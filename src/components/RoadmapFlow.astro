@@ -1,0 +1,341 @@
+---
+import { STAGES } from "../data/roadmap";
+---
+
+<section id="roadmap" class="roadmap section-shell">
+  <div class="section-grid" aria-hidden="true"></div>
+  <div class="section-glow" style="top: 10%; left: 50%;" aria-hidden="true"></div>
+
+  <header class="roadmap-header reveal">
+    <p class="section-kicker">// learning-path.sys</p>
+    <h2 class="section-title">THE <span>ROADMAP</span></h2>
+    <p class="section-readout">SIX STAGES · SEQUENTIAL PROGRESSION · SCROLL TO TRACE THE PATH</p>
+  </header>
+
+  <div class="flow-wrap" id="flow-wrap">
+    <div class="flow-line" aria-hidden="true">
+      <div class="flow-line-fill" id="flow-line-fill"></div>
+    </div>
+
+    <ol class="flow-nodes">
+      {STAGES.map((stage, i) => (
+        <li class:list={["flow-node", "reveal", i % 2 === 0 ? "align-left" : "align-right"]}>
+          <div class="flow-marker">
+            <span class="flow-marker-core"></span>
+          </div>
+
+          <a class="flow-card glass" href={`/topics/${stage.slug}/`}>
+            <div class="flow-card-head">
+              <span class="flow-id">{stage.id}</span>
+              <span class="flow-status" data-status={stage.status}>{stage.status}</span>
+            </div>
+            <p class="flow-tag">{stage.tag}</p>
+            <h3 class="flow-title">{stage.title}</h3>
+            <p class="flow-subtitle">{stage.subtitle}</p>
+            <p class="flow-blurb">{stage.blurb}</p>
+            <ul class="flow-topics">
+              {stage.topics.map((topic) => (
+                <li>{topic}</li>
+              ))}
+            </ul>
+            <span class="flow-enter">
+              <span>ENTER MODULE</span>
+              <span class="flow-enter-arrow">→</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .roadmap {
+    position: relative;
+    padding: 7rem 1.5rem 8rem;
+    background: var(--color-bg-primary);
+  }
+
+  .roadmap-header {
+    position: relative;
+    z-index: 2;
+    max-width: 46rem;
+    margin: 0 auto 5rem;
+    text-align: center;
+  }
+
+  .flow-wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 60rem;
+    margin: 0 auto;
+  }
+
+  .flow-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1.15rem;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .flow-line-fill {
+    width: 100%;
+    height: 0%;
+    background: linear-gradient(to bottom, var(--color-brand-primary), var(--color-brand-secondary));
+    box-shadow: 0 0 12px rgba(253, 144, 0, 0.6);
+    transition: height 0.15s linear;
+  }
+
+  .flow-nodes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .flow-node {
+    position: relative;
+    padding-left: 3.25rem;
+  }
+
+  .flow-marker {
+    position: absolute;
+    top: 0.35rem;
+    left: 0;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-primary);
+    border: 2px solid rgba(253, 144, 0, 0.35);
+  }
+
+  .flow-marker-core {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 999px;
+    background: var(--color-brand-primary);
+  }
+
+  .flow-node.in-view .flow-marker {
+    animation: core-pulse 2.6s ease-in-out infinite;
+    border-color: rgba(253, 144, 0, 0.8);
+  }
+
+  .flow-card {
+    display: block;
+    border-radius: 1rem;
+    padding: 1.75rem;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .flow-card:hover,
+  .flow-card:focus-visible {
+    border-color: rgba(253, 144, 0, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.38), 0 0 30px rgba(253, 144, 0, 0.08);
+  }
+
+  .flow-card:focus-visible {
+    outline: 2px solid rgba(253, 144, 0, 0.6);
+    outline-offset: 3px;
+  }
+
+  .flow-enter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--color-brand-primary);
+  }
+
+  .flow-enter-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .flow-card:hover .flow-enter-arrow {
+    transform: translateX(4px);
+  }
+
+  .flow-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .flow-id {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .flow-status {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid rgba(253, 144, 0, 0.35);
+    color: var(--color-brand-primary);
+  }
+
+  .flow-tag {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  .flow-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .flow-subtitle {
+    margin: 0.15rem 0 0.85rem;
+    font-size: 0.85rem;
+    color: var(--color-brand-primary);
+    font-weight: 600;
+  }
+
+  .flow-blurb {
+    margin: 0 0 1.15rem;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .flow-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .flow-topics li {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-glass-border);
+    padding: 0.3rem 0.65rem;
+    border-radius: 0.4rem;
+  }
+
+  @media (min-width: 860px) {
+    .flow-line {
+      left: 50%;
+      transform: translateX(-1px);
+    }
+
+    .flow-nodes {
+      gap: 4rem;
+    }
+
+    .flow-node {
+      padding-left: 0;
+      width: 50%;
+    }
+
+    .flow-marker {
+      left: auto;
+    }
+
+    .align-left {
+      padding-right: 3.5rem;
+      text-align: right;
+    }
+
+    .align-left .flow-marker {
+      right: -1.175rem;
+      left: auto;
+    }
+
+    .align-left .flow-card-head {
+      flex-direction: row-reverse;
+    }
+
+    .align-left .flow-topics {
+      justify-content: flex-end;
+    }
+
+    .align-right {
+      margin-left: 50%;
+      padding-left: 3.5rem;
+    }
+
+    .align-right .flow-marker {
+      left: -1.175rem;
+    }
+  }
+</style>
+
+<script>
+  const nodes = document.querySelectorAll(".flow-node");
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+        }
+      }
+    },
+    { threshold: 0.3, rootMargin: "0px 0px -10% 0px" }
+  );
+  nodes.forEach((node) => observer.observe(node));
+
+  const wrap = document.getElementById("flow-wrap");
+  const fill = document.getElementById("flow-line-fill");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (wrap && fill && !reduced) {
+    let ticking = false;
+
+    const update = () => {
+      const rect = wrap.getBoundingClientRect();
+      const viewportH = window.innerHeight;
+      const total = rect.height;
+      const start = viewportH * 0.85;
+      const traveled = start - rect.top;
+      const ratio = Math.min(1, Math.max(0, traveled / (total + start - viewportH * 0.15)));
+      fill.style.height = `${ratio * 100}%`;
+      ticking = false;
+    };
+
+    document.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener("resize", update);
+    update();
+  } else if (fill) {
+    fill.style.height = "100%";
+  }
+</script>
