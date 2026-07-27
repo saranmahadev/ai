@@ -1,0 +1,167 @@
+---
+import Layout from "./Layout.astro";
+import Footer from "../components/Footer.astro";
+import type { Stage } from "../data/roadmap";
+
+interface Props {
+  stage: Stage;
+}
+
+const { stage } = Astro.props;
+---
+
+<Layout title={`${stage.title} | AI Roadmap`} description={stage.blurb}>
+  <main class="topic section-shell">
+    <div class="section-grid" aria-hidden="true"></div>
+    <div class="section-glow" style="top: 0; left: 50%;" aria-hidden="true"></div>
+
+    <div class="topic-inner">
+      <a class="back-link" href="/#roadmap">
+        <span class="back-arrow">←</span>
+        <span>Back to roadmap</span>
+      </a>
+
+      <div class="topic-head">
+        <p class="section-kicker">// {stage.tag}</p>
+        <div class="topic-title-row">
+          <h1 class="section-title">{stage.title}</h1>
+          <span class="topic-status" data-status={stage.status}>{stage.status}</span>
+        </div>
+        <p class="topic-subtitle">{stage.subtitle}</p>
+        <p class="topic-blurb">{stage.blurb}</p>
+      </div>
+
+      <section class="topic-list">
+        <p class="section-kicker">// contents</p>
+        <ul class="topic-grid">
+          {stage.topics.map((topic) => (
+            <li class="topic-card glass">
+              <span class="topic-card-dot"></span>
+              <span class="topic-card-name">{topic}</span>
+              <span class="topic-card-status">notes coming soon</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <slot />
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .topic {
+    position: relative;
+    min-height: 70vh;
+    padding: 7rem 1.5rem 6rem;
+    background: var(--color-bg-primary);
+  }
+
+  .topic-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 52rem;
+    margin: 0 auto;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: var(--color-text-secondary);
+    transition: color 0.3s ease, gap 0.3s ease;
+  }
+
+  .back-link:hover {
+    color: var(--color-brand-primary);
+    gap: 0.75rem;
+  }
+
+  .topic-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .topic-status {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(253, 144, 0, 0.35);
+    color: var(--color-brand-primary);
+  }
+
+  .topic-subtitle {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-brand-primary);
+  }
+
+  .topic-blurb {
+    margin-top: 0.5rem;
+    max-width: 38rem;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .topic-list {
+    margin-top: 4rem;
+  }
+
+  .topic-grid {
+    margin-top: 1.25rem;
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  }
+
+  .topic-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    border-radius: 0.85rem;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .topic-card:hover {
+    border-color: rgba(253, 144, 0, 0.35);
+    transform: translateY(-2px);
+  }
+
+  .topic-card-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-brand-primary);
+    box-shadow: 0 0 10px rgba(253, 144, 0, 0.7);
+  }
+
+  .topic-card-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .topic-card-status {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+  }
+</style>

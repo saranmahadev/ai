@@ -1,0 +1,32 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import RoadmapFlow from "../components/RoadmapFlow.astro";
+import Changelog from "../components/Changelog.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout>
+  <Hero />
+  <RoadmapFlow />
+  <Changelog />
+  <Footer />
+</Layout>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+          observer.unobserve(entry.target);
+        }
+      }
+    },
+    { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
+  );
+
+  document
+    .querySelectorAll(".reveal:not(.in-view)")
+    .forEach((el) => observer.observe(el));
+</script>

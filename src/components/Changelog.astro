@@ -1,0 +1,132 @@
+---
+const CHANGES = [
+  {
+    date: "2026-07-27",
+    label: "INIT",
+    entry: "Repository scaffolded — roadmap structure and homepage design established.",
+  },
+];
+
+const lastUpdated = CHANGES[0].date;
+---
+
+<section id="changelog" class="changelog section-shell">
+  <div class="section-grid" aria-hidden="true"></div>
+
+  <div class="changelog-inner">
+    <div class="changelog-meta reveal">
+      <p class="section-kicker">// changelog.log</p>
+      <h2 class="section-title">LAST UPDATED</h2>
+      <p class="last-updated">
+        <span class="dot"></span>
+        {lastUpdated}
+      </p>
+    </div>
+
+    <ol class="changelog-list reveal">
+      {CHANGES.map((change) => (
+        <li class="changelog-item">
+          <span class="changelog-date">{change.date}</span>
+          <span class="changelog-label">{change.label}</span>
+          <span class="changelog-entry">{change.entry}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .changelog {
+    position: relative;
+    padding: 6rem 1.5rem;
+    background: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-glass-border);
+    border-bottom: 1px solid var(--color-glass-border);
+  }
+
+  .changelog-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 56rem;
+    margin: 0 auto;
+    display: grid;
+    gap: 3rem;
+  }
+
+  @media (min-width: 780px) {
+    .changelog-inner {
+      grid-template-columns: 1fr 1.4fr;
+      align-items: start;
+    }
+  }
+
+  .last-updated {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: var(--color-text-secondary);
+  }
+
+  .last-updated .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-brand-primary);
+    box-shadow: 0 0 10px rgba(253, 144, 0, 0.8);
+  }
+
+  .changelog-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .changelog-item {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: baseline;
+    gap: 0.9rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-glass-border);
+    background: var(--color-glass);
+  }
+
+  .changelog-date {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
+    white-space: nowrap;
+  }
+
+  .changelog-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--color-brand-primary);
+    border: 1px solid rgba(253, 144, 0, 0.35);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    white-space: nowrap;
+  }
+
+  .changelog-entry {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 560px) {
+    .changelog-item {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+  }
+</style>

@@ -1,0 +1,343 @@
+---
+const ROLES = ["MATH FOUNDATIONS", "MACHINE LEARNING", "DEEP LEARNING", "GENERATIVE AI", "AGENT ENGINEERING"];
+const MARQUEE_ITEMS = [
+  "LINEAR ALGEBRA",
+  "PROBABILITY",
+  "SUPERVISED LEARNING",
+  "NEURAL NETWORKS",
+  "TRANSFORMERS",
+  "LLMS",
+  "RAG",
+  "MULTI-AGENT SYSTEMS",
+  "MCP",
+  "CAPSTONE PROJECTS",
+];
+---
+
+<section
+  id="home"
+  class="hero"
+>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-grid" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <div class="status-pill reveal in-view">
+      <span class="dot-wrap">
+        <span class="dot-ping"></span>
+        <span class="dot"></span>
+      </span>
+      <span class="status-text">Progressively curated · Open source</span>
+    </div>
+
+    <h1 class="hero-title reveal in-view">
+      AI <span class="text-brand">ROADMAP</span><br />
+      &amp; KNOWLEDGE BASE
+    </h1>
+
+    <div class="hero-rule reveal in-view"></div>
+
+    <div class="hero-role reveal in-view">
+      <span class="slash">//</span>
+      <span id="role-text">{ROLES[0]}</span>
+      <span class="animate-blink cursor-bar"></span>
+    </div>
+
+    <p class="hero-subtitle reveal in-view">
+      One repo, one path: from calculus to autonomous agents. Every topic documented,
+      linked, and updated as the field moves.
+    </p>
+
+    <div class="hero-cta reveal in-view">
+      <a href="#roadmap" class="btn-primary">
+        <span class="btn-icon">↓</span>
+        <span>EXPLORE THE ROADMAP</span>
+      </a>
+      <a href="https://github.com" target="_blank" rel="noreferrer" class="btn-secondary">
+        <span>VIEW ON GITHUB</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-marquee" aria-hidden="true">
+    <div class="animate-marquee marquee-track">
+      {[0, 1].map(() => (
+        <div class="marquee-half">
+          {MARQUEE_ITEMS.map((item) => (
+            <span class="marquee-item">
+              <span class="marquee-dot">◆</span>
+              {item}
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #050505;
+    padding: 6rem 1.5rem 9rem;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(60rem, 100vw);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(253, 144, 0, 0.14), transparent 65%);
+    filter: blur(40px);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.4) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(circle at 50% 40%, #000, transparent 75%);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    max-width: 60rem;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 2rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-glass-border);
+    background: var(--color-glass);
+    backdrop-filter: blur(12px);
+  }
+
+  .dot-wrap {
+    position: relative;
+    display: flex;
+    height: 0.5rem;
+    width: 0.5rem;
+  }
+
+  .dot {
+    position: relative;
+    height: 0.5rem;
+    width: 0.5rem;
+    border-radius: 999px;
+    background: #34d399;
+  }
+
+  .dot-ping {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: #34d399;
+    opacity: 0.6;
+    animation: pulse-dot 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .status-text {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  .hero-title {
+    font-size: clamp(2.4rem, 8vw, 5.2rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin: 0;
+  }
+
+  .hero-rule {
+    margin-top: 1.5rem;
+    height: 1px;
+    width: 14rem;
+    background: linear-gradient(90deg, transparent, var(--color-brand-primary), transparent);
+    box-shadow: 0 0 20px rgba(253, 144, 0, 0.8);
+  }
+
+  .hero-role {
+    margin-top: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    color: var(--color-text-secondary);
+    min-height: 1.8rem;
+  }
+
+  .slash {
+    color: var(--color-brand-primary);
+  }
+
+  .cursor-bar {
+    display: inline-block;
+    height: 1.1rem;
+    width: 2px;
+    background: var(--color-brand-primary);
+  }
+
+  .hero-subtitle {
+    margin-top: 1.75rem;
+    max-width: 34rem;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .hero-cta {
+    margin-top: 2.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.6rem;
+    border-radius: 0.75rem;
+    background: var(--color-brand-gradient);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    box-shadow: 0 8px 30px rgba(253, 144, 0, 0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 45px rgba(253, 144, 0, 0.5);
+  }
+
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.85rem 1.6rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-glass-border);
+    background: var(--color-glass);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .btn-secondary:hover {
+    border-color: rgba(253, 144, 0, 0.5);
+    color: var(--color-brand-primary);
+  }
+
+  .hero-marquee {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    overflow: hidden;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1rem 0;
+    mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+  }
+
+  .marquee-half {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  .marquee-item {
+    margin: 0 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  .marquee-dot {
+    color: rgba(253, 144, 0, 0.5);
+  }
+</style>
+
+<script>
+  const roles = ["MATH FOUNDATIONS", "MACHINE LEARNING", "DEEP LEARNING", "GENERATIVE AI", "AGENT ENGINEERING"];
+  const SCRAMBLE_CHARS = "!<>-_\\/[]{}=+*^?#";
+  const el = document.getElementById("role-text");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (el && !reduced) {
+    let index = 0;
+
+    const cycle = () => {
+      const word = roles[index];
+      let frame = 0;
+      const interval = setInterval(() => {
+        frame++;
+        const revealed = Math.max(0, frame - 6) * 0.8;
+        el.textContent = word
+          .split("")
+          .map((char, i) => {
+            if (char === " " || i < revealed) return char;
+            return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+          })
+          .join("");
+        if (revealed >= word.length) clearInterval(interval);
+      }, 45);
+
+      setTimeout(() => {
+        index = (index + 1) % roles.length;
+        cycle();
+      }, 3600);
+    };
+
+    cycle();
+  }
+</script>
