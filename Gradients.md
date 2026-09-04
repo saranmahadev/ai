@@ -1,5 +1,3 @@
-# Gradients
-
 Part of [[Calculus]].
 
 * Gradient

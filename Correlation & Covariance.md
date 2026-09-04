@@ -1,5 +1,3 @@
-# Correlation & Covariance
-
 Part of [[Statistics]].
 
 * Covariance

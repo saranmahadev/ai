@@ -1,5 +1,3 @@
-# Sampling
-
 Part of [[Statistics]].
 
 * Population

@@ -1,5 +1,3 @@
-# ML-Specific Mathematical Concepts
-
 Part of [[Math]].
 
 Once you've covered the above, there are a few concepts that bridge mathematics into actual ML.

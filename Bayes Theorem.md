@@ -1,5 +1,3 @@
-# Bayes Theorem
-
 Part of [[Probability]].
 
 * Bayes' theorem

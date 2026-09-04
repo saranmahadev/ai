@@ -1,5 +1,3 @@
-# Estimation
-
 Part of [[Statistics]].
 
 * Point estimation

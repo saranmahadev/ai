@@ -1,5 +1,3 @@
-# Optimization
-
 Part of [[Calculus]].
 
 * Objective functions

@@ -1,5 +1,3 @@
-# Multivariate Probability
-
 Part of [[Probability]].
 
 * Joint distributions

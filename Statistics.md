@@ -1,5 +1,3 @@
-# Statistics
-
 Part of [[Math]].
 
 - [[Descriptive Statistics]]

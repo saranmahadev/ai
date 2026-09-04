@@ -1,5 +1,3 @@
-# Limits
-
 Part of [[Calculus]].
 
 * Concept of a limit

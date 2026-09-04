@@ -1,5 +1,3 @@
-# Math
-
 Root index for mathematics foundations.
 
 - [[Linear Algebra]]

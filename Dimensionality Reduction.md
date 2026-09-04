@@ -1,5 +1,3 @@
-# Dimensionality Reduction
-
 Part of [[Linear Algebra]].
 
 * Principal Component Analysis (PCA)

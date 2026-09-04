@@ -1,5 +1,3 @@
-# Descriptive Statistics
-
 Part of [[Statistics]].
 
 * Mean

@@ -1,5 +1,3 @@
-# Confidence Intervals
-
 Part of [[Statistics]].
 
 * Confidence intervals

@@ -1,5 +1,3 @@
-# Matrices
-
 Part of [[Linear Algebra]].
 
 * Matrix representation

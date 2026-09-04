@@ -1,5 +1,3 @@
-# Functions
-
 Part of [[Calculus]].
 
 * Variables

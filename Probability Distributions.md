@@ -1,5 +1,3 @@
-# Probability Distributions
-
 Part of [[Probability]].
 
 ### Discrete

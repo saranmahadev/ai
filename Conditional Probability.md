@@ -1,5 +1,3 @@
-# Conditional Probability
-
 Part of [[Probability]].
 
 * Conditional probability

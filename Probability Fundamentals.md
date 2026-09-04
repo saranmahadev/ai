@@ -1,5 +1,3 @@
-# Probability Fundamentals
-
 Part of [[Probability]].
 
 * Experiments

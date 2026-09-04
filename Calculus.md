@@ -1,5 +1,3 @@
-# Calculus
-
 Part of [[Math]].
 
 - [[Functions]]

@@ -1,5 +1,3 @@
-# Matrix Decompositions
-
 Part of [[Linear Algebra]].
 
 Important for ML:

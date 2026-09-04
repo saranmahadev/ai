@@ -1,5 +1,3 @@
-# Matrix Properties
-
 Part of [[Linear Algebra]].
 
 * Determinant

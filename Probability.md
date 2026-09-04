@@ -1,5 +1,3 @@
-# Probability
-
 Part of [[Math]].
 
 - [[Probability Fundamentals]]

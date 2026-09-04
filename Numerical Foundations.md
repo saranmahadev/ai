@@ -1,5 +1,3 @@
-# Numerical Foundations
-
 Part of [[Math]].
 
 You don't need to become a numerical-analysis expert, but understand:

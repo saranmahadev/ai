@@ -1,5 +1,3 @@
-# Partial Derivatives
-
 Part of [[Calculus]].
 
 For functions with multiple variables:

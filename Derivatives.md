@@ -1,5 +1,3 @@
-# Derivatives
-
 Part of [[Calculus]].
 
 * Derivative intuition

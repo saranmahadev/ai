@@ -1,5 +1,3 @@
-# Random Variables
-
 Part of [[Probability]].
 
 * Discrete random variables

@@ -1,5 +1,3 @@
-# Vector Operations
-
 Part of [[Linear Algebra]].
 
 * Dot product

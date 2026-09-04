@@ -1,5 +1,3 @@
-# Linear Algebra
-
 Part of [[Math]].
 
 - [[Math Fundamentals]]

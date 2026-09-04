@@ -1,5 +1,3 @@
-# Vector Spaces
-
 Part of [[Linear Algebra]].
 
 * Vector spaces

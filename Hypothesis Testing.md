@@ -1,5 +1,3 @@
-# Hypothesis Testing
-
 Part of [[Statistics]].
 
 * Null hypothesis

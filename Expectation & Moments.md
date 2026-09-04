@@ -1,5 +1,3 @@
-# Expectation & Moments
-
 Part of [[Probability]].
 
 * Expected value

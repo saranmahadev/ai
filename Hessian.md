@@ -1,5 +1,3 @@
-# Hessian
-
 Part of [[Calculus]].
 
 * Second derivatives

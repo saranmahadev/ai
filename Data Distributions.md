@@ -1,5 +1,3 @@
-# Data Distributions
-
 Part of [[Statistics]].
 
 Understand:

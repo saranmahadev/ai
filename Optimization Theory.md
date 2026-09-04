@@ -1,5 +1,3 @@
-# Optimization Theory
-
 Part of [[Math]].
 
 Although optimization overlaps with calculus, I would treat it as its own ML foundation.

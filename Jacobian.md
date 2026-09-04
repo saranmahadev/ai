@@ -1,5 +1,3 @@
-# Jacobian
-
 Part of [[Calculus]].
 
 * Jacobian matrix

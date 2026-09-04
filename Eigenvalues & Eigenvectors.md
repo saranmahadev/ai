@@ -1,5 +1,3 @@
-# Eigenvalues & Eigenvectors
-
 Part of [[Linear Algebra]].
 
 * Eigenvalues
