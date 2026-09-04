@@ -1,5 +1,3 @@
-Part of [[Probability]].
-
 * Bayes' theorem
 * Prior
 * Likelihood

@@ -1,5 +1,3 @@
-Part of [[Probability]].
-
 * Expected value
 * Variance
 * Standard deviation

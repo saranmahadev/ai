@@ -1,5 +1,3 @@
-Part of [[Math]].
-
 - [[Math Fundamentals]]
 - [[Vector Operations]]
 - [[Matrices]]

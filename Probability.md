@@ -1,5 +1,3 @@
-Part of [[Math]].
-
 - [[Probability Fundamentals]]
 - [[Conditional Probability]]
 - [[Bayes Theorem]]

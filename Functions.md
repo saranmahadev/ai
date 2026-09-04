@@ -1,5 +1,3 @@
-Part of [[Calculus]].
-
 * Variables
 * Constants
 * Functions

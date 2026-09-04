@@ -1,5 +1,3 @@
-Part of [[Math]].
-
 - [[Functions]]
 - [[Limits]]
 - [[Derivatives]]

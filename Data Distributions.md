@@ -1,5 +1,3 @@
-Part of [[Statistics]].
-
 Understand:
 
 * Normal distribution

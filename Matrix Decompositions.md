@@ -1,5 +1,3 @@
-Part of [[Linear Algebra]].
-
 Important for ML:
 
 * LU decomposition

@@ -1,5 +1,3 @@
-Part of [[Statistics]].
-
 * Null hypothesis
 * Alternative hypothesis
 * Test statistic

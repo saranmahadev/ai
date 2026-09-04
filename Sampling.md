@@ -1,5 +1,3 @@
-Part of [[Statistics]].
-
 * Population
 * Sample
 * Sampling methods

@@ -1,5 +1,3 @@
-Part of [[Linear Algebra]].
-
 * Eigenvalues
 * Eigenvectors
 * Characteristic equation

@@ -1,5 +1,3 @@
-Part of [[Probability]].
-
 ### Discrete
 
 * Bernoulli

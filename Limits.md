@@ -1,5 +1,3 @@
-Part of [[Calculus]].
-
 * Concept of a limit
 * Continuity
 * Basic limit rules

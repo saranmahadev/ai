@@ -1,5 +1,3 @@
-Part of [[Linear Algebra]].
-
 * Dot product
 * Inner product
 * Vector magnitude

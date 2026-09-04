@@ -1,5 +1,3 @@
-Part of [[Statistics]].
-
 * Mean
 * Median
 * Mode

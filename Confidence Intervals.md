@@ -1,5 +1,3 @@
-Part of [[Statistics]].
-
 * Confidence intervals
 * Interpretation
 * Standard errors

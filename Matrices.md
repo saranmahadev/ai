@@ -1,5 +1,3 @@
-Part of [[Linear Algebra]].
-
 * Matrix representation
 * Matrix dimensions
 * Matrix addition/subtraction

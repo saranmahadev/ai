@@ -1,5 +1,3 @@
-Part of [[Calculus]].
-
 * Derivative intuition
 * Derivative as rate of change
 * Derivative rules

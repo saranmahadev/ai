@@ -1,5 +1,3 @@
-Part of [[Linear Algebra]].
-
 * Determinant
 * Inverse
 * Rank

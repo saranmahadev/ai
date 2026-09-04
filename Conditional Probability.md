@@ -1,5 +1,3 @@
-Part of [[Probability]].
-
 * Conditional probability
 * Independence
 * Chain rule of probability

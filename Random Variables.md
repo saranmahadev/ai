@@ -1,5 +1,3 @@
-Part of [[Probability]].
-
 * Discrete random variables
 * Continuous random variables
 * Probability mass function

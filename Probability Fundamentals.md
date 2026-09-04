@@ -1,5 +1,3 @@
-Part of [[Probability]].
-
 * Experiments
 * Outcomes
 * Sample spaces

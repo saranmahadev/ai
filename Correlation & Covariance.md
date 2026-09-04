@@ -1,5 +1,3 @@
-Part of [[Statistics]].
-
 * Covariance
 * Pearson correlation
 * Spearman correlation

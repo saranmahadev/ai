@@ -1,5 +1,3 @@
-Part of [[Calculus]].
-
 * Jacobian matrix
 * Vector-valued functions
 * Jacobian intuition

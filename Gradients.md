@@ -1,5 +1,3 @@
-Part of [[Calculus]].
-
 * Gradient
 * Gradient vector
 * Directional derivatives

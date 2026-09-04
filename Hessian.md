@@ -1,5 +1,3 @@
-Part of [[Calculus]].
-
 * Second derivatives
 * Hessian matrix
 * Curvature

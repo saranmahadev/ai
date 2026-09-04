@@ -1,5 +1,3 @@
-Part of [[Linear Algebra]].
-
 Particularly important for Deep Learning:
 
 * Scalars → 0D tensor

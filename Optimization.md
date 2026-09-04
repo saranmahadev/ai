@@ -1,5 +1,3 @@
-Part of [[Calculus]].
-
 * Objective functions
 * Minima/maxima
 * Local vs global minima

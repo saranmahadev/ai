@@ -1,5 +1,3 @@
-Part of [[Statistics]].
-
 * Point estimation
 * Maximum likelihood estimation (MLE)
 * Maximum a posteriori estimation (MAP)
