@@ -1,0 +1,72 @@
+---
+const phases = [
+  ["The void", "A single piece of matter holds the beginning of a learning world."],
+  ["Gravity awakens", "Knowledge gains weight, motion, and a place to settle."],
+  ["Connections form", "Related ideas pull together. Dependencies become structure."],
+  ["Knowledge grows", "Small concepts develop into living systems of understanding."],
+  ["Intelligence", "Structures become a world you can learn inside."],
+];
+---
+
+<section class="universe-story" id="universe" aria-labelledby="universe-title">
+  <div class="universe-sticky">
+    <canvas class="universe-canvas" aria-hidden="true"></canvas>
+
+    <div class="universe-fallback" aria-hidden="true">
+      <span class="fallback-seed"></span>
+      <span class="fallback-orb fallback-orb-one"></span>
+      <span class="fallback-orb fallback-orb-two"></span>
+      <span class="fallback-orb fallback-orb-three"></span>
+    </div>
+
+    <div class="universe-chrome">
+      <p class="universe-index">01 / A physical path through AI</p>
+      <button class="sound-toggle" type="button" aria-pressed="false" aria-label="Enable ambient sound">
+        Sound off
+      </button>
+    </div>
+
+    <div class="universe-copy">
+      <p class="eyebrow"><span></span> A living knowledge universe</p>
+      <h1 id="universe-title">Learning is building connections.</h1>
+      <p class="universe-summary">Follow matter as it gathers, connects, grows, and becomes intelligence.</p>
+      <a class="button button-primary universe-cta" href="#curriculum">Enter the learning path <span aria-hidden="true">&rarr;</span></a>
+    </div>
+
+    <div class="universe-phase" aria-live="polite">
+      <p class="universe-phase-index">00</p>
+      <p class="universe-phase-name">The void</p>
+    </div>
+
+    <p class="universe-instruction">Scroll to shape the world <span aria-hidden="true">↓</span></p>
+  </div>
+
+  <div class="universe-waypoints" aria-label="The knowledge universe evolves as you scroll">
+    {phases.map(([title, description], index) => (
+      <article class="universe-waypoint">
+        <span>0{index + 1}</span>
+        <h2>{title}</h2>
+        <p>{description}</p>
+      </article>
+    ))}
+  </div>
+
+  <noscript>
+    <div class="universe-noscript">
+      <h2>Learning is building connections.</h2>
+      <p>Start with foundations, then build toward machine learning, language models, and agent systems.</p>
+      <a href="#curriculum">Enter the learning path</a>
+    </div>
+  </noscript>
+
+  <script>
+    const story = document.querySelector<HTMLElement>(".universe-story");
+    const canvas = story?.querySelector<HTMLCanvasElement>(".universe-canvas");
+
+    if (story && canvas) {
+      import("../scripts/knowledge-universe").then(({ createKnowledgeUniverse }) => {
+        createKnowledgeUniverse({ story, canvas }).catch(() => canvas.setAttribute("data-static", ""));
+      });
+    }
+  </script>
+</section>
