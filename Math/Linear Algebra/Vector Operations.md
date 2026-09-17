@@ -2,7 +2,6 @@
 * Inner product
 * Vector magnitude
 * Norms
-
   * L1 norm
   * L2 norm
   * L∞ norm

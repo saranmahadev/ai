@@ -1,10 +1,11 @@
 * [[Scalars]]
 * [[Vectors]]
-* Vector notation
-* Vector dimensions
-* Row vectors vs column vectors
-* Vector addition/subtraction
-* Scalar multiplication
-* Linear combinations
+* [[Vector notation]]
+* [[Vector dimensions]]
+* [[Row vectors vs Column vectors]]
+* Vector Addition
+* Vector Subtraction
+* Vector and Scalar Multiplication
+* Linear Combinations
 * Span
 * Linear independence
