@@ -1,32 +1,69 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Hero from "../components/Hero.astro";
-import RoadmapFlow from "../components/RoadmapFlow.astro";
-import Changelog from "../components/Changelog.astro";
-import Footer from "../components/Footer.astro";
+import LearningMap from "../components/LearningMap.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { learningStages } from "../data/curriculum";
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<Layout>
-  <Hero />
-  <RoadmapFlow />
-  <Changelog />
-  <Footer />
-</Layout>
+<BaseLayout>
+  <main>
+    <div class="page-shell">
+      <SiteHeader />
 
-<script>
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("in-view");
-          observer.unobserve(entry.target);
-        }
-      }
-    },
-    { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
-  );
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> A structured path through AI</p>
+          <h1 id="hero-title">Learn AI from first principles to systems you can build.</h1>
+          <p class="hero-summary">
+            Follow a connected curriculum from mathematical foundations through machine learning,
+            deep learning, language models, and agent systems. Learn each idea when it becomes useful.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#curriculum">Start with the foundations <span aria-hidden="true">&rarr;</span></a>
+            <a class="button button-secondary" href="#approach">How the path works</a>
+          </div>
+          <p class="hero-proof"><span class="proof-orb" aria-hidden="true"></span> Clear sequence. Practical context. No tutorial pile-up.</p>
+        </div>
 
-  document
-    .querySelectorAll(".reveal:not(.in-view)")
-    .forEach((el) => observer.observe(el));
-</script>
+        <div class="hero-visual">
+          <LearningMap />
+        </div>
+      </section>
+
+      <section class="approach" id="approach" aria-labelledby="approach-title">
+        <p class="eyebrow"><span></span> Learn with context</p>
+        <div>
+          <h2 id="approach-title">Every step has a reason to come next.</h2>
+          <p>
+            The curriculum connects foundations to applications, so you understand not only what a
+            technique does, but why it matters and where it fits.
+          </p>
+        </div>
+      </section>
+
+      <section class="curriculum" id="curriculum" aria-labelledby="curriculum-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow"><span></span> The learning path</p>
+            <h2 id="curriculum-title">Start where durable understanding begins.</h2>
+          </div>
+          <p>Each stage builds on the previous one. Begin with the foundations, then move forward when the ideas connect.</p>
+        </div>
+
+        <ol class="stage-grid">
+          {learningStages.map((stage) => (
+            <li class:list={["stage-card", `tone-${stage.tone}`]}>
+              <div class="stage-topline">
+                <span>{stage.id}</span>
+                <span>{stage.kicker}</span>
+              </div>
+              <h3>{stage.title}</h3>
+              <p>{stage.description}</p>
+              <span class="stage-arrow" aria-hidden="true">&rarr;</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </div>
+  </main>
+</BaseLayout>

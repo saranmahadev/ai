@@ -1,0 +1,30 @@
+---
+const modules = [
+  { label: "Math", className: "module-math", note: "Start" },
+  { label: "ML", className: "module-ml", note: "Patterns" },
+  { label: "Deep learning", className: "module-deep", note: "Networks" },
+  { label: "LLMs", className: "module-llm", note: "Language" },
+  { label: "Agents", className: "module-agents", note: "Systems" },
+];
+---
+
+<div class="learning-map" aria-label="Five connected stages: Math, machine learning, deep learning, language models, and agents">
+  <div class="map-glow" aria-hidden="true"></div>
+  <div class="map-path path-one" aria-hidden="true"></div>
+  <div class="map-path path-two" aria-hidden="true"></div>
+  <div class="map-path path-three" aria-hidden="true"></div>
+  <div class="map-path path-four" aria-hidden="true"></div>
+
+  {modules.map((module, index) => (
+    <article class:list={["map-module", module.className]}>
+      <span class="module-number">0{index + 1}</span>
+      <strong>{module.label}</strong>
+      <small>{module.note}</small>
+    </article>
+  ))}
+
+  <div class="map-caption" aria-hidden="true">
+    <span class="caption-dot"></span>
+    Follow the thread
+  </div>
+</div>
