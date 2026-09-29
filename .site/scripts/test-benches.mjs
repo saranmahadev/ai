@@ -38,6 +38,12 @@ for (const topic of withBenches) for (const bench of [...new Set(topic.benches)]
     await page.waitForSelector(sel, { timeout: 15000 });
     await page.waitForFunction((s) => { const el = document.querySelector(s); if (el) el.scrollIntoView({ block: "center" }); return el && el.classList.contains("ready"); }, sel, { timeout: 10000, polling: 200 });
     for (const btn of await page.locator(`${sel} .bench-btn`).all()) await btn.click(); // exercise every button
+    for (const c of await page.locator(`${sel} input[type=checkbox]`).all()) await c.click(); // toggles
+    for (let i = 0; i < 40 && (await page.locator(`${sel} .sorter-pool .sorter-chip`).count()); i++) { // sorters: place every chip in the first bin
+      await page.locator(`${sel} .sorter-pool .sorter-chip`).first().click();
+      await page.locator(`${sel} .sorter-bin-btn`).nth(i % 2).click();
+    }
+    if (await page.locator(`${sel} .sorter`).count()) await page.locator(`${sel} .sorter .bench-btn`).first().click();
     for (const r of await page.locator(`${sel} input[type=range]`).all()) await r.evaluate((el) => { el.value = el.max; el.dispatchEvent(new Event("input", { bubbles: true })); });
     await page.waitForTimeout(150);
     if (shots) await page.locator(sel).screenshot({ path: join(shots, `${bench}.png`) });

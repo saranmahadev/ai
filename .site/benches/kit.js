@@ -141,3 +141,134 @@ export function frame(root, { title, hint }) {
   if (hint) root.append(h("p", { class: "bench-hint" }, hint));
   return body;
 }
+
+// ---------- shared helpers added for the AI Fundamentals benches
+
+/** Small seeded random generator (mulberry32) so demos are reproducible. */
+export function rng(seed = 1) {
+  let a = seed >>> 0;
+  const next = () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  next.int = (n) => Math.floor(next() * n);
+  next.pick = (arr) => arr[next.int(arr.length)];
+  next.chance = (p) => next() < p;
+  next.shuffle = (arr) => { const o = arr.slice(); for (let i = o.length - 1; i > 0; i--) { const j = next.int(i + 1); [o[i], o[j]] = [o[j], o[i]]; } return o; };
+  return next;
+}
+
+/** Labelled row of checkboxes. `onChange(values)` gets {key: boolean}. */
+export function toggles(items, onChange) {
+  const values = {};
+  const inputs = {};
+  const el = h("div", { class: "bench-toggles", role: "group" });
+  for (const [key, label, on] of items) {
+    values[key] = !!on;
+    const input = h("input", { type: "checkbox" });
+    input.checked = !!on;
+    input.addEventListener("change", () => { values[key] = input.checked; onChange({ ...values }); });
+    inputs[key] = input;
+    el.append(h("label", { class: "bench-toggle" }, input, h("span", {}, label)));
+  }
+  return {
+    el, get: () => ({ ...values }),
+    set(next, silent) { for (const k of Object.keys(next)) { values[k] = !!next[k]; inputs[k].checked = !!next[k]; } if (!silent) onChange({ ...values }); }
+  };
+}
+
+/** A segmented single-choice control. */
+export function choice(label, options, value, onChange) {
+  let cur = value;
+  const btns = options.map(([key, text]) => h("button", { type: "button", class: "bench-btn", "aria-pressed": String(key === cur), onClick: () => set(key) }, text));
+  const set = (key, silent) => { cur = key; options.forEach(([k], i) => btns[i].setAttribute("aria-pressed", String(k === cur))); if (!silent) onChange(cur); };
+  const el = h("div", { class: "bench-choice", role: "group", "aria-label": label }, label ? h("span", { class: "bench-choice-label" }, label) : null, h("div", { class: "bench-row" }, btns));
+  return { el, get: () => cur, set };
+}
+
+/**
+ * Play / step / reset controls for step-through benches. Playing is always started by the reader and never automatic.
+ * `onStep()` returns false when the run is finished (playback then stops).
+ */
+export function stepper({ onStep, onReset, interval = 500, stepLabel = "Step" }) {
+  let timer = 0, speed = interval;
+  const playBtn = h("button", { type: "button", class: "bench-btn", onClick: () => (timer ? pause() : play()) }, "Play");
+  const stepBtn = h("button", { type: "button", class: "bench-btn", onClick: () => { pause(); onStep(); } }, stepLabel);
+  const resetBtn = h("button", { type: "button", class: "bench-btn", onClick: () => { pause(); onReset(); } }, "Reset");
+  const spd = slider({ label: "speed", min: 1, max: 5, step: 1, value: 3, format: (v) => ["slowest", "slow", "medium", "fast", "fastest"][v - 1], onInput: (v) => { speed = interval * [3, 1.8, 1, 0.5, 0.25][v - 1]; if (timer) { pause(); play(); } } });
+  function tick() { if (onStep() === false) pause(); }
+  function play() { playBtn.textContent = "Pause"; playBtn.setAttribute("aria-pressed", "true"); timer = setInterval(tick, speed); }
+  function pause() { clearInterval(timer); timer = 0; playBtn.textContent = "Play"; playBtn.setAttribute("aria-pressed", "false"); }
+  const el = h("div", { class: "bench-stepper" }, h("div", { class: "bench-row" }, stepBtn, playBtn, resetBtn), spd.el);
+  return { el, stop: pause };
+}
+
+/** Collapsible answer: `reveal("Why?", "Because …")`. */
+export function reveal(summary, text) {
+  return h("details", { class: "bench-reveal" }, h("summary", {}, summary), h("p", {}, text));
+}
+
+/**
+ * Sort items into bins. Works by click (select an item, then choose a bin) and by drag and drop.
+ * items: [{id, label, why}], bins: [{id, label}], answers: {itemId: binId}.
+ * Returns {el, reset, placed}. `onCheck({correct, total})` runs when the reader presses Check.
+ */
+export function sorter({ items, bins, answers, onCheck, checkLabel = "Check my answers" }) {
+  const place = {}; // itemId -> binId | null
+  items.forEach((i) => (place[i.id] = null));
+  let selected = null, checked = false;
+  const pool = h("div", { class: "sorter-pool", "aria-label": "Items to place" });
+  const cols = h("div", { class: "sorter-bins" });
+  const note = h("p", { class: "bench-verdict", "aria-live": "polite" });
+  const checkBtn = h("button", { type: "button", class: "bench-btn", onClick: check }, checkLabel);
+  const resetBtn = h("button", { type: "button", class: "bench-btn", onClick: reset }, "Start over");
+  const el = h("div", { class: "sorter" }, pool, cols, h("div", { class: "bench-row" }, checkBtn, resetBtn), note);
+  const binEls = {};
+  for (const b of bins) {
+    const list = h("div", { class: "sorter-list" });
+    const btn = h("button", { type: "button", class: "sorter-bin-btn", onClick: () => { if (selected) { move(selected, b.id); } } }, b.label);
+    const col = h("div", { class: "sorter-bin" }, btn, list);
+    col.addEventListener("dragover", (e) => e.preventDefault());
+    col.addEventListener("drop", (e) => { e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (place[id] !== undefined) move(id, b.id); });
+    binEls[b.id] = list;
+    cols.append(col);
+  }
+  pool.addEventListener("dragover", (e) => e.preventDefault());
+  pool.addEventListener("drop", (e) => { e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (place[id] !== undefined) move(id, null); });
+
+  function chip(item) {
+    const b = h("button", { type: "button", class: "sorter-chip", draggable: "true", "aria-pressed": String(selected === item.id) }, item.label);
+    b.addEventListener("click", () => { selected = selected === item.id ? null : item.id; draw(); });
+    b.addEventListener("dragstart", (e) => { e.dataTransfer.setData("text/plain", item.id); });
+    if (checked && place[item.id]) {
+      const ok = place[item.id] === answers[item.id];
+      b.classList.add(ok ? "ok" : "bad");
+      b.title = item.why || "";
+    }
+    return b;
+  }
+  function move(id, bin) { place[id] = bin; selected = null; checked = false; note.textContent = ""; draw(); }
+  function draw() {
+    pool.textContent = ""; Object.values(binEls).forEach((l) => (l.textContent = ""));
+    for (const item of items) {
+      const c = chip(item);
+      if (place[item.id]) binEls[place[item.id]].append(c); else pool.append(c);
+    }
+    if (!pool.children.length) pool.append(h("span", { class: "sorter-empty" }, "Everything is placed. Check your answers."));
+  }
+  function check() {
+    const unplaced = items.filter((i) => !place[i.id]).length;
+    if (unplaced) { note.textContent = `Place the remaining ${unplaced} item${unplaced > 1 ? "s" : ""} first.`; return; }
+    checked = true; draw();
+    const correct = items.filter((i) => place[i.id] === answers[i.id]).length;
+    const wrong = items.filter((i) => place[i.id] !== answers[i.id]);
+    note.textContent = `${correct} of ${items.length} placed where the note puts them.` + (wrong.length ? " " + wrong.map((i) => `${i.label}: ${i.why}`).join(" ") : " Nicely done.");
+    if (onCheck) onCheck({ correct, total: items.length });
+  }
+  function reset() { items.forEach((i) => (place[i.id] = null)); selected = null; checked = false; note.textContent = ""; draw(); }
+  draw();
+  return { el, reset, placed: () => ({ ...place }) };
+}
