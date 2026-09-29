@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { clay, tint, skyTexture } from "./clay.js";
+import { clay, tint, createSkyRig } from "./clay.js";
 import { createRocket } from "../models/rocket.js";
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -13,15 +13,16 @@ export function create({ planets, labelsEl, onFocus, onSelect, onSun, onWhiteout
   const N = planets.length, STEP = (Math.PI * 2) / N, R = 14, PR = 2.5;
 
   const scene = new THREE.Scene();
-  scene.background = skyTexture([[0, "#b7c6ff"], [0.55, "#dccdff"], [1, "#ffd9e6"]]);
   scene.fog = new THREE.FogExp2(0xdccdff, 0.006);
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 500);
   scene.add(camera);
 
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xcdbdf5, 2.0));
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xcdbdf5, 2.0);
+  scene.add(hemi);
   const sunLight = new THREE.DirectionalLight(0xfff4e6, 2.0);
   sunLight.position.set(-14, 26, 30);
   scene.add(sunLight);
+  const sky = createSkyRig(scene, { hemi, sun: sunLight, base: { hemi: 2.0, sun: 2.0 }, moonAt: [-115, -18, -190] });
 
   const orbit = new THREE.Mesh(new THREE.TorusGeometry(R, 0.07, 8, 200), clay(0xfff3e2));
   orbit.rotation.x = Math.PI / 2;
@@ -209,6 +210,7 @@ export function create({ planets, labelsEl, onFocus, onSelect, onSun, onWhiteout
   const tmpQ = new THREE.Quaternion(), tmpV = new THREE.Vector3(), look = new THREE.Vector3();
 
   function update(dt, t) {
+    sky.follow(camera);
     // ring
     if (!dragging) angle += (target - angle) * (reduce ? 1 : 1 - Math.exp(-dt * 6));
     reportFocus();
@@ -275,6 +277,7 @@ export function create({ planets, labelsEl, onFocus, onSelect, onSun, onWhiteout
 
   const api = {
     scene, camera, update, resize,
+    applyTheme: (t) => sky.apply(t),
     enter(i) {
       active = true; flight = null; pendingFly = null; pendingResolve = null;
       if (rocketRoot.parent !== camera) { scene.remove(rocketRoot); camera.add(rocketRoot); }

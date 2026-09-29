@@ -3,12 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Knowledge Brain</title>
-  <meta name="description" content="A living knowledge base about AI, explored planet by planet: fundamentals, math, machine learning, deep learning and beyond.">
+  <title>AI Base</title>
+  <meta name="description" content="AI Base: a living AI knowledge base, explored planet by planet. Fundamentals, math, machine learning, deep learning and beyond.">
   <meta name="theme-color" content="#f3ecff">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AI Base">
+  <meta property="og:title" content="AI Base">
+  <meta property="og:description" content="A living AI knowledge base. Take the rocket to a planet, walk its road, and open any topic.">
+  <meta property="og:url" content="https://ai.saranmahadev.in/">
+  <meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="vendor/fonts/nunito-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <script type="importmap">
   {
@@ -21,18 +29,21 @@
 </head>
 <body class="route-home">
   <canvas id="scene" aria-hidden="true"></canvas>
+  <div id="boot" aria-hidden="true"><i></i></div>
+  <div id="announce" class="sr-only" role="status" aria-live="polite"></div>
 
   <header class="hud">
-    <a class="brand clay-pill" href="#/"><span class="dot"></span>AI Knowledge Brain</a>
-    <nav class="clay-pill" aria-label="Main"><a href="#/galaxy">Galaxy</a><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <a class="brand clay-pill" href="#/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+    <nav class="clay-pill" aria-label="Main"><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a></nav>
   </header>
+
+  <nav id="navbar" aria-label="Where you are" hidden></nav>
 
   <section id="home">
     <h1>Explore AI,<br><em>planet by planet.</em></h1>
-    <p class="lede">A living knowledge base. Take the rocket to a planet, walk its road, and open any topic.</p>
+    <p class="lede">Your living AI knowledge base. Take the rocket to a planet, walk its road, and open any topic.</p>
     <div class="actions">
       <button id="launch" class="cta">Launch <span aria-hidden="true">🚀</span></button>
-      <a class="skip" href="#/galaxy">Skip to the text version</a>
     </div>
   </section>
 
@@ -44,13 +55,10 @@
       <span class="ghint">Drag, scroll or use ← → · click a planet to fly there</span>
       <button id="gnext" class="round" aria-label="Next planet">›</button>
     </div>
-    <div id="gtop"><a class="clay-pill" href="#/ai">☀ The big picture</a><a class="clay-pill" href="#/list">List view</a></div>
   </section>
 
   <div id="tlabels" hidden></div>
   <section id="planet" hidden>
-    <div id="ptop"><a class="clay-pill" href="#/galaxy">← Galaxy</a><span class="clay-pill" id="pmeta"></span></div>
-    <a id="plist" class="clay-pill" href="#/list">List view</a>
     <div id="pprompt" class="card" hidden></div>
     <div class="pnav">
       <button id="pprev" class="round" aria-label="Previous topic">‹</button>

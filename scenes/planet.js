@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { clay, tint, skyTexture } from "./clay.js";
+import { clay, tint, createSkyRig } from "./clay.js";
 import { createRocket } from "../models/rocket.js";
 import { createAstronaut } from "../models/astronaut.js";
 
@@ -10,6 +10,7 @@ const rand = (a, b) => a + Math.random() * (b - a);
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const UP = new V3(0, 1, 0);
 
+const SHADOW = matchMedia("(pointer: coarse)").matches ? 1024 : 2048; // lighter shadows on phones
 const NEAR = 7.5;          // how close (world units) you must be to a signpost to interact with it
 const SPACING = 9;         // road distance between signposts
 const GATE_GAP = 12;       // road distance around a district gate
@@ -22,17 +23,17 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const scene = new THREE.Scene();
-  scene.background = skyTexture([[0, "#bfe0ff"], [0.55, "#f1ecff"], [1, "#ffe9e0"]]);
   scene.fog = new THREE.FogExp2(0xf1ecff, 0.0045);
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 900);
 
   const hemi = new THREE.HemisphereLight(0xffffff, 0xd8ccfa, 2.0);
   const sun = new THREE.DirectionalLight(0xfff4e6, 2.4);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(SHADOW, SHADOW);
   Object.assign(sun.shadow.camera, { left: -34, right: 34, top: 34, bottom: -34, near: 1, far: 140 });
   sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.05; sun.shadow.radius = 5;
   scene.add(hemi, sun, sun.target);
+  const sky = createSkyRig(scene, { hemi, sun, base: { hemi: 2.0, sun: 2.4 }, moonAt: [-60, 70, -180] });
 
   const astro = createAstronaut();
   const char = astro.group;
@@ -53,7 +54,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
   // ---- per-planet state
   let world = null, planet = null, Rp = 40, active = false;
   let samples = [], cum = [], total = 0;
-  let signs = [], gates = [], rocketInfo = null, topicList = [];
+  let signs = [], gates = [], rocketInfo = null, topicList = [], obstacles = [];
   let P = new V3(1, 0, 0), H = new V3(0, 0, 1);
   let opening = null;
   let mode = "walk", landT = 0, popT = 1, cam0 = new V3(), padDir = new V3();
@@ -131,7 +132,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     planet = p;
     world = new THREE.Group();
     scene.add(world);
-    signs = []; gates = []; topicList = [];
+    signs = []; gates = []; topicList = []; obstacles = [];
     const base = new THREE.Color(p.color);
 
     const districts = p.districts.map((d, k) => ({
@@ -177,6 +178,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
         }
         const arch = new THREE.Mesh(new THREE.TorusGeometry(ROAD_W + 1.4, 0.3, 14, 40, Math.PI), mat);
         arch.position.y = 5; arch.castShadow = true; gate.add(arch);
+        for (const x of [-ROAD_W - 1.4, ROAD_W + 1.4]) obstacles.push({ d: surfacePoint(fr, x, 0).normalize(), r: 0.5 });
         stand(gate, fr.p.clone().multiplyScalar(Rp + 0.05), fr.t);
         world.add(gate);
         const lbl = labelFor(d.title, "gate", d.color.getStyle());
@@ -206,8 +208,10 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
         head.position.y = 3.5;
         head.castShadow = pole.castShadow = disc.castShadow = true;
         head.userData.sign = signs.length;
+        if (t.status !== "outlined") sky.addGlow(head.material, d.color, 0.7);
         g.add(disc, pole, head);
         stand(g, surfacePoint(fr, side, 0.06), fr.t);
+        obstacles.push({ d: surfacePoint(fr, side, 0).normalize(), r: 0.9 });
         world.add(g);
         const lbl = labelFor(t.title, `topic ${t.status}`, d.color.getStyle());
         lbl.addEventListener("click", () => walkTo(signs.find((x) => x.label === lbl), true));
@@ -251,6 +255,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       tmp.position.copy(d).multiplyScalar(Rp + 0.8 * sc); tmp.updateMatrix(); trunks.setMatrixAt(placed, tmp.matrix);
       tmp.position.copy(d).multiplyScalar(Rp + 2.4 * sc); tmp.updateMatrix(); leaves.setMatrixAt(placed, tmp.matrix);
       leaves.setColorAt(placed, palette[placed % palette.length]);
+      obstacles.push({ d, r: 0.4 * sc + 0.15 });
       placed++;
     }
     trunks.count = leaves.count = placed;
@@ -263,7 +268,9 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       if (nearRoad(d, 6)) continue;
       tmp.position.copy(d).multiplyScalar(Rp + 0.2);
       tmp.quaternion.setFromUnitVectors(UP, d);
-      tmp.scale.set(rand(0.5, 1.4), rand(0.4, 0.8), rand(0.5, 1.4));
+      const rx = rand(0.5, 1.4), rz = rand(0.5, 1.4);
+      tmp.scale.set(rx, rand(0.4, 0.8), rz);
+      obstacles.push({ d, r: Math.max(rx, rz) * 0.85 });
       tmp.updateMatrix(); rocks.setMatrixAt(rp++, tmp.matrix);
     }
     rocks.count = rp; rocks.castShadow = true;
@@ -289,6 +296,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     stand(padMat, padDir.clone().multiplyScalar(Rp + 0.1), padFr.t);
     world.add(padMat);
     rocketInfo = { pos: padDir.clone().multiplyScalar(Rp + 4), fr: padFr };
+    obstacles.push({ d: padDir.clone(), r: 1.8 });
     rocket.scale.setScalar(1.15);
   }
 
@@ -299,7 +307,15 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       world = null;
     }
     labelsEl.innerHTML = "";
+    sky.glow.length = 0;
     signs = []; gates = []; target = null; near = null; reportedNear = undefined; reportedIdx = -1;
+  }
+
+  // where the walker is along the road, in road units (nearest sample of the spiral)
+  function roadS() {
+    let best = 0, bd = -2;
+    for (let i = 0; i < samples.length; i++) { const d = samples[i].dot(P); if (d > bd) { bd = d; best = i; } }
+    return cum[best];
   }
 
   // ---------- movement
@@ -308,6 +324,19 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     axis.crossVectors(P, H).normalize();
     q.setFromAxisAngle(axis, dist / Rp);
     P.applyQuaternion(q).normalize(); H.applyQuaternion(q);
+  }
+  // keep the walker out of trees, rocks, gate posts, signposts and the rocket: slide along whatever is in the way
+  const push = new V3();
+  function collide() {
+    for (const o of obstacles) {
+      const dist = Math.acos(clamp(P.dot(o.d), -1, 1)) * Rp, min = o.r + 0.55;
+      if (dist >= min) continue;
+      push.copy(P).sub(o.d);
+      push.addScaledVector(P, -push.dot(P));
+      if (push.lengthSq() < 1e-12) push.copy(H);
+      push.normalize();
+      P.addScaledVector(push, (min - dist) / Rp).normalize();
+    }
   }
   function turn(a) { q.setFromAxisAngle(P, a); H.applyQuaternion(q); }
   const fixHeading = () => { H.addScaledVector(P, -H.dot(P)).normalize(); };
@@ -322,6 +351,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
   function update(dt, t) {
     if (!world || !active) return;
     frame++;
+    sky.follow(camera);
     const charPos = tv2.copy(P).multiplyScalar(Rp + 0.1);
 
     if (mode === "landing") {
@@ -379,7 +409,8 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       const run = keys.Shift ? 1.6 : 1;
       const speed = 8.5 * run;
       turn(tn * 2.4 * dt);
-      move(f * speed * dt);
+      move(f * speed * (f < 0 ? 0.55 : 1) * dt); // backing up is slower
+      collide();
       fixHeading();
 
       right.crossVectors(P, H);
@@ -388,7 +419,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       astro.animate(Math.abs(f) * run / 1.6, dt);
 
       // follow camera
-      camPos.copy(P).multiplyScalar(Rp + 5.4).addScaledVector(H, -11 * (f < 0 ? -0.2 : 1));
+      camPos.copy(P).multiplyScalar(Rp + 5.4).addScaledVector(H, -11); // the camera always stays behind the astronaut, even when reversing
       camera.position.lerp(camPos, 1 - Math.exp(-dt * 4.5));
       camera.up.copy(P);
       look.copy(P).multiplyScalar(Rp + 1.8).addScaledVector(H, 4);
@@ -419,7 +450,11 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     }
     const key = info ? `${info.kind}:${info.id || ""}` : "none";
     if (key !== reportedNear) { reportedNear = key; near = info || { kind: "none" }; onNear(info); }
-    if (nearest && nearest.idx !== reportedIdx && frame % 6 === 0) { reportedIdx = nearest.idx; onProgress(nearest.idx + 1, signs.length); }
+    if (frame % 8 === 0 && signs.length) {
+      const s = roadS() + 2; // topics you have reached or passed
+      let n = 0; for (const sg of signs) if (sg.s <= s) n++;
+      if (n !== reportedIdx) { reportedIdx = n; onProgress(n, signs.length); }
+    }
     if (mode !== "opening") signs.forEach((sg) => { sg.head.scale.setScalar(near && near.idx === sg.idx ? 1.25 : 1); });
 
     // labels
@@ -495,6 +530,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
 
   const api = {
     scene, camera, update, resize,
+    applyTheme: (t) => sky.apply(t),
     enter(p, { resume = true } = {}) {
       dispose();
       build(p);
@@ -532,15 +568,14 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       target = null;
       onOpen(near.id);
     },
-    // walk to the next/previous signpost along the road
+    // walk to the previous / next signpost along the road, measured from where you stand on it
     step(d) {
       if (mode !== "walk" || !signs.length) return;
-      let cur = reportedIdx < 0 ? 0 : reportedIdx;
-      const here = signs[cur];
-      // if we're already at this signpost, move on; otherwise go to it first
-      const atIt = here && here.pos.distanceTo(tv2.copy(P).multiplyScalar(Rp + 0.1)) < NEAR;
-      const next = clamp(atIt ? cur + d : cur, 0, signs.length - 1);
-      walkTo(signs[next], false);
+      const s = roadS();
+      let pick;
+      if (d > 0) pick = signs.find((x) => x.s > s + 3) || signs[signs.length - 1];
+      else pick = [...signs].reverse().find((x) => x.s < s - 3) || signs[0];
+      walkTo(pick, false);
     },
     get signCount() { return signs.length; }
   };
