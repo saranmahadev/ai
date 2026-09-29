@@ -1,4 +1,4 @@
-# AI Knowledge Brain site
+# AI Base site
 
 A static, claymorphism site generated from the vault's Markdown notes. See `../CLAUDE.md` for architecture and commands, and `../AGENTS.md` for how notes map to planets, districts and topics.
 

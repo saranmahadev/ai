@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { clay, skyTexture } from "./clay.js";
+import { clay, createSkyRig } from "./clay.js";
 import { createRocket } from "../models/rocket.js";
 
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -9,18 +9,19 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 export function create({ onWhiteout }) {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const scene = new THREE.Scene();
-  scene.background = skyTexture([[0, "#d6e6ff"], [0.6, "#f3ecff"], [1, "#ffe6e1"]]);
   scene.fog = new THREE.FogExp2(0xf1eafd, 0.012);
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 400);
 
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xd8ccfa, 1.9));
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xd8ccfa, 1.9);
+  scene.add(hemi);
   const sun = new THREE.DirectionalLight(0xfff4e6, 2.4);
   sun.position.set(-12, 22, 14);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(matchMedia("(pointer: coarse)").matches ? 1024 : 2048, matchMedia("(pointer: coarse)").matches ? 1024 : 2048);
   Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 80 });
   sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.04; sun.shadow.radius = 5;
   scene.add(sun);
+  const sky = createSkyRig(scene, { hemi, sun, base: { hemi: 1.9, sun: 2.4 }, moonAt: [75, 62, -200] });
 
   // ground hill + pad
   const hill = new THREE.Mesh(new THREE.SphereGeometry(40, 64, 32), clay(0xbfeedd));
@@ -50,6 +51,7 @@ export function create({ onWhiteout }) {
       grp.add(p);
     }
     grp.position.set(rand(-45, 45), rand(4, 60), rand(-40, -8));
+    if (grp.position.x < 6 && grp.position.y < 26) grp.position.y += 26; // keep clouds off the headline
     grp.userData = { y: grp.position.y, ph: Math.random() * 6, sp: rand(0.1, 0.3) };
     scene.add(grp);
     clouds.push(grp);
@@ -90,6 +92,7 @@ export function create({ onWhiteout }) {
   const look = new THREE.Vector3();
 
   function update(rawDt, t) {
+    sky.follow(camera);
     const dt = Math.min(rawDt, launching ? 0.1 : 0.05);
 
     let camY = 5, lookY = lookBase;
@@ -130,6 +133,7 @@ export function create({ onWhiteout }) {
 
   return {
     scene, camera, update, resize,
+    applyTheme: (t) => sky.apply(t),
     launch() {
       if (reduce) return Promise.resolve();
       return new Promise((res) => { launching = true; lt = 0; whited = false; resolveLaunch = res; });
