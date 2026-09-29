@@ -272,3 +272,30 @@ export function sorter({ items, bins, answers, onCheck, checkLabel = "Check my a
   draw();
   return { el, reset, placed: () => ({ ...place }) };
 }
+
+/**
+ * Data-space to pixel mapping for scatter and line plots.
+ * `const m = plot(w, h, [xmin, xmax], [ymin, ymax])`, then m.X(x), m.Y(y), m.x(px), m.y(py); `m.axes(ctx, pal)` draws a frame.
+ */
+export function plot(w, hh, rx, ry, pad = { l: 44, r: 14, t: 14, b: 32 }) {
+  const iw = w - pad.l - pad.r, ih = hh - pad.t - pad.b;
+  const m = {
+    pad, iw, ih,
+    X: (x) => pad.l + ((x - rx[0]) / (rx[1] - rx[0])) * iw,
+    Y: (y) => pad.t + ih - ((y - ry[0]) / (ry[1] - ry[0])) * ih,
+    x: (px) => rx[0] + ((px - pad.l) / iw) * (rx[1] - rx[0]),
+    y: (py) => ry[0] + ((pad.t + ih - py) / ih) * (ry[1] - ry[0]),
+    axes(ctx, p, { xlabel = "", ylabel = "", ticks = 4 } = {}) {
+      ctx.strokeStyle = p.muted; ctx.fillStyle = p.muted; ctx.lineWidth = 1.2; ctx.font = "700 11px Nunito, system-ui, sans-serif";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + ih); ctx.lineTo(pad.l + iw, pad.t + ih); ctx.stroke();
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      for (let i = 0; i <= ticks; i++) { const v = rx[0] + ((rx[1] - rx[0]) * i) / ticks; ctx.fillText(fmt(v, 1), m.X(v), pad.t + ih + 4); }
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (let i = 0; i <= ticks; i++) { const v = ry[0] + ((ry[1] - ry[0]) * i) / ticks; ctx.fillText(fmt(v, 1), pad.l - 6, m.Y(v)); }
+      ctx.fillStyle = p.ink; ctx.font = "800 12px Nunito, system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+      if (xlabel) ctx.fillText(xlabel, pad.l + iw / 2, hh - 4);
+      if (ylabel) { ctx.save(); ctx.translate(12, pad.t + ih / 2); ctx.rotate(-Math.PI / 2); ctx.fillText(ylabel, 0, 0); ctx.restore(); }
+    }
+  };
+  return m;
+}
