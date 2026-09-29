@@ -19,13 +19,28 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: .site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: .site
+        run: npm ci
+
+      - name: Build content from the vault
+        working-directory: .site
+        run: npm run content
+
       - name: Publish GitHub Pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: web
           publish_dir: .site
-          exclude_assets: README.md
+          exclude_assets: 'README.md,package.json,package-lock.json,node_modules,scripts,planets.json,.gitignore'
           cname: ai.saranmahadev.in
           user_name: saranmahadev
           user_email: sarandevnet@gmail.com
