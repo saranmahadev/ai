@@ -5,3 +5,5 @@ Topics on this stretch of the road:
 * [[Agents and Environments]]: the basic unit of an AI system.
 * [[PDA Loop]]: perceive, decide, act, and repeat.
 * [[Goals, Utility and Rationality]]: how an agent chooses between options.
+* [[State and Representation]]: what the agent keeps track of.
+* [[Kinds of Environments]]: why some problems are far harder than others.

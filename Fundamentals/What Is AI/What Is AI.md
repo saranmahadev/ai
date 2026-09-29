@@ -5,3 +5,5 @@ Topics on this stretch of the road:
 * [[What Counts as AI]]: several definitions, and why a thermostat is or is not AI depending on which one you choose.
 * [[AI, ML, DL and Generative AI]]: how the big terms nest inside each other.
 * [[Rules vs Learning]]: why we let machines learn from examples.
+* [[Narrow, General and Super AI]]: what today's systems can and cannot do.
+* [[A Short History of AI]]: booms, winters and the ideas that came back.
