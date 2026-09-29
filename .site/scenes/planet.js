@@ -15,7 +15,7 @@ const SPACING = 9;         // road distance between signposts
 const GATE_GAP = 12;       // road distance around a district gate
 const ROAD_W = 2.7;        // road half width
 
-let lastVisit = null;      // { planetId, idx }: where you were when you opened a topic
+let lastVisit = null;      // { planetId, topicId }: the last topic you opened, so you come back to its signpost
 
 // A small clay planet you walk around. The road winds over its surface; districts are gates, topics are signposts.
 export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }) {
@@ -55,6 +55,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
   let samples = [], cum = [], total = 0;
   let signs = [], gates = [], rocketInfo = null, topicList = [];
   let P = new V3(1, 0, 0), H = new V3(0, 0, 1);
+  let opening = null;
   let mode = "walk", landT = 0, popT = 1, cam0 = new V3(), padDir = new V3();
   let target = null, near = null, reportedNear = undefined, reportedIdx = -1, frame = 0;
   const keys = {}, stick = { x: 0, y: 0 };
@@ -337,6 +338,18 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       camera.lookAt(look);
       char.visible = false;
       if (landT >= 1) { flame.scale.setScalar(0.001); mode = "pop"; popT = 0; char.visible = true; }
+    } else if (mode === "opening") {
+      // dive into the signpost's orb while the warp starts over the top
+      opening.t = Math.min(1, opening.t + dt / 1.0);
+      const e = easeInOut(opening.t), sg = opening.sign;
+      sg.head.getWorldPosition(sg.pos);
+      tv.copy(camera.position).sub(sg.pos).normalize();
+      camPos.copy(sg.pos).addScaledVector(tv, 5.5 - e * 3.2);
+      camera.position.lerp(camPos, 1 - Math.exp(-dt * 6));
+      camera.lookAt(sg.pos);
+      sg.head.scale.setScalar(1.25 + e * 2.4);
+      sg.head.rotation.y += dt * (2 + e * 14);
+      astro.animate(0, dt);
     } else {
       if (mode === "pop") { popT = Math.min(1, popT + dt / 0.7); char.scale.setScalar(1.15 * (1 - Math.pow(1 - popT, 3) * Math.cos(popT * 9))); if (popT >= 1) mode = "walk"; }
 
@@ -407,14 +420,14 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     const key = info ? `${info.kind}:${info.id || ""}` : "none";
     if (key !== reportedNear) { reportedNear = key; near = info || { kind: "none" }; onNear(info); }
     if (nearest && nearest.idx !== reportedIdx && frame % 6 === 0) { reportedIdx = nearest.idx; onProgress(nearest.idx + 1, signs.length); }
-    signs.forEach((sg) => { sg.head.scale.setScalar(near && near.idx === sg.idx ? 1.25 : 1); });
+    if (mode !== "opening") signs.forEach((sg) => { sg.head.scale.setScalar(near && near.idx === sg.idx ? 1.25 : 1); });
 
     // labels
     camera.updateMatrixWorld();
     const place = (el, pos, maxD) => {
       const d = pos.distanceTo(camera.position);
       tv.copy(pos).project(camera);
-      const vis = showLabels && mode !== "landing" && d < maxD && tv.z < 1 && Math.abs(tv.x) < 1.1 && Math.abs(tv.y) < 1.1;
+      const vis = showLabels && mode !== "landing" && mode !== "opening" && d < maxD && tv.z < 1 && Math.abs(tv.x) < 1.1 && Math.abs(tv.y) < 1.1;
       el.style.opacity = vis ? clamp(1.4 - d / maxD, 0.2, 1).toFixed(2) : "0";
       el.style.pointerEvents = vis ? "auto" : "none";
       el.tabIndex = vis ? 0 : -1;
@@ -485,8 +498,8 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     enter(p, { resume = true } = {}) {
       dispose();
       build(p);
-      active = true; mode = "walk"; target = null; char.scale.setScalar(1.15); char.visible = true;
-      const resumeIdx = resume && lastVisit && lastVisit.planetId === p.id ? lastVisit.idx : -1;
+      active = true; mode = "walk"; target = null; opening = null; char.scale.setScalar(1.15); char.visible = true;
+      const resumeIdx = resume && lastVisit && lastVisit.planetId === p.id ? signs.findIndex((s) => s.topic.id === lastVisit.topicId) : -1;
       // start pose: on the road by the pad, facing along it (or back at the signpost you left)
       const startS = resumeIdx >= 0 && signs[resumeIdx] ? Math.max(0, signs[resumeIdx].s - 4) : 12;
       const fr = frameAt(startS);
@@ -506,11 +519,17 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     leave() { active = false; labelsEl.hidden = true; for (const k in keys) keys[k] = false; stick.x = stick.y = 0; },
     setStick(x, y) { stick.x = x; stick.y = y; },
     setLabels(v) { showLabels = v; },
+    // called by the page whenever a topic is shown, so "back to the road" returns to that signpost
+    remember(planetId, topicId) { lastVisit = { planetId, topicId }; },
     // press E / Enter / the prompt button
     interact() {
       if (!near || near.kind === "none" || mode !== "walk") return;
       if (near.kind === "rocket") return onBack();
-      lastVisit = { planetId: planet.id, idx: near.idx };
+      lastVisit = { planetId: planet.id, topicId: near.id };
+      const sg = signs[near.idx];
+      opening = { sign: sg, t: 0 };
+      mode = "opening";
+      target = null;
       onOpen(near.id);
     },
     // walk to the next/previous signpost along the road

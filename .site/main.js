@@ -1,3 +1,5 @@
+import { warp } from "./transition.js";
+
 // Router + views. The 3D scenes plug in per route; the text views below are also the permanent accessible fallback.
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -50,16 +52,61 @@ function topicView(t) {
   const p = t.planet && content.planets.find((x) => x.id === t.planet);
   const d = p && p.districts.find((x) => x.id === t.district);
   const chip = (id) => { const o = content.topics[id]; return o ? `<li><a class="chip ${o.status}" href="#/${id}">${esc(o.title)}</a></li>` : ""; };
+  const flat = p ? p.districts.flatMap((x) => x.topics) : [];
+  const at = flat.indexOf(t.id);
+  const prev = at > 0 ? content.topics[flat[at - 1]] : null;
+  const next = at >= 0 && at < flat.length - 1 ? content.topics[flat[at + 1]] : null;
+  const mins = Math.max(1, Math.round(t.words / 200));
+  const title = esc(t.title).split(" ").map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`).join(" ");
+  const card = (o, dir) => o ? `<a class="pager-card ${dir}" href="#/${o.id}"><small>${dir === "prev" ? "← Previous" : "Next →"}</small><b>${esc(o.title)}</b></a>` : "<span></span>";
   return `
     <nav class="crumbs"><a href="#/galaxy">Galaxy</a>${p ? ` / <a href="#/${p.id}">${esc(p.title)}</a>` : ""}${d && d.title !== p.title ? ` / ${esc(d.title)}` : ""} / ${esc(t.title)}</nav>
-    <article class="article" style="--c:${p ? p.color : "#b39cf5"}">
-      <header><p class="kicker">${p ? esc(p.title) : "Overview"} ${badge(t.status)}</p><h2>${esc(t.title)}</h2></header>
-      ${t.toc.length > 2 ? `<aside class="toc"><b>On this page</b>${t.toc.map((h) => `<a class="d${h.depth}" href="#/${t.id}" data-scroll="${h.id}">${esc(h.text)}</a>`).join("")}</aside>` : ""}
-      ${t.status === "outlined" ? `<p class="notice">This note exists in the vault but is still empty. It will fill in as the knowledge base grows.</p>` : `<div class="prose">${t.html}</div>`}
+    <article class="article topic" style="--c:${p ? p.color : "#b39cf5"}">
+      <div class="blobs" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      ${planetScene && p ? `<button class="back-road" data-back="${p.id}">🚀 Back to the road</button>` : ""}
+      <header class="t-hero">
+        <p class="kicker">${p ? esc(p.title) : "Overview"}${d && d.title !== p.title ? ` · ${esc(d.title)}` : ""} ${badge(t.status)}</p>
+        <h2 class="t-title">${title}</h2>
+        <p class="t-meta"><span>⏱ ${mins} min read</span>${t.toc.length ? `<span>${t.toc.length} section${t.toc.length > 1 ? "s" : ""}</span>` : ""}${at >= 0 ? `<span>Topic ${at + 1} of ${flat.length}</span>` : ""}</p>
+      </header>
+      <div class="t-body ${t.toc.length > 2 ? "has-toc" : ""}">
+        ${t.toc.length > 2 ? `<aside class="toc"><b>On this page</b>${t.toc.map((h) => `<a class="d${h.depth}" href="#/${t.id}" data-scroll="${h.id}">${esc(h.text)}</a>`).join("")}</aside>` : ""}
+        ${t.status === "outlined" ? `<p class="notice">This note exists in the vault but is still empty. It will fill in as the knowledge base grows.</p>` : `<div class="prose">${t.html}</div>`}
+      </div>
       ${t.links.length ? `<section class="related"><h3>Related topics</h3><ul class="chips">${t.links.map(chip).join("")}</ul></section>` : ""}
       ${t.backlinks.length ? `<section class="related"><h3>Mentioned in</h3><ul class="chips">${t.backlinks.map(chip).join("")}</ul></section>` : ""}
+      ${prev || next ? `<nav class="pager" aria-label="Neighbouring topics">${card(prev, "prev")}${card(next, "next")}</nav>` : ""}
       <p class="source"><a href="${REPO}${encodeURI(t.path)}" target="_blank" rel="noopener">View source note ↗</a></p>
     </article>`;
+}
+
+// ---------- article behaviour: reveal on scroll, scroll-spy TOC, reading bar, parallax blobs
+let cleanupArticle = null;
+function enhanceArticle() {
+  if (cleanupArticle) { cleanupArticle(); cleanupArticle = null; }
+  const art = view.querySelector(".topic");
+  if (!art) return;
+  const bar = $("#readbar");
+  const prose = art.querySelector(".prose");
+  let io = null;
+  if (!reduceMotion && "IntersectionObserver" in window && prose) {
+    art.classList.add("reveal-ready");
+    io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -6% 0px" });
+    [...prose.children].forEach((el, i) => { el.style.setProperty("--d", `${Math.min(i, 5) * 45}ms`); io.observe(el); });
+  }
+  const heads = prose ? [...prose.querySelectorAll("h1,h2,h3")].filter((h) => h.id) : [];
+  const links = [...art.querySelectorAll(".toc a[data-scroll]")];
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+    if (!reduceMotion) art.style.setProperty("--sy", String(scrollY));
+    let cur = null;
+    for (const h of heads) if (h.getBoundingClientRect().top < 150) cur = h.id;
+    links.forEach((a) => a.classList.toggle("active", a.dataset.scroll === cur));
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+  cleanupArticle = () => { removeEventListener("scroll", onScroll); if (io) io.disconnect(); bar.style.transform = "scaleX(0)"; };
 }
 
 // ---------- router
@@ -79,15 +126,12 @@ function showPrompt(info) {
     ? `<p class="kicker">Your rocket</p><h3>${esc(info.title)}</h3><p class="blurb">${esc(info.sub)}</p><button class="cta small" data-act="interact">Take off 🚀 <kbd>E</kbd></button>`
     : `<p class="kicker">${esc(info.district)} ${badge(info.status)}</p><h3>${esc(info.title)}</h3><button class="cta small" data-act="interact">Open topic <kbd>E</kbd></button>`;
 }
-async function openTopic(id) {
-  if (flying) return;
-  flying = true;
-  $("#white").classList.add("on");
-  await new Promise((r) => setTimeout(r, reduceMotion ? 0 : 650));
-  flying = false;
-  location.hash = `#/${id}`;
-  $("#white").classList.remove("on");
+const colorOf = (t) => { const p = t && t.planet && content.planets.find((x) => x.id === t.planet); return p ? p.color : "#b39cf5"; };
+async function warpTo(hash, dir, color) {
+  if (warp.busy) return;
+  await warp.play({ color, dir, swap: () => { location.hash = hash; } });
 }
+function openTopic(id) { return warpTo(`#/${id}`, 1, colorOf(content.topics[id])); }
 async function backToGalaxy() {
   $("#white").classList.add("on");
   await new Promise((r) => setTimeout(r, reduceMotion ? 0 : 500));
@@ -130,6 +174,7 @@ function route() {
   document.body.classList.toggle("route-home", isHome);
   document.body.classList.toggle("route-galaxy", isGalaxy);
   document.body.classList.toggle("route-planet", isPlanet);
+  document.body.classList.toggle("route-topic", !isHome && !isGalaxy && !isPlanet && !!content.topics[key]);
   planetEl.hidden = !isPlanet;
   home.hidden = !isHome;
   galaxyEl.hidden = !isGalaxy;
@@ -151,6 +196,8 @@ function route() {
   else if (content.planets.find((p) => p.id === key)) { const p = content.planets.find((x) => x.id === key); html = planetView(p); title = p.title; }
   else { html = `<p class="notice">Nothing here. <a href="#/galaxy">Back to the galaxy</a></p>`; title = "Not found"; }
   view.innerHTML = html;
+  if (content.topics[key]) { enhanceArticle(); if (planetScene && content.topics[key].planet) planetScene.remember(content.topics[key].planet, key); }
+  else if (cleanupArticle) { cleanupArticle(); cleanupArticle = null; }
   document.title = `${title} · AI Knowledge Brain`;
   scrollTo(0, 0);
   view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
@@ -165,6 +212,25 @@ document.addEventListener("click", (e) => {
   if (el) el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 });
 addEventListener("hashchange", route);
+
+// ---------- warp between topics, and back to the road
+view.addEventListener("click", (e) => {
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || !view.querySelector(".topic")) return;
+  const back = e.target.closest("[data-back]");
+  if (back) { e.preventDefault(); const pl = content.planets.find((p) => p.id === back.dataset.back); return warpTo(`#/${pl.id}`, -1, pl.color); }
+  const a = e.target.closest('a[href^="#/"]');
+  if (!a || a.dataset.scroll) return;
+  const href = decodeURIComponent(a.getAttribute("href").slice(2));
+  const topic = content.topics[href];
+  const planet = content.planets.find((p) => p.id === href);
+  if (topic) { e.preventDefault(); warpTo(`#/${href}`, 1, colorOf(topic)); }
+  else if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`, -1, planet.color); }
+});
+addEventListener("keydown", (e) => {
+  if (e.key !== "Escape" || !planetScene) return;
+  const art = view.querySelector(".topic [data-back]");
+  if (art && !view.hidden) { const pl = content.planets.find((p) => p.id === art.dataset.back); warpTo(`#/${pl.id}`, -1, pl.color); }
+});
 
 // ---------- launch
 $("#launch").addEventListener("click", async () => {
