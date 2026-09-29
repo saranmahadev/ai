@@ -1,5 +1,6 @@
 - [[Math Fundamentals]]
 - [[Vector Operations]]
+- [[Dot Product]]
 - [[Matrices]]
 - [[Matrix Properties]]
 - [[Vector Spaces]]

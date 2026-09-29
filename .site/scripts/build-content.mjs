@@ -1,6 +1,6 @@
 // Turns the Obsidian vault (Markdown notes) into .site/content.json.
 // Vault = source of truth. Run: `npm run content` (from .site/). `--check` builds without writing.
-import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, dirname, basename, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { marked } from "marked";
@@ -123,13 +123,29 @@ function resolveWikilinks(md, links) {
   }).join("");
 }
 
+// A ```bench block ("id: dot-product", optional "title:" and "fallback:") becomes a mount point for benches/<id>.js.
+function benchHtml(text, benches, note) {
+  const f = {};
+  for (const line of text.split(/\r?\n/)) { const kv = line.match(/^\s*([a-z]+):\s*(.*?)\s*$/); if (kv) f[kv[1]] = kv[2]; }
+  if (!/^[a-z0-9-]+$/.test(f.id || "")) { warn(`${note.path}: bench block needs an "id:" of lowercase letters, digits and dashes`); return ""; }
+  if (!existsSync(join(SITE, "benches", `${f.id}.js`))) warn(`${note.path}: bench "${f.id}" has no module at .site/benches/${f.id}.js`);
+  benches.push(f.id);
+  const title = f.title || f.id;
+  return `<div class="bench" data-bench="${f.id}" data-title="${escapeHtml(title)}"><p class="bench-fallback"><strong>Interactive bench: ${escapeHtml(title)}.</strong> ${escapeHtml(f.fallback || "It needs JavaScript; the text around it explains the same idea.")}</p></div>\n`;
+}
+
 function render(note) {
   const links = new Set();
+  const benches = [];
   const toc = [];
   const md = resolveWikilinks(note.body, links);
   marked.use({
     gfm: true,
     renderer: {
+      code({ text, lang, escaped }) {
+        if ((lang || "").trim() === "bench") return benchHtml(text, benches, note);
+        return false;
+      },
       heading({ tokens, depth }) {
         const html = this.parser.parseInline(tokens);
         const text = html.replace(/<[^>]+>/g, "");
@@ -143,7 +159,7 @@ function render(note) {
   if (toc.length && toc[0].depth === 1 && html.trimStart().startsWith("<h1")) toc.shift(); // the leading title repeats the page title
   html = html.replace(/<blockquote>\s*<p>\[!(\w+)\]\s*([^\n<]*)/g, (_, type, title) =>
     `<blockquote class="callout callout-${type.toLowerCase()}"><p><strong>${title.trim() || type}</strong>`);
-  return { html, toc, links };
+  return { html, toc, links, benches };
 }
 
 const isIndexOnly = (body) => body.split(/\r?\n/).every((l) => !l.trim() || /^\s*[-*]\s*\[\[[^\]]+\]\]\s*$/.test(l));
@@ -153,7 +169,7 @@ const topics = {};
 const planetOf = (id) => id.split("/")[0];
 for (const [path, id] of topicIdOf) {
   const note = notes.get(path);
-  const { html, toc, links } = render(note);
+  const { html, toc, links, benches } = render(note);
   const words = plain(html).split(" ").filter(Boolean).length;
   const firstP = (html.match(/<p>([\s\S]*?)<\/p>/) || [])[1] || "";
   let summary = note.meta.summary || plain(firstP);
@@ -163,7 +179,7 @@ for (const [path, id] of topicIdOf) {
     id, title: note.title, planet: id === "ai" ? null : planetOf(id), district: district ? district.d.id : null,
     path, summary, words, toc,
     status: note.meta.status || (words === 0 ? "outlined" : isIndexOnly(note.body) ? "index" : "written"),
-    html, links: [...links].filter((l) => l !== id), backlinks: []
+    html, benches, links: [...links].filter((l) => l !== id), backlinks: []
   };
 }
 for (const t of Object.values(topics)) for (const l of t.links) if (topics[l] && !topics[l].backlinks.includes(t.id)) topics[l].backlinks.push(t.id);

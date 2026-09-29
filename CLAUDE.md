@@ -14,7 +14,8 @@
 ```bash
 npm ci              # install (only dependency: marked)
 npm run content     # build the vault into .site/content.json
-npm test            # build in memory and print content warnings (unresolved links, unassigned notes)
+npm test            # build in memory and print content warnings (unresolved links, unassigned notes, missing bench modules)
+npm run test:benches  # opens every topic with a bench in Chromium (needs Playwright), exercises its controls, fails on console errors; --shots=DIR saves screenshots
 npm run dev         # build content and serve the site at http://localhost:8000
 ```
 
@@ -33,6 +34,7 @@ npm run dev         # build content and serve the site at http://localhost:8000
   main.js                  hash router (#/, #/galaxy, #/list, #/<planet>, #/<planet>/<topic>) + galaxy UI + text views
   scenes/                  stage.js (one shared WebGL renderer), home.js (rocket + launch), galaxy.js (planets + rocket flight), planet.js (walkable planet: road, gates, signposts, landing)
   models/                  procedural clay models (rocket, astronaut)
+  benches/                 interactive demos embedded in articles: kit.js (shared helpers) + one module per bench id
   vendor/                  three.js and the Nunito fonts (OFL), vendored: the site makes no external requests
   favicon.svg, og.png      icon and 1200×630 social preview (regenerate og.png from a Playwright screenshot of the home page when visuals change)
 ```
@@ -56,6 +58,35 @@ npm run dev         # build content and serve the site at http://localhost:8000
 - **Time-of-day theme:** `theme.js` blends keyframes (night, sunrise, day, sunset, twilight) by the visitor's local time and sets `--sky1..3` and an `html.night` class (dark clay UI). Each scene builds a `createSkyRig` (`scenes/clay.js`: sky, fog, lights, stars, moon, night glow on signposts) and exposes `applyTheme(t)`; new scenes must do the same. Use theme variables in CSS (`--clay`, `--ink`, `--soft`, `--white`…), never hard-coded light colours. Test with `?time=22:30` (night), `?time=18:40` (sunset), `?time=07:00` (sunrise).
 - **`reduce` motion:** every scene must honour `prefers-reduced-motion` and skip long animations.
 
+## Benches (interactive demos in articles)
+
+A **bench** is a small simulation embedded in a topic (sliders, draggable points, step-throughs). Benches only simulate; the explanation lives in the note.
+
+- **Note syntax:** a fenced block whose language is `bench`:
+
+  ````
+  ```bench
+  id: dot-product
+  title: Dot product playground
+  fallback: One sentence describing the bench for readers without JavaScript.
+  ```
+  ````
+  `id` (lowercase letters, digits, dashes) must match `.site/benches/<id>.js`; the build warns if it does not. Follow the block with a **Try this** list (3–4 experiments) and a **What you should notice** paragraph, written in the note.
+- **Module contract:** `export default function mount(root, kit) { …; return cleanup; }`. `kit` is `benches/kit.js`: `h` (DOM), `frame`, `canvas` (DPR-aware, redraws on resize and theme change), `slider`, `button`, `stats`, `live` (screen-reader announcements), `dragHandles`, `palette` (theme colours read from CSS variables), `fmt`. Vanilla canvas/SVG only, no external requests, no dependencies.
+- **Loading:** `main.js` (`mountBenches`) imports a bench when its placeholder scrolls near the viewport and mounts it into `.bench[data-bench]`; the placeholder text is the fallback, and a failed import leaves it with a "could not load" note.
+- **Rules:** benches must be operable by keyboard (every draggable quantity also has a slider), announce results via `live`, use theme colours (never hard-coded light ones), honour `reduceMotion`, and work at phone width. Add a bench with the note that uses it, then run `npm run test:benches`.
+
+## Topic template (for notes that publish well)
+
+One topic answers one question. Every written topic follows this arc, about 800–1500 words:
+
+1. Summary paragraph (becomes the topic summary), then **You need:** links to prerequisites that exist.
+2. The question it answers → intuition (plain language, an analogy) → definition and notation → a worked example with small numbers.
+3. **Bench** with **Try this** and **What you should notice**.
+4. Where it appears in AI → common pitfalls → **Quick check** (3 questions, answers in `<details>`) → **Related** links.
+
+The site has no LaTeX renderer: write formulas in Unicode inside code fences (`a · b = a₁b₁ + a₂b₂`).
+
 ## Content pipeline rules
 
 - Planets are configured in `.site/planets.json`; adding a domain means adding an entry there (a folder planet needs `folder` and `index`; a single-note planet lists `notes`). The build warns about notes not assigned to any planet.
@@ -73,6 +104,7 @@ Delivered in order, one PR each:
 4. **Topic pages** ✅ pressing E on a signpost dives the camera into its orb while the warp tunnel (`transition.js`) rushes in and opens on the article. The article has an animated title, reading bar, sticky scroll-spy table of contents (level 1–3 headings), reveal-on-scroll, parallax clay blobs, related/mentioned-in chips, and previous/next cards. Every topic link inside an article warps; "Back to the road" (or Esc, or the planet breadcrumb) runs the warp in reverse and returns to that topic's signpost.
 5. **Polish** ✅ renamed to AI Base, single GitHub link in the header, no "skip to text version" (the list view stays reachable from the galaxy and planet screens); self-hosted fonts (no external requests); favicon and social preview; collision with trees, rocks, gates and signposts; adaptive quality (lighter pixel ratio and shadows on phones, drops to 1× if the first seconds run slowly); boot loader; route announcements and heading focus for screen readers.
 6. **Time theme + navigation** ✅ local-time colours and a night mode across UI and all three scenes; a single Back/breadcrumb bar on every screen; fixes: reversing keeps the camera behind the astronaut, ‹ › walk to the previous/next signpost along the road.
+7. **Benches (Wave 0)** ✅ `bench` blocks, `benches/kit.js`, the smoke test, and three pilot topics that set the quality bar: Dot Product, Derivatives, Bayes Theorem. The curriculum is being rewritten from scratch in waves (math spine first); the pilot notes replace the earlier stubs.
 
 ## Verifying changes
 
