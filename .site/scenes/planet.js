@@ -451,7 +451,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     const key = info ? `${info.kind}:${info.id || ""}` : "none";
     if (key !== reportedNear) { reportedNear = key; near = info || { kind: "none" }; onNear(info); }
     if (frame % 8 === 0 && signs.length) {
-      const s = roadS() + 3; // topics you have reached or passed
+      const s = roadS() + 2; // topics you have reached or passed
       let n = 0; for (const sg of signs) if (sg.s <= s) n++;
       if (n !== reportedIdx) { reportedIdx = n; onProgress(n, signs.length); }
     }

@@ -11,11 +11,11 @@ export function navFor({ key, query, content, has3d }) {
   const topic = content.topics[key];
 
   if (key === "galaxy" && has3d) {
-    return { back: { label: "Home", href: "#/" }, crumbs: [home, { label: "Galaxy" }],
+    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Galaxy" }],
       actions: [{ label: "☀ The big picture", href: "#/ai" }, { label: "List view", href: "#/list" }] };
   }
   if (key === "galaxy" || key === "list") {
-    return { back: { label: "Home", href: "#/" }, crumbs: [home, { label: "Planets" }],
+    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Planets" }],
       actions: has3d ? [{ label: "3D galaxy", href: "#/galaxy" }] : [] };
   }
   if (planet) {
