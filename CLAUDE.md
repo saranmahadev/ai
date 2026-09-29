@@ -27,14 +27,15 @@ npm run dev         # build content and serve the site at http://localhost:8000
   planets.json             planets: id, title, color, blurb, root notes/folder, or `planned`
   scripts/build-content.mjs  vault → content.json (planets, districts, topics, links, backlinks, rendered HTML)
   index.html, styles.css   shell + clay UI
-  main.js                  hash router (#/, #/galaxy, #/<planet>, #/<planet>/<topic>) + text views
-  scenes/                  three.js scenes: home.js (rocket + launch); galaxy/planet scenes as they are built
+  main.js                  hash router (#/, #/galaxy, #/list, #/<planet>, #/<planet>/<topic>) + galaxy UI + text views
+  scenes/                  stage.js (one shared WebGL renderer), home.js (rocket + launch), galaxy.js (planets + rocket flight); planet scene next
   models/                  procedural clay models (rocket; astronaut later)
   vendor/                  three.js, vendored (no CDN for 3D)
 ```
 
 - **Style:** claymorphism. Pastel palette, matte clay materials (`scenes/clay.js`), soft shadows, no bloom. Everything is procedural: no downloaded models or textures.
 - **Routing:** hash-based so it works on static hosting. Topic ids are `<planet>/<slug-of-note-title>`; the overview note is `ai`.
+- **Scenes** share one renderer via `scenes/stage.js`: a scene is `{ scene, camera, update(dt, t), resize(w, h) }`. `main.js` activates the scene for the current route; other routes hide the canvas.
 - **Text views** (`main.js`) render the galaxy, planets and articles as accessible HTML. They are the permanent fallback for no-WebGL and reduced-motion users, and the article renderer the 3D flow opens.
 - **`reduce` motion:** every scene must honour `prefers-reduced-motion` and skip long animations.
 
@@ -50,7 +51,7 @@ npm run dev         # build content and serve the site at http://localhost:8000
 Delivered in order, one PR each:
 
 1. **Foundation** ✅ content pipeline, `AGENTS.md`/`CLAUDE.md`, minimal home with the rocket and lift-off, text explorer (galaxy, planet, article).
-2. **Galaxy** ☐ rocket flight into a solar system of planets; landing on a chosen planet.
+2. **Galaxy** ✅ inside the galaxy you rotate a ring of planets (drag, scroll, arrows, swipe); clicking or "Fly to" sends the rocket to that planet, then lands on its topics page (`#/<planet>`). `#/list` is the text list of planets.
 3. **Planet** ☐ walk an astronaut along the road of topics (keyboard, touch joystick, click-to-move); signposts open topics.
 4. **Topic pages** ☐ warp/zoom transition into the article, table of contents, related-topic fast travel, return to the same spot on the road.
 5. **Polish** ☐ mobile controls, performance, accessibility, social preview.

@@ -7,8 +7,9 @@ const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 const view = $("#view");
 const home = $("#home");
 let content = null;
-let homeScene = null;
-let launching = false;
+let stage = null, homeScene = null, galaxy = null;
+let launching = false, flying = false;
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const loading = fetch("content.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((c) => (content = c));
 
@@ -62,19 +63,49 @@ function topicView(t) {
 }
 
 // ---------- router
+const galaxyEl = $("#galaxy");
+
+function showGalaxyCard(i) {
+  const p = content.planets[i];
+  if (!p) return;
+  $("#gcard").style.setProperty("--c", p.color);
+  $("#gcard").innerHTML = `
+    <p class="kicker">${String(i + 1).padStart(2, "0")} / ${content.planets.length} · ${badge(p.status)}</p>
+    <h3>${esc(p.title)}</h3>
+    <p class="blurb">${esc(p.blurb)}</p>
+    <div class="meta">${p.topicCount ? `<span>${p.topicCount} topic${p.topicCount > 1 ? "s" : ""}</span>` : "<span>Not explored yet</span>"}
+    <button class="cta small" data-fly="${i}">${p.planned ? "Visit" : "Fly to"} ${esc(p.title)} <span aria-hidden="true">🚀</span></button></div>`;
+}
+
+async function flyTo(i) {
+  if (flying || !galaxy) return;
+  flying = true;
+  galaxyEl.classList.add("away");
+  await galaxy.select(i);
+  flying = false;
+  location.hash = `#/${content.planets[i].id}`;
+  $("#white").classList.remove("on");
+  galaxyEl.classList.remove("away");
+}
+
 function route() {
   if (!content) return;
   const parts = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("/").filter(Boolean);
   const key = parts.join("/");
   const isHome = parts.length === 0;
+  const isGalaxy = key === "galaxy" && !!galaxy;
   document.body.classList.toggle("route-home", isHome);
+  document.body.classList.toggle("route-galaxy", isGalaxy);
   home.hidden = !isHome;
-  view.hidden = isHome;
-  if (homeScene) homeScene.setActive(isHome && !launching);
+  galaxyEl.hidden = !isGalaxy;
+  view.hidden = isHome || isGalaxy;
+  if (stage) stage.setActive(isHome ? homeScene : isGalaxy ? galaxy : null);
+  if (galaxy) { if (isGalaxy) galaxy.enter(); else galaxy.leave(); }
   if (isHome) { document.title = "AI Knowledge Brain"; return; }
+  if (isGalaxy) { document.title = "Galaxy · AI Knowledge Brain"; return; }
 
   let html, title;
-  if (key === "galaxy") { html = galaxyView(); title = "Galaxy"; }
+  if (key === "galaxy" || key === "list") { html = galaxyView(); title = "Planets"; }
   else if (content.topics[key]) { html = topicView(content.topics[key]); title = content.topics[key].title; }
   else if (content.planets.find((p) => p.id === key)) { const p = content.planets.find((x) => x.id === key); html = planetView(p); title = p.title; }
   else { html = `<p class="notice">Nothing here. <a href="#/galaxy">Back to the galaxy</a></p>`; title = "Not found"; }
@@ -120,12 +151,36 @@ try {
 if (content) {
   route();
   try {
-    const mod = await import("./scenes/home.js");
-    homeScene = mod.start({ canvas: $("#scene"), onWhiteout: () => $("#white").classList.add("on") });
-    homeScene.setActive(!location.hash.replace(/^#\/?/, ""));
+    const { createStage } = await import("./scenes/stage.js");
+    const homeMod = await import("./scenes/home.js");
+    const galaxyMod = await import("./scenes/galaxy.js");
+    stage = createStage($("#scene"));
+    homeScene = homeMod.create({ onWhiteout: () => $("#white").classList.add("on") });
+    galaxy = galaxyMod.create({
+      planets: content.planets,
+      labelsEl: $("#glabels"),
+      onFocus: showGalaxyCard,
+      onSelect: flyTo,
+      onSun: () => { location.hash = "#/ai"; },
+      onWhiteout: () => $("#white").classList.add("on")
+    });
     document.body.classList.add("gl");
+    route();
   } catch (err) {
     console.warn("3D unavailable, using the text version.", err);
     document.body.classList.add("no-gl");
+    stage = homeScene = galaxy = null;
+    route();
   }
 }
+
+// ---------- galaxy controls
+$("#gprev").addEventListener("click", () => galaxy && galaxy.step(-1));
+$("#gnext").addEventListener("click", () => galaxy && galaxy.step(1));
+galaxyEl.addEventListener("click", (e) => { const b = e.target.closest("[data-fly]"); if (b) flyTo(+b.dataset.fly); });
+addEventListener("keydown", (e) => {
+  if (!galaxy || galaxyEl.hidden || flying) return;
+  if (e.key === "ArrowRight") galaxy.step(1);
+  else if (e.key === "ArrowLeft") galaxy.step(-1);
+  else if (e.key === "Enter" && !e.target.closest("button, a")) flyTo(galaxy.focus());
+});

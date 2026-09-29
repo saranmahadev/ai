@@ -6,13 +6,8 @@ const rand = (a, b) => a + Math.random() * (b - a);
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
 // The home scene: a rocket on a launch pad. launch() lifts it off and resolves once it has left the sky.
-export function start({ canvas, onWhiteout }) {
+export function create({ onWhiteout }) {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
   const scene = new THREE.Scene();
   scene.background = skyTexture([[0, "#d6e6ff"], [0.6, "#f3ecff"], [1, "#ffe6e1"]]);
   scene.fog = new THREE.FogExp2(0xf1eafd, 0.012);
@@ -77,9 +72,7 @@ export function start({ canvas, onWhiteout }) {
   };
 
   let baseX = 0, aspect = 1, lookBase = 5.6;
-  function resize() {
-    const w = innerWidth, h = innerHeight;
-    renderer.setSize(w, h, false);
+  function resize(w, h) {
     aspect = w / h;
     camera.aspect = aspect;
     camera.fov = aspect < 0.85 ? 58 : 38;
@@ -88,21 +81,15 @@ export function start({ canvas, onWhiteout }) {
     lookBase = aspect < 0.85 ? 0.4 : 5.6;
     camera.position.set(0, 5, aspect < 0.85 ? 30 : 21);
   }
-  addEventListener("resize", resize);
-  resize();
 
   let mx = 0, my = 0;
   addEventListener("pointermove", (e) => { mx = e.clientX / innerWidth - 0.5; my = e.clientY / innerHeight - 0.5; });
 
-  let active = true, launching = false, lt = 0, resolveLaunch = null, whited = false;
-  const clock = new THREE.Clock();
+  let launching = false, lt = 0, resolveLaunch = null, whited = false;
   const look = new THREE.Vector3();
 
-  function frame() {
-    requestAnimationFrame(frame);
-    const dt = Math.min(clock.getDelta(), launching ? 0.1 : 0.05);
-    if (!active) return;
-    const t = clock.elapsedTime;
+  function update(rawDt, t) {
+    const dt = Math.min(rawDt, launching ? 0.1 : 0.05);
 
     let camY = 5, lookY = lookBase;
     if (!launching) {
@@ -138,12 +125,10 @@ export function start({ canvas, onWhiteout }) {
       m.material.opacity = clamp(u.life, 0, 1) * 0.85;
     });
     if (!reduce) clouds.forEach((c) => { c.position.y = c.userData.y + Math.sin(t * c.userData.sp + c.userData.ph) * 0.8; });
-
-    renderer.render(scene, camera);
   }
-  frame();
 
   return {
+    scene, camera, update, resize,
     launch() {
       if (reduce) return Promise.resolve();
       return new Promise((res) => { launching = true; lt = 0; whited = false; resolveLaunch = res; });
@@ -153,6 +138,5 @@ export function start({ canvas, onWhiteout }) {
       rocket.rotation.set(0, 0, 0);
       smoke.forEach((m) => { m.visible = false; });
     },
-    setActive(v) { active = v; if (v) clock.getDelta(); }
   };
 }
