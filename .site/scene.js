@@ -1,10 +1,8 @@
 import * as THREE from "three";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const rand = (a, b) => a + Math.random() * (b - a);
 
 export function start({ stages, onSelect, onActive, onProgress }) {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -14,134 +12,210 @@ export function start({ stages, onSelect, onActive, onProgress }) {
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  const BG = 0x05060d;
+  // ---- Sky: a soft vertical gradient that stays fixed to the screen
+  const sky = document.createElement("canvas");
+  sky.width = 2; sky.height = 256;
+  {
+    const c = sky.getContext("2d");
+    const g = c.createLinearGradient(0, 0, 0, 256);
+    g.addColorStop(0, "#d6e6ff");
+    g.addColorStop(0.55, "#f3ecff");
+    g.addColorStop(1, "#ffe6e1");
+    c.fillStyle = g; c.fillRect(0, 0, 2, 256);
+  }
+  const skyTex = new THREE.CanvasTexture(sky);
+  skyTex.colorSpace = THREE.SRGBColorSpace;
+
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(BG);
-  scene.fog = new THREE.FogExp2(BG, 0.011);
+  scene.background = skyTex;
+  scene.fog = new THREE.FogExp2(0xf1eafd, 0.0085);
 
   const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 700);
 
-  // ---- Path: a winding road with a runway before the first and after the last stage
+  // ---- Clay material factory: matte, slightly glossy, soft sheen
+  const clay = (color, extra = {}) => new THREE.MeshPhysicalMaterial({
+    color, roughness: 0.62, metalness: 0, clearcoat: 0.3, clearcoatRoughness: 0.55,
+    sheen: 1, sheenRoughness: 0.7, sheenColor: new THREE.Color(0xffffff), ...extra
+  });
+  const tint = (hex, amount) => new THREE.Color(hex).lerp(new THREE.Color(0xffffff), amount);
+  const cream = 0xfff3e2;
+
+  // ---- Lights
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xd8ccfa, 1.9));
+  const sun = new THREE.DirectionalLight(0xfff4e6, 2.4);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.camera.left = -55; sun.shadow.camera.right = 55;
+  sun.shadow.camera.top = 55; sun.shadow.camera.bottom = -55;
+  sun.shadow.camera.near = 1; sun.shadow.camera.far = 200;
+  sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.05; sun.shadow.radius = 5;
+  scene.add(sun, sun.target);
+
+  // ---- Path: a fat clay rope winding through the world
   const pts = [];
   for (let i = -1; i <= N; i++) {
     pts.push(new THREE.Vector3(Math.sin(i * 0.95) * 16, Math.cos(i * 0.6) * 4 + i * 1.6, -(i + 1) * 30));
   }
   const curve = new THREE.CatmullRomCurve3(pts, false, "catmullrom", 0.5);
+  const uOf = (i) => (i + 1) / (N + 1);
 
-  const SEG = 900, RAD = 8;
-  const dimGeo = new THREE.TubeGeometry(curve, SEG, 0.16, RAD, false);
-  scene.add(new THREE.Mesh(dimGeo, new THREE.MeshBasicMaterial({ color: 0x27305a })));
-  const litGeo = new THREE.TubeGeometry(curve, SEG, 0.26, RAD, false);
-  const lit = new THREE.Mesh(litGeo, new THREE.MeshBasicMaterial({ color: 0x8be9ff }));
-  lit.geometry.setDrawRange(0, 0);
-  scene.add(lit);
-  const idxPerSeg = RAD * 6;
+  const SEG = 700, RAD = 20;
+  const baseTube = new THREE.Mesh(new THREE.TubeGeometry(curve, SEG, 0.95, RAD, false), clay(cream));
+  baseTube.castShadow = baseTube.receiveShadow = true;
+  scene.add(baseTube);
 
-  // ---- Lights
-  scene.add(new THREE.HemisphereLight(0x8fa0ff, 0x120a24, 1.1));
-  const follow = new THREE.PointLight(0xffffff, 900, 0, 2);
-  scene.add(follow);
-
-  // ---- Stars
+  const stageColors = stages.map((s) => new THREE.Color(s.color));
+  const colorAt = (u) => {
+    const f = u * (N + 1) - 1;
+    const i0 = clamp(Math.floor(f), 0, N - 1);
+    const i1 = Math.min(i0 + 1, N - 1);
+    return stageColors[i0].clone().lerp(stageColors[i1], clamp(f - i0, 0, 1));
+  };
+  const litGeo = new THREE.TubeGeometry(curve, SEG, 1.08, RAD, false);
   {
-    const n = 3000, arr = new Float32Array(n * 3);
-    for (let i = 0; i < n; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * 220;
-      arr[i * 3 + 1] = (Math.random() - 0.3) * 120 + 10;
-      arr[i * 3 + 2] = -Math.random() * (N + 3) * 30 + 30;
+    const count = litGeo.attributes.position.count, arr = new Float32Array(count * 3);
+    for (let v = 0; v < count; v++) {
+      const c = colorAt(Math.floor(v / (RAD + 1)) / SEG);
+      arr.set([c.r, c.g, c.b], v * 3);
     }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(arr, 3));
-    scene.add(new THREE.Points(g, new THREE.PointsMaterial({ size: 0.45, color: 0xaebbff, transparent: true, opacity: 0.8, depthWrite: false })));
+    litGeo.setAttribute("color", new THREE.BufferAttribute(arr, 3));
   }
+  const lit = new THREE.Mesh(litGeo, clay(0xffffff, { vertexColors: true }));
+  lit.castShadow = true;
+  litGeo.setDrawRange(0, 0);
+  scene.add(lit);
+  const tip = new THREE.Mesh(new THREE.SphereGeometry(1.08, 32, 24), clay(0xffffff));
+  tip.castShadow = true;
+  scene.add(tip);
+  const idxPerSeg = RAD * 6;
 
   // ---- Milestones, placed alternately left/right of the path
   const up = new THREE.Vector3(0, 1, 0);
-  const nodes = [];
-  const pickables = [];
-  const uOf = (i) => (i + 1) / (N + 1);
+  const shapes = [
+    () => new THREE.SphereGeometry(2.1, 48, 32),
+    () => new RoundedBoxGeometry(3.4, 3.4, 3.4, 8, 1.1),
+    () => new THREE.CapsuleGeometry(1.5, 1.8, 16, 32),
+    () => new THREE.TorusGeometry(1.7, 0.85, 32, 64)
+  ];
+  const nodes = [], pickables = [];
 
   stages.forEach((s, i) => {
     const u = uOf(i);
     const p = curve.getPointAt(u);
-    const side = new THREE.Vector3().crossVectors(curve.getTangentAt(u), up).normalize().multiplyScalar(i % 2 ? -7 : 7);
-    const pos = p.clone().add(side).add(new THREE.Vector3(0, 1.5, 0));
-    const color = new THREE.Color(s.color);
-    const dim = s.status === "planned" ? 0.45 : 1;
+    const side = new THREE.Vector3().crossVectors(curve.getTangentAt(u), up).normalize().multiplyScalar(i % 2 ? -13 : 13);
+    const base = p.clone().add(side).add(new THREE.Vector3(0, -2.2, 0));
+    const planned = s.status === "planned";
+    const color = planned ? tint(s.color, 0.5) : new THREE.Color(s.color);
 
     const g = new THREE.Group();
-    g.position.copy(pos);
+    g.position.copy(base);
 
-    const core = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1.6, 1),
-      new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.55 * dim, roughness: 0.35, metalness: 0.2, flatShading: true })
-    );
+    const pedestal = new THREE.Mesh(new THREE.SphereGeometry(4.2, 40, 24), clay(cream));
+    pedestal.scale.set(1, 0.3, 1);
+    pedestal.castShadow = pedestal.receiveShadow = true;
+    g.add(pedestal);
+
+    const body = new THREE.Group();
+    body.position.y = 4;
+    g.add(body);
+
+    const core = new THREE.Mesh(shapes[i % shapes.length](), clay(color));
+    core.castShadow = true;
+    if (i % 4 === 3) core.rotation.x = Math.PI / 2.4;
     core.userData.i = i;
-    g.add(core);
+    body.add(core);
     pickables.push(core);
 
-    const shell = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(2.4, 1),
-      new THREE.MeshBasicMaterial({ color, wireframe: true, transparent: true, opacity: 0.3 * dim })
-    );
-    g.add(shell);
-
-    const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(3.4, 0.05, 8, 96),
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.85 * dim })
-    );
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(3.6, 0.2, 16, 96), clay(0xffffff, { roughness: 0.7 }));
     ring.rotation.x = Math.PI / 2.4;
-    g.add(ring);
+    ring.castShadow = true;
+    body.add(ring);
 
     const moons = [];
     const m = Math.min(s.groups.length, 6);
     for (let k = 0; k < m; k++) {
       const pivot = new THREE.Group();
       pivot.rotation.set(k * 0.7, k * 1.1, 0);
-      const moon = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 16), new THREE.MeshBasicMaterial({ color }));
-      moon.position.x = 4.6 + (k % 2) * 0.7;
+      const moon = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 16), clay(tint(s.color, 0.25)));
+      moon.position.x = 4.9 + (k % 2) * 0.8;
+      moon.castShadow = true;
       pivot.add(moon);
       pivot.userData.speed = 0.25 + k * 0.05;
-      g.add(pivot);
+      body.add(pivot);
       moons.push(pivot);
     }
     scene.add(g);
 
-    // stub connecting the path to the milestone
-    scene.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([p, pos]),
-      new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.5 * dim })
-    ));
-    const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.55, 16, 16), new THREE.MeshBasicMaterial({ color }));
-    beacon.position.copy(p);
-    scene.add(beacon);
+    // stalk from the path to the pedestal, plus a bead on the path
+    const stalkCurve = new THREE.QuadraticBezierCurve3(p, p.clone().add(side.clone().multiplyScalar(0.5)).add(new THREE.Vector3(0, -3, 0)), base);
+    const stalk = new THREE.Mesh(new THREE.TubeGeometry(stalkCurve, 24, 0.34, 12, false), clay(cream));
+    stalk.castShadow = true;
+    scene.add(stalk);
+    const bead = new THREE.Mesh(new THREE.SphereGeometry(1.35, 32, 24), clay(color));
+    bead.position.copy(p);
+    bead.castShadow = true;
+    scene.add(bead);
 
-    // DOM label
     const label = document.createElement("button");
-    label.className = "label" + (s.status === "planned" ? " planned" : "");
+    label.className = "label" + (planned ? " planned" : "");
     label.style.setProperty("--c", s.color);
     label.tabIndex = -1;
     label.innerHTML = `<span>${s.id}</span>${s.title}`;
-    label.addEventListener("click", () => onSelect(i));
+    label.addEventListener("click", () => { node.bounce = 1; onSelect(i); });
     labelsEl.appendChild(label);
 
-    nodes.push({ g, core, shell, ring, moons, label, pos, scale: 1 });
+    const node = { g, body, core, ring, moons, label, pos: base.clone().add(new THREE.Vector3(0, 4, 0)), scale: 1, bounce: 0, phase: i * 1.3 };
+    nodes.push(node);
   });
 
-  // ---- Post-processing
-  const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.85, 0.7, 0.2);
-  composer.addPass(bloom);
-  composer.addPass(new OutputPass());
+  // ---- Decor: clay clouds and floating blobs
+  const cloudMat = clay(0xffffff, { roughness: 0.9, clearcoat: 0 });
+  const clouds = [];
+  for (let k = 0; k < 30; k++) {
+    const grp = new THREE.Group();
+    const puffs = 3 + Math.floor(Math.random() * 3);
+    for (let j = 0; j < puffs; j++) {
+      const r = rand(2, 4);
+      const pf = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), cloudMat);
+      pf.position.set(j * 3.2 - puffs * 1.5, rand(-0.6, 0.6), rand(-1, 1));
+      pf.scale.y = 0.75;
+      pf.castShadow = true;
+      grp.add(pf);
+    }
+    const u = Math.random();
+    const p = curve.getPointAt(u);
+    const sgn = Math.random() < 0.5 ? -1 : 1;
+    grp.position.set(p.x + sgn * rand(20, 46), p.y + rand(-14, 20), p.z + rand(-12, 12));
+    grp.userData = { y: grp.position.y, ph: Math.random() * 6, sp: rand(0.15, 0.35) };
+    scene.add(grp);
+    clouds.push(grp);
+  }
+  const blobs = [];
+  const blobGeos = [
+    new THREE.SphereGeometry(1, 24, 16),
+    new THREE.TorusGeometry(0.9, 0.42, 16, 32),
+    new RoundedBoxGeometry(1.6, 1.6, 1.6, 5, 0.5)
+  ];
+  for (let k = 0; k < 44; k++) {
+    const c = stages[k % N].color;
+    const mesh = new THREE.Mesh(blobGeos[k % 3], clay(tint(c, 0.15)));
+    const p = curve.getPointAt(Math.random());
+    const sgn = Math.random() < 0.5 ? -1 : 1;
+    mesh.position.set(p.x + sgn * rand(11, 30), p.y + rand(-9, 12), p.z + rand(-10, 10));
+    mesh.scale.setScalar(rand(0.8, 1.9));
+    mesh.rotation.set(rand(0, 3), rand(0, 3), 0);
+    mesh.castShadow = true;
+    mesh.userData = { y: mesh.position.y, ph: Math.random() * 6, sp: rand(0.2, 0.6) };
+    scene.add(mesh);
+    blobs.push(mesh);
+  }
 
   function resize() {
     const w = innerWidth, h = innerHeight;
     renderer.setSize(w, h, false);
-    composer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    composer.setSize(w, h);
     camera.aspect = w / h;
     camera.fov = w / h < 0.8 ? 78 : 60;
     camera.updateProjectionMatrix();
@@ -162,6 +236,7 @@ export function start({ stages, onSelect, onActive, onProgress }) {
   function jumpTo(i) {
     const max = document.documentElement.scrollHeight - innerHeight;
     scrollTo({ top: uOf(i) * max, behavior: reduce ? "auto" : "smooth" });
+    nodes[i].bounce = 1;
   }
 
   // ---- Picking
@@ -179,7 +254,7 @@ export function start({ stages, onSelect, onActive, onProgress }) {
     if (!down) return;
     const moved = Math.hypot(e.clientX - down[0], e.clientY - down[1]);
     down = null;
-    if (moved < 6) { const i = pick(e); if (i >= 0) onSelect(i); }
+    if (moved < 6) { const i = pick(e); if (i >= 0) { nodes[i].bounce = 1; onSelect(i); } }
   });
   canvas.addEventListener("pointermove", (e) => { canvas.style.cursor = pick(e) >= 0 ? "pointer" : "default"; });
 
@@ -189,44 +264,50 @@ export function start({ stages, onSelect, onActive, onProgress }) {
   // ---- Loop
   const clock = new THREE.Clock();
   const v = new THREE.Vector3();
-  const tan = new THREE.Vector3();
+  const off = new THREE.Vector3();
   let active = -2;
 
   function frame() {
     requestAnimationFrame(frame);
     const dt = Math.min(clock.getDelta(), 0.05);
+    const t = clock.elapsedTime;
     cur += (target - cur) * (reduce ? 1 : 1 - Math.pow(0.001, dt));
 
     const back = curve.getPointAt(clamp(cur - 0.02, 0, 1));
     const ahead = curve.getPointAt(clamp(cur + 0.025, 0, 1));
-    camera.position.copy(back).add(v.set(0, 3.2, 0));
-    if (!reduce) camera.position.add(v.set(mx * 2, -my * 1.2, 0));
+    camera.position.copy(back).add(off.set(0, 4.8, 0));
+    if (!reduce) camera.position.add(off.set(mx * 2, -my * 1.2, 0));
     camera.lookAt(ahead);
-    tan.copy(camera.position);
-    follow.position.copy(camera.position);
 
-    lit.geometry.setDrawRange(0, Math.floor(cur * SEG) * idxPerSeg);
+    sun.position.copy(camera.position).add(off.set(26, 46, 18));
+    sun.target.position.copy(ahead);
+
+    litGeo.setDrawRange(0, Math.floor(cur * SEG) * idxPerSeg);
+    tip.position.copy(curve.getPointAt(cur));
+    tip.material.color.copy(colorAt(cur));
 
     const idx = clamp(Math.round(cur * (N + 1)) - 1, 0, N - 1);
-    const idxOrNone = cur < 0.5 / (N + 1) ? -1 : idx;
-    if (idxOrNone !== active) { active = idxOrNone; onActive(active); }
+    const now = cur < 0.5 / (N + 1) ? -1 : idx;
+    if (now !== active) { active = now; onActive(active); }
 
     nodes.forEach((n, i) => {
       if (!reduce) {
-        n.core.rotation.y += dt * 0.4;
-        n.core.rotation.x += dt * 0.15;
-        n.shell.rotation.y -= dt * 0.2;
-        n.ring.rotation.z += dt * 0.5;
+        n.body.position.y = 4 + Math.sin(t * 1.1 + n.phase) * 0.35;
+        n.core.rotation.y += dt * 0.35;
+        n.ring.rotation.z += dt * 0.45;
         n.moons.forEach((m) => { m.rotation.y += dt * m.userData.speed; });
-      }
-      const want = i === active ? 1.3 : 1;
-      n.scale += (want - n.scale) * Math.min(1, dt * 6);
-      n.g.scale.setScalar(n.scale);
+        n.bounce = Math.max(0, n.bounce - dt * 1.4);
+      } else n.bounce = 0;
+      const want = i === active ? 1.18 : 1;
+      n.scale += (want - n.scale) * Math.min(1, dt * 7);
+      const sq = 1 + Math.sin(n.bounce * Math.PI * 3) * n.bounce * 0.2;
+      const xz = n.scale * (1 - (sq - 1) * 0.5);
+      n.g.scale.set(xz, n.scale * sq, xz);
 
-      v.copy(n.pos).add(new THREE.Vector3(0, 4.6, 0)).project(camera);
+      v.copy(n.pos).add(off.set(0, 6.4, 0)).project(camera);
       const d = camera.position.distanceTo(n.pos);
       const visible = v.z < 1 && Math.abs(v.x) < 1.15 && Math.abs(v.y) < 1.15;
-      const o = visible ? clamp(1 - (d - 25) / 90, 0, 1) : 0;
+      const o = visible ? clamp(1 - (d - 30) / 90, 0, 1) : 0;
       n.label.style.opacity = o.toFixed(3);
       n.label.style.pointerEvents = o > 0.3 ? "auto" : "none";
       n.label.tabIndex = o > 0.3 ? 0 : -1;
@@ -234,8 +315,13 @@ export function start({ stages, onSelect, onActive, onProgress }) {
       n.label.classList.toggle("active", i === active);
     });
 
+    if (!reduce) {
+      clouds.forEach((c) => { c.position.y = c.userData.y + Math.sin(t * c.userData.sp + c.userData.ph) * 1.4; c.position.x += Math.sin(t * 0.1 + c.userData.ph) * dt * 0.4; });
+      blobs.forEach((b) => { b.position.y = b.userData.y + Math.sin(t * b.userData.sp + b.userData.ph) * 1.2; b.rotation.x += dt * 0.2; b.rotation.y += dt * 0.25; });
+    }
+
     onProgress(cur);
-    composer.render();
+    renderer.render(scene, camera);
   }
   frame();
 
