@@ -7,5 +7,6 @@ By the end you will be able to take any AI system, from a thermostat to a chatbo
 1. [[What Is AI]]: what the word covers, how AI, machine learning and deep learning nest, and why we learn rules from data instead of writing them.
 2. [[The Agent]]: the unit every AI system is built around, and the perceive → decide → act loop.
 3. [[Data and Models]]: what data is, what a model is, and the difference between training and using one.
+4. [[Classic AI]]: search, heuristics, logic, planning and expert systems, the methods AI used before learning took over.
 
-Later districts will cover classic AI and judging AI.
+One more district, on judging AI, is still to come.
