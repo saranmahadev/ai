@@ -163,7 +163,7 @@ function render(note) {
 }
 
 const isIndexOnly = (body) => body.split(/\r?\n/).every((l) => !l.trim() || /^\s*[-*]\s*\[\[[^\]]+\]\]\s*$/.test(l));
-const plain = (html) => html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+const plain = (html) => html.replace(/<[^>]+>/g, "").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
 
 const topics = {};
 const planetOf = (id) => id.split("/")[0];
@@ -173,7 +173,11 @@ for (const [path, id] of topicIdOf) {
   const words = plain(html).split(" ").filter(Boolean).length;
   const firstP = (html.match(/<p>([\s\S]*?)<\/p>/) || [])[1] || "";
   let summary = note.meta.summary || plain(firstP);
-  if (summary.length > 200) summary = summary.slice(0, 197).trimEnd() + "…";
+  if (summary.length > 200) { // keep whole sentences where possible, else cut at a word
+    let cut = "";
+    for (const sentence of summary.split(/(?<=[.!?])\s+/)) { if ((cut + " " + sentence).trim().length > 200) break; cut = (cut + " " + sentence).trim(); }
+    summary = cut || summary.slice(0, 197).replace(/\s+\S*$/, "").trimEnd() + "…";
+  }
   const district = planets.flatMap((p) => p.districts.map((d) => ({ p, d }))).find(({ d }) => d.topics.includes(id));
   topics[id] = {
     id, title: note.title, planet: id === "ai" ? null : planetOf(id), district: district ? district.d.id : null,
