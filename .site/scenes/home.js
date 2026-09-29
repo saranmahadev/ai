@@ -78,6 +78,7 @@ export function create({ onWhiteout }) {
     camera.fov = aspect < 0.85 ? 58 : 38;
     camera.updateProjectionMatrix();
     baseX = aspect > 1.1 ? 3.6 : 0;
+    pad.position.x = padRing.position.x = baseX; // the pad always sits under the rocket
     lookBase = aspect < 0.85 ? 0.4 : 5.6;
     camera.position.set(0, 5, aspect < 0.85 ? 30 : 21);
   }
