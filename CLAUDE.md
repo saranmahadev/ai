@@ -27,6 +27,8 @@ npm run dev         # build content and serve the site at http://localhost:8000
   planets.json             planets: id, title, color, blurb, root notes/folder, or `planned`
   scripts/build-content.mjs  vault → content.json (planets, districts, topics, links, backlinks, rendered HTML)
   index.html, styles.css   shell + clay UI
+  theme.js                 time-of-day theme (local clock, or ?time=HH:MM to test): CSS variables + scene re-lighting, refreshed each minute
+  nav.js                   navigation model: Back button, breadcrumb trail and actions for each route
   transition.js            the warp: full-screen tunnel (streaks, rings, iris) that swaps the route at its peak
   main.js                  hash router (#/, #/galaxy, #/list, #/<planet>, #/<planet>/<topic>) + galaxy UI + text views
   scenes/                  stage.js (one shared WebGL renderer), home.js (rocket + launch), galaxy.js (planets + rocket flight), planet.js (walkable planet: road, gates, signposts, landing)
@@ -41,6 +43,17 @@ npm run dev         # build content and serve the site at http://localhost:8000
 - **Text views** (`main.js`) render the galaxy, planets and articles as accessible HTML. They are the permanent fallback for no-WebGL and reduced-motion users, and the article renderer the 3D flow opens.
 - **Planet scene:** the world is a sphere of radius scaled by topic count; the player is a unit position `P` and heading `H` moved with quaternions, and the camera follows with `up = P`. The road is a spiral sampled on the sphere; signposts sit at fixed road distances. Interactables (rocket, signposts) are found by proximity. Circular obstacles (trees, rocks, gate posts, signposts, the pad) push the walker out so it slides around them.
 - **Warp:** `warp.play({ color, dir, swap })` (dir 1 = into a topic, -1 = back to the road) runs on wall-clock time, calls `swap()` at its peak (where `main.js` sets `location.hash`), and is skipped under reduced motion. Only navigations that start from the planet scene or from inside an article use it; text-list pages navigate instantly.
+- **Navigation:** one levelled path, Home → Galaxy → Planet → Topic. `nav.js` (`navFor`) describes the bar for a route and `main.js` renders it: a Back button that names where it leads, a clickable breadcrumb trail, and a few actions. Esc always presses Back. Home has no bar. Never add ad-hoc back links or in-page breadcrumbs; extend `navFor` instead.
+
+  | Route | Back goes to | Actions |
+  | --- | --- | --- |
+  | `#/` | none | Launch |
+  | `#/galaxy` (3D) | Home | The big picture, List view |
+  | `#/list` (text) | Home | 3D galaxy |
+  | `#/<planet>` (3D road) | Galaxy (rocket boards) | List view; shows "n / N topics" |
+  | `#/<planet>?text` | Galaxy | Walk the road |
+  | `#/<planet>/<topic>` | that planet's road (reverse warp) | none |
+- **Time-of-day theme:** `theme.js` blends keyframes (night, sunrise, day, sunset, twilight) by the visitor's local time and sets `--sky1..3` and an `html.night` class (dark clay UI). Each scene builds a `createSkyRig` (`scenes/clay.js`: sky, fog, lights, stars, moon, night glow on signposts) and exposes `applyTheme(t)`; new scenes must do the same. Use theme variables in CSS (`--clay`, `--ink`, `--soft`, `--white`…), never hard-coded light colours. Test with `?time=22:30` (night), `?time=18:40` (sunset), `?time=07:00` (sunrise).
 - **`reduce` motion:** every scene must honour `prefers-reduced-motion` and skip long animations.
 
 ## Content pipeline rules
@@ -59,6 +72,7 @@ Delivered in order, one PR each:
 3. **Planet** ✅ `#/<planet>` lands the rocket on a spherical clay planet; walk an astronaut along the road (WASD/arrows, Shift to run, touch joystick, click-to-travel, ‹ › to jump between signposts). Districts are gates, topics are signposts (solid = written, hollow ring = outlined, cube = index). Walk near one and press E / tap to open it. Returning from a topic resumes at that signpost. `#/<planet>?text` is the text list.
 4. **Topic pages** ✅ pressing E on a signpost dives the camera into its orb while the warp tunnel (`transition.js`) rushes in and opens on the article. The article has an animated title, reading bar, sticky scroll-spy table of contents (level 1–3 headings), reveal-on-scroll, parallax clay blobs, related/mentioned-in chips, and previous/next cards. Every topic link inside an article warps; "Back to the road" (or Esc, or the planet breadcrumb) runs the warp in reverse and returns to that topic's signpost.
 5. **Polish** ✅ renamed to AI Base, single GitHub link in the header, no "skip to text version" (the list view stays reachable from the galaxy and planet screens); self-hosted fonts (no external requests); favicon and social preview; collision with trees, rocks, gates and signposts; adaptive quality (lighter pixel ratio and shadows on phones, drops to 1× if the first seconds run slowly); boot loader; route announcements and heading focus for screen readers.
+6. **Time theme + navigation** ✅ local-time colours and a night mode across UI and all three scenes; a single Back/breadcrumb bar on every screen; fixes: reversing keeps the camera behind the astronaut, ‹ › walk to the previous/next signpost along the road.
 
 ## Verifying changes
 

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { clay, tint, skyTexture } from "./clay.js";
+import { clay, tint, createSkyRig } from "./clay.js";
 import { createRocket } from "../models/rocket.js";
 import { createAstronaut } from "../models/astronaut.js";
 
@@ -23,7 +23,6 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const scene = new THREE.Scene();
-  scene.background = skyTexture([[0, "#bfe0ff"], [0.55, "#f1ecff"], [1, "#ffe9e0"]]);
   scene.fog = new THREE.FogExp2(0xf1ecff, 0.0045);
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 900);
 
@@ -34,6 +33,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
   Object.assign(sun.shadow.camera, { left: -34, right: 34, top: 34, bottom: -34, near: 1, far: 140 });
   sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.05; sun.shadow.radius = 5;
   scene.add(hemi, sun, sun.target);
+  const sky = createSkyRig(scene, { hemi, sun, base: { hemi: 2.0, sun: 2.4 }, moonAt: [-60, 70, -180] });
 
   const astro = createAstronaut();
   const char = astro.group;
@@ -208,6 +208,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
         head.position.y = 3.5;
         head.castShadow = pole.castShadow = disc.castShadow = true;
         head.userData.sign = signs.length;
+        if (t.status !== "outlined") sky.addGlow(head.material, d.color, 0.7);
         g.add(disc, pole, head);
         stand(g, surfacePoint(fr, side, 0.06), fr.t);
         obstacles.push({ d: surfacePoint(fr, side, 0).normalize(), r: 0.9 });
@@ -306,7 +307,15 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       world = null;
     }
     labelsEl.innerHTML = "";
+    sky.glow.length = 0;
     signs = []; gates = []; target = null; near = null; reportedNear = undefined; reportedIdx = -1;
+  }
+
+  // where the walker is along the road, in road units (nearest sample of the spiral)
+  function roadS() {
+    let best = 0, bd = -2;
+    for (let i = 0; i < samples.length; i++) { const d = samples[i].dot(P); if (d > bd) { bd = d; best = i; } }
+    return cum[best];
   }
 
   // ---------- movement
@@ -342,6 +351,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
   function update(dt, t) {
     if (!world || !active) return;
     frame++;
+    sky.follow(camera);
     const charPos = tv2.copy(P).multiplyScalar(Rp + 0.1);
 
     if (mode === "landing") {
@@ -399,7 +409,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       const run = keys.Shift ? 1.6 : 1;
       const speed = 8.5 * run;
       turn(tn * 2.4 * dt);
-      move(f * speed * dt);
+      move(f * speed * (f < 0 ? 0.55 : 1) * dt); // backing up is slower
       collide();
       fixHeading();
 
@@ -409,7 +419,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       astro.animate(Math.abs(f) * run / 1.6, dt);
 
       // follow camera
-      camPos.copy(P).multiplyScalar(Rp + 5.4).addScaledVector(H, -11 * (f < 0 ? -0.2 : 1));
+      camPos.copy(P).multiplyScalar(Rp + 5.4).addScaledVector(H, -11); // the camera always stays behind the astronaut, even when reversing
       camera.position.lerp(camPos, 1 - Math.exp(-dt * 4.5));
       camera.up.copy(P);
       look.copy(P).multiplyScalar(Rp + 1.8).addScaledVector(H, 4);
@@ -440,7 +450,11 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     }
     const key = info ? `${info.kind}:${info.id || ""}` : "none";
     if (key !== reportedNear) { reportedNear = key; near = info || { kind: "none" }; onNear(info); }
-    if (nearest && nearest.idx !== reportedIdx && frame % 6 === 0) { reportedIdx = nearest.idx; onProgress(nearest.idx + 1, signs.length); }
+    if (frame % 8 === 0 && signs.length) {
+      const s = roadS() + 3; // topics you have reached or passed
+      let n = 0; for (const sg of signs) if (sg.s <= s) n++;
+      if (n !== reportedIdx) { reportedIdx = n; onProgress(n, signs.length); }
+    }
     if (mode !== "opening") signs.forEach((sg) => { sg.head.scale.setScalar(near && near.idx === sg.idx ? 1.25 : 1); });
 
     // labels
@@ -516,6 +530,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
 
   const api = {
     scene, camera, update, resize,
+    applyTheme: (t) => sky.apply(t),
     enter(p, { resume = true } = {}) {
       dispose();
       build(p);
@@ -553,15 +568,14 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       target = null;
       onOpen(near.id);
     },
-    // walk to the next/previous signpost along the road
+    // walk to the previous / next signpost along the road, measured from where you stand on it
     step(d) {
       if (mode !== "walk" || !signs.length) return;
-      let cur = reportedIdx < 0 ? 0 : reportedIdx;
-      const here = signs[cur];
-      // if we're already at this signpost, move on; otherwise go to it first
-      const atIt = here && here.pos.distanceTo(tv2.copy(P).multiplyScalar(Rp + 0.1)) < NEAR;
-      const next = clamp(atIt ? cur + d : cur, 0, signs.length - 1);
-      walkTo(signs[next], false);
+      const s = roadS();
+      let pick;
+      if (d > 0) pick = signs.find((x) => x.s > s + 3) || signs[signs.length - 1];
+      else pick = [...signs].reverse().find((x) => x.s < s - 3) || signs[0];
+      walkTo(pick, false);
     },
     get signCount() { return signs.length; }
   };

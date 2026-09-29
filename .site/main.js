@@ -1,4 +1,6 @@
 import { warp } from "./transition.js";
+import { theme } from "./theme.js";
+import { navFor } from "./nav.js";
 
 // Router + views. The 3D scenes plug in per route; the text views below are also the permanent accessible fallback.
 const $ = (s) => document.querySelector(s);
@@ -45,7 +47,6 @@ function planetView(p) {
           <ul class="chips">${d.topics.map((id) => { const t = content.topics[id]; return `<li><a class="chip ${t.status}" href="#/${id}">${esc(t.title)}</a></li>`; }).join("")}</ul>
         </section>`).join("");
   return `
-    <nav class="crumbs"><a href="#/galaxy">Galaxy</a> / ${esc(p.title)}${planetScene && !p.planned ? ` · <a href="#/${p.id}">Walk the road →</a>` : ""}</nav>
     <header class="page-head" style="--c:${p.color}">${planetDot(p)}<div><p class="kicker">${STATUS[p.status]}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p></div></header>
     ${body}`;
 }
@@ -62,10 +63,8 @@ function topicView(t) {
   const title = esc(t.title).split(" ").map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`).join(" ");
   const card = (o, dir) => o ? `<a class="pager-card ${dir}" href="#/${o.id}"><small>${dir === "prev" ? "← Previous" : "Next →"}</small><b>${esc(o.title)}</b></a>` : "<span></span>";
   return `
-    <nav class="crumbs"><a href="#/galaxy">Galaxy</a>${p ? ` / <a href="#/${p.id}">${esc(p.title)}</a>` : ""}${d && d.title !== p.title ? ` / ${esc(d.title)}` : ""} / ${esc(t.title)}</nav>
     <article class="article topic" style="--c:${p ? p.color : "#b39cf5"}">
       <div class="blobs" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-      ${planetScene && p ? `<button class="back-road" data-back="${p.id}">🚀 Back to the road</button>` : ""}
       <header class="t-hero">
         <p class="kicker">${p ? esc(p.title) : "Overview"}${d && d.title !== p.title ? ` · ${esc(d.title)}` : ""} ${badge(t.status)}</p>
         <h2 class="t-title">${title}</h2>
@@ -116,10 +115,47 @@ const galaxyEl = $("#galaxy");
 const planetEl = $("#planet");
 
 function setPlanetUi(p) {
-  $("#pmeta").textContent = p.title;
-  $("#plist").href = `#/${p.id}?text`;
+  setProgress(0, p.districts.reduce((n, d) => n + d.topics.length, 0));
   $("#pprompt").hidden = true;
 }
+let lastProgress = [0, 0];
+function setProgress(n, total) {
+  lastProgress = [n, total];
+  const el = $("#pmeta");
+  if (el) el.textContent = `${n} / ${total} topics`;
+}
+
+// ---------- navigation bar: Home → Galaxy → Planet → Topic (see nav.js)
+function renderNav(info) {
+  const el = $("#navbar");
+  if (!info) { el.hidden = true; return; }
+  const a = (c, cls = "") => c.href
+    ? `<a class="${cls}" href="${c.href}"${c.warp ? ` data-warp="${c.warp}"` : ""}${c.board ? " data-board" : ""}${c.title ? ` title="${esc(c.title)}"` : ""}>${esc(c.label)}</a>`
+    : `<span class="${cls}" aria-current="page">${esc(c.label)}</span>`;
+  el.hidden = false;
+  el.innerHTML = `
+    ${a({ ...info.back, label: "‹ " + info.back.label }, "nb-back clay-pill")}
+    <ol class="nb-crumbs clay-pill">${info.crumbs.map((c) => `<li>${a(c)}</li>`).join("")}</ol>
+    <span class="nb-actions">${info.progress ? `<span class="clay-pill" id="pmeta" aria-live="off"></span>` : ""}${info.actions.map((c) => a(c, "clay-pill")).join("")}</span>`;
+  if (info.progress) setProgress(...lastProgress);
+}
+$("#navbar").addEventListener("click", (e) => {
+  const l = e.target.closest("a[href]");
+  if (!l || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+  if (l.hasAttribute("data-board")) { e.preventDefault(); backToGalaxy(); }
+  else if (l.dataset.warp) {
+    e.preventDefault();
+    const id = decodeURIComponent(l.getAttribute("href").slice(2));
+    const pl = content.planets.find((p) => p.id === id);
+    warpTo(l.getAttribute("href"), +l.dataset.warp, pl ? pl.color : "#b39cf5");
+  }
+});
+// Esc always means "go back one level"
+addEventListener("keydown", (e) => {
+  if (e.key !== "Escape" || e.defaultPrevented || warp.busy || flying || launching) return;
+  const b = $("#navbar:not([hidden]) .nb-back");
+  if (b) b.click();
+});
 function showPrompt(info) {
   const el = $("#pprompt");
   if (!info) { el.hidden = true; return; }
@@ -188,6 +224,7 @@ function route() {
       if (planetKey !== key) { planetKey = key; setPlanetUi(planetObj); planetScene.enter(planetObj); }
     } else { planetScene.leave(); planetKey = null; }
   }
+  renderNav(navFor({ key, query, content, has3d: !!galaxy }));
   if (isPlanet) { setTitle(`${planetObj.title} · AI Base`); return; }
   if (isHome) { setTitle("AI Base"); return; }
   if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
@@ -219,8 +256,6 @@ addEventListener("hashchange", route);
 // ---------- warp between topics, and back to the road
 view.addEventListener("click", (e) => {
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || !view.querySelector(".topic")) return;
-  const back = e.target.closest("[data-back]");
-  if (back) { e.preventDefault(); const pl = content.planets.find((p) => p.id === back.dataset.back); return warpTo(`#/${pl.id}`, -1, pl.color); }
   const a = e.target.closest('a[href^="#/"]');
   if (!a || a.dataset.scroll) return;
   const href = decodeURIComponent(a.getAttribute("href").slice(2));
@@ -229,12 +264,6 @@ view.addEventListener("click", (e) => {
   if (topic) { e.preventDefault(); warpTo(`#/${href}`, 1, colorOf(topic)); }
   else if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`, -1, planet.color); }
 });
-addEventListener("keydown", (e) => {
-  if (e.key !== "Escape" || !planetScene) return;
-  const art = view.querySelector(".topic [data-back]");
-  if (art && !view.hidden) { const pl = content.planets.find((p) => p.id === art.dataset.back); warpTo(`#/${pl.id}`, -1, pl.color); }
-});
-
 // ---------- launch
 $("#launch").addEventListener("click", async () => {
   if (launching) return;
@@ -280,10 +309,11 @@ if (content) {
       content,
       labelsEl: $("#tlabels"),
       onNear: showPrompt,
-      onProgress: (i, n) => { $("#pmeta").textContent = `${content.planets.find((p) => p.id === planetKey).title} · ${i} / ${n}`; },
+      onProgress: setProgress,
       onOpen: openTopic,
       onBack: backToGalaxy
     });
+    theme.subscribe((t) => { homeScene.applyTheme(t); galaxy.applyTheme(t); planetScene.applyTheme(t); });
     document.body.classList.add("gl");
     route();
   } catch (err) {
