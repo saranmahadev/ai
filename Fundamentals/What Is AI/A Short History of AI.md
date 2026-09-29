@@ -72,6 +72,14 @@ Algorithms, data and compute.
 They were narrow and brittle, and keeping their hand-written rules up to date was expensive.
 </details>
 
+## Key terms
+
+* **AI winter:** a period of sharply reduced funding and interest after a wave of over-promising.
+* **Perceptron:** an early learning model: a single artificial neuron that classifies its inputs.
+* **Expert system:** a rule-based program that captures a specialist's knowledge.
+* **Backpropagation:** the method for training multi-layer networks by passing the error backwards through them.
+* **Transformer:** a neural network architecture built on attention, introduced in 2017.
+
 ## Related
 
 [[What Counts as AI]] · [[Rules vs Learning]] · [[Narrow, General and Super AI]] · [[Expert Systems and Their Limits]] · [[Deep Learning]] · [[Transformers]]

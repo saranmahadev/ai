@@ -85,6 +85,15 @@ BFS, when every step costs the same.
 10⁴ = 10,000.
 </details>
 
+## Key terms
+
+* **State space:** all the states a problem can be in, joined by actions.
+* **Frontier:** the states discovered but not yet explored.
+* **Goal test:** the check that says a state is a solution.
+* **Breadth-first search:** exploring the nearest states first, in rings.
+* **Depth-first search:** following one route as deep as possible before backing up.
+* **Branching factor:** the number of actions available from a typical state.
+
 ## Related
 
 [[State and Representation]] · [[Kinds of Environments]] · [[Heuristics and A-star Search]] · [[Planning]] · [[Optimization]]

@@ -83,6 +83,14 @@ A model performs arithmetic, so every input must be represented as numbers first
 If the data going in is poor, the results coming out will be poor, however clever the model.
 </details>
 
+## Key terms
+
+* **Data:** recorded information about the world.
+* **Structured data:** data in neat rows and columns, like a spreadsheet.
+* **Unstructured data:** free-form data such as text, images and audio.
+* **Time series:** measurements recorded in order over time.
+* **Token:** a chunk of text, such as a word or word piece, converted into a number.
+
 ## Related
 
 [[Features and Labels]] · [[State and Representation]] · [[Machine Learning]] · [[Where AI Goes Wrong]]

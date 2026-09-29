@@ -83,6 +83,13 @@ Machine learning is bigger. Deep learning is the part of it that uses many-layer
 No. It recognises (classifies) images; it does not create new ones. It is deep learning, not generative AI.
 </details>
 
+## Key terms
+
+* **Machine learning:** methods in which a system learns patterns from data instead of following hand-written rules.
+* **Neural network:** a model built from many simple connected units whose connection strengths are learned.
+* **Deep learning:** machine learning with neural networks that have many layers.
+* **Generative AI:** models that create new content such as text, images, audio or code.
+
 ## Related
 
 [[What Counts as AI]] · [[Rules vs Learning]] · [[Machine Learning]] · [[Deep Learning]] · [[Generative AI]]

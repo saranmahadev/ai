@@ -85,6 +85,13 @@ Every fact that affects the right decision, and little else.
 The number of possible situations multiplies with each new fact, so there is much more for the agent to distinguish and learn about.
 </details>
 
+## Key terms
+
+* **State:** the agent's summary of the situation, holding every fact its decision depends on.
+* **Representation:** the form in which the state is written: numbers, a table, a graph or learned vectors.
+* **State explosion:** the way the number of possible states multiplies with each extra fact.
+* **Embedding:** a list of numbers, usually learned by a model, that represents something such as a word.
+
 ## Related
 
 [[Agents and Environments]] · [[PDA Loop]] · [[Kinds of Environments]] · [[Search]] · [[Logic and Knowledge Representation]]

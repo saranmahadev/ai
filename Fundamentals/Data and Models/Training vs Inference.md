@@ -90,6 +90,14 @@ Its parameters were set from data that stopped at training time, and it does not
 Predict, measure the error, nudge the parameters to reduce it, and repeat.
 </details>
 
+## Key terms
+
+* **Training:** adjusting a model's parameters using examples.
+* **Inference:** using a trained, frozen model to make predictions on new inputs.
+* **Loss:** the number that training tries to make small.
+* **Gradient descent:** repeatedly nudging parameters in the direction that lowers the loss.
+* **Converged:** no longer improving noticeably, so training can stop.
+
 ## Related
 
 [[A Model Is a Function]] · [[Types of Tasks]] · [[Generalization]] · [[Derivatives]] · [[Optimization]]

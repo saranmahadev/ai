@@ -98,6 +98,15 @@ Repeatedly applying rules to known facts, adding the conclusions, until nothing 
 Each derived fact traces back to the specific facts and rule that produced it.
 </details>
 
+## Key terms
+
+* **Fact:** a statement taken to be true.
+* **Rule:** an if-then statement saying what follows from what.
+* **Inference:** deriving new facts from known facts and rules.
+* **Forward chaining:** applying rules repeatedly to known facts until nothing new appears.
+* **Knowledge graph:** facts stored as things linked by relations.
+* **Ontology:** a structured description of categories and how they relate.
+
 ## Related
 
 [[State and Representation]] · [[Planning]] · [[Expert Systems and Their Limits]] · [[Rules vs Learning]] · [[Dot Product]]

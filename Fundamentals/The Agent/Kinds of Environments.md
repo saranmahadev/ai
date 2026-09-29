@@ -74,6 +74,14 @@ Sequential (as opposed to episodic).
 It has all five hard properties: it is partly observable, stochastic, sequential, dynamic and multi-agent, while chess is fully observable, deterministic and static.
 </details>
 
+## Key terms
+
+* **Fully or partly observable:** whether the agent can see everything relevant.
+* **Deterministic or stochastic:** whether outcomes are fixed by the state and action, or involve chance.
+* **Episodic or sequential:** whether decisions stand alone or shape later options.
+* **Static or dynamic:** whether the world waits for the agent or keeps changing.
+* **Multi-agent:** an environment in which other agents also act, cooperating or competing.
+
 ## Related
 
 [[Agents and Environments]] · [[State and Representation]] · [[PDA Loop]] · [[Probability Distributions]] · [[Agents]]

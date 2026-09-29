@@ -92,6 +92,14 @@ Perception. The decision rule may be perfectly sensible; it was given wrong inpu
 An open loop acts without checking the result, like a timer. A closed loop perceives the result and adjusts, like a thermostat.
 </details>
 
+## Key terms
+
+* **Perception:** turning raw signals into an understanding of the situation.
+* **Decision:** choosing an action based on that understanding and the goal.
+* **Action:** carrying out the choice and changing the world.
+* **Feedback:** the effect of an action coming back as the next perception.
+* **Closed loop:** a system that checks the results of its actions and adjusts, unlike an open loop that acts blindly.
+
 ## Related
 
 [[Agents and Environments]] · [[Goals, Utility and Rationality]] · [[Kinds of Environments]] · [[Agents]]

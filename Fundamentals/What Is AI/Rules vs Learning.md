@@ -84,6 +84,13 @@ They see which words are blocked and switch to others. The rules must be rewritt
 When the cases are few and clear, or when each decision must be explained and audited. A safety limit such as "never allow a negative balance" is one.
 </details>
 
+## Key terms
+
+* **Rule-based system:** one whose behaviour is set by hand-written if-then rules.
+* **Training data:** the examples a system learns from.
+* **Label:** the correct answer attached to a training example, such as “spam”.
+* **Brittle:** working only in the situations it was written for, and failing badly outside them.
+
 ## Related
 
 [[What Counts as AI]] · [[AI, ML, DL and Generative AI]] · [[Expert Systems and Their Limits]] · [[Machine Learning]] · [[Bayes Theorem]]

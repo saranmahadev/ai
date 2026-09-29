@@ -83,6 +83,13 @@ It adds noise and can lead the model to find patterns that are not real.
 Choosing and shaping the input features by hand so the model has useful information to work with.
 </details>
 
+## Key terms
+
+* **Feature:** one measurable fact about an example.
+* **Feature vector:** the list of an example's features.
+* **Label:** the answer the model is asked to predict.
+* **Feature engineering:** choosing and shaping features by hand to give a model useful information.
+
 ## Related
 
 [[Data as Raw Material]] · [[A Model Is a Function]] · [[Types of Tasks]] · [[Dot Product]] · [[Machine Learning]]

@@ -79,6 +79,13 @@ There is no agreed definition or test, so the answer depends on which definition
 A system can be excellent at one task and weak at a similar-looking one, so judging it from a single strength is misleading.
 </details>
 
+## Key terms
+
+* **Narrow AI:** a system built for one task or a tight family of tasks.
+* **Artificial general intelligence (AGI):** a hypothetical system flexible across most intellectual tasks a person can do. There is no agreed definition or test.
+* **Superintelligence:** a hypothetical system far better than the best humans at nearly everything.
+* **Uneven ability:** being excellent at one task and weak at a similar-looking one.
+
 ## Related
 
 [[What Counts as AI]] · [[AI, ML, DL and Generative AI]] · [[A Short History of AI]] · [[LLMs]] · [[Agents]]

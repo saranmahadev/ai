@@ -89,6 +89,14 @@ No. It chooses the action with the best expected result given what it knows, whi
 The agent optimises exactly what it was told, which may differ from what was intended, for example rewarding clicks instead of quality.
 </details>
 
+## Key terms
+
+* **Goal:** what the agent is trying to achieve.
+* **Utility:** a number scoring how good an outcome is for the agent.
+* **Expected value:** the average result when each possible outcome is weighted by its chance.
+* **Rational:** choosing the action with the best expected result given what is known, not necessarily the best in hindsight.
+* **Misspecified goal:** an objective that differs from what its designers actually wanted.
+
 ## Related
 
 [[Agents and Environments]] · [[PDA Loop]] · [[Optimization]] · [[Probability Fundamentals]] · [[Machine Learning]]

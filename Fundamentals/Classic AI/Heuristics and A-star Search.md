@@ -74,6 +74,14 @@ It never overestimates the true remaining cost, so A* is guaranteed to find the 
 It looks only at the guessed distance to the goal and ignores the cost already paid, so it can commit to a poor route.
 </details>
 
+## Key terms
+
+* **Heuristic:** a cheap, informed estimate of how far a state is from the goal.
+* **Admissible heuristic:** one that never overestimates the true remaining cost.
+* **Manhattan distance:** the steps needed on a grid if nothing blocked the way: |Δrow| + |Δcolumn|.
+* **A*:** a search that picks states by steps so far plus the heuristic estimate.
+* **Greedy best-first search:** a search that follows the heuristic alone.
+
 ## Related
 
 [[Search]] · [[Planning]] · [[Optimization]] · [[State and Representation]]

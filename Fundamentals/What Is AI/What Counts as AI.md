@@ -87,6 +87,13 @@ Acting humanly means behaving so that people cannot tell you from a person. Acti
 The tendency to stop calling a technique AI once it works reliably and becomes ordinary.
 </details>
 
+## Key terms
+
+* **Artificial intelligence (AI):** the field, and the systems, aimed at machines that sense, decide and act towards goals.
+* **Turing test:** Turing's imitation game, in which a judge tries to tell a machine from a person by conversation alone.
+* **Rational agent:** an agent that chooses the action expected to best achieve its goal, given what it knows.
+* **AI effect:** the habit of no longer calling a technique AI once it has become routine.
+
 ## Related
 
 [[AI, ML, DL and Generative AI]] · [[Rules vs Learning]] · [[Agents and Environments]] · [[PDA Loop]]

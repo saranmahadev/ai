@@ -8,5 +8,6 @@ By the end you will be able to take any AI system, from a thermostat to a chatbo
 2. [[The Agent]]: the unit every AI system is built around, and the perceive → decide → act loop.
 3. [[Data and Models]]: what data is, what a model is, and the difference between training and using one.
 4. [[Classic AI]]: search, heuristics, logic, planning and expert systems, the methods AI used before learning took over.
+5. [[Judging AI]]: how to measure a system, whether it generalises, where it fails, and how the whole picture fits together.
 
-One more district, on judging AI, is still to come.
+From here the road leads on to [[Math]], the language every model is written in, and then [[Machine Learning]].

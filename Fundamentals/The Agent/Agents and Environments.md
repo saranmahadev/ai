@@ -83,6 +83,14 @@ What the agent's sensors report at a given moment, for example "my square is dir
 Without one it cannot tell a good action from a bad one, so any action is as good as another.
 </details>
 
+## Key terms
+
+* **Agent:** anything that perceives its environment through sensors and acts on it through actuators to pursue a goal.
+* **Environment:** everything outside the agent that it senses and affects.
+* **Sensor:** a channel through which the agent receives information: a camera, a microphone, a data feed.
+* **Actuator:** a channel through which the agent acts: a motor, a screen, an outgoing message.
+* **Percept:** what the sensors report at one moment.
+
 ## Related
 
 [[What Counts as AI]] · [[PDA Loop]] · [[Goals, Utility and Rationality]] · [[Agents]]

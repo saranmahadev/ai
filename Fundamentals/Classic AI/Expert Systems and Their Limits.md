@@ -86,6 +86,13 @@ Failing badly, or having nothing to say, when a case falls outside the situation
 It depends on experts putting their skill into explicit rules, which is slow, expensive and often incomplete.
 </details>
 
+## Key terms
+
+* **Knowledge base:** the collection of rules and facts written by people.
+* **Inference engine:** the general machinery that applies the rules to a case.
+* **Knowledge acquisition bottleneck:** the difficulty of getting experts' skill into explicit rules.
+* **Brittleness:** failing badly outside the situations the rules cover.
+
 ## Related
 
 [[Logic and Knowledge Representation]] · [[Rules vs Learning]] · [[A Short History of AI]] · [[Machine Learning]]

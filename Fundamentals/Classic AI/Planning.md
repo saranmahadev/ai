@@ -84,6 +84,14 @@ Block B sits on top of it, so A is not clear.
 Replan from the new situation, by running the perceive–decide–act loop again.
 </details>
 
+## Key terms
+
+* **Plan:** a sequence of actions that reaches a goal.
+* **Precondition:** what must be true before an action is allowed.
+* **Effect:** what changes after an action.
+* **Replanning:** making a new plan when the world does not go as expected.
+* **STRIPS:** an early planning language that described actions by their preconditions and effects.
+
 ## Related
 
 [[Search]] · [[Heuristics and A-star Search]] · [[Logic and Knowledge Representation]] · [[PDA Loop]] · [[Agents]]

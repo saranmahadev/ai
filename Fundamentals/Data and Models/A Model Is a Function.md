@@ -49,6 +49,23 @@ fallback: A scatter plot of fourteen houses (size against price) with a line con
 
 **What you should notice:** even the best dials do not reach zero error, because real data is noisy and a straight line cannot capture everything. A model gets *close*, not *perfect*.
 
+## Functions you already use
+
+You meet functions with dials all the time. What differs in AI is *how the dials get set*:
+
+| System | Input | The function | Output | Where the dials come from |
+| --- | --- | --- | --- | --- |
+| Thermostat | room temperature | "heat if below the target" | on or off | a person sets the target |
+| House-price line | size in m² | `w × size + b` | a price | learned from sales data |
+| Spam filter | the words in an email | a weighted sum of word clues | a spam score | learned from labelled emails |
+| Language model | the text so far | a very large network | the next word | learned from vast amounts of text |
+
+The thermostat's dial is set by hand. The others are set by learning. That is the whole difference between a fixed program and a model.
+
+## Shapes of model
+
+A line is one *shape* of function. Others include decision trees (a chain of yes/no questions), and neural networks (many layers of simple units). Each shape can express different patterns, and choosing one is a design decision made before any learning happens. A straight line, for instance, can never capture a pattern that curves, however well its dials are set.
+
 ## Where it appears in AI
 
 Everything in [[Machine Learning]] is a function with parameters, from lines to decision trees to the [[Neural Networks]] that power [[Deep Learning]]. The dials are set by [[Optimization]], as the next topic shows.
@@ -73,6 +90,13 @@ The two numbers, 2.2 and 35 (`w` and `b`).
 <details><summary>3. What does "learning" mean here?</summary>
 Finding parameter values that make the model's predictions match real examples well.
 </details>
+
+## Key terms
+
+* **Model:** a function that turns inputs into a prediction.
+* **Parameter:** an adjustable number inside a model, set by learning.
+* **Prediction:** the output the model produces for an input.
+* **Error (loss):** a number measuring how far predictions are from the true answers.
 
 ## Related
 
