@@ -7,7 +7,7 @@ const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 const view = $("#view");
 const home = $("#home");
 let content = null;
-let stage = null, homeScene = null, galaxy = null;
+let stage = null, homeScene = null, galaxy = null, planetScene = null, planetKey = null;
 let launching = false, flying = false;
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -41,7 +41,7 @@ function planetView(p) {
           <ul class="chips">${d.topics.map((id) => { const t = content.topics[id]; return `<li><a class="chip ${t.status}" href="#/${id}">${esc(t.title)}</a></li>`; }).join("")}</ul>
         </section>`).join("");
   return `
-    <nav class="crumbs"><a href="#/galaxy">Galaxy</a> / ${esc(p.title)}</nav>
+    <nav class="crumbs"><a href="#/galaxy">Galaxy</a> / ${esc(p.title)}${planetScene && !p.planned ? ` · <a href="#/${p.id}">Walk the road →</a>` : ""}</nav>
     <header class="page-head" style="--c:${p.color}">${planetDot(p)}<div><p class="kicker">${STATUS[p.status]}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p></div></header>
     ${body}`;
 }
@@ -64,6 +64,36 @@ function topicView(t) {
 
 // ---------- router
 const galaxyEl = $("#galaxy");
+const planetEl = $("#planet");
+
+function setPlanetUi(p) {
+  $("#pmeta").textContent = p.title;
+  $("#plist").href = `#/${p.id}?text`;
+  $("#pprompt").hidden = true;
+}
+function showPrompt(info) {
+  const el = $("#pprompt");
+  if (!info) { el.hidden = true; return; }
+  el.hidden = false;
+  el.innerHTML = info.kind === "rocket"
+    ? `<p class="kicker">Your rocket</p><h3>${esc(info.title)}</h3><p class="blurb">${esc(info.sub)}</p><button class="cta small" data-act="interact">Take off 🚀 <kbd>E</kbd></button>`
+    : `<p class="kicker">${esc(info.district)} ${badge(info.status)}</p><h3>${esc(info.title)}</h3><button class="cta small" data-act="interact">Open topic <kbd>E</kbd></button>`;
+}
+async function openTopic(id) {
+  if (flying) return;
+  flying = true;
+  $("#white").classList.add("on");
+  await new Promise((r) => setTimeout(r, reduceMotion ? 0 : 650));
+  flying = false;
+  location.hash = `#/${id}`;
+  $("#white").classList.remove("on");
+}
+async function backToGalaxy() {
+  $("#white").classList.add("on");
+  await new Promise((r) => setTimeout(r, reduceMotion ? 0 : 500));
+  location.hash = "#/galaxy";
+  $("#white").classList.remove("on");
+}
 
 function showGalaxyCard(i) {
   const p = content.planets[i];
@@ -90,17 +120,28 @@ async function flyTo(i) {
 
 function route() {
   if (!content) return;
-  const parts = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("/").filter(Boolean);
+  const [pathPart, query] = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("?");
+  const parts = pathPart.split("/").filter(Boolean);
   const key = parts.join("/");
+  const planetObj = parts.length === 1 && content.planets.find((p) => p.id === key);
+  const isPlanet = !!(planetScene && planetObj && !planetObj.planned && query !== "text");
   const isHome = parts.length === 0;
   const isGalaxy = key === "galaxy" && !!galaxy;
   document.body.classList.toggle("route-home", isHome);
   document.body.classList.toggle("route-galaxy", isGalaxy);
+  document.body.classList.toggle("route-planet", isPlanet);
+  planetEl.hidden = !isPlanet;
   home.hidden = !isHome;
   galaxyEl.hidden = !isGalaxy;
-  view.hidden = isHome || isGalaxy;
-  if (stage) stage.setActive(isHome ? homeScene : isGalaxy ? galaxy : null);
+  view.hidden = isHome || isGalaxy || isPlanet;
+  if (stage) stage.setActive(isHome ? homeScene : isGalaxy ? galaxy : isPlanet ? planetScene : null);
   if (galaxy) { if (isGalaxy) galaxy.enter(); else galaxy.leave(); }
+  if (planetScene) {
+    if (isPlanet) {
+      if (planetKey !== key) { planetKey = key; setPlanetUi(planetObj); planetScene.enter(planetObj); }
+    } else { planetScene.leave(); planetKey = null; }
+  }
+  if (isPlanet) { document.title = `${planetObj.title} · AI Knowledge Brain`; return; }
   if (isHome) { document.title = "AI Knowledge Brain"; return; }
   if (isGalaxy) { document.title = "Galaxy · AI Knowledge Brain"; return; }
 
@@ -154,6 +195,7 @@ if (content) {
     const { createStage } = await import("./scenes/stage.js");
     const homeMod = await import("./scenes/home.js");
     const galaxyMod = await import("./scenes/galaxy.js");
+    const planetMod = await import("./scenes/planet.js");
     stage = createStage($("#scene"));
     homeScene = homeMod.create({ onWhiteout: () => $("#white").classList.add("on") });
     galaxy = galaxyMod.create({
@@ -164,12 +206,20 @@ if (content) {
       onSun: () => { location.hash = "#/ai"; },
       onWhiteout: () => $("#white").classList.add("on")
     });
+    planetScene = planetMod.create({
+      content,
+      labelsEl: $("#tlabels"),
+      onNear: showPrompt,
+      onProgress: (i, n) => { $("#pmeta").textContent = `${content.planets.find((p) => p.id === planetKey).title} · ${i} / ${n}`; },
+      onOpen: openTopic,
+      onBack: backToGalaxy
+    });
     document.body.classList.add("gl");
     route();
   } catch (err) {
     console.warn("3D unavailable, using the text version.", err);
     document.body.classList.add("no-gl");
-    stage = homeScene = galaxy = null;
+    stage = homeScene = galaxy = planetScene = null;
     route();
   }
 }
@@ -184,3 +234,25 @@ addEventListener("keydown", (e) => {
   else if (e.key === "ArrowLeft") galaxy.step(-1);
   else if (e.key === "Enter" && !e.target.closest("button, a")) flyTo(galaxy.focus());
 });
+
+// ---------- planet controls
+$("#pprev").addEventListener("click", () => planetScene && planetScene.step(-1));
+$("#pnext").addEventListener("click", () => planetScene && planetScene.step(1));
+$("#pprompt").addEventListener("click", (e) => { if (e.target.closest("[data-act=interact]") && planetScene) planetScene.interact(); });
+{
+  // touch joystick
+  const joy = $("#pjoy"), knob = joy.firstElementChild;
+  let id = null;
+  const set = (e) => {
+    const r = joy.getBoundingClientRect(), R = r.width / 2;
+    let dx = e.clientX - (r.left + R), dy = e.clientY - (r.top + R);
+    const d = Math.hypot(dx, dy), k = d > R * 0.8 ? (R * 0.8) / d : 1;
+    dx *= k; dy *= k;
+    knob.style.transform = `translate(${dx}px, ${dy}px)`;
+    planetScene && planetScene.setStick(dx / (R * 0.8), dy / (R * 0.8));
+  };
+  joy.addEventListener("pointerdown", (e) => { id = e.pointerId; joy.setPointerCapture(id); set(e); });
+  joy.addEventListener("pointermove", (e) => { if (e.pointerId === id) set(e); });
+  const end = (e) => { if (e.pointerId !== id) return; id = null; knob.style.transform = ""; planetScene && planetScene.setStick(0, 0); };
+  joy.addEventListener("pointerup", end); joy.addEventListener("pointercancel", end);
+}
