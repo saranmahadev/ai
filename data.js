@@ -3,7 +3,7 @@ export const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 // status: "written" = note has content, "outlined" = note exists but is empty, "planned" = no note yet
 export const stages = [
   {
-    id: "01", title: "AI Fundamentals", kicker: "Start here", color: "#67e8f9",
+    id: "01", title: "AI Fundamentals", kicker: "Start here", color: "#79d3c1",
     note: "Fundamentals.md", status: "written",
     blurb: "What AI is and how an intelligent system perceives, decides and acts: agents, rationality and the Perception → Decision → Action loop.",
     groups: [
@@ -13,7 +13,7 @@ export const stages = [
     ]
   },
   {
-    id: "02", title: "Math", kicker: "The language of models", color: "#a78bfa",
+    id: "02", title: "Math", kicker: "The language of models", color: "#b39cf5",
     note: "Math.md", status: "written",
     blurb: "Eight areas that every later stage leans on, from vectors and gradients to entropy and numerical stability.",
     groups: [
@@ -26,7 +26,7 @@ export const stages = [
     ]
   },
   {
-    id: "03", title: "Machine Learning", kicker: "Learn from data", color: "#fbbf24",
+    id: "03", title: "Machine Learning", kicker: "Learn from data", color: "#ffc46b",
     note: "Machine Learning.md", status: "outlined",
     blurb: "Building systems that learn patterns from data instead of being handed every rule. Data plus correct answers go into a learning algorithm; a model comes out.",
     groups: [
@@ -35,7 +35,7 @@ export const stages = [
     ]
   },
   {
-    id: "04", title: "Deep Learning", kicker: "Learn representations", color: "#fb7185",
+    id: "04", title: "Deep Learning", kicker: "Learn representations", color: "#ff8f8f",
     note: "Deep Learning.md", status: "outlined",
     blurb: "Machine learning with multi-layer neural networks that learn useful representations themselves, powerful on images, audio, video and language.",
     groups: [
@@ -43,19 +43,19 @@ export const stages = [
     ]
   },
   {
-    id: "05", title: "Neural Networks", kicker: "The building block", color: "#34d399",
+    id: "05", title: "Neural Networks", kicker: "The building block", color: "#7fd48a",
     status: "planned",
     blurb: "The multi-layer networks that deep learning is made of. Note not written yet.",
     groups: []
   },
   {
-    id: "06", title: "Transformers", kicker: "Attention era", color: "#60a5fa",
+    id: "06", title: "Transformers", kicker: "Attention era", color: "#7db7ff",
     status: "planned",
     blurb: "The architecture behind modern generative models. Note not written yet.",
     groups: []
   },
   {
-    id: "07", title: "Generative AI", kicker: "Create, don't just classify", color: "#f472b6",
+    id: "07", title: "Generative AI", kicker: "Create, don't just classify", color: "#ff9ccf",
     status: "planned",
     blurb: "AI that creates new content from patterns learned in existing data: text, images, audio, video and code.",
     groups: [
@@ -63,19 +63,19 @@ export const stages = [
     ]
   },
   {
-    id: "08", title: "LLMs", kicker: "Language at scale", color: "#f97316",
+    id: "08", title: "LLMs", kicker: "Language at scale", color: "#ffa970",
     status: "planned",
     blurb: "Transformers that predict the next token, over and over, until a response is complete.",
     groups: []
   },
   {
-    id: "09", title: "RAG", kicker: "Ground the model", color: "#2dd4bf",
+    id: "09", title: "RAG", kicker: "Ground the model", color: "#5fd1d9",
     status: "planned",
     blurb: "Retrieval-augmented generation. Note not written yet.",
     groups: []
   },
   {
-    id: "10", title: "Agents", kicker: "Put it all together", color: "#e879f9",
+    id: "10", title: "Agents", kicker: "Put it all together", color: "#c99bf0",
     status: "planned",
     blurb: "Systems that perceive, decide and act using everything before them. It closes the loop back to the Fundamentals.",
     groups: []
