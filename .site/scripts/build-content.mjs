@@ -134,12 +134,13 @@ function render(note) {
         const html = this.parser.parseInline(tokens);
         const text = html.replace(/<[^>]+>/g, "");
         const id = slug(text) || `h${toc.length}`;
-        if (depth >= 2 && depth <= 3) toc.push({ id, text, depth });
+        if (depth >= 1 && depth <= 3) toc.push({ id, text, depth });
         return `<h${depth} id="${id}">${html}</h${depth}>\n`;
       }
     }
   });
   let html = marked.parse(md, { async: false });
+  if (toc.length && toc[0].depth === 1 && html.trimStart().startsWith("<h1")) toc.shift(); // the leading title repeats the page title
   html = html.replace(/<blockquote>\s*<p>\[!(\w+)\]\s*([^\n<]*)/g, (_, type, title) =>
     `<blockquote class="callout callout-${type.toLowerCase()}"><p><strong>${title.trim() || type}</strong>`);
   return { html, toc, links };
