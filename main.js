@@ -1,6 +1,7 @@
 import { warp } from "./transition.js";
 import { theme } from "./theme.js";
 import { navFor } from "./nav.js";
+import * as benchKit from "./benches/kit.js";
 
 // Router + views. The 3D scenes plug in per route; the text views below are also the permanent accessible fallback.
 const $ = (s) => document.querySelector(s);
@@ -107,7 +108,32 @@ function enhanceArticle() {
   };
   addEventListener("scroll", onScroll, { passive: true });
   onScroll();
-  cleanupArticle = () => { removeEventListener("scroll", onScroll); if (io) io.disconnect(); bar.style.transform = "scaleX(0)"; };
+  const stopBenches = mountBenches(art);
+  cleanupArticle = () => { removeEventListener("scroll", onScroll); if (io) io.disconnect(); stopBenches(); bar.style.transform = "scaleX(0)"; };
+}
+
+// ---------- benches: interactive demos embedded in articles (see benches/kit.js), loaded when scrolled near
+function mountBenches(art) {
+  const roots = [...art.querySelectorAll(".bench[data-bench]")];
+  if (!roots.length) return () => {};
+  const cleanups = [];
+  let gone = false;
+  const load = async (root) => {
+    try {
+      const mod = await import(`./benches/${root.dataset.bench}.js`);
+      if (gone) return;
+      const stop = mod.default(root, benchKit);
+      if (typeof stop === "function") cleanups.push(stop);
+    } catch (err) {
+      console.error(`bench ${root.dataset.bench} failed`, err);
+      root.classList.add("failed");
+    }
+  };
+  const io = "IntersectionObserver" in window
+    ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { io.unobserve(e.target); load(e.target); } }), { rootMargin: "300px 0px" })
+    : null;
+  roots.forEach((r) => (io ? io.observe(r) : load(r)));
+  return () => { gone = true; if (io) io.disconnect(); cleanups.forEach((c) => c()); };
 }
 
 // ---------- router
