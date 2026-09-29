@@ -7,7 +7,7 @@
 ## What this repo is
 
 - An Obsidian vault of Markdown notes about AI (`*.md` at the root and in `Math/`).
-- A static site in `.site/` that presents the vault as a galaxy: each domain is a **planet**, you fly there by rocket, walk the **road** of topics, and open a topic as an article. The vault is the source of truth; the site is derived.
+- A static site called **AI Base** in `.site/` (the vault itself is the "AI Knowledge Brain") that presents the vault as a galaxy: each domain is a **planet**, you fly there by rocket, walk the **road** of topics, and open a topic as an article. The vault is the source of truth; the site is derived.
 
 ## Commands (run in `.site/`)
 
@@ -31,14 +31,15 @@ npm run dev         # build content and serve the site at http://localhost:8000
   main.js                  hash router (#/, #/galaxy, #/list, #/<planet>, #/<planet>/<topic>) + galaxy UI + text views
   scenes/                  stage.js (one shared WebGL renderer), home.js (rocket + launch), galaxy.js (planets + rocket flight), planet.js (walkable planet: road, gates, signposts, landing)
   models/                  procedural clay models (rocket, astronaut)
-  vendor/                  three.js, vendored (no CDN for 3D)
+  vendor/                  three.js and the Nunito fonts (OFL), vendored: the site makes no external requests
+  favicon.svg, og.png      icon and 1200×630 social preview (regenerate og.png from a Playwright screenshot of the home page when visuals change)
 ```
 
 - **Style:** claymorphism. Pastel palette, matte clay materials (`scenes/clay.js`), soft shadows, no bloom. Everything is procedural: no downloaded models or textures.
 - **Routing:** hash-based so it works on static hosting. Topic ids are `<planet>/<slug-of-note-title>`; the overview note is `ai`.
 - **Scenes** share one renderer via `scenes/stage.js`: a scene is `{ scene, camera, update(dt, t), resize(w, h) }`. `main.js` activates the scene for the current route; other routes hide the canvas.
 - **Text views** (`main.js`) render the galaxy, planets and articles as accessible HTML. They are the permanent fallback for no-WebGL and reduced-motion users, and the article renderer the 3D flow opens.
-- **Planet scene:** the world is a sphere of radius scaled by topic count; the player is a unit position `P` and heading `H` moved with quaternions, and the camera follows with `up = P`. The road is a spiral sampled on the sphere; signposts sit at fixed road distances. Interactables (rocket, signposts) are found by proximity; `onOpen(topicId)` is where PR 4 hooks the warp transition.
+- **Planet scene:** the world is a sphere of radius scaled by topic count; the player is a unit position `P` and heading `H` moved with quaternions, and the camera follows with `up = P`. The road is a spiral sampled on the sphere; signposts sit at fixed road distances. Interactables (rocket, signposts) are found by proximity. Circular obstacles (trees, rocks, gate posts, signposts, the pad) push the walker out so it slides around them.
 - **Warp:** `warp.play({ color, dir, swap })` (dir 1 = into a topic, -1 = back to the road) runs on wall-clock time, calls `swap()` at its peak (where `main.js` sets `location.hash`), and is skipped under reduced motion. Only navigations that start from the planet scene or from inside an article use it; text-list pages navigate instantly.
 - **`reduce` motion:** every scene must honour `prefers-reduced-motion` and skip long animations.
 
@@ -57,7 +58,7 @@ Delivered in order, one PR each:
 2. **Galaxy** ✅ inside the galaxy you rotate a ring of planets (drag, scroll, arrows, swipe); clicking or "Fly to" sends the rocket to that planet, then lands on its topics page (`#/<planet>`). `#/list` is the text list of planets.
 3. **Planet** ✅ `#/<planet>` lands the rocket on a spherical clay planet; walk an astronaut along the road (WASD/arrows, Shift to run, touch joystick, click-to-travel, ‹ › to jump between signposts). Districts are gates, topics are signposts (solid = written, hollow ring = outlined, cube = index). Walk near one and press E / tap to open it. Returning from a topic resumes at that signpost. `#/<planet>?text` is the text list.
 4. **Topic pages** ✅ pressing E on a signpost dives the camera into its orb while the warp tunnel (`transition.js`) rushes in and opens on the article. The article has an animated title, reading bar, sticky scroll-spy table of contents (level 1–3 headings), reveal-on-scroll, parallax clay blobs, related/mentioned-in chips, and previous/next cards. Every topic link inside an article warps; "Back to the road" (or Esc, or the planet breadcrumb) runs the warp in reverse and returns to that topic's signpost.
-5. **Polish** ☐ mobile controls, performance, accessibility, social preview.
+5. **Polish** ✅ renamed to AI Base, single GitHub link in the header, no "skip to text version" (the list view stays reachable from the galaxy and planet screens); self-hosted fonts (no external requests); favicon and social preview; collision with trees, rocks, gates and signposts; adaptive quality (lighter pixel ratio and shadows on phones, drops to 1× if the first seconds run slowly); boot loader; route announcements and heading focus for screen readers.
 
 ## Verifying changes
 

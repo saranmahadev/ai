@@ -17,7 +17,7 @@ export function create({ onWhiteout }) {
   const sun = new THREE.DirectionalLight(0xfff4e6, 2.4);
   sun.position.set(-12, 22, 14);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(matchMedia("(pointer: coarse)").matches ? 1024 : 2048, matchMedia("(pointer: coarse)").matches ? 1024 : 2048);
   Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 80 });
   sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.04; sun.shadow.radius = 5;
   scene.add(sun);
@@ -50,6 +50,7 @@ export function create({ onWhiteout }) {
       grp.add(p);
     }
     grp.position.set(rand(-45, 45), rand(4, 60), rand(-40, -8));
+    if (grp.position.x < 6 && grp.position.y < 26) grp.position.y += 26; // keep clouds off the headline
     grp.userData = { y: grp.position.y, ph: Math.random() * 6, sp: rand(0.1, 0.3) };
     scene.add(grp);
     clouds.push(grp);

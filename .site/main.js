@@ -15,6 +15,8 @@ const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const loading = fetch("content.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((c) => (content = c));
 
+function setTitle(t) { document.title = t; $("#announce").textContent = t; }
+
 const badge = (s) => `<span class="badge ${s}">${STATUS[s] || s}</span>`;
 const planetDot = (p) => `<span class="orb" style="--c:${p.color}" aria-hidden="true"></span>`;
 
@@ -186,9 +188,9 @@ function route() {
       if (planetKey !== key) { planetKey = key; setPlanetUi(planetObj); planetScene.enter(planetObj); }
     } else { planetScene.leave(); planetKey = null; }
   }
-  if (isPlanet) { document.title = `${planetObj.title} · AI Knowledge Brain`; return; }
-  if (isHome) { document.title = "AI Knowledge Brain"; return; }
-  if (isGalaxy) { document.title = "Galaxy · AI Knowledge Brain"; return; }
+  if (isPlanet) { setTitle(`${planetObj.title} · AI Base`); return; }
+  if (isHome) { setTitle("AI Base"); return; }
+  if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
 
   let html, title;
   if (key === "galaxy" || key === "list") { html = galaxyView(); title = "Planets"; }
@@ -196,9 +198,10 @@ function route() {
   else if (content.planets.find((p) => p.id === key)) { const p = content.planets.find((x) => x.id === key); html = planetView(p); title = p.title; }
   else { html = `<p class="notice">Nothing here. <a href="#/galaxy">Back to the galaxy</a></p>`; title = "Not found"; }
   view.innerHTML = html;
+  { const h = view.querySelector("h2"); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
   if (content.topics[key]) { enhanceArticle(); if (planetScene && content.topics[key].planet) planetScene.remember(content.topics[key].planet, key); }
   else if (cleanupArticle) { cleanupArticle(); cleanupArticle = null; }
-  document.title = `${title} · AI Knowledge Brain`;
+  setTitle(`${title} · AI Base`);
   scrollTo(0, 0);
   view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
 }
@@ -253,6 +256,7 @@ try {
   await loading;
 } catch (err) {
   console.warn("content.json missing; run `npm run content` in .site/", err);
+  document.body.classList.add("no-gl");
   home.innerHTML = `<h1>Almost there</h1><p class="lede">The content index hasn’t been built. Run <code>npm run content</code> in <code>.site/</code>.</p>`;
 }
 if (content) {
