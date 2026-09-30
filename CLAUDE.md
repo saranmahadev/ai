@@ -17,7 +17,7 @@ npm run content     # build the vault into .site/content.json
 npm test            # build in memory and print content warnings (unresolved links, unassigned notes, missing bench modules)
 npm run test:benches  # opens every bench at 1280, 768 and 390px in Chromium (needs Playwright), exercises its controls, fails on console errors or horizontal overflow; --shots=DIR saves screenshots
 npm run test:reader   # exercises the article reading experience in Chromium: type, cover, street strip, settings and themes, drawer, previews, key terms, selection bar, resume, ?at= links, phone width; --shots=DIR
-npm run test:planet   # walks a planet in Chromium: › to the kiosk and to the first street, E opens the article, Back returns to that street; --planet=id --time=HH:MM --shots=DIR
+npm run test:planet   # walks a planet in Chromium: HUD (weather, detail, connections, radar), draw-call budget, seeded scenery, weather with motion, then › to the kiosk and first street, E opens the article, Back returns; --planet=id --time=HH:MM --shots=DIR
 npm run dev         # build content and serve the site at http://localhost:8000
 ```
 
@@ -33,7 +33,8 @@ npm run dev         # build content and serve the site at http://localhost:8000
   theme.js                 time-of-day theme (local clock, or ?time=HH:MM to test): CSS variables + scene re-lighting, refreshed each minute
   nav.js                   navigation model: Back button, breadcrumb trail and actions for each route
   main.js                  hash router (#/, #/galaxy, #/list, #/<planet>, #/<planet>/<topic>) + galaxy UI + text views
-  scenes/                  stage.js (one shared WebGL renderer), home.js (rocket + launch), galaxy.js (planets + rocket flight), planet.js (walkable planet: road, gates, signposts, landing)
+  scenes/                  stage.js (one shared WebGL renderer), home.js (rocket + launch), galaxy.js (planets + rocket flight), planet.js (walkable planet: road, gates, signposts, landing),
+                           city.js (tech layer: textures, materials, landmarks, pulses, pod, drones), grid.js (connection beams + radar), weather.js (weather modes and particles)
   models/                  procedural clay models (rocket, astronaut)
   cover.js                 generated SVG cover art for an article, seeded from its title and planet colour
   reader.js                the reading experience: preferences, floating bar with the street strip, settings, outline drawer, resume, link previews, key-term popovers, selection bar
@@ -60,6 +61,18 @@ npm run dev         # build content and serve the site at http://localhost:8000
   | `#/<planet>/<topic>` | that planet's road, on that topic's street (fade) | none |
 - **Time-of-day theme:** `theme.js` blends keyframes (night, sunrise, day, sunset, twilight) by the visitor's local time and sets `--sky1..3` and an `html.night` class (dark clay UI). Each scene builds a `createSkyRig` (`scenes/clay.js`: sky, fog, lights, stars, moon, night glow on signposts) and exposes `applyTheme(t)`; new scenes must do the same. Use theme variables in CSS (`--clay`, `--ink`, `--soft`, `--white`…), never hard-coded light colours. Test with `?time=22:30` (night), `?time=18:40` (sunset), `?time=07:00` (sunrise).
 - **`reduce` motion:** every scene must honour `prefers-reduced-motion` and skip long animations.
+
+## Tech city, knowledge grid and weather (planet scene)
+
+Luminous accents on top of the clay look: pastel by day, glowing at night (through `sky.addGlow`, which scales emissive with `sky.night`).
+
+- **`city.js`**: `createTech` (circuit-trace road texture, windowed houses, lodge doors and status panels; generated canvas textures, no assets) and `buildCity` (smart-lamp light cones, lodge terminals, one landmark per district by position `k % 4`: server spire, radar dish, antenna array, energy core, sized by topic count; rooftop masts, kiosk terminals, holo billboards, data pulses, a maglev pod at height 6.6 so it clears the arches, up to 6 drones). Scenery (trees, rocks, clouds) and the city use seeded streams from the planet id, so a planet looks the same every visit (`planetScene.stats().sceneryHash`). Never use `Math.random()` for placing things.
+- **`grid.js`**: `buildGrid` draws arcs between lodges whose notes link each other (brighter near the lodge you stand by; Connections toggle); `createRadar` draws the HUD minimap (heading up, rings = unread, pulse/arrow = nearest unread; `M` toggles).
+- **Read progress**: `reader.js` records a topic in localStorage `ai-base-read` at 90% scroll (`markRead`, `readSet`). Read lodges glow mint, unread written ones warm, hubs cyan, outlined stay dark. Read from the vault's own notes only; nothing is stored server-side.
+- **`weather.js`**: Auto (seeded by planet id, date and six-hour block), Clear, Cloudy, Mist, Rain, Snow, Storm. It scales fog, light, sky and clouds, adds rain/snow particles around the walker, wet sheen, snow cover and storm lightning, easing between modes. `weather.reapply()` must run after every `sky.apply` (planet `applyTheme` does). The choice is stored in `ai-base-weather`; `#planet[data-weather]` shows the resolved mode. Reduced motion: no particles, no lightning, no drifting clouds.
+- **Detail**: Full or Lite (fewer pulses, no drones/billboards/cones, half the particles). Lite is the default on touch screens; the scene drops to Lite by itself if the first ~3s average under 24 fps, unless chosen (HUD, stored in `ai-base-hud`) or forced with `?detail=full|lite`.
+- **HUD** (`#phud` in `index.html`): radar `#pmap`, `#pweather`, `#pdetail`, `#pconn`, `#pradar`; a ⚙ button opens it on phones.
+- **`?debug`**: shows fps, draw calls and triangles and exposes `window.__aiBase = { stage, planetScene }`. `test:planet` keeps Full detail under 190 draw calls (about 135 measured on Fundamentals).
 
 ## Benches (interactive demos in articles)
 
@@ -112,6 +125,7 @@ Delivered in order, one PR each:
 8. **AI Fundamentals** ✅ the planet is a folder planet (`Fundamentals/<District>/<Topic>.md`, landing note `Fundamentals.md`) with five districts and 24 topics, each with a bench: What Is AI, The Agent, Data and Models, Classic AI, Judging AI. Dates and textbook frameworks were checked against sources. Worked-example numbers in the notes were produced by running the benches' own logic, so change a bench's data or seed only together with its note.
 9. **Reading, benches and streets** ✅ articles and text lists became a standard document (no clay, parallax or reveal animations); benches got a roomy two-pane layout and lost their explanatory text; the planet road grew a big arch and plaza per district and a street with a reading lodge per topic, with a door fade replacing the warp tunnel (`transition.js` was removed).
 10. **Medium-style reading** ✅ articles gained the serif typography, generated covers, end-of-article cards and the reader (`reader.js`): a floating bar whose **street strip** has a lamp per section and a small walker that moves as you read (click a lamp to jump), time left, settings (size, typeface, light/sepia/dark/auto), an outline drawer, resume where you left off, hover previews for topic links, dotted key-term popovers built from each note's *Key terms* list (the build exposes them as `glossary`), a selection bar (copy quote, copy link to a section via `#/<topic>?at=<heading-id>`). The note's trailing *Related* list is replaced on the page by the cards; the vault note keeps it.
+11. **Tech city and weather** ✅ luminous accents (lit roads, windowed houses, smart lamps, lodge terminals), district landmarks, living layers (pulses, maglev pod, drones), knowledge grid beams, read-progress lighting, radar minimap, six weather modes, Full/Lite detail, `?debug` overlay, seeded scenery.
 
 ## Verifying changes
 

@@ -129,6 +129,13 @@ try {
   check("?at= scrolls to the section", top < 400 && top > -50, `${Math.round(top)}px from top`);
   await ctx.close();
 
+  // ---- reading to the end marks the topic as read (the planet lights its lodge)
+  ({ ctx, page } = await open(1280, 900));
+  await scrollTo(page, 1); await page.waitForTimeout(700);
+  const readList = await page.evaluate(() => JSON.parse(localStorage.getItem("ai-base-read") || "[]"));
+  check("reading to the end records the topic as read", readList.length === 1 && TOPIC.includes(readList[0]), readList.join(","));
+  await ctx.close();
+
   // ---- phone
   ({ ctx, page } = await open(390, 844));
   await scrollTo(page, 0.3); await page.waitForTimeout(600);
