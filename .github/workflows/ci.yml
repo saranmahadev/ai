@@ -1,0 +1,31 @@
+name: Site checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: .site/package-lock.json
+      - run: npm ci
+      - name: Build content and print warnings
+        run: npm test
+      - name: Install Chromium for the browser tests
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - run: npm run content
+      - run: npm run test:site
+      - run: npm run test:reader
+      - run: npm run test:planet
+      - run: npm run test:benches
