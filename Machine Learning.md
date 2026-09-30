@@ -10,5 +10,7 @@ Each topic asks one question, explains it with a small worked example, lets you 
 4. [[Instance and Probability Methods]]: nearest neighbours, naive Bayes and kernels.
 5. [[Trees and Ensembles]]: decision trees, forests and boosting.
 6. [[Evaluation]]: confusion matrices, precision and recall, ROC, regression metrics, cross-validation and tuning.
+7. [[Unsupervised Learning]]: clustering, mixtures, dimensionality reduction and anomalies.
+8. [[Bias, Fairness and Failure]]: learning curves, data bias, fairness measures, distribution shift and interpretation.
 
-More districts ( unsupervised learning, fairness and failure, reinforcement learning, and machine learning in practice) will follow on the same road.
+More districts (reinforcement learning, and machine learning in practice) will follow on the same road.
