@@ -125,3 +125,51 @@ export function boundaryLine(ctx, m, w, color, { width = 3, dash = null, rx = [-
   else { const x = -w[0] / (w[1] || 1e-9); ctx.moveTo(m.X(x), m.pad.t); ctx.lineTo(m.X(x), m.pad.t + m.ih); }
   ctx.stroke(); ctx.restore();
 }
+
+// ---------- trees, forests and boosting
+
+export const gini = (n0, n1) => { const n = n0 + n1; if (!n) return 0; const p = n1 / n; return 2 * p * (1 - p); };
+export const entropyBits = (n0, n1) => { const n = n0 + n1; if (!n) return 0; return [n0, n1].reduce((s, k) => s + (k ? -(k / n) * Math.log2(k / n) : 0), 0); };
+
+/** Greedy classification tree on points {x, y, c}. Options: maxDepth, minLeaf, crit ("gini" | "entropy"), rand (an rng: pick one random feature per split). */
+export function fitTree(pts, { maxDepth = 3, minLeaf = 1, crit = "gini", rand = null } = {}, depth = 0) {
+  const I = crit === "gini" ? gini : entropyBits, n1 = pts.filter((p) => p.c).length, n0 = pts.length - n1, leaf = { leaf: true, p: pts.length ? n1 / pts.length : 0.5, n: pts.length };
+  if (depth >= maxDepth || !n0 || !n1 || pts.length < 2 * minLeaf) return leaf;
+  const feats = rand ? [rand() < 0.5 ? "x" : "y"] : ["x", "y"], parent = I(n0, n1);
+  let best = null;
+  for (const f of feats) {
+    const s = [...pts].sort((a, b) => a[f] - b[f]); let l0 = 0, l1 = 0;
+    for (let i = 0; i < s.length - 1; i++) {
+      s[i].c ? l1++ : l0++;
+      if (s[i][f] === s[i + 1][f]) continue;
+      const nl = i + 1, nr = s.length - nl; if (nl < minLeaf || nr < minLeaf) continue;
+      const imp = (nl * I(l0, l1) + nr * I(n0 - l0, n1 - l1)) / s.length;
+      if (!best || imp < best.imp - 1e-12) best = { imp, f, t: (s[i][f] + s[i + 1][f]) / 2 };
+    }
+  }
+  if (!best || best.imp >= parent - 1e-12) return leaf;
+  const L = pts.filter((p) => p[best.f] <= best.t), R = pts.filter((p) => p[best.f] > best.t);
+  return { f: best.f, t: best.t, l: fitTree(L, { maxDepth, minLeaf, crit, rand }, depth + 1), r: fitTree(R, { maxDepth, minLeaf, crit, rand }, depth + 1), n: pts.length, gain: parent - best.imp };
+}
+export const treeProb = (t, x, y) => (t.leaf ? t.p : (t.f === "x" ? x : y) <= t.t ? treeProb(t.l, x, y) : treeProb(t.r, x, y));
+export const treeLeaves = (t) => (t.leaf ? 1 : treeLeaves(t.l) + treeLeaves(t.r));
+
+/** A random forest: bootstrap samples, one random feature per split, averaged probabilities. */
+export function fitForest(pts, nTrees, opts = {}, seed = 3) {
+  const r = rng(seed);
+  return Array.from({ length: nTrees }, () => fitTree(Array.from({ length: pts.length }, () => pts[r.int(pts.length)]), { ...opts, rand: r }));
+}
+export const forestProb = (F, x, y) => F.reduce((s, t) => s + treeProb(t, x, y), 0) / F.length;
+
+/** Best one-split regression stump on 1-D data: returns {t, l, r}. */
+export function fitStump(xs, res) {
+  const idx = xs.map((_, i) => i).sort((a, b) => xs[a] - xs[b]), n = xs.length, tot = res.reduce((a, b) => a + b, 0);
+  let best = null, sl = 0;
+  for (let k = 0; k < n - 1; k++) {
+    sl += res[idx[k]];
+    if (xs[idx[k]] === xs[idx[k + 1]]) continue;
+    const nl = k + 1, nr = n - nl, ml = sl / nl, mr = (tot - sl) / nr, gain = nl * ml * ml + nr * mr * mr;
+    if (!best || gain > best.gain) best = { gain, t: (xs[idx[k]] + xs[idx[k + 1]]) / 2, l: ml, r: mr };
+  }
+  return best || { t: 0, l: tot / n, r: tot / n };
+}

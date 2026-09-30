@@ -8,5 +8,7 @@ Each topic asks one question, explains it with a small worked example, lets you 
 2. [[Data and Features]]: cleaning, scaling, encoding and engineering the numbers a model sees.
 3. [[Linear Models]]: regression, logistic regression, regularisation, the perceptron and support vector machines.
 4. [[Instance and Probability Methods]]: nearest neighbours, naive Bayes and kernels.
+5. [[Trees and Ensembles]]: decision trees, forests and boosting.
+6. [[Evaluation]]: confusion matrices, precision and recall, ROC, regression metrics, cross-validation and tuning.
 
-More districts (trees and ensembles, evaluation, unsupervised learning, fairness and failure, reinforcement learning, and machine learning in practice) will follow on the same road.
+More districts ( unsupervised learning, fairness and failure, reinforcement learning, and machine learning in practice) will follow on the same road.
