@@ -5,13 +5,13 @@ export default function mount(root, kit) {
   const body = frame(root, { title: "When the world moves" });
   const say = live(body);
   const r = rng(2), mk = (n, d) => Array.from({ length: n }, (_, i) => ({ x: (i % 2 ? 1 : -1) + d + 0.8 * r.gauss(), y: 0.8 * r.gauss(), c: i % 2 }));
-  const tr = mk(400, 0), w0 = logisticFit(tr.map((p) => [p.x, p.y]), tr.map((p) => p.c), { iters: 500, lr: 0.5 });
+  const tr = mk(400, 0), w0 = logisticFit(tr.map((p) => [p.x, p.y]), tr.map((p) => p.c), { iters: 300, lr: 0.5 });
   const test = new Map(), retrained = new Map(), accOf = (w, P) => P.filter((p) => (logisticProb(w, [p.x, p.y]) > 0.5 ? 1 : 0) === p.c).length / P.length;
-  const grid = []; for (let d = -2; d <= 2.001; d += 0.25) grid.push(+d.toFixed(2));
-  for (const d of grid) { const T = mk(1500, d), R = mk(400, d); test.set(d, T); retrained.set(d, logisticFit(R.map((p) => [p.x, p.y]), R.map((p) => p.c), { iters: 500, lr: 0.5 })); }
+  const grid = []; for (let d = -2; d <= 2.001; d += 0.5) grid.push(+d.toFixed(2));
+  for (const d of grid) { const T = mk(1000, d), R = mk(400, d); test.set(d, T); retrained.set(d, logisticFit(R.map((p) => [p.x, p.y]), R.map((p) => p.c), { iters: 300, lr: 0.5 })); }
   const accFixed = new Map(), accRe = new Map(); for (const g of grid) { accFixed.set(g, accOf(w0, test.get(g))); accRe.set(g, accOf(retrained.get(g), test.get(g))); }
   let d = 0, redo = false;
-  const sl = slider({ label: "shift of every feature value", min: -2, max: 2, step: 0.25, value: d, format: (v) => fmt(v, 2), onInput: (v) => { d = v; update(); } });
+  const sl = slider({ label: "shift of every feature value", min: -2, max: 2, step: 0.5, value: d, format: (v) => fmt(v, 2), onInput: (v) => { d = v; update(); } });
   const tg = toggles([["r", "retrain on data from the new world", false]], (v) => { redo = v.r; update(); });
   const cv = canvas(body, { aspect: 0.5, label: "Shifted test points with the decision line, and accuracy against shift" });
   const st = stats([["a", "accuracy now"], ["b", "accuracy before the shift"]]);
