@@ -247,27 +247,24 @@ export function create({ content, labelsEl, radarEl, onDetail, onNear, onProgres
     world.add(ribbon(0, total, ROAD_W + 0.15, 0.32, 0.1, edgeMat));
 
     // a topic's signpost: a plaque whose head shows its status (solid orb = written, ring = outlined, cube = index)
+    // (the disc and pole are instanced below; only the head is its own mesh, since it bobs and can be clicked)
+    const headMats = new Map(), headGeos = {
+      outlined: new THREE.TorusGeometry(0.75, 0.22, 16, 32), index: new RoundedBoxGeometry(1.3, 1.3, 1.3, 5, 0.4),
+      written: new THREE.SphereGeometry(0.85, 32, 24), ring: new THREE.TorusGeometry(1.25, 0.07, 10, 40)
+    }, ringMat = clay(0xfff3e2);
+    const headMat = (t, d) => {
+      const key = `${d.id}|${t.status === "outlined" ? "o" : "c"}`;
+      if (!headMats.has(key)) { const m = clay(t.status === "outlined" ? tint(d.color.getHex(), 0.55) : d.color); if (t.status !== "outlined") sky.addGlow(m, d.color, 0.7); headMats.set(key, m); }
+      return headMats.get(key);
+    };
     const plaque = (t, d) => {
-      const g = new THREE.Group(), c = clay(d.color);
-      const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.05, 0.2, 24), clay(0xfff3e2));
-      disc.position.y = 0.1;
-      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 2.8, 12), clay(0xfff3e2));
-      pole.position.y = 1.4;
+      const g = new THREE.Group();
       let head;
-      if (t.status === "outlined") {
-        head = new THREE.Mesh(new THREE.TorusGeometry(0.75, 0.22, 16, 32), clay(tint(d.color.getHex(), 0.55)));
-      } else if (t.status === "index") {
-        head = new THREE.Mesh(new RoundedBoxGeometry(1.3, 1.3, 1.3, 5, 0.4), c);
-        head.rotation.set(0.6, 0.6, 0);
-      } else {
-        head = new THREE.Mesh(new THREE.SphereGeometry(0.85, 32, 24), c);
-        const ring = new THREE.Mesh(new THREE.TorusGeometry(1.25, 0.07, 10, 40), clay(0xfff3e2));
-        ring.rotation.x = 1.2; head.add(ring);
-      }
-      head.position.y = 3.5;
-      head.castShadow = pole.castShadow = disc.castShadow = true;
-      if (t.status !== "outlined") sky.addGlow(head.material, d.color, 0.7);
-      g.add(disc, pole, head);
+      if (t.status === "outlined") head = new THREE.Mesh(headGeos.outlined, headMat(t, d));
+      else if (t.status === "index") { head = new THREE.Mesh(headGeos.index, headMat(t, d)); head.rotation.set(0.6, 0.6, 0); }
+      else { head = new THREE.Mesh(headGeos.written, headMat(t, d)); const ring = new THREE.Mesh(headGeos.ring, ringMat); ring.rotation.x = 1.2; head.add(ring); }
+      head.position.y = 3.5; head.castShadow = true;
+      g.add(head);
       return { g, head };
     };
     const addSign = (e, pl, extra) => {
@@ -290,6 +287,20 @@ export function create({ content, labelsEl, radarEl, onDetail, onNear, onProgres
     sky.addGlow(bulbMat, 0xffe08a, 1.6);
     const bulbs = new THREE.InstancedMesh(new THREE.SphereGeometry(0.32, 12, 10), bulbMat, Math.max(1, nStreets * 4));
     let hn = 0, ln = 0;
+    // signposts, street-name posts and lodges are instanced too: a big planet has well over a hundred of each
+    const nSign = Math.max(1, plan.filter((e) => e.kind !== "gate").length), cream = clay(0xfff3e2), streetsN = Math.max(1, nStreets);
+    const pDisc = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.9, 1.05, 0.2, 24), cream, nSign);
+    const pPole = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.12, 0.16, 2.8, 12), cream, nSign);
+    const sPole = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.1, 0.13, 2.4, 10), cream, streetsN);
+    const sBoard = new THREE.InstancedMesh(new RoundedBoxGeometry(1.7, 0.7, 0.2, 3, 0.1), clay(0xffffff), streetsN);
+    const lBody = new THREE.InstancedMesh(new RoundedBoxGeometry(6, 4.2, 5.2, 4, 0.35), clay(0xffffff), streetsN);
+    const lRoof = new THREE.InstancedMesh(new THREE.ConeGeometry(4.9, 2.6, 4), clay(0xffffff), streetsN);
+    const doorGeo = new RoundedBoxGeometry(1.6, 2.5, 0.3, 3, 0.12), doors = new Map();
+    let np = 0, nsp = 0, nl = 0;
+    const mtx = new THREE.Matrix4(), loc = new THREE.Matrix4();
+    const put = (mesh, i, g, x, y, z, rotY = 0) => { g.updateMatrix(); loc.makeRotationY(rotY); loc.setPosition(x, y, z); mtx.multiplyMatrices(g.matrix, loc); mesh.setMatrixAt(i, mtx); };
+    const putPlaque = (g) => { put(pDisc, np, g, 0, 0.1, 0); put(pPole, np, g, 0, 1.4, 0); np++; };
+    const laneParts = [], edgeParts = [];
     const inst = new THREE.Object3D();
     const setInst = (mesh, i, pos, fwd, lift, rotY = 0) => {
       stand(inst, pos, fwd); inst.translateY(lift); inst.rotateY(rotY); inst.updateMatrix(); mesh.setMatrixAt(i, inst.matrix);
@@ -320,25 +331,21 @@ export function create({ content, labelsEl, radarEl, onDetail, onNear, onProgres
         const fr = frameAt(e.s), side = (signs.length % 2 ? -1 : 1) * 5.4;
         const pl = plaque(e.t, d);
         e.lat = side;
-        stand(pl.g, surfacePoint(fr, side, 0.09), fr.t);
+        stand(pl.g, surfacePoint(fr, side, 0.09), fr.t); putPlaque(pl.g);
         obstacles.push({ d: surfacePoint(fr, side, 0).normalize(), r: 0.9 });
         world.add(pl.g);
         addSign(e, pl, { roadPos: fr.p.clone().multiplyScalar(Rp), lane: null, dir: surfacePoint(fr, side, 0).normalize(), beamAt: surfacePoint(fr, side, 5.2), color: d.color.getStyle(), read: read.has(e.t.id) });
       } else {
         // a street of its own for this topic: lamps, houses, and a reading lodge at the end
         const fr = frameAt(e.s), lf = (u) => laneFrame(fr, e.side, u);
-        world.add(ribbonBy(lf, ROAD_W - 0.5, STREET_LEN + 4, 0, STREET_W, 0.075, laneMat));
-        world.add(ribbonBy(lf, ROAD_W - 0.5, STREET_LEN + 4, -STREET_W - 0.12, 0.25, 0.1, edgeMat));
-        world.add(ribbonBy(lf, ROAD_W - 0.5, STREET_LEN + 4, STREET_W + 0.12, 0.25, 0.1, edgeMat));
+        laneParts.push(ribbonBy(lf, ROAD_W - 0.5, STREET_LEN + 4, 0, STREET_W, 0.075, laneMat));
+        edgeParts.push(ribbonBy(lf, ROAD_W - 0.5, STREET_LEN + 4, -STREET_W - 0.12, 0.25, 0.1, edgeMat), ribbonBy(lf, ROAD_W - 0.5, STREET_LEN + 4, STREET_W + 0.12, 0.25, 0.1, edgeMat));
 
         // street-name post at the entrance
         const entU = ROAD_W + 1.8, ef = lf(entU);
-        const post = new THREE.Group();
-        const pp = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.13, 2.4, 10), clay(0xfff3e2)); pp.position.y = 1.2;
-        const board = new THREE.Mesh(new RoundedBoxGeometry(1.7, 0.7, 0.2, 3, 0.1), clay(d.color)); board.position.y = 2.5;
-        pp.castShadow = board.castShadow = true; post.add(pp, board);
+        const post = new THREE.Object3D();
         stand(post, lanePos(ef, STREET_W + 1.2, 0.09), ef.t);
-        world.add(post);
+        put(sPole, nsp, post, 0, 1.2, 0); put(sBoard, nsp, post, 0, 2.5, 0); sBoard.setColorAt(nsp, d.color); nsp++;
         obstacles.push({ d: lanePos(ef, STREET_W + 1.2, 0).normalize(), r: 0.25 });
 
         // lamps, alternating sides
@@ -363,21 +370,18 @@ export function create({ content, labelsEl, radarEl, onDetail, onNear, onProgres
 
         // the reading lodge at the end of the street
         const lodgeU = STREET_LEN + 3.6, lgf = lf(lodgeU);
-        const lodge = new THREE.Group();
-        const lb = new THREE.Mesh(new RoundedBoxGeometry(6, 4.2, 5.2, 4, 0.35), clay(tint(d.color.getHex(), 0.55))); lb.position.y = 2.1;
-        const lr = new THREE.Mesh(new THREE.ConeGeometry(4.9, 2.6, 4), clay(d.color)); lr.position.y = 5.5; lr.rotation.y = Math.PI / 4;
-        const isRead = read.has(e.t.id), doorMat = tech.doorMat(e.t.status, isRead);
-        const door = new THREE.Mesh(new RoundedBoxGeometry(1.6, 2.5, 0.3, 3, 0.12), doorMat); door.position.set(0, 1.25, 2.68);
-        lb.castShadow = lr.castShadow = door.castShadow = true;
-        lodge.add(lb, lr, door);
+        const lodge = new THREE.Object3D(), isRead = read.has(e.t.id), doorMat = tech.doorMat(e.t.status, isRead);
         stand(lodge, lanePos(lgf, 0, 0.05), lgf.t.clone().negate());
-        world.add(lodge);
+        put(lBody, nl, lodge, 0, 2.1, 0); lBody.setColorAt(nl, tint(d.color.getHex(), 0.55));
+        put(lRoof, nl, lodge, 0, 5.5, 0, Math.PI / 4); lRoof.setColorAt(nl, d.color); nl++;
+        if (!doors.has(doorMat)) { const dm = new THREE.InstancedMesh(doorGeo, doorMat, streetsN); dm.count = 0; doors.set(doorMat, dm); }
+        { const dm = doors.get(doorMat); put(dm, dm.count, lodge, 0, 1.25, 2.68); dm.count++; }
         lodgeList.push({ pos: lanePos(lf(lodgeU - 2.75), 0, 3.3), fwd: lgf.t.clone().negate(), panelMat: tech.panelMat(e.t.status, isRead) });
         obstacles.push({ d: lanePos(lgf, 0, 0).normalize(), r: 3.2 });
 
         // the plaque you open the topic from, just before the lodge
         const plU = STREET_LEN - 0.4, plf = lf(plU), pl = plaque(e.t, d);
-        stand(pl.g, lanePos(plf, 1.4, 0.09), plf.t);
+        stand(pl.g, lanePos(plf, 1.4, 0.09), plf.t); putPlaque(pl.g);
         obstacles.push({ d: lanePos(plf, 1.4, 0).normalize(), r: 0.9 });
         world.add(pl.g);
         const focus = lanePos(lf(lodgeU - 2.9), 0, 1.6);
@@ -388,6 +392,18 @@ export function create({ content, labelsEl, radarEl, onDetail, onNear, onProgres
         streetLabel.addEventListener("click", () => walkTo(sign, true));
       }
     });
+    const mergeRibbons = (parts, material) => {
+      if (!parts.length) return;
+      let vc = 0, ic = 0; for (const q of parts) { vc += q.geometry.attributes.position.count; ic += q.geometry.index.count; }
+      const pos = new Float32Array(vc * 3), nrm = new Float32Array(vc * 3), uv = new Float32Array(vc * 2), idx = new Uint32Array(ic);
+      let vo = 0, io = 0;
+      for (const q of parts) { const g = q.geometry, n = g.attributes.position.count; pos.set(g.attributes.position.array, vo * 3); nrm.set(g.attributes.normal.array, vo * 3); uv.set(g.attributes.uv.array, vo * 2); for (let k = 0; k < g.index.count; k++) idx[io + k] = g.index.array[k] + vo; vo += n; io += g.index.count; g.dispose(); }
+      const g = new THREE.BufferGeometry();
+      g.setAttribute("position", new THREE.BufferAttribute(pos, 3)); g.setAttribute("normal", new THREE.BufferAttribute(nrm, 3)); g.setAttribute("uv", new THREE.BufferAttribute(uv, 2)); g.setIndex(new THREE.BufferAttribute(idx, 1));
+      const m = new THREE.Mesh(g, material); m.receiveShadow = true; world.add(m);
+    };
+    mergeRibbons(laneParts, laneMat); mergeRibbons(edgeParts, edgeMat);
+    for (const [m, n] of [[pDisc, np], [pPole, np], [sPole, nsp], [sBoard, nsp], [lBody, nl], [lRoof, nl], ...[...doors.values()].map((dm) => [dm, dm.count])]) { m.count = n; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; m.castShadow = true; m.frustumCulled = false; world.add(m); }
     for (const m of [houses, roofs, poles, bulbs]) { m.count = m === bulbs || m === poles ? ln : hn; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; m.castShadow = m !== bulbs; world.add(m); }
 
     // finish flag

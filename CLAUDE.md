@@ -18,6 +18,7 @@ npm test            # build in memory and print content warnings (unresolved lin
 npm run test:benches  # opens every bench at 1280, 768 and 390px in Chromium (needs Playwright), exercises its controls, fails on console errors or horizontal overflow; --shots=DIR saves screenshots
 npm run test:reader   # exercises the article reading experience in Chromium: type, cover, street strip, settings and themes, drawer, previews, key terms, selection bar, resume, ?at= links, phone width; --shots=DIR
 npm run test:planet   # walks a planet in Chromium: HUD (weather, detail, connections, radar), draw-call budget, seeded scenery, weather with motion, then › to the kiosk and first street, E opens the article, Back returns; --planet=id --time=HH:MM --shots=DIR
+npm run test:site     # search, My path progress, cross-planet tags and lazy bodies in Chromium
 npm run dev         # build content and serve the site at http://localhost:8000
 ```
 
@@ -32,7 +33,9 @@ npm run dev         # build content and serve the site at http://localhost:8000
   index.html, styles.css   shell + clay UI
   theme.js                 time-of-day theme (local clock, or ?time=HH:MM to test): CSS variables + scene re-lighting, refreshed each minute
   nav.js                   navigation model: Back button, breadcrumb trail and actions for each route
-  main.js                  hash router (#/, #/galaxy, #/list, #/<planet>, #/<planet>/<topic>) + galaxy UI + text views
+  main.js                  hash router (#/, #/galaxy, #/list, #/path, #/<planet>, #/<planet>/<topic>) + galaxy UI + text views + My path; article bodies load on demand
+  search.js                topic search (titles, key terms, summaries; / or Ctrl+K)
+  content/                 generated per-topic bodies (`<id>.json`: html, toc), gitignored; content.json holds only the index
   scenes/                  stage.js (one shared WebGL renderer), home.js (rocket + launch), galaxy.js (planets + rocket flight), planet.js (walkable planet: road, gates, signposts, landing),
                            city.js (tech layer: textures, materials, landmarks, pulses, pod, drones), grid.js (connection beams + radar), weather.js (weather modes and particles)
   models/                  procedural clay models (rocket, astronaut)
@@ -72,7 +75,7 @@ Luminous accents on top of the clay look: pastel by day, glowing at night (throu
 - **`weather.js`**: Auto (seeded by planet id, date and six-hour block), Clear, Cloudy, Mist, Rain, Snow, Storm. It scales fog, light, sky and clouds, adds rain/snow particles around the walker, wet sheen, snow cover and storm lightning, easing between modes. `weather.reapply()` must run after every `sky.apply` (planet `applyTheme` does). The choice is stored in `ai-base-weather`; `#planet[data-weather]` shows the resolved mode. Reduced motion: no particles, no lightning, no drifting clouds.
 - **Detail**: Full or Lite (fewer pulses, no drones/billboards/cones, half the particles). Lite is the default on touch screens; the scene drops to Lite by itself if the first ~3s average under 24 fps, unless chosen (HUD, stored in `ai-base-hud`) or forced with `?detail=full|lite`.
 - **HUD** (`#phud` in `index.html`): radar `#pmap`, `#pweather`, `#pdetail`, `#pconn`, `#pradar`; a ⚙ button opens it on phones.
-- **`?debug`**: shows fps, draw calls and triangles and exposes `window.__aiBase = { stage, planetScene }`. `test:planet` keeps Full detail under 190 draw calls (about 135 measured on Fundamentals).
+- **`?debug`**: shows fps, draw calls and triangles and exposes `window.__aiBase = { stage, planetScene }`. `test:planet` keeps Full detail within `100 + 0.6 × topics` draw calls (plaques, posts, lodges and street ribbons are instanced or merged: about 91 on Fundamentals, 128 on Math).
 
 ## Benches (interactive demos in articles)
 
@@ -127,7 +130,8 @@ Delivered in order, one PR each:
 10. **Medium-style reading** ✅ articles gained the serif typography, generated covers, end-of-article cards and the reader (`reader.js`): a floating bar whose **street strip** has a lamp per section and a small walker that moves as you read (click a lamp to jump), time left, settings (size, typeface, light/sepia/dark/auto), an outline drawer, resume where you left off, hover previews for topic links, dotted key-term popovers built from each note's *Key terms* list (the build exposes them as `glossary`), a selection bar (copy quote, copy link to a section via `#/<topic>?at=<heading-id>`). The note's trailing *Related* list is replaced on the page by the cards; the vault note keeps it.
 11. **Tech city and weather** ✅ luminous accents (lit roads, windowed houses, smart lamps, lodge terminals), district landmarks, living layers (pulses, maglev pod, drones), knowledge grid beams, read-progress lighting, radar minimap, six weather modes, Full/Lite detail, `?debug` overlay, seeded scenery.
 12. **The Math planet** ✅ rebuilt from scratch as 12 districts and 122 topics in learning order, each with a bench: Arithmetic and Number Sense, Algebra and Functions, Geometry and Trigonometry, Sets/Logic and Counting, Linear Algebra, Calculus, Probability, Statistics, Information Theory, Optimization, Numerical Computing, Math in AI. Every topic follows the topic template and lists only earlier topics after **You need:** (the content build warns when a prerequisite comes later on the road). Worked-example numbers were checked by running the same formulas (and, for the overfitting and bias–variance tables, the benches' own `mathkit.js` code), so change a bench's data or seed only together with its note.
+13. **Site upgrades** ✅ search, My path (progress, continue, reset), cross-planet prerequisite tags, lazy article bodies, instanced planet streets (fewer draw calls), `test:site`, and the CI workflow `.github/workflows/ci.yml`.
 
 ## Verifying changes
 
-There is no test suite. For site work: run `npm test` (must build with no unexpected warnings), serve the site, and check it in a real browser (Playwright with Chromium is available in the cloud environment: launch with `--use-gl=swiftshader --enable-unsafe-swiftshader --ignore-gpu-blocklist`). Look at screenshots of the home, galaxy, a planet (day and `?time=22:30`) and an article, run `npm run test:benches`, `npm run test:planet` and `npm run test:reader`, and check the console for errors.
+There is no test suite. For site work: run `npm test` (must build with no unexpected warnings), serve the site, and check it in a real browser (Playwright with Chromium is available in the cloud environment: launch with `--use-gl=swiftshader --enable-unsafe-swiftshader --ignore-gpu-blocklist`). Look at screenshots of the home, galaxy, a planet (day and `?time=22:30`) and an article, run `npm run test:benches`, `npm run test:planet`, `npm run test:reader` and `npm run test:site`, and check the console for errors.
