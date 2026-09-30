@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, choice, button, live } = kit;
   const body = frame(root, {
-    title: "How hard is this environment?",
-    hint: "Pick an environment, answer the five questions, then check. Classifications follow Russell and Norvig's textbook table."
+    title: "How hard is this environment?"
   });
   const say = live(body);
   const PROPS = [
@@ -41,7 +40,7 @@ export default function mount(root, kit) {
     if (!shown) { out.textContent = ""; why.textContent = ""; return; }
     const right = PROPS.filter(([k]) => ans[k] === truth[k]).length, answered = PROPS.filter(([k]) => ans[k]).length;
     const hardness = Object.values(truth).filter((v) => HARD[v]).length;
-    const msg = `${right} of 5 match the textbook (${answered} answered). This environment has ${hardness} of the 5 "hard" properties (partly observable, stochastic, sequential, dynamic, multi-agent).`;
+    const msg = `${right} of 5 match · ${hardness} of 5 hard properties`;
     out.textContent = msg; why.textContent = ENV[cur][2]; say(msg);
   }
   render();

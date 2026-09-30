@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, canvas, stepper, slider, toggles, button, rng, stats, live } = kit;
   const body = frame(root, {
-    title: "The perceive – decide – act loop",
-    hint: "Press Step. Each press runs one phase of the loop. Add sensor noise and watch the loop go wrong."
+    title: "The perceive – decide – act loop"
   });
   const say = live(body);
   const ROWS = 7, COLS = 10;
@@ -25,27 +24,27 @@ export default function mount(root, kit) {
   function reset() {
     R = rng(seed * 101 + Math.round(noise * 100));
     pos = START.slice(); phase = "perceive"; percept = null; choice = null; visits = { [pos.join(",")]: 1 }; loops = 0; bumps = 0; done = false;
-    log.textContent = "The agent stands at the start. Its goal is the green square."; refresh();
+    log.textContent = "Ready"; refresh();
   }
   function step() {
     if (done) return false;
     if (phase === "perceive") {
       percept = DIRS.map(([n, dr, dc]) => { const r = pos[0] + dr, c = pos[1] + dc, real = wallAt(r, c); return { n, r, c, real, seen: R.chance(noise) ? !real : real }; });
       const wrong = percept.filter((p) => p.seen !== p.real).length;
-      log.textContent = `Perceive: it senses its four neighbours${wrong ? ` (${wrong} misread!)` : ""}.`; phase = "decide";
+      log.textContent = `Perceive: 4 neighbours sensed${wrong ? `, ${wrong} misread` : ""}`; phase = "decide";
     } else if (phase === "decide") {
       const free = percept.filter((p) => !p.seen);
       const score = (p) => Math.abs(p.r - GOAL[0]) + Math.abs(p.c - GOAL[1]) + (memory ? 3 * (visits[p.r + "," + p.c] || 0) : 0) + R() * 0.01;
       choice = free.length ? free.reduce((a, b) => (score(b) < score(a) ? b : a)) : null;
-      log.textContent = choice ? `Decide: move ${choice.n}, the free-looking neighbour with the best score.` : "Decide: every neighbour looks blocked, so it waits."; phase = "act";
+      log.textContent = choice ? `Decide: move ${choice.n}` : "Decide: wait"; phase = "act";
     } else {
       if (choice) {
-        if (wallAt(choice.r, choice.c)) { bumps++; log.textContent = `Act: it moves ${choice.n} and bumps into a wall it did not see.`; }
-        else { pos = [choice.r, choice.c]; visits[pos.join(",")] = (visits[pos.join(",")] || 0) + 1; log.textContent = `Act: it moves ${choice.n}.`; }
-      } else log.textContent = "Act: it does nothing.";
+        if (wallAt(choice.r, choice.c)) { bumps++; log.textContent = `Act: bumped a wall going ${choice.n}`; }
+        else { pos = [choice.r, choice.c]; visits[pos.join(",")] = (visits[pos.join(",")] || 0) + 1; log.textContent = `Act: moved ${choice.n}`; }
+      } else log.textContent = "Act: waited";
       loops++; phase = "perceive"; percept = null;
-      if (pos[0] === GOAL[0] && pos[1] === GOAL[1]) { done = true; log.textContent += ` Goal reached after ${loops} loops.`; }
-      else if (loops >= 60) { done = true; log.textContent += " It has used up 60 loops without reaching the goal."; }
+      if (pos[0] === GOAL[0] && pos[1] === GOAL[1]) { done = true; log.textContent += ` · goal reached in ${loops} loops`; }
+      else if (loops >= 60) { done = true; log.textContent += " · gave up after 60 loops"; }
     }
     say(log.textContent); refresh(); return !done;
   }

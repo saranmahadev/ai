@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, choice, canvas, live } = kit;
   const body = frame(root, {
-    title: "What can each system do?",
-    hint: "A rough guide to typical, purpose-built systems. General-purpose models change fast, so treat the middle rows as approximate."
+    title: "What can each system do?"
   });
   const say = live(body);
   const TASKS = ["Play chess", "Label a photo", "Filter spam", "Write an essay", "Vacuum a room", "Steer a car"];
@@ -19,8 +18,8 @@ export default function mount(root, kit) {
   let cur = 3;
   const pick = choice("System", SYS.map((s, i) => [i, s[0]]), cur, (i) => { cur = i; render(); });
   const cv = canvas(body, { aspect: 0.5, label: "Grid of systems against tasks, showing which each can do" });
-  const out = h("p", { class: "bench-verdict" });
-  body.append(pick.el, cv.box, out);
+  const out = kit.stats([["can", "tasks it can touch"]]);
+  body.append(pick.el, cv.box, out.el);
   cv.onDraw((ctx, w, hh, p) => {
     const left = Math.min(150, w * 0.26), top = 34, cw = (w - left - 8) / TASKS.length, rh = (hh - top - 6) / SYS.length;
     ctx.font = "800 11px Nunito, system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
@@ -40,7 +39,7 @@ export default function mount(root, kit) {
   function render() {
     const s = SYS[cur], can = s[1].filter((v) => v > 0).length;
     const msg = `${s[0]}: can do ${can} of ${TASKS.length} tasks. ${s[2]}`;
-    out.textContent = msg; say(msg); cv.redraw();
+    out.set("can", `${can} of ${TASKS.length}`); say(msg); cv.redraw();
   }
   render();
   return () => cv.destroy();

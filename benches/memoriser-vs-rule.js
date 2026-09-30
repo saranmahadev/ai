@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, slider, canvas, rng, plot, live, stats, fmt } = kit;
   const body = frame(root, {
-    title: "Memorising vs learning the pattern",
-    hint: "The true pattern is a diagonal line, but 12% of labels are wrong (noise). k = 1 copies the nearest example; larger k averages more neighbours."
+    title: "Memorising vs learning the pattern"
   });
   const say = live(body);
   const gen = (seed, n) => { const r = rng(seed); return Array.from({ length: n }, () => { const x = r(), y = r(); let l = x + y > 1 ? 1 : 0; if (r() < 0.12) l = 1 - l; return { x, y, l }; }); };
@@ -14,7 +13,7 @@ export default function mount(root, kit) {
   const cv = canvas(body, { aspect: 0.75, label: "Scatter of noisy training points with the model's decision regions shaded" });
   const st = stats([["train", "accuracy on training examples"], ["test", "accuracy on new examples"], ["gap", "gap"]]);
   const out = h("p", { class: "bench-verdict" });
-  body.append(cv.box, st.el, out, h("div", { class: "bench-controls" }, sn.el, sk.el));
+  body.append(cv.box, st.el, h("div", { class: "bench-controls" }, sn.el, sk.el));
   const predict = (tr, p) => { const d = tr.map((t) => ({ d: (t.x - p.x) ** 2 + (t.y - p.y) ** 2, l: t.l })).sort((a, b) => a.d - b.d).slice(0, k); return d.reduce((a, b) => a + b.l, 0) * 2 > k ? 1 : 0; };
   cv.onDraw((ctx, W, H, p) => {
     const tr = pool.slice(0, n), m = plot(W, H, [0, 1], [0, 1], { l: 8, r: 8, t: 8, b: 8 }), G = 36;

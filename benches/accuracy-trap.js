@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, slider, choice, canvas, live, fmt } = kit;
   const body = frame(root, {
-    title: "The 99% accurate system that catches nothing",
-    hint: "10,000 cases. Change how rare the thing you are looking for is, and compare three detectors."
+    title: "The 99% accurate system that catches nothing"
   });
   const say = live(body);
   const N = 10000;
@@ -18,7 +17,7 @@ export default function mount(root, kit) {
   const cv = canvas(body, { aspect: 0.3, label: "Bars for accuracy, recall and precision of the chosen detector" });
   const table = h("table", { class: "bench-table" });
   const out = h("p", { class: "bench-verdict" });
-  body.append(pick.el, sp.el, cv.box, table, out);
+  body.append(pick.el, sp.el, cv.box, table);
 
   function counts(d) {
     const real = Math.round(N * prev / 100), tp = Math.round(real * d.sens), fp = Math.round((N - real) * d.fpr);

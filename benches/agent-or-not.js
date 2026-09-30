@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, choice, toggles, live } = kit;
   const body = frame(root, {
-    title: "What makes something an agent?",
-    hint: "Pick a system, then switch its parts off one at a time."
+    title: "What makes something an agent?"
   });
   const say = live(body);
   const SCEN = {
@@ -40,7 +39,7 @@ export default function mount(root, kit) {
     const s = SCEN[cur], off = Object.keys(parts).filter((k) => !parts[k]);
     const msg = off.length ? `Not an agent any more. ${off.map((k) => s.no[k]).join(" ")}`
       : `Complete: it senses (${s.sensors}), decides (${s.decide}) and acts (${s.act}) to ${s.goal}. That is an agent.`;
-    out.textContent = msg; say(msg); cv.redraw();
+    out.textContent = off.map((k) => s.no[k]).join(" "); say(msg); cv.redraw();
   }
   render();
   return () => cv.destroy();

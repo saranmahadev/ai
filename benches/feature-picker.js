@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, choice, canvas, rng, plot, live, fmt } = kit;
   const body = frame(root, {
-    title: "Which features separate apples from oranges?",
-    hint: "Pick what to measure on each axis. A classifier that just compares distances to each group's centre shows how well those features work."
+    title: "Which features separate apples from oranges?"
   });
   const say = live(body);
   const FEATS = { redness: "Redness (0–1)", bumpy: "Skin bumpiness (0–1)", weight: "Weight (g)", seeds: "Seeds counted" };
@@ -18,8 +17,8 @@ export default function mount(root, kit) {
   const cx = choice("Horizontal axis", opts, fx, (v) => { fx = v; render(); });
   const cy = choice("Vertical axis", opts, fy, (v) => { fy = v; render(); });
   const cv = canvas(body, { aspect: 0.62, label: "Scatter plot of apples and oranges on the chosen two features" });
-  const out = h("p", { class: "bench-verdict" });
-  body.append(cx.el, cy.el, cv.box, out);
+  const st = kit.stats([["acc", "fruits on the correct side"]]);
+  body.append(cx.el, cy.el, cv.box, st.el);
   const stat = (k) => { const v = data.map((d) => d[k]), mu = v.reduce((a, b) => a + b, 0) / v.length; return { mu, sd: Math.sqrt(v.reduce((a, b) => a + (b - mu) ** 2, 0) / v.length) || 1, lo: Math.min(...v), hi: Math.max(...v) }; };
   function model() {
     const ks = fx === fy ? [fx] : [fx, fy], st = ks.map(stat), z = (d) => ks.map((k, i) => (d[k] - st[i].mu) / st[i].sd);
@@ -50,7 +49,7 @@ export default function mount(root, kit) {
   function render() {
     const M = model(), a = Math.round(M.acc * 100);
     const msg = `${a}% of the 90 fruits land on the correct side (circled dots are misplaced). ` + (fx === fy ? "Same feature on both axes, so only one feature is really used. " : "") + (a >= 92 ? "These features tell the fruits apart well." : a <= 65 ? "These features barely help. The groups overlap almost completely." : "Some help, but the groups still overlap.");
-    out.textContent = msg; say(msg); cv.redraw();
+    st.set("acc", a + "%"); say(msg); cv.redraw();
   }
   render();
   return () => cv.destroy();

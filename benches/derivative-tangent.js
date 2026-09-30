@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, fmt, canvas, slider, stats, button, frame, live } = kit;
   const body = frame(root, {
-    title: "From secant to tangent",
-    hint: "Shrink h and the secant slope closes in on the derivative. The right-hand plot shows the derivative at every x."
+    title: "From secant to tangent"
   });
   const say = live(body);
 
@@ -28,7 +27,7 @@ export default function mount(root, kit) {
   const sh = slider({ label: "distance h (log scale)", min: -3, max: 0.3, step: 0.01, value: exp, format: (v) => fmt(side * 10 ** v, 3), onInput: (v) => { exp = v; update(); } });
   const flipText = () => `Second point is on the ${side > 0 ? "right" : "left"} · switch side`;
   const flip = button(flipText(), () => { side = -side; flip.textContent = flipText(); update(); });
-  body.append(readout.el, verdict, h("div", { class: "bench-controls" }, sx.el, sh.el), h("div", { class: "bench-row" }, flip));
+  body.append(readout.el, h("div", { class: "bench-controls" }, sx.el, sh.el), h("div", { class: "bench-row" }, flip));
 
   function choose(n) {
     name = n;

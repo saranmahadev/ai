@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, stepper, button, canvas, rng, plot, live, fmt, stats } = kit;
   const body = frame(root, {
-    title: "Training, then inference",
-    hint: "Training nudges the two numbers to shrink the average miss. Once you freeze the model, you can only ask it questions."
+    title: "Training, then inference"
   });
   const say = live(body);
   const r = rng(5);
@@ -16,7 +15,7 @@ export default function mount(root, kit) {
   const out = h("p", { class: "bench-verdict" });
   const s = stepper({ onStep: train, onReset: reset, interval: 220, stepLabel: "Train 1 step" });
   const freeze = button("Freeze the model, then ask it questions", () => { if (steps === 0) { out.textContent = "Train for a few steps first."; return; } frozen = true; s.stop(); update("Frozen. Now click the plot to ask about a house size."); });
-  body.append(cv.box, lossCv.box, st.el, out, s.el, h("div", { class: "bench-row" }, freeze));
+  body.append(cv.box, lossCv.box, st.el, s.el, h("div", { class: "bench-row" }, freeze));
   const err = () => data.reduce((a, d) => a + Math.abs((w * d.size / 100 + b) * 100 - d.price), 0) / data.length;
   function reset() { w = 0; b = 0; steps = 0; hist = [err0()]; frozen = false; query = null; update("Untrained: both numbers are 0, so the model predicts $0 for every house."); }
   function err0() { return data.reduce((a, d) => a + Math.abs(d.price), 0) / data.length; }
