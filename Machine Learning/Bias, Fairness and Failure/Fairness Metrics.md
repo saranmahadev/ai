@@ -24,12 +24,12 @@ When base rates differ (the groups have different shares of positives), a non-pe
 
 ## A worked example
 
-One score model for two groups with identical score behaviour (positives around 1.5, negatives around 0, spread 1), but group A has 40% positives and group B has 20%. Expected results per 1,000 people:
+One score model for two groups with identical score behaviour (positives around 1.5, negatives around 0, spread 1), but group A has 40% positives and group B has 20%. Expected results per 1,000 people ("caught" is the true positive rate, "false alarms" the false positive rate):
 
 ```text
-single threshold 0.75            selected    true positive rate    false positive rate    precision
-group A (40% positive)            44.5%           77.3%                 22.7%              69.5%
-group B (20% positive)            33.6%           77.3%                 22.7%              46.0%
+single threshold 0.75            selected    caught (TPR)    false alarms (FPR)    precision
+group A (40% positive)            44.5%           77.3%           22.7%                69.5%
+group B (20% positive)            33.6%           77.3%           22.7%                46.0%
 ```
 
 The model treats individuals identically (same score, same threshold), and both true and false positive rates match, so equalised odds holds. But group A is selected far more often (44.5% against 33.6%) and flagged people are much more likely to be true positives in A (69.5%) than in B (46.0%). To equalise selection rates, lower B's threshold to 0.41:

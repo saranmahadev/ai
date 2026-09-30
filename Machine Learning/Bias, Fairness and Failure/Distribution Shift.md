@@ -23,15 +23,15 @@ Ways to cope: monitor input statistics and accuracy in production, compare recen
 
 ## A worked example
 
-Two classes sit at `x = −1` and `x = +1` (spread 0.8). A logistic regression is trained with no shift. Then every feature value in the test data moves by a fixed amount. Accuracy on 4,000 test points:
+Two classes sit at `x = −1` and `x = +1` (spread 0.8). A logistic regression is trained with no shift. Then every feature value in the test data moves by a fixed amount. Accuracy on 1,500 test points at each shift:
 
 ```text
 shift of all features      −2      −1     −0.5     0     +0.5     +1     +1.5     +2
-fixed model               55.1%  74.2%   84.7%   88.7%  85.7%  74.9%   64.0%   55.4%
-retrained on new data     88.8%  89.3%   89.2%   89.2%  88.9%  88.8%   89.4%   88.7%
+fixed model               54.9%  75.3%   84.8%   89.3%  85.0%  75.5%   63.7%   55.8%
+retrained on new data     88.5%  89.1%   89.1%   89.6%  88.5%  89.3%   89.3%   88.6%
 ```
 
-Without any shift the model scores 88.7%. A shift of one unit costs about 14 points (to 74–75%), and a shift of two brings it to about 55%, barely above guessing. The task itself has not become harder: a model retrained on data from the shifted world gets about 89% everywhere. The lesson is that the drop is caused by the mismatch, and that fresh labelled data from the new setting cures it.
+Without any shift the model scores 89.3%. A shift of one unit costs about 14 points (to about 75%), and a shift of two brings it to 55–56%, barely above guessing. The task itself has not become harder: a model retrained on data from the shifted world gets about 89% everywhere. The lesson is that the drop is caused by the mismatch, and that fresh labelled data from the new setting cures it.
 
 ## Bench
 

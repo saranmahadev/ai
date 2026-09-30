@@ -12,5 +12,5 @@ Each topic asks one question, explains it with a small worked example, lets you 
 6. [[Evaluation]]: confusion matrices, precision and recall, ROC, regression metrics, cross-validation and tuning.
 7. [[Unsupervised Learning]]: clustering, mixtures, dimensionality reduction and anomalies.
 8. [[Bias, Fairness and Failure]]: learning curves, data bias, fairness measures, distribution shift and interpretation.
-
-More districts (reinforcement learning, and machine learning in practice) will follow on the same road.
+9. [[Reinforcement Learning Basics]]: rewards, values, exploration, Q-learning and policy gradients.
+10. [[Machine Learning in Practice]]: workflow, baselines, leakage, monitoring and a capstone.

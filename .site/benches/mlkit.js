@@ -259,3 +259,83 @@ export function emStep(xs, comps) {
   const next = comps.map((_, k) => { const nk = R.reduce((s, r) => s + r[k], 0), mu = R.reduce((s, r, i) => s + r[k] * xs[i], 0) / nk, v = R.reduce((s, r, i) => s + r[k] * (xs[i] - mu) ** 2, 0) / nk; return { w: nk / xs.length, mu, sd: Math.max(0.05, Math.sqrt(v)) }; });
   return { comps: next, ll, R };
 }
+
+// ---------- reinforcement learning basics
+
+/** A small deterministic-or-slippery grid world. Actions: 0 north, 1 east, 2 south, 3 west. Terminal cells: the goal (+1) and the pit (−1). */
+export function gridMdp({ w = 4, h = 4, goal = [3, 0], pit = [3, 1], walls = [[1, 1]], slip = 0, stepCost = -0.04 } = {}) {
+  const id = (x, y) => y * w + x, DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]], G = id(...goal), P = id(...pit), W = new Set(walls.map(([x, y]) => id(x, y)));
+  const isTerm = (s) => s === G || s === P, isWall = (s) => W.has(s);
+  const move = (s, a) => { const x = s % w, y = (s / w) | 0, nx = x + DIRS[a][0], ny = y + DIRS[a][1]; return nx < 0 || ny < 0 || nx >= w || ny >= h || W.has(id(nx, ny)) ? s : id(nx, ny); };
+  const reward = (s2) => (s2 === G ? 1 : s2 === P ? -1 : stepCost);
+  const trans = (s, a) => { if (isTerm(s)) return [[1, s, 0]]; const out = []; for (let b = 0; b < 4; b++) { const p = (b === a ? 1 - slip : 0) + slip / 4; if (p > 0) { const s2 = move(s, b); out.push([p, s2, reward(s2)]); } } return out; };
+  return { w, h, S: w * h, id, DIRS, isTerm, isWall, trans, start: id(0, h - 1), goal: G, pit: P, move, reward };
+}
+export function evalPolicy(m, pol, gamma, sweeps = 400) {
+  const V = new Array(m.S).fill(0);
+  for (let k = 0; k < sweeps; k++) for (let s = 0; s < m.S; s++) if (!m.isTerm(s) && !m.isWall(s)) V[s] = m.trans(s, pol[s]).reduce((t, [p, s2, r]) => t + p * (r + gamma * V[s2]), 0);
+  return V;
+}
+/** One Bellman-optimality sweep; returns the new values, the greedy policy and the largest change. */
+export function valueSweep(m, V, gamma) {
+  const V2 = V.slice(), pol = new Array(m.S).fill(0); let delta = 0;
+  for (let s = 0; s < m.S; s++) { if (m.isTerm(s) || m.isWall(s)) continue; let best = -Infinity, ba = 0; for (let a = 0; a < 4; a++) { const q = m.trans(s, a).reduce((t, [p, s2, r]) => t + p * (r + gamma * V[s2]), 0); if (q > best + 1e-12) { best = q; ba = a; } } V2[s] = best; pol[s] = ba; delta = Math.max(delta, Math.abs(best - V[s])); }
+  return { V: V2, pol, delta };
+}
+/** Sample a transition from the grid world. */
+export function envStep(m, s, a, r) { const t = m.trans(s, a); let u = r(), acc = 0; for (const [p, s2, rw] of t) { acc += p; if (u <= acc) return { s2, rw }; } const [, s2, rw] = t[t.length - 1]; return { s2, rw }; }
+/** Tabular Q-learning agent state: Q is an array of 4 values per state. */
+export function newQ(m) { return Array.from({ length: m.S }, () => [0, 0, 0, 0]); }
+export function qEpisode(m, Q, { alpha = 0.5, gamma = 0.9, eps = 0.2, maxSteps = 200 } = {}, r) {
+  let s = m.start, steps = 0, total = 0;
+  while (!m.isTerm(s) && steps < maxSteps) {
+    const a = r() < eps ? r.int(4) : Q[s].indexOf(Math.max(...Q[s])), { s2, rw } = envStep(m, s, a, r);
+    Q[s][a] += alpha * (rw + gamma * (m.isTerm(s2) ? 0 : Math.max(...Q[s2])) - Q[s][a]); s = s2; steps++; total += rw;
+  }
+  return { steps, total };
+}
+/** Average reward curve of an epsilon-greedy agent on a k-armed Gaussian bandit, averaged over runs. */
+export function banditCurve(eps, { arms = 5, steps = 500, runs = 200, seed = 1 } = {}) {
+  const out = new Array(steps).fill(0);
+  for (let run = 0; run < runs; run++) {
+    const r = rng(seed * 1000 + run), mu = Array.from({ length: arms }, () => r.gauss()), n = new Array(arms).fill(0), q = new Array(arms).fill(0);
+    for (let t = 0; t < steps; t++) { const a = r() < eps ? r.int(arms) : q.indexOf(Math.max(...q)), rew = mu[a] + r.gauss(); n[a]++; q[a] += (rew - q[a]) / n[a]; out[t] += rew / runs; }
+  }
+  return out;
+}
+
+// ---------- general-purpose helpers for the end-to-end capstone
+
+/** Classification tree on rows X (arrays of features) with labels y (0/1). Returns a predictor probability function. */
+export function fitTreeN(X, y, { maxDepth = 4, minLeaf = 3, rand = null } = {}, idx = null, depth = 0) {
+  idx = idx || X.map((_, i) => i);
+  const n1 = idx.filter((i) => y[i]).length, n0 = idx.length - n1, leaf = { leaf: true, p: idx.length ? n1 / idx.length : 0.5 };
+  if (depth >= maxDepth || !n0 || !n1 || idx.length < 2 * minLeaf) return leaf;
+  const d = X[0].length, feats = rand ? [rand.int(d)] : Array.from({ length: d }, (_, j) => j), parent = gini(n0, n1);
+  let best = null;
+  for (const f of feats) {
+    const s = [...idx].sort((a, b) => X[a][f] - X[b][f]); let l0 = 0, l1 = 0;
+    for (let q = 0; q < s.length - 1; q++) {
+      y[s[q]] ? l1++ : l0++;
+      if (X[s[q]][f] === X[s[q + 1]][f]) continue;
+      const nl = q + 1, nr = s.length - nl; if (nl < minLeaf || nr < minLeaf) continue;
+      const imp = (nl * gini(l0, l1) + nr * gini(n0 - l0, n1 - l1)) / s.length;
+      if (!best || imp < best.imp - 1e-12) best = { imp, f, t: (X[s[q]][f] + X[s[q + 1]][f]) / 2 };
+    }
+  }
+  if (!best || best.imp >= parent - 1e-12) return leaf;
+  return { f: best.f, t: best.t, l: fitTreeN(X, y, { maxDepth, minLeaf, rand }, idx.filter((i) => X[i][best.f] <= best.t), depth + 1), r: fitTreeN(X, y, { maxDepth, minLeaf, rand }, idx.filter((i) => X[i][best.f] > best.t), depth + 1) };
+}
+export const treeProbN = (t, row) => (t.leaf ? t.p : row[t.f] <= t.t ? treeProbN(t.l, row) : treeProbN(t.r, row));
+/** k-fold cross-validated accuracy: `learn(Xtr, ytr)` returns a function row → predicted class. */
+export function cvAccuracy(X, y, learn, folds = 5, seed = 1) {
+  const r = rng(seed), idx = X.map((_, i) => i);
+  for (let i = idx.length - 1; i > 0; i--) { const j = r.int(i + 1); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+  const acc = [];
+  for (let f = 0; f < folds; f++) {
+    const te = idx.filter((_, q) => q % folds === f), tr = idx.filter((_, q) => q % folds !== f), pred = learn(tr.map((i) => X[i]), tr.map((i) => y[i]));
+    acc.push(te.filter((i) => pred(X[i]) === y[i]).length / te.length);
+  }
+  const m = acc.reduce((a, b) => a + b, 0) / folds;
+  return { mean: m, sd: Math.sqrt(acc.reduce((s, v) => s + (v - m) ** 2, 0) / (folds - 1)) };
+}

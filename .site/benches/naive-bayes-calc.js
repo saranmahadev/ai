@@ -10,7 +10,7 @@ export default function mount(root, kit) {
   const table = h("table", { class: "bench-table" });
   const st = stats([["o", "odds for spam"], ["p", "P(spam | words)"]]);
   body.append(table, st.el, tg.el, sl.el);
-  function update() { const on = tg.get(); let odds = prior / (1 - prior); table.textContent = ""; table.append(h("tr", {}, h("th", {}, "step"), h("th", {}, "P(word | spam)"), h("th", {}, "P(word | ham)"), h("th", {}, "× ratio"), h("th", {}, "odds after")), h("tr", {}, h("td", {}, "prior"), h("td", {}, fmt(prior, 2)), h("td", {}, fmt(1 - prior, 2)), h("td", {}, "—"), h("td", {}, fmt(odds, 2))));
+  function update() { const on = tg.get(); let odds = prior / (1 - prior); table.textContent = ""; table.append(h("tr", {}, h("th", {}, "step"), h("th", {}, "if spam"), h("th", {}, "if ham"), h("th", {}, "× ratio"), h("th", {}, "odds")), h("tr", {}, h("td", {}, "prior"), h("td", {}, fmt(prior, 2)), h("td", {}, fmt(1 - prior, 2)), h("td", {}, "—"), h("td", {}, fmt(odds, 2))));
     for (const [w, ps, ph] of W) if (on[w]) { odds *= ps / ph; table.append(h("tr", {}, h("td", {}, w), h("td", {}, fmt(ps, 2)), h("td", {}, fmt(ph, 2)), h("td", {}, "× " + fmt(ps / ph, 2)), h("td", {}, fmt(odds, 2)))); }
     const p = odds / (1 + odds); st.set("o", fmt(odds, 2)); st.set("p", fmt(p * 100, 1) + "%"); say(`Probability of spam ${fmt(p * 100, 1)} percent`); }
   update(); return () => {};
