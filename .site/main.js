@@ -19,6 +19,13 @@ let stage = null, homeScene = null, galaxy = null, planetScene = null, planetKey
 let launching = false, flying = false;
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+const bodies = new Map();
+// an article's body (html and table of contents) lives in its own file; fetched once, then cached on the topic
+function loadBody(t) {
+  if (t.html !== undefined) return Promise.resolve(t);
+  if (!bodies.has(t.id)) bodies.set(t.id, fetch(`content/${t.id}.json`).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((b) => Object.assign(t, b)).catch((e) => { bodies.delete(t.id); throw e; }));
+  return bodies.get(t.id);
+}
 const loading = fetch("content.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((c) => (content = c));
 
 function setTitle(t) { document.title = t; $("#announce").textContent = t; }
@@ -104,7 +111,7 @@ function topicView(t) {
       </header>
       <figure class="doc-cover" aria-hidden="true">${cover(t.title, color)}</figure>
       <div class="doc-body">
-        ${t.status === "outlined" ? `<p class="notice">This note exists in the vault but is still empty. It will fill in as the knowledge base grows.</p>` : `<div class="prose">${t.html}</div>`}
+        ${t.status === "outlined" ? `<p class="notice">This note exists in the vault but is still empty. It will fill in as the knowledge base grows.</p>` : `<div class="prose">${t.html || ""}</div>`}
       </div>
       <footer class="doc-end">
         ${next ? `<a class="read-next" href="#/${next.id}" data-topic="${next.id}"><small>Read next</small><b>${esc(next.title)}</b><p>${esc(next.summary || "")}</p><span aria-hidden="true">→</span></a>` : ""}
@@ -135,8 +142,9 @@ function enhanceArticle(topic) {
     });
     break;
   }
+  { const nx = art.querySelector(".read-next[data-topic]") || document.querySelector(".read-next[data-topic]"); const nt = nx && content.topics[nx.dataset.topic]; if (nt && nt.status !== "outlined") (window.requestIdleCallback || setTimeout)(() => loadBody(nt).catch(() => {})); }
   const stopBenches = mountBenches(art);
-  const stopReader = mountReader({ art, topic: { ...topic, toc: topic.toc.filter((t) => t.id !== "related") }, content, reduce: reduceMotion });
+  const stopReader = mountReader({ art, topic: { ...topic, toc: (topic.toc || []).filter((t) => t.id !== "related") }, content, reduce: reduceMotion });
   cleanupArticle = () => { stopReader(); stopBenches(); };
 }
 
@@ -291,6 +299,14 @@ function route() {
   if (isHome) { setTitle("AI Base"); return; }
   if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
 
+  const wanted = content.topics[key];
+  if (wanted && wanted.html === undefined && wanted.status !== "outlined") {
+    const at = location.hash;
+    view.innerHTML = `<p class="notice" role="status">Loading…</p>`;
+    setTitle(`${wanted.title} · AI Base`);
+    loadBody(wanted).then(() => { if (location.hash === at) route(); }, () => { if (location.hash === at) view.innerHTML = `<p class="notice">This topic could not be loaded. <a href="${at}">Try again</a></p>`; });
+    return;
+  }
   let html, title;
   if (key === "path") { html = pathView(); title = "My path"; }
   else if (key === "galaxy" || key === "list") { html = galaxyView(); title = "Planets"; }

@@ -1,6 +1,6 @@
 // Turns the Obsidian vault (Markdown notes) into .site/content.json.
 // Vault = source of truth. Run: `npm run content` (from .site/). `--check` builds without writing.
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { join, dirname, basename, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { marked } from "marked";
@@ -224,8 +224,20 @@ const stats = {
   topics: Object.keys(topics).length,
   written: Object.values(topics).filter((t) => t.status === "written").length
 };
-const out = { generated: new Date().toISOString(), galaxy: galaxyNote ? { ...config.galaxy, id: "ai" } : null, planets, topics, stats };
+// The index (content.json) carries everything except article bodies; each body (html + table of contents) is its own file
+// under content/, fetched when the topic is opened, so the first load stays small however many planets there are.
+const index = {};
+for (const [id, t] of Object.entries(topics)) { const { html, toc, ...rest } = t; index[id] = rest; }
+const out = { generated: new Date().toISOString(), galaxy: galaxyNote ? { ...config.galaxy, id: "ai" } : null, planets, topics: index, stats };
 
-if (!CHECK) writeFileSync(join(SITE, "content.json"), JSON.stringify(out));
+if (!CHECK) {
+  writeFileSync(join(SITE, "content.json"), JSON.stringify(out));
+  rmSync(join(SITE, "content"), { recursive: true, force: true });
+  for (const [id, t] of Object.entries(topics)) {
+    const file = join(SITE, "content", `${id}.json`);
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify({ html: t.html, toc: t.toc }));
+  }
+}
 console.log(`content: ${stats.planets} planets (${stats.explored} explored), ${stats.topics} topics (${stats.written} written)${CHECK ? " [check only]" : ""}`);
 if (warnings.length) console.warn(`\n${warnings.length} warning(s):\n- ${[...new Set(warnings)].join("\n- ")}`);
