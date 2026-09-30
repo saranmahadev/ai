@@ -9,7 +9,7 @@ const SITE = join(dirname(fileURLToPath(import.meta.url)), "..");
 const shots = (process.argv.find((a) => a.startsWith("--shots=")) || "").slice(8);
 const planetId = (process.argv.find((a) => a.startsWith("--planet=")) || "--planet=fundamentals").slice(9);
 const time = (process.argv.find((a) => a.startsWith("--time=")) || "--time=12:00").slice(7); // e.g. --time=22:30 to test night
-const planetBudget = 260; // draw calls in Full detail (measured, with headroom)
+const planetBudget = 190; // draw calls in Full detail (measured, with headroom)
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".png": "image/png" };
 let chromium;
 try { ({ chromium } = await import("playwright")); } catch { console.error("Playwright is not installed; skipping planet test."); process.exit(2); }
