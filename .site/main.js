@@ -55,28 +55,29 @@ function planetView(p) {
 function topicView(t) {
   const p = t.planet && content.planets.find((x) => x.id === t.planet);
   const d = p && p.districts.find((x) => x.id === t.district);
-  const chip = (id) => { const o = content.topics[id]; return o ? `<li><a class="chip ${o.status}" href="#/${id}">${esc(o.title)}</a></li>` : ""; };
+  const link = (id) => { const o = content.topics[id]; return o ? `<li><a class="chip ${o.status}" href="#/${id}">${esc(o.title)}</a></li>` : ""; };
   const flat = p ? p.districts.flatMap((x) => x.topics) : [];
   const at = flat.indexOf(t.id);
   const prev = at > 0 ? content.topics[flat[at - 1]] : null;
   const next = at >= 0 && at < flat.length - 1 ? content.topics[flat[at + 1]] : null;
   const mins = Math.max(1, Math.round(t.words / 200));
-  const title = esc(t.title).split(" ").map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`).join(" ");
-  const card = (o, dir) => o ? `<a class="pager-card ${dir}" href="#/${o.id}"><small>${dir === "prev" ? "← Previous" : "Next →"}</small><b>${esc(o.title)}</b></a>` : "<span></span>";
+  const card = (o, dir) => o ? `<a class="pager-card ${dir}" href="#/${o.id}"><small>${dir === "prev" ? "Previous" : "Next"}</small><b>${esc(o.title)}</b></a>` : "<span></span>";
+  const hasToc = t.toc.length > 2;
+  const tocLinks = t.toc.map((h) => `<a class="d${h.depth}" href="#/${t.id}" data-scroll="${h.id}">${esc(h.text)}</a>`).join("");
   return `
-    <article class="article topic" style="--c:${p ? p.color : "#b39cf5"}">
-      <div class="blobs" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-      <header class="t-hero">
-        <p class="kicker">${p ? esc(p.title) : "Overview"}${d && d.title !== p.title ? ` · ${esc(d.title)}` : ""} ${badge(t.status)}</p>
-        <h2 class="t-title">${title}</h2>
-        <p class="t-meta"><span>⏱ ${mins} min read</span>${t.toc.length ? `<span>${t.toc.length} section${t.toc.length > 1 ? "s" : ""}</span>` : ""}${at >= 0 ? `<span>Topic ${at + 1} of ${flat.length}</span>` : ""}</p>
+    <article class="doc topic" style="--c:${p ? p.color : "#b39cf5"}">
+      <header class="doc-head">
+        <p class="doc-kicker">${p ? esc(p.title) : "Overview"}${d && d.title !== p.title ? ` · ${esc(d.title)}` : ""}</p>
+        <h1 class="doc-title">${esc(t.title)}</h1>
+        <p class="doc-meta"><span>${mins} min read</span>${at >= 0 ? `<span>Topic ${at + 1} of ${flat.length}</span>` : ""}${t.status !== "written" ? badge(t.status) : ""}</p>
       </header>
-      <div class="t-body ${t.toc.length > 2 ? "has-toc" : ""}">
-        ${t.toc.length > 2 ? `<aside class="toc"><b>On this page</b>${t.toc.map((h) => `<a class="d${h.depth}" href="#/${t.id}" data-scroll="${h.id}">${esc(h.text)}</a>`).join("")}</aside>` : ""}
+      ${hasToc ? `<details class="toc toc-inline"><summary>On this page</summary><nav aria-label="On this page">${tocLinks}</nav></details>` : ""}
+      <div class="doc-body ${hasToc ? "has-toc" : ""}">
         ${t.status === "outlined" ? `<p class="notice">This note exists in the vault but is still empty. It will fill in as the knowledge base grows.</p>` : `<div class="prose">${t.html}</div>`}
+        ${hasToc ? `<aside class="toc toc-side" aria-label="On this page"><b>On this page</b>${tocLinks}</aside>` : ""}
       </div>
-      ${t.links.length ? `<section class="related"><h3>Related topics</h3><ul class="chips">${t.links.map(chip).join("")}</ul></section>` : ""}
-      ${t.backlinks.length ? `<section class="related"><h3>Mentioned in</h3><ul class="chips">${t.backlinks.map(chip).join("")}</ul></section>` : ""}
+      ${t.links.length ? `<section class="related"><h3>Related topics</h3><ul class="chips">${t.links.map(link).join("")}</ul></section>` : ""}
+      ${t.backlinks.length ? `<section class="related"><h3>Mentioned in</h3><ul class="chips">${t.backlinks.map(link).join("")}</ul></section>` : ""}
       ${prev || next ? `<nav class="pager" aria-label="Neighbouring topics">${card(prev, "prev")}${card(next, "next")}</nav>` : ""}
       <p class="source"><a href="${REPO}${encodeURI(t.path)}" target="_blank" rel="noopener">View source note ↗</a></p>
     </article>`;
@@ -89,19 +90,13 @@ function enhanceArticle() {
   const art = view.querySelector(".topic");
   if (!art) return;
   const bar = $("#readbar");
+  bar.style.setProperty("--c", art.style.getPropertyValue("--c"));
   const prose = art.querySelector(".prose");
-  let io = null;
-  if (!reduceMotion && "IntersectionObserver" in window && prose) {
-    art.classList.add("reveal-ready");
-    io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -6% 0px" });
-    [...prose.children].forEach((el, i) => { el.style.setProperty("--d", `${Math.min(i, 5) * 45}ms`); io.observe(el); });
-  }
   const heads = prose ? [...prose.querySelectorAll("h1,h2,h3")].filter((h) => h.id) : [];
   const links = [...art.querySelectorAll(".toc a[data-scroll]")];
   const onScroll = () => {
     const max = document.documentElement.scrollHeight - innerHeight;
     bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
-    if (!reduceMotion) art.style.setProperty("--sy", String(scrollY));
     let cur = null;
     for (const h of heads) if (h.getBoundingClientRect().top < 150) cur = h.id;
     links.forEach((a) => a.classList.toggle("active", a.dataset.scroll === cur));
@@ -109,7 +104,7 @@ function enhanceArticle() {
   addEventListener("scroll", onScroll, { passive: true });
   onScroll();
   const stopBenches = mountBenches(art);
-  cleanupArticle = () => { removeEventListener("scroll", onScroll); if (io) io.disconnect(); stopBenches(); bar.style.transform = "scaleX(0)"; };
+  cleanupArticle = () => { removeEventListener("scroll", onScroll); stopBenches(); bar.style.transform = "scaleX(0)"; };
 }
 
 // ---------- benches: interactive demos embedded in articles (see benches/kit.js), loaded when scrolled near
@@ -239,6 +234,7 @@ function route() {
   document.body.classList.toggle("route-galaxy", isGalaxy);
   document.body.classList.toggle("route-planet", isPlanet);
   document.body.classList.toggle("route-topic", !isHome && !isGalaxy && !isPlanet && !!content.topics[key]);
+  document.body.classList.toggle("reading", !isHome && !isGalaxy && !isPlanet);
   planetEl.hidden = !isPlanet;
   home.hidden = !isHome;
   galaxyEl.hidden = !isGalaxy;
@@ -261,7 +257,7 @@ function route() {
   else if (content.planets.find((p) => p.id === key)) { const p = content.planets.find((x) => x.id === key); html = planetView(p); title = p.title; }
   else { html = `<p class="notice">Nothing here. <a href="#/galaxy">Back to the galaxy</a></p>`; title = "Not found"; }
   view.innerHTML = html;
-  { const h = view.querySelector("h2"); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
+  { const h = view.querySelector("h1, h2"); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
   if (content.topics[key]) { enhanceArticle(); if (planetScene && content.topics[key].planet) planetScene.remember(content.topics[key].planet, key); }
   else if (cleanupArticle) { cleanupArticle(); cleanupArticle = null; }
   setTitle(`${title} · AI Base`);
@@ -279,7 +275,7 @@ document.addEventListener("click", (e) => {
 });
 addEventListener("hashchange", route);
 
-// ---------- warp between topics, and back to the road
+// ---------- from a topic back to a planet's road
 view.addEventListener("click", (e) => {
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || !view.querySelector(".topic")) return;
   const a = e.target.closest('a[href^="#/"]');
@@ -287,8 +283,8 @@ view.addEventListener("click", (e) => {
   const href = decodeURIComponent(a.getAttribute("href").slice(2));
   const topic = content.topics[href];
   const planet = content.planets.find((p) => p.id === href);
-  if (topic) { e.preventDefault(); warpTo(`#/${href}`, 1, colorOf(topic)); }
-  else if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`, -1, planet.color); }
+  if (topic) return; // topic to topic is a plain page change
+  if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`, -1, planet.color); }
 });
 // ---------- launch
 $("#launch").addEventListener("click", async () => {

@@ -148,7 +148,7 @@ function render(note) {
       },
       heading({ tokens, depth }) {
         const html = this.parser.parseInline(tokens);
-        const text = html.replace(/<[^>]+>/g, "");
+        const text = html.replace(/<[^>]+>/g, "").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
         const id = slug(text) || `h${toc.length}`;
         if (depth >= 1 && depth <= 3) toc.push({ id, text, depth });
         return `<h${depth} id="${id}">${html}</h${depth}>\n`;
