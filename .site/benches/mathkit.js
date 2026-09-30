@@ -65,3 +65,18 @@ export function matrixControls(kit, M, onChange, presets = []) {
 export const PRESETS = [
   ["Identity", [1, 0, 0, 1]], ["Stretch x", [2, 0, 0, 1]], ["Rotate 90°", [0, -1, 1, 0]], ["Shear", [1, 1, 0, 1]], ["Flip", [1, 0, 0, -1]], ["Squash", [1, 2, 0.5, 1]]
 ];
+
+/** Colour a scalar field f(x, y) over the canvas using a view V. Returns the min and max value found. */
+export function heatmap(ctx, w, h, V, f, { block = 6, bands = 10, lo = null, hi = null } = {}) {
+  const cols = Math.ceil(w / block), rows = Math.ceil(h / block), vals = new Float32Array(cols * rows);
+  let mn = Infinity, mx = -Infinity;
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) { const v = f(V.x(i * block + block / 2), V.y(j * block + block / 2)); vals[j * cols + i] = v; if (v < mn) mn = v; if (v > mx) mx = v; }
+  if (lo !== null) mn = lo; if (hi !== null) mx = hi;
+  const span = mx - mn || 1;
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+    const t = Math.min(1, Math.max(0, (vals[j * cols + i] - mn) / span)), band = Math.floor(t * bands);
+    ctx.fillStyle = `hsla(${230 - 200 * t}, 75%, ${band % 2 ? 62 : 56}%, 0.55)`; ctx.fillRect(i * block, j * block, block + 0.5, block + 0.5);
+  }
+  return { mn, mx };
+}
+export const numDiff = (f, x, h = 1e-4) => (f(x + h) - f(x - h)) / (2 * h);
