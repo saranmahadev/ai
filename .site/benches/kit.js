@@ -59,6 +59,7 @@ export function canvas(parent, { aspect = 0.6, label = "", maxH = 460 } = {}) {
   ro.observe(box);
   const mo = new MutationObserver(redraw); // theme.js changes root style/class as the day goes by
   mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style"] });
+  mo.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] }); // the reader can switch theme
   return {
     cv, box, ctx,
     get w() { return w; }, get h() { return hh; },

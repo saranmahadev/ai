@@ -16,6 +16,7 @@ npm ci              # install (only dependency: marked)
 npm run content     # build the vault into .site/content.json
 npm test            # build in memory and print content warnings (unresolved links, unassigned notes, missing bench modules)
 npm run test:benches  # opens every bench at 1280, 768 and 390px in Chromium (needs Playwright), exercises its controls, fails on console errors or horizontal overflow; --shots=DIR saves screenshots
+npm run test:reader   # exercises the article reading experience in Chromium: type, cover, street strip, settings and themes, drawer, previews, key terms, selection bar, resume, ?at= links, phone width; --shots=DIR
 npm run test:planet   # walks a planet in Chromium: › to the kiosk and to the first street, E opens the article, Back returns to that street; --planet=id --time=HH:MM --shots=DIR
 npm run dev         # build content and serve the site at http://localhost:8000
 ```
@@ -34,12 +35,14 @@ npm run dev         # build content and serve the site at http://localhost:8000
   main.js                  hash router (#/, #/galaxy, #/list, #/<planet>, #/<planet>/<topic>) + galaxy UI + text views
   scenes/                  stage.js (one shared WebGL renderer), home.js (rocket + launch), galaxy.js (planets + rocket flight), planet.js (walkable planet: road, gates, signposts, landing)
   models/                  procedural clay models (rocket, astronaut)
+  cover.js                 generated SVG cover art for an article, seeded from its title and planet colour
+  reader.js                the reading experience: preferences, floating bar with the street strip, settings, outline drawer, resume, link previews, key-term popovers, selection bar
   benches/                 interactive demos embedded in articles: kit.js (shared helpers) + one module per bench id
-  vendor/                  three.js and the Nunito fonts (OFL), vendored: the site makes no external requests
+  vendor/                  three.js, the Nunito fonts and Source Serif 4 (both OFL), vendored: the site makes no external requests
   favicon.svg, og.png      icon and 1200×630 social preview (regenerate og.png from a Playwright screenshot of the home page when visuals change)
 ```
 
-- **Style:** the *world* (home, galaxy, planet scenes and their overlays) is claymorphism: pastel palette, matte clay materials (`scenes/clay.js`), soft shadows, no bloom, everything procedural. The *reading pages* (articles and text lists, `body.reading`) are a standard document: flat top bar and breadcrumb, system-font body text with Nunito headings, a 74ch column, thin rules, light and dark variants (`--r-*` tokens in `styles.css`). Do not bring clay shadows or pills into reading pages.
+- **Style:** the *world* (home, galaxy, planet scenes and their overlays) is claymorphism: pastel palette, matte clay materials (`scenes/clay.js`), soft shadows, no bloom, everything procedural. The *reading pages* (articles and text lists, `body.reading`) are a standard, Medium-style document: flat top bar and breadcrumb that tuck away while you read down, a 720px column of Source Serif 4 body text (or sans, by preference) with Nunito headings, a lede first paragraph, a generated cover, pull quotes, wide figures for benches, and Read next / Keep exploring cards at the end. Three reader themes (light, sepia, dark) plus "auto" (follows `html.night`) are `--r-*` tokens in `styles.css`, switched by `body[data-theme]`; the size and typeface preferences live in `localStorage` (`ai-base-reader`). Do not bring clay shadows or pills into reading pages.
 - **Routing:** hash-based so it works on static hosting. Topic ids are `<planet>/<slug-of-note-title>`; the overview note is `ai`.
 - **Scenes** share one renderer via `scenes/stage.js`: a scene is `{ scene, camera, update(dt, t), resize(w, h) }`. `main.js` activates the scene for the current route; other routes hide the canvas.
 - **Text views** (`main.js`) render the galaxy, planets and articles as accessible HTML. They are the permanent fallback for no-WebGL and reduced-motion users, and the article renderer the 3D flow opens.
@@ -108,7 +111,8 @@ Delivered in order, one PR each:
 7. **Benches (Wave 0)** ✅ `bench` blocks, `benches/kit.js`, the smoke test, and three pilot topics that set the quality bar: Dot Product, Derivatives, Bayes Theorem. The curriculum is being rewritten from scratch in waves (math spine first); the pilot notes replace the earlier stubs.
 8. **AI Fundamentals** ✅ the planet is a folder planet (`Fundamentals/<District>/<Topic>.md`, landing note `Fundamentals.md`) with five districts and 24 topics, each with a bench: What Is AI, The Agent, Data and Models, Classic AI, Judging AI. Dates and textbook frameworks were checked against sources. Worked-example numbers in the notes were produced by running the benches' own logic, so change a bench's data or seed only together with its note.
 9. **Reading, benches and streets** ✅ articles and text lists became a standard document (no clay, parallax or reveal animations); benches got a roomy two-pane layout and lost their explanatory text; the planet road grew a big arch and plaza per district and a street with a reading lodge per topic, with a door fade replacing the warp tunnel (`transition.js` was removed).
+10. **Medium-style reading** ✅ articles gained the serif typography, generated covers, end-of-article cards and the reader (`reader.js`): a floating bar whose **street strip** has a lamp per section and a small walker that moves as you read (click a lamp to jump), time left, settings (size, typeface, light/sepia/dark/auto), an outline drawer, resume where you left off, hover previews for topic links, dotted key-term popovers built from each note's *Key terms* list (the build exposes them as `glossary`), a selection bar (copy quote, copy link to a section via `#/<topic>?at=<heading-id>`). The note's trailing *Related* list is replaced on the page by the cards; the vault note keeps it.
 
 ## Verifying changes
 
-There is no test suite. For site work: run `npm test` (must build with no unexpected warnings), serve the site, and check it in a real browser (Playwright with Chromium is available in the cloud environment: launch with `--use-gl=swiftshader --enable-unsafe-swiftshader --ignore-gpu-blocklist`). Look at screenshots of the home, galaxy, a planet (day and `?time=22:30`) and an article, run `npm run test:benches` and `npm run test:planet`, and check the console for errors.
+There is no test suite. For site work: run `npm test` (must build with no unexpected warnings), serve the site, and check it in a real browser (Playwright with Chromium is available in the cloud environment: launch with `--use-gl=swiftshader --enable-unsafe-swiftshader --ignore-gpu-blocklist`). Look at screenshots of the home, galaxy, a planet (day and `?time=22:30`) and an article, run `npm run test:benches`, `npm run test:planet` and `npm run test:reader`, and check the console for errors.

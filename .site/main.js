@@ -1,6 +1,8 @@
 import { theme } from "./theme.js";
 import { navFor } from "./nav.js";
 import * as benchKit from "./benches/kit.js";
+import { cover } from "./cover.js";
+import { mountReader, applyPrefs } from "./reader.js";
 
 // Router + views. The 3D scenes plug in per route; the text views below are also the permanent accessible fallback.
 const $ = (s) => document.querySelector(s);
@@ -8,6 +10,7 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 const STATUS = { written: "Written", outlined: "Outlined", index: "Index", planned: "Undiscovered", explored: "Explored" };
 const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 
+applyPrefs();
 const view = $("#view");
 const home = $("#home");
 let content = null;
@@ -54,56 +57,47 @@ function planetView(p) {
 function topicView(t) {
   const p = t.planet && content.planets.find((x) => x.id === t.planet);
   const d = p && p.districts.find((x) => x.id === t.district);
-  const link = (id) => { const o = content.topics[id]; return o ? `<li><a class="chip ${o.status}" href="#/${id}">${esc(o.title)}</a></li>` : ""; };
   const flat = p ? p.districts.flatMap((x) => x.topics) : [];
   const at = flat.indexOf(t.id);
   const prev = at > 0 ? content.topics[flat[at - 1]] : null;
   const next = at >= 0 && at < flat.length - 1 ? content.topics[flat[at + 1]] : null;
   const mins = Math.max(1, Math.round(t.words / 200));
-  const card = (o, dir) => o ? `<a class="pager-card ${dir}" href="#/${o.id}"><small>${dir === "prev" ? "Previous" : "Next"}</small><b>${esc(o.title)}</b></a>` : "<span></span>";
-  const hasToc = t.toc.length > 2;
-  const tocLinks = t.toc.map((h) => `<a class="d${h.depth}" href="#/${t.id}" data-scroll="${h.id}">${esc(h.text)}</a>`).join("");
+  const color = p ? p.color : "#b39cf5";
+  const card = (o, cls = "") => `<a class="rc-card ${cls}" href="#/${o.id}" data-topic="${o.id}"><small>${esc(o.district && content.topics[o.id] ? districtTitle(o) : "")}</small><b>${esc(o.title)}</b><p>${esc(o.summary || "Not written yet.")}</p></a>`;
+  const more = [...new Set([...t.links, ...t.backlinks])].map((id) => content.topics[id]).filter((o) => o && o.id !== (next && next.id)).slice(0, 6);
   return `
-    <article class="doc topic" style="--c:${p ? p.color : "#b39cf5"}">
+    <article class="doc topic" style="--c:${color}">
       <header class="doc-head">
         <p class="doc-kicker">${p ? esc(p.title) : "Overview"}${d && d.title !== p.title ? ` · ${esc(d.title)}` : ""}</p>
         <h1 class="doc-title">${esc(t.title)}</h1>
-        <p class="doc-meta"><span>${mins} min read</span>${at >= 0 ? `<span>Topic ${at + 1} of ${flat.length}</span>` : ""}${t.status !== "written" ? badge(t.status) : ""}</p>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>${p ? esc(p.title) : "AI Base"}</b><span>${mins} min read${at >= 0 ? ` · Topic ${at + 1} of ${flat.length}` : ""}${t.status !== "written" ? ` · ${STATUS[t.status] || t.status}` : ""}</span></div></div>
       </header>
-      ${hasToc ? `<details class="toc toc-inline"><summary>On this page</summary><nav aria-label="On this page">${tocLinks}</nav></details>` : ""}
-      <div class="doc-body ${hasToc ? "has-toc" : ""}">
+      <figure class="doc-cover" aria-hidden="true">${cover(t.title, color)}</figure>
+      <div class="doc-body">
         ${t.status === "outlined" ? `<p class="notice">This note exists in the vault but is still empty. It will fill in as the knowledge base grows.</p>` : `<div class="prose">${t.html}</div>`}
-        ${hasToc ? `<aside class="toc toc-side" aria-label="On this page"><b>On this page</b>${tocLinks}</aside>` : ""}
       </div>
-      ${t.links.length ? `<section class="related"><h3>Related topics</h3><ul class="chips">${t.links.map(link).join("")}</ul></section>` : ""}
-      ${t.backlinks.length ? `<section class="related"><h3>Mentioned in</h3><ul class="chips">${t.backlinks.map(link).join("")}</ul></section>` : ""}
-      ${prev || next ? `<nav class="pager" aria-label="Neighbouring topics">${card(prev, "prev")}${card(next, "next")}</nav>` : ""}
-      <p class="source"><a href="${REPO}${encodeURI(t.path)}" target="_blank" rel="noopener">View source note ↗</a></p>
+      <footer class="doc-end">
+        ${next ? `<a class="read-next" href="#/${next.id}" data-topic="${next.id}"><small>Read next</small><b>${esc(next.title)}</b><p>${esc(next.summary || "")}</p><span aria-hidden="true">→</span></a>` : ""}
+        ${more.length ? `<section class="more"><h3>Keep exploring</h3><div class="rc-grid">${more.map((o) => card(o)).join("")}</div></section>` : ""}
+        ${prev ? `<p class="doc-prev"><a href="#/${prev.id}">← Previous: ${esc(prev.title)}</a></p>` : ""}
+        <p class="source"><a href="${REPO}${encodeURI(t.path)}" target="_blank" rel="noopener">View source note ↗</a></p>
+      </footer>
     </article>`;
 }
+const districtTitle = (o) => { const p = content.planets.find((x) => x.id === o.planet); const d = p && p.districts.find((x) => x.id === o.district); return d && d.title; };
 
 // ---------- article behaviour: reveal on scroll, scroll-spy TOC, reading bar, parallax blobs
 let cleanupArticle = null;
-function enhanceArticle() {
+function enhanceArticle(topic) {
   if (cleanupArticle) { cleanupArticle(); cleanupArticle = null; }
   const art = view.querySelector(".topic");
   if (!art) return;
-  const bar = $("#readbar");
-  bar.style.setProperty("--c", art.style.getPropertyValue("--c"));
-  const prose = art.querySelector(".prose");
-  const heads = prose ? [...prose.querySelectorAll("h1,h2,h3")].filter((h) => h.id) : [];
-  const links = [...art.querySelectorAll(".toc a[data-scroll]")];
-  const onScroll = () => {
-    const max = document.documentElement.scrollHeight - innerHeight;
-    bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
-    let cur = null;
-    for (const h of heads) if (h.getBoundingClientRect().top < 150) cur = h.id;
-    links.forEach((a) => a.classList.toggle("active", a.dataset.scroll === cur));
-  };
-  addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
+  // the end-of-article cards replace the note's own trailing "Related" list (the vault note keeps it)
+  const rel = art.querySelector(".prose > h2#related");
+  if (rel && art.querySelector(".doc-end .read-next, .doc-end .more")) { while (rel.nextSibling) rel.nextSibling.remove(); rel.remove(); }
   const stopBenches = mountBenches(art);
-  cleanupArticle = () => { removeEventListener("scroll", onScroll); stopBenches(); bar.style.transform = "scaleX(0)"; };
+  const stopReader = mountReader({ art, topic: { ...topic, toc: topic.toc.filter((t) => t.id !== "related") }, content, reduce: reduceMotion });
+  cleanupArticle = () => { stopReader(); stopBenches(); };
 }
 
 // ---------- benches: interactive demos embedded in articles (see benches/kit.js), loaded when scrolled near
@@ -263,10 +257,11 @@ function route() {
   else { html = `<p class="notice">Nothing here. <a href="#/galaxy">Back to the galaxy</a></p>`; title = "Not found"; }
   view.innerHTML = html;
   { const h = view.querySelector("h1, h2"); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
-  if (content.topics[key]) { enhanceArticle(); if (planetScene && content.topics[key].planet) planetScene.remember(content.topics[key].planet, key); }
+  if (content.topics[key]) { enhanceArticle(content.topics[key]); if (planetScene && content.topics[key].planet) planetScene.remember(content.topics[key].planet, key); }
   else if (cleanupArticle) { cleanupArticle(); cleanupArticle = null; }
   setTitle(`${title} · AI Base`);
   scrollTo(0, 0);
+  if (content.topics[key] && query && query.startsWith("at=")) { const target = document.getElementById(query.slice(3)); if (target) requestAnimationFrame(() => target.scrollIntoView()); }
   view.classList.remove("enter"); void view.offsetWidth; view.classList.add("enter");
 }
 
