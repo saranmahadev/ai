@@ -21,6 +21,15 @@ function h(tag, props = {}, ...kids) {
   return el;
 }
 
+// topics you have read to the end (>= 90%): the planet lights their lodges
+const READ_KEY = "ai-base-read";
+export function readSet() {
+  try { const a = JSON.parse(localStorage.getItem(READ_KEY) || "[]"); return new Set(Array.isArray(a) ? a : []); } catch { return new Set(); }
+}
+export function markRead(id) {
+  try { const s = readSet(); if (s.has(id)) return; s.add(id); localStorage.setItem(READ_KEY, JSON.stringify([...s])); } catch { /* private mode */ }
+}
+
 export function loadPrefs() {
   try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(PREFS_KEY) || "{}") }; } catch { return { ...DEFAULTS }; }
 }
@@ -121,8 +130,10 @@ export function mountReader({ art, topic, content, reduce }) {
   const frac = () => { const { top, H } = geom(); return clamp((scrollY + innerHeight * 0.4 - top) / H, 0, 1); };
   const readbar = document.getElementById("readbar");
   if (readbar) readbar.style.setProperty("--c", art.style.getPropertyValue("--c"));
+  let marked = false;
   function tick() {
     const f = frac(), y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+    if (f >= 0.9 && !marked) { marked = true; markRead(topic.id); }
     fill.style.width = f * 100 + "%";
     walker.style.left = f * 100 + "%";
     lamps.forEach((l, i) => l.classList.toggle("lit", lampFrac[i] <= f));
