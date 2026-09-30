@@ -1,6 +1,6 @@
 // Smoke test: opens every topic that embeds a bench, scrolls to it and checks it mounts without console errors.
 // Every bench is opened at 1280, 768 and 390px wide and must not overflow horizontally.
-// Needs Playwright with Chromium (not a dependency of the site): `npm run test:benches`. Add --shots=DIR to save screenshots.
+// Needs Playwright with Chromium (not a dependency of the site): `npm run test:benches`. Options: --shots=DIR saves screenshots, --only=bench-id tests one bench.
 import { createServer } from "node:http";
 import { readFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname, extname } from "node:path";
@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const SITE = join(dirname(fileURLToPath(import.meta.url)), "..");
 const shots = (process.argv.find((a) => a.startsWith("--shots=")) || "").slice(8);
+const only = (process.argv.find((a) => a.startsWith("--only=")) || "").slice(7); // test a single bench id
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".png": "image/png" };
 
 let chromium;
@@ -30,12 +31,14 @@ const browser = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable
 let failed = 0;
 const WIDTHS = [1280, 768, 390];
 for (const topic of withBenches) for (const bench of [...new Set(topic.benches)]) {
+  if (only && bench !== only) continue;
   const errors = [];
   for (const width of WIDTHS) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     page.on("console", (m) => { if (m.type() === "error") errors.push(`[${width}] ${m.text()}`); });
     page.on("pageerror", (e) => errors.push(`[${width}] ${e}`));
     await page.goto(`${base}?time=12:00#/${topic.id}`);
+    await page.addStyleTag({ content: "#rbar, .r-toast { display: none !important; }" }); // the reading bar is tested in test:reader
     const sel = `.bench[data-bench="${bench}"]`;
     try {
       await page.waitForSelector(sel, { timeout: 15000 });
