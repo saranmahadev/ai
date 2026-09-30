@@ -1,4 +1,3 @@
-import { warp } from "./transition.js";
 import { theme } from "./theme.js";
 import { navFor } from "./nav.js";
 import * as benchKit from "./benches/kit.js";
@@ -167,13 +166,12 @@ $("#navbar").addEventListener("click", (e) => {
   else if (l.dataset.warp) {
     e.preventDefault();
     const id = decodeURIComponent(l.getAttribute("href").slice(2));
-    const pl = content.planets.find((p) => p.id === id);
-    warpTo(l.getAttribute("href"), +l.dataset.warp, pl ? pl.color : "#b39cf5");
+    warpTo(l.getAttribute("href"));
   }
 });
 // Esc always means "go back one level"
 addEventListener("keydown", (e) => {
-  if (e.key !== "Escape" || e.defaultPrevented || warp.busy || flying || launching) return;
+  if (e.key !== "Escape" || e.defaultPrevented || fading || flying || launching) return;
   const b = $("#navbar:not([hidden]) .nb-back");
   if (b) b.click();
 });
@@ -185,12 +183,19 @@ function showPrompt(info) {
     ? `<p class="kicker">Your rocket</p><h3>${esc(info.title)}</h3><p class="blurb">${esc(info.sub)}</p><button class="cta small" data-act="interact">Take off 🚀 <kbd>E</kbd></button>`
     : `<p class="kicker">${esc(info.district)} ${badge(info.status)}</p><h3>${esc(info.title)}</h3><button class="cta small" data-act="interact">Open topic <kbd>E</kbd></button>`;
 }
-const colorOf = (t) => { const p = t && t.planet && content.planets.find((x) => x.id === t.planet); return p ? p.color : "#b39cf5"; };
-async function warpTo(hash, dir, color) {
-  if (warp.busy) return;
-  await warp.play({ color, dir, swap: () => { location.hash = hash; } });
+// between the road and a topic: a short fade (the planet scene has already glided to the lodge door)
+let fading = false;
+async function warpTo(hash) {
+  if (fading) return;
+  fading = true;
+  const white = $("#white");
+  white.classList.add("on", "door");
+  await new Promise((r) => setTimeout(r, reduceMotion ? 0 : 380));
+  location.hash = hash;
+  white.classList.remove("on");
+  setTimeout(() => { white.classList.remove("door"); fading = false; }, reduceMotion ? 0 : 260);
 }
-function openTopic(id) { return warpTo(`#/${id}`, 1, colorOf(content.topics[id])); }
+function openTopic(id) { return warpTo(`#/${id}`); }
 async function backToGalaxy() {
   $("#white").classList.add("on");
   await new Promise((r) => setTimeout(r, reduceMotion ? 0 : 500));
@@ -284,7 +289,7 @@ view.addEventListener("click", (e) => {
   const topic = content.topics[href];
   const planet = content.planets.find((p) => p.id === href);
   if (topic) return; // topic to topic is a plain page change
-  if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`, -1, planet.color); }
+  if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`); }
 });
 // ---------- launch
 $("#launch").addEventListener("click", async () => {
