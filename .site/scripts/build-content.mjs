@@ -198,6 +198,20 @@ for (const [path, id] of topicIdOf) {
 }
 for (const t of Object.values(topics)) for (const l of t.links) if (topics[l] && !topics[l].backlinks.includes(t.id)) topics[l].backlinks.push(t.id);
 
+// A topic's "You need:" prerequisites (on the same planet) must come earlier on the road
+for (const p of planets) {
+  const pos = new Map(p.districts.flatMap((d) => d.topics).map((id, i) => [id, i]));
+  for (const [path, id] of topicIdOf) {
+    if (!pos.has(id)) continue;
+    const m = notes.get(path).body.match(/\*\*You need:\*\*([^\n]*)/);
+    if (!m) continue;
+    for (const target of wikiTargets(m[1])) {
+      const n = byTitle.get(norm(target)), pid = n && topicIdOf.get(n.path);
+      if (pid && pos.has(pid) && pos.get(pid) > pos.get(id)) warn(`Prerequisite "${target}" of "${notes.get(path).title}" comes later on the road`);
+    }
+  }
+}
+
 for (const p of planets) {
   const ts = p.districts.flatMap((d) => d.topics).map((id) => topics[id]);
   p.status = p.planned ? "planned" : ts.some((t) => t.status === "written") ? "explored" : "outlined";

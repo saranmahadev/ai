@@ -80,3 +80,49 @@ export function heatmap(ctx, w, h, V, f, { block = 6, bands = 10, lo = null, hi 
   return { mn, mx };
 }
 export const numDiff = (f, x, h = 1e-4) => (f(x + h) - f(x - h)) / (2 * h);
+
+// ---------- probability helpers
+export const erf = (x) => { const s = Math.sign(x), t = 1 / (1 + 0.3275911 * Math.abs(x)), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return s * y; };
+export const normCdf = (x, mu = 0, s = 1) => 0.5 * (1 + erf((x - mu) / (s * Math.SQRT2)));
+export const normPdf = (x, mu = 0, s = 1) => Math.exp(-((x - mu) ** 2) / (2 * s * s)) / (s * Math.sqrt(2 * Math.PI));
+export const choose = (n, k) => { let r = 1; for (let i = 1; i <= k; i++) r = (r * (n - k + i)) / i; return r; };
+export const factorial = (n) => { let r = 1; for (let i = 2; i <= n; i++) r *= i; return r; };
+/** Numerical integral of f over [a, b] (Simpson's rule). */
+export const integrate = (f, a, b, n = 400) => { const h = (b - a) / n; let s = f(a) + f(b); for (let i = 1; i < n; i++) s += f(a + i * h) * (i % 2 ? 4 : 2); return (s * h) / 3; };
+/** Gaussian sample via Box-Muller from a uniform generator. */
+export const gauss = (r) => Math.sqrt(-2 * Math.log(Math.max(1e-12, r()))) * Math.cos(2 * Math.PI * r());
+/** Draw a histogram of `counts` as bars using a plot mapping m (x from lo..hi over bins). */
+export function bars(ctx, m, counts, lo, hi, color, { gap = 1 } = {}) {
+  const bw = (hi - lo) / counts.length;
+  counts.forEach((c, i) => { const x0 = m.X(lo + i * bw), x1 = m.X(lo + (i + 1) * bw); ctx.fillStyle = color; ctx.fillRect(x0 + gap / 2, m.Y(c), Math.max(1, x1 - x0 - gap), m.Y(0) - m.Y(c)); });
+}
+
+// ---------- statistics helpers
+export const lgamma = (x) => { const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5]; let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015; for (const cj of c) s += cj / ++y; return -t + Math.log((2.5066282746310005 * s) / x); };
+export const betaPdf = (p, a, b) => (p <= 0 || p >= 1 ? 0 : Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + (a - 1) * Math.log(p) + (b - 1) * Math.log(1 - p)));
+export const quantile = (sorted, q) => { const i = (sorted.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i); return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo); };
+export const mean = (a) => a.reduce((s, v) => s + v, 0) / a.length;
+export const variance = (a, ddof = 1) => { const m = mean(a); return a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - ddof); };
+/** Least-squares polynomial fit of the given degree (x should lie in about [-1, 1]); returns coefficients, lowest power first. */
+export function polyfit(xs, ys, deg) {
+  const n = deg + 1, A = Array.from({ length: n }, () => new Array(n + 1).fill(0));
+  for (let k = 0; k < xs.length; k++) { const pw = [1]; for (let i = 1; i < 2 * n; i++) pw.push(pw[i - 1] * xs[k]); for (let i = 0; i < n; i++) { for (let j = 0; j < n; j++) A[i][j] += pw[i + j]; A[i][n] += pw[i] * ys[k]; } }
+  for (let i = 0; i < n; i++) A[i][i] += 1e-9;
+  for (let c = 0; c < n; c++) { let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r; [A[c], A[p]] = [A[p], A[c]]; for (let r = c + 1; r < n; r++) { const f = A[r][c] / A[c][c]; for (let k = c; k <= n; k++) A[r][k] -= f * A[c][k]; } }
+  const x = new Array(n).fill(0); for (let i = n - 1; i >= 0; i--) { let s = A[i][n]; for (let j = i + 1; j < n; j++) s -= A[i][j] * x[j]; x[i] = s / A[i][i]; } return x;
+}
+export const polyval = (c, x) => c.reduceRight((s, v) => s * x + v, 0);
+export const entropy = (p) => -p.reduce((s, x) => s + (x > 0 ? x * Math.log2(x) : 0), 0);
+export const norm1 = (w) => { const t = w.reduce((a, b) => a + b, 0) || 1; return w.map((x) => x / t); };
+
+/** Repeatedly fit polynomials of a given degree to fresh noisy data from `truth` on [-1, 1]; used by the bias-variance bench. */
+export function biasVariance(rand, truth, { deg, N, noise, sets = 30, grid = 41 }) {
+  const xs = Array.from({ length: grid }, (_, i) => -1 + (2 * i) / (grid - 1)), fits = [];
+  for (let s = 0; s < sets; s++) {
+    const tx = Array.from({ length: N }, (_, i) => -1 + (2 * (i + rand() * 0.6)) / N), ty = tx.map((x) => truth(x) + noise * gauss(rand));
+    const c = polyfit(tx, ty, Math.min(deg, N - 1)); fits.push(xs.map((x) => polyval(c, x)));
+  }
+  const avg = xs.map((_, j) => fits.reduce((a, f) => a + f[j], 0) / sets);
+  const bias2 = xs.reduce((a, x, j) => a + (avg[j] - truth(x)) ** 2, 0) / grid, vari = xs.reduce((a, _, j) => a + fits.reduce((b, f) => b + (f[j] - avg[j]) ** 2, 0) / sets, 0) / grid;
+  return { xs, fits, avg, bias2, variance: vari, noise2: noise * noise, total: bias2 + vari + noise * noise };
+}
