@@ -10,6 +10,9 @@ export function navFor({ key, query, content, has3d }) {
   const planet = content.planets.find((p) => p.id === key);
   const topic = content.topics[key];
 
+  if (key === "path") {
+    return { back: { label: "Home", href: "#/" }, crumbs: [home, { label: "My path" }], actions: [{ label: has3d ? "3D galaxy" : "Planets", href: galaxyHref }] };
+  }
   if (key === "galaxy" && has3d) {
     return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Galaxy" }],
       actions: [{ label: "☀ The big picture", href: "#/ai" }, { label: "List view", href: "#/list" }] };

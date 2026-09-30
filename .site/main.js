@@ -2,7 +2,8 @@ import { theme } from "./theme.js";
 import { navFor } from "./nav.js";
 import * as benchKit from "./benches/kit.js";
 import { cover } from "./cover.js";
-import { mountReader, applyPrefs } from "./reader.js";
+import { mountReader, applyPrefs, readSet } from "./reader.js";
+import { mountSearch } from "./search.js";
 
 // Router + views. The 3D scenes plug in per route; the text views below are also the permanent accessible fallback.
 const $ = (s) => document.querySelector(s);
@@ -40,6 +41,35 @@ function galaxyView() {
         </a>`).join("")}
     </div>
     ${ai ? `<p class="big-picture"><a class="clay-pill" href="#/ai">Read “${esc(ai.title)}” →</a></p>` : ""}`;
+}
+
+// ---------- My path: progress across planets, from the topics you have read to the end (localStorage, this device only)
+function pathView() {
+  const read = readSet(), explored = content.planets.filter((p) => !p.planned && p.districts.some((d) => d.topics.some((id) => content.topics[id] && content.topics[id].status === "written")));
+  const written = (p) => p.districts.flatMap((d) => d.topics).filter((id) => content.topics[id] && content.topics[id].status === "written");
+  const total = explored.reduce((n, p) => n + written(p).length, 0), done = explored.reduce((n, p) => n + written(p).filter((id) => read.has(id)).length, 0);
+  const lastId = [...read].reverse().find((id) => content.topics[id]), lastPlanet = lastId && content.topics[lastId].planet;
+  let next = null;
+  if (lastPlanet) { const ids = written(content.planets.find((p) => p.id === lastPlanet)); const at = ids.indexOf(lastId); next = ids.slice(at + 1).find((id) => !read.has(id)) || ids.find((id) => !read.has(id)); }
+  if (!next) for (const p of explored) { next = written(p).find((id) => !read.has(id)); if (next) break; }
+  const pct = (a, b) => (b ? Math.round((100 * a) / b) : 0);
+  const cont = next ? content.topics[next] : null;
+  const planetBlock = (p) => {
+    const ids = written(p), n = ids.filter((id) => read.has(id)).length;
+    return `<section class="path-planet" style="--c:${p.color}">
+      <h3>${planetDot(p)}<a href="#/${p.id}">${esc(p.title)}</a><span>${n} of ${ids.length} read</span></h3>
+      <div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct(n, ids.length)}"><i style="width:${pct(n, ids.length)}%"></i></div>
+      <details ${n && n < ids.length ? "open" : ""}><summary>Districts</summary>
+      ${p.districts.map((d) => { const dids = d.topics.filter((id) => content.topics[id] && content.topics[id].status === "written"), dn = dids.filter((id) => read.has(id)).length; return `<div class="path-district"><h4>${esc(d.title)} <small>${dn}/${dids.length}</small></h4><ul class="chips">${dids.map((id) => `<li><a class="chip ${read.has(id) ? "read" : ""}" href="#/${id}"${read.has(id) ? ' aria-label="' + esc(content.topics[id].title) + ' (read)"' : ""}>${esc(content.topics[id].title)}</a></li>`).join("")}</ul></div>`; }).join("")}
+      </details></section>`;
+  };
+  return `
+    <header class="page-head"><p class="kicker">Your progress</p><h2>My path</h2>
+    <p class="blurb">${done} of ${total} topics read across ${explored.length} planets. A topic counts as read when you reach the end of it. Progress is kept in this browser only.</p></header>
+    <div class="pbar big" role="progressbar" aria-label="Overall progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct(done, total)}"><i style="width:${pct(done, total)}%"></i></div>
+    ${cont ? `<a class="read-next path-continue" href="#/${cont.id}"><small>${done ? "Continue where you left off" : "Start here"}</small><b>${esc(cont.title)}</b><p>${esc(cont.summary || "")}</p><span aria-hidden="true">→</span></a>` : `<p class="notice">Every written topic is read. New ones appear here as they are added.</p>`}
+    ${explored.map(planetBlock).join("")}
+    ${done ? `<p class="source"><button type="button" class="linklike" data-reset-progress>Reset my progress</button></p>` : ""}`;
 }
 
 function planetView(p) {
@@ -95,6 +125,16 @@ function enhanceArticle(topic) {
   // the end-of-article cards replace the note's own trailing "Related" list (the vault note keeps it)
   const rel = art.querySelector(".prose > h2#related");
   if (rel && art.querySelector(".doc-end .read-next, .doc-end .more")) { while (rel.nextSibling) rel.nextSibling.remove(); rel.remove(); }
+  // prerequisites that live on another planet get a small planet tag
+  for (const p of art.querySelectorAll(".prose > p")) {
+    if (!/^You need:/i.test(p.textContent.trim())) continue;
+    p.querySelectorAll('a[href^="#/"]').forEach((a) => {
+      const t = content.topics[decodeURIComponent(a.getAttribute("href").slice(2))];
+      const pl = t && t.planet && t.planet !== topic.planet && content.planets.find((x) => x.id === t.planet);
+      if (pl && !a.nextElementSibling?.classList?.contains("xp")) a.insertAdjacentHTML("afterend", `<span class="xp" title="This prerequisite is on the ${esc(pl.title)} planet">${esc(pl.title)}</span>`);
+    });
+    break;
+  }
   const stopBenches = mountBenches(art);
   const stopReader = mountReader({ art, topic: { ...topic, toc: topic.toc.filter((t) => t.id !== "related") }, content, reduce: reduceMotion });
   cleanupArticle = () => { stopReader(); stopBenches(); };
@@ -232,6 +272,7 @@ function route() {
   document.body.classList.toggle("route-home", isHome);
   document.body.classList.toggle("route-galaxy", isGalaxy);
   document.body.classList.toggle("route-planet", isPlanet);
+  document.body.classList.toggle("route-path", key === "path");
   document.body.classList.toggle("route-topic", !isHome && !isGalaxy && !isPlanet && !!content.topics[key]);
   document.body.classList.toggle("reading", !isHome && !isGalaxy && !isPlanet);
   planetEl.hidden = !isPlanet;
@@ -251,12 +292,13 @@ function route() {
   if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
 
   let html, title;
-  if (key === "galaxy" || key === "list") { html = galaxyView(); title = "Planets"; }
+  if (key === "path") { html = pathView(); title = "My path"; }
+  else if (key === "galaxy" || key === "list") { html = galaxyView(); title = "Planets"; }
   else if (content.topics[key]) { html = topicView(content.topics[key]); title = content.topics[key].title; }
   else if (content.planets.find((p) => p.id === key)) { const p = content.planets.find((x) => x.id === key); html = planetView(p); title = p.title; }
   else { html = `<p class="notice">Nothing here. <a href="#/galaxy">Back to the galaxy</a></p>`; title = "Not found"; }
   view.innerHTML = html;
-  { const h = view.querySelector("h1, h2"); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
+  { const h = view.querySelector("h1, h2"); if (h && !document.body.classList.contains("searching")) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
   if (content.topics[key]) { enhanceArticle(content.topics[key]); if (planetScene && content.topics[key].planet) planetScene.remember(content.topics[key].planet, key); }
   else if (cleanupArticle) { cleanupArticle(); cleanupArticle = null; }
   setTitle(`${title} · AI Base`);
@@ -274,6 +316,10 @@ document.addEventListener("click", (e) => {
   if (el) el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 });
 addEventListener("hashchange", route);
+view.addEventListener("click", (e) => {
+  if (!e.target.closest("[data-reset-progress]")) return;
+  if (confirm("Reset your reading progress on this device?")) { try { localStorage.removeItem("ai-base-read"); } catch { /* ignore */ } route(); }
+});
 
 // ---------- from a topic back to a planet's road
 view.addEventListener("click", (e) => {
@@ -311,6 +357,7 @@ try {
   home.innerHTML = `<h1>Almost there</h1><p class="lede">The content index hasn’t been built. Run <code>npm run content</code> in <code>.site/</code>.</p>`;
 }
 if (content) {
+  mountSearch({ content, onGo: (d) => { location.hash = `#/${d.id}`; } });
   route();
   try {
     const { createStage } = await import("./scenes/stage.js");
