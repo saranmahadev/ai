@@ -44,7 +44,7 @@ export function canvas(parent, { aspect = 0.6, label = "", maxH = 460 } = {}) {
   let draw = () => {}, w = 0, hh = 0, raf = 0;
   const size = () => {
     w = Math.max(220, box.clientWidth);
-    hh = Math.min(maxH, Math.round(w * aspect));
+    hh = Math.max(Math.min(240, maxH), Math.min(maxH, Math.round(w * aspect)));
     const dpr = Math.min(2, devicePixelRatio || 1);
     cv.width = Math.round(w * dpr); cv.height = Math.round(hh * dpr);
     cv.style.height = hh + "px";
@@ -132,13 +132,19 @@ export function dragHandles(cv, handles, onMove, radius = 18) {
   cv.addEventListener("pointercancel", up);
 }
 
-/** Standard bench frame: title, body and a short instruction line. */
-export function frame(root, { title, hint }) {
+/**
+ * Standard bench frame: a title, then two panes. Visuals (canvas, grids, sorters, tables, lists) go to the
+ * stage; controls and readouts go to the panel. `body.append(...)` routes each node, so a bench just appends.
+ * Mark any element with class "stage" to force it into the stage.
+ */
+export function frame(root, { title }) {
   root.textContent = "";
   root.classList.add("ready");
-  const body = h("div", { class: "bench-body" });
+  const stage = h("div", { class: "bench-stage" }), panel = h("div", { class: "bench-panel" });
+  const body = h("div", { class: "bench-layout" }, stage, panel);
+  const STAGE = ".bench-canvas, .bench-two, .sorter, table, .stage, .bench-legend, .isai-list";
+  body.append = (...nodes) => { for (const n of nodes.flat()) if (n != null) (n.nodeType === 1 && n.matches(STAGE) ? stage : panel).append(n); };
   root.append(h("div", { class: "bench-head" }, h("span", { class: "bench-tag" }, "Bench"), h("b", {}, title)), body);
-  if (hint) root.append(h("p", { class: "bench-hint" }, hint));
   return body;
 }
 
@@ -265,7 +271,9 @@ export function sorter({ items, bins, answers, onCheck, checkLabel = "Check my a
     checked = true; draw();
     const correct = items.filter((i) => place[i.id] === answers[i.id]).length;
     const wrong = items.filter((i) => place[i.id] !== answers[i.id]);
-    note.textContent = `${correct} of ${items.length} placed where the note puts them.` + (wrong.length ? " " + wrong.map((i) => `${i.label}: ${i.why}`).join(" ") : " Nicely done.");
+    note.textContent = "";
+    note.append(document.createTextNode(`${correct} of ${items.length} correct`));
+    if (wrong.length) note.append(h("ul", { class: "sorter-misses" }, wrong.map((i) => h("li", {}, h("b", {}, i.label), ` ${i.why}`))));
     if (onCheck) onCheck({ correct, total: items.length });
   }
   function reset() { items.forEach((i) => (place[i.id] = null)); selected = null; checked = false; note.textContent = ""; draw(); }

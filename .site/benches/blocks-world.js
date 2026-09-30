@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, canvas, stepper, button, stats, live } = kit;
   const body = frame(root, {
-    title: "Planning: a sequence of moves to a goal",
-    hint: "Goal: a tower with A on top of B, B on C, and C on D. Move blocks yourself, or let the planner search for the shortest plan."
+    title: "Planning: a sequence of moves to a goal"
   });
   const say = live(body);
   const B = ["A", "B", "C", "D"];
@@ -25,11 +24,11 @@ export default function mount(root, kit) {
   const out = h("p", { class: "bench-verdict" });
   const list = h("div", { class: "bench-row" });
   const stp = stepper({ onStep: () => { if (plan && planIdx < plan.length) { do1(plan[planIdx++]); return planIdx < plan.length; } return false; }, onReset: reset, interval: 700, stepLabel: "Next planned move" });
-  const solveBtn = button("Plan from here", () => { const r = solve(st); plan = r.path; planIdx = 0; searched = r.n; out.textContent = plan ? `Plan found: ${plan.length} move${plan.length === 1 ? "" : "s"}, after examining ${r.n} states. Use the buttons below to step through it.` : "No plan exists."; refresh(); });
-  body.append(cv.box, info.el, out, h("b", {}, "Legal moves right now"), list, h("div", { class: "bench-row" }, solveBtn), stp.el);
+  const solveBtn = button("Plan from here", () => { const r = solve(st); plan = r.path; planIdx = 0; searched = r.n; out.textContent = plan ? "Plan: " + plan.map((m) => `${m[0]} → ${m[1]}`).join(", ") : "No plan exists."; refresh(); });
+  body.append(cv.box, info.el, out, h("b", {}, "Legal moves"), list, h("div", { class: "bench-row" }, solveBtn), stp.el);
 
   function do1(m) { st = apply(st, m); moves++; refresh(); }
-  function reset() { st = { ...START }; moves = 0; plan = null; planIdx = 0; searched = 0; out.textContent = "Start: B sits on A, and D sits on C."; refresh(); }
+  function reset() { st = { ...START }; moves = 0; plan = null; planIdx = 0; searched = 0; out.textContent = ""; refresh(); }
   function stacks() { const bottoms = B.filter((b) => st[b] === "table"), res = []; for (const b0 of bottoms) { const stack = [b0]; let cur = b0, nxt; while ((nxt = B.find((o) => st[o] === cur))) { stack.push(nxt); cur = nxt; } res.push(stack); } return res; }
   cv.onDraw((ctx, W, H, p) => {
     const bw = Math.min(70, W / 8), bh = Math.min(44, H / 5.5), base = H - 26;
@@ -45,10 +44,10 @@ export default function mount(root, kit) {
   function refresh() {
     list.textContent = "";
     if (isGoal(st)) list.append(h("span", { class: "bench-line" }, "The goal is reached."));
-    else for (const m of legal(st)) list.append(button(`Move ${m[0]} ${m[1] === "table" ? "to the table" : "onto " + m[1]}`, () => { plan = null; do1(m); out.textContent = `You moved ${m[0]} ${m[1] === "table" ? "to the table" : "onto " + m[1]}.`; }));
+    else for (const m of legal(st)) list.append(button(`Move ${m[0]} ${m[1] === "table" ? "to the table" : "onto " + m[1]}`, () => { plan = null; do1(m); out.textContent = ""; }));
     const r = solve(st);
     info.set("moves", String(moves)); info.set("short", r.path ? String(r.path.length) : "—"); info.set("searched", searched ? String(searched) : "—");
-    if (isGoal(st)) out.textContent = `Goal reached in ${moves} move${moves === 1 ? "" : "s"}.`;
+    if (isGoal(st)) out.textContent = `Goal reached in ${moves} move${moves === 1 ? "" : "s"}`;
     say(out.textContent); cv.redraw();
   }
   reset();

@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, slider, button, canvas, live } = kit;
   const body = frame(root, {
-    title: "Seventy years of AI",
-    hint: "Slide the year, or step through events. Shaded bands mark the periods usually called AI winters (approximate)."
+    title: "Seventy years of AI"
   });
   const say = live(body);
   const EV = [
@@ -26,7 +25,7 @@ export default function mount(root, kit) {
   let year = 1950;
   const s = slider({ label: "year", min: Y0, max: Y1, step: 1, value: year, format: (v) => v, onInput: (v) => { year = v; render(); } });
   const cv = canvas(body, { aspect: 0.28, label: "Timeline of AI events with winter periods shaded" });
-  const card = h("div", { class: "bench-reveal", style: "padding:12px 16px" });
+  const card = h("div", { class: "bench-reveal stage", style: "padding:12px 16px" });
   const prev = button("← Previous event", () => jump(-1)), next = button("Next event →", () => jump(1));
   body.append(cv.box, s.el, h("div", { class: "bench-row" }, prev, next), card);
   const reached = () => EV.filter((e) => e[0] <= year);
@@ -59,7 +58,6 @@ export default function mount(root, kit) {
     if (!last) card.append(h("b", {}, `${year}: before the field has a name.`), h("p", { style: "margin:6px 0 0" }, "Computers exist, but nobody has yet proposed making them intelligent."));
     else {
       card.append(h("b", {}, `${last[0]}: ${last[1]}`), h("p", { style: "margin:6px 0 0" }, last[2]));
-      if (winter) card.append(h("p", { style: "margin:6px 0 0", class: "bench-line" }, `Around now: the ${winter[2]} (roughly ${winter[0]}–${winter[1]}).`));
     }
     say(card.textContent); cv.redraw();
   }

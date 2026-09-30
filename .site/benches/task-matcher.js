@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { frame, sorter } = kit;
   const body = frame(root, {
-    title: "What kind of task is it?",
-    hint: "Choose a problem, then press the task type it belongs to (or drag it)."
+    title: "What kind of task is it?"
   });
   const bins = [
     { id: "cls", label: "Classify: pick a category" },

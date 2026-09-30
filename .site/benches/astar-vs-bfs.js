@@ -3,8 +3,7 @@ import { layout, makeSearch, paintWalls } from "./grid.js";
 export default function mount(root, kit) {
   const { h, frame, canvas, choice, stepper, button, rng, live } = kit;
   const body = frame(root, {
-    title: "A guess that saves work: BFS, A* and greedy",
-    hint: "The table compares all three algorithms on the same grid. Animate one, and draw walls to change the problem."
+    title: "A guess that saves work: BFS, A* and greedy"
   });
   const say = live(body);
   const ROWS = 11, COLS = 16, start = [5, 2], goal = [5, 13];
@@ -21,7 +20,7 @@ export default function mount(root, kit) {
   const out = h("p", { class: "bench-verdict" });
   const stp = stepper({ onStep: () => { const more = s.step(); refresh(); return more; }, onReset: reset, interval: 90 });
   const presets = h("div", { class: "bench-row" }, button("Scattered rocks", () => { walls = mk.rocks(); reset(); }), button("Wall with a gap", () => { walls = mk.gap(); reset(); }), button("Open field", () => { walls = mk.open(); reset(); }));
-  body.append(pick.el, cv.box, table, out, stp.el, presets);
+  body.append(pick.el, cv.box, table, stp.el, presets);
 
   function reset() { s = makeSearch(kind, { rows: ROWS, cols: COLS, walls, start, goal }); compare(); refresh(true); }
   function compare() {

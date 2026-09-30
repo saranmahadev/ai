@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, slider, toggles, canvas, rng, live, stats, fmt } = kit;
   const body = frame(root, {
-    title: "Whose data shaped the model?",
-    hint: "The model picks one cut-off on a single reading. Group B's readings sit differently from group A's, so one cut-off cannot suit both."
+    title: "Whose data shaped the model?"
   });
   const say = live(body);
   const tA = 0.55, tB = 0.4, noise = 0.04;
@@ -16,7 +15,7 @@ export default function mount(root, kit) {
   const cv = canvas(body, { aspect: 0.32, label: "Two rows of readings for groups A and B with the model's cut-off line", maxH: 220 });
   const st = stats([["a", "group A: correct"], ["b", "group B: correct"], ["thr", "learned cut-off"]]);
   const out = h("p", { class: "bench-verdict" });
-  body.append(cv.box, st.el, out, h("div", { class: "bench-controls" }, ss.el, sh.el), tg.el);
+  body.append(cv.box, st.el, h("div", { class: "bench-controls" }, ss.el, sh.el), tg.el);
 
   function fit(data) {
     let best = -1, ts = [];

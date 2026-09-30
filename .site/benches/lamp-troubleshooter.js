@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, toggles, button, choice, live } = kit;
   const body = frame(root, {
-    title: "A lamp troubleshooter built from rules",
-    hint: "Tick what you observe. The system fires every rule whose conditions all match."
+    title: "A lamp troubleshooter built from rules"
   });
   const say = live(body);
   const SYM = { dead: "The lamp does not light", unplugged: "The plug is not in the socket", bulb: "The bulb looks broken", loose: "The switch feels loose", frayed: "The cord looks frayed", flicker: "It flickers when the washing machine starts", hum: "It hums loudly" };
@@ -29,10 +28,10 @@ export default function mount(root, kit) {
     for (const r of fired) out.append(h("ul", { class: "isai-list yes", style: "margin:6px 0 0" }, h("li", {}, h("b", {}, `Rule ${r.id.slice(1)} fires: `), r.then, r.note ? h("small", {}, ` (${r.note})`) : null)));
     const anything = Object.values(v).some(Boolean);
     let msg;
-    if (!anything) msg = "Tick at least one observation.";
-    else if (!fired.length) msg = "No rule matches. The system has nothing to say: this situation was never written into its rules.";
-    else if (fired.length > 1 && new Set(fired.map((r) => r.then)).size > 1) msg = `${fired.length} rules fire and give different advice. Someone must decide which rule wins, and the system cannot tell.`;
-    else msg = "The rules cover this case.";
+    if (!anything) msg = "Tick an observation.";
+    else if (!fired.length) msg = "No rule matches.";
+    else if (fired.length > 1 && new Set(fired.map((r) => r.then)).size > 1) msg = `Conflict: ${fired.length} rules give different advice.`;
+    else msg = "Covered by the rules.";
     verdict.textContent = msg;
     kb.textContent = `Knowledge base: ${rules.length} rule${rules.length === 1 ? "" : "s"}, ${rules.length - 4} taught by a person.`;
     say(msg);

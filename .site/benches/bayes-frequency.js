@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, fmt, canvas, slider, stats, button, frame, live } = kit;
   const body = frame(root, {
-    title: "1,000 people, one test",
-    hint: "Each dot is a person. Change the disease rate and the test's accuracy, then look only at the people who tested positive."
+    title: "1,000 people, one test"
   });
   const say = live(body);
   let prev = 1, sens = 90, fpr = 9; // percentages
@@ -23,7 +22,7 @@ export default function mount(root, kit) {
     button("Spam filter (40% spam)", () => setAll(40, 95, 2)),
     button("Near-perfect test", () => setAll(1, 99, 1))
   );
-  body.append(cv.box, legend, readout.el, sum, verdict, h("div", { class: "bench-controls" }, sp.el, ss.el, sf.el), presets);
+  body.append(cv.box, legend, readout.el, h("div", { class: "bench-controls" }, sp.el, ss.el, sf.el), presets);
 
   const N = 1000, COLS = 50;
   const KINDS = [["tp", "sick, tests positive"], ["fp", "healthy, tests positive"], ["fn", "sick, tests negative"], ["tn", "healthy, tests negative"]];

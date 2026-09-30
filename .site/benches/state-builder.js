@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, toggles, canvas, live } = kit;
   const body = frame(root, {
-    title: "What goes into the state?",
-    hint: "A delivery robot must handle six situations. Choose which facts it keeps track of."
+    title: "What goes into the state?"
   });
   const say = live(body);
   // name, how many values it can take
@@ -19,8 +18,8 @@ export default function mount(root, kit) {
   const tg = toggles(Object.entries(VARS).map(([k, [label]]) => [k, label, k === "pos" || k === "dest"]), render);
   const cv = canvas(body, { aspect: 0.16, label: "Bar showing how many distinct states the agent must distinguish" });
   const list = h("ul", { class: "isai-list yes" });
-  const count = h("p", { class: "bench-verdict" });
-  body.append(tg.el, list, cv.box, count);
+  const st = kit.stats([["ok", "situations handled"], ["n", "distinct states"]]);
+  body.append(st.el, tg.el, list, cv.box);
   let n = 1;
   cv.onDraw((ctx, w, hh, p) => {
     const frac = Math.log10(n) / Math.log10(160000 * 1.0001);
@@ -38,7 +37,7 @@ export default function mount(root, kit) {
     n = have.reduce((a, k) => a * VARS[k][1], 1);
     const msg = `The robot handles ${ok} of ${CASES.length} situations. Its state can be in ${n.toLocaleString("en-US")} different configurations. ` +
       (have.length === Object.keys(VARS).length ? "Everything is tracked, and the number of situations to learn about is now large." : ok === CASES.length ? "That is enough for every case." : "Add what is missing, but notice how the count grows.");
-    count.textContent = msg; say(msg); cv.redraw();
+    st.set("ok", `${ok} of ${CASES.length}`); st.set("n", n.toLocaleString("en-US")); say(msg); cv.redraw();
   }
   render();
   return () => cv.destroy();

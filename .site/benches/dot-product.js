@@ -2,15 +2,14 @@
 export default function mount(root, kit) {
   const { h, fmt, canvas, slider, stats, button, dragHandles, frame, live } = kit;
   const body = frame(root, {
-    title: "Dot product playground",
-    hint: "Drag the two arrow tips, or use the sliders. The green segment is the shadow of b on a."
+    title: "Dot product playground"
   });
   const say = live(body);
 
   const R = 6; // the canvas shows -R..R on the x axis
   let a = [3, 1.5], b = [1.5, 3];
   const cv = canvas(body, { aspect: 0.62, label: "Two vectors a and b drawn from the origin, with the projection of b onto a" });
-  const readout = stats([["dot", "a · b"], ["angle", "angle θ"], ["cos", "cos θ"], ["proj", "shadow of b on a"]]);
+  const readout = stats([["dot", "a · b"], ["angle", "angle θ"], ["cos", "cos θ"], ["proj", "shadow of b"]]);
   const sum = h("p", { class: "bench-line" });
   const verdict = h("p", { class: "bench-verdict", "aria-live": "off" });
 
@@ -31,7 +30,7 @@ export default function mount(root, kit) {
     button("Unit length (cosine similarity)", () => { a = cart(1, 20); b = cart(1, 70); update(); })
   );
   const controls = h("div", { class: "bench-controls" }, sl.la.el, sl.aa.el, sl.lb.el, sl.ab.el);
-  body.append(readout.el, sum, verdict, controls, presets);
+  body.append(readout.el, sum, controls, presets);
 
   const toPx = (v) => { const s = cv.w / (2 * R); return { x: cv.w / 2 + v[0] * s, y: cv.h / 2 - v[1] * s }; };
   const fromPx = (x, y) => { const s = cv.w / (2 * R); return [(x - cv.w / 2) / s, (cv.h / 2 - y) / s]; };
@@ -85,7 +84,7 @@ export default function mount(root, kit) {
     readout.set("dot", fmt(dot));
     readout.set("angle", fmt(theta, 0) + "°");
     readout.set("cos", fmt(cos, 2));
-    readout.set("proj", fmt(la ? dot / la : 0) + " (signed length)");
+    readout.set("proj", fmt(la ? dot / la : 0));
     sum.textContent = `a · b = (${fmt(a[0])} × ${fmt(b[0])}) + (${fmt(a[1])} × ${fmt(b[1])}) = ${fmt(dot)}   and   |a| |b| cos θ = ${fmt(la)} × ${fmt(lb)} × ${fmt(cos)} = ${fmt(la * lb * cos)}`;
     const msg = Math.abs(cos) < 0.02 ? "Perpendicular: the dot product is 0, so they share no direction."
       : cos > 0 ? "They point roughly the same way: the dot product is positive."
