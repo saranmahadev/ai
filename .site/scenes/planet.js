@@ -3,6 +3,10 @@ import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.j
 import { clay, tint, createSkyRig } from "./clay.js";
 import { createRocket } from "../models/rocket.js";
 import { createAstronaut } from "../models/astronaut.js";
+import { createTech, buildCity, mulberry32, hashString } from "./city.js";
+import { buildGrid, createRadar } from "./grid.js";
+import { createWeather } from "./weather.js";
+import { readSet } from "../reader.js";
 
 const V3 = THREE.Vector3;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -19,10 +23,16 @@ const ROAD_W = 2.7;        // road half width
 const STREET_LEN = 28;     // length of a topic's street, from the main road to its reading lodge
 const STREET_W = 1.9;      // street half width
 
+const COARSE = matchMedia("(pointer: coarse)").matches;
+const HUD_KEY = "ai-base-hud";     // { conn, detail, radar } preferences
+const loadHud = () => { try { return JSON.parse(localStorage.getItem(HUD_KEY) || "{}"); } catch { return {}; } };
+const saveHud = (o) => { try { localStorage.setItem(HUD_KEY, JSON.stringify(o)); } catch { /* private mode */ } };
+const urlParam = (k) => new URLSearchParams(location.search).get(k);
+
 let lastVisit = null;      // { planetId, topicId }: the last topic you opened, so you come back to its signpost
 
 // A small clay planet you walk around. The road winds over its surface; districts are gates, topics are signposts.
-export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }) {
+export function create({ content, labelsEl, radarEl, onDetail, onNear, onProgress, onOpen, onBack }) {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const scene = new THREE.Scene();
@@ -37,6 +47,16 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
   sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.05; sun.shadow.radius = 5;
   scene.add(hemi, sun, sun.target);
   const sky = createSkyRig(scene, { hemi, sun, base: { hemi: 2.0, sun: 2.4 }, moonAt: [-60, 70, -180] });
+  const weather = createWeather({ scene, sky, hemi, sun, reduce });
+  let lastTheme = null;
+
+  // detail level: Full, or Lite (fewer moving parts and particles). Lite is the default on touch screens, and the scene drops
+  // to Lite by itself if the first seconds run slowly, unless you (or ?detail=) chose.
+  const hud = loadHud();
+  const forced = urlParam("detail") === "full" || urlParam("detail") === "lite" ? urlParam("detail") : null;
+  let detail = forced || hud.detail || (COARSE ? "lite" : "full"), detailChosen = !!(forced || hud.detail);
+  let showConn = hud.conn !== false, showRadar = hud.radar !== false;
+  let city = null, grid = null, tech = null, radar = null, nextUnread = -1, perf = null, sceneryHash = 0;
 
   const astro = createAstronaut();
   const char = astro.group;
@@ -57,7 +77,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
   // ---- per-planet state
   let world = null, planet = null, Rp = 40, active = false;
   let samples = [], cum = [], total = 0;
-  let signs = [], gates = [], rocketInfo = null, topicList = [], obstacles = [];
+  let signs = [], gates = [], gateDirs = [], rocketInfo = null, topicList = [], obstacles = [];
   let P = new V3(1, 0, 0), H = new V3(0, 0, 1);
   let opening = null;
   let mode = "walk", landT = 0, popT = 1, cam0 = new V3(), padDir = new V3();
@@ -99,20 +119,21 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
 
   // a ribbon along any path: frameFn(s) gives { p, r } (a surface direction and the sideways direction there)
   function ribbonBy(frameFn, s0, s1, off, halfW, lift, material) {
-    const pos = [], nrm = [], idx = [];
+    const pos = [], nrm = [], uv = [], idx = [];
     let n = 0;
     for (let s = s0; s <= s1 + 0.001; s += 1.2) {
       const fr = frameFn(Math.min(s, s1));
-      for (const side of [off - halfW, off + halfW]) {
+      [off - halfW, off + halfW].forEach((side, k) => {
         const v = surfacePoint(fr, side, lift);
-        pos.push(v.x, v.y, v.z); nrm.push(fr.p.x, fr.p.y, fr.p.z);
-      }
+        pos.push(v.x, v.y, v.z); nrm.push(fr.p.x, fr.p.y, fr.p.z); uv.push(k, (Math.min(s, s1) - s0) / (2 * halfW));
+      });
       if (n > 0) { const a = (n - 1) * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
       n++;
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
     g.setAttribute("normal", new THREE.Float32BufferAttribute(nrm, 3));
+    g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
     g.setIndex(idx);
     material.side = THREE.DoubleSide;
     const m = new THREE.Mesh(g, material);
@@ -154,8 +175,14 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     planet = p;
     world = new THREE.Group();
     scene.add(world);
-    signs = []; gates = []; topicList = []; obstacles = [];
+    signs = []; gates = []; gateDirs = []; topicList = []; obstacles = [];
     const base = new THREE.Color(p.color);
+    // scenery is seeded by the planet id, so a planet looks the same every visit; the city layers use their own stream
+    const sr = mulberry32(hashString(p.id)), rnd = mulberry32(hashString(p.id + ":city"));
+    const rr = (a, b) => a + sr() * (b - a);
+    tech = createTech({ sky });
+    const read = readSet();
+    const houseList = [], lampList = [], lodgeList = [];
 
     const districts = p.districts.map((d, k) => ({
       id: d.id, title: d.title, color: base.clone().offsetHSL(k * 0.06, 0.02, 0), topics: d.topics.map((id) => content.topics[id]).filter(Boolean)
@@ -207,14 +234,15 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     while (R0 < 160 && !roomy()) { R0 += 4; lay(R0); }
 
     // planet body
-    const body = new THREE.Mesh(new THREE.SphereGeometry(Rp, 128, 96), clay(tint(p.color, 0.6)));
+    const groundMat = clay(tint(p.color, 0.6));
+    const body = new THREE.Mesh(new THREE.SphereGeometry(Rp, 128, 96), groundMat);
     body.receiveShadow = true;
     body.userData.ground = true;
     world.add(body);
 
     // main road: cream track with coloured edges
-    const edgeMat = clay(base.clone().multiplyScalar(0.88)), laneMat = clay(0xfff3e2);
-    world.add(ribbon(0, total, 0, ROAD_W, 0.06, clay(0xfff3e2)));
+    const edgeMat = tech.edgeMat(p.color, base.clone().multiplyScalar(0.88)), laneMat = tech.roadMat(p.color);
+    world.add(ribbon(0, total, 0, ROAD_W, 0.06, laneMat));
     world.add(ribbon(0, total, -ROAD_W - 0.15, 0.32, 0.1, edgeMat));
     world.add(ribbon(0, total, ROAD_W + 0.15, 0.32, 0.1, edgeMat));
 
@@ -255,7 +283,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
 
     // shared furniture for the streets: houses, roofs, lamp posts and bulbs are instanced
     const nStreets = plan.filter((e) => e.kind === "street").length;
-    const houses = new THREE.InstancedMesh(new RoundedBoxGeometry(3.2, 2.4, 3.2, 3, 0.25), clay(0xffffff), Math.max(1, nStreets * 4));
+    const houses = new THREE.InstancedMesh(new RoundedBoxGeometry(3.2, 2.4, 3.2, 3, 0.25), tech.houseMat(), Math.max(1, nStreets * 4));
     const roofs = new THREE.InstancedMesh(new THREE.ConeGeometry(2.7, 1.6, 4), clay(0xffffff), Math.max(1, nStreets * 4));
     const poles = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.08, 0.11, 2.6, 8), clay(0xfff3e2), Math.max(1, nStreets * 4));
     const bulbMat = clay(0xfff2c2);
@@ -286,14 +314,16 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
         for (const m of [plazaRim, plazaTop]) { stand(m, fr.p.clone().multiplyScalar(Rp), fr.t); world.add(m); }
         const lbl = labelFor(d.title, "gate", d.color.getStyle());
         gates.push({ pos: fr.p.clone().multiplyScalar(Rp + 10), label: lbl });
+        gateDirs.push({ dir: fr.p.clone(), color: d.color.getStyle() });
       } else if (e.kind === "kiosk") {
         // the district's landing note stands on its plaza
         const fr = frameAt(e.s), side = (signs.length % 2 ? -1 : 1) * 5.4;
         const pl = plaque(e.t, d);
+        e.lat = side;
         stand(pl.g, surfacePoint(fr, side, 0.09), fr.t);
         obstacles.push({ d: surfacePoint(fr, side, 0).normalize(), r: 0.9 });
         world.add(pl.g);
-        addSign(e, pl, { roadPos: fr.p.clone().multiplyScalar(Rp), lane: null });
+        addSign(e, pl, { roadPos: fr.p.clone().multiplyScalar(Rp), lane: null, dir: surfacePoint(fr, side, 0).normalize(), beamAt: surfacePoint(fr, side, 5.2), color: d.color.getStyle(), read: read.has(e.t.id) });
       } else {
         // a street of its own for this topic: lamps, houses, and a reading lodge at the end
         const fr = frameAt(e.s), lf = (u) => laneFrame(fr, e.side, u);
@@ -316,6 +346,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
           const lfu = lf(u), lat = (i % 2 ? -1 : 1) * (STREET_W + 0.9);
           const at = lanePos(lfu, lat, 0.06);
           setInst(poles, ln, at, lfu.t, 1.3); setInst(bulbs, ln, at, lfu.t, 2.75); ln++;
+          lampList.push({ at, fwd: lfu.t });
           obstacles.push({ d: at.clone().normalize(), r: 0.25 });
         });
         // houses on both sides, doors facing the street
@@ -325,6 +356,7 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
             const lfu = lf(u), at = lanePos(lfu, sgn * (STREET_W + 3.6), 0.06), fwd = lfu.r.clone().multiplyScalar(-sgn);
             setInst(houses, hn, at, fwd, 1.2); setInst(roofs, hn, at, fwd, 3.2, Math.PI / 4);
             houses.setColorAt(hn, wall); roofs.setColorAt(hn, d.color); hn++;
+            houseList.push({ at, fwd });
             obstacles.push({ d: at.clone().normalize(), r: 2.1 });
           }
         });
@@ -334,12 +366,13 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
         const lodge = new THREE.Group();
         const lb = new THREE.Mesh(new RoundedBoxGeometry(6, 4.2, 5.2, 4, 0.35), clay(tint(d.color.getHex(), 0.55))); lb.position.y = 2.1;
         const lr = new THREE.Mesh(new THREE.ConeGeometry(4.9, 2.6, 4), clay(d.color)); lr.position.y = 5.5; lr.rotation.y = Math.PI / 4;
-        const doorMat = clay(0x6a5aa0); sky.addGlow(doorMat, 0xffd479, 1.1);
+        const isRead = read.has(e.t.id), doorMat = tech.doorMat(e.t.status, isRead);
         const door = new THREE.Mesh(new RoundedBoxGeometry(1.6, 2.5, 0.3, 3, 0.12), doorMat); door.position.set(0, 1.25, 2.68);
         lb.castShadow = lr.castShadow = door.castShadow = true;
         lodge.add(lb, lr, door);
         stand(lodge, lanePos(lgf, 0, 0.05), lgf.t.clone().negate());
         world.add(lodge);
+        lodgeList.push({ pos: lanePos(lf(lodgeU - 2.75), 0, 3.3), fwd: lgf.t.clone().negate(), panelMat: tech.panelMat(e.t.status, isRead) });
         obstacles.push({ d: lanePos(lgf, 0, 0).normalize(), r: 3.2 });
 
         // the plaque you open the topic from, just before the lodge
@@ -349,7 +382,9 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
         world.add(pl.g);
         const focus = lanePos(lf(lodgeU - 2.9), 0, 1.6);
         const streetLabel = labelFor(e.t.title, `street ${e.t.status}`, d.color.getStyle());
-        const sign = addSign(e, pl, { roadPos: lanePos(plf, 0, 0), lane: { fr, side: e.side }, focus, entrance: lanePos(ef, STREET_W + 1.2, 3.6), streetLabel });
+        const sign = addSign(e, pl, { roadPos: lanePos(plf, 0, 0), lane: { fr, side: e.side }, focus, entrance: lanePos(ef, STREET_W + 1.2, 3.6), streetLabel,
+          dir: lanePos(lgf, 0, 0).normalize(), beamAt: lanePos(lgf, 0, 7.6), color: d.color.getStyle(), read: isRead,
+          laneDirs: Array.from({ length: 8 }, (_, i) => lf(ROAD_W + ((lodgeU - ROAD_W) * i) / 7).p) });
         streetLabel.addEventListener("click", () => walkTo(sign, true));
       }
     });
@@ -380,17 +415,18 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     const trunks = new THREE.InstancedMesh(trunkGeo, clay(0xd9b38c), nTrees);
     const leaves = new THREE.InstancedMesh(leafGeo, clay(0xffffff), nTrees);
     const palette = [0x9fe3b4, 0xb8e6a0, 0xffc9d9, 0xc9b8ff, 0xa8dcf5].map((h) => new THREE.Color(h));
-    let placed = 0;
+    let placed = 0, chk = 0;
     for (let tries = 0; tries < nTrees * 6 && placed < nTrees; tries++) {
-      const d = new V3(rand(-1, 1), rand(-1, 1), rand(-1, 1)).normalize();
+      const d = new V3(rr(-1, 1), rr(-1, 1), rr(-1, 1)).normalize();
       if (nearRoad(d, 9)) continue;
-      const sc = rand(0.8, 1.6);
+      const sc = rr(0.8, 1.6);
       const q = new THREE.Quaternion().setFromUnitVectors(UP, d);
       tmp.quaternion.copy(q); tmp.scale.setScalar(sc);
       tmp.position.copy(d).multiplyScalar(Rp + 0.8 * sc); tmp.updateMatrix(); trunks.setMatrixAt(placed, tmp.matrix);
       tmp.position.copy(d).multiplyScalar(Rp + 2.4 * sc); tmp.updateMatrix(); leaves.setMatrixAt(placed, tmp.matrix);
       leaves.setColorAt(placed, palette[placed % palette.length]);
       obstacles.push({ d, r: 0.4 * sc + 0.15 });
+      chk += d.x * 7 + d.y * 13 + d.z * 17 + sc;
       placed++;
     }
     trunks.count = leaves.count = placed;
@@ -399,29 +435,34 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     const rocks = new THREE.InstancedMesh(rockGeo, clay(0xcfc4e6), 46);
     let rp = 0;
     for (let tries = 0; tries < 300 && rp < 46; tries++) {
-      const d = new V3(rand(-1, 1), rand(-1, 1), rand(-1, 1)).normalize();
+      const d = new V3(rr(-1, 1), rr(-1, 1), rr(-1, 1)).normalize();
       if (nearRoad(d, 6)) continue;
       tmp.position.copy(d).multiplyScalar(Rp + 0.2);
       tmp.quaternion.setFromUnitVectors(UP, d);
-      const rx = rand(0.5, 1.4), rz = rand(0.5, 1.4);
-      tmp.scale.set(rx, rand(0.4, 0.8), rz);
+      const rx = rr(0.5, 1.4), rz = rr(0.5, 1.4);
+      tmp.scale.set(rx, rr(0.4, 0.8), rz);
       obstacles.push({ d, r: Math.max(rx, rz) * 0.85 });
+      chk += d.x * 5 + d.y * 3 + d.z * 11 + rx;
       tmp.updateMatrix(); rocks.setMatrixAt(rp++, tmp.matrix);
     }
     rocks.count = rp; rocks.castShadow = true;
     world.add(rocks);
     const cloudMat = clay(0xffffff, { roughness: 0.9, clearcoat: 0 });
+    const cloudRoot = new THREE.Group(), clouds = [];
+    world.add(cloudRoot);
     for (let k = 0; k < 26; k++) {
       const grp = new THREE.Group();
-      const puffs = 3 + Math.floor(Math.random() * 3);
+      const puffs = 3 + Math.floor(sr() * 3);
       for (let j = 0; j < puffs; j++) {
-        const pf = new THREE.Mesh(new THREE.SphereGeometry(rand(2, 3.6), 20, 14), cloudMat);
-        pf.position.set(j * 3 - puffs * 1.4, rand(-0.5, 0.5), rand(-1, 1)); pf.scale.y = 0.75; grp.add(pf);
+        const pf = new THREE.Mesh(new THREE.SphereGeometry(rr(2, 3.6), 20, 14), cloudMat);
+        pf.position.set(j * 3 - puffs * 1.4, rr(-0.5, 0.5), rr(-1, 1)); pf.scale.y = 0.75; grp.add(pf);
       }
-      const d = new V3(rand(-1, 1), rand(-1, 1), rand(-1, 1)).normalize();
-      stand(grp, d.multiplyScalar(Rp + rand(20, 40)), new V3(rand(-1, 1), rand(-1, 1), rand(-1, 1)));
-      world.add(grp);
+      const d = new V3(rr(-1, 1), rr(-1, 1), rr(-1, 1)).normalize();
+      stand(grp, d.multiplyScalar(Rp + rr(20, 40)), new V3(rr(-1, 1), rr(-1, 1), rr(-1, 1)));
+      cloudRoot.add(grp); clouds.push(grp);
     }
+
+    sceneryHash = hashString(`${p.id}|${placed}|${rp}|${chk.toFixed(4)}`);
 
     // rocket pad and starting frame
     const padFr = frameAt(5);
@@ -433,6 +474,18 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
     rocketInfo = { pos: padDir.clone().multiplyScalar(Rp + 4), fr: padFr };
     obstacles.push({ d: padDir.clone(), r: 1.8 });
     rocket.scale.setScalar(1.15);
+
+    // the tech layer, the knowledge grid and the weather
+    city = buildCity({ world, sky, base, Rp, frameAt, laneFrame, lanePos, surfacePoint, stand, obstacles, plan, total, houseList, lampList, lodgeList, rnd, reduce, ROAD_W, STREET_LEN });
+    city.setDetail(detail);
+    grid = buildGrid({ world, Rp, base, signs, content });
+    grid.setVisible(showConn);
+    radar = radarEl ? createRadar(radarEl, { Rp }) : null;
+    const wet = [laneMat, tech.houseMat(), groundMat];
+    weather.setDetail(detail);
+    if (lastTheme) sky.apply(lastTheme); // back to the plain time-of-day values before weather scales them
+    weather.attach({ clouds, cloudMat, cloudRoot, wetMats: wet, groundMat, Rp, id: p.id });
+    perf = detailChosen || detail === "lite" ? null : { t: 0, n: 0 };
   }
 
   function dispose() {
@@ -441,6 +494,8 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       world.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose()); });
       world = null;
     }
+    weather.detach();
+    city = grid = radar = null;
     labelsEl.innerHTML = "";
     sky.glow.length = 0;
     signs = []; gates = []; target = null; near = null; reportedNear = undefined; reportedIdx = -1;
@@ -584,6 +639,14 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       camera.lookAt(look);
     }
 
+    // the city's moving parts, the grid highlight, the weather and the radar
+    if (perf && mode !== "landing") {
+      perf.t += Math.min(dt, 0.25); perf.n++;
+      if (perf.t > 3.2) { if (perf.n / perf.t < 24) api.setDetail("lite", false); perf = null; }
+    }
+    if (city) city.update(dt, t, sky.night || 0, tech.panelMats);
+    weather.update(dt, t, P, H);
+
     // light follows the walker so the world is always lit from above
     hemi.position.copy(P);
     sun.position.copy(charPos).addScaledVector(P, 34).addScaledVector(H, -10).addScaledVector(right.crossVectors(P, H), 20);
@@ -612,6 +675,12 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
       const s = roadS() + 2; // topics you have reached or passed
       let n = 0; for (const sg of signs) if (sg.s <= s) n++;
       if (n !== reportedIdx) { reportedIdx = n; onProgress(n, signs.length); }
+    }
+    if (grid) grid.setNear(info && info.kind === "topic" ? info.idx : -1);
+    if (radar && showRadar && frame % 3 === 0) {
+      let nu = -1, best = -2;
+      for (const sg of signs) if (!sg.read && sg.topic.status !== "outlined") { const d = sg.dir.dot(P); if (d > best) { best = d; nu = sg.idx; } }
+      radar.draw({ P, H, samples, signs, gates: gateDirs, nextIdx: nu, now: performance.now() });
     }
     if (mode !== "opening") signs.forEach((sg) => { sg.head.scale.setScalar(near && near.idx === sg.idx ? 1.25 : 1); });
 
@@ -693,7 +762,21 @@ export function create({ content, labelsEl, onNear, onProgress, onOpen, onBack }
 
   const api = {
     scene, camera, update, resize,
-    applyTheme: (t) => sky.apply(t),
+    applyTheme: (t) => { lastTheme = t; sky.apply(t); weather.reapply(); },
+    // HUD controls
+    setWeather(m) { weather.setMode(m); },
+    get weather() { return { mode: weather.mode, resolved: weather.resolved }; },
+    setConnections(v) { showConn = !!v; if (grid) grid.setVisible(showConn); saveHud({ ...loadHud(), conn: showConn }); },
+    setRadar(v) { showRadar = !!v; saveHud({ ...loadHud(), radar: showRadar }); },
+    get hud() { return { conn: showConn, radar: showRadar, detail }; },
+    setDetail(level, chosen = true) {
+      detail = level === "lite" ? "lite" : "full";
+      if (chosen) { detailChosen = true; perf = null; saveHud({ ...loadHud(), detail }); }
+      if (city) city.setDetail(detail);
+      weather.setDetail(detail);
+      if (onDetail) onDetail(detail);
+    },
+    stats: () => ({ sceneryHash, signs: signs.length, beams: grid ? grid.count : 0, detail, weather: weather.resolved }),
     enter(p, { resume = true } = {}) {
       dispose();
       build(p);

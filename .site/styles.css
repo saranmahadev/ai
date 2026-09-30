@@ -519,3 +519,23 @@ abbr.term:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; bord
   .r-bar, .rb-walker, .hud, #navbar { transition: none !important; }
 }
 html:has(body.reading) { scroll-padding-bottom: 96px; } /* leave room for the floating reading bar */
+
+/* planet HUD: radar, weather and city settings */
+#phud { position: absolute; right: 16px; top: 132px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; pointer-events: none; }
+#phud > * { pointer-events: auto; }
+#pmap { width: 168px; height: 168px; border-radius: 50%; box-shadow: var(--puff-sm); }
+#pmap[hidden] { display: none; }
+#pctl { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 18px; background: var(--clay); box-shadow: var(--puff-sm); font-size: .82rem; color: var(--ink); }
+#pctl label { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+#pctl label.chk { justify-content: flex-start; gap: 6px; }
+#pctl select { font: inherit; color: var(--ink); background: transparent; border: 1px solid var(--soft); border-radius: 10px; padding: 2px 6px; }
+#pctl kbd { font: inherit; opacity: .6; border: 1px solid var(--soft); border-radius: 5px; padding: 0 4px; }
+#phudtoggle { display: none; }
+#dbg { position: fixed; left: 8px; bottom: 8px; z-index: 50; margin: 0; padding: 6px 9px; border-radius: 8px; background: rgba(0, 0, 0, .65); color: #9ff5d2; font: 12px/1.3 ui-monospace, monospace; pointer-events: none; }
+@media (pointer: coarse), (max-width: 640px) {
+  #phud { top: auto; bottom: 96px; right: 12px; }
+  #pmap { width: 88px; height: 88px; }
+  #phudtoggle { display: block; }
+  #pctl { display: none; }
+  #phud.open #pctl { display: flex; }
+}

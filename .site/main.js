@@ -242,7 +242,7 @@ function route() {
   if (galaxy) { if (isGalaxy) galaxy.enter(); else galaxy.leave(); }
   if (planetScene) {
     if (isPlanet) {
-      if (planetKey !== key) { planetKey = key; setPlanetUi(planetObj); planetScene.enter(planetObj); }
+      if (planetKey !== key) { planetKey = key; setPlanetUi(planetObj); planetScene.enter(planetObj); syncPlanetHud(); }
     } else { planetScene.leave(); planetKey = null; }
   }
   renderNav(navFor({ key, query, content, has3d: !!galaxy }));
@@ -330,11 +330,15 @@ if (content) {
     planetScene = planetMod.create({
       content,
       labelsEl: $("#tlabels"),
+      radarEl: $("#pmap"),
+      onDetail: (d) => { $("#pdetail").value = d; planetEl.dataset.detail = d; },
       onNear: showPrompt,
       onProgress: setProgress,
       onOpen: openTopic,
       onBack: backToGalaxy
     });
+    setupPlanetHud();
+    if (new URLSearchParams(location.search).has("debug")) setupDebug();
     theme.subscribe((t) => { homeScene.applyTheme(t); galaxy.applyTheme(t); planetScene.applyTheme(t); });
     document.body.classList.add("gl");
     route();
@@ -344,6 +348,42 @@ if (content) {
     stage = homeScene = galaxy = planetScene = null;
     route();
   }
+}
+
+// ---------- planet HUD: radar, weather, detail, connections
+function syncPlanetHud() {
+  if (!planetScene) return;
+  const h = planetScene.hud, w = planetScene.weather;
+  $("#pweather").value = w.mode; $("#pdetail").value = h.detail; $("#pconn").checked = h.conn; $("#pradar").checked = h.radar;
+  $("#pmap").hidden = !h.radar;
+  planetEl.dataset.weather = w.resolved; planetEl.dataset.detail = h.detail;
+}
+function setupPlanetHud() {
+  $("#pweather").addEventListener("change", (e) => { planetScene.setWeather(e.target.value); syncPlanetHud(); });
+  $("#pdetail").addEventListener("change", (e) => { planetScene.setDetail(e.target.value); syncPlanetHud(); });
+  $("#pconn").addEventListener("change", (e) => planetScene.setConnections(e.target.checked));
+  $("#pradar").addEventListener("change", (e) => { planetScene.setRadar(e.target.checked); syncPlanetHud(); });
+  $("#phudtoggle").addEventListener("click", () => { const o = $("#phud").classList.toggle("open"); $("#phudtoggle").setAttribute("aria-expanded", o); });
+  addEventListener("keydown", (e) => {
+    if ((e.key === "m" || e.key === "M") && !planetEl.hidden && !e.target.closest("textarea, select, input:not([type=checkbox])") && !e.ctrlKey && !e.metaKey) $("#pradar").click();
+  });
+  syncPlanetHud();
+}
+// ?debug: frame rate, draw calls and triangles, and the scene objects for tests
+function setupDebug() {
+  window.__aiBase = { stage, planetScene };
+  const box = document.createElement("pre");
+  box.id = "dbg"; box.setAttribute("aria-hidden", "true");
+  document.body.append(box);
+  let frames = 0, last = performance.now();
+  const count = () => { frames++; requestAnimationFrame(count); };
+  count();
+  setInterval(() => {
+    const now = performance.now(), fps = (frames * 1000) / (now - last); frames = 0; last = now;
+    const i = stage.renderer.info;
+    box.textContent = `${fps.toFixed(0)} fps\n${i.render.calls} draw calls\n${(i.render.triangles / 1000).toFixed(0)}k tris`;
+    box.dataset.calls = i.render.calls; box.dataset.fps = fps.toFixed(1);
+  }, 500);
 }
 
 // ---------- galaxy controls
