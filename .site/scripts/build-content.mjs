@@ -148,7 +148,7 @@ function render(note) {
       },
       heading({ tokens, depth }) {
         const html = this.parser.parseInline(tokens);
-        const text = html.replace(/<[^>]+>/g, "");
+        const text = html.replace(/<[^>]+>/g, "").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
         const id = slug(text) || `h${toc.length}`;
         if (depth >= 1 && depth <= 3) toc.push({ id, text, depth });
         return `<h${depth} id="${id}">${html}</h${depth}>\n`;
@@ -160,6 +160,16 @@ function render(note) {
   html = html.replace(/<blockquote>\s*<p>\[!(\w+)\]\s*([^\n<]*)/g, (_, type, title) =>
     `<blockquote class="callout callout-${type.toLowerCase()}"><p><strong>${title.trim() || type}</strong>`);
   return { html, toc, links, benches };
+}
+
+// "Key terms" section: `* **Term:** definition` items become a glossary the reader shows as popovers
+const decode = (t) => t.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+function glossaryOf(html) {
+  const m = html.match(/<h2 id="key-terms">[\s\S]*?<ul>([\s\S]*?)<\/ul>/);
+  if (!m) return [];
+  return [...m[1].matchAll(/<li><strong>([\s\S]*?):<\/strong>\s*([\s\S]*?)<\/li>/g)]
+    .map((x) => ({ term: decode(x[1].replace(/<[^>]+>/g, "")).trim(), def: decode(x[2].replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").trim() }))
+    .filter((g) => g.term && g.def);
 }
 
 const isIndexOnly = (body) => body.split(/\r?\n/).every((l) => !l.trim() || /^\s*[-*]\s*\[\[[^\]]+\]\]\s*$/.test(l));
@@ -183,7 +193,7 @@ for (const [path, id] of topicIdOf) {
     id, title: note.title, planet: id === "ai" ? null : planetOf(id), district: district ? district.d.id : null,
     path, summary, words, toc,
     status: note.meta.status || (words === 0 ? "outlined" : isIndexOnly(note.body) ? "index" : "written"),
-    html, benches, links: [...links].filter((l) => l !== id), backlinks: []
+    html, benches, glossary: glossaryOf(html), links: [...links].filter((l) => l !== id), backlinks: []
   };
 }
 for (const t of Object.values(topics)) for (const l of t.links) if (topics[l] && !topics[l].backlinks.includes(t.id)) topics[l].backlinks.push(t.id);

@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, toggles, button, choice, live } = kit;
   const body = frame(root, {
-    title: "Facts, rules and inference",
-    hint: "Start with four facts about parents. Switch rules on and run inference to see what follows."
+    title: "Facts, rules and inference"
   });
   const say = live(body);
   const NAMES = ["Asha", "Bala", "Chitra", "Dev", "Esha", "Farid"];
@@ -21,7 +20,7 @@ export default function mount(root, kit) {
   const addBtn = button("Add this fact", () => { const f = ["parent", pa.get(), pb.get()]; if (pa.get() === pb.get()) { render("Nobody is their own parent."); return; } if (facts.some((x) => fkey(x.f) === fkey(f))) { render("That fact is already known."); return; } facts.push({ f, why: "given" }); render(`Added ${show(f)}.`); });
   const list = h("ul", { class: "isai-list yes" });
   const out = h("p", { class: "bench-verdict" });
-  body.append(h("b", {}, "Rules (tick to switch on)"), rulesUi.el, h("div", { class: "bench-row" }, button("Run one round of inference", () => infer(false)), button("Run until nothing new", () => infer(true)), button("Reset", reset)), out, list, h("b", {}, "Teach it a new fact"), pa.el, pb.el, h("div", { class: "bench-row" }, addBtn));
+  body.append(h("b", {}, "Rules"), rulesUi.el, h("div", { class: "bench-row" }, button("Run one round of inference", () => infer(false)), button("Run until nothing new", () => infer(true)), button("Reset", reset)), out, list, h("b", {}, "Add a fact"), pa.el, pb.el, h("div", { class: "bench-row" }, addBtn));
 
   function match(rule, known) {
     const results = [];
@@ -59,7 +58,7 @@ export default function mount(root, kit) {
     list.textContent = "";
     facts.forEach((x) => list.append(h("li", { style: x.why === "given" ? "" : "border-left-color:var(--warn-fg,#e8793a)" }, h("b", {}, show(x.f)), h("small", {}, ` — ${x.why}`))));
     const derived = facts.filter((x) => x.why !== "given").length;
-    out.textContent = `${msg} (${facts.length} facts: ${facts.length - derived} given, ${derived} derived, ${rounds} round${rounds === 1 ? "" : "s"} run.)`; say(out.textContent);
+    out.textContent = `${facts.length} facts: ${facts.length - derived} given, ${derived} derived · ${rounds} round${rounds === 1 ? "" : "s"}`; say(`${msg} ${out.textContent}`);
   }
   reset();
 }

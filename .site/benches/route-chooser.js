@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, slider, button, canvas, live, fmt } = kit;
   const body = frame(root, {
-    title: "Choosing a route",
-    hint: "The agent scores each route. Change what it cares about and watch the best choice change."
+    title: "Choosing a route"
   });
   const say = live(body);
   // time (min), toll ($), chance of delay, delay length (min)
@@ -19,8 +18,8 @@ export default function mount(root, kit) {
   const presets = h("div", { class: "bench-row" }, button("In a hurry", () => set(10, 1, 1)), button("On a budget", () => set(2, 10, 2)), button("Hates surprises", () => set(3, 3, 10)));
   const cv = canvas(body, { aspect: 0.42, label: "Bar chart of each route's score" });
   const table = h("dl", { class: "bench-stats" });
-  const verdict = h("p", { class: "bench-verdict" });
-  body.append(cv.box, table, verdict, h("div", { class: "bench-controls" }, st.time.el, st.cost.el, st.risk.el), presets);
+  const bestOut = kit.stats([["best", "best route"]]);
+  body.append(cv.box, bestOut.el, table, h("div", { class: "bench-controls" }, st.time.el, st.cost.el, st.risk.el), presets);
 
   let scores = [];
   function compute() {
@@ -47,7 +46,7 @@ export default function mount(root, kit) {
     table.textContent = "";
     for (const s of scores) table.append(h("div", {}, h("dt", {}, s.name), h("dd", {}, `${fmt(s.expTime, 1)} min · $${s.cost}`), h("small", { class: "bench-line" }, `expected time = ${s.time} + ${fmt(s.p, 2)} × ${s.delay} = ${fmt(s.expTime, 1)}`)));
     const msg = `The agent chooses: ${best.name} (score ${fmt(best.u, 2)}). Same routes, different priorities, different action.`;
-    verdict.textContent = msg; say(msg); cv.redraw();
+    bestOut.set("best", best.name); say(msg); cv.redraw();
   }
   update();
   return () => cv.destroy();

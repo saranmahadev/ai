@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, slider, button, canvas, rng, plot, live, fmt, stats } = kit;
   const body = frame(root, {
-    title: "A model is a function with dials",
-    hint: "price = w × size + b. Turn the two dials and see how far the line misses each house."
+    title: "A model is a function with dials"
   });
   const say = live(body);
   const r = rng(5);
@@ -17,7 +16,7 @@ export default function mount(root, kit) {
   const out = h("p", { class: "bench-verdict" });
   const line = h("p", { class: "bench-line" });
   const best = button("Reveal the best-fitting dials", () => { const n = data.length, mx = data.reduce((a, d) => a + d.size, 0) / n, my = data.reduce((a, d) => a + d.price, 0) / n; const bw = data.reduce((a, d) => a + (d.size - mx) * (d.price - my), 0) / data.reduce((a, d) => a + (d.size - mx) ** 2, 0); w = Math.round(bw * 20) / 20; b = Math.round((my - bw * mx) / 5) * 5; sw.set(w, true); sb.set(b, true); update(); });
-  body.append(cv.box, st.el, line, out, h("div", { class: "bench-controls" }, sw.el, sb.el, sq.el), h("div", { class: "bench-row" }, best));
+  body.append(cv.box, st.el, line, h("div", { class: "bench-controls" }, sw.el, sb.el, sq.el), h("div", { class: "bench-row" }, best));
   cv.onDraw((ctx, W, H, p) => {
     const m = plot(W, H, [20, 170], [0, 450]);
     m.axes(ctx, p, { xlabel: "size (m²)", ylabel: "price ($k)" });

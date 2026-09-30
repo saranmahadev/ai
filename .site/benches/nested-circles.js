@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { frame, sorter, h } = kit;
   const body = frame(root, {
-    title: "AI, ML, DL and Generative AI",
-    hint: "Choose an item, then press the group it belongs to (or drag it). Pick the innermost group that fits."
+    title: "AI, ML, DL and Generative AI"
   });
   const bins = [
     { id: "ai", label: "AI, but not learning from data" },
@@ -26,5 +25,5 @@ export default function mount(root, kit) {
     ["Music generator", "gen", "It creates new audio."]
   ].map(([label, bin, why], i) => ({ id: "i" + i, label, bin, why }));
   const s = sorter({ items, bins, answers: Object.fromEntries(items.map((i) => [i.id, i.bin])) });
-  body.append(s.el, h("p", { class: "bench-hint" }, "Generative AI is itself built with deep learning, and deep learning is a kind of machine learning, which is a kind of AI. The groups are nested; you place each item in the smallest one."));
+  body.append(s.el);
 }

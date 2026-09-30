@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, slider, toggles, button, rng, fmt, live } = kit;
   const body = frame(root, {
-    title: "Spam filter duel: your rules vs a learned filter",
-    hint: "All emails are made up. Tick the words your rules will flag, then compare with a filter that learned from labelled examples."
+    title: "Spam filter duel: your rules vs a learned filter"
   });
   const say = live(body);
   const SPAM = ["free", "winner", "prize", "claim", "urgent", "cash", "offer", "click", "limited", "deal", "bonus", "credit"];
@@ -40,7 +39,7 @@ export default function mount(root, kit) {
   const verdict = h("p", { class: "bench-verdict" });
   const top = h("p", { class: "bench-line" });
   const samples = h("ul", { class: "isai-list yes" });
-  body.append(h("b", {}, "Your rules: flag an email if it contains these words"), chips.el, sNeed.el, h("hr"), h("b", {}, "The learned filter"), sTrain.el, h("div", { class: "bench-row" }, waveBtn, retrainBtn), st.el, verdict, top, h("b", {}, "A few test emails"), samples);
+  body.append(h("b", {}, "Your rules"), chips.el, sNeed.el, h("hr"), h("b", {}, "The learned filter"), sTrain.el, h("div", { class: "bench-row" }, waveBtn, retrainBtn), st.el, top, h("b", { class: "stage" }, "Test emails"), samples);
 
   function fit(n) {
     const data = (wave && retrain ? trainNew : train).slice(0, n), c = { spam: {}, ham: {}, ns: 0, nh: 0 };

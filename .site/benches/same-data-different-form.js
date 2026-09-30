@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { h, frame, choice, slider, button, canvas, live } = kit;
   const body = frame(root, {
-    title: "Everything becomes numbers",
-    hint: "Pick a kind of data. The left side is what people see; the right side is what a model receives."
+    title: "Everything becomes numbers"
   });
   const say = live(body);
   let kind = "text";
@@ -11,7 +10,7 @@ export default function mount(root, kit) {
   const human = h("div", { class: "bench-canvas", style: "padding:12px;min-height:120px" });
   const nums = h("pre", { class: "bench-line", style: "margin:0;padding:12px;border-radius:20px;background:var(--pre);color:#efe9ff;white-space:pre-wrap;overflow-wrap:anywhere;min-height:120px" });
   const say2 = h("p", { class: "bench-verdict" });
-  body.append(pick.el, h("div", { class: "bench-two" }, human, nums), say2);
+  body.append(pick.el, h("div", { class: "bench-two" }, human, nums));
 
   // image state: 6x6 pixels, brightness 0..9
   const N = 6;

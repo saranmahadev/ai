@@ -2,8 +2,7 @@
 export default function mount(root, kit) {
   const { frame, sorter, choice, h } = kit;
   const body = frame(root, {
-    title: "Anatomy of an AI system",
-    hint: "Choose a system, then place each statement into the role it plays: goal, data, model, perceive, decide, act or judge."
+    title: "Anatomy of an AI system"
   });
   const bins = [["goal", "Goal"], ["data", "Data it learns from or uses"], ["model", "Model or rule"], ["perceive", "Perceive"], ["decide", "Decide"], ["act", "Act"], ["judge", "How we judge it"]].map(([id, label]) => ({ id, label }));
   const SYS = {

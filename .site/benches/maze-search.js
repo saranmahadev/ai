@@ -3,8 +3,7 @@ import { layout, makeSearch, paintWalls } from "./grid.js";
 export default function mount(root, kit) {
   const { h, frame, canvas, choice, stepper, button, stats, live } = kit;
   const body = frame(root, {
-    title: "Searching for a path",
-    hint: "Click or drag on the grid to draw walls. Press Step or Play to watch the search spread from the start (purple) to the goal (green)."
+    title: "Searching for a path"
   });
   const say = live(body);
   const ROWS = 10, COLS = 16, start = [4, 1], goal = [4, 14];
@@ -22,7 +21,7 @@ export default function mount(root, kit) {
   const presets = h("div", { class: "bench-row" },
     button("Wall with a gap", () => { walls = layouts.gap(); reset(); }), button("Open field", () => { walls = layouts.open(); reset(); }),
     button("Zig-zag walls", () => { walls = layouts.zigzag(); reset(); }), button("Clear my walls", () => { walls = new Set(); reset(); }));
-  body.append(pick.el, cv.box, st.el, out, stp.el, presets);
+  body.append(pick.el, cv.box, st.el, stp.el, presets);
 
   function reset() { s = makeSearch(kind, { rows: ROWS, cols: COLS, walls, start, goal }); out.textContent = "Nothing explored yet."; refresh(true); }
   cv.onDraw((ctx, W, H2, p) => {
