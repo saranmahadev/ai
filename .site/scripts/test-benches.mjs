@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const SITE = join(dirname(fileURLToPath(import.meta.url)), "..");
 const shots = (process.argv.find((a) => a.startsWith("--shots=")) || "").slice(8);
-const only = (process.argv.find((a) => a.startsWith("--only=")) || "").slice(7); // test a single bench id
+const only = (process.argv.find((a) => a.startsWith("--only=")) || "").slice(7).split(",").filter(Boolean); // test some bench ids, e.g. --only=dot-product,log-mirror
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".png": "image/png" };
 
 let chromium;
@@ -31,7 +31,7 @@ const browser = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable
 let failed = 0;
 const WIDTHS = [1280, 768, 390];
 for (const topic of withBenches) for (const bench of [...new Set(topic.benches)]) {
-  if (only && bench !== only) continue;
+  if (only.length && !only.includes(bench)) continue;
   const errors = [];
   for (const width of WIDTHS) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
