@@ -1,8 +1,0 @@
-- [[Functions]]
-- [[Limits]]
-- [[Derivatives]]
-- [[Partial Derivatives]]
-- [[Gradients]]
-- [[Jacobian]]
-- [[Hessian]]
-- [[Optimization]]
