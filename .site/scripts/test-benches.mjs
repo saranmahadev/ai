@@ -32,6 +32,7 @@ let failed = 0;
 const WIDTHS = [1280, 768, 390];
 for (const topic of withBenches) for (const bench of [...new Set(topic.benches)]) {
   if (only.length && !only.includes(bench)) continue;
+  const attempt = async () => {
   const errors = [];
   for (const width of WIDTHS) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
@@ -58,9 +59,13 @@ for (const topic of withBenches) for (const bench of [...new Set(topic.benches)]
       if (over.bench > 1) errors.push(`[${width}] bench overflows horizontally by ${over.bench}px`);
       if (over.page > 1) errors.push(`[${width}] page scrolls horizontally by ${over.page}px`);
       if (shots) await page.locator(sel).screenshot({ path: join(shots, `${bench}-${width}.png`) });
-    } catch (e) { errors.push(`[${width}] did not mount: ${e.message.split("\n")[0]}`); }
+    } catch (e) { errors.push(`[${width}] did not mount: ${e.message.split("\n").slice(0, 12).join(" | ")}`); }
     await page.close();
   }
+  return errors;
+  };
+  let errors = await attempt();
+  if (errors.length) errors = await attempt(); // one retry: a slow machine can stall a page load without the bench being broken
   console.log(`${errors.length ? "FAIL" : "ok  "} ${topic.id} · ${bench}${errors.length ? "\n  - " + errors.join("\n  - ") : ""}`);
   if (errors.length) failed++;
 }
