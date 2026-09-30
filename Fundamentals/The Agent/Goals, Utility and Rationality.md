@@ -66,7 +66,7 @@ The agent maximises the goal you gave it, not the one you meant. A feed that max
 
 ## Where it appears in AI
 
-Goals and utility become **loss functions** in [[Machine Learning]] (a number to make small) and **reward functions** in reinforcement learning (a number to make large). Finding the best action is [[Optimization]]. Weighing chances is the subject of [[Probability Fundamentals]].
+Goals and utility become **loss functions** in [[Machine Learning]] (a number to make small) and **reward functions** in reinforcement learning (a number to make large). Finding the best action is [[Optimization]]. Weighing chances is the subject of [[Probability]].
 
 ## Common pitfalls
 
@@ -99,4 +99,4 @@ The agent optimises exactly what it was told, which may differ from what was int
 
 ## Related
 
-[[Agents and Environments]] · [[PDA Loop]] · [[Optimization]] · [[Probability Fundamentals]] · [[Machine Learning]]
+[[Agents and Environments]] · [[PDA Loop]] · [[Optimization]] · [[Probability]] · [[Machine Learning]]

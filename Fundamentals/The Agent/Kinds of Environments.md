@@ -51,7 +51,7 @@ fallback: Eight environments, from crosswords to taxi driving. For each you answ
 
 ## Where it appears in AI
 
-These properties explain why some planets exist. Hidden state and chance lead to [[Probability Distributions]]. Sequential decisions with feedback lead to planning and reinforcement learning. Multi-agent settings lead to game-playing methods. The [[Agents]] planet returns to dynamic, partly observable, multi-agent worlds.
+These properties explain why some planets exist. Hidden state and chance lead to [[Probability]]. Sequential decisions with feedback lead to planning and reinforcement learning. Multi-agent settings lead to game-playing methods. The [[Agents]] planet returns to dynamic, partly observable, multi-agent worlds.
 
 ## Common pitfalls
 
@@ -84,4 +84,4 @@ It has all five hard properties: it is partly observable, stochastic, sequential
 
 ## Related
 
-[[Agents and Environments]] · [[State and Representation]] · [[PDA Loop]] · [[Probability Distributions]] · [[Agents]]
+[[Agents and Environments]] · [[State and Representation]] · [[PDA Loop]] · [[Probability]] · [[Agents]]

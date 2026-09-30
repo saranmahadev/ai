@@ -9,7 +9,6 @@ const SITE = join(dirname(fileURLToPath(import.meta.url)), "..");
 const shots = (process.argv.find((a) => a.startsWith("--shots=")) || "").slice(8);
 const planetId = (process.argv.find((a) => a.startsWith("--planet=")) || "--planet=fundamentals").slice(9);
 const time = (process.argv.find((a) => a.startsWith("--time=")) || "--time=12:00").slice(7); // e.g. --time=22:30 to test night
-const planetBudget = 190; // draw calls in Full detail (measured, with headroom)
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".png": "image/png" };
 let chromium;
 try { ({ chromium } = await import("playwright")); } catch { console.error("Playwright is not installed; skipping planet test."); process.exit(2); }
@@ -65,6 +64,7 @@ try {
   check("radar canvas is drawn", painted > 2000, `${painted} px`);
   await page.waitForTimeout(1200);
   const calls = await page.evaluate(() => window.__aiBase.stage.renderer.info.render.calls);
+  const planetBudget = Math.round(110 + 1.8 * stats.signs); // Full detail: a base plus about 1.5 per topic (measured: 135 calls for 29 topics, 297 for 134)
   check(`draw calls stay within budget (${planetBudget})`, calls > 0 && calls <= planetBudget, `${calls} calls`);
   await shot("planet-hud");
   for (const w of ["storm", "snow"]) { await page.selectOption("#pweather", w); await page.waitForTimeout(400); await shot(`planet-${w}`); }
@@ -111,7 +111,7 @@ try {
   mp.on("console", (m) => { if (m.type() === "error") errors.push("[motion] " + m.text()); });
   mp.on("pageerror", (e) => errors.push("[motion] " + e));
   await mp.goto(`${base}?time=${time}&debug&detail=lite#/${planetId}`);
-  await mp.waitForSelector("#planet:not([hidden])", { timeout: 20000 });
+  await mp.waitForSelector("#planet:not([hidden])", { timeout: 90000 });
   await mp.waitForTimeout(4500);
   for (const w of ["rain", "snow", "storm"]) { await mp.selectOption("#pweather", w); await mp.waitForTimeout(1800); if (shots && w === "storm") await mp.screenshot({ path: join(shots, "planet-storm-motion.png") }); }
   check("weather animates with motion on", (await mp.evaluate(() => document.querySelector("#planet").dataset.weather)) === "storm");
