@@ -30,3 +30,38 @@ export function curve(ctx, m, f, x0, x1, { color = "#888", width = 3, dash = nul
   ctx.stroke(); ctx.restore();
 }
 export const clip = (m) => ({ x: m.pad.l, y: m.pad.t, w: m.iw, h: m.ih });
+
+/** Apply a 2x2 matrix M = [a, b, c, d] (row-major) to a point. */
+export const apply2 = (M, x, y) => [M[0] * x + M[1] * y, M[2] * x + M[3] * y];
+
+/** Draw the grid warped by M, the unit square and the two column vectors, using a view V. */
+export function warp(ctx, V, M, p, { range = 5, square = true, columns = true, faint = false } = {}) {
+  ctx.lineWidth = 1;
+  for (let t = -range; t <= range; t++) {
+    ctx.strokeStyle = t === 0 ? p.muted : faint ? p.soft : p.soft2;
+    for (const horiz of [true, false]) {
+      ctx.beginPath();
+      const a = horiz ? apply2(M, -range, t) : apply2(M, t, -range), b = horiz ? apply2(M, range, t) : apply2(M, t, range);
+      ctx.moveTo(V.X(a[0]), V.Y(a[1])); ctx.lineTo(V.X(b[0]), V.Y(b[1])); ctx.stroke();
+    }
+  }
+  if (square) {
+    const q = [apply2(M, 0, 0), apply2(M, 1, 0), apply2(M, 1, 1), apply2(M, 0, 1)];
+    ctx.fillStyle = p.accent; ctx.globalAlpha = 0.28; ctx.beginPath(); q.forEach((s, i) => (i ? ctx.lineTo(V.X(s[0]), V.Y(s[1])) : ctx.moveTo(V.X(s[0]), V.Y(s[1])))); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+    ctx.strokeStyle = p.accent; ctx.lineWidth = 2; ctx.stroke();
+  }
+  if (columns) { arrow(ctx, V.X(0), V.Y(0), V.X(M[0]), V.Y(M[2]), p.warm, 3.5); arrow(ctx, V.X(0), V.Y(0), V.X(M[1]), V.Y(M[3]), p.good, 3.5); }
+}
+
+/** Four sliders for a 2x2 matrix plus preset buttons. Returns { el, M, set(m) }. */
+export function matrixControls(kit, M, onChange, presets = []) {
+  const { h, slider, button, fmt } = kit;
+  const names = ["a", "b", "c", "d"], sl = names.map((n, i) => slider({ label: n, min: -3, max: 3, step: 0.25, value: M[i], format: (v) => fmt(v, 2), onInput: (v) => { M[i] = v; onChange(); } }));
+  const el = h("div", { class: "bench-controls" }, h("p", { class: "bench-line" }, "Matrix [ a b ; c d ]. Column 1 is (a, c) and column 2 is (b, d)."), sl.map((s) => s.el));
+  const set = (m) => { m.forEach((v, i) => { M[i] = v; sl[i].set(v, true); }); onChange(); };
+  const row = presets.length ? h("div", { class: "bench-row" }, presets.map(([name, m]) => button(name, () => set(m)))) : null;
+  return { el, row, set };
+}
+export const PRESETS = [
+  ["Identity", [1, 0, 0, 1]], ["Stretch x", [2, 0, 0, 1]], ["Rotate 90°", [0, -1, 1, 0]], ["Shear", [1, 1, 0, 1]], ["Flip", [1, 0, 0, -1]], ["Squash", [1, 2, 0.5, 1]]
+];
