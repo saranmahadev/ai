@@ -72,7 +72,7 @@ Luminous accents on top of the clay look: pastel by day, glowing at night (throu
 - **`weather.js`**: Auto (seeded by planet id, date and six-hour block), Clear, Cloudy, Mist, Rain, Snow, Storm. It scales fog, light, sky and clouds, adds rain/snow particles around the walker, wet sheen, snow cover and storm lightning, easing between modes. `weather.reapply()` must run after every `sky.apply` (planet `applyTheme` does). The choice is stored in `ai-base-weather`; `#planet[data-weather]` shows the resolved mode. Reduced motion: no particles, no lightning, no drifting clouds.
 - **Detail**: Full or Lite (fewer pulses, no drones/billboards/cones, half the particles). Lite is the default on touch screens; the scene drops to Lite by itself if the first ~3s average under 24 fps, unless chosen (HUD, stored in `ai-base-hud`) or forced with `?detail=full|lite`.
 - **HUD** (`#phud` in `index.html`): radar `#pmap`, `#pweather`, `#pdetail`, `#pconn`, `#pradar`; a ⚙ button opens it on phones.
-- **`?debug`**: shows fps, draw calls and triangles and exposes `window.__aiBase = { stage, planetScene }`. `test:planet` keeps Full detail under 190 draw calls (about 135 measured on Fundamentals).
+- **`?debug`**: shows fps, draw calls and triangles and exposes `window.__aiBase = { stage, planetScene }`. `test:planet` keeps Full detail within `100 + 0.6 × topics` draw calls (plaques, posts, lodges and street ribbons are instanced or merged: about 91 on Fundamentals, 128 on Math).
 
 ## Benches (interactive demos in articles)
 

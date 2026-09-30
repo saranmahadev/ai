@@ -64,7 +64,7 @@ try {
   check("radar canvas is drawn", painted > 2000, `${painted} px`);
   await page.waitForTimeout(1200);
   const calls = await page.evaluate(() => window.__aiBase.stage.renderer.info.render.calls);
-  const planetBudget = Math.round(110 + 1.8 * stats.signs); // Full detail: a base plus about 1.5 per topic (measured: 135 calls for 29 topics, 297 for 134)
+  const planetBudget = Math.round(100 + 0.6 * stats.signs); // Full detail: a base plus a little per topic (instanced; measured: 91 calls for 29 topics, 128 for 134)
   check(`draw calls stay within budget (${planetBudget})`, calls > 0 && calls <= planetBudget, `${calls} calls`);
   await shot("planet-hud");
   for (const w of ["storm", "snow"]) { await page.selectOption("#pweather", w); await page.waitForTimeout(400); await shot(`planet-${w}`); }
