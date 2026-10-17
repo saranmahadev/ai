@@ -1,6 +1,6 @@
 // Exercises the reading experience in Chromium: typography, cover, street strip, settings and themes, outline drawer,
 // link previews, key-term popovers, selection bar, resume position and ?at= links, at desktop and phone widths.
-// Needs Playwright (not a site dependency): `npm run test:reader`. Add --shots=DIR to save screenshots.
+// Needs Playwright (a devDependency, installed via `npm ci`): `npm run test:reader`. Add --shots=DIR to save screenshots.
 import { createServer } from "node:http";
 import { readFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname, extname } from "node:path";
