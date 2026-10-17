@@ -3,6 +3,8 @@
 
 export const sigmoid = (z) => 1 / (1 + Math.exp(-z));
 export const dot = (a, b) => a.reduce((s, x, i) => s + x * b[i], 0);
+export const matvec = (W, x) => W.map((row) => dot(row, x));
+export const vecAdd = (a, b) => a.map((v, i) => v + b[i]);
 
 export function softmax(scores) {
   const m = Math.max(...scores);
@@ -121,6 +123,26 @@ export function layerNorm(x, { eps = 1e-5, gamma = null, beta = null } = {}) {
   const variance = x.reduce((s, v) => s + (v - mean) ** 2, 0) / n;
   const norm = x.map((v) => (v - mean) / Math.sqrt(variance + eps));
   return norm.map((v, i) => v * (gamma ? gamma[i] : 1) + (beta ? beta[i] : 0));
+}
+
+// ---------- Feed-forward sublayer ----------
+
+export const relu = (x) => Math.max(0, x);
+export const gelu = (x) => 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * x ** 3)));
+export const silu = (x) => x * sigmoid(x);
+
+/** A gated feed-forward sublayer (SwiGLU with activation=silu, GeGLU with activation=gelu): two parallel projections, one gated by an activation, elementwise-multiplied, then projected down. No biases, matching common practice. */
+export function gatedFeedForward(x, { Wgate, Wup, Wdown, activation = silu } = {}) {
+  const gate = Wgate.map((row) => activation(dot(row, x)));
+  const up = Wup.map((row) => dot(row, x));
+  const gated = gate.map((g, i) => g * up[i]);
+  return Wdown.map((row) => dot(row, gated));
+}
+
+/** Standard two-layer feed-forward sublayer: W2 · activation(W1 · x + b1) + b2. */
+export function feedForward(x, { W1, b1, W2, b2, activation = relu } = {}) {
+  const hidden = W1.map((row, i) => activation(dot(row, x) + b1[i]));
+  return W2.map((row, i) => dot(row, hidden) + b2[i]);
 }
 
 export function rmsNorm(x, { eps = 1e-5, gamma = null } = {}) {
