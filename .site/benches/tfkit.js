@@ -104,6 +104,15 @@ export function bpeApply(word, merges, eow = "</w>") {
   return symbols;
 }
 
+// ---------- Embeddings ----------
+
+/** Look up a token's embedding row, optionally scaled (the √d_model factor). */
+export function embeddingLookup(table, tokenId, scale = 1) {
+  return table[tokenId].map((v) => v * scale);
+}
+
+export const vecNorm = (x) => Math.sqrt(x.reduce((s, v) => s + v * v, 0));
+
 // ---------- Normalization ----------
 
 export function layerNorm(x, { eps = 1e-5, gamma = null, beta = null } = {}) {
