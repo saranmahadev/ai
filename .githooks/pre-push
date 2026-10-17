@@ -1,0 +1,13 @@
+#!/bin/sh
+# Runs the full site check suite before a push leaves this machine, mirroring what the
+# ci.yml GitHub Actions workflow used to run on every pull request.
+# Enabled by `git config core.hooksPath .githooks` (wired automatically by `npm ci`'s
+# `prepare` script in .site/package.json). Skip once with `git push --no-verify`.
+set -e
+cd "$(git rev-parse --show-toplevel)/.site"
+npm test
+npm run content
+npm run test:site
+npm run test:reader
+npm run test:planet
+npm run test:benches

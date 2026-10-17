@@ -1,5 +1,5 @@
 // Walks the planet scene in Chromium (options: --planet=id, --time=HH:MM, --shots=DIR): the HUD (weather, detail, connections, radar), a draw-call budget and seeded scenery are checked first; then › walks to the first topic's street, the lodge prompt appears, E opens the article,
-// and "back" returns to that street. Needs Playwright (not a site dependency): `npm run test:planet`. Add --shots=DIR for screenshots.
+// and "back" returns to that street. Needs Playwright (a devDependency, installed via `npm ci`): `npm run test:planet`. Add --shots=DIR for screenshots.
 import { createServer } from "node:http";
 import { readFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname, extname } from "node:path";

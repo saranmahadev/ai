@@ -1,6 +1,6 @@
 // Smoke test: opens every topic that embeds a bench, scrolls to it and checks it mounts without console errors.
 // Every bench is opened at 1280, 768 and 390px wide and must not overflow horizontally.
-// Needs Playwright with Chromium (not a dependency of the site): `npm run test:benches`. Options: --shots=DIR saves screenshots, --only=bench-id tests one bench.
+// Needs Playwright with Chromium (a devDependency, installed via `npm ci`): `npm run test:benches`. Options: --shots=DIR saves screenshots, --only=bench-id tests one bench.
 import { createServer } from "node:http";
 import { readFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname, extname } from "node:path";

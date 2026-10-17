@@ -1,5 +1,5 @@
 // Exercises the site-level features in Chromium: search, My path, cross-planet prerequisite tags and the lazily loaded topics.
-// Needs Playwright (not a site dependency): `npm run test:site`. Add --shots=DIR to save screenshots.
+// Needs Playwright (a devDependency, installed via `npm ci`): `npm run test:site`. Add --shots=DIR to save screenshots.
 import { createServer } from "node:http";
 import { readFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname, extname } from "node:path";
