@@ -192,6 +192,11 @@ export function paddingMask(validLengths, n) {
   return validLengths.map((len) => Array.from({ length: n }, (_, j) => j < len));
 }
 
+/** A local/windowed mask: position i may attend to positions within `radius` of itself on either side. */
+export function windowMask(n, radius) {
+  return Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => Math.abs(i - j) <= radius));
+}
+
 export function combineMasks(a, b) {
   return a.map((row, i) => row.map((v, j) => v && b[i][j]));
 }
@@ -217,6 +222,53 @@ export function ropeApply(x, pos, base = 10000) {
 
 /** ALiBi's linear bias: slope * -(distance), added directly to an attention score. */
 export const alibiBias = (slope, queryPos, keyPos) => -slope * Math.abs(queryPos - keyPos);
+
+// ---------- Linear attention ----------
+
+/** A positive feature map (elu(x)+1) used by linear-attention kernels in place of softmax. */
+export const elu1 = (x) => (x > 0 ? x + 1 : Math.exp(x));
+
+function matmul(A, B) {
+  const n = A.length, m = B[0].length, k = B.length;
+  const C = Array.from({ length: n }, () => new Array(m).fill(0));
+  for (let i = 0; i < n; i++) for (let j = 0; j < m; j++) for (let l = 0; l < k; l++) C[i][j] += A[i][l] * B[l][j];
+  return C;
+}
+const transpose = (A) => A[0].map((_, j) => A.map((row) => row[j]));
+
+/** Quadratic order: (φ(Q) · φ(K)ᵀ) · V — forms the full n×n score matrix. */
+export function linearAttentionQuadraticOrder(Q, K, V, feature = elu1) {
+  const phiQ = Q.map((row) => row.map(feature)), phiK = K.map((row) => row.map(feature));
+  return matmul(matmul(phiQ, transpose(phiK)), V);
+}
+
+/** Linear order: φ(Q) · (φ(K)ᵀ · V) — never forms the n×n matrix, same result by associativity. */
+export function linearAttentionLinearOrder(Q, K, V, feature = elu1) {
+  const phiQ = Q.map((row) => row.map(feature)), phiK = K.map((row) => row.map(feature));
+  return matmul(phiQ, matmul(transpose(phiK), V));
+}
+
+/** One online-softmax block update: folds a new block of scores/values into the running (m, l, acc) state. */
+export function onlineSoftmaxBlock(state, blockScores, blockValues) {
+  const d = blockValues[0].length;
+  const { m, l, acc } = state;
+  const blockMax = Math.max(...blockScores);
+  const mNew = Math.max(m, blockMax);
+  const correction = Math.exp(m - mNew);
+  const blockExps = blockScores.map((s) => Math.exp(s - mNew));
+  const blockSum = blockExps.reduce((a, b) => a + b, 0);
+  const lNew = l * correction + blockSum;
+  const accNew = new Array(d).fill(0);
+  for (let j = 0; j < d; j++) {
+    let blockAcc = 0;
+    for (let i = 0; i < blockValues.length; i++) blockAcc += blockExps[i] * blockValues[i][j];
+    accNew[j] = acc[j] * correction + blockAcc;
+  }
+  return { m: mNew, l: lNew, acc: accNew };
+}
+
+export const onlineSoftmaxInit = (d) => ({ m: -Infinity, l: 0, acc: new Array(d).fill(0) });
+export const onlineSoftmaxOutput = (state) => state.acc.map((v) => v / state.l);
 
 // ---------- Patchifying (tokenizing beyond text) ----------
 
