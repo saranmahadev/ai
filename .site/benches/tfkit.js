@@ -223,6 +223,31 @@ export function ropeApply(x, pos, base = 10000) {
 /** ALiBi's linear bias: slope * -(distance), added directly to an attention score. */
 export const alibiBias = (slope, queryPos, keyPos) => -slope * Math.abs(queryPos - keyPos);
 
+// ---------- Graphs ----------
+
+/** Build an n×n adjacency matrix (with self-loops) from a list of undirected edges. */
+export function adjacencyMatrix(n, edges) {
+  const adj = Array.from({ length: n }, () => new Array(n).fill(false));
+  for (const [a, b] of edges) { adj[a][b] = true; adj[b][a] = true; }
+  for (let i = 0; i < n; i++) adj[i][i] = true;
+  return adj;
+}
+
+/** Shortest-path distance from every node to every other, via breadth-first search over an adjacency matrix. */
+export function graphShortestPaths(adj) {
+  const n = adj.length;
+  return Array.from({ length: n }, (_, start) => {
+    const dist = new Array(n).fill(Infinity);
+    dist[start] = 0;
+    const queue = [start];
+    while (queue.length) {
+      const u = queue.shift();
+      for (let v = 0; v < n; v++) if (adj[u][v] && dist[v] === Infinity) { dist[v] = dist[u] + 1; queue.push(v); }
+    }
+    return dist;
+  });
+}
+
 // ---------- Linear attention ----------
 
 /** A positive feature map (elu(x)+1) used by linear-attention kernels in place of softmax. */
