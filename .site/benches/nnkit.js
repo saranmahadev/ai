@@ -4,6 +4,22 @@
 export const sign = (x) => (x >= 0 ? 1 : -1);
 export const sigmoid = (z) => 1 / (1 + Math.exp(-z));
 
+export function softmax(scores) {
+  const m = Math.max(...scores);
+  const e = scores.map((s) => Math.exp(s - m));
+  const sum = e.reduce((a, b) => a + b, 0);
+  return e.map((v) => v / sum);
+}
+
+/** Modern (continuous) Hopfield update: ξ_new = Σᵢ softmax(β · patternᵢ · ξ) · patternᵢ — the same formula as single-query attention. */
+export function modernHopfieldUpdate(patterns, xi, beta = 1) {
+  const scores = patterns.map((p) => beta * p.reduce((s, v, k) => s + v * xi[k], 0));
+  const weights = softmax(scores);
+  const out = new Array(xi.length).fill(0);
+  patterns.forEach((p, i) => p.forEach((v, k) => (out[k] += weights[i] * v)));
+  return { weights, out };
+}
+
 /** Hebbian outer-product weight matrix for a set of ±1 patterns, zero diagonal. */
 export function hopfieldWeights(patterns) {
   const n = patterns[0].length;
