@@ -104,3 +104,32 @@ export function somStep(weights, x, { lr = 0.3, radius = 1 } = {}) {
   });
   return b;
 }
+
+/** Gaussian radial basis function: responds to how close x is to centre c, not to a dot product. */
+export function gaussianRBF(x, c, sigma) {
+  const d2 = x.reduce((s, xi, i) => s + (xi - c[i]) ** 2, 0);
+  return Math.exp(-d2 / (2 * sigma * sigma));
+}
+
+/** Solve a linear least-squares fit Phi w = y by the normal equations (PhiᵗPhi) w = Phiᵗy. */
+export function leastSquares(Phi, y) {
+  const n = Phi[0].length;
+  const M = Array.from({ length: n }, () => new Array(n).fill(0));
+  const b = new Array(n).fill(0);
+  for (const [k, row] of Phi.entries()) {
+    for (let i = 0; i < n; i++) { b[i] += row[i] * y[k]; for (let j = 0; j < n; j++) M[i][j] += row[i] * row[j]; }
+  }
+  const A = M.map((r) => r.slice()), B = b.slice();
+  for (let i = 0; i < n; i++) {
+    const piv = A[i][i];
+    for (let j = 0; j < n; j++) A[i][j] /= piv;
+    B[i] /= piv;
+    for (let k = 0; k < n; k++) {
+      if (k === i) continue;
+      const f = A[k][i];
+      for (let j = 0; j < n; j++) A[k][j] -= f * A[i][j];
+      B[k] -= f * B[i];
+    }
+  }
+  return B;
+}
