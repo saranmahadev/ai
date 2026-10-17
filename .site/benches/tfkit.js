@@ -270,6 +270,30 @@ export function onlineSoftmaxBlock(state, blockScores, blockValues) {
 export const onlineSoftmaxInit = (d) => ({ m: -Infinity, l: 0, acc: new Array(d).fill(0) });
 export const onlineSoftmaxOutput = (state) => state.acc.map((v) => v / state.l);
 
+// ---------- Mixture of experts ----------
+
+/** A router: scores every expert for an input, turns scores into probabilities, and picks the top-k. */
+/** Tensor-parallel feed-forward: split d_ff across `numDevices`, column-split W1, row-split W2, sum (all-reduce) the partial outputs. */
+export function tensorParallelFeedForward(x, { W1, W2, activation = relu }, numDevices) {
+  const dFF = W1.length, chunk = dFF / numDevices;
+  let out = new Array(W2.length).fill(0);
+  for (let d = 0; d < numDevices; d++) {
+    const W1d = W1.slice(d * chunk, (d + 1) * chunk);
+    const W2d = W2.map((row) => row.slice(d * chunk, (d + 1) * chunk));
+    const hiddenD = W1d.map((row) => activation(dot(row, x)));
+    const partial = W2d.map((row) => dot(row, hiddenD));
+    out = out.map((v, i) => v + partial[i]);
+  }
+  return out;
+}
+
+export function routeTopK(x, Wrouter, k) {
+  const scores = Wrouter.map((row) => dot(row, x));
+  const probs = softmax(scores);
+  const ranked = probs.map((p, i) => ({ p, i })).sort((a, b) => b.p - a.p);
+  return { scores, probs, selected: ranked.slice(0, k) };
+}
+
 // ---------- Patchifying (tokenizing beyond text) ----------
 
 /** Split a 2D grid into non-overlapping P×P patches, each flattened row-major into one vector ("token").
