@@ -166,12 +166,17 @@ export function attendOne(q, keys, values, mask = null) {
 
 /** Full self-attention over a sequence of vectors: each position attends to the others, honoring an optional [n x n] mask. */
 export function selfAttention(X, { Wq, Wk, Wv, mask = null } = {}) {
+  return crossAttention(X, X, { Wq, Wk, Wv, mask });
+}
+
+/** Cross-attention: queries come from one sequence, keys/values from another (e.g. a decoder attending to an encoder's output). */
+export function crossAttention(Xq, Xkv, { Wq, Wk, Wv, mask = null } = {}) {
   const proj = (x, W) => W.map((row) => dot(row, x));
-  const Q = X.map((x) => proj(x, Wq));
-  const K = X.map((x) => proj(x, Wk));
-  const V = X.map((x) => proj(x, Wv));
+  const Q = Xq.map((x) => proj(x, Wq));
+  const K = Xkv.map((x) => proj(x, Wk));
+  const V = Xkv.map((x) => proj(x, Wv));
   const out = [], allWeights = [];
-  for (let i = 0; i < X.length; i++) {
+  for (let i = 0; i < Xq.length; i++) {
     const { weights, out: oi } = attendOne(Q[i], K, V, mask ? mask[i] : null);
     out.push(oi);
     allWeights.push(weights);
