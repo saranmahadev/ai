@@ -1,9 +1,16 @@
 #!/bin/sh
-# Runs the full site check suite before a push leaves this machine, mirroring what the
-# ci.yml GitHub Actions workflow used to run on every pull request.
-# Enabled by `git config core.hooksPath .githooks` (wired automatically by `npm ci`'s
-# `prepare` script in .site/package.json). Skip once with `git push --no-verify`.
+# Runs the full site check suite before a push leaves this machine, but only for the
+# dev and main branches — feature/* branches push straight through for fast iteration
+# and get checked when they're merged into dev (see "Branching and release flow" in
+# CLAUDE.md). Enabled by `git config core.hooksPath .githooks` (wired automatically by
+# `npm ci`'s `prepare` script in .site/package.json). Skip once with `git push --no-verify`.
 set -e
+branch="$(git symbolic-ref --short HEAD 2>/dev/null || echo "")"
+case "$branch" in
+  feature/*)
+    exit 0
+    ;;
+esac
 cd "$(git rev-parse --show-toplevel)/.site"
 npm test
 npm run content
