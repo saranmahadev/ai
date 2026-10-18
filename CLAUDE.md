@@ -24,7 +24,28 @@ npm run dev         # build content and serve the site at http://localhost:8000
 
 `content.json` is generated and gitignored. Deployment (`.github/workflows/deploy-site.yml`) runs `npm ci && npm run content`, then publishes `.site/` to the `web` branch, excluding build files.
 
-There is no GitHub Actions check workflow: `npm ci`'s `prepare` script runs `git config core.hooksPath .githooks`, which points git at the committed `.githooks/pre-push` hook. That hook runs `npm test`, `npm run content` and all four `test:*` scripts before any push leaves the machine — the same checks `ci.yml` used to run remotely on every pull request. Skip it once with `git push --no-verify` if needed; don't disable it otherwise.
+There is no GitHub Actions check workflow: `npm ci`'s `prepare` script runs `git config core.hooksPath .githooks`, which points git at the committed `.githooks/pre-push` hook. That hook runs `npm test`, `npm run content` and all four `test:*` scripts before a push leaves the machine, but only on `dev` and `main` (see below) — it exits immediately on a `feature/*` branch. Skip it once with `git push --no-verify` if needed; don't disable it otherwise.
+
+## Branching and release flow
+
+Three branches, each with one job:
+
+| Branch | Role | Pre-push hook | Moves forward by |
+| --- | --- | --- | --- |
+| `feature/<name>` | All day-to-day development, branched from `dev`. | **Skipped** — pushes go straight through for fast iteration. | Merged into `dev` once the feature is ready. |
+| `dev` | Integration/staging branch. Every finished feature lands here first. | **Runs** — the full suite (`npm test`, `npm run content`, all four `test:*` scripts) must pass before `dev` can be pushed. | Pushed to remote, then opened as a PR into `main`. |
+| `main` | Production branch. Only moves via a merged PR from `dev`. | Runs too (a safety net; should already be green since it came from a tested `dev`). | Merging the PR triggers `.github/workflows/deploy-site.yml`, which publishes `.site/` to the `web` branch (ai.saranmahadev.in). |
+
+Flow for a single change:
+
+1. **Branch**: `git checkout dev && git pull && git checkout -b feature/<name>`.
+2. **Develop**: commit freely on the feature branch. `git push` here skips the test suite entirely, so iteration stays fast.
+3. **Integrate**: once the feature is ready, merge it into `dev` (`git checkout dev && git merge feature/<name>`).
+4. **Test**: `git push origin dev` — this is where the full pre-push suite runs. A failure here is fixed on `dev` (or by going back to the feature branch) before `dev` can reach remote.
+5. **Release**: open a PR from `dev` into `main`.
+6. **Deploy**: merging that PR deploys automatically — there is no separate deploy step.
+
+Never push straight to `main` from a feature branch, and don't habitually `--no-verify` past the hook on `dev` — `dev` is the one place the full suite is meant to catch problems before they reach production.
 
 ## Site architecture
 
