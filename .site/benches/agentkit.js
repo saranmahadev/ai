@@ -349,3 +349,48 @@ export function trajectoryVerdict(stepsValid, finalCorrect) {
 // An agent config with a higher success rate isn't automatically the better choice once cost
 // is folded in -- cost per SUCCESSFUL run is the joint metric that can flip the comparison.
 export function costPerSuccess(successRate, costPerAttempt) { return costPerAttempt / successRate; }
+
+// ---------- Agent safety and governance ----------
+
+// How many of a trajectory's actions need a human approval under each oversight tier:
+// in-loop approves every action, on-loop approves only irreversible ones, out-loop approves none.
+export function oversightApprovalsNeeded(actions, tier) {
+  const irreversible = actions.filter((a) => a.irreversible).length;
+  if (tier === "in-loop") return { approvals: actions.length, of: actions.length };
+  if (tier === "on-loop") return { approvals: irreversible, of: actions.length };
+  return { approvals: 0, of: actions.length };
+}
+
+// How many of a set of files a piece of running code can reach -- with no sandbox, every file
+// on the host; inside a sandbox restricted to one directory, only files under that prefix.
+export function sandboxReachableFiles(filePaths, sandboxed, allowedPrefix) {
+  if (!sandboxed) return filePaths.length;
+  return filePaths.filter((f) => f.startsWith(allowedPrefix)).length;
+}
+
+// How many of an attacker's desired actions actually succeed, given which tools the agent
+// was granted -- excessive agency means granting tools the task never required in the first place.
+export function grantedActionsSucceed(attemptedActions, grantedTools) {
+  return attemptedActions.filter((a) => grantedTools.includes(a)).length;
+}
+
+// An action-level guardrail matches a PROPOSED action's structured parameters against a
+// rule, not free text -- so it can block or allow with zero ambiguity, unlike a text classifier.
+export function actionGuardrailResult(actions, highRiskPatterns) {
+  return actions.map((a) => ({ action: a, blocked: highRiskPatterns.some((p) => a.includes(p)) }));
+}
+
+// Whether a document's injected instruction succeeds in hijacking an agent's next action --
+// it fails the moment that action falls outside the task's granted scope, regardless of the text.
+export function injectionHijackSucceeds(injectedAction, hasScopeGate, allowedScope) {
+  return !hasScopeGate || allowedScope.includes(injectedAction);
+}
+
+// ---------- Agents in practice ----------
+
+// How many of a trajectory's intermediate steps are actually inspectable after the fact: zero
+// without tracing (only the final output was ever recorded), every one of them with tracing
+// (each step's tool, input and output were captured as its own span).
+export function visibleIntermediateSteps(nSteps, hasTracing) {
+  return hasTracing ? nSteps : 0;
+}

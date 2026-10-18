@@ -1,6 +1,6 @@
 A 95%-success-rate agent sounds better than an 85%-success-rate one, full stop — until the first one costs ten times as much per attempt. Cost per *successful* run, not success rate alone, is the number that actually decides which configuration is worth deploying.
 
-**You need:** [[Cost and Latency of Agent Loops]].
+**You need:** [[Success-Rate Metrics and Their Blind Spots]].
 
 ## The question it answers
 
