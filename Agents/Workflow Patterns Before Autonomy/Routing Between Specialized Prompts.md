@@ -51,7 +51,7 @@ fallback: Compare accuracy when requests are routed to the matching specialist a
 ## Where it appears in AI
 
 * **Routing depends on an accurate classification step**, the same task-classification problem that shows up throughout this road — a misrouted request gets the wrong specialist's accuracy, not the one it should have received.
-* **[[Supervisor/Orchestrator Patterns]] is the multi-agent version of the same idea**: instead of routing to a specialized *prompt*, a supervisor routes to a specialized *agent*.
+* **[[Supervisor-Orchestrator Patterns|Supervisor/Orchestrator Patterns]] is the multi-agent version of the same idea**: instead of routing to a specialized *prompt*, a supervisor routes to a specialized *agent*.
 * **[[Tool Selection Among Many Candidates]] is a closely related problem one level down**: picking the right tool out of many is routing applied to actions instead of to whole requests.
 
 ## Common pitfalls
@@ -82,4 +82,4 @@ Misclassified requests get sent to the wrong specialist, whose accuracy for that
 
 ## Related
 
-[[Prompt Chaining]] · [[Supervisor/Orchestrator Patterns]] · [[Tool Selection Among Many Candidates]]
+[[Prompt Chaining]] · [[Supervisor-Orchestrator Patterns|Supervisor/Orchestrator Patterns]] · [[Tool Selection Among Many Candidates]]

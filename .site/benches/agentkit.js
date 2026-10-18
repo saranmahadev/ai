@@ -140,3 +140,212 @@ export function parsesAsIso(s) {
 // the whole loop as one piece of code the agent emits in a single call.
 export function structuredCalls(nItems) { return nItems; }
 export function codeInterfaceCalls() { return 1; }
+
+// ---------- Memory and state management ----------
+
+// How many times a user has to restate the same fact across separate sessions: every
+// session if nothing persists between them, versus exactly once if it's written to
+// long-term memory the first time and read back on every later session.
+export function redundantAsks(nSessions, persistent) {
+  return persistent ? 1 : nSessions;
+}
+
+// Total attempts spent on a recurring task: without an episodic log, every instance
+// re-discovers which approach works from scratch (try, fail, try again, succeed); with
+// one, only the first instance has to discover it -- every later instance recalls the
+// logged outcome and goes straight to the approach that worked.
+export function recurringTaskAttempts(nInstances, useEpisodicMemory) {
+  if (!useEpisodicMemory) return 2 * nInstances;
+  return 2 + (nInstances - 1) * 1;
+}
+
+// Raw transcript size growing linearly with turns versus a fixed summarization budget
+// that stays capped regardless of how long the conversation runs.
+export function rawTranscriptTokens(nTurns, perTurn) {
+  return nTurns * perTurn;
+}
+export function compressionRatio(nTurns, perTurn, cap) {
+  return (nTurns * perTurn) / cap;
+}
+
+// External calls a multi-step task needs for a piece of shared context: once per step if
+// nothing is shared between steps, or exactly once if it's fetched into shared state the
+// first time and every later step just reads it back.
+export function externalCallsWithoutSharedState(nSteps) {
+  return nSteps;
+}
+export function externalCallsWithSharedState() {
+  return 1;
+}
+
+// ---------- Multi-agent systems ----------
+
+// Communication edges in a hub-and-spoke supervisor topology (one link per specialist,
+// specialists never link to each other) versus a fully connected peer-to-peer mesh among
+// the same number of agents.
+export function starEdges(n) {
+  return n;
+}
+export function meshEdges(n) {
+  return (n * (n - 1)) / 2;
+}
+
+// How many pipeline stages run on a flawed result before anything notices, if nothing
+// validates between stages -- versus zero, if each stage gates its output the way
+// Prompt Chaining's validation gate does, just one level up at agent granularity.
+export function wastedStagesWithoutGate(totalStages, failStage) {
+  return totalStages - failStage;
+}
+
+// Whether two agents are in a circular wait: the specific coordination failure where each
+// is blocked on a result only the other can produce, so neither can proceed.
+export function circularWait(aWaitsOnB, bWaitsOnA) {
+  return aWaitsOnB && bWaitsOnA;
+}
+
+// Total work units spent on a set of subtasks if two uncoordinated agents each do all of
+// them independently (duplicated) versus a coordinated division where each is done once.
+export function duplicatedWorkUnits(nSharedSubtasks, duplicated) {
+  return duplicated ? 2 * nSharedSubtasks : nSharedSubtasks;
+}
+
+// ---------- Reflection and self-improvement ----------
+
+// Runs a trajectory of steps, each computed from the previous step's value. Without
+// self-critique, a step's injected buggy output is used as-is and feeds the next step.
+// With self-critique, each step recomputes its own output from its own formula and
+// swaps in that recomputed value whenever it disagrees with what was produced.
+export function runSelfCritique(steps, selfCritique) {
+  let value = steps[0].start;
+  const log = [value];
+  let correctionsCaught = 0;
+  for (let i = 1; i < steps.length; i++) {
+    const s = steps[i];
+    let produced = s.buggyOutput ? s.buggyOutput(value) : s.compute(value);
+    if (selfCritique) {
+      const recomputed = s.compute(value);
+      if (produced !== recomputed) { produced = recomputed; correctionsCaught++; }
+    }
+    value = produced;
+    log.push(value);
+  }
+  return { final: value, log, correctionsCaught };
+}
+
+// How many checks it takes to find the first step that broke a long trajectory: a linear
+// forward scan checks every step up to and including the culprit; a binary search over the
+// same monotonic valid/invalid boundary needs only ceil(log2(n)) checks.
+export function linearAttributionChecks(culprit) {
+  return culprit;
+}
+export function binaryAttributionChecks(n) {
+  return Math.ceil(Math.log2(n));
+}
+
+// Attempts at a repeated task: without incorporating feedback into context, the same
+// mistake repeats every attempt (always wrong); with it, the first attempt still fails
+// (there's no feedback yet), but every attempt after the correction is appended succeeds --
+// no weights changed, only what's in the context window.
+export function attemptsWithoutFeedback(n) {
+  return Array.from({ length: n }, () => false);
+}
+export function attemptsWithFeedback(n) {
+  return Array.from({ length: n }, (_, i) => i >= 1);
+}
+
+// Runs a sequence of actions, each either valid immediately or only after some number of
+// retries. Without a verifier, every action is used on its first (possibly bad) attempt.
+// With one, an action is retried -- up to maxRetries times -- until it passes, consuming
+// retries only from the budget actions that actually need them.
+export function runVerifierGuided(actions, useVerifier, maxRetries) {
+  let retriesUsed = 0;
+  const results = actions.map((a) => {
+    let attempt = 0;
+    let ok = a.validOnAttempt <= attempt;
+    if (useVerifier) {
+      while (!ok && attempt < maxRetries) {
+        attempt++;
+        retriesUsed++;
+        ok = a.validOnAttempt <= attempt;
+      }
+    }
+    return { ok, attempts: attempt + 1 };
+  });
+  return { results, allOk: results.every((r) => r.ok), retriesUsed };
+}
+
+// ---------- Agent environments and action spaces ----------
+
+// A web agent's planned action targets an element either by stable selector (role/id) or by
+// raw list index. A re-render before `reRenderAtAction` shifts every index after it, so
+// index-based targeting only keeps hitting the right element up to that point.
+export function webActionAccuracy(nActions, reRenderAtAction) {
+  let indexCorrect = 0;
+  for (let i = 1; i <= nActions; i++) if (i < reRenderAtAction) indexCorrect++;
+  return { indexCorrect, selectorCorrect: nActions, nActions };
+}
+
+// A fixed pixel click-error offset either lands inside a target's half-width/half-height
+// box (a hit) or doesn't -- the same offset can hit a big button and miss a small icon.
+export function clickHit(halfW, halfH, dx, dy) { return dx <= halfW && dy <= halfH; }
+
+// Stateful (persistent) execution sends each of n steps' own code once; stateless execution
+// resends every prior step's code alongside each new one, so volume grows triangularly.
+export function statefulCodeVolume(n, lenPerStep = 1) { return n * lenPerStep; }
+export function statelessCodeVolume(n, lenPerStep = 1) { return (n * (n + 1) / 2) * lenPerStep; }
+
+// Three strategies for a set of tasks, each task carrying its GUI action count, its code
+// action count, and whether the code path actually succeeds (e.g. skips validation events).
+export function actionSpaceStrategyTotals(tasks, strategy) {
+  let actions = 0, successes = 0;
+  for (const t of tasks) {
+    if (strategy === "gui") { actions += t.gui; successes++; }
+    else if (strategy === "code") { actions += t.code; if (t.codeSucceeds) successes++; }
+    else { // hybrid: use code when it works, fall back to the GUI path when it doesn't
+      actions += t.codeSucceeds ? t.code : t.gui;
+      successes++;
+    }
+  }
+  return { actions, successes, of: tasks.length };
+}
+
+// A random, uninformed first pick among k enumerated (one-action-per-object) choices
+// succeeds with probability 1/k -- this is the combinatorial-explosion failure mode as
+// k grows, distinct from a too-coarse action that can never succeed at any k.
+export function enumeratedActionSuccess(k) { return 1 / k; }
+
+// ---------- Evaluating agents ----------
+
+// Grading an agent run by exact text match vs. by checking the environment's resulting
+// state -- many different final messages can all reach the identical correct state.
+export function gradingAccuracy(runs, mode) {
+  let correct = 0;
+  for (const r of runs) {
+    if (mode === "text") { if (r.finalText === r.referenceText) correct++; }
+    else { if (r.resultState === r.expectedState) correct++; }
+  }
+  return { correct, of: runs.length };
+}
+
+// A binary success rate hides how close a failing run actually got -- two agents with the
+// identical success rate can have very different average partial credit on their failures.
+export function partialCreditStats(runs) {
+  const successes = runs.filter((r) => r.credit >= 1).length;
+  const avgCredit = runs.reduce((a, r) => a + r.credit, 0) / runs.length;
+  return { successRate: successes / runs.length, avgCredit };
+}
+
+// Outcome-only grading checks just the final answer; trajectory-level grading checks every
+// step, so it can fail a run whose final answer happens to be right despite an invalid step.
+export function trajectoryVerdict(stepsValid, finalCorrect) {
+  const validCount = stepsValid.filter(Boolean).length;
+  return {
+    outcomePass: finalCorrect,
+    trajectoryScore: validCount / stepsValid.length,
+    trajectoryPass: stepsValid.every(Boolean),
+  };
+}
+
+// An agent config with a higher success rate isn't automatically the better choice once cost
+// is folded in -- cost per SUCCESSFUL run is the joint metric that can flip the comparison.
+export function costPerSuccess(successRate, costPerAttempt) { return costPerAttempt / successRate; }

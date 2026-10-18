@@ -2,7 +2,7 @@ One agent can only hold one line of thought at a time. Splitting a task across s
 
 Topics on this stretch of the road:
 
-* [[Supervisor/Orchestrator Patterns]]: one agent that routes work to specialists and never lets them talk to each other directly.
+* [[Supervisor-Orchestrator Patterns|Supervisor/Orchestrator Patterns]]: one agent that routes work to specialists and never lets them talk to each other directly.
 * [[Pipeline and Sequential Handoff]]: a fixed chain of agents, each one handing its output to the next.
 * [[Swarm and Peer-to-Peer Coordination]]: agents that coordinate directly through shared state, with no central router.
 * [[Debate and Adversarial Multi-Agent Setups]]: agents arguing opposite sides of a question to surface a better answer than either alone.

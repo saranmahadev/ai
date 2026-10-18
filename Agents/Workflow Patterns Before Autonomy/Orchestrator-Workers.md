@@ -52,7 +52,7 @@ fallback: Compare a single big call that ran out of room against an orchestrator
 
 * **Orchestrator-workers extends [[Parallelization: Sectioning and Voting|sectioning]]** to tasks where the subtasks aren't known ahead of time — the orchestrator's dynamic decomposition step is the one piece sectioning doesn't need.
 * **[[Goal Decomposition into Subtasks]] is the general mechanism behind the orchestrator's decomposition step**, applied here specifically to spawning parallel worker calls.
-* **[[Supervisor/Orchestrator Patterns]] is the multi-agent version of the same structure**: workers become full agents rather than single calls, and the orchestrator's assembly step becomes an ongoing coordination job.
+* **[[Supervisor-Orchestrator Patterns|Supervisor/Orchestrator Patterns]] is the multi-agent version of the same structure**: workers become full agents rather than single calls, and the orchestrator's assembly step becomes an ongoing coordination job.
 
 ## Common pitfalls
 
@@ -82,4 +82,4 @@ Each worker call gets its own independent response budget, so one section's leng
 
 ## Related
 
-[[Parallelization: Sectioning and Voting]] · [[Goal Decomposition into Subtasks]] · [[Supervisor/Orchestrator Patterns]]
+[[Parallelization: Sectioning and Voting]] · [[Goal Decomposition into Subtasks]] · [[Supervisor-Orchestrator Patterns|Supervisor/Orchestrator Patterns]]
