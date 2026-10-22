@@ -222,7 +222,8 @@ const stats = {
   planets: planets.length,
   explored: planets.filter((p) => p.status === "explored").length,
   topics: Object.keys(topics).length,
-  written: Object.values(topics).filter((t) => t.status === "written").length
+  written: Object.values(topics).filter((t) => t.status === "written").length,
+  benches: Object.values(topics).filter((t) => t.benches.length > 0).length
 };
 // The index (content.json) carries everything except article bodies; each body (html + table of contents) is its own file
 // under content/, fetched when the topic is opened, so the first load stays small however many planets there are.
