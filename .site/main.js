@@ -347,7 +347,13 @@ document.addEventListener("click", (e) => {
 addEventListener("hashchange", route);
 view.addEventListener("click", (e) => {
   if (!e.target.closest("[data-reset-progress]")) return;
-  if (confirm("Reset your reading progress on this device?")) { try { localStorage.removeItem("ai-base-read"); } catch { /* ignore */ } route(); }
+  if (!confirm("Reset your reading progress on this device?")) return;
+  try {
+    localStorage.removeItem("ai-base-read");
+    localStorage.removeItem("ai-base-progress");
+    for (const k of Object.keys(localStorage)) if (k.startsWith("ai-base-pos:")) localStorage.removeItem(k);
+  } catch { /* ignore */ }
+  route();
 });
 
 // ---------- from a topic back to a planet's road
