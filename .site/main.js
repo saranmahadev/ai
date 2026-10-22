@@ -2,7 +2,7 @@ import { theme } from "./theme.js";
 import { navFor } from "./nav.js";
 import * as benchKit from "./benches/kit.js";
 import { cover } from "./cover.js";
-import { mountReader, applyPrefs, readSet } from "./reader.js";
+import { mountReader, applyPrefs, readSet, progressFor } from "./reader.js";
 import { mountSearch } from "./search.js";
 
 // Router + views. The 3D scenes plug in per route; the text views below are also the permanent accessible fallback.
@@ -15,7 +15,11 @@ applyPrefs();
 // Explorer Mode: the optional 3D galaxy/planet experience. Read Mode (the default) renders every
 // route as a plain document; switching to Explorer Mode is what unlocks the rocket and the walkable
 // planets. The choice is remembered in this browser only, same as the other ai-base-* preferences.
-function getMode() { try { return localStorage.getItem("ai-base-mode") === "explore" ? "explore" : "read"; } catch { return "read"; } }
+function getMode() {
+  const q = new URLSearchParams(location.search).get("mode");
+  if (q === "explore" || q === "read") return q; // ?mode= forces it for this pageload (used by the test suite and shareable 3D links)
+  try { return localStorage.getItem("ai-base-mode") === "explore" ? "explore" : "read"; } catch { return "read"; }
+}
 function setMode(m) { try { localStorage.setItem("ai-base-mode", m); } catch { /* ignore */ } }
 const view = $("#view");
 const home = $("#home");
@@ -39,18 +43,28 @@ const badge = (s) => `<span class="badge ${s}">${STATUS[s] || s}</span>`;
 const planetDot = (p) => `<span class="orb" style="--c:${p.color}" aria-hidden="true"></span>`;
 
 // ---------- views
+function subjectProgress(p) {
+  if (p.planned) return null;
+  const read = readSet();
+  const ids = p.districts.flatMap((d) => d.topics).filter((id) => content.topics[id] && content.topics[id].status === "written");
+  if (!ids.length) return null;
+  const n = ids.filter((id) => read.has(id)).length;
+  return { n, total: ids.length, pct: Math.round((100 * n) / ids.length) };
+}
+
 function galaxyView() {
   const ai = content.topics.ai;
   return `
-    <header class="page-head"><p class="kicker">The galaxy</p><h2>Choose a planet</h2>
-    <p class="blurb">${content.stats.explored} of ${content.stats.planets} planets explored · ${content.stats.written} topics written.</p></header>
+    <header class="page-head"><p class="kicker">The knowledge base</p><h2>Browse subjects</h2>
+    <p class="blurb">${content.stats.planets} subjects, ${content.stats.written} topics written, each with a worked example and an interactive demo. ${content.stats.explored} subjects explored so far on this device.</p></header>
     <div class="planet-grid">
-      ${content.planets.map((p) => `
+      ${content.planets.map((p) => { const prog = subjectProgress(p); return `
         <a class="card planet-card ${p.planned ? "planned" : ""}" href="#/${p.id}" style="--c:${p.color}">
           ${planetDot(p)}
           <div><h3>${esc(p.title)}</h3><p>${esc(p.blurb)}</p>
-          <div class="meta">${badge(p.status)}${p.topicCount ? `<span>${p.topicCount} topic${p.topicCount > 1 ? "s" : ""}</span>` : ""}</div></div>
-        </a>`).join("")}
+          <div class="meta">${badge(p.status)}${p.topicCount ? `<span>${p.topicCount} topic${p.topicCount > 1 ? "s" : ""}</span>` : ""}</div>
+          ${prog ? `<div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${prog.pct}"><i style="width:${prog.pct}%"></i></div><p class="meta"><span>${prog.n} of ${prog.total} read</span></p>` : ""}</div>
+        </a>`; }).join("")}
     </div>
     ${ai ? `<p class="big-picture"><a class="clay-pill" href="#/ai">Read “${esc(ai.title)}” →</a></p>` : ""}`;
 }
@@ -59,7 +73,7 @@ function notFoundView() {
   return `
     <header class="page-head"><p class="kicker">404</p><h2>Nothing here</h2>
     <p class="blurb">That page doesn't exist, or the link is out of date.</p></header>
-    <p class="actions"><a class="cta small" href="#/explore">Browse the knowledge base</a></p>`;
+    <p><a class="chip" href="#/explore">← Browse the knowledge base</a></p>`;
 }
 
 // ---------- My path: progress across planets, from the topics you have read to the end (localStorage, this device only)
@@ -92,14 +106,24 @@ function pathView() {
 }
 
 function planetView(p) {
+  const read = readSet();
+  const prog = subjectProgress(p);
+  const topicMark = (id) => {
+    const t = content.topics[id];
+    if (t.status !== "written") return "";
+    if (read.has(id)) return "";
+    const pct = Math.round(progressFor(id) * 100);
+    return pct > 0 ? ` <span class="chip-pct">${pct}%</span>` : "";
+  };
   const body = p.planned
-    ? `<p class="notice">This planet hasn’t been explored yet. When notes are added to the vault and assigned to it in <code>.site/planets.json</code>, its road appears here.</p>`
+    ? `<p class="notice">This subject hasn’t been written yet. When notes are added to the vault and assigned to it in <code>.site/planets.json</code>, its topics appear here.</p>`
     : p.districts.map((d) => `
         <section class="district"><h3>${esc(d.title)}</h3>
-          <ul class="chips">${d.topics.map((id) => { const t = content.topics[id]; return `<li><a class="chip ${t.status}" href="#/${id}">${esc(t.title)}</a></li>`; }).join("")}</ul>
+          <ul class="chips">${d.topics.map((id) => { const t = content.topics[id]; return `<li><a class="chip ${t.status}${read.has(id) ? " read" : ""}" href="#/${id}">${esc(t.title)}</a>${topicMark(id)}</li>`; }).join("")}</ul>
         </section>`).join("");
   return `
-    <header class="page-head" style="--c:${p.color}">${planetDot(p)}<div><p class="kicker">${STATUS[p.status]}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p></div></header>
+    <header class="page-head" style="--c:${p.color}">${planetDot(p)}<div><p class="kicker">${STATUS[p.status]}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p>
+    ${prog ? `<div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${prog.pct}"><i style="width:${prog.pct}%"></i></div><p class="meta"><span>${prog.n} of ${prog.total} read</span></p>` : ""}</div></header>
     ${body}`;
 }
 
