@@ -52,21 +52,79 @@ function subjectProgress(p) {
   return { n, total: ids.length, pct: Math.round((100 * n) / ids.length) };
 }
 
+function planetCard(p) {
+  const prog = subjectProgress(p);
+  return `
+    <a class="card planet-card ${p.planned ? "planned" : ""}" href="#/${p.id}" style="--c:${p.color}">
+      ${planetDot(p)}
+      <div><h3>${esc(p.title)}</h3><p>${esc(p.blurb)}</p>
+      <div class="meta">${badge(p.status)}${p.topicCount ? `<span>${p.topicCount} topic${p.topicCount > 1 ? "s" : ""}</span>` : ""}</div>
+      ${prog ? `<div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${prog.pct}"><i style="width:${prog.pct}%"></i></div><p class="meta"><span>${prog.n} of ${prog.total} read</span></p>` : ""}</div>
+    </a>`;
+}
+
 function galaxyView() {
   const ai = content.topics.ai;
   return `
     <header class="page-head"><p class="kicker">The knowledge base</p><h2>Browse subjects</h2>
     <p class="blurb">${content.stats.planets} subjects, ${content.stats.written} topics written, each with a worked example and an interactive demo. ${content.stats.explored} subjects explored so far on this device.</p></header>
-    <div class="planet-grid">
-      ${content.planets.map((p) => { const prog = subjectProgress(p); return `
-        <a class="card planet-card ${p.planned ? "planned" : ""}" href="#/${p.id}" style="--c:${p.color}">
-          ${planetDot(p)}
-          <div><h3>${esc(p.title)}</h3><p>${esc(p.blurb)}</p>
-          <div class="meta">${badge(p.status)}${p.topicCount ? `<span>${p.topicCount} topic${p.topicCount > 1 ? "s" : ""}</span>` : ""}</div>
-          ${prog ? `<div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${prog.pct}"><i style="width:${prog.pct}%"></i></div><p class="meta"><span>${prog.n} of ${prog.total} read</span></p>` : ""}</div>
-        </a>`; }).join("")}
-    </div>
+    <div class="planet-grid">${content.planets.map(planetCard).join("")}</div>
     ${ai ? `<p class="big-picture"><a class="clay-pill" href="#/ai">Read “${esc(ai.title)}” →</a></p>` : ""}`;
+}
+
+// ---------- home page: dynamic stats, subject grid, continue-reading teaser, scroll reveal
+function renderHomeStatic() {
+  const grid = $("#home-subjects");
+  if (grid) grid.innerHTML = content.planets.map(planetCard).join("");
+  const sections = document.querySelectorAll("#home .reveal");
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -10% 0px" });
+    sections.forEach((el) => io.observe(el));
+  } else sections.forEach((el) => el.classList.add("in"));
+  const statsEl = $("#home-stats");
+  if (!statsEl) return;
+  const animateStats = () => {
+    statsEl.querySelectorAll("[data-stat]").forEach((b) => {
+      const target = content.stats[b.dataset.stat] || 0;
+      if (reduceMotion) { b.textContent = target; return; }
+      const start = performance.now(), dur = 900;
+      const tick = (now) => {
+        const p = Math.min(1, (now - start) / dur), eased = 1 - Math.pow(1 - p, 3);
+        b.textContent = Math.round(target * eased);
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  };
+  if ("IntersectionObserver" in window) {
+    const sio = new IntersectionObserver((es) => { if (es[0].isIntersecting) { animateStats(); sio.disconnect(); } });
+    sio.observe(statsEl);
+  } else animateStats();
+}
+function renderHomeContinue() {
+  const el = $("#home-continue");
+  if (!el) return;
+  const read = readSet();
+  if (!read.size) { el.hidden = true; return; }
+  const writtenIds = (p) => p.districts.flatMap((d) => d.topics).filter((id) => content.topics[id] && content.topics[id].status === "written");
+  const lastId = [...read].reverse().find((id) => content.topics[id]);
+  const lastPlanet = lastId && content.topics[lastId].planet;
+  let next = null;
+  if (lastPlanet) {
+    const p = content.planets.find((x) => x.id === lastPlanet);
+    if (p) { const ids = writtenIds(p), at = ids.indexOf(lastId); next = ids.slice(at + 1).find((id) => !read.has(id)) || ids.find((id) => !read.has(id)); }
+  }
+  if (!next) for (const p of content.planets) { if (p.planned) continue; next = writtenIds(p).find((id) => !read.has(id)); if (next) break; }
+  if (!next) { el.hidden = true; return; }
+  const t = content.topics[next], p = t.planet && content.planets.find((x) => x.id === t.planet);
+  el.hidden = false;
+  el.innerHTML = `<h2>Continue where you left off</h2>
+    <a class="read-next home-continue-card" href="#/${t.id}"><small>${esc(p ? p.title : "")}</small><b>${esc(t.title)}</b><p>${esc(t.summary || "")}</p><span aria-hidden="true">→</span></a>`;
+}
+function refreshHomeProgress() {
+  const grid = $("#home-subjects");
+  if (grid) grid.innerHTML = content.planets.map(planetCard).join("");
+  renderHomeContinue();
 }
 
 function notFoundView() {
@@ -324,7 +382,7 @@ function route() {
   home.hidden = !isHome;
   galaxyEl.hidden = !isGalaxy;
   view.hidden = isHome || isGalaxy || isPlanet;
-  if (stage) stage.setActive(isHome ? homeScene : isGalaxy ? galaxy : isPlanet ? planetScene : null);
+  if (stage) stage.setActive(isGalaxy ? galaxy : isPlanet ? planetScene : null);
   if (galaxy) { if (isGalaxy) galaxy.enter(); else galaxy.leave(); }
   if (planetScene) {
     if (isPlanet) {
@@ -333,7 +391,7 @@ function route() {
   }
   renderNav(navFor({ key, query, content, has3d: !!galaxy && explorerMode }));
   if (isPlanet) { setTitle(`${planetObj.title} · AI Base`); return; }
-  if (isHome) { setTitle("AI Base"); return; }
+  if (isHome) { refreshHomeProgress(); setTitle("AI Base"); return; }
   if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
 
   const wanted = content.topics[key];
@@ -413,21 +471,25 @@ modeToggle?.addEventListener("click", () => {
 });
 syncModeToggle();
 
-// ---------- launch
-$("#launch").addEventListener("click", async () => {
+// ---------- launch: the home page carries no idle 3D render; the rocket only appears for this one
+// transient transition, triggered by an explicit click, then the canvas hands off to the galaxy scene.
+$("#home-launch").addEventListener("click", async () => {
   if (launching) return;
   setMode("explore");
   syncModeToggle();
-  if (!homeScene) { location.hash = "#/galaxy"; return; }
+  if (!homeScene || !stage) { location.hash = "#/galaxy"; return; }
   launching = true;
-  $("#launch").disabled = true;
+  $("#home-launch").disabled = true;
+  document.body.classList.add("launching");
+  stage.setActive(homeScene);
   home.classList.add("away");
   await homeScene.launch();
   launching = false;
   location.hash = "#/galaxy";
   $("#white").classList.remove("on");
   home.classList.remove("away");
-  $("#launch").disabled = false;
+  document.body.classList.remove("launching");
+  $("#home-launch").disabled = false;
   homeScene.reset();
 });
 
@@ -441,6 +503,8 @@ try {
 }
 if (content) {
   mountSearch({ content, onGo: (d) => { location.hash = `#/${d.id}`; } });
+  renderHomeStatic();
+  refreshHomeProgress();
   route();
   try {
     const { createStage } = await import("./scenes/stage.js");
