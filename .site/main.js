@@ -8,7 +8,9 @@ import { mountSearch } from "./search.js";
 // Router + views. The 3D scenes plug in per route; the text views below are also the permanent accessible fallback.
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const STATUS = { written: "Written", outlined: "Outlined", index: "Index", planned: "Undiscovered", explored: "Explored" };
+// "explored" here means the subject has at least one written topic (content-complete), distinct from
+// the reader's own progress shown right beside it — labelled "Written" to avoid reading as a false claim.
+const STATUS = { written: "Written", outlined: "Outlined", index: "Index", planned: "Undiscovered", explored: "Written" };
 const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 
 applyPrefs();
