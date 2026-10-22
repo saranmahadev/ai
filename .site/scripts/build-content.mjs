@@ -9,7 +9,7 @@ const SITE = join(dirname(fileURLToPath(import.meta.url)), "..");
 const VAULT = join(SITE, "..");
 const CHECK = process.argv.includes("--check");
 const SKIP_DIRS = new Set([".git", ".obsidian", ".agents", ".github", ".site", "node_modules"]);
-const SKIP_FILES = new Set(["AGENTS.md", "CLAUDE.md", "README.md"]);
+const SKIP_FILES = new Set(["AGENTS.md", "CLAUDE.md", "README.md", "LICENSE", "CONTRIBUTING.md", "SECURITY.md", "CODE_OF_CONDUCT.md"]);
 const warnings = [];
 const warn = (m) => warnings.push(m);
 

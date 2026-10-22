@@ -12,6 +12,11 @@ const STATUS = { written: "Written", outlined: "Outlined", index: "Index", plann
 const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 
 applyPrefs();
+// Explorer Mode: the optional 3D galaxy/planet experience. Read Mode (the default) renders every
+// route as a plain document; switching to Explorer Mode is what unlocks the rocket and the walkable
+// planets. The choice is remembered in this browser only, same as the other ai-base-* preferences.
+function getMode() { try { return localStorage.getItem("ai-base-mode") === "explore" ? "explore" : "read"; } catch { return "read"; } }
+function setMode(m) { try { localStorage.setItem("ai-base-mode", m); } catch { /* ignore */ } }
 const view = $("#view");
 const home = $("#home");
 let content = null;
@@ -48,6 +53,13 @@ function galaxyView() {
         </a>`).join("")}
     </div>
     ${ai ? `<p class="big-picture"><a class="clay-pill" href="#/ai">Read “${esc(ai.title)}” →</a></p>` : ""}`;
+}
+
+function notFoundView() {
+  return `
+    <header class="page-head"><p class="kicker">404</p><h2>Nothing here</h2>
+    <p class="blurb">That page doesn't exist, or the link is out of date.</p></header>
+    <p class="actions"><a class="cta small" href="#/explore">Browse the knowledge base</a></p>`;
 }
 
 // ---------- My path: progress across planets, from the topics you have read to the end (localStorage, this device only)
@@ -273,10 +285,11 @@ function route() {
   const [pathPart, query] = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("?");
   const parts = pathPart.split("/").filter(Boolean);
   const key = parts.join("/");
+  const explorerMode = getMode() === "explore";
   const planetObj = parts.length === 1 && content.planets.find((p) => p.id === key);
-  const isPlanet = !!(planetScene && planetObj && !planetObj.planned && query !== "text");
+  const isPlanet = !!(explorerMode && planetScene && planetObj && !planetObj.planned && query !== "text");
   const isHome = parts.length === 0;
-  const isGalaxy = key === "galaxy" && !!galaxy;
+  const isGalaxy = explorerMode && key === "galaxy" && !!galaxy;
   document.body.classList.toggle("route-home", isHome);
   document.body.classList.toggle("route-galaxy", isGalaxy);
   document.body.classList.toggle("route-planet", isPlanet);
@@ -294,7 +307,7 @@ function route() {
       if (planetKey !== key) { planetKey = key; setPlanetUi(planetObj); planetScene.enter(planetObj); syncPlanetHud(); }
     } else { planetScene.leave(); planetKey = null; }
   }
-  renderNav(navFor({ key, query, content, has3d: !!galaxy }));
+  renderNav(navFor({ key, query, content, has3d: !!galaxy && explorerMode }));
   if (isPlanet) { setTitle(`${planetObj.title} · AI Base`); return; }
   if (isHome) { setTitle("AI Base"); return; }
   if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
@@ -309,10 +322,10 @@ function route() {
   }
   let html, title;
   if (key === "path") { html = pathView(); title = "My path"; }
-  else if (key === "galaxy" || key === "list") { html = galaxyView(); title = "Planets"; }
+  else if (key === "galaxy" || key === "list" || key === "explore") { html = galaxyView(); title = "Explore"; }
   else if (content.topics[key]) { html = topicView(content.topics[key]); title = content.topics[key].title; }
   else if (content.planets.find((p) => p.id === key)) { const p = content.planets.find((x) => x.id === key); html = planetView(p); title = p.title; }
-  else { html = `<p class="notice">Nothing here. <a href="#/galaxy">Back to the galaxy</a></p>`; title = "Not found"; }
+  else { html = notFoundView(); title = "Not found"; }
   view.innerHTML = html;
   { const h = view.querySelector("h1, h2"); if (h && !document.body.classList.contains("searching")) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
   if (content.topics[key]) { enhanceArticle(content.topics[key]); if (planetScene && content.topics[key].planet) planetScene.remember(content.topics[key].planet, key); }
@@ -348,9 +361,33 @@ view.addEventListener("click", (e) => {
   if (topic) return; // topic to topic is a plain page change
   if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`); }
 });
+// ---------- Explorer Mode toggle (header): switches between Read Mode (plain documents, the default)
+// and Explorer Mode (the 3D galaxy/planet experience). The choice persists via ai-base-mode.
+const modeToggle = $("[data-mode-toggle]");
+function syncModeToggle() {
+  if (!modeToggle) return;
+  const on = getMode() === "explore";
+  modeToggle.textContent = on ? "📖 Read mode" : "🚀 Explorer mode";
+  modeToggle.setAttribute("aria-pressed", String(on));
+  modeToggle.title = on ? "Switch back to Read Mode" : "Switch to the 3D Explorer Mode";
+}
+modeToggle?.addEventListener("click", () => {
+  const next = getMode() === "explore" ? "read" : "explore";
+  setMode(next);
+  syncModeToggle();
+  const [pathPart] = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("?");
+  const key = pathPart.split("/").filter(Boolean).join("/");
+  // leaving the catalog text view while switching on Explorer Mode lands straight in the 3D galaxy
+  if (next === "explore" && galaxy && (key === "list" || key === "explore")) { location.hash = "#/galaxy"; return; }
+  route();
+});
+syncModeToggle();
+
 // ---------- launch
 $("#launch").addEventListener("click", async () => {
   if (launching) return;
+  setMode("explore");
+  syncModeToggle();
   if (!homeScene) { location.hash = "#/galaxy"; return; }
   launching = true;
   $("#launch").disabled = true;
