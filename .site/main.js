@@ -464,9 +464,11 @@ const modeToggle = $("[data-mode-toggle]");
 function syncModeToggle() {
   if (!modeToggle) return;
   const on = getMode() === "explore";
-  modeToggle.textContent = on ? "📖 Read mode" : "🚀 Explorer mode";
+  modeToggle.innerHTML = `<span class="nav-icon" aria-hidden="true">${on ? "📖" : "🚀"}</span><span class="nav-label">${on ? "Read mode" : "Explorer mode"}</span>`;
   modeToggle.setAttribute("aria-pressed", String(on));
-  modeToggle.title = on ? "Switch back to Read Mode" : "Switch to the 3D Explorer Mode";
+  const label = on ? "Switch back to Read Mode" : "Switch to the 3D Explorer Mode";
+  modeToggle.setAttribute("aria-label", label);
+  modeToggle.title = label;
 }
 modeToggle?.addEventListener("click", () => {
   const next = getMode() === "explore" ? "read" : "explore";

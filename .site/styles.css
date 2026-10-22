@@ -605,7 +605,15 @@ html:has(body.reading) { scroll-padding-bottom: 96px; } /* leave room for the fl
 .hud-btn kbd, .search-hint kbd { font: inherit; font-size: 11px; padding: 0 5px; border-radius: 5px; border: 1px solid var(--soft); opacity: .8; }
 body.reading .hud-btn { border-radius: 6px; font-weight: 600; color: var(--r-muted); }
 body.reading .hud-btn:hover { color: var(--r-ink); background: var(--r-surface); }
+.nav-icon { display: none; }
 @media (max-width: 640px) { .hud-btn kbd { display: none; } .hud nav a, .hud-btn { padding: 6px 9px; } }
+/* narrow phones: icon-only nav so the header stays on one row (a wrapped header used to overlap the page) */
+@media (max-width: 480px) {
+  .hud nav { gap: 2px; }
+  .hud nav a, .hud-btn { padding: 9px 10px; display: flex; align-items: center; justify-content: center; }
+  .nav-icon { display: block; font-size: 15px; line-height: 1; font-weight: 800; }
+  .nav-label { display: none; }
+}
 #search { position: fixed; inset: 0; z-index: 60; display: flex; justify-content: center; align-items: flex-start; padding: 12vh 16px 0; background: rgba(20, 16, 40, .45); backdrop-filter: blur(3px); }
 #search[hidden] { display: none; }
 .search-box { width: min(620px, 100%); background: var(--clay, #fff); color: var(--ink, #222); border-radius: 22px; box-shadow: 0 24px 60px rgba(20, 16, 40, .35); padding: 14px; }
