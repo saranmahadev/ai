@@ -168,18 +168,25 @@ function pathView() {
 function planetView(p) {
   const read = readSet();
   const prog = subjectProgress(p);
-  const topicMark = (id) => {
-    const t = content.topics[id];
-    if (t.status !== "written") return "";
-    if (read.has(id)) return "";
-    const pct = Math.round(progressFor(id) * 100);
-    return pct > 0 ? ` <span class="chip-pct">${pct}%</span>` : "";
+  const mins = (t) => Math.max(1, Math.round((t.words || 0) / 200));
+  const topicRow = (id) => {
+    const t = content.topics[id], isRead = read.has(id), pct = !isRead ? Math.round(progressFor(id) * 100) : 0;
+    return `<li class="topic-row ${t.status}${isRead ? " read" : ""}">
+      <a href="#/${id}">
+        <span class="tr-icon" aria-hidden="true"></span>
+        <span class="tr-title">${esc(t.title)}</span>
+        <span class="tr-meta">
+          ${t.status === "written" ? `<span class="tr-time">${mins(t)} min</span>` : ""}
+          ${isRead ? `<span class="tr-read" aria-label="Read">✓</span>` : pct > 0 ? `<span class="tr-pct">${pct}%</span>` : ""}
+        </span>
+      </a>
+    </li>`;
   };
   const body = p.planned
     ? `<p class="notice">This subject hasn’t been written yet. When notes are added to the vault and assigned to it in <code>.site/planets.json</code>, its topics appear here.</p>`
     : p.districts.map((d) => `
         <section class="district"><h3>${esc(d.title)}</h3>
-          <ul class="chips">${d.topics.map((id) => { const t = content.topics[id]; return `<li><a class="chip ${t.status}${read.has(id) ? " read" : ""}" href="#/${id}">${esc(t.title)}</a>${topicMark(id)}</li>`; }).join("")}</ul>
+          <ul class="topic-rows">${d.topics.map(topicRow).join("")}</ul>
         </section>`).join("");
   return `
     <header class="page-head" style="--c:${p.color}">${planetDot(p)}<div><p class="kicker">${STATUS[p.status]}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p>

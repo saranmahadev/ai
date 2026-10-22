@@ -203,8 +203,22 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--puff), 0 0 0 3px c
 .chip:active { box-shadow: var(--press); }
 .chip.outlined { color: var(--muted); border: 2px dashed #d9cff5; box-shadow: none; }
 .chip.index { color: var(--link); }
-.chip-pct { font-size: 11px; font-weight: 700; color: var(--muted); margin-left: 2px; }
 .notice { background: var(--warn-bg); color: var(--warn-fg); border-radius: 22px; padding: 16px 20px; font-weight: 700; line-height: 1.5; box-shadow: var(--puff-sm); }
+
+/* ---------- subject page topic rows: a flat course table of contents, no clay (reading page) */
+.topic-rows { list-style: none; margin: 0; padding: 0; }
+.topic-row { border-bottom: 1px solid var(--r-rule, var(--soft2)); }
+.topic-row:last-child { border-bottom: 0; }
+.topic-row a { display: flex; align-items: center; gap: 14px; padding: 12px 2px; text-decoration: none; color: var(--r-ink, var(--ink)); }
+.tr-icon { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--c, var(--accent)); }
+.topic-row.outlined .tr-icon { background: none; border: 1.5px dashed var(--r-muted, var(--muted)); }
+.topic-row.index .tr-icon { border-radius: 2px; background: none; border: 1.5px solid var(--c, var(--accent)); }
+.topic-row.read .tr-icon { background: #17924f; }
+.tr-title { flex: 1 1 auto; font-weight: 600; font-size: 15px; }
+.topic-row.outlined .tr-title { color: var(--r-muted, var(--muted)); font-style: italic; }
+.tr-meta { flex: none; display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; color: var(--r-muted, var(--muted)); }
+.tr-read { color: #17924f; font-weight: 800; }
+.topic-row a:hover .tr-title { text-decoration: underline; }
 
 /* ---------- warp + reading bar */
 #warp { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 40; pointer-events: none; display: none; }
@@ -321,7 +335,6 @@ html.night #view .badge.outlined { background: #2d2a12; color: #e3b341; border-c
 #view .chip.index { font-weight: 600; }
 #view .chip.outlined { border: 0; color: var(--r-muted); font-style: italic; }
 #view .chip:hover, #view .chip:active { transform: none; box-shadow: none; }
-#view .chip-pct { color: var(--r-muted); font-weight: 500; }
 #view .notice { background: var(--r-surface); color: var(--r-ink); box-shadow: none; border: 1px solid var(--r-rule); border-left: 4px solid var(--c, var(--accent)); border-radius: 6px; font-weight: 400; padding: 12px 16px; }
 #view code { background: var(--r-surface); border: 1px solid var(--r-rule); border-radius: 4px; padding: 1px 5px; }
 
