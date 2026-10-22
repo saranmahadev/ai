@@ -4,29 +4,30 @@
 
 export function navFor({ key, query, content, has3d }) {
   if (!key) return null; // home has no bar
-  const galaxyHref = has3d ? "#/galaxy" : "#/list";
+  const galaxyHref = has3d ? "#/galaxy" : "#/explore";
+  const galaxyLabel = has3d ? "Galaxy" : "Explore";
   const home = { label: "Home", href: "#/" };
-  const galaxy = { label: "Galaxy", href: galaxyHref };
+  const galaxy = { label: galaxyLabel, href: galaxyHref };
   const planet = content.planets.find((p) => p.id === key);
   const topic = content.topics[key];
 
   if (key === "path") {
-    return { back: { label: "Home", href: "#/" }, crumbs: [home, { label: "My path" }], actions: [{ label: has3d ? "3D galaxy" : "Planets", href: galaxyHref }] };
+    return { back: { label: "Home", href: "#/" }, crumbs: [home, { label: "My path" }], actions: [{ label: has3d ? "3D galaxy" : "Explore", href: galaxyHref }] };
   }
   if (key === "galaxy" && has3d) {
     return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Galaxy" }],
-      actions: [{ label: "☀ The big picture", href: "#/ai" }, { label: "List view", href: "#/list" }] };
+      actions: [{ label: "☀ The big picture", href: "#/ai" }, { label: "Catalog view", href: "#/explore" }] };
   }
-  if (key === "galaxy" || key === "list") {
-    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Planets" }],
+  if (key === "galaxy" || key === "list" || key === "explore") {
+    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Explore" }],
       actions: has3d ? [{ label: "3D galaxy", href: "#/galaxy" }] : [] };
   }
   if (planet) {
     const threeD = has3d && !planet.planned && query !== "text";
     return {
-      back: { label: "Galaxy", href: galaxyHref, board: threeD },
+      back: { label: galaxyLabel, href: galaxyHref, board: threeD },
       crumbs: [home, galaxy, { label: planet.title }],
-      actions: threeD ? [{ label: "List view", href: `#/${planet.id}?text` }]
+      actions: threeD ? [{ label: "Reading view", href: `#/${planet.id}?text` }]
         : has3d && !planet.planned ? [{ label: "🚀 Walk the road", href: `#/${planet.id}` }] : [],
       progress: threeD
     };

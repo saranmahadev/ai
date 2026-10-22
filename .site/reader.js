@@ -30,6 +30,21 @@ export function markRead(id) {
   try { const s = readSet(); if (s.has(id)) return; s.add(id); localStorage.setItem(READ_KEY, JSON.stringify([...s])); } catch { /* private mode */ }
 }
 
+// how far into each article you've scrolled, 0-1, kept separately from the read/unread flag above
+// (that one is a fixed threshold for the planet's lodge glow; this is the actual reading progress shown
+// in the catalog and My path). The furthest point reached is kept, even if you scroll back up.
+const PROGRESS_KEY = "ai-base-progress";
+export function progressMap() {
+  try { const m = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}"); return m && typeof m === "object" && !Array.isArray(m) ? m : {}; } catch { return {}; }
+}
+export function progressFor(id) { return progressMap()[id] || 0; }
+function saveProgress(id, f) {
+  try {
+    const m = progressMap(), cur = m[id] || 0, next = Math.round(Math.min(1, Math.max(0, f)) * 100) / 100;
+    if (next > cur) { m[id] = next; localStorage.setItem(PROGRESS_KEY, JSON.stringify(m)); }
+  } catch { /* private mode */ }
+}
+
 export function loadPrefs() {
   try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(PREFS_KEY) || "{}") }; } catch { return { ...DEFAULTS }; }
 }
@@ -147,7 +162,7 @@ export function mountReader({ art, topic, content, reduce }) {
     for (const hd of heads) if (hd.getBoundingClientRect().top < 160) cur = hd.id;
     links.forEach((a) => a.classList.toggle("active", a.dataset.scroll === cur));
     hideTip();
-    if (Date.now() - lastSave > 400) { lastSave = Date.now(); savePos(f); }
+    if (Date.now() - lastSave > 400) { lastSave = Date.now(); savePos(f); saveProgress(topic.id, f); }
   }
   const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; tick(); }); };
   on(window, "scroll", onScroll, { passive: true });

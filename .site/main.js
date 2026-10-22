@@ -2,16 +2,27 @@ import { theme } from "./theme.js";
 import { navFor } from "./nav.js";
 import * as benchKit from "./benches/kit.js";
 import { cover } from "./cover.js";
-import { mountReader, applyPrefs, readSet } from "./reader.js";
+import { mountReader, applyPrefs, readSet, progressFor } from "./reader.js";
 import { mountSearch } from "./search.js";
 
 // Router + views. The 3D scenes plug in per route; the text views below are also the permanent accessible fallback.
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const STATUS = { written: "Written", outlined: "Outlined", index: "Index", planned: "Undiscovered", explored: "Explored" };
+// "explored" here means the subject has at least one written topic (content-complete), distinct from
+// the reader's own progress shown right beside it — labelled "Written" to avoid reading as a false claim.
+const STATUS = { written: "Written", outlined: "Outlined", index: "Index", planned: "Undiscovered", explored: "Written" };
 const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 
 applyPrefs();
+// Explorer Mode: the optional 3D galaxy/planet experience. Read Mode (the default) renders every
+// route as a plain document; switching to Explorer Mode is what unlocks the rocket and the walkable
+// planets. The choice is remembered in this browser only, same as the other ai-base-* preferences.
+function getMode() {
+  const q = new URLSearchParams(location.search).get("mode");
+  if (q === "explore" || q === "read") return q; // ?mode= forces it for this pageload (used by the test suite and shareable 3D links)
+  try { return localStorage.getItem("ai-base-mode") === "explore" ? "explore" : "read"; } catch { return "read"; }
+}
+function setMode(m) { try { localStorage.setItem("ai-base-mode", m); } catch { /* ignore */ } }
 const view = $("#view");
 const home = $("#home");
 let content = null;
@@ -34,20 +45,95 @@ const badge = (s) => `<span class="badge ${s}">${STATUS[s] || s}</span>`;
 const planetDot = (p) => `<span class="orb" style="--c:${p.color}" aria-hidden="true"></span>`;
 
 // ---------- views
+function subjectProgress(p) {
+  if (p.planned) return null;
+  const read = readSet();
+  const ids = p.districts.flatMap((d) => d.topics).filter((id) => content.topics[id] && content.topics[id].status === "written");
+  if (!ids.length) return null;
+  const n = ids.filter((id) => read.has(id)).length;
+  return { n, total: ids.length, pct: Math.round((100 * n) / ids.length) };
+}
+
+function planetCard(p) {
+  const prog = subjectProgress(p);
+  return `
+    <a class="card planet-card ${p.planned ? "planned" : ""}" href="#/${p.id}" style="--c:${p.color}">
+      ${planetDot(p)}
+      <div><h3>${esc(p.title)}</h3><p>${esc(p.blurb)}</p>
+      <div class="meta">${badge(p.status)}${p.topicCount ? `<span>${p.topicCount} topic${p.topicCount > 1 ? "s" : ""}</span>` : ""}</div>
+      ${prog ? `<div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${prog.pct}"><i style="width:${prog.pct}%"></i></div><p class="meta"><span>${prog.n} of ${prog.total} read</span></p>` : ""}</div>
+    </a>`;
+}
+
 function galaxyView() {
   const ai = content.topics.ai;
   return `
-    <header class="page-head"><p class="kicker">The galaxy</p><h2>Choose a planet</h2>
-    <p class="blurb">${content.stats.explored} of ${content.stats.planets} planets explored · ${content.stats.written} topics written.</p></header>
-    <div class="planet-grid">
-      ${content.planets.map((p) => `
-        <a class="card planet-card ${p.planned ? "planned" : ""}" href="#/${p.id}" style="--c:${p.color}">
-          ${planetDot(p)}
-          <div><h3>${esc(p.title)}</h3><p>${esc(p.blurb)}</p>
-          <div class="meta">${badge(p.status)}${p.topicCount ? `<span>${p.topicCount} topic${p.topicCount > 1 ? "s" : ""}</span>` : ""}</div></div>
-        </a>`).join("")}
-    </div>
+    <header class="page-head"><p class="kicker">The knowledge base</p><h2>Browse subjects</h2>
+    <p class="blurb">${content.stats.planets} subjects, ${content.stats.written} topics written, each with a worked example and an interactive demo. ${content.stats.explored} subjects explored so far on this device.</p></header>
+    <div class="planet-grid">${content.planets.map(planetCard).join("")}</div>
     ${ai ? `<p class="big-picture"><a class="clay-pill" href="#/ai">Read “${esc(ai.title)}” →</a></p>` : ""}`;
+}
+
+// ---------- home page: dynamic stats, subject grid, continue-reading teaser, scroll reveal
+function renderHomeStatic() {
+  const grid = $("#home-subjects");
+  if (grid) grid.innerHTML = content.planets.map(planetCard).join("");
+  const sections = document.querySelectorAll("#home .reveal");
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -10% 0px" });
+    sections.forEach((el) => io.observe(el));
+  } else sections.forEach((el) => el.classList.add("in"));
+  const statsEl = $("#home-stats");
+  if (!statsEl) return;
+  const animateStats = () => {
+    statsEl.querySelectorAll("[data-stat]").forEach((b) => {
+      const target = content.stats[b.dataset.stat] || 0;
+      if (reduceMotion) { b.textContent = target; return; }
+      const start = performance.now(), dur = 900;
+      const tick = (now) => {
+        const p = Math.min(1, (now - start) / dur), eased = 1 - Math.pow(1 - p, 3);
+        b.textContent = Math.round(target * eased);
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  };
+  if ("IntersectionObserver" in window) {
+    const sio = new IntersectionObserver((es) => { if (es[0].isIntersecting) { animateStats(); sio.disconnect(); } });
+    sio.observe(statsEl);
+  } else animateStats();
+}
+function renderHomeContinue() {
+  const el = $("#home-continue");
+  if (!el) return;
+  const read = readSet();
+  if (!read.size) { el.hidden = true; return; }
+  const writtenIds = (p) => p.districts.flatMap((d) => d.topics).filter((id) => content.topics[id] && content.topics[id].status === "written");
+  const lastId = [...read].reverse().find((id) => content.topics[id]);
+  const lastPlanet = lastId && content.topics[lastId].planet;
+  let next = null;
+  if (lastPlanet) {
+    const p = content.planets.find((x) => x.id === lastPlanet);
+    if (p) { const ids = writtenIds(p), at = ids.indexOf(lastId); next = ids.slice(at + 1).find((id) => !read.has(id)) || ids.find((id) => !read.has(id)); }
+  }
+  if (!next) for (const p of content.planets) { if (p.planned) continue; next = writtenIds(p).find((id) => !read.has(id)); if (next) break; }
+  if (!next) { el.hidden = true; return; }
+  const t = content.topics[next], p = t.planet && content.planets.find((x) => x.id === t.planet);
+  el.hidden = false;
+  el.innerHTML = `<h2>Continue where you left off</h2>
+    <a class="read-next home-continue-card" href="#/${t.id}"><small>${esc(p ? p.title : "")}</small><b>${esc(t.title)}</b><p>${esc(t.summary || "")}</p><span aria-hidden="true">→</span></a>`;
+}
+function refreshHomeProgress() {
+  const grid = $("#home-subjects");
+  if (grid) grid.innerHTML = content.planets.map(planetCard).join("");
+  renderHomeContinue();
+}
+
+function notFoundView() {
+  return `
+    <header class="page-head"><p class="kicker">404</p><h2>Nothing here</h2>
+    <p class="blurb">That page doesn't exist, or the link is out of date.</p></header>
+    <p><a class="chip" href="#/explore">← Browse the knowledge base</a></p>`;
 }
 
 // ---------- My path: progress across planets, from the topics you have read to the end (localStorage, this device only)
@@ -80,14 +166,31 @@ function pathView() {
 }
 
 function planetView(p) {
+  const read = readSet();
+  const prog = subjectProgress(p);
+  const mins = (t) => Math.max(1, Math.round((t.words || 0) / 200));
+  const topicRow = (id) => {
+    const t = content.topics[id], isRead = read.has(id), pct = !isRead ? Math.round(progressFor(id) * 100) : 0;
+    return `<li class="topic-row ${t.status}${isRead ? " read" : ""}">
+      <a href="#/${id}">
+        <span class="tr-icon" aria-hidden="true"></span>
+        <span class="tr-title">${esc(t.title)}</span>
+        <span class="tr-meta">
+          ${t.status === "written" ? `<span class="tr-time">${mins(t)} min</span>` : ""}
+          ${isRead ? `<span class="tr-read" aria-label="Read">✓</span>` : pct > 0 ? `<span class="tr-pct">${pct}%</span>` : ""}
+        </span>
+      </a>
+    </li>`;
+  };
   const body = p.planned
-    ? `<p class="notice">This planet hasn’t been explored yet. When notes are added to the vault and assigned to it in <code>.site/planets.json</code>, its road appears here.</p>`
+    ? `<p class="notice">This subject hasn’t been written yet. When notes are added to the vault and assigned to it in <code>.site/planets.json</code>, its topics appear here.</p>`
     : p.districts.map((d) => `
         <section class="district"><h3>${esc(d.title)}</h3>
-          <ul class="chips">${d.topics.map((id) => { const t = content.topics[id]; return `<li><a class="chip ${t.status}" href="#/${id}">${esc(t.title)}</a></li>`; }).join("")}</ul>
+          <ul class="topic-rows">${d.topics.map(topicRow).join("")}</ul>
         </section>`).join("");
   return `
-    <header class="page-head" style="--c:${p.color}">${planetDot(p)}<div><p class="kicker">${STATUS[p.status]}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p></div></header>
+    <header class="page-head" style="--c:${p.color}">${planetDot(p)}<div><p class="kicker">${STATUS[p.status]}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p>
+    ${prog ? `<div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${prog.pct}"><i style="width:${prog.pct}%"></i></div><p class="meta"><span>${prog.n} of ${prog.total} read</span></p>` : ""}</div></header>
     ${body}`;
 }
 
@@ -273,10 +376,11 @@ function route() {
   const [pathPart, query] = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("?");
   const parts = pathPart.split("/").filter(Boolean);
   const key = parts.join("/");
+  const explorerMode = getMode() === "explore";
   const planetObj = parts.length === 1 && content.planets.find((p) => p.id === key);
-  const isPlanet = !!(planetScene && planetObj && !planetObj.planned && query !== "text");
+  const isPlanet = !!(explorerMode && planetScene && planetObj && !planetObj.planned && query !== "text");
   const isHome = parts.length === 0;
-  const isGalaxy = key === "galaxy" && !!galaxy;
+  const isGalaxy = explorerMode && key === "galaxy" && !!galaxy;
   document.body.classList.toggle("route-home", isHome);
   document.body.classList.toggle("route-galaxy", isGalaxy);
   document.body.classList.toggle("route-planet", isPlanet);
@@ -287,16 +391,16 @@ function route() {
   home.hidden = !isHome;
   galaxyEl.hidden = !isGalaxy;
   view.hidden = isHome || isGalaxy || isPlanet;
-  if (stage) stage.setActive(isHome ? homeScene : isGalaxy ? galaxy : isPlanet ? planetScene : null);
+  if (stage) stage.setActive(isGalaxy ? galaxy : isPlanet ? planetScene : null);
   if (galaxy) { if (isGalaxy) galaxy.enter(); else galaxy.leave(); }
   if (planetScene) {
     if (isPlanet) {
       if (planetKey !== key) { planetKey = key; setPlanetUi(planetObj); planetScene.enter(planetObj); syncPlanetHud(); }
     } else { planetScene.leave(); planetKey = null; }
   }
-  renderNav(navFor({ key, query, content, has3d: !!galaxy }));
+  renderNav(navFor({ key, query, content, has3d: !!galaxy && explorerMode }));
   if (isPlanet) { setTitle(`${planetObj.title} · AI Base`); return; }
-  if (isHome) { setTitle("AI Base"); return; }
+  if (isHome) { refreshHomeProgress(); setTitle("AI Base"); return; }
   if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
 
   const wanted = content.topics[key];
@@ -309,10 +413,10 @@ function route() {
   }
   let html, title;
   if (key === "path") { html = pathView(); title = "My path"; }
-  else if (key === "galaxy" || key === "list") { html = galaxyView(); title = "Planets"; }
+  else if (key === "galaxy" || key === "list" || key === "explore") { html = galaxyView(); title = "Explore"; }
   else if (content.topics[key]) { html = topicView(content.topics[key]); title = content.topics[key].title; }
   else if (content.planets.find((p) => p.id === key)) { const p = content.planets.find((x) => x.id === key); html = planetView(p); title = p.title; }
-  else { html = `<p class="notice">Nothing here. <a href="#/galaxy">Back to the galaxy</a></p>`; title = "Not found"; }
+  else { html = notFoundView(); title = "Not found"; }
   view.innerHTML = html;
   { const h = view.querySelector("h1, h2"); if (h && !document.body.classList.contains("searching")) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
   if (content.topics[key]) { enhanceArticle(content.topics[key]); if (planetScene && content.topics[key].planet) planetScene.remember(content.topics[key].planet, key); }
@@ -334,7 +438,13 @@ document.addEventListener("click", (e) => {
 addEventListener("hashchange", route);
 view.addEventListener("click", (e) => {
   if (!e.target.closest("[data-reset-progress]")) return;
-  if (confirm("Reset your reading progress on this device?")) { try { localStorage.removeItem("ai-base-read"); } catch { /* ignore */ } route(); }
+  if (!confirm("Reset your reading progress on this device?")) return;
+  try {
+    localStorage.removeItem("ai-base-read");
+    localStorage.removeItem("ai-base-progress");
+    for (const k of Object.keys(localStorage)) if (k.startsWith("ai-base-pos:")) localStorage.removeItem(k);
+  } catch { /* ignore */ }
+  route();
 });
 
 // ---------- from a topic back to a planet's road
@@ -348,19 +458,49 @@ view.addEventListener("click", (e) => {
   if (topic) return; // topic to topic is a plain page change
   if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`); }
 });
-// ---------- launch
-$("#launch").addEventListener("click", async () => {
+// ---------- Explorer Mode toggle (header): switches between Read Mode (plain documents, the default)
+// and Explorer Mode (the 3D galaxy/planet experience). The choice persists via ai-base-mode.
+const modeToggle = $("[data-mode-toggle]");
+function syncModeToggle() {
+  if (!modeToggle) return;
+  const on = getMode() === "explore";
+  modeToggle.innerHTML = `<span class="nav-icon" aria-hidden="true">${on ? "📖" : "🚀"}</span><span class="nav-label">${on ? "Read mode" : "Explorer mode"}</span>`;
+  modeToggle.setAttribute("aria-pressed", String(on));
+  const label = on ? "Switch back to Read Mode" : "Switch to the 3D Explorer Mode";
+  modeToggle.setAttribute("aria-label", label);
+  modeToggle.title = label;
+}
+modeToggle?.addEventListener("click", () => {
+  const next = getMode() === "explore" ? "read" : "explore";
+  setMode(next);
+  syncModeToggle();
+  const [pathPart] = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("?");
+  const key = pathPart.split("/").filter(Boolean).join("/");
+  // leaving the catalog text view while switching on Explorer Mode lands straight in the 3D galaxy
+  if (next === "explore" && galaxy && (key === "list" || key === "explore")) { location.hash = "#/galaxy"; return; }
+  route();
+});
+syncModeToggle();
+
+// ---------- launch: the home page carries no idle 3D render; the rocket only appears for this one
+// transient transition, triggered by an explicit click, then the canvas hands off to the galaxy scene.
+$("#home-launch").addEventListener("click", async () => {
   if (launching) return;
-  if (!homeScene) { location.hash = "#/galaxy"; return; }
+  setMode("explore");
+  syncModeToggle();
+  if (!homeScene || !stage) { location.hash = "#/galaxy"; return; }
   launching = true;
-  $("#launch").disabled = true;
+  $("#home-launch").disabled = true;
+  document.body.classList.add("launching");
+  stage.setActive(homeScene);
   home.classList.add("away");
   await homeScene.launch();
   launching = false;
   location.hash = "#/galaxy";
   $("#white").classList.remove("on");
   home.classList.remove("away");
-  $("#launch").disabled = false;
+  document.body.classList.remove("launching");
+  $("#home-launch").disabled = false;
   homeScene.reset();
 });
 
@@ -374,6 +514,8 @@ try {
 }
 if (content) {
   mountSearch({ content, onGo: (d) => { location.hash = `#/${d.id}`; } });
+  renderHomeStatic();
+  refreshHomeProgress();
   route();
   try {
     const { createStage } = await import("./scenes/stage.js");
