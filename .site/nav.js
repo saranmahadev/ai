@@ -22,6 +22,17 @@ export function navFor({ key, query, content, has3d }) {
     return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Explore" }],
       actions: has3d ? [{ label: "3D galaxy", href: "#/galaxy" }] : [] };
   }
+  if (key.endsWith("/glossary")) {
+    const p = content.planets.find((x) => x.id === key.slice(0, -"/glossary".length));
+    if (p) {
+      const toSubject = { href: `#/${p.id}` };
+      return {
+        back: { label: p.title, ...toSubject, title: `Back to ${p.title}` },
+        crumbs: [home, galaxy, { label: p.title, ...toSubject }, { label: "Glossary" }],
+        actions: []
+      };
+    }
+  }
   if (planet) {
     const threeD = has3d && !planet.planned && query !== "text";
     return {
