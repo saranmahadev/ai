@@ -6,14 +6,16 @@
   "engines": { "node": ">=20" },
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",
-    "content": "node scripts/build-content.mjs && node scripts/build-static.mjs",
+    "content": "node scripts/build-content.mjs && node scripts/build-static.mjs && node scripts/build-feed.mjs",
     "prerender": "node scripts/build-static.mjs",
+    "feed": "node scripts/build-feed.mjs",
     "dev": "npm run content && python3 -m http.server 8000",
     "test": "node scripts/build-content.mjs --check",
     "test:benches": "node scripts/test-benches.mjs",
     "test:planet": "node scripts/test-planet.mjs",
     "test:reader": "node scripts/test-reader.mjs",
-    "test:site": "node scripts/test-site.mjs"
+    "test:site": "node scripts/test-site.mjs",
+    "test:pwa": "node scripts/test-pwa.mjs"
   },
   "dependencies": {
     "marked": "^15.0.0"
