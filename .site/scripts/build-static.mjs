@@ -53,9 +53,14 @@ function page({ title, description, url, body, extraHead = "", crumbs = [], acti
   // the #navbar id, which is position:fixed for the app shell) so no new CSS is needed and the visible
   // page matches what the BreadcrumbList JSON-LD already claims about it.
   const linkable = [...crumbs].reverse().find((c, i) => i > 0 && c.url); // nearest crumb above the current one that has a page of its own (a district crumb doesn't)
+  // Same markup as main.js's renderNav(): an icon-only back button (styles.css shows the icon and
+  // visually hides the label in body.reading, which every static page carries) ahead of a flat crumb trail.
   const navHtml = crumbs.length ? `
 <nav class="static-crumbs" aria-label="Breadcrumb">
-  ${linkable ? `<a class="nb-back" href="${linkable.url}">‹ ${esc(linkable.name)}</a>` : ""}
+  ${linkable ? `<a class="nb-back" href="${linkable.url}">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ ${esc(linkable.name)}</span>
+  </a>` : ""}
   <ul class="nb-crumbs">${crumbs.map((c, i) => `<li>${i < crumbs.length - 1 && c.url ? `<a href="${c.url}">${esc(c.name)}</a>` : esc(c.name)}</li>`).join("")}</ul>
   ${actions.length ? `<div class="nb-actions">${actions.map((a) => `<a class="clay-pill" href="${a.url}">${esc(a.label)}</a>`).join("")}</div>` : ""}
 </nav>` : "";

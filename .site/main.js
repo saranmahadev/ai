@@ -363,8 +363,15 @@ function renderNav(info) {
     ? `<a class="${cls}" href="${c.href}"${c.warp ? ` data-warp="${c.warp}"` : ""}${c.board ? " data-board" : ""}${c.title ? ` title="${esc(c.title)}"` : ""}>${esc(c.label)}</a>`
     : `<span class="${cls}" aria-current="page">${esc(c.label)}</span>`;
   el.hidden = false;
+  const back = info.back;
+  // The icon is what reading pages show (CSS hides it elsewhere); the label stays in the DOM for
+  // the clay/3D pages' pill button and, in reading pages, as a visually-hidden string for the
+  // anchor's accessible name instead of a floating tooltip-only title.
   el.innerHTML = `
-    ${a({ ...info.back, label: "‹ " + info.back.label }, "nb-back clay-pill")}
+    <a class="nb-back clay-pill" href="${back.href}"${back.warp ? ` data-warp="${back.warp}"` : ""}${back.board ? " data-board" : ""} title="${esc(back.title || back.label)}">
+      <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="nb-back-label">‹ ${esc(back.label)}</span>
+    </a>
     <ol class="nb-crumbs clay-pill">${info.crumbs.map((c) => `<li>${a(c)}</li>`).join("")}</ol>
     <span class="nb-actions">${info.progress ? `<span class="clay-pill" id="pmeta" aria-live="off"></span>` : ""}${info.actions.map((c) => a(c, "clay-pill")).join("")}</span>`;
   if (info.progress) setProgress(...lastProgress);

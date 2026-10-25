@@ -292,6 +292,7 @@ body:not(.gl):not(.no-gl) #boot { display: grid; }
 .nb-back { padding: 9px 18px; font-size: 14px; font-weight: 900; color: var(--link); white-space: nowrap; flex: none; transition: transform .15s; }
 .nb-back:hover { transform: translateX(-2px); }
 .nb-back:active { box-shadow: var(--press); }
+.nb-back-icon { display: none; } /* reading pages show this instead of the text label — see body.reading below */
 .nb-crumbs { list-style: none; margin: 0; padding: 9px 18px; display: flex; align-items: center; gap: 0; min-width: 0; overflow: hidden; font-size: 13px; font-weight: 800; color: var(--muted); }
 .nb-crumbs li { display: flex; align-items: center; white-space: nowrap; min-width: 0; }
 .nb-crumbs li + li::before { content: "›"; margin: 0 9px; opacity: .55; }
@@ -341,12 +342,26 @@ body.reading .clay-pill { background: none; box-shadow: none; border-radius: 6px
 body.reading .hud { background: var(--r-bg); border-bottom: 1px solid var(--r-rule); padding: 10px 24px; }
 body.reading .brand { padding: 6px 8px; font-weight: 700; }
 body.reading .brand .dot { box-shadow: none; }
-body.reading #navbar { top: 53px; left: 0; right: 0; padding: 8px 24px; background: var(--r-bg); border-bottom: 1px solid var(--r-rule); }
-body.reading .nb-back { padding: 4px 12px; border: 1px solid var(--r-rule); border-radius: 6px; font-weight: 600; font-size: 13px; }
-/* a visible border-left here, not just the gap, keeps Back (a bordered button) and the breadcrumb trail
-   (otherwise bare text) from reading as one run-on phrase. */
-body.reading .nb-crumbs { padding: 0 0 0 14px; font-weight: 500; border-left: 1px solid var(--r-rule); }
-body.reading .nb-actions .clay-pill { border: 1px solid var(--r-rule); padding: 4px 12px; font-weight: 600; }
+body.reading #navbar { top: 53px; left: 0; right: 0; padding: 8px 24px; background: var(--r-bg); border-bottom: 1px solid var(--r-rule); gap: 10px; }
+/* A flat breadcrumb bar, redesigned from scratch to match the document (no clay/pill chrome): an
+   icon-only back button, a plain "/"-separated trail, and ghost-link actions — one quiet row under
+   a single rule, the way GitHub/Linear/Vercel do it, instead of boxed pills competing for attention. */
+body.reading .nb-back, .static-crumbs .nb-back {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; padding: 0; flex: none;
+  border: 0; border-radius: 8px; background: none; color: var(--r-muted);
+}
+body.reading .nb-back:hover, .static-crumbs .nb-back:hover { background: var(--r-surface); color: var(--r-ink); transform: none; }
+body.reading .nb-back-icon, .static-crumbs .nb-back-icon { display: block; width: 16px; height: 16px; }
+body.reading .nb-back-label, .static-crumbs .nb-back-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+body.reading .nb-crumbs { padding: 0; font-weight: 500; border: 0; }
+body.reading .nb-crumbs li + li::before { content: "/"; margin: 0 9px; opacity: 1; color: var(--r-rule); font-weight: 400; }
+body.reading .nb-crumbs li:last-child { font-weight: 700; }
+body.reading .nb-crumbs a { color: var(--r-muted); }
+body.reading .nb-crumbs a:hover { color: var(--r-ink); text-decoration: underline; text-underline-offset: 3px; }
+body.reading .nb-actions { gap: 2px; }
+body.reading .nb-actions .clay-pill { border: 0; padding: 6px 10px; border-radius: 7px; font-weight: 600; font-size: 13px; color: var(--r-link); background: none; }
+body.reading .nb-actions .clay-pill:hover { background: var(--r-surface); color: var(--r-link); }
 body.reading #view h2, body.reading #view h3 { font-weight: 700; }
 #view .kicker { font-size: 13px; font-weight: 600; letter-spacing: .04em; color: var(--r-muted, var(--muted)); }
 #view .badge { box-shadow: none; background: var(--r-surface, var(--soft)); border: 1px solid var(--r-rule, var(--soft2)); font-weight: 600; }
@@ -604,6 +619,9 @@ abbr.term:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; bord
 @media (max-width: 820px) {
   body.reading #view { padding: 112px 18px 140px; }
   #static-view { padding: 76px 18px 60px; }
+  body.reading #navbar, .static-crumbs { gap: 8px; }
+  body.reading .nb-back, .static-crumbs .nb-back { width: 28px; height: 28px; }
+  body.reading .nb-crumbs li + li::before { content: none; } /* only the last crumb shows on phones; no orphan "/" before it */
   body.reading .prose { font-size: calc(var(--r-fs) - 2px); }
   .prose > .bench { width: calc(100vw - 28px); }
   .rb-left { display: none; }
