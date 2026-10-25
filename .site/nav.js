@@ -57,5 +57,5 @@ export function navFor({ key, query, content, has3d }) {
       actions: []
     };
   }
-  return { back: { ...galaxy }, crumbs: [home, { label: "Not found" }], actions: [] };
+  return { back: { ...galaxy }, crumbs: [home, galaxy, { label: "Not found" }], actions: [] };
 }

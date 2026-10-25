@@ -81,15 +81,15 @@ function page({ title, description, url, body, extraHead = "", crumbs = [], acti
 <link rel="stylesheet" href="/styles.css">
 ${extraHead}
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">${navHtml}${body}</main>
+<main id="static-view">${navHtml}${body}</main>
 <footer class="home-footer">
   <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
 </footer>
