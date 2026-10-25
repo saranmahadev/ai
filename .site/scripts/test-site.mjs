@@ -57,6 +57,21 @@ try {
   const tags = await page.locator(".prose .xp").allInnerTexts();
   check("a prerequisite on another planet gets a planet tag", tags.includes("Math"), tags.join(","));
 
+  // subject glossary
+  await page.goto(`${base}?time=12:00#/fundamentals/glossary`);
+  await page.waitForSelector(".glossary-list");
+  const glossaryCount = await page.locator(".glossary-entry").count();
+  check("glossary lists every subject's key terms", glossaryCount > 50, `${glossaryCount} terms`);
+  await page.fill("#gfilter", "agent");
+  await page.waitForTimeout(100);
+  const visibleCount = await page.locator(".glossary-entry:not([hidden])").count();
+  check("glossary filter narrows the list", visibleCount > 0 && visibleCount < glossaryCount, `${visibleCount} of ${glossaryCount}`);
+  await page.fill("#gfilter", "");
+  await page.locator(".glossary-source").first().click();
+  await page.waitForFunction(() => location.hash !== "#/fundamentals/glossary");
+  check("glossary source link opens the topic", (await hash()).startsWith("#/fundamentals/") && (await hash()) !== "#/fundamentals/glossary", await hash());
+  await shot("glossary");
+
   // My path
   await page.evaluate(() => localStorage.setItem("ai-base-read", JSON.stringify(["math/logarithms", "math/exponents-and-roots"])));
   await page.goto(`${base}?time=12:00#/path`);
