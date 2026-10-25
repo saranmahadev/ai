@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 import { cover } from "../cover.js";
 
 const SITE = join(dirname(fileURLToPath(import.meta.url)), "..");
+const VAULT = join(SITE, "..");
 const SITE_URL = "https://ai.saranmahadev.in";
 // Top-level generated output directories, cleaned and rebuilt each run. Keep this in sync with
 // .site/planets.json's planet ids when a planet is added or renamed.
@@ -258,7 +259,29 @@ ${content.planets.filter((p) => !p.planned).map((p) => `- [${p.title}](${SITE_UR
 ## Reference
 
 - [Explore all subjects](${SITE_URL}/explore/)
+- [The full corpus, concatenated](${SITE_URL}/llms-full.txt)
 - [Source](https://github.com/saranmahadev/ai)
 `);
 
-console.log(`prerender: ${topicCount} topic pages, ${subjectCount} subject pages (+ glossaries), sitemap.xml, robots.txt, llms.txt`);
+// llms-full.txt: every written topic's source note, concatenated in site order. Reads the vault files
+// directly (content.topics[id].path) rather than converting the rendered HTML back to text, so it is
+// byte-faithful to the notes rather than a lossy round trip.
+const stripFrontmatter = (src) => src.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
+const llmsFull = [`# AI Base — full corpus\n\nEvery written topic's source note, concatenated in site order. See llms.txt for a shorter index.\n`];
+const ai = content.topics.ai;
+if (ai && ai.status === "written") llmsFull.push(`\n# Overview\n\n${stripFrontmatter(readFileSync(join(VAULT, ai.path), "utf8")).trim()}\n`);
+let fullCount = ai && ai.status === "written" ? 1 : 0;
+for (const p of content.planets) {
+  if (p.planned) continue;
+  llmsFull.push(`\n# ${p.title}\n`);
+  const order = [p.index, ...p.districts.flatMap((d) => d.topics)].filter(Boolean); // p.index (the subject's own landing note) isn't in any district's topic list
+  for (const id of order) {
+    const t = content.topics[id];
+    if (!t || t.status !== "written") continue;
+    llmsFull.push(`\n## ${t.title}\n\n${stripFrontmatter(readFileSync(join(VAULT, t.path), "utf8")).trim()}\n`);
+    fullCount++;
+  }
+}
+writeFileSync(join(SITE, "llms-full.txt"), llmsFull.join(""));
+
+console.log(`prerender: ${topicCount} topic pages, ${subjectCount} subject pages (+ glossaries), sitemap.xml, robots.txt, llms.txt, llms-full.txt (${fullCount} notes)`);
