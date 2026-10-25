@@ -659,6 +659,27 @@ html:has(body.reading) { scroll-padding-bottom: 96px; } /* leave room for the fl
   #phud.open #pctl { display: flex; }
 }
 
+/* Graph Mode: a 2D force-directed map of every topic (see graph.js), styled with the galaxy/planet
+   scenes' own chrome (round buttons, clay panel) rather than invented from scratch. */
+#graph { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
+#graph > * { pointer-events: auto; }
+#graphcanvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+#graphcanvas:active { cursor: grabbing; }
+#graph .ghint { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); }
+#gstatus { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); margin: 0; }
+#gctl { position: absolute; left: 50%; bottom: 80px; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; }
+#gctl input[type="search"] { font: inherit; font-size: .95rem; padding: 10px 16px; border-radius: 999px; border: 0; background: var(--clay); box-shadow: var(--puff-sm); color: var(--ink); width: 220px; }
+#gpanel { position: absolute; right: 16px; top: 132px; width: 220px; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 18px; background: var(--clay); box-shadow: var(--puff-sm); font-size: .85rem; color: var(--ink); }
+#gpanel[hidden] { display: none; }
+.gcount { margin: 0; font-weight: 800; color: var(--muted); font-size: .78rem; }
+#glegend { display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto; }
+.gleg-item { display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; }
+.gleg-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
+@media (max-width: 640px) {
+  #gctl input[type="search"] { width: 150px; }
+  #gpanel { top: auto; bottom: 96px; right: 12px; width: 190px; }
+}
+
 /* search overlay and header buttons */
 .hud-btn { font: inherit; font-weight: 800; font-size: 14px; padding: 10px 16px; border-radius: 999px; border: 0; color: var(--muted); cursor: pointer; display: flex; align-items: center; gap: 8px; text-decoration: none; }
 .hud-btn:hover { color: var(--ink); background: var(--white); }

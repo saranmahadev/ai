@@ -15,19 +15,18 @@ const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 
 applyPrefs();
 // Three modes: Read (the default, every route is a plain document), Explorer (unlocks the rocket and
-// the walkable 3D planets), and AI (reads like Read Mode, but surfaces the AI tutor on topic pages — see
-// AI_MODE_READY below). The choice is remembered in this browser only, same as the other ai-base-* prefs.
-const MODES = ["read", "explore", "ai"];
+// the walkable 3D planets), and Graph (a 2D map of every topic and the links between them, at #/graph —
+// see graph.js). The choice is remembered in this browser only, same as the other ai-base-* prefs.
+const MODES = ["read", "explore", "graph"];
 function getMode() {
   const q = new URLSearchParams(location.search).get("mode");
   if (MODES.includes(q)) return q; // ?mode= forces it for this pageload (used by the test suite and shareable 3D links)
   try { const m = localStorage.getItem("ai-base-mode"); return MODES.includes(m) ? m : "read"; } catch { return "read"; }
 }
 function setMode(m) { try { localStorage.setItem("ai-base-mode", m); } catch { /* ignore */ } }
-// The AI tutor itself (BYOK panel, provider calls) isn't built yet; AI Mode exists as a real, selectable
-// mode so it's discoverable, and shows an honest "coming soon" notice on topic pages until it lands.
-const AI_MODE_READY = false;
 const view = $("#view");
+const graphEl = $("#graph");
+let graphApi = null, graphLoading = false;
 const home = $("#home");
 let content = null;
 let stage = null, homeScene = null, galaxy = null, planetScene = null, planetKey = null;
@@ -268,8 +267,6 @@ function topicView(t) {
   const color = p ? p.color : "#b39cf5";
   const card = (o, cls = "") => `<a class="rc-card ${cls}" href="#/${o.id}" data-topic="${o.id}"><small>${esc(o.district && content.topics[o.id] ? districtTitle(o) : "")}</small><b>${esc(o.title)}</b><p>${esc(o.summary || "Not written yet.")}</p></a>`;
   const more = [...new Set([...t.links, ...t.backlinks])].map((id) => content.topics[id]).filter((o) => o && o.id !== (next && next.id)).slice(0, 6);
-  const aiNotice = getMode() === "ai" && !AI_MODE_READY
-    ? `<p class="notice">✨ AI Mode is coming soon — ask questions about this topic using your own API key (Anthropic, OpenAI or a local model). <a href="#" data-mode-btn="read">Switch back to Read Mode</a> for now.</p>` : "";
   return `
     <article class="doc topic" style="--c:${color}">
       <header class="doc-head">
@@ -278,7 +275,6 @@ function topicView(t) {
       </header>
       <figure class="doc-cover" aria-hidden="true">${cover(t.title, color)}</figure>
       <div class="doc-body">
-        ${aiNotice}
         ${t.status === "outlined" ? `<p class="notice">This note exists in the vault but is still empty. It will fill in as the knowledge base grows.</p>` : `<div class="prose">${t.html || ""}</div>`}
       </div>
       <footer class="doc-end">
@@ -455,16 +451,19 @@ function route() {
   const isPlanet = !!(explorerMode && planetScene && planetObj && !planetObj.planned && query !== "text");
   const isHome = parts.length === 0;
   const isGalaxy = explorerMode && key === "galaxy" && !!galaxy;
+  const isGraph = key === "graph";
   document.body.classList.toggle("route-home", isHome);
   document.body.classList.toggle("route-galaxy", isGalaxy);
   document.body.classList.toggle("route-planet", isPlanet);
+  document.body.classList.toggle("route-graph", isGraph);
   document.body.classList.toggle("route-path", key === "path");
-  document.body.classList.toggle("route-topic", !isHome && !isGalaxy && !isPlanet && !!content.topics[key]);
-  document.body.classList.toggle("reading", !isHome && !isGalaxy && !isPlanet);
+  document.body.classList.toggle("route-topic", !isHome && !isGalaxy && !isPlanet && !isGraph && !!content.topics[key]);
+  document.body.classList.toggle("reading", !isHome && !isGalaxy && !isPlanet && !isGraph);
   planetEl.hidden = !isPlanet;
   home.hidden = !isHome;
   galaxyEl.hidden = !isGalaxy;
-  view.hidden = isHome || isGalaxy || isPlanet;
+  graphEl.hidden = !isGraph;
+  view.hidden = isHome || isGalaxy || isPlanet || isGraph;
   if (stage) stage.setActive(isGalaxy ? galaxy : isPlanet ? planetScene : null);
   if (galaxy) { if (isGalaxy) galaxy.enter(); else galaxy.leave(); }
   if (planetScene) {
@@ -476,6 +475,20 @@ function route() {
   if (isPlanet) { setTitle(`${planetObj.title} · AI Base`); return; }
   if (isHome) { refreshHomeProgress(); setTitle("AI Base"); return; }
   if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
+  if (isGraph) {
+    setTitle("Graph · AI Base");
+    if (!graphApi && !graphLoading) {
+      graphLoading = true;
+      import("./graph.js").then((mod) => {
+        graphApi = mod.mountGraph(graphEl, mod.buildGraphData(content), {
+          content, reduceMotion, cacheKey: content.generated,
+          onOpen: (id) => { location.hash = `#/${id}`; }
+        });
+        graphLoading = false;
+      });
+    } else if (graphApi) graphApi.resize();
+    return;
+  }
 
   const wanted = !glossaryPlanet && content.topics[key];
   if (wanted && wanted.html === undefined && wanted.status !== "outlined") {
@@ -536,8 +549,7 @@ view.addEventListener("click", (e) => {
 });
 // ---------- mode pill (header): one segmented control for the three modes, replacing the old binary
 // Explorer-Mode toggle button. The choice persists via ai-base-mode (see getMode/setMode above).
-// Delegated on document (not just the header's own buttons) so an inline "Switch back to Read Mode"
-// link, such as the AI Mode "coming soon" notice in topicView(), works the same way.
+// Delegated on document (not just the header's own buttons) in case a future inline link reuses it.
 function syncModePill() {
   const m = getMode();
   for (const b of document.querySelectorAll("[data-mode-btn]")) b.setAttribute("aria-checked", String(b.dataset.modeBtn === m));
@@ -554,6 +566,8 @@ document.addEventListener("click", (e) => {
   const key = pathPart.split("/").filter(Boolean).join("/");
   // leaving the catalog text view while switching on Explorer Mode lands straight in the 3D galaxy
   if (next === "explore" && galaxy && (key === "list" || key === "explore")) { location.hash = "#/galaxy"; return; }
+  // Graph Mode's whole purpose is the graph itself, so selecting it always jumps straight there
+  if (next === "graph" && key !== "graph") { location.hash = "#/graph"; return; }
   route();
 });
 syncModePill();
@@ -673,7 +687,9 @@ function setupPlanetHud() {
 }
 // ?debug: frame rate, draw calls and triangles, and the scene objects for tests
 function setupDebug() {
-  window.__aiBase = { stage, planetScene };
+  // a getter, not a one-time snapshot: graph.js is lazy-loaded on first visit to #/graph, which can
+  // resolve before or after this runs depending on route order, so graphApi must be read live.
+  window.__aiBase = { stage, planetScene, get graph() { return graphApi && graphApi.debug; } };
   const box = document.createElement("pre");
   box.id = "dbg"; box.setAttribute("aria-hidden", "true");
   document.body.append(box);

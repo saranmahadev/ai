@@ -19,8 +19,13 @@ export function navFor({ key, query, content, has3d }) {
       actions: [{ label: "☀ The big picture", href: "#/ai" }, { label: "Catalog view", href: "#/explore" }] };
   }
   if (key === "galaxy" || key === "list" || key === "explore") {
-    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Explore" }],
-      actions: has3d ? [{ label: "3D galaxy", href: "#/galaxy" }] : [] };
+    const actions = has3d ? [{ label: "3D galaxy", href: "#/galaxy" }] : [];
+    actions.push({ label: "Graph view", href: "#/graph" });
+    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Explore" }], actions };
+  }
+  if (key === "graph") {
+    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Graph" }],
+      actions: [{ label: galaxyLabel, href: galaxyHref }] };
   }
   if (key.endsWith("/glossary")) {
     const p = content.planets.find((x) => x.id === key.slice(0, -"/glossary".length));
