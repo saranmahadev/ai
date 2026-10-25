@@ -568,6 +568,9 @@ $("#home-launch").addEventListener("click", async () => {
   homeScene.reset();
 });
 
+// ---------- PWA: app-shell + visited-content offline caching (sw.js); never blocks the page.
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+
 // ---------- boot
 try {
   await loading;
