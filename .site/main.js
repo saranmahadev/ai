@@ -572,9 +572,9 @@ $("#home-launch").addEventListener("click", async () => {
 try {
   await loading;
 } catch (err) {
-  console.warn("content.json missing; run `npm run content` in .site/", err);
+  console.warn("content.json failed to load; in development, run `npm run content` in .site/", err);
   document.body.classList.add("no-gl");
-  home.innerHTML = `<h1>Almost there</h1><p class="lede">The content index hasn’t been built. Run <code>npm run content</code> in <code>.site/</code>.</p>`;
+  home.innerHTML = `<h1>Something went wrong</h1><p class="lede">The site couldn’t load just now. Please <a href="${location.pathname}">refresh the page</a> — if it keeps happening, let us know.</p>`;
 }
 if (content) {
   mountSearch({ content, onGo: (d) => { location.hash = `#/${d.id}`; } });
