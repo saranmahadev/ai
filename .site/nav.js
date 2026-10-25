@@ -19,8 +19,13 @@ export function navFor({ key, query, content, has3d }) {
       actions: [{ label: "☀ The big picture", href: "#/ai" }, { label: "Catalog view", href: "#/explore" }] };
   }
   if (key === "galaxy" || key === "list" || key === "explore") {
-    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Explore" }],
-      actions: has3d ? [{ label: "3D galaxy", href: "#/galaxy" }] : [] };
+    const actions = has3d ? [{ label: "3D galaxy", href: "#/galaxy" }] : [];
+    actions.push({ label: "Graph view", href: "#/graph" });
+    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Explore" }], actions };
+  }
+  if (key === "graph") {
+    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Graph" }],
+      actions: [{ label: galaxyLabel, href: galaxyHref }] };
   }
   if (key.endsWith("/glossary")) {
     const p = content.planets.find((x) => x.id === key.slice(0, -"/glossary".length));
@@ -35,11 +40,14 @@ export function navFor({ key, query, content, has3d }) {
   }
   if (planet) {
     const threeD = has3d && !planet.planned && query !== "text";
+    const actions = [];
+    if (threeD) actions.push({ label: "Reading view", href: `#/${planet.id}?text` });
+    else if (has3d && !planet.planned) actions.push({ label: "🚀 Walk the road", href: `#/${planet.id}` });
+    if (!planet.planned) actions.push({ label: "Glossary", href: `#/${planet.id}/glossary` });
     return {
       back: { label: galaxyLabel, href: galaxyHref, board: threeD },
       crumbs: [home, galaxy, { label: planet.title }],
-      actions: threeD ? [{ label: "Reading view", href: `#/${planet.id}?text` }]
-        : has3d && !planet.planned ? [{ label: "🚀 Walk the road", href: `#/${planet.id}` }] : [],
+      actions,
       progress: threeD
     };
   }
@@ -54,5 +62,5 @@ export function navFor({ key, query, content, has3d }) {
       actions: []
     };
   }
-  return { back: { ...galaxy }, crumbs: [home, { label: "Not found" }], actions: [] };
+  return { back: { ...galaxy }, crumbs: [home, galaxy, { label: "Not found" }], actions: [] };
 }

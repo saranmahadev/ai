@@ -48,7 +48,22 @@ const breadcrumb = (items) => jsonLd({
   itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, item: it.url }))
 });
 
-function page({ title, description, url, body, extraHead = "" }) {
+function page({ title, description, url, body, extraHead = "", crumbs = [], actions = [] }) {
+  // A visible breadcrumb + actions, reusing the SPA's own .nb-crumbs/.nb-back/.nb-actions classes (not
+  // the #navbar id, which is position:fixed for the app shell) so no new CSS is needed and the visible
+  // page matches what the BreadcrumbList JSON-LD already claims about it.
+  const linkable = [...crumbs].reverse().find((c, i) => i > 0 && c.url); // nearest crumb above the current one that has a page of its own (a district crumb doesn't)
+  // Same markup as main.js's renderNav(): an icon-only back button (styles.css shows the icon and
+  // visually hides the label in body.reading, which every static page carries) ahead of a flat crumb trail.
+  const navHtml = crumbs.length ? `
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  ${linkable ? `<a class="nb-back" href="${linkable.url}">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ ${esc(linkable.name)}</span>
+  </a>` : ""}
+  <ul class="nb-crumbs">${crumbs.map((c, i) => `<li>${i < crumbs.length - 1 && c.url ? `<a href="${c.url}">${esc(c.name)}</a>` : esc(c.name)}</li>`).join("")}</ul>
+  ${actions.length ? `<div class="nb-actions">${actions.map((a) => `<a class="clay-pill" href="${a.url}">${esc(a.label)}</a>`).join("")}</div>` : ""}
+</nav>` : "";
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -67,18 +82,22 @@ function page({ title, description, url, body, extraHead = "" }) {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
 ${extraHead}
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">${body}</main>
+<main id="static-view">${navHtml}${body}</main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>`;
 }
@@ -99,8 +118,9 @@ function topicPage(id) {
     .map((x) => content.topics[x]).filter((o) => o && o.status === "written").slice(0, 6);
   const interactive = `${SITE_URL}/#/${id}`;
 
-  const crumbs = [{ name: "Home", url: `${SITE_URL}/` }];
+  const crumbs = [{ name: "Home", url: `${SITE_URL}/` }, { name: "Explore", url: `${SITE_URL}/explore/` }];
   if (planet) crumbs.push({ name: planet.title, url: `${SITE_URL}/${planet.id}/` });
+  if (district && district.title !== planet.title) crumbs.push({ name: district.title }); // no page of its own, matches the SPA's unlinked district crumb
   crumbs.push({ name: t.title, url });
 
   const qc = quickCheckOf(html);
@@ -122,7 +142,6 @@ function topicPage(id) {
   const body = `
     <article class="doc topic" style="--c:${color}">
       <header class="doc-head">
-        <p class="doc-kicker">${planet ? `<a href="/${planet.id}/">${esc(planet.title)}</a>` : "Overview"}${district && district.title !== planet.title ? ` · ${esc(district.title)}` : ""}</p>
         <h1 class="doc-title">${esc(t.title)}</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>${planet ? esc(planet.title) : "AI Base"}</b><span>${mins} min read</span></div></div>
       </header>
@@ -136,7 +155,7 @@ function topicPage(id) {
       </footer>
     </article>`;
 
-  return page({ title: `${t.title} — AI Base`, description: t.summary || t.title, url, body, extraHead: ld });
+  return page({ title: `${t.title} — AI Base`, description: t.summary || t.title, url, body, extraHead: ld, crumbs });
 }
 
 function subjectPage(p) {
@@ -150,12 +169,13 @@ function subjectPage(p) {
     <section class="district"><h3>${esc(d.title)}</h3><ul class="topic-rows">${d.topics.map(topicRow).join("")}</ul></section>`).join("");
   const body = `
     <header class="page-head" style="--c:${p.color}"><span class="orb" style="--c:${p.color}" aria-hidden="true"></span>
-      <div><p class="kicker">${STATUS[p.status] || p.status}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p>
-      <p class="subject-links"><a href="/${p.id}/glossary/">Glossary →</a> · <a href="${SITE_URL}/#/${p.id}">Open in the interactive site →</a></p></div>
+      <div><p class="kicker">${STATUS[p.status] || p.status}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p></div>
     </header>
     ${bodyHtml}`;
-  const ld = breadcrumb([{ name: "Home", url: `${SITE_URL}/` }, { name: p.title, url }]);
-  return page({ title: `${p.title} — AI Base`, description: p.blurb, url, body, extraHead: ld });
+  const crumbs = [{ name: "Home", url: `${SITE_URL}/` }, { name: "Explore", url: `${SITE_URL}/explore/` }, { name: p.title, url }];
+  const ld = breadcrumb(crumbs);
+  const actions = [{ label: "Glossary", url: `${SITE_URL}/${p.id}/glossary/` }, { label: "Open in the interactive site", url: `${SITE_URL}/#/${p.id}` }];
+  return page({ title: `${p.title} — AI Base`, description: p.blurb, url, body, extraHead: ld, crumbs, actions });
 }
 
 function glossaryData(p) {
@@ -186,14 +206,15 @@ function glossaryPage(p) {
       <div><p class="kicker">Glossary</p><h2>${esc(p.title)} Glossary</h2><p class="blurb">${terms.length} term${terms.length === 1 ? "" : "s"} from ${esc(p.title)}.</p></div>
     </header>
     ${bodyHtml}`;
+  const crumbs = [{ name: "Home", url: `${SITE_URL}/` }, { name: "Explore", url: `${SITE_URL}/explore/` }, { name: p.title, url: `${SITE_URL}/${p.id}/` }, { name: "Glossary", url }];
   const ld = [
-    breadcrumb([{ name: "Home", url: `${SITE_URL}/` }, { name: p.title, url: `${SITE_URL}/${p.id}/` }, { name: "Glossary", url }]),
+    breadcrumb(crumbs),
     ...(terms.length ? [jsonLd({
       "@context": "https://schema.org", "@type": "DefinedTermSet", name: `${p.title} Glossary`, url,
       hasDefinedTerm: terms.map((g) => ({ "@type": "DefinedTerm", name: g.term, description: g.entries[0].def }))
     })] : [])
   ].join("\n");
-  return page({ title: `${p.title} Glossary — AI Base`, description: `${terms.length} key terms from ${p.title}, defined in context.`, url, body, extraHead: ld });
+  return page({ title: `${p.title} Glossary — AI Base`, description: `${terms.length} key terms from ${p.title}, defined in context.`, url, body, extraHead: ld, crumbs });
 }
 
 function catalogPage() {
@@ -207,9 +228,10 @@ function catalogPage() {
     <header class="page-head"><p class="kicker">The knowledge base</p><h2>Browse subjects</h2>
     <p class="blurb">${content.stats.planets} subjects, ${content.stats.written} topics written, each with a worked example and an interactive demo.</p></header>
     <div class="planet-grid">${content.planets.map(planetCard).join("")}</div>`;
-  const ld = breadcrumb([{ name: "Home", url: `${SITE_URL}/` }, { name: "Explore", url }]);
+  const crumbs = [{ name: "Home", url: `${SITE_URL}/` }, { name: "Explore", url }];
+  const ld = breadcrumb(crumbs);
   const description = `${content.stats.planets} subjects, ${content.stats.written} AI topics, each with a worked example and an interactive demo.`;
-  return page({ title: "Explore — AI Base", description, url, body, extraHead: ld });
+  return page({ title: "Explore — AI Base", description, url, body, extraHead: ld, crumbs });
 }
 
 // ---- generate everything
