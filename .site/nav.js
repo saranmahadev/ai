@@ -35,11 +35,14 @@ export function navFor({ key, query, content, has3d }) {
   }
   if (planet) {
     const threeD = has3d && !planet.planned && query !== "text";
+    const actions = [];
+    if (threeD) actions.push({ label: "Reading view", href: `#/${planet.id}?text` });
+    else if (has3d && !planet.planned) actions.push({ label: "🚀 Walk the road", href: `#/${planet.id}` });
+    if (!planet.planned) actions.push({ label: "Glossary", href: `#/${planet.id}/glossary` });
     return {
       back: { label: galaxyLabel, href: galaxyHref, board: threeD },
       crumbs: [home, galaxy, { label: planet.title }],
-      actions: threeD ? [{ label: "Reading view", href: `#/${planet.id}?text` }]
-        : has3d && !planet.planned ? [{ label: "🚀 Walk the road", href: `#/${planet.id}` }] : [],
+      actions,
       progress: threeD
     };
   }

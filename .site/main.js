@@ -14,15 +14,19 @@ const STATUS = { written: "Written", outlined: "Outlined", index: "Index", plann
 const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 
 applyPrefs();
-// Explorer Mode: the optional 3D galaxy/planet experience. Read Mode (the default) renders every
-// route as a plain document; switching to Explorer Mode is what unlocks the rocket and the walkable
-// planets. The choice is remembered in this browser only, same as the other ai-base-* preferences.
+// Three modes: Read (the default, every route is a plain document), Explorer (unlocks the rocket and
+// the walkable 3D planets), and AI (reads like Read Mode, but surfaces the AI tutor on topic pages — see
+// AI_MODE_READY below). The choice is remembered in this browser only, same as the other ai-base-* prefs.
+const MODES = ["read", "explore", "ai"];
 function getMode() {
   const q = new URLSearchParams(location.search).get("mode");
-  if (q === "explore" || q === "read") return q; // ?mode= forces it for this pageload (used by the test suite and shareable 3D links)
-  try { return localStorage.getItem("ai-base-mode") === "explore" ? "explore" : "read"; } catch { return "read"; }
+  if (MODES.includes(q)) return q; // ?mode= forces it for this pageload (used by the test suite and shareable 3D links)
+  try { const m = localStorage.getItem("ai-base-mode"); return MODES.includes(m) ? m : "read"; } catch { return "read"; }
 }
 function setMode(m) { try { localStorage.setItem("ai-base-mode", m); } catch { /* ignore */ } }
+// The AI tutor itself (BYOK panel, provider calls) isn't built yet; AI Mode exists as a real, selectable
+// mode so it's discoverable, and shows an honest "coming soon" notice on topic pages until it lands.
+const AI_MODE_READY = false;
 const view = $("#view");
 const home = $("#home");
 let content = null;
@@ -191,7 +195,7 @@ function planetView(p) {
   return `
     <header class="page-head" style="--c:${p.color}">${planetDot(p)}<div><p class="kicker">${STATUS[p.status]}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p>
     ${prog ? `<div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${prog.pct}"><i style="width:${prog.pct}%"></i></div><p class="meta"><span>${prog.n} of ${prog.total} read</span></p>` : ""}
-    ${!p.planned ? `<p class="subject-links"><a href="#/${p.id}/glossary">Glossary →</a></p>` : ""}</div></header>
+    </div></header>
     ${body}`;
 }
 
@@ -256,7 +260,6 @@ function wireGlossaryFilter() {
 
 function topicView(t) {
   const p = t.planet && content.planets.find((x) => x.id === t.planet);
-  const d = p && p.districts.find((x) => x.id === t.district);
   const flat = p ? p.districts.flatMap((x) => x.topics) : [];
   const at = flat.indexOf(t.id);
   const prev = at > 0 ? content.topics[flat[at - 1]] : null;
@@ -265,15 +268,17 @@ function topicView(t) {
   const color = p ? p.color : "#b39cf5";
   const card = (o, cls = "") => `<a class="rc-card ${cls}" href="#/${o.id}" data-topic="${o.id}"><small>${esc(o.district && content.topics[o.id] ? districtTitle(o) : "")}</small><b>${esc(o.title)}</b><p>${esc(o.summary || "Not written yet.")}</p></a>`;
   const more = [...new Set([...t.links, ...t.backlinks])].map((id) => content.topics[id]).filter((o) => o && o.id !== (next && next.id)).slice(0, 6);
+  const aiNotice = getMode() === "ai" && !AI_MODE_READY
+    ? `<p class="notice">✨ AI Mode is coming soon — ask questions about this topic using your own API key (Anthropic, OpenAI or a local model). <a href="#" data-mode-btn="read">Switch back to Read Mode</a> for now.</p>` : "";
   return `
     <article class="doc topic" style="--c:${color}">
       <header class="doc-head">
-        <p class="doc-kicker">${p ? esc(p.title) : "Overview"}${d && d.title !== p.title ? ` · ${esc(d.title)}` : ""}</p>
         <h1 class="doc-title">${esc(t.title)}</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>${p ? esc(p.title) : "AI Base"}</b><span>${mins} min read${at >= 0 ? ` · Topic ${at + 1} of ${flat.length}` : ""}${t.status !== "written" ? ` · ${STATUS[t.status] || t.status}` : ""}</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true">${cover(t.title, color)}</figure>
       <div class="doc-body">
+        ${aiNotice}
         ${t.status === "outlined" ? `<p class="notice">This note exists in the vault but is still empty. It will fill in as the knowledge base grows.</p>` : `<div class="prose">${t.html || ""}</div>`}
       </div>
       <footer class="doc-end">
@@ -522,29 +527,47 @@ view.addEventListener("click", (e) => {
   if (topic) return; // topic to topic is a plain page change
   if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`); }
 });
-// ---------- Explorer Mode toggle (header): switches between Read Mode (plain documents, the default)
-// and Explorer Mode (the 3D galaxy/planet experience). The choice persists via ai-base-mode.
-const modeToggle = $("[data-mode-toggle]");
-function syncModeToggle() {
-  if (!modeToggle) return;
-  const on = getMode() === "explore";
-  modeToggle.innerHTML = `<span class="nav-icon" aria-hidden="true">${on ? "📖" : "🚀"}</span><span class="nav-label">${on ? "Read mode" : "Explorer mode"}</span>`;
-  modeToggle.setAttribute("aria-pressed", String(on));
-  const label = on ? "Switch back to Read Mode" : "Switch to the 3D Explorer Mode";
-  modeToggle.setAttribute("aria-label", label);
-  modeToggle.title = label;
+// ---------- mode pill (header): one segmented control for the three modes, replacing the old binary
+// Explorer-Mode toggle button. The choice persists via ai-base-mode (see getMode/setMode above).
+// Delegated on document (not just the header's own buttons) so an inline "Switch back to Read Mode"
+// link, such as the AI Mode "coming soon" notice in topicView(), works the same way.
+function syncModePill() {
+  const m = getMode();
+  for (const b of document.querySelectorAll("[data-mode-btn]")) b.setAttribute("aria-checked", String(b.dataset.modeBtn === m));
 }
-modeToggle?.addEventListener("click", () => {
-  const next = getMode() === "explore" ? "read" : "explore";
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-mode-btn]");
+  if (!b) return;
+  e.preventDefault();
+  const next = b.dataset.modeBtn;
+  if (next === getMode()) return;
   setMode(next);
-  syncModeToggle();
+  syncModePill();
   const [pathPart] = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("?");
   const key = pathPart.split("/").filter(Boolean).join("/");
   // leaving the catalog text view while switching on Explorer Mode lands straight in the 3D galaxy
   if (next === "explore" && galaxy && (key === "list" || key === "explore")) { location.hash = "#/galaxy"; return; }
   route();
 });
-syncModeToggle();
+syncModePill();
+
+// ---------- more menu (header): My path + GitHub, tucked behind one button instead of sitting
+// permanently in the header row.
+{
+  const btn = $("[data-more]"), pop = $("[data-more-popover]");
+  if (btn && pop) {
+    const close = () => { pop.hidden = true; btn.setAttribute("aria-expanded", "false"); };
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const open = pop.hidden;
+      pop.hidden = !open;
+      btn.setAttribute("aria-expanded", String(open));
+    });
+    document.addEventListener("click", (e) => { if (!pop.hidden && !pop.contains(e.target) && e.target !== btn) close(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !pop.hidden) { close(); btn.focus(); } });
+    window.addEventListener("hashchange", close);
+  }
+}
 
 // ---------- launch: the home page carries no idle 3D render; the rocket only appears for this one
 // transient transition, triggered by an explicit click, then the canvas hands off to the galaxy scene.
