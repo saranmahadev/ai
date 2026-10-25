@@ -6,7 +6,8 @@
   "engines": { "node": ">=20" },
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",
-    "content": "node scripts/build-content.mjs",
+    "content": "node scripts/build-content.mjs && node scripts/build-static.mjs",
+    "prerender": "node scripts/build-static.mjs",
     "dev": "npm run content && python3 -m http.server 8000",
     "test": "node scripts/build-content.mjs --check",
     "test:benches": "node scripts/test-benches.mjs",
