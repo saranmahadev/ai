@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Sparse Retrieval with TF-IDF and BM25","item":"https://ai.saranmahadev.in/rag/sparse-retrieval-with-tf-idf-and-bm25/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Retrieval Strategies"},{"@type":"ListItem","position":5,"name":"Sparse Retrieval with TF-IDF and BM25","item":"https://ai.saranmahadev.in/rag/sparse-retrieval-with-tf-idf-and-bm25/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sparse Retrieval with TF-IDF and BM25","description":"Counting how many query words a document shares is the simplest possible retrieval method — and it treats every word as equally informative, which \"the\" and \"cat\" obviously aren't.","url":"https://ai.saranmahadev.in/rag/sparse-retrieval-with-tf-idf-and-bm25/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does TF-IDF give d3 a score of exactly zero despite d3 containing \"mat\"?","acceptedAnswer":{"@type":"Answer","text":"\"Mat\" appears in 2 of the 3 documents, which makes TF-IDF's idf formula, log(N/(1+document count)), evaluate to log(3/3) = log(1) = 0 — multiplying by this zero idf wipes out any contribution from \"mat\" regardless of how often it appears."}},{"@type":"Question","name":"Why doesn't BM25 have the same problem?","acceptedAnswer":{"@type":"Answer","text":"BM25's idf formula adds smoothing terms (+0.5) that keep it from ever evaluating to exactly zero, so a term appearing in roughly half the collection still contributes some weight rather than none."}},{"@type":"Question","name":"Would either TF-IDF or BM25 score a document highly if it discussed the same topic as the query using entirely different words?","acceptedAnswer":{"@type":"Answer","text":"No — both methods only match exact vocabulary overlap; a topically relevant document using no words in common with the query would score zero under either method, which is exactly the gap dense retrieval is designed to fill."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ RAG</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Retrieval Strategies</li><li>Sparse Retrieval with TF-IDF and BM25</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#5fd1d9">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/rag/">RAG</a> · Retrieval Strategies</p>
         <h1 class="doc-title">Sparse Retrieval with TF-IDF and BM25</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
       </header>
@@ -121,5 +129,8 @@ No — both methods only match exact vocabulary overlap; a topically relevant do
         <p class="doc-prev"><a href="/rag/retrieval-strategies/">← Previous: Retrieval Strategies</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

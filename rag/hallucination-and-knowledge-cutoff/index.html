@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Hallucination and Knowledge Cutoff","item":"https://ai.saranmahadev.in/rag/hallucination-and-knowledge-cutoff/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Why Retrieval and Grounding"},{"@type":"ListItem","position":5,"name":"Hallucination and Knowledge Cutoff","item":"https://ai.saranmahadev.in/rag/hallucination-and-knowledge-cutoff/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hallucination and Knowledge Cutoff","description":"Every model has a training cutoff — a date after which nothing happened in its training data. Ask it about something before that date, and it usually answers confidently and correctly.","url":"https://ai.saranmahadev.in/rag/hallucination-and-knowledge-cutoff/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does confidence 1 day after the cutoff (92%) look almost as high as confidence 1 day before it (95%)?","acceptedAnswer":{"@type":"Answer","text":"The decay function only starts applying once an event is past the cutoff, and the exponential decay is still very close to its starting value just one day in — the drop accelerates over the following weeks rather than happening instantly."}},{"@type":"Question","name":"Does a model's confidence in an unretrieved answer ever reach exactly zero for events far past its cutoff?","acceptedAnswer":{"@type":"Answer","text":"No — the worked example's confidence floor is 5%, reflecting that models are built to produce fluent completions and rarely default to flat refusal, however far past their knowledge the question falls."}},{"@type":"Question","name":"What's the direct fix retrieval offers for this specific problem?","acceptedAnswer":{"@type":"Answer","text":"Giving the model a current document about the event at answer-time, so it can ground its response in real information instead of relying on its own decaying, unretrieved confidence."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ RAG</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Why Retrieval and Grounding</li><li>Hallucination and Knowledge Cutoff</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#5fd1d9">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/rag/">RAG</a> · Why Retrieval and Grounding</p>
         <h1 class="doc-title">Hallucination and Knowledge Cutoff</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
       </header>
@@ -121,5 +129,8 @@ Giving the model a current document about the event at answer-time, so it can gr
         <p class="doc-prev"><a href="/rag/parametric-vs-non-parametric-knowledge/">← Previous: Parametric vs. Non-Parametric Knowledge</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

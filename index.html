@@ -37,12 +37,21 @@
 
   <header class="hud">
     <a class="brand clay-pill" href="#/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-    <nav class="clay-pill" aria-label="Main">
-      <button type="button" class="hud-btn" data-search aria-label="Search topics (press /)"><span class="nav-icon" aria-hidden="true">🔎</span><span class="nav-label">Search <kbd>/</kbd></span></button>
-      <a href="#/path" aria-label="My path"><span class="nav-icon" aria-hidden="true">🧭</span><span class="nav-label">My path</span></a>
-      <button type="button" class="hud-btn" data-mode-toggle aria-pressed="false"></button>
-      <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener" aria-label="GitHub"><span class="nav-icon" aria-hidden="true">GH</span><span class="nav-label">GitHub ↗</span></a>
-    </nav>
+    <div class="hud-right">
+      <button type="button" class="hud-btn clay-pill" data-search aria-label="Search topics (press /)"><span class="nav-icon" aria-hidden="true">🔎</span><span class="nav-label">Search</span><kbd>/</kbd></button>
+      <div class="mode-pill clay-pill" role="radiogroup" aria-label="Mode" data-mode-pill>
+        <button type="button" role="radio" data-mode-btn="read" aria-checked="true" title="Read mode" aria-label="Read mode: plain documents">📖</button>
+        <button type="button" role="radio" data-mode-btn="explore" aria-checked="false" title="Explorer mode" aria-label="Explorer mode: fly between subjects in 3D">🚀</button>
+        <button type="button" role="radio" data-mode-btn="graph" aria-checked="false" title="Graph mode" aria-label="Graph mode: see every topic and how they connect">🕸️</button>
+      </div>
+      <div class="more-menu">
+        <button type="button" class="hud-btn clay-pill" data-more aria-haspopup="true" aria-expanded="false" aria-label="More">⋯</button>
+        <div class="more-popover" data-more-popover hidden>
+          <a href="#/path">🧭 My path</a>
+          <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GH GitHub ↗</a>
+        </div>
+      </div>
+    </div>
   </header>
 
   <nav id="navbar" aria-label="Where you are" hidden></nav>
@@ -88,7 +97,7 @@
     </section>
 
     <footer class="home-footer reveal">
-      <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contributing</a></p>
+      <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contributing</a> · <a href="/feed.xml">RSS ↗</a></p>
       <p class="home-footer-note">Generated from an open Markdown knowledge vault.</p>
     </footer>
   </section>
@@ -128,6 +137,23 @@
         <label class="chk"><input type="checkbox" id="pconn"> Connections</label>
         <label class="chk"><input type="checkbox" id="pradar"> Radar <kbd>M</kbd></label>
       </div>
+    </div>
+  </section>
+
+  <section id="graph" hidden>
+    <canvas id="graphcanvas" aria-label="Graph view: every topic in the knowledge base and how they link together"></canvas>
+    <p class="notice" id="gstatus" role="status">Laying out the graph…</p>
+    <p class="ghint">Drag to pan · scroll to zoom · click a node to open it</p>
+    <div id="gctl">
+      <label class="sr-only" for="gsearch">Find a topic in the graph</label>
+      <input type="search" id="gsearch" placeholder="Find a topic…" autocomplete="off" spellcheck="false">
+      <button id="gctltoggle" class="round" type="button" aria-label="Graph legend and filters" aria-expanded="false">⚙</button>
+    </div>
+    <div id="gpanel" hidden>
+      <p class="gcount" id="gcount"></p>
+      <div id="glegend"></div>
+      <button type="button" class="chip" id="greset">Reset view</button>
+      <p class="source"><a href="#/explore">List view instead →</a></p>
     </div>
   </section>
 

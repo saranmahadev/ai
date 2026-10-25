@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Bi-Encoders and Dense Embeddings","item":"https://ai.saranmahadev.in/rag/bi-encoders-and-dense-embeddings/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Embeddings for Retrieval"},{"@type":"ListItem","position":5,"name":"Bi-Encoders and Dense Embeddings","item":"https://ai.saranmahadev.in/rag/bi-encoders-and-dense-embeddings/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bi-Encoders and Dense Embeddings","description":"Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered on the Math planet.","url":"https://ai.saranmahadev.in/rag/bi-encoders-and-dense-embeddings/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can a bi-encoder's document vectors be computed once and reused for every future query?","acceptedAnswer":{"@type":"Answer","text":"Because the query and document are encoded independently — a document's vector doesn't depend on what query will eventually be compared against it, so it never needs to be recomputed."}},{"@type":"Question","name":"In the worked example, why does the cross-encoder's cost grow so much faster than the bi-encoder's as the collection size increases?","acceptedAnswer":{"@type":"Answer","text":"Both costs scale linearly with collection size, but the cross-encoder's per-document cost (a full joint forward pass) is far larger than the bi-encoder's (a single dot product against an already-computed vector), so the same linear growth reaches a much larger total."}},{"@type":"Question","name":"What has to happen to a collection's stored vectors if the embedding model used to produce them is replaced?","acceptedAnswer":{"@type":"Answer","text":"Every document has to be re-encoded and re-indexed with the new model — a bi-encoder's stored vectors are only comparable to queries encoded by that same model."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ RAG</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Embeddings for Retrieval</li><li>Bi-Encoders and Dense Embeddings</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#5fd1d9">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/rag/">RAG</a> · Embeddings for Retrieval</p>
         <h1 class="doc-title">Bi-Encoders and Dense Embeddings</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
       </header>
@@ -119,5 +127,8 @@ Every document has to be re-encoded and re-indexed with the new model — a bi-e
         <p class="doc-prev"><a href="/rag/embeddings-for-retrieval/">← Previous: Embeddings for Retrieval</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

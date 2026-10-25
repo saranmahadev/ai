@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Context-Window Budgeting for RAG","item":"https://ai.saranmahadev.in/rag/context-window-budgeting-for-rag/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Generation with Retrieved Context"},{"@type":"ListItem","position":5,"name":"Context-Window Budgeting for RAG","item":"https://ai.saranmahadev.in/rag/context-window-budgeting-for-rag/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Context-Window Budgeting for RAG","description":"Retrieved chunks don't get the entire context window to themselves — a running conversation's own history is sitting in there too, and the two are competing for the exact same limited space.","url":"https://ai.saranmahadev.in/rag/context-window-budgeting-for-rag/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the number of chunks that fit drop so sharply as conversation history grows?","acceptedAnswer":{"@type":"Answer","text":"The chunk budget is whatever's left over after conversation history's share is subtracted from the fixed total — as conversation history claims more of that fixed total, proportionally less remains for chunks, each of which still costs the same 150 tokens."}},{"@type":"Question","name":"Does a larger context window eliminate this trade-off entirely?","acceptedAnswer":{"@type":"Answer","text":"It relaxes it by raising the total budget, but doesn't eliminate it — conversation history can still grow to consume a large fraction of any fixed window, and a bigger window introduces its own lost-in-the-middle risk for whatever does fit."}},{"@type":"Question","name":"What are the two things competing for the same context-window budget in this topic?","acceptedAnswer":{"@type":"Answer","text":"Conversation history (the accumulated prior turns of the chat) and newly retrieved chunks (the context fetched for the current question) — both need space from the same fixed total."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ RAG</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Generation with Retrieved Context</li><li>Context-Window Budgeting for RAG</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#5fd1d9">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/rag/">RAG</a> · Generation with Retrieved Context</p>
         <h1 class="doc-title">Context-Window Budgeting for RAG</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
       </header>
@@ -115,5 +123,8 @@ Conversation history (the accumulated prior turns of the chat) and newly retriev
         <p class="doc-prev"><a href="/rag/handling-noisy-or-conflicting-retrieved-context/">← Previous: Handling Noisy or Conflicting Retrieved Context</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

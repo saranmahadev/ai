@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Multi-Vector and Late-Interaction Retrieval","item":"https://ai.saranmahadev.in/rag/multi-vector-and-late-interaction-retrieval/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Embeddings for Retrieval"},{"@type":"ListItem","position":5,"name":"Multi-Vector and Late-Interaction Retrieval","item":"https://ai.saranmahadev.in/rag/multi-vector-and-late-interaction-retrieval/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Multi-Vector and Late-Interaction Retrieval","description":"Pooling every token of a document into one vector means a single, strong, exact match can get diluted by everything else in the document — the more unrelated text surrounds it, the weaker its…","url":"https://ai.saranmahadev.in/rag/multi-vector-and-late-interaction-retrieval/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the pooled single-vector score drop as unrelated tokens are added, while MaxSim doesn't drop the same way?","acceptedAnswer":{"@type":"Answer","text":"Pooling averages every token's vector together, so more unrelated tokens dilute the one strong match's contribution to the average; MaxSim only ever takes each query token's single best match, which stays just as strong regardless of how many weaker tokens are also present."}},{"@type":"Question","name":"Can multi-vector document representations still be precomputed ahead of a query, like a bi-encoder's?","acceptedAnswer":{"@type":"Answer","text":"Yes — each document's token vectors are produced independently of any future query, so they can be computed once and stored, the same precomputation advantage a bi-encoder has."}},{"@type":"Question","name":"What's the main cost of multi-vector retrieval compared to a single pooled vector per document?","acceptedAnswer":{"@type":"Answer","text":"Storing and searching many vectors per document instead of one, which increases both memory use and the complexity of the index needed to search them efficiently."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ RAG</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Embeddings for Retrieval</li><li>Multi-Vector and Late-Interaction Retrieval</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#5fd1d9">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/rag/">RAG</a> · Embeddings for Retrieval</p>
         <h1 class="doc-title">Multi-Vector and Late-Interaction Retrieval</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
       </header>
@@ -115,5 +123,8 @@ Storing and searching many vectors per document instead of one, which increases 
         <p class="doc-prev"><a href="/rag/domain-adapting-embedding-models/">← Previous: Domain-Adapting Embedding Models</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

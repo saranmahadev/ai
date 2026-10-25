@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Parallel vs. Sequential Tool Calls","item":"https://ai.saranmahadev.in/agents/parallel-vs-sequential-tool-calls/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":4,"name":"Tool Use and Function Calling"},{"@type":"ListItem","position":5,"name":"Parallel vs. Sequential Tool Calls","item":"https://ai.saranmahadev.in/agents/parallel-vs-sequential-tool-calls/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Parallel vs. Sequential Tool Calls","description":"Checking flight prices, the weather at the destination, and today's exchange rate are three tool calls that have nothing to do with each other — running them one after another wastes however long…","url":"https://ai.saranmahadev.in/agents/parallel-vs-sequential-tool-calls/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the independent case's parallel total equal 800ms rather than something smaller?","acceptedAnswer":{"@type":"Answer","text":"Even running all three calls at once, the overall wait is bounded by whichever single call takes the longest — here, the 800ms flight search — so nothing can finish before that, no matter how fast the other two are."}},{"@type":"Question","name":"Why can't the dependent chain's total time be reduced by reordering or parallelizing its three calls?","acceptedAnswer":{"@type":"Answer","text":"Each call in the chain needs a specific result from the call before it (a booking needs a flight search result, a confirmation needs a booking result) — there's no valid order to run them in except the one the dependencies require, and no way to start two of them at once."}},{"@type":"Question","name":"What property of a set of tool calls determines whether they can be parallelized?","acceptedAnswer":{"@type":"Answer","text":"Whether any call's input depends on another call's output — calls with no such dependency between them can run in parallel; any dependency at all forces that part of the sequence to run one after another."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/agents/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ Agents</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/agents/">Agents</a></li><li>Tool Use and Function Calling</li><li>Parallel vs. Sequential Tool Calls</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#c99bf0">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/agents/">Agents</a> · Tool Use and Function Calling</p>
         <h1 class="doc-title">Parallel vs. Sequential Tool Calls</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
       </header>
@@ -120,5 +128,8 @@ Whether any call's input depends on another call's output — calls with no such
         <p class="doc-prev"><a href="/agents/tool-selection-among-many-candidates/">← Previous: Tool Selection Among Many Candidates</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

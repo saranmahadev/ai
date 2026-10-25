@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Cross-Attention Conditioning for Generation","item":"https://ai.saranmahadev.in/generative-ai/cross-attention-conditioning-for-generation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":4,"name":"Conditioning and Guidance"},{"@type":"ListItem","position":5,"name":"Cross-Attention Conditioning for Generation","item":"https://ai.saranmahadev.in/generative-ai/cross-attention-conditioning-for-generation/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Cross-Attention Conditioning for Generation","description":"Guidance (as in Classifier-Free Guidance) steers generation toward a condition through the score itself; this note covers a completely different way a condition enters a generative model —…","url":"https://ai.saranmahadev.in/generative-ai/cross-attention-conditioning-for-generation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In cross-attention conditioning, what plays the role of queries, and what plays the role of keys and values?","acceptedAnswer":{"@type":"Answer","text":"The positions being generated (e.g. image patches) are the queries; the conditioning input's tokens (e.g. text embeddings) supply the keys and values."}},{"@type":"Question","name":"In the worked example, why did latent 1 attend most strongly to \"cat\"?","acceptedAnswer":{"@type":"Answer","text":"Because latent 1's query vector was built to closely resemble the \"cat\" token's key vector, giving their dot-product similarity (and so their attention weight) the highest value among the three conditioning tokens."}},{"@type":"Question","name":"How does cross-attention conditioning differ from guidance, mechanically?","acceptedAnswer":{"@type":"Answer","text":"Cross-attention is built into the model's architecture and runs on every forward pass regardless of any guidance setting; guidance is a separate adjustment applied to the model's output (its score) at sampling time, with no architectural change required."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/generative-ai/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ Generative AI</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/generative-ai/">Generative AI</a></li><li>Conditioning and Guidance</li><li>Cross-Attention Conditioning for Generation</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#ff9ccf">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Conditioning and Guidance</p>
         <h1 class="doc-title">Cross-Attention Conditioning for Generation</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
       </header>
@@ -119,5 +127,8 @@ Cross-attention is built into the model's architecture and runs on every forward
         <p class="doc-prev"><a href="/generative-ai/classifier-free-guidance/">← Previous: Classifier-Free Guidance</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

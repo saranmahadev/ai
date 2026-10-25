@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Designing Tools for Agent Reliability","item":"https://ai.saranmahadev.in/agents/designing-tools-for-agent-reliability/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":4,"name":"Tool Use and Function Calling"},{"@type":"ListItem","position":5,"name":"Designing Tools for Agent Reliability","item":"https://ai.saranmahadev.in/agents/designing-tools-for-agent-reliability/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Designing Tools for Agent Reliability","description":"A tool with a free-text date field lets an agent write \"03/14/2025,\" \"March 14, 2025,\" or \"14/03/2025\" — three formats, at least two of them genuinely ambiguous about which number is the month.","url":"https://ai.saranmahadev.in/agents/designing-tools-for-agent-reliability/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does \"14/03/2025\" fail to parse under the free-text design but not necessarily under a schema?","acceptedAnswer":{"@type":"Answer","text":"As free text, it's genuinely ambiguous whether 14 is meant as the day or an invalid month depending on the reader's assumed format; a strict schema sidesteps the ambiguity entirely by only accepting one defined format (ISO-8601), so a value like this is simply rejected before any ambiguous interpretation is attempted."}},{"@type":"Question","name":"What's the key difference between fixing this with a stricter schema versus fixing it by retrying failed calls?","acceptedAnswer":{"@type":"Answer","text":"A stricter schema prevents the ambiguous or malformed value from being accepted in the first place, reducing how often the failure happens at all; retrying (from the previous topic) only helps with failures that have some chance of not recurring, and a parsing failure caused by a genuinely ambiguous format will recur identically on every retry."}},{"@type":"Question","name":"What's the trade-off of making a tool's schema stricter?","acceptedAnswer":{"@type":"Answer","text":"A stricter schema reduces ambiguity-driven failures but risks rejecting inputs that are actually valid if the schema is narrower than the real range of acceptable values — reliability gained on one side can cost false rejections on the other if the schema is miscalibrated."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/agents/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ Agents</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/agents/">Agents</a></li><li>Tool Use and Function Calling</li><li>Designing Tools for Agent Reliability</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#c99bf0">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/agents/">Agents</a> · Tool Use and Function Calling</p>
         <h1 class="doc-title">Designing Tools for Agent Reliability</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
       </header>
@@ -124,5 +132,8 @@ A stricter schema reduces ambiguity-driven failures but risks rejecting inputs t
         <p class="doc-prev"><a href="/agents/tool-result-verification/">← Previous: Tool Result Verification</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

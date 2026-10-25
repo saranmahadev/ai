@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Re-Ranking Retrieved Results","item":"https://ai.saranmahadev.in/rag/re-ranking-retrieved-results/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Advanced RAG Patterns"},{"@type":"ListItem","position":5,"name":"Re-Ranking Retrieved Results","item":"https://ai.saranmahadev.in/rag/re-ranking-retrieved-results/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Re-Ranking Retrieved Results","description":"Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet's own illustrative units — far too much for a live request.","url":"https://ai.saranmahadev.in/rag/re-ranking-retrieved-results/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the funnel's total cost stay low even as the shortlist size grows?","acceptedAnswer":{"@type":"Answer","text":"The bi-encoder pass over the full 10,000-document collection (10,000 cost units) dominates the total; the cross-encoder's cost over the shortlist only adds 100 units per document kept, which stays small relative to the bi-encoder term for any reasonable shortlist size."}},{"@type":"Question","name":"What's the risk of making the shortlist too small?","acceptedAnswer":{"@type":"Answer","text":"If the true most relevant document scores just outside the shortlist cutoff under the cheap first-stage method, it never reaches the cross-encoder at all — no amount of accurate re-ranking can recover a document that was never passed through."}},{"@type":"Question","name":"Why is re-ranking not simply \"run a cross-encoder on everything, but faster\"?","acceptedAnswer":{"@type":"Answer","text":"It's a structurally different approach — a cheap method handles the full collection first, and only the resulting shortlist gets the expensive treatment; the cross-encoder itself isn't optimized to be cheaper, it's just applied to far fewer documents."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ RAG</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Advanced RAG Patterns</li><li>Re-Ranking Retrieved Results</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#5fd1d9">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/rag/">RAG</a> · Advanced RAG Patterns</p>
         <h1 class="doc-title">Re-Ranking Retrieved Results</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
       </header>
@@ -117,5 +125,8 @@ It's a structurally different approach — a cheap method handles the full colle
         <p class="doc-prev"><a href="/rag/advanced-rag-patterns/">← Previous: Advanced RAG Patterns</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

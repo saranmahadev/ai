@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Tool Selection Among Many Candidates","item":"https://ai.saranmahadev.in/agents/tool-selection-among-many-candidates/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":4,"name":"Tool Use and Function Calling"},{"@type":"ListItem","position":5,"name":"Tool Selection Among Many Candidates","item":"https://ai.saranmahadev.in/agents/tool-selection-among-many-candidates/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Tool Selection Among Many Candidates","description":"An agent with 40 tools available for one task has exactly one that's actually correct. Shown all 40 at once with no other signal to go on, picking it by chance alone succeeds 2.5% of the time.","url":"https://ai.saranmahadev.in/agents/tool-selection-among-many-candidates/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does K = 1 guarantee the agent can't pick the right tool at all?","acceptedAnswer":{"@type":"Answer","text":"The genuinely correct tool ranks 3rd by similarity, so a cutoff at K = 1 only keeps the top-ranked tool — the correct one never makes it into the candidate set the model actually sees."}},{"@type":"Question","name":"Why does worst-case accuracy keep dropping from K = 3 to K = 40 even though recall stays at 100% the whole time?","acceptedAnswer":{"@type":"Answer","text":"Recall only tracks whether the correct tool is present among the candidates; it says nothing about how many other candidates are also present to be confused with it. A uniform guess among 40 candidates succeeds far less often than a uniform guess among 3, even when the right answer is in both sets."}},{"@type":"Question","name":"What determines the best choice of K in general?","acceptedAnswer":{"@type":"Answer","text":"It depends on how reliably the correct tool ranks near the top for the task at hand — if relevance ranking is accurate, a small K both preserves recall and keeps the candidate set focused; if ranking is unreliable, a small K risks filtering out the correct tool before selection even starts."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/agents/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ Agents</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/agents/">Agents</a></li><li>Tool Use and Function Calling</li><li>Tool Selection Among Many Candidates</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#c99bf0">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/agents/">Agents</a> · Tool Use and Function Calling</p>
         <h1 class="doc-title">Tool Selection Among Many Candidates</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
       </header>
@@ -117,5 +125,8 @@ It depends on how reliably the correct tool ranks near the top for the task at h
         <p class="doc-prev"><a href="/agents/tool-use-and-function-calling/">← Previous: Tool Use and Function Calling</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

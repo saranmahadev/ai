@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Metadata Filtering and Hybrid Indexes","item":"https://ai.saranmahadev.in/rag/metadata-filtering-and-hybrid-indexes/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Vector Search and Indexing"},{"@type":"ListItem","position":5,"name":"Metadata Filtering and Hybrid Indexes","item":"https://ai.saranmahadev.in/rag/metadata-filtering-and-hybrid-indexes/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Metadata Filtering and Hybrid Indexes","description":"Asking for \"the 20 most relevant chunks, but only from documents I have permission to see\" sounds like one request — but a vector index has to decide when to apply that permission check.","url":"https://ai.saranmahadev.in/rag/metadata-filtering-and-hybrid-indexes/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does post-filtering a request for 20 results at a 5% match rate leave only about 1 survivor?","acceptedAnswer":{"@type":"Answer","text":"The ANN search's top 20 were chosen purely by similarity, with no regard for the filter, so only roughly 5% of them — about 1 — happen to also satisfy it; the rest are discarded after the fact."}},{"@type":"Question","name":"Does pre-filtering guarantee the requested number of results no matter how restrictive the filter is?","acceptedAnswer":{"@type":"Answer","text":"No — it guarantees up to the requested number, limited by how many eligible candidates actually exist in the collection; an extremely restrictive filter can still leave fewer than requested if there simply aren't enough matching chunks."}},{"@type":"Question","name":"What does a hybrid index add that makes pre-filtering practical?","acceptedAnswer":{"@type":"Answer","text":"A fast way to check metadata eligibility combined with the vector index, so narrowing to eligible candidates before the similarity search doesn't itself require a slow scan of the whole collection."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ RAG</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Vector Search and Indexing</li><li>Metadata Filtering and Hybrid Indexes</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#5fd1d9">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/rag/">RAG</a> · Vector Search and Indexing</p>
         <h1 class="doc-title">Metadata Filtering and Hybrid Indexes</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
       </header>
@@ -118,5 +126,8 @@ A fast way to check metadata eligibility combined with the vector index, so narr
         <p class="doc-prev"><a href="/rag/vector-databases-and-index-management/">← Previous: Vector Databases and Index Management</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

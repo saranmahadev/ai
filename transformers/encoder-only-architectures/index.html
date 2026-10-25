@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Encoder-Only Architectures","item":"https://ai.saranmahadev.in/transformers/encoder-only-architectures/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":4,"name":"Architectural Families"},{"@type":"ListItem","position":5,"name":"Encoder-Only Architectures","item":"https://ai.saranmahadev.in/transformers/encoder-only-architectures/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Encoder-Only Architectures","description":"The masking topic introduced two patterns: padding masks and causal masks.","url":"https://ai.saranmahadev.in/transformers/encoder-only-architectures/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What single masking choice defines an encoder-only architecture?","acceptedAnswer":{"@type":"Answer","text":"No causal mask — only padding masking is applied, so every real token can attend to every other real token in both directions."}},{"@type":"Question","name":"In the worked example, why did the causal case have so much less context available than the bidirectional case?","acceptedAnswer":{"@type":"Answer","text":"A causal mask only allows a position to attend to itself and earlier positions, so at position 2 it could only see positions 0 and 1 — the bidirectional case had no such restriction and could see all 5 other positions."}},{"@type":"Question","name":"What training objective is commonly paired with encoder-only architectures, and why does it need bidirectional attention?","acceptedAnswer":{"@type":"Answer","text":"Masked language modeling — predicting a masked-out token using the full surrounding context, which requires seeing tokens on both sides of the gap, not just the ones before it."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/transformers/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ Transformers</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/transformers/">Transformers</a></li><li>Architectural Families</li><li>Encoder-Only Architectures</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#7db7ff">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Architectural Families</p>
         <h1 class="doc-title">Encoder-Only Architectures</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
       </header>
@@ -119,5 +127,8 @@ Masked language modeling — predicting a masked-out token using the full surrou
         <p class="doc-prev"><a href="/transformers/architectural-families/">← Previous: Architectural Families</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

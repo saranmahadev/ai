@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Caching and Incremental Indexing","item":"https://ai.saranmahadev.in/rag/caching-and-incremental-indexing/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"RAG in Practice"},{"@type":"ListItem","position":5,"name":"Caching and Incremental Indexing","item":"https://ai.saranmahadev.in/rag/caching-and-incremental-indexing/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Caching and Incremental Indexing","description":"Asking the same question twice shouldn't cost the full pipeline twice — caching the first answer makes the second one nearly free.","url":"https://ai.saranmahadev.in/rag/caching-and-incremental-indexing/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does a higher cache hit rate save more total time?","acceptedAnswer":{"@type":"Answer","text":"A higher hit rate means a larger fraction of the 10,000 queries skip the full pipeline cost and are instead served near-instantly from the cache, so the total time spent across all queries drops proportionally more."}},{"@type":"Question","name":"Why is a full index rebuild disproportionate to adding 10 documents to a 100,000-document collection?","acceptedAnswer":{"@type":"Answer","text":"A full rebuild reprocesses every document in the collection, including the 99,990 that didn't change at all — its cost scales with the whole collection's size, not with how much actually changed."}},{"@type":"Question","name":"What risk does caching introduce that incremental indexing doesn't share?","acceptedAnswer":{"@type":"Answer","text":"A cached result can become stale if the underlying information changes after it was cached — incremental indexing, by contrast, is specifically about keeping the index itself current as documents change, not about serving a potentially outdated cached answer."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ RAG</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>RAG in Practice</li><li>Caching and Incremental Indexing</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#5fd1d9">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/rag/">RAG</a> · RAG in Practice</p>
         <h1 class="doc-title">Caching and Incremental Indexing</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
       </header>
@@ -120,5 +128,8 @@ A cached result can become stale if the underlying information changes after it 
         <p class="doc-prev"><a href="/rag/production-rag-pipeline-architecture/">← Previous: Production RAG Pipeline Architecture</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Direct Preference Optimization (DPO)","item":"https://ai.saranmahadev.in/llms/direct-preference-optimization-dpo/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"Instruction Tuning and Alignment"},{"@type":"ListItem","position":5,"name":"Direct Preference Optimization (DPO)","item":"https://ai.saranmahadev.in/llms/direct-preference-optimization-dpo/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Direct Preference Optimization (DPO)","description":"RLHF's reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones.","url":"https://ai.saranmahadev.in/llms/direct-preference-optimization-dpo/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does DPO optimize directly, that RLHF instead optimizes indirectly through a reward model?","acceptedAnswer":{"@type":"Answer","text":"The policy's own log-probability ratio (relative to a frozen reference) between a preferred and dispreferred response — DPO adjusts this ratio directly via gradient descent, with no separate reward model in between."}},{"@type":"Question","name":"In the worked example, why did the loss start at exactly ln 2 (≈0.693)?","acceptedAnswer":{"@type":"Answer","text":"Because the policy started identical to the reference, making the two log-ratio terms equal and so z = 0 — and −log(sigmoid(0)) = −log(0.5) = ln 2."}},{"@type":"Question","name":"What role does the frozen reference policy play in the DPO loss?","acceptedAnswer":{"@type":"Answer","text":"It anchors the comparison, so the loss only rewards genuine relative shifts in preference — without it, the policy could trivially inflate every response's probability without actually separating preferred from dispreferred."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/llms/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ LLMs</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/llms/">LLMs</a></li><li>Instruction Tuning and Alignment</li><li>Direct Preference Optimization (DPO)</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#ffa970">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Instruction Tuning and Alignment</p>
         <h1 class="doc-title">Direct Preference Optimization (DPO)</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
       </header>
@@ -122,5 +130,8 @@ It anchors the comparison, so the loss only rewards genuine relative shifts in p
         <p class="doc-prev"><a href="/llms/reinforcement-learning-from-human-feedback-rlhf/">← Previous: Reinforcement Learning from Human Feedback (RLHF)</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>

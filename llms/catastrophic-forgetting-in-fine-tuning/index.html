@@ -16,23 +16,31 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Catastrophic Forgetting in Fine-Tuning","item":"https://ai.saranmahadev.in/llms/catastrophic-forgetting-in-fine-tuning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"LLMs in Practice"},{"@type":"ListItem","position":5,"name":"Catastrophic Forgetting in Fine-Tuning","item":"https://ai.saranmahadev.in/llms/catastrophic-forgetting-in-fine-tuning/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Catastrophic Forgetting in Fine-Tuning","description":"Fine-tuning a model to be excellent at one narrow task can quietly make it worse at everything it used to do.","url":"https://ai.saranmahadev.in/llms/catastrophic-forgetting-in-fine-tuning/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, does the model's loss on task A ever stop increasing while loss on task B keeps decreasing?","acceptedAnswer":{"@type":"Answer","text":"No — in this trace, every step that decreases lossB increases lossA; they move together because both are driven by the same shared weight update."}},{"@type":"Question","name":"Why can't you see catastrophic forgetting just by watching the fine-tuning run's own training loss?","acceptedAnswer":{"@type":"Answer","text":"The training loss only measures performance on the new task's data, which keeps improving — forgetting shows up only when performance on the old task is measured separately, which the fine-tuning run doesn't do by default."}},{"@type":"Question","name":"What's one way to reduce how much a fine-tuned model forgets?","acceptedAnswer":{"@type":"Answer","text":"Stop fine-tuning earlier (the worked example shows new-task gains flattening out well before old-task loss stops rising), or merge the fine-tuned weights back with the original model's weights, as in model merging."}}]}</script>
 </head>
-<body class="reading" data-theme="light">
+<body class="reading static-page" data-theme="light">
 <header class="hud">
   <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <nav class="clay-pill" aria-label="Main">
-    <a href="/explore/">Explore</a>
-    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
-  </nav>
+  <div class="hud-right">
+    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
+    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
-<main id="view">
+<main id="static-view">
+<nav class="static-crumbs" aria-label="Breadcrumb">
+  <a class="nb-back" href="https://ai.saranmahadev.in/llms/">
+    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="nb-back-label">‹ LLMs</span>
+  </a>
+  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/llms/">LLMs</a></li><li>LLMs in Practice</li><li>Catastrophic Forgetting in Fine-Tuning</li></ul>
+  
+</nav>
     <article class="doc topic" style="--c:#ffa970">
       <header class="doc-head">
-        <p class="doc-kicker"><a href="/llms/">LLMs</a> · LLMs in Practice</p>
         <h1 class="doc-title">Catastrophic Forgetting in Fine-Tuning</h1>
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
       </header>
@@ -122,5 +130,8 @@ Stop fine-tuning earlier (the worked example shows new-task gains flattening out
         <p class="doc-prev"><a href="/llms/fine-tuning-for-a-specific-task/">← Previous: Fine-Tuning for a Specific Task</a></p>
       </footer>
     </article></main>
+<footer class="home-footer">
+  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
+</footer>
 </body>
 </html>
