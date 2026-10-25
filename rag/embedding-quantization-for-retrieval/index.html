@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embedding Quantization for Retrieval — AI Base</title>
+<meta name="description" content="A million documents, each with a 768-dimensional embedding stored as 32-bit floats, is already several gigabytes before any text itself is stored.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/embedding-quantization-for-retrieval/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Embedding Quantization for Retrieval — AI Base">
+<meta property="og:description" content="A million documents, each with a 768-dimensional embedding stored as 32-bit floats, is already several gigabytes before any text itself is stored.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/embedding-quantization-for-retrieval/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Embedding Quantization for Retrieval","item":"https://ai.saranmahadev.in/rag/embedding-quantization-for-retrieval/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Embedding Quantization for Retrieval","description":"A million documents, each with a 768-dimensional embedding stored as 32-bit floats, is already several gigabytes before any text itself is stored.","url":"https://ai.saranmahadev.in/rag/embedding-quantization-for-retrieval/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does quantizing to int8 barely change the vector's similarity to its own original version?","acceptedAnswer":{"@type":"Answer","text":"The quantization scale is chosen relative to the vector's own maximum absolute value, so the rounding error introduced at each dimension is small relative to the vector's overall magnitude — the reconstructed vector stays very close to the original."}},{"@type":"Question","name":"When would quantization be more likely to change a retrieval ranking?","acceptedAnswer":{"@type":"Answer","text":"When two or more candidates' true similarities to the query are extremely close — quantization's small rounding errors are more likely to flip the order of near-ties than they are to change a ranking where the gaps are already large."}},{"@type":"Question","name":"Does quantization reduce how many dimensions a vector has?","acceptedAnswer":{"@type":"Answer","text":"No — it keeps the same number of dimensions but stores each one with less precision (fewer bits), which is different from dimensionality reduction, which drops dimensions entirely."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Embeddings for Retrieval</p>
+        <h1 class="doc-title">Embedding Quantization for Retrieval</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c14mhgxgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c14mhgxgpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c14mhgxgbg)"/>
+  <circle cx="634" cy="300" r="98" fill="#42718e" opacity="0.31"/><circle cx="178" cy="325" r="85" fill="#b7d5be" opacity="0.50"/><circle cx="323" cy="383" r="66" fill="#dcf5f7" opacity="0.44"/><circle cx="764" cy="213" r="174" fill="#b7d5be" opacity="0.44"/><circle cx="450" cy="141" r="134" fill="#b7d5be" opacity="0.26"/><circle cx="1043" cy="254" r="219" fill="#b7d5be" opacity="0.53"/><circle cx="805" cy="289" r="87" fill="#42718e" opacity="0.29"/>
+  <path d="M0,420 L0,346 L30,341 L60,335 L90,329 L120,322 L150,316 L180,310 L210,307 L240,306 L270,306 L300,309 L330,314 L360,320 L390,326 L420,333 L450,340 L480,345 L510,348 L540,350 L570,349 L600,346 L630,341 L660,335 L690,329 L720,322 L750,316 L780,310 L810,307 L840,306 L870,306 L900,309 L930,314 L960,320 L990,326 L1020,333 L1050,340 L1080,345 L1110,348 L1140,350 L1170,349 L1200,346 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,367 L30,371 L60,375 L90,380 L120,385 L150,389 L180,392 L210,394 L240,394 L270,392 L300,389 L330,385 L360,381 L390,376 L420,371 L450,367 L480,364 L510,362 L540,362 L570,364 L600,367 L630,371 L660,375 L690,380 L720,385 L750,389 L780,392 L810,394 L840,394 L870,392 L900,389 L930,385 L960,381 L990,376 L1020,371 L1050,367 L1080,364 L1110,362 L1140,362 L1170,364 L1200,367 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="714" cy="180" rx="252" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(2.0 714 180)"/><ellipse cx="714" cy="180" rx="349" ry="98" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(8.0 714 180)"/>
+  <circle cx="714" cy="180" r="99" fill="url(#c14mhgxgpl)"/>
+  <circle cx="786" cy="273" r="14" fill="#ffffff" opacity="0.70"/><circle cx="1013" cy="88" r="7" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A million documents, each with a 768-dimensional embedding stored as 32-bit floats, is already several gigabytes before any text itself is stored. Quantization shrinks every number in every vector down to a much smaller representation — trading a small amount of precision for a large, direct cut in memory.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How much can an embedding be shrunk before it stops being useful for retrieval?&quot; Quantization rounds each float32 value in a vector down to a much coarser representation — commonly int8, one byte instead of four — scaled so the rounding error stays small relative to the vector&#39;s own range. The question is whether that rounding changes which documents a query would retrieve, not just how much space the vectors take up.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Rounding a set of prices to the nearest dollar instead of keeping every cent barely changes which item is cheapest when prices differ by many dollars — it only risks confusion between items priced within a few cents of each other. Quantizing an embedding is the same trade: coarser numbers, with very little risk of changing the <em>ranking</em> unless two candidates were already nearly tied.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">scale = max(|vector|) / 127
+quantized[i]   = round(vector[i] / scale)        -- an integer from −127 to 127
+dequantized[i] = quantized[i] × scale            -- back to a float, at reduced precision
+</code></pre>
+<p>Four bytes per dimension (float32) become one byte per dimension (int8): a 4× reduction in memory for the vectors themselves.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>One embedding, quantized to int8 and converted back to check the precision lost:</p>
+<pre><code class="language-text">original:      [0.9500, 0.0500]
+quantized:     [127, 7]            (integers, one byte each)
+dequantized:   [0.9500, 0.0524]
+similarity between original and dequantized: 0.999997
+</code></pre>
+<p>Quantizing and reconstructing this vector changes its cosine similarity to itself by only about 0.0003% — nearly indistinguishable. Checking the same three-document ranking from earlier topics confirms it: the ranking order (refund timeline, returns policy, shipping times) comes out identical whether the document vectors are stored at full float32 precision or quantized to int8.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="embedding-quantization" data-title="Four bytes per number, or one"><p class="bench-fallback"><strong>Interactive bench: Four bytes per number, or one.</strong> Quantize an embedding to int8 and compare its similarity and ranking against the original float32 version.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the float32 and int8 rankings — they come out in the same order.</li>
+<li>Check the memory figure for each precision level.</li>
+<li>Imagine a collection of 10 million documents — what does a 4× memory reduction actually mean at that scale?</li>
+</ol>
+<p><strong>What you should notice:</strong> the ranking the query cares about survives quantization intact in this example, while the memory footprint drops to a quarter — a trade that&#39;s nearly free when the vectors being compared aren&#39;t extremely close to each other to begin with.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Multi-vector retrieval (<a class="wikilink" href="/rag/multi-vector-and-late-interaction-retrieval/" data-topic="rag/multi-vector-and-late-interaction-retrieval">Multi-Vector and Late-Interaction Retrieval</a>) stores many more vectors per document</strong>, which is exactly where quantization&#39;s memory savings matter most.</li>
+<li><strong><a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a> often applies quantization as one of its built-in storage options</strong>, alongside the index structure itself.</li>
+<li><strong><a class="wikilink" href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/" data-topic="rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization">Approximate Nearest Neighbor Search with IVF and Product Quantization</a> takes this idea further</strong>, using quantization not just to save memory but as part of the search algorithm itself.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming quantization is always this safe.</strong> The worked example&#39;s three documents aren&#39;t nearly tied — quantization is far more likely to change a ranking when two candidates&#39; true similarities are extremely close to begin with.</li>
+<li><strong>Quantizing without checking the actual retrieval quality impact on real queries.</strong> A similarity-preservation check on one vector, as in the worked example, is reassuring but not a guarantee across an entire collection and query distribution.</li>
+<li><strong>Confusing quantization with dimensionality reduction.</strong> Quantization keeps every dimension but represents each one more coarsely; it doesn&#39;t reduce how many numbers make up the vector.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does quantizing to int8 barely change the vector's similarity to its own original version?</summary>
+The quantization scale is chosen relative to the vector's own maximum absolute value, so the rounding error introduced at each dimension is small relative to the vector's overall magnitude — the reconstructed vector stays very close to the original.
+</details>
+
+<details><summary>2. When would quantization be more likely to change a retrieval ranking?</summary>
+When two or more candidates' true similarities to the query are extremely close — quantization's small rounding errors are more likely to flip the order of near-ties than they are to change a ranking where the gaps are already large.
+</details>
+
+<details><summary>3. Does quantization reduce how many dimensions a vector has?</summary>
+No — it keeps the same number of dimensions but stores each one with less precision (fewer bits), which is different from dimensionality reduction, which drops dimensions entirely.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Quantization:</strong> representing each value in a vector with fewer bits, trading precision for reduced memory.</li>
+<li><strong>int8:</strong> an 8-bit (1-byte) integer representation, commonly used as a quantization target for embeddings originally stored as 32-bit floats.</li>
+<li><strong>Scale factor:</strong> the value used to convert between a quantized integer and its original floating-point range.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a> · <a class="wikilink" href="/rag/multi-vector-and-late-interaction-retrieval/" data-topic="rag/multi-vector-and-late-interaction-retrieval">Multi-Vector and Late-Interaction Retrieval</a> · <a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/embedding-quantization-for-retrieval">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/vector-search-and-indexing/"><small>Read next</small><b>Vector Search and Indexing</b><p>Once a collection has a few million chunks, each with its own embedding, finding the handful nearest to a query vector stops being a problem you can solve by checking every single one.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/bi-encoders-and-dense-embeddings/"><b>Bi-Encoders and Dense Embeddings</b><p>Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered on the Math planet.</p></a><a class="rc-card" href="/rag/multi-vector-and-late-interaction-retrieval/"><b>Multi-Vector and Late-Interaction Retrieval</b><p>Pooling every token of a document into one vector means a single, strong, exact match can get diluted by everything else in the document — the more unrelated text surrounds it, the weaker its…</p></a><a class="rc-card" href="/rag/vector-databases-and-index-management/"><b>Vector Databases and Index Management</b><p>An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest?</p></a><a class="rc-card" href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/"><b>Approximate Nearest Neighbor Search with IVF and Product Quantization</b><p>Rather than navigating a graph one hop at a time, IVF (inverted file index) takes a different shortcut: group every vector into a cluster ahead of time, and at query time, only search inside the…</p></a><a class="rc-card" href="/rag/embeddings-for-retrieval/"><b>Embeddings for Retrieval</b><p>Turning a chunk of text into a vector is already covered on the Math planet; this district is about the retrieval-specific engineering on top of that: which kind of model produces the vector, how…</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/multi-vector-and-late-interaction-retrieval/">← Previous: Multi-Vector and Late-Interaction Retrieval</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

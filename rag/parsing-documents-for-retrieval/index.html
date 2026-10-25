@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parsing Documents for Retrieval — AI Base</title>
+<meta name="description" content="A real document isn&#39;t just its words. A PDF carries page numbers, headers and footers repeated on every page; a web page carries navigation menus and cookie banners around the actual article.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/parsing-documents-for-retrieval/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Parsing Documents for Retrieval — AI Base">
+<meta property="og:description" content="A real document isn&#39;t just its words. A PDF carries page numbers, headers and footers repeated on every page; a web page carries navigation menus and cookie banners around the actual article.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/parsing-documents-for-retrieval/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Parsing Documents for Retrieval","item":"https://ai.saranmahadev.in/rag/parsing-documents-for-retrieval/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Parsing Documents for Retrieval","description":"A real document isn't just its words. A PDF carries page numbers, headers and footers repeated on every page; a web page carries navigation menus and cookie banners around the actual article.","url":"https://ai.saranmahadev.in/rag/parsing-documents-for-retrieval/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the noise fraction come out above 50%?","acceptedAnswer":{"@type":"Answer","text":"The raw page has only one real sentence of content (12 words) against 11 words of repeated boilerplate (a page counter, a confidentiality stamp, and a footer), so the boilerplate makes up slightly more than half the total word count."}},{"@type":"Question","name":"Why does boilerplate matter more on a long, multi-page document than on a single short one?","acceptedAnswer":{"@type":"Answer","text":"The same boilerplate repeats on every page, so its total footprint across the whole document scales with the page count — a document with more pages wastes proportionally more of its chunked, embedded content on identical repeated text."}},{"@type":"Question","name":"What's the risk of being too aggressive about stripping \"boilerplate\"?","acceptedAnswer":{"@type":"Answer","text":"A cleaning rule written too broadly can remove real content that happens to resemble boilerplate (like a section heading), losing information the chunking and retrieval stages downstream never get a chance to see."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Document Processing and Chunking</p>
+        <h1 class="doc-title">Parsing Documents for Retrieval</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1svcqybg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1svcqypl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1svcqybg)"/>
+  <circle cx="431" cy="39" r="224" fill="#b7d5be" opacity="0.45"/><circle cx="403" cy="187" r="176" fill="#97e1e6" opacity="0.28"/><circle cx="883" cy="86" r="146" fill="#dcf5f7" opacity="0.59"/><circle cx="421" cy="275" r="83" fill="#b7d5be" opacity="0.26"/><circle cx="517" cy="337" r="162" fill="#42718e" opacity="0.41"/><circle cx="168" cy="401" r="87" fill="#97e1e6" opacity="0.58"/><circle cx="1012" cy="225" r="148" fill="#97e1e6" opacity="0.43"/>
+  <path d="M0,420 L0,349 L30,347 L60,344 L90,341 L120,336 L150,331 L180,326 L210,321 L240,316 L270,312 L300,309 L330,307 L360,306 L390,306 L420,307 L450,310 L480,313 L510,317 L540,322 L570,327 L600,333 L630,337 L660,342 L690,345 L720,348 L750,349 L780,350 L810,349 L840,346 L870,343 L900,339 L930,335 L960,330 L990,324 L1020,319 L1050,315 L1080,311 L1110,308 L1140,306 L1170,306 L1200,306 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,380 L30,377 L60,375 L90,372 L120,370 L150,368 L180,366 L210,365 L240,363 L270,363 L300,362 L330,362 L360,362 L390,363 L420,364 L450,366 L480,367 L510,369 L540,372 L570,374 L600,376 L630,379 L660,381 L690,384 L720,386 L750,388 L780,390 L810,391 L840,393 L870,393 L900,394 L930,394 L960,394 L990,393 L1020,392 L1050,390 L1080,389 L1110,387 L1140,384 L1170,382 L1200,380 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="900" cy="226" rx="231" ry="65" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-0.4 900 226)"/><ellipse cx="900" cy="226" rx="320" ry="90" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(5.6 900 226)"/>
+  <circle cx="900" cy="226" r="91" fill="url(#c1svcqypl)"/>
+  <circle cx="533" cy="207" r="12" fill="#ffffff" opacity="0.82"/><circle cx="546" cy="279" r="8" fill="#ffffff" opacity="0.78"/><circle cx="952" cy="336" r="12" fill="#ffffff" opacity="0.71"/><circle cx="682" cy="186" r="19" fill="#ffffff" opacity="0.75"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A real document isn&#39;t just its words. A PDF carries page numbers, headers and footers repeated on every page; a web page carries navigation menus and cookie banners around the actual article. None of that is content a retrieval system should ever match a query against — but it&#39;s exactly what a naive &quot;just extract the text&quot; approach drags along for free.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/anatomy-of-a-rag-pipeline/" data-topic="rag/anatomy-of-a-rag-pipeline">Anatomy of a RAG Pipeline</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What has to happen before a document is even ready to chunk?&quot; Parsing turns a document&#39;s native format (PDF, HTML, a spreadsheet, a scanned image) into clean text, and specifically means stripping boilerplate that repeats across every page or section — page numbers, running headers, confidentiality footers, navigation chrome — none of which answers any real question a user would ask.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Photocopying every page of a report and handing someone the whole stack, headers, footers and page numbers included, buries the one paragraph they actually need in repeated noise. A good parser is the person who goes through first with a highlighter and scissors, keeping only what the report actually says.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">noise fraction = (raw word count − cleaned word count) / raw word count
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>One raw page from a company policy PDF, before and after stripping repeated boilerplate:</p>
+<pre><code class="language-text">raw page (23 words):
+  &quot;Page 7 of 42
+   ACME CORP CONFIDENTIAL
+   Shipping Policy
+   Orders ship within two business days of payment confirmation.
+   Footer: acme.com | page 7&quot;
+
+cleaned (11 words):
+  &quot;Shipping Policy
+   Orders ship within two business days of payment confirmation.&quot;
+
+noise fraction: (23 − 11) / 23 = 52.2%
+</code></pre>
+<p>Just over half of this raw page&#39;s word count was boilerplate repeated on every single page of the document — page numbers, a confidentiality stamp, and a footer. Left in, it would be chunked and embedded right alongside the one sentence that actually answers a question.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="parsing-noise-vs-signal" data-title="Half of this page was never content"><p class="bench-fallback"><strong>Interactive bench: Half of this page was never content.</strong> Toggle boilerplate stripping and watch how much of a raw page was never real content.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the raw page and count how much of it repeats the same way on every page of a 42-page document.</li>
+<li>Toggle stripping on and see exactly which lines get removed.</li>
+<li>Imagine this boilerplate embedded and chunked across all 42 pages — how much wasted index space does that add up to?</li>
+</ol>
+<p><strong>What you should notice:</strong> the noise isn&#39;t a small rounding error — on this page it&#39;s over half the word count, and it would repeat identically on every other page of the same document.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Everything downstream assumes parsing already happened</strong>: <a class="wikilink" href="/rag/fixed-size-and-recursive-chunking/" data-topic="rag/fixed-size-and-recursive-chunking">Fixed-Size and Recursive Chunking</a> and every later chunking topic operate on text that&#39;s assumed to already be boilerplate-free.</li>
+<li><strong><a class="wikilink" href="/rag/handling-tables-code-and-structured-content/" data-topic="rag/handling-tables-code-and-structured-content">Handling Tables, Code and Structured Content</a> is about a parsing decision too</strong> — how to extract structured content without destroying the structure that makes it meaningful.</li>
+<li><strong>Boilerplate left in a chunk pollutes its embedding</strong> (covered on <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a>), diluting the signal a retrieval system is supposed to match against.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming &quot;extracting text&quot; is the whole job.</strong> The worked example shows extraction alone (without cleaning) keeps over half noise — parsing isn&#39;t finished until boilerplate is actually removed.</li>
+<li><strong>Writing one-off cleaning rules per document instead of detecting repeated patterns.</strong> Headers and footers repeat identically or near-identically across pages, which is exactly what makes them detectable and removable systematically.</li>
+<li><strong>Over-stripping and removing real content that merely looks like boilerplate.</strong> A line like &quot;Section 7: Shipping Policy&quot; can look like a header but is actually the start of real content — cleaning rules need to be specific enough to avoid false positives.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the noise fraction come out above 50%?</summary>
+The raw page has only one real sentence of content (12 words) against 11 words of repeated boilerplate (a page counter, a confidentiality stamp, and a footer), so the boilerplate makes up slightly more than half the total word count.
+</details>
+
+<details><summary>2. Why does boilerplate matter more on a long, multi-page document than on a single short one?</summary>
+The same boilerplate repeats on every page, so its total footprint across the whole document scales with the page count — a document with more pages wastes proportionally more of its chunked, embedded content on identical repeated text.
+</details>
+
+<details><summary>3. What's the risk of being too aggressive about stripping "boilerplate"?</summary>
+A cleaning rule written too broadly can remove real content that happens to resemble boilerplate (like a section heading), losing information the chunking and retrieval stages downstream never get a chance to see.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Boilerplate:</strong> text that repeats across a document&#39;s pages or sections without carrying page-specific content (headers, footers, page numbers).</li>
+<li><strong>Parsing:</strong> converting a document&#39;s native format into clean text suitable for chunking.</li>
+<li><strong>Noise fraction:</strong> the share of a raw extraction that turns out to be boilerplate rather than real content.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/anatomy-of-a-rag-pipeline/" data-topic="rag/anatomy-of-a-rag-pipeline">Anatomy of a RAG Pipeline</a> · <a class="wikilink" href="/rag/fixed-size-and-recursive-chunking/" data-topic="rag/fixed-size-and-recursive-chunking">Fixed-Size and Recursive Chunking</a> · <a class="wikilink" href="/rag/handling-tables-code-and-structured-content/" data-topic="rag/handling-tables-code-and-structured-content">Handling Tables, Code and Structured Content</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/parsing-documents-for-retrieval">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/fixed-size-and-recursive-chunking/"><small>Read next</small><b>Fixed-Size and Recursive Chunking</b><p>The simplest way to split a document is to cut it every N characters and move on.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/anatomy-of-a-rag-pipeline/"><b>Anatomy of a RAG Pipeline</b><p>Every retrieval-augmented system, however elaborate, is built from the same handful of stages in the same order: a question comes in, it becomes a vector, that vector finds relevant passages,…</p></a><a class="rc-card" href="/rag/fixed-size-and-recursive-chunking/"><b>Fixed-Size and Recursive Chunking</b><p>The simplest way to split a document is to cut it every N characters and move on.</p></a><a class="rc-card" href="/rag/handling-tables-code-and-structured-content/"><b>Handling Tables, Code and Structured Content</b><p>Flattening a pricing table into one run-on paragraph destroys the one thing that made it useful — knowing which number went with which row.</p></a><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/rag/document-processing-and-chunking/"><b>Document Processing and Chunking</b><p>Before anything can be retrieved, raw documents — PDFs, web pages, spreadsheets, code — have to become a collection of individually retrievable pieces.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/document-processing-and-chunking/">← Previous: Document Processing and Chunking</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkpointing and Reproducibility — AI Base</title>
+<meta name="description" content="A training run that takes days can fail for all kinds of reasons that have nothing to do with the model — a machine reboots, a job gets pre-empted, a bug crashes the process.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/checkpointing-and-reproducibility/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Checkpointing and Reproducibility — AI Base">
+<meta property="og:description" content="A training run that takes days can fail for all kinds of reasons that have nothing to do with the model — a machine reboots, a job gets pre-empted, a bug crashes the process.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/checkpointing-and-reproducibility/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Checkpointing and Reproducibility","item":"https://ai.saranmahadev.in/deep-learning/checkpointing-and-reproducibility/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Checkpointing and Reproducibility","description":"A training run that takes days can fail for all kinds of reasons that have nothing to do with the model — a machine reboots, a job gets pre-empted, a bug crashes the process.","url":"https://ai.saranmahadev.in/deep-learning/checkpointing-and-reproducibility/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a checkpoint need to include, beyond just the model's weights, to let training resume properly?","acceptedAnswer":{"@type":"Answer","text":"The optimizer's internal state and the current step number at minimum; for exact reproducibility, the random-number generator's state too."}},{"@type":"Question","name":"Why isn't checkpointing as frequently as possible always the best choice?","acceptedAnswer":{"@type":"Answer","text":"Each checkpoint has its own time cost; checkpointing extremely often wastes a large fraction of total training time on saving rather than training."}},{"@type":"Question","name":"Does fixing all random seeds guarantee bit-for-bit identical results across two different training runs?","acceptedAnswer":{"@type":"Answer","text":"Not always — some parallel floating-point operations can have a non-deterministic rounding order even with identical seeds, which can cause small differences despite careful seeding."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Training at Scale</p>
+        <h1 class="doc-title">Checkpointing and Reproducibility</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cdqpwsubg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cdqpwsupl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cdqpwsubg)"/>
+  <circle cx="918" cy="320" r="115" fill="#ffb6b6" opacity="0.35"/><circle cx="841" cy="28" r="82" fill="#8a546c" opacity="0.38"/><circle cx="446" cy="305" r="104" fill="#8a546c" opacity="0.53"/><circle cx="41" cy="377" r="144" fill="#ffb89d" opacity="0.35"/><circle cx="45" cy="383" r="175" fill="#ffb6b6" opacity="0.44"/>
+  <path d="M0,420 L0,309 L30,311 L60,313 L90,316 L120,319 L150,322 L180,325 L210,329 L240,332 L270,336 L300,339 L330,342 L360,344 L390,346 L420,348 L450,349 L480,349 L510,350 L540,349 L570,348 L600,347 L630,345 L660,342 L690,339 L720,336 L750,333 L780,330 L810,326 L840,323 L870,320 L900,316 L930,314 L960,311 L990,309 L1020,307 L1050,306 L1080,306 L1110,306 L1140,306 L1170,307 L1200,309 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,367 L30,364 L60,362 L90,362 L120,364 L150,367 L180,371 L210,375 L240,380 L270,385 L300,389 L330,392 L360,394 L390,394 L420,392 L450,389 L480,385 L510,381 L540,376 L570,371 L600,367 L630,364 L660,362 L690,362 L720,364 L750,367 L780,371 L810,375 L840,380 L870,385 L900,389 L930,392 L960,394 L990,394 L1020,392 L1050,389 L1080,385 L1110,381 L1140,376 L1170,371 L1200,367 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="624" cy="185" rx="174" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.3 624 185)"/><ellipse cx="624" cy="185" rx="241" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.3 624 185)"/>
+  <circle cx="624" cy="185" r="68" fill="url(#cdqpwsupl)"/>
+  <circle cx="594" cy="101" r="14" fill="#ffffff" opacity="0.69"/><circle cx="593" cy="115" r="8" fill="#ffffff" opacity="0.69"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A training run that takes days can fail for all kinds of reasons that have nothing to do with the model — a machine reboots, a job gets pre-empted, a bug crashes the process. <strong>Checkpointing</strong> periodically saves everything needed to resume exactly where training left off; <strong>reproducibility</strong> is the related, separate goal of being able to get the <em>same</em> result twice, given the same starting conditions.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/random-numbers-and-seeds/" data-topic="math/random-numbers-and-seeds">Random Numbers and Seeds</a> and <a class="wikilink" href="/deep-learning/debugging-a-training-run/" data-topic="deep-learning/debugging-a-training-run">Debugging a Training Run</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If a multi-day training run fails three-quarters of the way through, do I really have to start over from scratch?&quot; Not if you&#39;ve been checkpointing — saving the model weights, optimizer state and step count regularly lets a run resume from the last save instead of from zero.</p>
+<h2 id="intuition-a-save-point-in-a-long-interruption-prone-game">Intuition: a save point in a long, interruption-prone game</h2>
+<p>A checkpoint is exactly a video game&#39;s save point: if something goes wrong, you reload from the last save instead of replaying the entire game from the beginning. Checkpointing too rarely risks losing a lot of progress if something fails right before the next save; checkpointing too often wastes time on the saving itself — there&#39;s a real trade-off, not an obviously &quot;more is better&quot; answer.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">checkpoint:   a saved snapshot of the model&#39;s weights, the optimizer&#39;s internal state,
+              the current step number, and (for true reproducibility) the random-number
+              generator&#39;s state
+
+checkpoint interval C:  how many steps between saves
+expected cost(C) ≈ C/2  (expected wasted progress if a failure happens, on average, mid-interval)
+                  + S·T/C   (total time spent saving, S = cost per save, T = total training steps)
+</code></pre>
+<p><strong>Reproducibility</strong> needs more than a saved checkpoint: fixing every source of randomness (data shuffling order, weight initialization, dropout masks) to the same seed, and sometimes disabling certain parallel floating-point operations whose exact rounding order can otherwise vary run to run even with identical seeds.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A training run of <code>T = 10,000</code> steps, where saving a checkpoint costs the equivalent of <code>S = 10</code> steps, compared across different checkpoint intervals <code>C</code>:</p>
+<pre><code class="language-text">C = 100:    expected cost ≈ 100/2  + 10×10000/100  = 50 + 1000  = 1050
+C = 300:    expected cost ≈ 300/2  + 10×10000/300  = 150 + 333  = 483
+C = 447:    expected cost ≈ 447/2  + 10×10000/447  = 224 + 224  = 447    ← minimum
+C = 1000:   expected cost ≈ 1000/2 + 10×10000/1000 = 500 + 100  = 600
+</code></pre>
+<p>The cost at the extremes (checkpointing too rarely, at <code>C=100</code>, or too often relative to run length, at <code>C=1000</code>) is noticeably higher than at the balanced point near <code>C ≈ 447</code>, where the two costs — wasted progress on failure, and time spent saving — are almost exactly equal.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="checkpoint-interval" data-title="Finding a good checkpoint interval"><p class="bench-fallback"><strong>Interactive bench: Finding a good checkpoint interval.</strong> Sliders for total training steps and the cost of one save. See the expected total cost (wasted progress plus saving overhead) across a range of checkpoint intervals, and find the minimum.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move the checkpoint-interval slider and watch the two cost components trade off against each other.</li>
+<li>Increase the cost of a single save and watch the optimal interval shift longer.</li>
+<li>Increase total training steps and see how the optimal interval changes.</li>
+</ol>
+<p><strong>What you should notice:</strong> the optimal interval balances two opposing costs almost exactly at the minimum — too frequent saving wastes time on the saves themselves, too infrequent saving risks losing too much progress on failure.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Large, long-running training jobs checkpoint routinely</strong>, often every few minutes to every few hours depending on run length and save cost, precisely to avoid catastrophic loss from an interruption.</li>
+<li><strong>True bit-for-bit reproducibility across different hardware or software versions is notoriously hard to guarantee</strong>, even with every seed fixed, because of exactly the floating-point rounding-order sensitivity mentioned above.</li>
+<li><strong>Checkpoints are also used for purposes beyond crash recovery</strong>: evaluating the model&#39;s performance at intermediate points, or rolling back to an earlier checkpoint if a later one turns out to have diverged (see <a class="wikilink" href="/deep-learning/debugging-a-training-run/" data-topic="deep-learning/debugging-a-training-run">Debugging a Training Run</a>).</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Checkpointing only the weights, not the optimizer&#39;s state.</strong> Resuming without the optimizer&#39;s internal statistics (such as Adam&#39;s running averages) can behave noticeably differently from an uninterrupted run.</li>
+<li><strong>Assuming a fixed random seed guarantees identical results across different hardware or software versions.</strong> It greatly improves reproducibility but doesn&#39;t always guarantee it exactly, due to non-deterministic parallel floating-point operations.</li>
+<li><strong>Picking a checkpoint interval based on intuition alone.</strong> As the worked example shows, there&#39;s a genuine, calculable trade-off, not just &quot;more checkpoints are always safer.&quot;</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does a checkpoint need to include, beyond just the model's weights, to let training resume properly?</summary>
+The optimizer's internal state and the current step number at minimum; for exact reproducibility, the random-number generator's state too.
+</details>
+
+<details><summary>2. Why isn't checkpointing as frequently as possible always the best choice?</summary>
+Each checkpoint has its own time cost; checkpointing extremely often wastes a large fraction of total training time on saving rather than training.
+</details>
+
+<details><summary>3. Does fixing all random seeds guarantee bit-for-bit identical results across two different training runs?</summary>
+Not always — some parallel floating-point operations can have a non-deterministic rounding order even with identical seeds, which can cause small differences despite careful seeding.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Checkpoint:</strong> a saved snapshot of a model&#39;s weights, optimizer state and training progress.</li>
+<li><strong>Checkpoint interval:</strong> how many training steps elapse between saved checkpoints.</li>
+<li><strong>Reproducibility:</strong> the ability to obtain the same training result given the same starting conditions.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/random-numbers-and-seeds/" data-topic="math/random-numbers-and-seeds">Random Numbers and Seeds</a> · <a class="wikilink" href="/deep-learning/debugging-a-training-run/" data-topic="deep-learning/debugging-a-training-run">Debugging a Training Run</a> · <a class="wikilink" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training">Distributed and Data-Parallel Training</a> · <a class="wikilink" href="/deep-learning/hyperparameter-tuning-for-deep-networks/" data-topic="deep-learning/hyperparameter-tuning-for-deep-networks">Hyperparameter Tuning for Deep Networks</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/checkpointing-and-reproducibility">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/deep-learning-in-practice/"><small>Read next</small><b>Deep Learning in Practice</b><p>The last stretch of the road is judgment: picking an architecture, trusting it, knowing where it breaks, and seeing the whole planet in one project.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/random-numbers-and-seeds/"><b>Random Numbers and Seeds</b><p>Computers cannot produce true randomness by calculation, so they use pseudo-random number generators: deterministic recipes that produce sequences that look random. The seed is the starting value.</p></a><a class="rc-card" href="/deep-learning/debugging-a-training-run/"><b>Debugging a Training Run</b><p>A training run that looks &quot;broken&quot; is usually not a mystery — most failures leave a recognisable signature in the loss curve or the gradient statistics, and reading that signature correctly points…</p></a><a class="rc-card" href="/deep-learning/distributed-and-data-parallel-training/"><b>Distributed and Data-Parallel Training</b><p>One accelerator has a limit to how much data it can process at once.</p></a><a class="rc-card" href="/deep-learning/hyperparameter-tuning-for-deep-networks/"><b>Hyperparameter Tuning for Deep Networks</b><p>Hyperparameter Tuning already covered searching over settings like regularization strength for classic models.</p></a><a class="rc-card" href="/deep-learning/training-at-scale/"><b>Training at Scale</b><p>Training a large network is an engineering problem as much as a mathematical one: it runs on specific hardware, for hours or weeks, and can silently fail in ways a small model never would.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/debugging-a-training-run/">← Previous: Debugging a Training Run</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

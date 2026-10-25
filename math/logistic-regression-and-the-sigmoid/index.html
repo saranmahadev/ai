@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logistic Regression and the Sigmoid — AI Base</title>
+<meta name="description" content="Logistic regression answers yes/no questions with a probability.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/logistic-regression-and-the-sigmoid/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Logistic Regression and the Sigmoid — AI Base">
+<meta property="og:description" content="Logistic regression answers yes/no questions with a probability.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/logistic-regression-and-the-sigmoid/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Logistic Regression and the Sigmoid","item":"https://ai.saranmahadev.in/math/logistic-regression-and-the-sigmoid/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Logistic Regression and the Sigmoid","description":"Logistic regression answers yes/no questions with a probability.","url":"https://ai.saranmahadev.in/math/logistic-regression-and-the-sigmoid/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"With w = 2 and b = −4, where is the boundary?","acceptedAnswer":{"@type":"Answer","text":"x = 2."}},{"@type":"Question","name":"What is σ(0)?","acceptedAnswer":{"@type":"Answer","text":"0.5."}},{"@type":"Question","name":"What is ∂L/∂z for p = 0.9 and y = 0?","acceptedAnswer":{"@type":"Answer","text":"0.9."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Math in AI</p>
+        <h1 class="doc-title">Logistic Regression and the Sigmoid</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1b48x9abg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1b48x9apl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1b48x9abg)"/>
+  <circle cx="223" cy="323" r="220" fill="#68599a" opacity="0.30"/><circle cx="18" cy="373" r="83" fill="#eee9fd" opacity="0.53"/><circle cx="939" cy="362" r="103" fill="#cebff9" opacity="0.22"/><circle cx="84" cy="147" r="105" fill="#cebff9" opacity="0.54"/><circle cx="250" cy="208" r="135" fill="#ddbecb" opacity="0.48"/>
+  <path d="M0,420 L0,306 L30,306 L60,307 L90,311 L120,316 L150,322 L180,329 L210,336 L240,342 L270,346 L300,349 L330,350 L360,348 L390,345 L420,339 L450,333 L480,326 L510,319 L540,314 L570,309 L600,306 L630,306 L660,307 L690,311 L720,316 L750,322 L780,329 L810,336 L840,342 L870,346 L900,349 L930,350 L960,348 L990,345 L1020,339 L1050,333 L1080,326 L1110,319 L1140,314 L1170,309 L1200,306 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,388 L30,386 L60,384 L90,381 L120,379 L150,376 L180,374 L210,371 L240,369 L270,367 L300,365 L330,364 L360,363 L390,362 L420,362 L450,362 L480,363 L510,363 L540,365 L570,366 L600,368 L630,370 L660,372 L690,375 L720,377 L750,380 L780,382 L810,385 L840,387 L870,389 L900,391 L930,392 L960,393 L990,394 L1020,394 L1050,394 L1080,393 L1110,393 L1140,391 L1170,390 L1200,388 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="769" cy="154" rx="226" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(24.7 769 154)"/><ellipse cx="769" cy="154" rx="313" ry="88" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(30.7 769 154)"/>
+  <circle cx="769" cy="154" r="89" fill="url(#c1b48x9apl)"/>
+  <circle cx="684" cy="30" r="17" fill="#ffffff" opacity="0.74"/><circle cx="990" cy="120" r="16" fill="#ffffff" opacity="0.80"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Logistic regression</strong> answers yes/no questions with a probability. It takes a weighted sum of the inputs, exactly like linear regression, and squashes it through the <strong>sigmoid</strong> so the output lies between 0 and 1. It is trained by minimising log loss, and its gradient is strikingly simple.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/functions-ai-loves/" data-topic="math/functions-ai-loves">Functions AI Loves</a>, <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a>, <a class="wikilink" href="/math/derivatives-of-exp-log-and-sigmoid/" data-topic="math/derivatives-of-exp-log-and-sigmoid">Derivatives of Exp, Log and Sigmoid</a> and <a class="wikilink" href="/math/linear-regression-end-to-end/" data-topic="math/linear-regression-end-to-end">Linear Regression End to End</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How likely is this to be a yes?&quot; Will this email be spam, will this student pass, will this customer click? A raw line can predict 1.7 or −0.4; a probability must stay between 0 and 1.</p>
+<h2 id="the-model">The model</h2>
+<pre><code class="language-text">score  z = w·x + b            (a linear function of the inputs)
+p = σ(z) = 1 / (1 + e⁻ᶻ)      probability of the &quot;yes&quot; class
+predict yes if p ≥ 0.5, which is the same as z ≥ 0
+</code></pre>
+<p>The <strong>decision boundary</strong> is where <code>z = 0</code>. With one input <code>x</code>, that is the point <code>x = −b / w</code>. The weight <code>w</code> sets how sharply the probability changes across it.</p>
+<h2 id="training-log-loss-and-its-gradient">Training: log loss and its gradient</h2>
+<p>For a label <code>y ∈ {0, 1}</code> the loss is the cross-entropy of the true label against the prediction:</p>
+<pre><code class="language-text">L = −[ y ln p + (1 − y) ln(1 − p) ]
+</code></pre>
+<p>Combining the chain rule with <code>σ′ = σ(1 − σ)</code> gives a remarkably clean result for the gradient with respect to the score:</p>
+<pre><code class="language-text">∂L/∂z = p − y            and therefore     ∂L/∂w = (p − y)·x,    ∂L/∂b = p − y
+</code></pre>
+<p>The gradient is just &quot;prediction minus truth&quot;, scaled by the input.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>One input, <code>w = 1</code>, <code>b = −3</code>. The boundary is at <code>x = 3</code>.</p>
+<pre><code class="language-text">x = 3:   z = 0    p = 0.5
+x = 5:   z = 2    p = σ(2)  = 0.8808
+x = 1:   z = −2   p = σ(−2) = 0.1192
+</code></pre>
+<p>If the true label at <code>x = 1</code> is <code>y = 1</code> (a yes the model doubted): <code>L = −ln 0.1192 = 2.127</code>. Gradient with respect to the score: <code>p − y = 0.1192 − 1 = −0.881</code>, so the update pushes the score for that example up. If instead <code>y = 0</code>, the loss is <code>−ln(1 − 0.1192) = 0.127</code> (small: the model was right).</p>
+<p>Notice it uses <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a> from the information-theory district, the sigmoid from the algebra district, and the chain rule from calculus.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="boundary-drawer" data-title="Draw the decision boundary"><p class="bench-fallback"><strong>Interactive bench: Draw the decision boundary.</strong> Two classes of points on a line; sliders for the weight and bias draw the sigmoid curve and the decision boundary, showing accuracy and log loss, with a button that trains the model by gradient descent.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move the boundary between the two groups and read the accuracy.</li>
+<li>Increase the weight to sharpen the curve and watch the loss.</li>
+<li>Place the boundary badly and see the loss rise.</li>
+<li>Press &quot;Train&quot; and compare with your best manual setting.</li>
+</ol>
+<p><strong>What you should notice:</strong> accuracy depends only on where the boundary sits, while the loss also rewards confident correct predictions and punishes confident wrong ones.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Binary classifiers</strong> end in a sigmoid.</li>
+<li><strong>Every neuron with a sigmoid</strong> is a tiny logistic regression.</li>
+<li><strong>Log loss</strong> and its gradient <code>p − y</code> recur in nearly all classification.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating the output as a certain answer</strong> rather than a probability.</li>
+<li><strong>Using squared error</strong> for classification (log loss trains better).</li>
+<li><strong>Very confident wrong predictions</strong> that dominate the loss.</li>
+<li><strong>Assuming a linear boundary</strong> can separate any data.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. With w = 2 and b = −4, where is the boundary?</summary>
+x = 2.
+</details>
+
+<details><summary>2. What is σ(0)?</summary>
+0.5.
+</details>
+
+<details><summary>3. What is ∂L/∂z for p = 0.9 and y = 0?</summary>
+0.9.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Logistic regression:</strong> a linear score passed through a sigmoid to give a probability.</li>
+<li><strong>Decision boundary:</strong> where the predicted probability is 0.5.</li>
+<li><strong>Log loss:</strong> the cross-entropy of the true label against the predicted probability.</li>
+<li><strong>Logit:</strong> the score <code>z</code> before the sigmoid.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/functions-ai-loves/" data-topic="math/functions-ai-loves">Functions AI Loves</a> · <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a> · <a class="wikilink" href="/math/derivatives-of-exp-log-and-sigmoid/" data-topic="math/derivatives-of-exp-log-and-sigmoid">Derivatives of Exp, Log and Sigmoid</a> · <a class="wikilink" href="/math/lines-planes-and-circles/" data-topic="math/lines-planes-and-circles">Lines, Planes and Circles</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/logistic-regression-and-the-sigmoid">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/a-forward-pass-by-hand/"><small>Read next</small><b>A Forward Pass by Hand</b><p>A forward pass pushes an input through a network layer by layer to produce a prediction. Each layer is the same recipe: multiply by a weight matrix, add a bias, apply an activation function.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/functions-ai-loves/"><b>Functions AI Loves</b><p>A few specific functions turn up in almost every neural network: the sigmoid, tanh, ReLU, its leaky variant and softplus.</p></a><a class="rc-card" href="/math/cross-entropy/"><b>Cross-Entropy</b><p>Cross-entropy is the average surprise you feel when the world follows distribution p but you predicted with distribution q: H(p, q) = −Σ p log q.</p></a><a class="rc-card" href="/math/derivatives-of-exp-log-and-sigmoid/"><b>Derivatives of Exp, Log and Sigmoid</b><p>Three families of functions carry most of machine learning: the exponential eˣ, the natural logarithm ln x, and the sigmoid σ(x).</p></a><a class="rc-card" href="/math/linear-regression-end-to-end/"><b>Linear Regression End to End</b><p>Linear regression fits a straight line ŷ = m·x + b to data by choosing the slope and intercept that minimise the mean squared error.</p></a><a class="rc-card" href="/math/lines-planes-and-circles/"><b>Lines, Planes and Circles</b><p>A line, a circle and a plane are the basic shapes, and each has a short equation.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/linear-regression-end-to-end/">← Previous: Linear Regression End to End</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

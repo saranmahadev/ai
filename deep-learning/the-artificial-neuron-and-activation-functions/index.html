@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Artificial Neuron and Activation Functions — AI Base</title>
+<meta name="description" content="An artificial neuron is a dot product plus a bias, passed through a non-linear activation function: a = f(w · x + b).">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/the-artificial-neuron-and-activation-functions/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="The Artificial Neuron and Activation Functions — AI Base">
+<meta property="og:description" content="An artificial neuron is a dot product plus a bias, passed through a non-linear activation function: a = f(w · x + b).">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/the-artificial-neuron-and-activation-functions/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"The Artificial Neuron and Activation Functions","item":"https://ai.saranmahadev.in/deep-learning/the-artificial-neuron-and-activation-functions/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Artificial Neuron and Activation Functions","description":"An artificial neuron is a dot product plus a bias, passed through a non-linear activation function: a = f(w · x + b).","url":"https://ai.saranmahadev.in/deep-learning/the-artificial-neuron-and-activation-functions/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does a sigmoid unit stop learning when its input is very large or very negative?","acceptedAnswer":{"@type":"Answer","text":"Its slope approaches zero far from 0, so the gradient flowing back through it is multiplied by almost nothing."}},{"@type":"Question","name":"What is a \"dead\" ReLU unit?","acceptedAnswer":{"@type":"Answer","text":"A unit whose input is always negative, so it always outputs zero and its slope is always zero — it never updates."}},{"@type":"Question","name":"What problem does leaky ReLU fix that plain ReLU has?","acceptedAnswer":{"@type":"Answer","text":"It gives a small, non-zero slope on the negative side, so a unit that is currently negative can still receive a (small) training signal."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Neural Network Foundations</p>
+        <h1 class="doc-title">The Artificial Neuron and Activation Functions</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c173fcirbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c173fcirpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c173fcirbg)"/>
+  <circle cx="319" cy="21" r="176" fill="#ffb6b6" opacity="0.56"/><circle cx="321" cy="298" r="185" fill="#ffb6b6" opacity="0.44"/><circle cx="319" cy="272" r="96" fill="#ffe6e6" opacity="0.56"/><circle cx="433" cy="142" r="187" fill="#8a546c" opacity="0.40"/><circle cx="1095" cy="38" r="157" fill="#ffb89d" opacity="0.42"/>
+  <path d="M0,420 L0,345 L30,347 L60,348 L90,349 L120,350 L150,350 L180,349 L210,348 L240,346 L270,344 L300,342 L330,339 L360,336 L390,332 L420,329 L450,326 L480,322 L510,319 L540,316 L570,313 L600,311 L630,309 L660,307 L690,306 L720,306 L750,306 L780,306 L810,307 L840,309 L870,311 L900,314 L930,316 L960,320 L990,323 L1020,326 L1050,330 L1080,333 L1110,336 L1140,339 L1170,342 L1200,345 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,393 L90,391 L120,390 L150,388 L180,386 L210,384 L240,381 L270,379 L300,376 L330,374 L360,372 L390,369 L420,367 L450,366 L480,364 L510,363 L540,362 L570,362 L600,362 L630,363 L660,363 L690,365 L720,366 L750,368 L780,370 L810,372 L840,375 L870,377 L900,380 L930,382 L960,384 L990,387 L1020,389 L1050,390 L1080,392 L1110,393 L1140,394 L1170,394 L1200,394 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="669" cy="267" rx="241" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-6.1 669 267)"/><ellipse cx="669" cy="267" rx="333" ry="93" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-0.1 669 267)"/>
+  <circle cx="669" cy="267" r="95" fill="url(#c173fcirpl)"/>
+  <circle cx="518" cy="403" r="19" fill="#ffffff" opacity="0.71"/><circle cx="510" cy="371" r="13" fill="#ffffff" opacity="0.89"/><circle cx="542" cy="141" r="14" fill="#ffffff" opacity="0.72"/><circle cx="988" cy="309" r="18" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An <strong>artificial neuron</strong> is a dot product plus a bias, passed through a non-linear <strong>activation function</strong>: <code>a = f(w · x + b)</code>. The dot product and bias are exactly the score a <a class="wikilink" href="/machine-learning/the-perceptron/" data-topic="machine-learning/the-perceptron">perceptron</a> or <a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">logistic regression</a> computes; what varies across architectures is the choice of <code>f</code>. That choice decides how easily a deep stack of these neurons trains at all.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/from-linear-models-to-neural-networks/" data-topic="deep-learning/from-linear-models-to-neural-networks">From Linear Models to Neural Networks</a> and <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Given the score <code>z = w · x + b</code>, what should the neuron actually output?&quot; <a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">Sigmoid</a> squashes <code>z</code> into a probability-like <code>(0, 1)</code> value, but it is only one of several choices, and the choice has large, practical consequences once neurons are stacked many layers deep.</p>
+<h2 id="intuition-a-kink-and-how-sharp-it-is">Intuition: a kink, and how sharp it is</h2>
+<p>Every activation function does the same job — add a kink so stacking is not pointless — but the kinks look very different. Sigmoid and tanh squash every input into a narrow band and go almost flat away from zero. ReLU (<code>max(0, z)</code>) is flat on one side and a perfect, unchanging slope of 1 on the other — it never squashes the positive side at all. Leaky ReLU and GELU are small fixes to ReLU&#39;s two weaknesses: a completely dead negative side, and a sharp corner at zero.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">sigmoid(z)      = 1 / (1 + e^-z)                      range (0, 1)
+tanh(z)         = (e^z − e^-z) / (e^z + e^-z)          range (−1, 1)
+ReLU(z)         = max(0, z)                            range [0, ∞)
+leaky ReLU(z)   = z if z &gt; 0 else 0.01·z                range (−∞, ∞)
+GELU(z)         ≈ z · Φ(z)   (a smoothed ReLU using the normal CDF Φ)
+</code></pre>
+<p>A unit is <strong>saturated</strong> at an input where its slope is close to zero — sigmoid and tanh saturate for any <code>z</code> far from 0; ReLU saturates (exactly to zero slope) for every negative <code>z</code>, but never for positive <code>z</code>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Compare sigmoid and ReLU at several inputs, with the slope <code>f&#39;(z)</code> measured numerically:</p>
+<pre><code class="language-text">z       sigmoid(z)   sigmoid&#39;(z)    ReLU(z)   ReLU&#39;(z)
+-4      0.0180       0.0177         0.0000    0.0000
+-1      0.2689       0.1966         0.0000    0.0000
+ 0      0.5000       0.2500         0.0000    0.5000 (undefined point, taken as 0.5)
+ 1      0.7311       0.1966         1.0000    1.0000
+ 2      0.8808       0.1050         2.0000    1.0000
+ 4      0.9820       0.0177         4.0000    1.0000
+</code></pre>
+<p>At <code>z = 4</code>, sigmoid&#39;s slope has fallen to 0.0177 — training signal flowing back through this unit is multiplied by that tiny number — while ReLU&#39;s slope is still a full 1.0000. Stack many sigmoid units in a row and that shrinkage compounds; this is the seed of <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a>, and one reason ReLU became the default for deep networks.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="activation-zoo" data-title="Activation functions and their slopes"><p class="bench-fallback"><strong>Interactive bench: Activation functions and their slopes.</strong> Pick an activation function and an input z; see its curve, the tangent line at z (the slope used when training), and the function and slope values printed out.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set <code>z</code> to a large positive value under sigmoid and watch the tangent line flatten.</li>
+<li>Switch to ReLU at the same <code>z</code> and compare the slope.</li>
+<li>Move <code>z</code> negative under ReLU, then under leaky ReLU, and compare what happens to the slope.</li>
+<li>Try GELU near <code>z = 0</code> and compare its corner to ReLU&#39;s.</li>
+</ol>
+<p><strong>What you should notice:</strong> sigmoid and tanh&#39;s slopes shrink toward zero the further <code>z</code> is from 0 in either direction; ReLU&#39;s slope is either exactly 0 or exactly 1, with a sharp corner at <code>z = 0</code> that leaky ReLU and GELU both soften.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>ReLU and its variants</strong> are the default hidden-layer activation in almost every modern deep network.</li>
+<li><strong>Sigmoid</strong> survives at output layers for binary probabilities, and inside gates (see <a class="wikilink" href="/deep-learning/long-short-term-memory/" data-topic="deep-learning/long-short-term-memory">Long Short-Term Memory</a>).</li>
+<li><strong>GELU</strong> is the default in many transformer-based architectures.</li>
+<li><strong>tanh</strong> appears inside vanilla <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a> and LSTM candidate values, where a zero-centred output helps.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>&quot;Dead&quot; ReLU units.</strong> A unit whose input is always negative outputs zero forever and never gets a training signal; leaky ReLU and GELU exist partly to avoid this.</li>
+<li><strong>Using sigmoid or tanh throughout a deep network.</strong> Both saturate easily, which is exactly the mechanism behind vanishing gradients.</li>
+<li><strong>Forgetting the kink is the whole point.</strong> An activation function that is itself linear (like <code>f(z) = 2z</code>) gives none of the benefit described in <a class="wikilink" href="/deep-learning/from-linear-models-to-neural-networks/" data-topic="deep-learning/from-linear-models-to-neural-networks">From Linear Models to Neural Networks</a>.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does a sigmoid unit stop learning when its input is very large or very negative?</summary>
+Its slope approaches zero far from 0, so the gradient flowing back through it is multiplied by almost nothing.
+</details>
+
+<details><summary>2. What is a "dead" ReLU unit?</summary>
+A unit whose input is always negative, so it always outputs zero and its slope is always zero — it never updates.
+</details>
+
+<details><summary>3. What problem does leaky ReLU fix that plain ReLU has?</summary>
+It gives a small, non-zero slope on the negative side, so a unit that is currently negative can still receive a (small) training signal.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Activation function:</strong> the non-linear function applied to a neuron&#39;s weighted sum.</li>
+<li><strong>Saturation:</strong> a region of an activation function where its slope is close to zero.</li>
+<li><strong>ReLU:</strong> <code>max(0, z)</code>, the most common hidden-layer activation in deep networks.</li>
+<li><strong>Dead unit:</strong> a ReLU unit whose input is always negative, so it never activates or updates.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/from-linear-models-to-neural-networks/" data-topic="deep-learning/from-linear-models-to-neural-networks">From Linear Models to Neural Networks</a> · <a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">Logistic Regression and the Sigmoid</a> · <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> · <a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/the-artificial-neuron-and-activation-functions">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/the-multilayer-feedforward-network/"><small>Read next</small><b>The Multilayer Feedforward Network</b><p>A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/the-perceptron/"><b>The Perceptron</b><p>The perceptron is the oldest learning machine: compute a weighted sum of the inputs, answer &quot;yes&quot; if it is positive and &quot;no&quot; otherwise, and after every mistake nudge the weights so that mistake is…</p></a><a class="rc-card" href="/math/logistic-regression-and-the-sigmoid/"><b>Logistic Regression and the Sigmoid</b><p>Logistic regression answers yes/no questions with a probability.</p></a><a class="rc-card" href="/deep-learning/from-linear-models-to-neural-networks/"><b>From Linear Models to Neural Networks</b><p>A single linear unit — a perceptron or a logistic regression — can only cut its input space with one straight line (or flat plane).</p></a><a class="rc-card" href="/math/dot-product/"><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/long-short-term-memory/"><b>Long Short-Term Memory</b><p>A plain RNN&#39;s hidden state is rewritten from scratch at every step — nothing is deliberately preserved.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/from-linear-models-to-neural-networks/">← Previous: From Linear Models to Neural Networks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

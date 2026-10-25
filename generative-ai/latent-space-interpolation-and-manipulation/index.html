@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Latent Space Interpolation and Manipulation — AI Base</title>
+<meta name="description" content="Every conditioning technique so far steers generation toward something.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/latent-space-interpolation-and-manipulation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Latent Space Interpolation and Manipulation — AI Base">
+<meta property="og:description" content="Every conditioning technique so far steers generation toward something.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/latent-space-interpolation-and-manipulation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Latent Space Interpolation and Manipulation","item":"https://ai.saranmahadev.in/generative-ai/latent-space-interpolation-and-manipulation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Latent Space Interpolation and Manipulation","description":"Every conditioning technique so far steers generation toward something.","url":"https://ai.saranmahadev.in/generative-ai/latent-space-interpolation-and-manipulation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key geometric difference between lerp and slerp?","acceptedAnswer":{"@type":"Answer","text":"Lerp follows a straight line between two points; slerp follows the arc between them along a circle (or sphere) of roughly constant radius."}},{"@type":"Question","name":"In the worked example, what happened to each method's norm at the midpoint?","acceptedAnswer":{"@type":"Answer","text":"Lerp's norm dropped to about 0.707, noticeably shorter than either endpoint's length of 1.000; slerp's norm stayed at exactly 1.000 throughout."}},{"@type":"Question","name":"Why might a shrunken-norm latent point decode into a worse sample?","acceptedAnswer":{"@type":"Answer","text":"Because many generative decoders are built around latents drawn from a distribution (like a standard Gaussian) where most of the probability mass sits at a fairly consistent distance from the origin — a point much closer to the origin than that is an atypical input the decoder wasn't well-trained on."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Conditioning and Guidance</p>
+        <h1 class="doc-title">Latent Space Interpolation and Manipulation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c797v1vbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c797v1vpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c797v1vbg)"/>
+  <circle cx="491" cy="195" r="228" fill="#ffe9f4" opacity="0.32"/><circle cx="1089" cy="373" r="118" fill="#ffbfe0" opacity="0.36"/><circle cx="1119" cy="286" r="153" fill="#ffe9f4" opacity="0.59"/><circle cx="1015" cy="154" r="126" fill="#ffbfe0" opacity="0.35"/><circle cx="347" cy="178" r="214" fill="#ffbeba" opacity="0.37"/>
+  <path d="M0,420 L0,350 L30,348 L60,344 L90,339 L120,332 L150,326 L180,319 L210,313 L240,309 L270,306 L300,306 L330,307 L360,311 L390,316 L420,323 L450,330 L480,336 L510,342 L540,346 L570,349 L600,350 L630,348 L660,344 L690,339 L720,332 L750,326 L780,319 L810,313 L840,309 L870,306 L900,306 L930,307 L960,311 L990,316 L1020,323 L1050,330 L1080,336 L1110,342 L1140,346 L1170,349 L1200,350 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,394 L90,393 L120,392 L150,390 L180,389 L210,387 L240,384 L270,382 L300,380 L330,377 L360,375 L390,372 L420,370 L450,368 L480,366 L510,365 L540,363 L570,363 L600,362 L630,362 L660,362 L690,363 L720,364 L750,366 L780,367 L810,369 L840,372 L870,374 L900,376 L930,379 L960,381 L990,384 L1020,386 L1050,388 L1080,390 L1110,391 L1140,393 L1170,393 L1200,394 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="782" cy="157" rx="264" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.9 782 157)"/><ellipse cx="782" cy="157" rx="365" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.1 782 157)"/>
+  <circle cx="782" cy="157" r="104" fill="url(#c797v1vpl)"/>
+  <circle cx="1149" cy="103" r="15" fill="#ffffff" opacity="0.77"/><circle cx="1065" cy="87" r="15" fill="#ffffff" opacity="0.85"/><circle cx="386" cy="185" r="10" fill="#ffffff" opacity="0.87"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every conditioning technique so far steers generation toward something. This note is about moving <em>between</em> two already-generated results, smoothly — and about why the obvious way to do that (a straight line) isn&#39;t usually the right one.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">Variational Autoencoders</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you smoothly morph between two generated outputs, through their latent representations?&quot; <strong>Linear interpolation (lerp)</strong> draws a straight line between two latent vectors. <strong>Spherical interpolation (slerp)</strong> instead follows the arc between them on the sphere of a given radius — and for latents whose <em>norm</em> matters to how a decoder interprets them (common when latents are drawn from something like a Gaussian, where most of the probability mass sits at a fairly consistent distance from the origin), slerp keeps that norm roughly constant along the path, while lerp doesn&#39;t.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Walking in a straight line between two points on the surface of a globe takes you <em>through</em> the globe, not along it — the direct path dips below the surface before rising back up to the destination. Walking the great-circle arc instead stays on the surface the whole way. Latent interpolation has the same geometry problem: a straight line between two latent vectors of similar length passes through points <em>closer to the origin</em> than either endpoint, which — for many generative decoders — corresponds to a point that doesn&#39;t look like a confident sample of anything.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">lerp(a, b, t)  = (1−t)·a + t·b                                    t ∈ [0, 1]
+
+slerp(a, b, t) = sin((1−t)θ)/sin(θ) · a  +  sin(tθ)/sin(θ) · b
+  θ = angle between a and b
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two unit-length latent vectors 90° apart, <code>a = (1, 0)</code> and <code>b = (0, 1)</code>:</p>
+<pre><code class="language-text">t = 0.00:  lerp (1.000, 0.000) |1.000|    slerp (1.000, 0.000) |1.000|
+t = 0.25:  lerp (0.750, 0.250) |0.791|    slerp (0.924, 0.383) |1.000|
+t = 0.50:  lerp (0.500, 0.500) |0.707|    slerp (0.707, 0.707) |1.000|
+t = 0.75:  lerp (0.250, 0.750) |0.791|    slerp (0.383, 0.924) |1.000|
+t = 1.00:  lerp (0.000, 1.000) |1.000|    slerp (0.000, 1.000) |1.000|
+</code></pre>
+<p>At the midpoint, linear interpolation&#39;s norm has shrunk to 0.707 — about 71% of either endpoint&#39;s length — while spherical interpolation&#39;s norm stays exactly 1.000 the entire way. Both paths start and end at exactly the same two points; only what happens <em>between</em> them differs.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="latent-interpolation" data-title="Interpolating between two latents"><p class="bench-fallback"><strong>Interactive bench: Interpolating between two latents.</strong> Slide between two latent vectors using linear and spherical interpolation and compare their paths and norms.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move t from 0 to 1 and watch both paths trace out between the same two endpoints.</li>
+<li>Watch the lerp path&#39;s norm dip in the middle while slerp&#39;s stays constant.</li>
+<li>Compare the two curves drawn on the canvas — one is a straight line, the other follows the circle.</li>
+</ol>
+<p><strong>What you should notice:</strong> the two interpolations agree exactly at the endpoints (t=0 and t=1) and diverge everywhere in between, with lerp cutting the &quot;inside&quot; of the arc that slerp follows along its edge.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>GAN and diffusion-model latent-space exploration tools almost always use slerp</strong>, not lerp, specifically to avoid passing through lower-norm regions that tend to decode into blurrier or less coherent intermediate samples.</li>
+<li><strong><a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">VAE</a> latents are typically drawn to resemble a standard Gaussian</strong>, where almost all the probability mass sits near one particular distance from the origin — exactly the setting where norm-preserving interpolation matters.</li>
+<li><strong>&quot;Latent space walks&quot;</strong> — a common way to visualize what a generative model has learned — are built by interpolating (usually spherically) between sampled latents and decoding each intermediate point.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming lerp and slerp always differ meaningfully.</strong> When two latents are nearly identical (θ close to 0) or when the decoder doesn&#39;t care about latent norm, the two methods barely differ in practice.</li>
+<li><strong>Forgetting slerp is undefined (or numerically unstable) at θ = 0.</strong> When the two latents point in exactly the same direction, there&#39;s no unique arc between them — most implementations fall back to lerp in that case.</li>
+<li><strong>Interpolating in the wrong space.</strong> Interpolating raw pixel values between two images produces a ghostly double-exposure, not a smooth morph — the whole point of latent interpolation is that the <em>latent</em> space, not pixel space, is where intermediate points decode into plausible content.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key geometric difference between lerp and slerp?</summary>
+Lerp follows a straight line between two points; slerp follows the arc between them along a circle (or sphere) of roughly constant radius.
+</details>
+
+<details><summary>2. In the worked example, what happened to each method's norm at the midpoint?</summary>
+Lerp's norm dropped to about 0.707, noticeably shorter than either endpoint's length of 1.000; slerp's norm stayed at exactly 1.000 throughout.
+</details>
+
+<details><summary>3. Why might a shrunken-norm latent point decode into a worse sample?</summary>
+Because many generative decoders are built around latents drawn from a distribution (like a standard Gaussian) where most of the probability mass sits at a fairly consistent distance from the origin — a point much closer to the origin than that is an atypical input the decoder wasn't well-trained on.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Linear interpolation (lerp):</strong> a straight-line blend between two points, parameterized by t ∈ [0, 1].</li>
+<li><strong>Spherical interpolation (slerp):</strong> an interpolation that follows the arc between two vectors, keeping their norm roughly constant along the path.</li>
+<li><strong>Latent space walk:</strong> a sequence of decoded outputs along an interpolated path between two (or more) latent points.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">Variational Autoencoders</a> · <a class="wikilink" href="/generative-ai/controlnet-style-structural-conditioning/" data-topic="generative-ai/controlnet-style-structural-conditioning">ControlNet-Style Structural Conditioning</a> · <a class="wikilink" href="/generative-ai/any-to-any-generative-models/" data-topic="generative-ai/any-to-any-generative-models">Any-to-Any Generative Models</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/latent-space-interpolation-and-manipulation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/image-generation-and-editing/"><small>Read next</small><b>Image Generation and Editing</b><p>With decoding and conditioning covered as general mechanisms, this district applies them to the modality generative AI is best known for: pictures — generating them from text, and then editing…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/variational-autoencoders/"><b>Variational Autoencoders</b><p>A plain autoencoder&#39;s bottleneck is one fixed vector per input — useful for compression, but there&#39;s no obvious way to &quot;make up&quot; a new, realistic vector to decode into something new.</p></a><a class="rc-card" href="/generative-ai/controlnet-style-structural-conditioning/"><b>ControlNet-Style Structural Conditioning</b><p>Guidance and cross-attention both steer generation toward a concept — a class, a prompt — expressed as a direction or an attended-to embedding. Neither one forces an exact structure.</p></a><a class="rc-card" href="/generative-ai/any-to-any-generative-models/"><b>Any-to-Any Generative Models</b><p>a unified vocabulary lets text and image tokens share one generation mechanism.</p></a><a class="rc-card" href="/generative-ai/conditioning-and-guidance/"><b>Conditioning and Guidance</b><p>Decoding controls how output is assembled token by token; this district covers a different lever — how a generative model&#39;s output is pushed toward a specific condition, image, or structure during…</p></a><a class="rc-card" href="/generative-ai/image-to-image-translation-and-style-transfer/"><b>Image-to-Image Translation and Style Transfer</b><p>Structural conditioning keeps a generated output faithful to an exact structure; this note covers a different kind of faithfulness — matching an image&#39;s statistics rather than its exact values,…</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/controlnet-style-structural-conditioning/">← Previous: ControlNet-Style Structural Conditioning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

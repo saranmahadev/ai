@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deep Learning Across Modalities — AI Base</title>
+<meta name="description" content="Vision, speech and language look like completely different fields from the outside — but underneath, the same handful of architectural ideas (convolution, recurrence, attention, embeddings) keep…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/deep-learning-across-modalities/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Deep Learning Across Modalities — AI Base">
+<meta property="og:description" content="Vision, speech and language look like completely different fields from the outside — but underneath, the same handful of architectural ideas (convolution, recurrence, attention, embeddings) keep…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/deep-learning-across-modalities/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Deep Learning Across Modalities","item":"https://ai.saranmahadev.in/deep-learning/deep-learning-across-modalities/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Deep Learning Across Modalities","description":"Vision, speech and language look like completely different fields from the outside — but underneath, the same handful of architectural ideas (convolution, recurrence, attention, embeddings) keep…","url":"https://ai.saranmahadev.in/deep-learning/deep-learning-across-modalities/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the key difference in how convolution is applied to vision versus audio?","acceptedAnswer":{"@type":"Answer","text":"Mostly just the shape of the grid the filter slides over — pixels for vision, a spectrogram's time-frequency grid (or the raw waveform) for audio; the convolution operation itself is unchanged."}},{"@type":"Question","name":"Does attention's formula need to change depending on whether it's relating image patches, audio frames, or text tokens?","acceptedAnswer":{"@type":"Answer","text":"No — the computation is identical in all three cases; only what the underlying vectors represent differs."}},{"@type":"Question","name":"What does a genuinely multimodal model (handling two modalities together) typically need, beyond two separate single-modality models?","acceptedAnswer":{"@type":"Answer","text":"A way of bringing both modalities' representations into a shared space, so they can be meaningfully related to each other, rather than simply processing each modality independently."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Deep Learning in Practice</p>
+        <h1 class="doc-title">Deep Learning Across Modalities</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1w5xs2vbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1w5xs2vpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1w5xs2vbg)"/>
+  <circle cx="262" cy="20" r="131" fill="#ffb89d" opacity="0.50"/><circle cx="692" cy="109" r="173" fill="#ffb89d" opacity="0.30"/><circle cx="1169" cy="277" r="74" fill="#ffe6e6" opacity="0.37"/><circle cx="829" cy="279" r="79" fill="#ffb6b6" opacity="0.38"/><circle cx="39" cy="44" r="120" fill="#8a546c" opacity="0.35"/><circle cx="431" cy="101" r="131" fill="#ffb89d" opacity="0.56"/>
+  <path d="M0,420 L0,306 L30,306 L60,306 L90,307 L120,308 L150,309 L180,312 L210,314 L240,317 L270,320 L300,324 L330,327 L360,330 L390,334 L420,337 L450,340 L480,343 L510,345 L540,347 L570,348 L600,349 L630,350 L660,349 L690,349 L720,347 L750,346 L780,344 L810,341 L840,338 L870,335 L900,332 L930,328 L960,325 L990,321 L1020,318 L1050,315 L1080,312 L1110,310 L1140,308 L1170,307 L1200,306 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,362 L90,363 L120,364 L150,366 L180,368 L210,370 L240,372 L270,374 L300,377 L330,379 L360,382 L390,384 L420,386 L450,388 L480,390 L510,392 L540,393 L570,394 L600,394 L630,394 L660,394 L690,393 L720,392 L750,390 L780,388 L810,386 L840,384 L870,382 L900,379 L930,377 L960,374 L990,372 L1020,370 L1050,368 L1080,366 L1110,364 L1140,363 L1170,362 L1200,362 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="896" cy="177" rx="215" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(8.2 896 177)"/><ellipse cx="896" cy="177" rx="297" ry="83" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(14.2 896 177)"/>
+  <circle cx="896" cy="177" r="84" fill="url(#c1w5xs2vpl)"/>
+  <circle cx="943" cy="279" r="15" fill="#ffffff" opacity="0.63"/><circle cx="694" cy="69" r="14" fill="#ffffff" opacity="0.67"/><circle cx="563" cy="136" r="8" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Vision, speech and language look like completely different fields from the outside — but underneath, the same handful of architectural ideas (convolution, recurrence, attention, embeddings) keep reappearing, each one adapted to whatever shape that modality&#39;s data happens to take.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> and <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Do vision, speech and language each need their own, entirely separate set of deep learning ideas?&quot; Not really — the same core building blocks recur across all of them; what differs is how the raw data gets turned into the grid, sequence, or set of vectors those building blocks expect.</p>
+<h2 id="intuition-the-same-tools-a-different-shaped-material-each-time">Intuition: the same tools, a different-shaped material each time</h2>
+<p>A convolution doesn&#39;t care whether the grid it&#39;s sliding over represents pixel brightness or a spectrogram&#39;s time-and-frequency intensity — it just needs <em>some</em> grid. Attention doesn&#39;t care whether the sequence of vectors it&#39;s relating to each other represents words, audio frames, or image patches — it just needs a sequence of vectors to compare. Adapting an idea to a new modality is mostly about finding the right way to turn that modality&#39;s raw data into the shape (grid, sequence, or set) the architecture already knows how to use.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">modality         raw data              typical &quot;shape&quot; used by the model
+vision            pixels                a 2D grid (an image, read by convolutions)
+speech/audio      waveform              a spectrogram (2D: time × frequency), or a 1D sequence of audio frames
+text/language     characters or words   a 1D sequence of token embeddings
+
+once data is a sequence of vectors, attention applies identically regardless of what those
+vectors originally represented
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The exact same architectural idea, applied to three modalities:</p>
+<pre><code class="language-text">convolution:
+  vision:   slides a small 2D filter over an image&#39;s pixel grid
+  audio:    slides a small 2D filter over a spectrogram&#39;s time-frequency grid
+            (or a 1D filter directly over the raw waveform)
+
+attention:
+  vision:   relates patches of an image to each other (as in vision transformers)
+  audio:    relates frames of an audio sequence to each other
+  language: relates tokens (words or subwords) of a sentence to each other
+            — the attention computation itself is identical in all three cases,
+            only what the vectors represent differs
+</code></pre>
+<p>The attention mechanism&#39;s formula doesn&#39;t change at all between these three uses — only the meaning of what&#39;s being compared does.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="modality-map" data-title="The same idea, a different modality each time"><p class="bench-fallback"><strong>Interactive bench: The same idea, a different modality each time.</strong> Pick an architectural idea (convolution, attention) and a modality (vision, audio, language) and see how that idea is adapted — what raw data becomes what shape before the idea applies.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare how convolution is applied to vision versus audio and note what changed (the data&#39;s shape) and what didn&#39;t (the operation itself).</li>
+<li>Compare attention across all three modalities and notice the formula never changes.</li>
+<li>Think about what a &quot;multimodal&quot; model (handling two of these at once) needs to bridge between them.</li>
+</ol>
+<p><strong>What you should notice:</strong> adapting a deep learning idea to a new modality is almost entirely about finding the right representation (grid? sequence? what resolution?) — the architectural idea itself usually transfers with little or no change.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Vision transformers</strong> apply attention (originally developed for language) to images, by splitting an image into patches and treating each patch like a &quot;word&quot; in a sequence.</li>
+<li><strong>Speech recognition and audio generation models</strong> borrow heavily from both convolutional and sequence-modelling ideas developed first for vision and language respectively.</li>
+<li><strong>Multimodal models</strong> — handling images and text together, as in CLIP-style architectures (see <a class="wikilink" href="/deep-learning/contrastive-learning/" data-topic="deep-learning/contrastive-learning">Contrastive Learning</a>) — are an increasingly central direction, and are the natural bridge toward the Transformers, Generative AI and LLMs planets ahead on this road.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming each modality needs a fundamentally different theory.</strong> Most of deep learning&#39;s core ideas (convolution, attention, embeddings, normalization) are modality-agnostic; what&#39;s modality-specific is usually just the data representation.</li>
+<li><strong>Underestimating how much representation choice matters.</strong> Whether audio is represented as a raw waveform or a spectrogram, for instance, can matter as much as the architecture applied afterward.</li>
+<li><strong>Treating &quot;multimodal&quot; as simply running two separate models side by side.</strong> Genuinely combining modalities (as in contrastive vision-language training) usually requires the two modalities&#39; representations to be brought into a shared space, not just processed independently.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the key difference in how convolution is applied to vision versus audio?</summary>
+Mostly just the shape of the grid the filter slides over — pixels for vision, a spectrogram's time-frequency grid (or the raw waveform) for audio; the convolution operation itself is unchanged.
+</details>
+
+<details><summary>2. Does attention's formula need to change depending on whether it's relating image patches, audio frames, or text tokens?</summary>
+No — the computation is identical in all three cases; only what the underlying vectors represent differs.
+</details>
+
+<details><summary>3. What does a genuinely multimodal model (handling two modalities together) typically need, beyond two separate single-modality models?</summary>
+A way of bringing both modalities' representations into a shared space, so they can be meaningfully related to each other, rather than simply processing each modality independently.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Modality:</strong> a kind of data (vision, audio, language, and others), each with its own typical raw representation.</li>
+<li><strong>Multimodal model:</strong> a model that combines information from more than one modality.</li>
+<li><strong>Vision transformer:</strong> an architecture applying attention to image patches, adapting an idea originally developed for language.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> · <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a> · <a class="wikilink" href="/deep-learning/contrastive-learning/" data-topic="deep-learning/contrastive-learning">Contrastive Learning</a> · <a class="wikilink" href="/deep-learning/capstone-designing-a-deep-learning-system-end-to-end/" data-topic="deep-learning/capstone-designing-a-deep-learning-system-end-to-end">Capstone: Designing a Deep Learning System End to End</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/deep-learning-across-modalities">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/ethics-and-safety-of-deep-systems/"><small>Read next</small><b>Ethics and Safety of Deep Systems</b><p>Where AI Goes Wrong and Fairness Metrics cover risks shared across machine learning generally.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/"><b>CNN Architectures: From LeNet to ResNet</b><p>Convolutional architectures did not arrive all at once.</p></a><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/deep-learning/contrastive-learning/"><b>Contrastive Learning</b><p>Self-Supervised Learning can invent a pretext task besides &quot;fill in the missing piece.&quot; Contrastive learning instead asks: given an anchor and several candidates, which one is really just another…</p></a><a class="rc-card" href="/deep-learning/capstone-designing-a-deep-learning-system-end-to-end/"><b>Capstone: Designing a Deep Learning System End to End</b><p>This capstone walks one project through every stage this planet covered: choosing an architecture, initializing and training it soundly, regularising it, checking it honestly, and shrinking it for…</p></a><a class="rc-card" href="/deep-learning/deep-learning-in-practice/"><b>Deep Learning in Practice</b><p>The last stretch of the road is judgment: picking an architecture, trusting it, knowing where it breaks, and seeing the whole planet in one project.</p></a><a class="rc-card" href="/deep-learning/choosing-an-architecture-for-a-problem/"><b>Choosing an Architecture for a Problem</b><p>Every architecture in this planet was built to exploit some specific structure in its data: convolution exploits a grid, recurrence and attention exploit a sequence, graph networks exploit…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/scaling-laws-and-model-capacity/">← Previous: Scaling Laws and Model Capacity</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

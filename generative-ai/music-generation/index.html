@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Music Generation — AI Base</title>
+<meta name="description" content="Speech has to be intelligible; music, rather famously, has to sound right in a way that&#39;s much harder to pin down — but at least one piece of that is concrete and checkable: whether the notes…">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/music-generation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Music Generation — AI Base">
+<meta property="og:description" content="Speech has to be intelligible; music, rather famously, has to sound right in a way that&#39;s much harder to pin down — but at least one piece of that is concrete and checkable: whether the notes…">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/music-generation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Music Generation","item":"https://ai.saranmahadev.in/generative-ai/music-generation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Music Generation","description":"Speech has to be intelligible; music, rather famously, has to sound right in a way that's much harder to pin down — but at least one piece of that is concrete and checkable: whether the notes…","url":"https://ai.saranmahadev.in/generative-ai/music-generation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's being masked in scale-constrained melody generation, and what stays unmasked?","acceptedAnswer":{"@type":"Answer","text":"The available next notes are masked down to only those belonging to the chosen scale; the underlying preference for which of the remaining notes to pick (here, favoring small melodic steps) is unchanged."}},{"@type":"Question","name":"In the worked example, which notes appeared in the unconstrained melody that the scale mask would have forbidden?","acceptedAnswer":{"@type":"Answer","text":"D#, C#, and D# again — three notes that fall outside the C major scale."}},{"@type":"Question","name":"Why is this the same underlying technique as grammar-masked arithmetic generation?","acceptedAnswer":{"@type":"Answer","text":"Both work by setting the logits of disallowed options to −∞ before sampling, guaranteeing the output can never include anything outside the allowed set — only what counts as \"allowed\" differs between the two domains."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Audio and Speech Generation</p>
+        <h1 class="doc-title">Music Generation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1lzmz96bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c1lzmz96pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1lzmz96bg)"/>
+  <circle cx="871" cy="43" r="92" fill="#8a5989" opacity="0.60"/><circle cx="1079" cy="411" r="172" fill="#ffbeba" opacity="0.28"/><circle cx="278" cy="377" r="192" fill="#ffe9f4" opacity="0.29"/><circle cx="446" cy="289" r="213" fill="#ffbeba" opacity="0.50"/><circle cx="162" cy="343" r="148" fill="#ffbeba" opacity="0.30"/>
+  <path d="M0,420 L0,346 L30,342 L60,338 L90,333 L120,328 L150,323 L180,318 L210,313 L240,310 L270,307 L300,306 L330,306 L360,307 L390,309 L420,312 L450,316 L480,321 L510,326 L540,331 L570,336 L600,340 L630,344 L660,347 L690,349 L720,350 L750,349 L780,347 L810,344 L840,341 L870,336 L900,331 L930,326 L960,321 L990,316 L1020,312 L1050,309 L1080,307 L1110,306 L1140,306 L1170,307 L1200,310 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,382 L30,386 L60,390 L90,393 L120,394 L150,394 L180,392 L210,388 L240,384 L270,379 L300,374 L330,370 L360,366 L390,363 L420,362 L450,362 L480,364 L510,368 L540,372 L570,377 L600,382 L630,386 L660,390 L690,393 L720,394 L750,394 L780,392 L810,388 L840,384 L870,379 L900,374 L930,370 L960,366 L990,363 L1020,362 L1050,362 L1080,364 L1110,368 L1140,372 L1170,377 L1200,382 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="941" cy="235" rx="232" ry="65" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-20.7 941 235)"/><ellipse cx="941" cy="235" rx="321" ry="90" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-14.7 941 235)"/>
+  <circle cx="941" cy="235" r="91" fill="url(#c1lzmz96pl)"/>
+  <circle cx="630" cy="172" r="19" fill="#ffffff" opacity="0.71"/><circle cx="859" cy="342" r="7" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Speech has to be intelligible; music, rather famously, has to sound <em>right</em> in a way that&#39;s much harder to pin down — but at least one piece of that is concrete and checkable: whether the notes played actually belong to the key the piece is in.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/constrained-and-structured-generation/" data-topic="generative-ai/constrained-and-structured-generation">Constrained and Structured Generation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you generate a melody that stays in a given musical key?&quot; The same <a class="wikilink" href="/generative-ai/constrained-and-structured-generation/" data-topic="generative-ai/constrained-and-structured-generation">grammar masking</a> used to force valid arithmetic can force valid <em>scale membership</em>: at every step, mask out every note that doesn&#39;t belong to the chosen scale before sampling the next one, exactly the way an invalid arithmetic token was masked out earlier on this planet. The underlying note-to-note preferences (a toy model favoring small, stepwise melodic motion) stay exactly the same — only which notes are <em>available</em> to express that preference over changes.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A jazz musician improvising over a chord progression isn&#39;t choosing from all twelve notes with equal freedom — they&#39;re choosing from whichever subset fits the current harmony, and the <em>feel</em> of the solo comes from how they move within that restricted set. Masking a generative model&#39;s output to a musical scale is the same restriction: it doesn&#39;t change what the model finds melodically interesting (stepwise motion, in this toy setup), it changes which notes count as valid choices in the first place.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">12 chromatic notes, indices 0-11 (C, C#, D, D#, E, F, F#, G, G#, A, A#, B)
+C major scale = {0, 2, 4, 5, 7, 9, 11}        (7 of the 12 notes)
+
+toy melodic preference: logit(next | prev) = −0.5 · |next − prev|
+  (favors notes close in pitch to the previous one)
+
+scale-constrained generation: mask out every note not in the scale,
+  exactly as in grammar-masked decoding, then sample as usual
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Generating a 10-note melody from the same starting note and the same stepwise-motion preference, with and without a C-major scale mask:</p>
+<pre><code class="language-text">unconstrained:  C D E D# E C# D D# D F# F
+  notes outside C major:  D#, C#, D#  (3 off-scale notes)
+
+scale-masked:   C D E E F D D E E G F
+  notes outside C major:  (none)
+</code></pre>
+<p>Both sequences follow the same underlying preference for small melodic steps — that&#39;s why they look similar overall — but the unconstrained version drifts onto chromatic notes (D#, C#) that don&#39;t belong to C major whenever they happen to be the closest-pitch option, while the masked version is guaranteed to never do that, regardless of what the underlying preference would otherwise pick.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="scale-constrained-music" data-title="Keeping a melody in key"><p class="bench-fallback"><strong>Interactive bench: Keeping a melody in key.</strong> Toggle a scale mask on and off and see how many notes in a generated melody fall outside the chosen musical scale.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With the mask off, count how many generated notes fall outside C major.</li>
+<li>Turn the mask on and confirm that count drops to zero.</li>
+<li>Notice the overall melodic &quot;shape&quot; — mostly small steps — doesn&#39;t change between the two.</li>
+</ol>
+<p><strong>What you should notice:</strong> the mask doesn&#39;t change the model&#39;s underlying melodic taste, only which notes it&#39;s allowed to express that taste through — the exact same relationship between a model&#39;s preferences and a grammar mask seen earlier with arithmetic generation.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Real symbolic music generation models (predicting notes or chords, not raw audio) commonly use exactly this kind of scale or chord-tone masking</strong> as a hard constraint layered on top of a learned model&#39;s preferences.</li>
+<li><strong>Audio-domain music generation (producing a waveform directly, rather than symbolic notes) can&#39;t apply this mask as cleanly</strong> — a raw audio sample doesn&#39;t have a discrete &quot;note&quot; to mask, which is part of why symbolic and audio-domain music generation remain fairly separate approaches.</li>
+<li><strong><a class="wikilink" href="/generative-ai/vocoders-and-neural-audio-synthesis/" data-topic="generative-ai/vocoders-and-neural-audio-synthesis">turning a generated symbolic melody into actual sound</a> still needs a synthesis step afterward</strong> — generating the right notes and generating a pleasant-sounding performance of them are different problems.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a scale mask guarantees &quot;good&quot; music.</strong> It only guarantees the notes belong to the chosen scale — rhythm, harmony, phrasing and structure are entirely separate concerns a note-level mask says nothing about.</li>
+<li><strong>Forgetting a mask changes what&#39;s available, not what&#39;s preferred.</strong> The underlying stepwise-motion preference in this worked example is unaffected by the mask — it simply can no longer act on now-forbidden notes.</li>
+<li><strong>Treating &quot;off-scale&quot; as always wrong in real music.</strong> Deliberate chromaticism (brief excursions outside the home scale) is a normal and expressive part of real composition — a hard mask is a simplification useful for a toy demonstration, not a rule real music always follows.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's being masked in scale-constrained melody generation, and what stays unmasked?</summary>
+The available next notes are masked down to only those belonging to the chosen scale; the underlying preference for which of the remaining notes to pick (here, favoring small melodic steps) is unchanged.
+</details>
+
+<details><summary>2. In the worked example, which notes appeared in the unconstrained melody that the scale mask would have forbidden?</summary>
+D#, C#, and D# again — three notes that fall outside the C major scale.
+</details>
+
+<details><summary>3. Why is this the same underlying technique as grammar-masked arithmetic generation?</summary>
+Both work by setting the logits of disallowed options to −∞ before sampling, guaranteeing the output can never include anything outside the allowed set — only what counts as "allowed" differs between the two domains.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Scale:</strong> a fixed subset of notes (here, 7 of 12) that a piece of music is considered to be &quot;in.&quot;</li>
+<li><strong>Scale masking:</strong> forcing generated notes to belong to a chosen scale by masking out every note that doesn&#39;t.</li>
+<li><strong>Symbolic music generation:</strong> generating discrete musical events (notes, chords) rather than a raw audio waveform directly.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/constrained-and-structured-generation/" data-topic="generative-ai/constrained-and-structured-generation">Constrained and Structured Generation</a> · <a class="wikilink" href="/generative-ai/vocoders-and-neural-audio-synthesis/" data-topic="generative-ai/vocoders-and-neural-audio-synthesis">Vocoders and Neural Audio Synthesis</a> · <a class="wikilink" href="/generative-ai/code-generation-and-program-synthesis/" data-topic="generative-ai/code-generation-and-program-synthesis">Code Generation and Program Synthesis</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/music-generation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/video-3d-and-code-generation/"><small>Read next</small><b>Video, 3D and Code Generation</b><p>Three modalities that each push generation past where images and audio stop: video adds time, 3D adds an extra spatial dimension and viewpoint consistency, and code adds a requirement neither has…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/constrained-and-structured-generation/"><b>Constrained and Structured Generation</b><p>A model&#39;s raw next-token distribution has no idea your downstream code needs valid JSON, a specific grammar, or a well-formed arithmetic expression — it just assigns probabilities, and the most…</p></a><a class="rc-card" href="/generative-ai/vocoders-and-neural-audio-synthesis/"><b>Vocoders and Neural Audio Synthesis</b><p>Every generative model covered so far on this planet outputs some intermediate representation — a latent, a spectrogram-like set of frequencies and amplitudes — but none of that is sound yet.</p></a><a class="rc-card" href="/generative-ai/code-generation-and-program-synthesis/"><b>Code Generation and Program Synthesis</b><p>a grammar mask guarantees generated arithmetic is syntactically valid — but valid syntax and a program that actually does what you want are two different guarantees entirely.</p></a><a class="rc-card" href="/generative-ai/audio-and-speech-generation/"><b>Audio and Speech Generation</b><p>The same generation machinery — learned distributions, conditioning, iterative refinement — applies just as well to sound.</p></a><a class="rc-card" href="/generative-ai/text-to-speech-pipelines/"><b>Text-to-Speech Pipelines</b><p>Turning text into speech means answering several questions at once: how long should each sound last, how should pitch rise and fall, how loud should each part be — and only then, what should the…</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/voice-cloning-and-speaker-adaptation/">← Previous: Voice Cloning and Speaker Adaptation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

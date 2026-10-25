@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grokking and Delayed Generalization — AI Base</title>
+<meta name="description" content="A model that has reached 100% accuracy on its training data looks, by every usual signal, finished.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/grokking-and-delayed-generalization/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Grokking and Delayed Generalization — AI Base">
+<meta property="og:description" content="A model that has reached 100% accuracy on its training data looks, by every usual signal, finished.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/grokking-and-delayed-generalization/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Grokking and Delayed Generalization","item":"https://ai.saranmahadev.in/llms/grokking-and-delayed-generalization/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Grokking and Delayed Generalization","description":"A model that has reached 100% accuracy on its training data looks, by every usual signal, finished.","url":"https://ai.saranmahadev.in/llms/grokking-and-delayed-generalization/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does \"grokking\" describe, in terms of the training and test accuracy curves?","acceptedAnswer":{"@type":"Answer","text":"Training accuracy saturates near 100% early and stays there; test accuracy remains near chance for a long stretch afterward, then suddenly rises sharply, well after training accuracy stopped changing."}},{"@type":"Question","name":"In the worked example, roughly how much additional training happened between train accuracy saturating and test accuracy beginning to rise?","acceptedAnswer":{"@type":"Answer","text":"About five times as much — train accuracy saturated by epoch 100, but test accuracy didn't start climbing meaningfully until around epoch 1000."}},{"@type":"Question","name":"How does grokking differ from emergent abilities, even though both involve a sudden-looking jump?","acceptedAnswer":{"@type":"Answer","text":"Grokking's jump happens as a function of training time for one fixed-size model; emergent abilities' jump happens as a function of model scale, typically compared across differently-sized models at similar amounts of training."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Scaling, Capacity and Emergence</p>
+        <h1 class="doc-title">Grokking and Delayed Generalization</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cv98bj2bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="cv98bj2pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cv98bj2bg)"/>
+  <circle cx="779" cy="152" r="135" fill="#ffece0" opacity="0.32"/><circle cx="412" cy="95" r="62" fill="#ffece0" opacity="0.60"/><circle cx="895" cy="177" r="191" fill="#ffc38f" opacity="0.61"/><circle cx="175" cy="114" r="215" fill="#ffc38f" opacity="0.54"/><circle cx="569" cy="175" r="178" fill="#ffc7a2" opacity="0.52"/><circle cx="149" cy="382" r="90" fill="#ffc7a2" opacity="0.22"/>
+  <path d="M0,420 L0,348 L30,346 L60,344 L90,342 L120,339 L150,336 L180,333 L210,329 L240,326 L270,322 L300,319 L330,316 L360,313 L390,311 L420,309 L450,307 L480,306 L510,306 L540,306 L570,306 L600,307 L630,309 L660,311 L690,313 L720,316 L750,319 L780,323 L810,326 L840,330 L870,333 L900,336 L930,339 L960,342 L990,344 L1020,346 L1050,348 L1080,349 L1110,350 L1140,350 L1170,349 L1200,348 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,379 L30,381 L60,384 L90,386 L120,388 L150,390 L180,391 L210,393 L240,393 L270,394 L300,394 L330,394 L360,393 L390,392 L420,390 L450,389 L480,387 L510,385 L540,382 L570,380 L600,377 L630,375 L660,372 L690,370 L720,368 L750,366 L780,365 L810,363 L840,363 L870,362 L900,362 L930,362 L960,363 L990,364 L1020,366 L1050,367 L1080,369 L1110,371 L1140,374 L1170,376 L1200,379 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="716" cy="147" rx="167" ry="47" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(16.5 716 147)"/><ellipse cx="716" cy="147" rx="231" ry="65" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(22.5 716 147)"/>
+  <circle cx="716" cy="147" r="66" fill="url(#cv98bj2pl)"/>
+  <circle cx="617" cy="233" r="10" fill="#ffffff" opacity="0.64"/><circle cx="792" cy="229" r="16" fill="#ffffff" opacity="0.69"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A model that has reached 100% accuracy on its training data looks, by every usual signal, finished. Keep training it anyway, far past that point, and sometimes something strange happens on the test set — nothing for a long while, and then, abruptly, everything.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/emergent-abilities-and-capability-jumps/" data-topic="llms/emergent-abilities-and-capability-jumps">Emergent Abilities and Capability Jumps</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can a model memorize its training data completely and still go on to generalize much later?&quot; <strong>Grokking</strong> is exactly that: training accuracy saturates near 100% early, while test accuracy stays near chance for a long stretch of additional training — then, well after training accuracy has flatlined, test accuracy suddenly rises sharply, as if the model had been quietly working toward a genuine, generalizing solution the entire time it appeared to be &quot;just&quot; memorizing.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A student who crams and can recite every answer from a specific practice test perfectly, but can&#39;t yet solve a new, differently-worded version of the same kind of problem, looks &quot;done&quot; by one measure (perfect recall) and clearly unfinished by another (no real understanding). Grokking is the strange case where that student, kept studying far past the point of perfect recall, eventually and abruptly starts solving the new versions too — not because they memorized more examples, but because something about continuing to train pushed them from a memorizing solution toward a genuinely generalizing one.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">train accuracy(epoch): rises quickly, saturates near 100% early
+test accuracy(epoch):  stays near chance for a long stretch,
+                        then rises sharply much later
+
+the gap between &quot;train accuracy saturates&quot; and &quot;test accuracy rises&quot;
+  can span many times more training than it took to saturate train
+  accuracy in the first place
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy training run&#39;s train and test accuracy, tracked across several checkpoints:</p>
+<pre><code class="language-text">epoch   10:  train  48.7%   test  10.1%
+epoch   50:  train  96.4%   test  10.1%
+epoch  100:  train  99.9%   test  10.1%   ← train has essentially saturated
+epoch  300:  train 100.0%   test  10.6%
+epoch  600:  train 100.0%   test  16.4%
+epoch 1000:  train 100.0%   test  69.3%   ← generalization beginning
+epoch 1500:  train 100.0%   test  94.4%
+epoch 2000:  train 100.0%   test  95.0%   ← fully &quot;grokked&quot;
+</code></pre>
+<p>Train accuracy reached essentially 100% by epoch 100 and never moved again. Test accuracy sat at chance (around 10%) for the next <em>five hundred epochs</em> — five times as much training as it took to memorize the training set — before finally climbing, in a comparatively short span, to 95%.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="grokking-curves" data-title="Memorized long before it generalizes"><p class="bench-fallback"><strong>Interactive bench: Memorized long before it generalizes.</strong> Step through training epochs and watch test accuracy stay flat long after training accuracy has saturated, then suddenly catch up.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step forward until train accuracy saturates and note where test accuracy sits.</li>
+<li>Keep stepping through the long flat stretch where nothing on the test set seems to change.</li>
+<li>Watch test accuracy&#39;s sudden rise, and note how much training happened before it started.</li>
+</ol>
+<p><strong>What you should notice:</strong> nothing about the training-accuracy curve gives any hint that test accuracy is about to move — the two curves tell completely different stories for most of the run.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Grokking was first clearly documented on small, highly structured tasks</strong> (like modular arithmetic) where it&#39;s unusually easy to tell &quot;memorized the specific examples&quot; apart from &quot;learned the actual rule,&quot; making the delayed jump to generalization directly observable.</li>
+<li><strong>It&#39;s a striking counterexample to the instinct that training past 100% training accuracy is pure overfitting with nothing left to gain</strong> — in these cases, continuing to train is exactly what eventually produces generalization, not just additional memorization.</li>
+<li><strong>It&#39;s related to, but distinct from, <a class="wikilink" href="/llms/emergent-abilities-and-capability-jumps/" data-topic="llms/emergent-abilities-and-capability-jumps">emergent abilities</a></strong>: emergence is a capability appearing suddenly as <em>model scale</em> grows; grokking is a capability appearing suddenly as <em>training time</em> grows, for one fixed model.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Stopping training as soon as training accuracy saturates, assuming nothing more is happening.</strong> The worked example shows the most interesting part of the whole run — the delayed jump to generalization — happens well after that point.</li>
+<li><strong>Assuming grokking happens in every training setup.</strong> It&#39;s been reliably observed on specific, usually small and highly structured tasks; it isn&#39;t a guaranteed outcome of training any model longer.</li>
+<li><strong>Confusing a long flat stretch with a sign of a training failure.</strong> In a setup where grokking is possible, that flat stretch can be the necessary precursor to the eventual jump, not evidence something is broken.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does "grokking" describe, in terms of the training and test accuracy curves?</summary>
+Training accuracy saturates near 100% early and stays there; test accuracy remains near chance for a long stretch afterward, then suddenly rises sharply, well after training accuracy stopped changing.
+</details>
+
+<details><summary>2. In the worked example, roughly how much additional training happened between train accuracy saturating and test accuracy beginning to rise?</summary>
+About five times as much — train accuracy saturated by epoch 100, but test accuracy didn't start climbing meaningfully until around epoch 1000.
+</details>
+
+<details><summary>3. How does grokking differ from emergent abilities, even though both involve a sudden-looking jump?</summary>
+Grokking's jump happens as a function of training time for one fixed-size model; emergent abilities' jump happens as a function of model scale, typically compared across differently-sized models at similar amounts of training.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Grokking:</strong> training accuracy saturating early while test accuracy stays flat, then suddenly rising much later in training.</li>
+<li><strong>Delayed generalization:</strong> the gap between memorizing training data and developing a solution that generalizes to new examples.</li>
+<li><strong>Memorization vs. generalization:</strong> perfectly reproducing seen examples versus correctly handling genuinely new ones.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/emergent-abilities-and-capability-jumps/" data-topic="llms/emergent-abilities-and-capability-jumps">Emergent Abilities and Capability Jumps</a> · <a class="wikilink" href="/llms/the-bitter-lesson-scale-vs-hand-engineering/" data-topic="llms/the-bitter-lesson-scale-vs-hand-engineering">The Bitter Lesson: Scale vs. Hand-Engineering</a> · <a class="wikilink" href="/generative-ai/memorization-and-training-data-leakage/" data-topic="generative-ai/memorization-and-training-data-leakage">Memorization and Training Data Leakage</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/grokking-and-delayed-generalization">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/the-bitter-lesson-scale-vs-hand-engineering/"><small>Read next</small><b>The Bitter Lesson: Scale vs. Hand-Engineering</b><p>Across decades of AI research, a pattern keeps repeating: a simple, general method paired with more computation eventually beats an elaborately hand-engineered, domain-specific one — not…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/emergent-abilities-and-capability-jumps/"><b>Emergent Abilities and Capability Jumps</b><p>Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.</p></a><a class="rc-card" href="/llms/the-bitter-lesson-scale-vs-hand-engineering/"><b>The Bitter Lesson: Scale vs. Hand-Engineering</b><p>Across decades of AI research, a pattern keeps repeating: a simple, general method paired with more computation eventually beats an elaborately hand-engineered, domain-specific one — not…</p></a><a class="rc-card" href="/generative-ai/memorization-and-training-data-leakage/"><b>Memorization and Training Data Leakage</b><p>overlap detection checks whether generated output matches training data verbatim.</p></a><a class="rc-card" href="/llms/scaling-capacity-and-emergence/"><b>Scaling, Capacity and Emergence</b><p>Make an LLM bigger, train it on more data, or give it more compute, and its capability doesn&#39;t grow in some simple, uniform way — it follows surprisingly predictable curves overall, punctuated by…</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/emergent-abilities-and-capability-jumps/">← Previous: Emergent Abilities and Capability Jumps</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

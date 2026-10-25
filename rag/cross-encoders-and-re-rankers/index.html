@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross-Encoders and Re-Rankers — AI Base</title>
+<meta name="description" content="A bi-encoder&#39;s speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/cross-encoders-and-re-rankers/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Cross-Encoders and Re-Rankers — AI Base">
+<meta property="og:description" content="A bi-encoder&#39;s speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/cross-encoders-and-re-rankers/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Cross-Encoders and Re-Rankers","item":"https://ai.saranmahadev.in/rag/cross-encoders-and-re-rankers/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Cross-Encoders and Re-Rankers","description":"A bi-encoder's speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented.","url":"https://ai.saranmahadev.in/rag/cross-encoders-and-re-rankers/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does candidate A score so highly under the bi-encoder but so poorly under the cross-encoder?","acceptedAnswer":{"@type":"Answer","text":"A's pooled embedding ends up close to the query's because it repeats the query's own words, even though its actual content is off-topic — the cross-encoder, processing the pair jointly, can detect that the surface overlap doesn't correspond to real relevance."}},{"@type":"Question","name":"Why is a cross-encoder typically applied only to a shortlist rather than an entire collection?","acceptedAnswer":{"@type":"Answer","text":"Its cost scales with the number of query-document pairs it has to jointly process, and that cost per pair is far higher than a bi-encoder's — applying it to a whole large collection would be far too expensive for most systems."}},{"@type":"Question","name":"What's lost by encoding the query and document independently, as a bi-encoder does?","acceptedAnswer":{"@type":"Answer","text":"Any fine-grained interaction between specific parts of the query and specific parts of the document — a bi-encoder's two separate, pooled vectors can't capture the kind of mismatch the worked example's candidate A represents."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Embeddings for Retrieval</p>
+        <h1 class="doc-title">Cross-Encoders and Re-Rankers</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1w2gy4sbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1w2gy4spl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1w2gy4sbg)"/>
+  <circle cx="170" cy="119" r="147" fill="#42718e" opacity="0.52"/><circle cx="136" cy="242" r="205" fill="#b7d5be" opacity="0.35"/><circle cx="84" cy="65" r="161" fill="#97e1e6" opacity="0.25"/><circle cx="835" cy="299" r="77" fill="#dcf5f7" opacity="0.27"/><circle cx="1198" cy="414" r="69" fill="#dcf5f7" opacity="0.48"/>
+  <path d="M0,420 L0,316 L30,312 L60,309 L90,307 L120,306 L150,306 L180,307 L210,310 L240,313 L270,317 L300,322 L330,327 L360,332 L390,337 L420,342 L450,345 L480,348 L510,349 L540,350 L570,349 L600,347 L630,343 L660,339 L690,335 L720,330 L750,325 L780,320 L810,315 L840,311 L870,308 L900,306 L930,306 L960,306 L990,308 L1020,311 L1050,314 L1080,319 L1110,324 L1140,329 L1170,334 L1200,339 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,363 L60,364 L90,366 L120,369 L150,373 L180,376 L210,380 L240,384 L270,387 L300,390 L330,392 L360,393 L390,394 L420,394 L450,392 L480,390 L510,388 L540,385 L570,381 L600,377 L630,374 L660,370 L690,367 L720,365 L750,363 L780,362 L810,362 L840,363 L870,365 L900,367 L930,370 L960,374 L990,378 L1020,381 L1050,385 L1080,388 L1110,391 L1140,393 L1170,394 L1200,394 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="902" cy="209" rx="262" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-24.4 902 209)"/><ellipse cx="902" cy="209" rx="363" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-18.4 902 209)"/>
+  <circle cx="902" cy="209" r="103" fill="url(#c1w2gy4spl)"/>
+  <circle cx="674" cy="139" r="12" fill="#ffffff" opacity="0.73"/><circle cx="485" cy="203" r="15" fill="#ffffff" opacity="0.88"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A bi-encoder&#39;s speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented. A cross-encoder gives that up: it feeds the query and a document into the model <em>together</em>, letting every word of each attend to every word of the other, at the cost of having to do that fresh for every single pair.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;When does a bi-encoder&#39;s ranking get something wrong that a more careful look would catch?&quot; A document that happens to repeat a query&#39;s own words can score a high bi-encoder similarity without actually answering the question — its pooled vector looks close to the query&#39;s, even though the content is off-topic. A <strong>cross-encoder</strong> jointly processes the query and that document and outputs a single relevance score, catching exactly this kind of mismatch that two independently pooled vectors can miss. Because a cross-encoder has to run once per candidate pair, it&#39;s typically used as a <strong>re-ranker</strong>: applied only to the short list a cheap bi-encoder already narrowed down, not the whole collection.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Judging how well two people would get along by comparing each one&#39;s résumé independently misses the chemistry that only shows up once they&#39;re actually talking to each other. A cross-encoder is the conversation: it looks at the query and the document together, not two separate summaries of each.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">bi-encoder score(query, doc)    = cosine_similarity(encode(query), encode(doc))     -- independent
+cross-encoder score(query, doc) = model(query ⊕ doc) → single relevance score       -- joint
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two candidates for the query &quot;how long do refunds take&quot;:</p>
+<pre><code class="language-text">A: repeats &quot;refund&quot; twice but is actually off-topic
+B: on-topic, but phrased without reusing the query&#39;s exact words
+
+bi-encoder ranking (independent cosine similarity):   A 1.000  &gt;  B 0.989
+cross-encoder ranking (joint relevance score):         B 0.950  &gt;  A 0.300
+</code></pre>
+<p>The bi-encoder ranks A above B — A&#39;s surface-level word overlap with the query pulls its pooled vector closer, even though it&#39;s off-topic. The cross-encoder, scoring the pair jointly, correctly flips the ranking: B is far more relevant (0.950) and A is recognized as mostly irrelevant (0.300) despite sharing vocabulary with the query.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="cross-encoder-rerank" data-title="Scoring the pair together catches what pooling misses"><p class="bench-fallback"><strong>Interactive bench: Scoring the pair together catches what pooling misses.</strong> Compare a bi-encoder's independent-vector ranking against a cross-encoder's joint-scored ranking for the same two candidates.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the bi-encoder ranking and note which candidate wins.</li>
+<li>Switch to the cross-encoder ranking and watch the winner flip.</li>
+<li>Read both candidates&#39; descriptions again — which one would you actually want cited in an answer?</li>
+</ol>
+<p><strong>What you should notice:</strong> the bi-encoder&#39;s error isn&#39;t a small numerical wobble — it ranks the wrong candidate first by a comfortable margin (1.000 vs. 0.989), while the cross-encoder&#39;s joint view corrects it decisively (0.950 vs. 0.300).</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is exactly why <a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a> exists as a separate stage</strong>: run a cheap bi-encoder over the whole collection to get a shortlist, then run an expensive cross-encoder only over that shortlist.</li>
+<li><strong>The compute-cost argument from <a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a> is what makes re-ranking, rather than cross-encoding everything, the practical choice.</strong></li>
+<li><strong><a class="wikilink" href="/rag/multi-vector-and-late-interaction-retrieval/" data-topic="rag/multi-vector-and-late-interaction-retrieval">Multi-Vector and Late-Interaction Retrieval</a> sits between these two extremes</strong>: still precomputable like a bi-encoder, but closer to a cross-encoder&#39;s sensitivity to specific token-level matches.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Running a cross-encoder over an entire large collection &quot;to be safe.&quot;</strong> The whole reason bi-encoders exist is that this doesn&#39;t scale — a cross-encoder&#39;s cost per query grows with collection size the same way a cross-encoder&#39;s score itself does, just much more expensively.</li>
+<li><strong>Assuming a cross-encoder is always right and a bi-encoder is always wrong.</strong> The worked example is a case specifically designed to expose the bi-encoder&#39;s blind spot; on many queries the two methods agree closely.</li>
+<li><strong>Skipping the bi-encoder stage and going straight to cross-encoding &quot;for accuracy.&quot;</strong> Without a bi-encoder&#39;s cheap first pass to narrow the field, there&#39;s no shortlist small enough for a cross-encoder&#39;s cost to be affordable.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does candidate A score so highly under the bi-encoder but so poorly under the cross-encoder?</summary>
+A's pooled embedding ends up close to the query's because it repeats the query's own words, even though its actual content is off-topic — the cross-encoder, processing the pair jointly, can detect that the surface overlap doesn't correspond to real relevance.
+</details>
+
+<details><summary>2. Why is a cross-encoder typically applied only to a shortlist rather than an entire collection?</summary>
+Its cost scales with the number of query-document pairs it has to jointly process, and that cost per pair is far higher than a bi-encoder's — applying it to a whole large collection would be far too expensive for most systems.
+</details>
+
+<details><summary>3. What's lost by encoding the query and document independently, as a bi-encoder does?</summary>
+Any fine-grained interaction between specific parts of the query and specific parts of the document — a bi-encoder's two separate, pooled vectors can't capture the kind of mismatch the worked example's candidate A represents.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Cross-encoder:</strong> a model that jointly processes a query and a document together to produce a single relevance score.</li>
+<li><strong>Re-ranker:</strong> a (typically cross-encoder) model applied to a short list of already-retrieved candidates to reorder them more accurately.</li>
+<li><strong>Joint encoding:</strong> processing two inputs together, allowing interactions between them, as opposed to encoding each independently.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a> · <a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a> · <a class="wikilink" href="/rag/multi-vector-and-late-interaction-retrieval/" data-topic="rag/multi-vector-and-late-interaction-retrieval">Multi-Vector and Late-Interaction Retrieval</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/cross-encoders-and-re-rankers">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/domain-adapting-embedding-models/"><small>Read next</small><b>Domain-Adapting Embedding Models</b><p>A general-purpose embedding model learned its sense of &quot;similar&quot; from broad, general text — which means it can genuinely confuse two meanings of the same term if one of them is specific to a…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/bi-encoders-and-dense-embeddings/"><b>Bi-Encoders and Dense Embeddings</b><p>Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered on the Math planet.</p></a><a class="rc-card" href="/rag/re-ranking-retrieved-results/"><b>Re-Ranking Retrieved Results</b><p>Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet&#39;s own illustrative units — far too much for a live request.</p></a><a class="rc-card" href="/rag/multi-vector-and-late-interaction-retrieval/"><b>Multi-Vector and Late-Interaction Retrieval</b><p>Pooling every token of a document into one vector means a single, strong, exact match can get diluted by everything else in the document — the more unrelated text surrounds it, the weaker its…</p></a><a class="rc-card" href="/rag/embeddings-for-retrieval/"><b>Embeddings for Retrieval</b><p>Turning a chunk of text into a vector is already covered on the Math planet; this district is about the retrieval-specific engineering on top of that: which kind of model produces the vector, how…</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/bi-encoders-and-dense-embeddings/">← Previous: Bi-Encoders and Dense Embeddings</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

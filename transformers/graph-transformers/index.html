@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graph Transformers — AI Base</title>
+<meta name="description" content="A graph neural network restricts every node to messages from its direct neighbours, layer after layer.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/graph-transformers/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Graph Transformers — AI Base">
+<meta property="og:description" content="A graph neural network restricts every node to messages from its direct neighbours, layer after layer.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/graph-transformers/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Graph Transformers","item":"https://ai.saranmahadev.in/transformers/graph-transformers/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Graph Transformers","description":"A graph neural network restricts every node to messages from its direct neighbours, layer after layer.","url":"https://ai.saranmahadev.in/transformers/graph-transformers/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key structural difference between a GNN and a graph transformer?","acceptedAnswer":{"@type":"Answer","text":"A GNN restricts each node to messages from its direct neighbours (hard masking by adjacency); a graph transformer allows full attention among all nodes, injecting structure through a bias instead."}},{"@type":"Question","name":"In the worked example, why was node 0's attention to node 2 not blocked, unlike under the GNN-style mask?","acceptedAnswer":{"@type":"Answer","text":"A graph transformer applies no adjacency mask at all — every node can attend to every other node; the graph distance only biases the attention score, it never fully blocks a pair."}},{"@type":"Question","name":"What can a graph transformer do in a single layer that a message-passing GNN fundamentally cannot?","acceptedAnswer":{"@type":"Answer","text":"Let any two nodes directly influence each other's attention, regardless of distance — a GNN needs as many layers as the shortest path between two nodes for information to travel that far."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Transformers Beyond Text</p>
+        <h1 class="doc-title">Graph Transformers</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c15ifhipbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c15ifhippl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c15ifhipbg)"/>
+  <circle cx="114" cy="320" r="183" fill="#e2efff" opacity="0.60"/><circle cx="770" cy="25" r="119" fill="#4f669f" opacity="0.49"/><circle cx="1003" cy="121" r="161" fill="#c5cacf" opacity="0.60"/><circle cx="754" cy="332" r="112" fill="#abd0ff" opacity="0.57"/><circle cx="228" cy="150" r="150" fill="#abd0ff" opacity="0.23"/><circle cx="1184" cy="248" r="197" fill="#4f669f" opacity="0.36"/><circle cx="489" cy="315" r="160" fill="#e2efff" opacity="0.51"/>
+  <path d="M0,420 L0,338 L30,334 L60,329 L90,323 L120,319 L150,314 L180,310 L210,308 L240,306 L270,306 L300,306 L330,308 L360,311 L390,315 L420,320 L450,325 L480,330 L510,335 L540,340 L570,344 L600,347 L630,349 L660,350 L690,349 L720,348 L750,345 L780,341 L810,337 L840,332 L870,327 L900,322 L930,317 L960,313 L990,309 L1020,307 L1050,306 L1080,306 L1110,307 L1140,309 L1170,313 L1200,317 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,387 L60,391 L90,393 L120,394 L150,393 L180,391 L210,388 L240,383 L270,378 L300,373 L330,369 L360,365 L390,363 L420,362 L450,363 L480,365 L510,368 L540,373 L570,378 L600,383 L630,387 L660,391 L690,393 L720,394 L750,393 L780,391 L810,388 L840,383 L870,378 L900,373 L930,369 L960,365 L990,363 L1020,362 L1050,363 L1080,365 L1110,368 L1140,373 L1170,378 L1200,383 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="757" cy="278" rx="208" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-11.6 757 278)"/><ellipse cx="757" cy="278" rx="288" ry="81" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-5.6 757 278)"/>
+  <circle cx="757" cy="278" r="82" fill="url(#c15ifhippl)"/>
+  <circle cx="651" cy="382" r="11" fill="#ffffff" opacity="0.74"/><circle cx="596" cy="222" r="14" fill="#ffffff" opacity="0.63"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/deep-learning/graph-neural-networks/" data-topic="deep-learning/graph-neural-networks">A graph neural network</a> restricts every node to messages from its direct neighbours, layer after layer. A graph transformer removes that restriction entirely — every node attends to every other node, exactly like a text transformer — and puts the graph&#39;s actual structure back in through a bias on the attention scores instead of through the mask.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/graph-neural-networks/" data-topic="deep-learning/graph-neural-networks">Graph Neural Networks</a>, <a class="wikilink" href="/transformers/alibi-and-length-extrapolation/" data-topic="transformers/alibi-and-length-extrapolation">ALiBi and Length Extrapolation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If a transformer can attend across an entire sequence, why not apply the same thing to a graph&#39;s nodes, instead of restricting attention to direct neighbours?&quot; A graph transformer does exactly that: full, unrestricted attention among every node, with no adjacency mask at all. But a graph&#39;s structure still has to influence the result somehow, or the model would be blind to the topology entirely — the standard fix borrows <a class="wikilink" href="/transformers/alibi-and-length-extrapolation/" data-topic="transformers/alibi-and-length-extrapolation">ALiBi&#39;s</a> trick, adding a bias to each attention score based on the shortest-path distance between two nodes in the graph, instead of position distance in a sequence.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A message-passing GNN is structurally conservative: information only ever reaches a node from its immediate neighbours, and reaching a distant node takes as many layers as the shortest path between them. A graph transformer takes the opposite stance: let any node attend to any other node directly, in a single layer — but bias that attention so nearby nodes (by graph distance) are naturally favoured over distant ones, the same way ALiBi biases sequence attention by sequence distance. The structure isn&#39;t enforced through a hard mask anymore; it&#39;s a soft nudge built into the score itself.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">GNN-style (message passing): allowed(i, j) = adjacency(i, j)     — hard restriction to direct neighbours
+graph transformer:            allowed(i, j) = true, for all i, j  — full attention
+                               bias(i, j) = −slope × shortest_path_distance(i, j)
+</code></pre>
+<p>The shortest-path distance is computed once from the graph&#39;s actual edges (via breadth-first search), the same role sequence position plays for ALiBi — except here, &quot;distance&quot; means hops along the graph, not position in a line.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 5-node cycle graph (edges <code>0-1, 1-2, 2-3, 3-4, 0-4</code>), compared two ways:</p>
+<pre><code class="language-text">GNN-style adjacency mask (self + direct neighbours only):
+  node 0: [1,1,0,0,1]   — sees nodes 0, 1, 4
+  node 2: [0,1,1,1,0]   — sees nodes 1, 2, 3
+
+shortest-path distances (all pairs):
+       0  1  2  3  4
+  0 [  0  1  2  2  1 ]
+  2 [  2  1  0  1  2 ]
+
+graph transformer bias (slope 0.5, −0.5 × distance), full attention:
+  node 0 → node 1 (distance 1): bias −0.50
+  node 0 → node 2 (distance 2): bias −1.00
+</code></pre>
+<p>Node 0&#39;s attention is never <em>blocked</em> from node 2, the way the GNN-style mask would block it — but the bias still pushes the attention weight toward closer nodes, with the exact amount of push determined by actual graph distance.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="graph-transformer-bias" data-title="Full attention, with the graph's shape as a bias"><p class="bench-fallback"><strong>Interactive bench: Full attention, with the graph's shape as a bias.</strong> Compare a GNN-style adjacency mask against a graph transformer's full attention with a distance-based bias, on a small graph.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare which nodes a given node can see under GNN-style masking versus graph-transformer attention.</li>
+<li>Change the bias slope and watch how strongly distant nodes get penalized without ever being fully blocked.</li>
+<li>Try a different graph shape and see how the shortest-path distances, and so the bias pattern, change.</li>
+</ol>
+<p><strong>What you should notice:</strong> a graph transformer can still, in principle, let information flow between any two nodes in a single layer — something a message-passing GNN genuinely cannot do, however many layers it stacks, without literally adding the edges.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is a genuinely different architecture family from <a class="wikilink" href="/deep-learning/graph-neural-networks/" data-topic="deep-learning/graph-neural-networks">Graph Neural Networks</a></strong>, not a variant — full attention with a structural bias, rather than restricted message passing.</li>
+<li><strong>It directly reuses the bias-based trick from <a class="wikilink" href="/transformers/alibi-and-length-extrapolation/" data-topic="transformers/alibi-and-length-extrapolation">ALiBi and Length Extrapolation</a></strong>, just computed from graph distance instead of sequence position — a concrete example of an idea from one modality transferring cleanly to another.</li>
+<li><strong>It trades <a class="wikilink" href="/deep-learning/graph-neural-networks/" data-topic="deep-learning/graph-neural-networks">GNN&#39;s</a> cheaper, locally-restricted computation for full-attention&#39;s quadratic cost</strong> (in the number of nodes) — a genuine trade-off, not a strict improvement.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a graph transformer ignores the graph&#39;s structure.</strong> It doesn&#39;t restrict attention, but the distance-based bias still makes the structure matter — a far cry from treating the graph as an unordered set of nodes.</li>
+<li><strong>Forgetting full attention over nodes is quadratic in the number of nodes.</strong> For very large graphs, this cost can make graph transformers less practical than a sparser message-passing GNN.</li>
+<li><strong>Confusing graph distance with any notion of sequence position.</strong> There&#39;s no inherent ordering to a graph&#39;s nodes — distance here specifically means shortest-path hops along actual edges.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key structural difference between a GNN and a graph transformer?</summary>
+A GNN restricts each node to messages from its direct neighbours (hard masking by adjacency); a graph transformer allows full attention among all nodes, injecting structure through a bias instead.
+</details>
+
+<details><summary>2. In the worked example, why was node 0's attention to node 2 not blocked, unlike under the GNN-style mask?</summary>
+A graph transformer applies no adjacency mask at all — every node can attend to every other node; the graph distance only biases the attention score, it never fully blocks a pair.
+</details>
+
+<details><summary>3. What can a graph transformer do in a single layer that a message-passing GNN fundamentally cannot?</summary>
+Let any two nodes directly influence each other's attention, regardless of distance — a GNN needs as many layers as the shortest path between two nodes for information to travel that far.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Shortest-path distance:</strong> the minimum number of edges connecting two nodes in a graph, computed via breadth-first search.</li>
+<li><strong>Structural bias:</strong> an attention-score adjustment based on graph structure, used in place of a hard adjacency mask.</li>
+<li><strong>Message passing:</strong> a GNN&#39;s mechanism for propagating information only between directly connected nodes.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/graph-neural-networks/" data-topic="deep-learning/graph-neural-networks">Graph Neural Networks</a> · <a class="wikilink" href="/transformers/alibi-and-length-extrapolation/" data-topic="transformers/alibi-and-length-extrapolation">ALiBi and Length Extrapolation</a> · <a class="wikilink" href="/transformers/multimodal-transformers-as-an-architecture-pattern/" data-topic="transformers/multimodal-transformers-as-an-architecture-pattern">Multimodal Transformers as an Architecture Pattern</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/graph-transformers">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/multimodal-transformers-as-an-architecture-pattern/"><small>Read next</small><b>Multimodal Transformers as an Architecture Pattern</b><p>Image patches and text tokens both end up as the exact same thing by the time attention sees them: a vector of width d_model.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/graph-neural-networks/"><b>Graph Neural Networks</b><p>A convolution aggregates each pixel&#39;s fixed, grid-shaped neighbourhood.</p></a><a class="rc-card" href="/transformers/alibi-and-length-extrapolation/"><b>ALiBi and Length Extrapolation</b><p>RoPE builds relative position into attention through rotation.</p></a><a class="rc-card" href="/transformers/multimodal-transformers-as-an-architecture-pattern/"><b>Multimodal Transformers as an Architecture Pattern</b><p>Image patches and text tokens both end up as the exact same thing by the time attention sees them: a vector of width d_model.</p></a><a class="rc-card" href="/transformers/transformers-beyond-text/"><b>Transformers Beyond Text</b><p>Nothing about the transformer block is specific to language — it only needs a sequence of vectors to attend over.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/vision-transformers/">← Previous: Vision Transformers</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

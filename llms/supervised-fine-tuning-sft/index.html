@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supervised Fine-Tuning (SFT) — AI Base</title>
+<meta name="description" content="A pretrained model is extremely good at continuing text in whatever style it appears in — but &quot;the internet&quot; doesn&#39;t naturally produce the specific pattern of a helpful assistant replying to a…">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/supervised-fine-tuning-sft/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Supervised Fine-Tuning (SFT) — AI Base">
+<meta property="og:description" content="A pretrained model is extremely good at continuing text in whatever style it appears in — but &quot;the internet&quot; doesn&#39;t naturally produce the specific pattern of a helpful assistant replying to a…">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/supervised-fine-tuning-sft/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Supervised Fine-Tuning (SFT)","item":"https://ai.saranmahadev.in/llms/supervised-fine-tuning-sft/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Supervised Fine-Tuning (SFT)","description":"A pretrained model is extremely good at continuing text in whatever style it appears in — but \"the internet\" doesn't naturally produce the specific pattern of a helpful assistant replying to a…","url":"https://ai.saranmahadev.in/llms/supervised-fine-tuning-sft/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's different about SFT's training objective compared to ordinary pretraining?","acceptedAnswer":{"@type":"Answer","text":"Nothing about the objective itself — SFT uses the exact same causal language modeling loss; only the training data changes, to curated instruction-response pairs instead of general text."}},{"@type":"Question","name":"In the worked example, what caused the loss to drop so sharply after SFT?","acceptedAnswer":{"@type":"Answer","text":"The model's assigned probability to the exact tokens of the assistant-style response rose substantially at every position, because the model had been directly trained on examples of that pattern."}},{"@type":"Question","name":"Why is SFT alone usually not considered sufficient for full alignment?","acceptedAnswer":{"@type":"Answer","text":"SFT only teaches a model to imitate the specific examples it was shown — it provides no direct signal about which responses are actually better or worse in cases not covered by those examples, which is what preference-based methods like RLHF or DPO add."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Instruction Tuning and Alignment</p>
+        <h1 class="doc-title">Supervised Fine-Tuning (SFT)</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cf3w9g3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="cf3w9g3pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cf3w9g3bg)"/>
+  <circle cx="108" cy="119" r="133" fill="#ffc7a2" opacity="0.24"/><circle cx="853" cy="205" r="66" fill="#ffc7a2" opacity="0.30"/><circle cx="426" cy="377" r="178" fill="#ffc7a2" opacity="0.52"/><circle cx="20" cy="378" r="73" fill="#ffece0" opacity="0.30"/><circle cx="440" cy="255" r="200" fill="#ffc7a2" opacity="0.52"/><circle cx="857" cy="251" r="84" fill="#ffc7a2" opacity="0.34"/>
+  <path d="M0,420 L0,312 L30,316 L60,320 L90,325 L120,330 L150,335 L180,340 L210,344 L240,347 L270,349 L300,350 L330,349 L360,347 L390,345 L420,341 L450,337 L480,332 L510,326 L540,321 L570,317 L600,312 L630,309 L660,307 L690,306 L720,306 L750,307 L780,309 L810,313 L840,317 L870,322 L900,327 L930,332 L960,337 L990,341 L1020,345 L1050,348 L1080,349 L1110,350 L1140,349 L1170,347 L1200,344 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,379 L30,377 L60,374 L90,372 L120,370 L150,368 L180,366 L210,364 L240,363 L270,362 L300,362 L330,362 L360,362 L390,363 L420,364 L450,366 L480,367 L510,369 L540,372 L570,374 L600,377 L630,379 L660,382 L690,384 L720,386 L750,388 L780,390 L810,392 L840,393 L870,394 L900,394 L930,394 L960,394 L990,393 L1020,392 L1050,390 L1080,389 L1110,387 L1140,384 L1170,382 L1200,379 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="975" cy="163" rx="211" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(22.4 975 163)"/><ellipse cx="975" cy="163" rx="292" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(28.4 975 163)"/>
+  <circle cx="975" cy="163" r="83" fill="url(#cf3w9g3pl)"/>
+  <circle cx="1288" cy="140" r="14" fill="#ffffff" opacity="0.67"/><circle cx="674" cy="181" r="8" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A pretrained model is extremely good at continuing text in whatever style it appears in — but &quot;the internet&quot; doesn&#39;t naturally produce the specific pattern of a helpful assistant replying to a user&#39;s question. Supervised fine-tuning is the first, most direct step toward making that pattern the model&#39;s default.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a>, <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you turn a raw next-token predictor into something that responds like an assistant?&quot; <strong>Supervised fine-tuning (SFT)</strong> continues training a pretrained model with the exact same causal language modeling objective from <a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a> — but now on a curated dataset of (instruction, ideal response) pairs, so the model is directly shown many examples of exactly the behavior it should produce. Nothing about the training mechanism changes; only the data does.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A pretrained model has read an enormous amount of text in every conceivable style — stories, forum posts, code, arguments — with no particular reason to default to &quot;helpful assistant&quot; as its voice. Showing it thousands of examples that specifically look like &quot;a user asks something, an assistant replies helpfully&quot; is like handing an actor a script and having them read it aloud repeatedly: they already knew how to speak, but repetition on this <em>specific</em> script makes that particular voice and structure the one that comes out by default.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">SFT dataset: {(instruction₁, response₁), (instruction₂, response₂), ...}
+
+training: exactly causal language modeling (teacher forcing, cross-entropy
+  loss), but computed only over the RESPONSE tokens, conditioned on the
+  instruction as context
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The same toy 4-token sequence scored by a base (pretrained-only) model and by a model after SFT:</p>
+<pre><code class="language-text">base model (pretrained only):   mean loss 1.9348
+after SFT:                      mean loss 0.2670
+</code></pre>
+<p>Before SFT, the base model assigns relatively low probability to the exact tokens of this particular assistant-style response — it&#39;s plausible text, but not the response the model would have confidently produced on its own. After SFT on examples like it, the same response&#39;s tokens become far more probable under the model, reflected directly in the loss dropping by roughly 7×.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="sft-loss-drop" data-title="Learning to produce the assistant's own words"><p class="bench-fallback"><strong>Interactive bench: Learning to produce the assistant's own words.</strong> Compare a base model's loss on an assistant-style response against the same response scored by a model after SFT.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the base model&#39;s per-position probabilities.</li>
+<li>Switch to the SFT model and compare.</li>
+<li>Notice which positions improved the most.</li>
+</ol>
+<p><strong>What you should notice:</strong> SFT doesn&#39;t change what the loss function measures or how training works — it only changes which examples the model is being trained to confidently reproduce.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>SFT is the near-universal first step after pretraining</strong> for any model meant to behave as an instruction-following assistant, almost always followed by further alignment (<a class="wikilink" href="/llms/reinforcement-learning-from-human-feedback-rlhf/" data-topic="llms/reinforcement-learning-from-human-feedback-rlhf">RLHF</a> or <a class="wikilink" href="/llms/direct-preference-optimization-dpo/" data-topic="llms/direct-preference-optimization-dpo">DPO</a>).</li>
+<li><strong>The quality of <a class="wikilink" href="/llms/instruction-dataset-construction/" data-topic="llms/instruction-dataset-construction">the instruction dataset</a> matters enormously</strong> — SFT can only teach a model to reproduce the patterns actually present in its training examples, for better or worse.</li>
+<li><strong>SFT alone, without further alignment, tends to produce a model that&#39;s responsive but not especially good at handling genuinely ambiguous or adversarial requests</strong> — it has learned to imitate good responses, not to judge what makes a response good in cases its training data didn&#39;t cover.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming SFT is a fundamentally different training algorithm from pretraining.</strong> It&#39;s literally the same causal language modeling loss — only the data distribution (curated instruction-response pairs instead of general web text) changes.</li>
+<li><strong>Treating SFT as the final alignment step.</strong> It&#39;s typically just the foundation that <a class="wikilink" href="/llms/reinforcement-learning-from-human-feedback-rlhf/" data-topic="llms/reinforcement-learning-from-human-feedback-rlhf">RLHF</a> or <a class="wikilink" href="/llms/direct-preference-optimization-dpo/" data-topic="llms/direct-preference-optimization-dpo">DPO</a> build further training on top of.</li>
+<li><strong>Expecting SFT to teach judgment, not just imitation.</strong> A model trained purely by imitating examples has no direct signal about <em>why</em> those examples were good — only reinforcement from preferences (RLHF/DPO) adds that.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's different about SFT's training objective compared to ordinary pretraining?</summary>
+Nothing about the objective itself — SFT uses the exact same causal language modeling loss; only the training data changes, to curated instruction-response pairs instead of general text.
+</details>
+
+<details><summary>2. In the worked example, what caused the loss to drop so sharply after SFT?</summary>
+The model's assigned probability to the exact tokens of the assistant-style response rose substantially at every position, because the model had been directly trained on examples of that pattern.
+</details>
+
+<details><summary>3. Why is SFT alone usually not considered sufficient for full alignment?</summary>
+SFT only teaches a model to imitate the specific examples it was shown — it provides no direct signal about which responses are actually better or worse in cases not covered by those examples, which is what preference-based methods like RLHF or DPO add.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Supervised fine-tuning (SFT):</strong> continuing a pretrained model&#39;s training on curated instruction-response examples, using the same objective as pretraining.</li>
+<li><strong>Instruction-response pair:</strong> one training example consisting of a user instruction and an ideal assistant response.</li>
+<li><strong>Imitation:</strong> learning to reproduce the pattern of given examples, without an explicit signal about why they were chosen.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a> · <a class="wikilink" href="/llms/instruction-dataset-construction/" data-topic="llms/instruction-dataset-construction">Instruction Dataset Construction</a> · <a class="wikilink" href="/llms/reinforcement-learning-from-human-feedback-rlhf/" data-topic="llms/reinforcement-learning-from-human-feedback-rlhf">Reinforcement Learning from Human Feedback (RLHF)</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/supervised-fine-tuning-sft">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/instruction-dataset-construction/"><small>Read next</small><b>Instruction Dataset Construction</b><p>SFT can only be as good as the examples it&#39;s trained on — which raises an immediate, practical problem: writing enough high-quality (instruction, response) pairs by hand, across every kind of…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/causal-language-modeling-as-a-pretraining-objective/"><b>Causal Language Modeling as a Pretraining Objective</b><p>With a curated corpus in hand, there&#39;s still a question of what, exactly, a model is being trained to do with it.</p></a><a class="rc-card" href="/llms/compute-optimal-scaling-chinchilla/"><b>Compute-Optimal Scaling (Chinchilla)</b><p>Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data?</p></a><a class="rc-card" href="/llms/reinforcement-learning-from-human-feedback-rlhf/"><b>Reinforcement Learning from Human Feedback (RLHF)</b><p>A reward model can score any response — but scoring responses isn&#39;t the same as producing better ones.</p></a><a class="rc-card" href="/llms/direct-preference-optimization-dpo/"><b>Direct Preference Optimization (DPO)</b><p>RLHF&#39;s reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones.</p></a><a class="rc-card" href="/llms/instruction-dataset-construction/"><b>Instruction Dataset Construction</b><p>SFT can only be as good as the examples it&#39;s trained on — which raises an immediate, practical problem: writing enough high-quality (instruction, response) pairs by hand, across every kind of…</p></a><a class="rc-card" href="/llms/instruction-tuning-and-alignment/"><b>Instruction Tuning and Alignment</b><p>A model pretrained purely to predict the next token has no particular reason to follow an instruction, refuse a harmful request, or prefer a helpful answer over a merely plausible one.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/instruction-tuning-and-alignment/">← Previous: Instruction Tuning and Alignment</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

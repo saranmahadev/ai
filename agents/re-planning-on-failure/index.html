@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Re-Planning on Failure — AI Base</title>
+<meta name="description" content="A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/re-planning-on-failure/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Re-Planning on Failure — AI Base">
+<meta property="og:description" content="A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/re-planning-on-failure/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Re-Planning on Failure","item":"https://ai.saranmahadev.in/agents/re-planning-on-failure/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Re-Planning on Failure","description":"A plan to book a trip hits a hotel that's sold out on step 3 of 5.","url":"https://ai.saranmahadev.in/agents/re-planning-on-failure/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do steps 4 and 5 fail in the worked example even though nothing is wrong with them individually?","acceptedAnswer":{"@type":"Answer","text":"Both depend on step 3 (the hotel booking) having actually succeeded — booking a transfer to an address that was never confirmed, or confirming an itinerary around a hotel that was never booked, doesn't make sense once step 3 failed."}},{"@type":"Question","name":"What does re-planning actually change about the outcome of step 3's failure?","acceptedAnswer":{"@type":"Answer","text":"It doesn't prevent the original failure (the first hotel really is sold out), but it stops that failure from silently propagating — a new plan for the remaining steps (built around a different hotel) lets steps 4 and 5 complete successfully instead of failing too."}},{"@type":"Question","name":"What's the minimum an agent needs to re-plan successfully?","acceptedAnswer":{"@type":"Answer","text":"It needs to detect that a step's actual result doesn't match what the plan assumed — the same closed-loop check as open-loop vs. closed-loop behavior, just applied to one step of a larger plan rather than a single action."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Planning and Task Decomposition</p>
+        <h1 class="doc-title">Re-Planning on Failure</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1ka0y0lbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1ka0y0lpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1ka0y0lbg)"/>
+  <circle cx="675" cy="354" r="81" fill="#f3e9fc" opacity="0.61"/><circle cx="401" cy="102" r="62" fill="#e7bdc8" opacity="0.62"/><circle cx="722" cy="48" r="177" fill="#dcbef5" opacity="0.40"/><circle cx="519" cy="385" r="141" fill="#dcbef5" opacity="0.32"/><circle cx="774" cy="371" r="223" fill="#725998" opacity="0.51"/>
+  <path d="M0,420 L0,344 L30,346 L60,348 L90,349 L120,349 L150,350 L180,349 L210,348 L240,347 L270,345 L300,343 L330,340 L360,337 L390,334 L420,330 L450,327 L480,323 L510,320 L540,317 L570,314 L600,312 L630,309 L660,308 L690,306 L720,306 L750,306 L780,306 L810,307 L840,308 L870,310 L900,313 L930,315 L960,318 L990,322 L1020,325 L1050,328 L1080,332 L1110,335 L1140,338 L1170,341 L1200,344 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,388 L30,386 L60,384 L90,381 L120,379 L150,376 L180,374 L210,372 L240,369 L270,367 L300,366 L330,364 L360,363 L390,362 L420,362 L450,362 L480,363 L510,363 L540,365 L570,366 L600,368 L630,370 L660,372 L690,375 L720,377 L750,380 L780,382 L810,384 L840,387 L870,389 L900,390 L930,392 L960,393 L990,394 L1020,394 L1050,394 L1080,393 L1110,393 L1140,391 L1170,390 L1200,388 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="667" cy="161" rx="255" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.2 667 161)"/><ellipse cx="667" cy="161" rx="352" ry="99" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.2 667 161)"/>
+  <circle cx="667" cy="161" r="100" fill="url(#c1ka0y0lpl)"/>
+  <circle cx="351" cy="201" r="15" fill="#ffffff" opacity="0.71"/><circle cx="329" cy="228" r="10" fill="#ffffff" opacity="0.80"/><circle cx="503" cy="267" r="12" fill="#ffffff" opacity="0.62"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5. An agent that never checks its own results just keeps going — booking a transfer to a hotel address that was never actually confirmed, then &quot;confirming&quot; an itinerary that was never real. An agent that notices the failure and re-plans picks a different hotel and finishes every remaining step successfully.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/plan-and-execute-agents/" data-topic="agents/plan-and-execute-agents">Plan-and-Execute Agents</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What happens when a step in an already-committed plan fails, and how does an agent recover?&quot; Re-planning means detecting that a step didn&#39;t produce the result the plan assumed, and generating a new plan for the remaining steps instead of blindly continuing the old one. Without it, every later step that depended on the failed one&#39;s result either silently fails too or produces output built on a false premise.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A road trip&#39;s GPS route hits a closed bridge. A driver who doesn&#39;t notice and keeps following the original turn-by-turn directions ends up stuck at the bridge, with every subsequent direction now meaningless. A driver whose GPS notices the closure and recalculates a new route from the current position reaches the destination anyway — the original plan&#39;s failure doesn&#39;t have to mean the whole trip fails.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">plan: step₁ → step₂ → ... → stepₙ
+failure at stepₖ:
+  without re-planning: steps 1..k-1 complete, step k fails, steps k+1..n depend on it and also fail
+  with re-planning:    steps 1..k-1 complete, step k&#39;s failure is detected, a new plan for steps k..n is made and completes
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 5-step trip-booking plan where step 3 (book hotel) fails because the hotel is sold out:</p>
+<pre><code class="language-text">plan: book flight, get visa, book hotel, book transfer, confirm itinerary
+failure: step 3 (&quot;book hotel&quot;) — the hotel is sold out
+
+without re-planning: 2 of 5 steps complete (flight, visa) — transfer and itinerary both depend on
+                      a hotel that was never actually booked, so they fail too
+with re-planning:     5 of 5 steps complete — the failure at step 3 is detected, a new hotel is
+                      found, and the remaining steps (transfer, itinerary) proceed against it
+</code></pre>
+<p>The difference isn&#39;t that re-planning avoids the failure itself — the first hotel is still sold out either way. It&#39;s that re-planning contains the damage to the one step that actually failed, instead of letting it silently propagate through every step that assumed it had succeeded.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="replan-on-failure" data-title="Notice the failure, or plough on"><p class="bench-fallback"><strong>Interactive bench: Notice the failure, or plough on.</strong> Step through a 5-step plan where step 3 fails, comparing outcomes with and without re-planning.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With replanning off, step through all 5 steps and watch steps 4 and 5 get marked as depending on a step that never actually succeeded.</li>
+<li>Turn replanning on and step through again — notice steps 4 and 5 now complete.</li>
+<li>Imagine the failure happened at step 1 instead of step 3 — would re-planning still recover all 5 steps?</li>
+</ol>
+<p><strong>What you should notice:</strong> re-planning doesn&#39;t require predicting every possible failure in advance — it only requires noticing, after the fact, that a step&#39;s actual result didn&#39;t match what the plan assumed, which is the same closed-loop check already covered in <a class="wikilink" href="/agents/open-loop-vs-closed-loop-behavior/" data-topic="agents/open-loop-vs-closed-loop-behavior">Open-Loop vs. Closed-Loop Behavior</a>.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Re-planning is <a class="wikilink" href="/agents/open-loop-vs-closed-loop-behavior/" data-topic="agents/open-loop-vs-closed-loop-behavior">closed-loop checking</a> applied specifically to a multi-step plan</strong>, rather than to a single action — the loop still has to check its own results, just now at the level of &quot;did this step&#39;s actual outcome match the plan&#39;s assumption.&quot;</li>
+<li><strong><a class="wikilink" href="/agents/verifier-guided-agent-loops/" data-topic="agents/verifier-guided-agent-loops">Verifier-Guided Agent Loops</a>, covered later, generalizes the same detect-and-recover mechanism</strong> into a continuous check running throughout an agent&#39;s trajectory, not only at a single plan&#39;s failure points.</li>
+<li><strong>A plan-and-execute agent (the previous topic) specifically needs re-planning</strong> to recover the adaptability it gave up by committing to a plan up front.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a failed step&#39;s consequences stay contained to that one step.</strong> The worked example shows the opposite — two further steps fail too, purely because they depended on a result that never materialized.</li>
+<li><strong>Re-planning the entire task from scratch instead of just the remaining steps.</strong> The completed early steps (booking the flight, getting the visa) don&#39;t need to be redone — only the steps from the failure point onward need a new plan.</li>
+<li><strong>Detecting failure too late.</strong> If the failure at step 3 isn&#39;t noticed until step 5 is attempted, the agent has already wasted effort executing steps built on a false premise, rather than catching it at step 3 itself.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why do steps 4 and 5 fail in the worked example even though nothing is wrong with them individually?</summary>
+Both depend on step 3 (the hotel booking) having actually succeeded — booking a transfer to an address that was never confirmed, or confirming an itinerary around a hotel that was never booked, doesn't make sense once step 3 failed.
+</details>
+
+<details><summary>2. What does re-planning actually change about the outcome of step 3's failure?</summary>
+It doesn't prevent the original failure (the first hotel really is sold out), but it stops that failure from silently propagating — a new plan for the remaining steps (built around a different hotel) lets steps 4 and 5 complete successfully instead of failing too.
+</details>
+
+<details><summary>3. What's the minimum an agent needs to re-plan successfully?</summary>
+It needs to detect that a step's actual result doesn't match what the plan assumed — the same closed-loop check as open-loop vs. closed-loop behavior, just applied to one step of a larger plan rather than a single action.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Re-planning:</strong> detecting that a plan&#39;s step failed and generating a new plan for the remaining steps instead of continuing the original one.</li>
+<li><strong>Failure propagation:</strong> later steps failing because they depended on an earlier step&#39;s result that never actually materialized.</li>
+<li><strong>Detection point:</strong> the moment a failure is actually noticed, which determines how much wasted effort happens before recovery begins.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/plan-and-execute-agents/" data-topic="agents/plan-and-execute-agents">Plan-and-Execute Agents</a> · <a class="wikilink" href="/agents/open-loop-vs-closed-loop-behavior/" data-topic="agents/open-loop-vs-closed-loop-behavior">Open-Loop vs. Closed-Loop Behavior</a> · <a class="wikilink" href="/agents/verifier-guided-agent-loops/" data-topic="agents/verifier-guided-agent-loops">Verifier-Guided Agent Loops</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/re-planning-on-failure">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/hierarchical-task-planning/"><small>Read next</small><b>Hierarchical Task Planning</b><p>&quot;Organize a conference&quot; eventually breaks down into 36 individual primitive actions — booking a specific venue, sending a specific email, printing a specific badge.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/plan-and-execute-agents/"><b>Plan-and-Execute Agents</b><p>Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop.</p></a><a class="rc-card" href="/agents/open-loop-vs-closed-loop-behavior/"><b>Open-Loop vs. Closed-Loop Behavior</b><p>An agent that fires off four actions in a row and reports &quot;done&quot; might be lying — not out of any intent to deceive, but because it never actually checked whether any of those four actions worked.</p></a><a class="rc-card" href="/agents/verifier-guided-agent-loops/"><b>Verifier-Guided Agent Loops</b><p>An agent that runs six actions in sequence, one of which is subtly wrong, finds out it failed only once all six are done — by which point the bad action has already fed into whatever came after it.</p></a><a class="rc-card" href="/agents/planning-and-task-decomposition/"><b>Planning and Task Decomposition</b><p>A genuinely open-ended goal can&#39;t be handled by a fixed workflow written in advance — nobody knows the steps until the agent starts looking at the specific situation.</p></a><a class="rc-card" href="/agents/when-planning-hurts-more-than-it-helps/"><b>When Planning Hurts More Than It Helps</b><p>Planning ahead only pays off if the plan is still good by the time it&#39;s executed. In a stable environment that barely changes, one upfront plan beats reacting fresh at every single step.</p></a><a class="rc-card" href="/agents/handling-tool-errors-and-retries/"><b>Handling Tool Errors and Retries</b><p>A flaky network call that succeeds 70% of the time individually succeeds 99.19% of the time within four tries — failures that are transient are exactly the kind retrying is good for.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/plan-and-execute-agents/">← Previous: Plan-and-Execute Agents</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

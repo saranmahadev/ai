@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sparse Retrieval with TF-IDF and BM25 — AI Base</title>
+<meta name="description" content="Counting how many query words a document shares is the simplest possible retrieval method — and it treats every word as equally informative, which &quot;the&quot; and &quot;cat&quot; obviously aren&#39;t.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/sparse-retrieval-with-tf-idf-and-bm25/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Sparse Retrieval with TF-IDF and BM25 — AI Base">
+<meta property="og:description" content="Counting how many query words a document shares is the simplest possible retrieval method — and it treats every word as equally informative, which &quot;the&quot; and &quot;cat&quot; obviously aren&#39;t.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/sparse-retrieval-with-tf-idf-and-bm25/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Sparse Retrieval with TF-IDF and BM25","item":"https://ai.saranmahadev.in/rag/sparse-retrieval-with-tf-idf-and-bm25/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sparse Retrieval with TF-IDF and BM25","description":"Counting how many query words a document shares is the simplest possible retrieval method — and it treats every word as equally informative, which \"the\" and \"cat\" obviously aren't.","url":"https://ai.saranmahadev.in/rag/sparse-retrieval-with-tf-idf-and-bm25/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does TF-IDF give d3 a score of exactly zero despite d3 containing \"mat\"?","acceptedAnswer":{"@type":"Answer","text":"\"Mat\" appears in 2 of the 3 documents, which makes TF-IDF's idf formula, log(N/(1+document count)), evaluate to log(3/3) = log(1) = 0 — multiplying by this zero idf wipes out any contribution from \"mat\" regardless of how often it appears."}},{"@type":"Question","name":"Why doesn't BM25 have the same problem?","acceptedAnswer":{"@type":"Answer","text":"BM25's idf formula adds smoothing terms (+0.5) that keep it from ever evaluating to exactly zero, so a term appearing in roughly half the collection still contributes some weight rather than none."}},{"@type":"Question","name":"Would either TF-IDF or BM25 score a document highly if it discussed the same topic as the query using entirely different words?","acceptedAnswer":{"@type":"Answer","text":"No — both methods only match exact vocabulary overlap; a topically relevant document using no words in common with the query would score zero under either method, which is exactly the gap dense retrieval is designed to fill."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Retrieval Strategies</p>
+        <h1 class="doc-title">Sparse Retrieval with TF-IDF and BM25</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1w3rxe6bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1w3rxe6pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1w3rxe6bg)"/>
+  <circle cx="968" cy="252" r="189" fill="#97e1e6" opacity="0.39"/><circle cx="246" cy="83" r="108" fill="#42718e" opacity="0.28"/><circle cx="790" cy="399" r="93" fill="#97e1e6" opacity="0.51"/><circle cx="1129" cy="257" r="193" fill="#dcf5f7" opacity="0.25"/><circle cx="649" cy="97" r="124" fill="#42718e" opacity="0.57"/><circle cx="247" cy="75" r="114" fill="#97e1e6" opacity="0.57"/>
+  <path d="M0,420 L0,313 L30,319 L60,325 L90,332 L120,338 L150,344 L180,348 L210,349 L240,349 L270,347 L300,342 L330,337 L360,330 L390,323 L420,317 L450,311 L480,308 L510,306 L540,306 L570,308 L600,313 L630,319 L660,325 L690,332 L720,338 L750,344 L780,348 L810,349 L840,349 L870,347 L900,342 L930,337 L960,330 L990,323 L1020,317 L1050,311 L1080,308 L1110,306 L1140,306 L1170,308 L1200,313 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,377 L60,374 L90,370 L120,367 L150,365 L180,363 L210,362 L240,362 L270,363 L300,365 L330,367 L360,370 L390,374 L420,377 L450,381 L480,385 L510,388 L540,390 L570,392 L600,394 L630,394 L660,393 L690,392 L720,390 L750,387 L780,384 L810,380 L840,376 L870,373 L900,369 L930,366 L960,364 L990,363 L1020,362 L1050,362 L1080,363 L1110,365 L1140,368 L1170,371 L1200,375 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="985" cy="179" rx="188" ry="53" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.0 985 179)"/><ellipse cx="985" cy="179" rx="260" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.0 985 179)"/>
+  <circle cx="985" cy="179" r="74" fill="url(#c1w3rxe6pl)"/>
+  <circle cx="1050" cy="280" r="15" fill="#ffffff" opacity="0.78"/><circle cx="1152" cy="256" r="7" fill="#ffffff" opacity="0.69"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Counting how many query words a document shares is the simplest possible retrieval method — and it treats every word as equally informative, which &quot;the&quot; and &quot;cat&quot; obviously aren&#39;t. TF-IDF and BM25 are two ways of weighting term matches so that rare, distinctive words count for more than common ones, and each has its own particular way of doing that weighting.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/anatomy-of-a-rag-pipeline/" data-topic="rag/anatomy-of-a-rag-pipeline">Anatomy of a RAG Pipeline</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you rank documents by matching words, without treating every word equally?&quot; <strong>TF-IDF</strong> scores a term by how often it appears in a document (term frequency) multiplied by how rare it is across the whole collection (inverse document frequency) — a term appearing in every document contributes nothing, since it can&#39;t distinguish one document from another. <strong>BM25</strong> computes a similar idea but with two refinements: its term-frequency contribution saturates rather than growing without bound, and its idf formula is smoothed so it never degenerates to exactly zero the way TF-IDF&#39;s can.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Scoring how well a résumé matches a job posting by counting shared words treats &quot;and&quot; the same as the one specific skill that actually matters. Down-weighting common words and up-weighting rare, specific ones is the whole idea — TF-IDF and BM25 are just two different formulas for doing that weighting.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">tf-idf(term, doc)  = count(term, doc) × log(N / (1 + doc_count(term)))
+bm25(term, doc)    = idf(term) × count(term, doc) × (k1 + 1) / (count(term, doc) + k1 × length_norm)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three tiny documents, scored against the query &quot;cat mat&quot;:</p>
+<pre><code class="language-text">d1: &quot;the cat sat on the mat&quot;    (contains both &quot;cat&quot; and &quot;mat&quot;)
+d2: &quot;the dog sat on the log&quot;    (contains neither)
+d3: &quot;a mat for yoga practice&quot;   (contains &quot;mat&quot; only)
+
+raw word overlap:  d1: 2   d2: 0   d3: 1
+
+TF-IDF:  d1: 0.4055   d2: 0.0000   d3: 0.0000
+BM25:    d1: 1.4134   d2: 0.0000   d3: 0.4963
+</code></pre>
+<p>&quot;Mat&quot; appears in exactly 2 of these 3 documents, which happens to make TF-IDF&#39;s idf formula evaluate to exactly zero for it (log(3/3) = 0) — so TF-IDF gives d3 <em>no</em> credit at all for containing &quot;mat,&quot; indistinguishable from d2&#39;s zero overlap. BM25&#39;s smoothed idf formula never hits exactly zero this way, correctly giving d3 partial credit (0.4963) for the one term it does share.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="sparse-tfidf-bm25" data-title="Weighting matters: raw overlap isn't the only option"><p class="bench-fallback"><strong>Interactive bench: Weighting matters: raw overlap isn't the only option.</strong> Compare raw word-overlap, TF-IDF and BM25 scores for the same query across a tiny corpus.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Switch between raw overlap, TF-IDF and BM25 and watch d3&#39;s score change.</li>
+<li>Notice TF-IDF scores d2 (no overlap) and d3 (one shared word) identically — both zero.</li>
+<li>Confirm BM25 is the only method that distinguishes d2 from d3.</li>
+</ol>
+<p><strong>What you should notice:</strong> TF-IDF&#39;s idf formula can land on exactly zero for a term that appears in close to half the collection, silently erasing any credit for documents containing that term — a real, specific edge case BM25&#39;s smoothing is designed to avoid.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong><a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a> solves a different problem these methods can&#39;t</strong>: a query and a relevant document that share no vocabulary at all score zero under both TF-IDF and BM25, regardless of how well-weighted the terms are.</li>
+<li><strong><a class="wikilink" href="/rag/hybrid-retrieval-fusion/" data-topic="rag/hybrid-retrieval-fusion">Hybrid Retrieval Fusion</a> combines a sparse method like BM25 with dense retrieval</strong>, so exact-term-matching strength and semantic-matching strength both contribute to the final ranking.</li>
+<li><strong><a class="wikilink" href="/rag/query-expansion-and-rewriting/" data-topic="rag/query-expansion-and-rewriting">Query Expansion and Rewriting</a> is one way to work around sparse retrieval&#39;s exact-vocabulary requirement</strong> without switching to dense retrieval at all.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming TF-IDF and BM25 are interchangeable.</strong> The worked example shows a real, specific case where they disagree — not just by degree, but by TF-IDF giving literally zero credit where BM25 gives meaningful partial credit.</li>
+<li><strong>Expecting sparse retrieval to handle synonyms or paraphrasing.</strong> Both methods match exact tokens — a document about &quot;automobiles&quot; scores zero against a query about &quot;cars&quot; unless the exact word appears.</li>
+<li><strong>Treating a high TF-IDF or BM25 score as a guarantee of relevance.</strong> Both measure term-matching strength, not whether the document actually answers the question — a document can share rare terms with a query while being about something else entirely.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does TF-IDF give d3 a score of exactly zero despite d3 containing "mat"?</summary>
+"Mat" appears in 2 of the 3 documents, which makes TF-IDF's idf formula, log(N/(1+document count)), evaluate to log(3/3) = log(1) = 0 — multiplying by this zero idf wipes out any contribution from "mat" regardless of how often it appears.
+</details>
+
+<details><summary>2. Why doesn't BM25 have the same problem?</summary>
+BM25's idf formula adds smoothing terms (+0.5) that keep it from ever evaluating to exactly zero, so a term appearing in roughly half the collection still contributes some weight rather than none.
+</details>
+
+<details><summary>3. Would either TF-IDF or BM25 score a document highly if it discussed the same topic as the query using entirely different words?</summary>
+No — both methods only match exact vocabulary overlap; a topically relevant document using no words in common with the query would score zero under either method, which is exactly the gap dense retrieval is designed to fill.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>TF-IDF:</strong> a term-weighting scheme combining term frequency and inverse document frequency.</li>
+<li><strong>BM25:</strong> a smoothed, saturating refinement of TF-IDF widely used as a strong sparse-retrieval baseline.</li>
+<li><strong>Sparse retrieval:</strong> ranking documents by weighted exact-term overlap with a query, as opposed to embedding-based similarity.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a> · <a class="wikilink" href="/rag/hybrid-retrieval-fusion/" data-topic="rag/hybrid-retrieval-fusion">Hybrid Retrieval Fusion</a> · <a class="wikilink" href="/rag/query-expansion-and-rewriting/" data-topic="rag/query-expansion-and-rewriting">Query Expansion and Rewriting</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/sparse-retrieval-with-tf-idf-and-bm25">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/dense-retrieval/"><small>Read next</small><b>Dense Retrieval</b><p>&quot;Automobile repair&quot; and &quot;car maintenance&quot; share not a single word, yet mean almost the same thing.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/anatomy-of-a-rag-pipeline/"><b>Anatomy of a RAG Pipeline</b><p>Every retrieval-augmented system, however elaborate, is built from the same handful of stages in the same order: a question comes in, it becomes a vector, that vector finds relevant passages,…</p></a><a class="rc-card" href="/rag/dense-retrieval/"><b>Dense Retrieval</b><p>&quot;Automobile repair&quot; and &quot;car maintenance&quot; share not a single word, yet mean almost the same thing.</p></a><a class="rc-card" href="/rag/hybrid-retrieval-fusion/"><b>Hybrid Retrieval Fusion</b><p>Sparse retrieval and dense retrieval fail in different, complementary ways — one misses semantic matches with no shared vocabulary, the other can blur exact matches it should have caught outright.</p></a><a class="rc-card" href="/rag/query-expansion-and-rewriting/"><b>Query Expansion and Rewriting</b><p>Sparse retrieval only ever matches the exact words a query happens to use.</p></a><a class="rc-card" href="/rag/retrieval-strategies/"><b>Retrieval Strategies</b><p>Having a fast index doesn&#39;t yet say what to search it with.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/retrieval-strategies/">← Previous: Retrieval Strategies</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

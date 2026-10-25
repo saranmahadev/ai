@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spike-Timing-Dependent Plasticity — AI Base</title>
+<meta name="description" content="Hebb&#39;s rule says neurons that fire together wire together, but says nothing about order.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/spike-timing-dependent-plasticity/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Spike-Timing-Dependent Plasticity — AI Base">
+<meta property="og:description" content="Hebb&#39;s rule says neurons that fire together wire together, but says nothing about order.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/spike-timing-dependent-plasticity/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Spike-Timing-Dependent Plasticity","item":"https://ai.saranmahadev.in/neural-networks/spike-timing-dependent-plasticity/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Spike-Timing-Dependent Plasticity","description":"Hebb's rule says neurons that fire together wire together, but says nothing about order.","url":"https://ai.saranmahadev.in/neural-networks/spike-timing-dependent-plasticity/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What determines whether STDP strengthens or weakens a connection?","acceptedAnswer":{"@type":"Answer","text":"The order of the two spikes — presynaptic before postsynaptic strengthens the connection; the reverse order weakens it."}},{"@type":"Question","name":"In the worked example, why was the weakening at Δt = −10ms slightly larger in magnitude than the strengthening at Δt = +10ms?","acceptedAnswer":{"@type":"Answer","text":"Because `A₋ = 0.12` was set larger than `A₊ = 0.1` — a real, commonly observed asymmetry between the strengthening and weakening amplitudes."}},{"@type":"Question","name":"What happens to the size of the weight change as the time gap between the two spikes grows?","acceptedAnswer":{"@type":"Answer","text":"It shrinks exponentially toward zero in either direction — STDP's effect is concentrated in a narrow window around a zero time gap."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Spiking and Neuromorphic Computing</p>
+        <h1 class="doc-title">Spike-Timing-Dependent Plasticity</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cnruuu4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="cnruuu4pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cnruuu4bg)"/>
+  <circle cx="665" cy="202" r="63" fill="#e3f6e5" opacity="0.59"/><circle cx="292" cy="157" r="141" fill="#e3f6e5" opacity="0.42"/><circle cx="1054" cy="332" r="213" fill="#ace3b3" opacity="0.36"/><circle cx="728" cy="146" r="163" fill="#e3f6e5" opacity="0.47"/><circle cx="1140" cy="282" r="75" fill="#e3f6e5" opacity="0.58"/>
+  <path d="M0,420 L0,334 L30,337 L60,340 L90,343 L120,345 L150,347 L180,348 L210,349 L240,350 L270,349 L300,349 L330,347 L360,346 L390,344 L420,341 L450,338 L480,335 L510,332 L540,328 L570,325 L600,321 L630,318 L660,315 L690,312 L720,310 L750,308 L780,307 L810,306 L840,306 L870,306 L900,307 L930,308 L960,309 L990,312 L1020,314 L1050,317 L1080,320 L1110,324 L1140,327 L1170,330 L1200,334 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,391 L90,387 L120,383 L150,378 L180,373 L210,368 L240,365 L270,363 L300,362 L330,363 L360,365 L390,369 L420,373 L450,378 L480,383 L510,388 L540,391 L570,393 L600,394 L630,393 L660,391 L690,387 L720,383 L750,378 L780,373 L810,368 L840,365 L870,363 L900,362 L930,363 L960,365 L990,369 L1020,373 L1050,378 L1080,383 L1110,388 L1140,391 L1170,393 L1200,394 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="848" cy="248" rx="221" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-5.0 848 248)"/><ellipse cx="848" cy="248" rx="306" ry="86" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.0 848 248)"/>
+  <circle cx="848" cy="248" r="87" fill="url(#cnruuu4pl)"/>
+  <circle cx="1170" cy="307" r="12" fill="#ffffff" opacity="0.80"/><circle cx="1124" cy="253" r="11" fill="#ffffff" opacity="0.60"/><circle cx="681" cy="173" r="16" fill="#ffffff" opacity="0.72"/><circle cx="702" cy="179" r="7" fill="#ffffff" opacity="0.87"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/neural-networks/hebbian-learning/" data-topic="neural-networks/hebbian-learning">Hebb&#39;s rule</a> says neurons that fire together wire together, but says nothing about <em>order</em>. Spike-timing-dependent plasticity (STDP) fills in exactly that gap: whether a connection strengthens or weakens depends on which neuron fired first, and by how much time.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/hebbian-learning/" data-topic="neural-networks/hebbian-learning">Hebbian Learning</a>, <a class="wikilink" href="/neural-networks/rate-and-temporal-coding/" data-topic="neural-networks/rate-and-temporal-coding">Rate and Temporal Coding</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If two connected neurons spike close together in time, should the connection between them get stronger or weaker — and does it matter which one fired first?&quot; Biological synapses answer this with a strikingly consistent rule: if the <strong>presynaptic</strong> (sending) neuron fires shortly <em>before</em> the <strong>postsynaptic</strong> (receiving) neuron — a pattern consistent with the first neuron having helped cause the second to fire — the connection strengthens. If the order is reversed, it weakens.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Think of it as evidence for causation, measured in milliseconds. A spike arriving just before the receiving neuron fires looks like it might have contributed to that firing — reward the connection that delivered it. A spike arriving just <em>after</em> the receiving neuron already fired could not possibly have caused it — penalize that connection instead, since it is clearly not the one driving this particular output. The closer in time the two spikes are, the stronger the effect in either direction; spikes far apart in time barely affect the connection at all.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>With <code>Δt = t_post − t_pre</code> (positive when the presynaptic spike comes first):</p>
+<pre><code class="language-text">Δt &gt; 0 (pre before post, causal):      Δw = A₊ · exp(−Δt / τ₊)     (strengthen)
+Δt &lt; 0 (post before pre, anti-causal): Δw = −A₋ · exp(Δt / τ₋)     (weaken)
+</code></pre>
+<p><code>A₊</code> and <code>A₋</code> set the maximum strengthening and weakening; <code>τ₊</code> and <code>τ₋</code> set how quickly the effect fades as the two spikes move further apart in time. This is Hebb&#39;s rule made temporally precise: &quot;fire together&quot; becomes &quot;fire within this time window,&quot; and &quot;wire together&quot; gets a sign that depends on the order.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>With <code>A₊ = 0.1</code>, <code>A₋ = 0.12</code>, <code>τ₊ = τ₋ = 20</code> ms:</p>
+<pre><code class="language-text">Δt = +10 ms (pre fires 10ms before post, causal):  Δw = 0.1 · exp(−10/20) ≈ +0.0607
+Δt = −10 ms (post fires 10ms before pre, anti-causal): Δw = −0.12 · exp(−10/20) ≈ −0.0728
+Δt = +40 ms (pre fires 40ms before post):  Δw = 0.1 · exp(−40/20) ≈ +0.0135
+</code></pre>
+<p>Ten milliseconds in the &quot;right&quot; causal order strengthens the connection by about 0.061; the same ten milliseconds in the wrong order weakens it by about 0.073 — slightly more, since <code>A₋ &gt; A₊</code> here, a common asymmetry in real STDP measurements. Stretch the causal gap to 40 ms and the strengthening shrinks to about a fifth of its value at 10 ms — the window is narrow, not an all-or-nothing effect.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="stdp-window" data-title="The STDP learning window"><p class="bench-fallback"><strong>Interactive bench: The STDP learning window.</strong> Set the time gap between a presynaptic and postsynaptic spike, in either order, and see how much the connection strengthens or weakens as a result.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Try several positive (causal) gaps and watch the strengthening shrink as the gap grows.</li>
+<li>Try the same gaps in the anti-causal direction and compare the sign and size of the change.</li>
+<li>Find the gap size beyond which the weight change becomes negligible in either direction.</li>
+</ol>
+<p><strong>What you should notice:</strong> the effect is sharply peaked near zero time gap and in the causal order, and fades quickly — STDP rewards tight, causally-ordered timing, not just &quot;close enough.&quot;</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the biologically-grounded answer to the training-signal question</strong> raised all the way back in <a class="wikilink" href="/neural-networks/why-this-planet-looks-different-from-deep-learning/" data-topic="neural-networks/why-this-planet-looks-different-from-deep-learning">Why This Planet Looks Different from Deep Learning</a>: a genuinely different, local, timing-based learning rule, needing no global error signal at all.</li>
+<li><strong>It is one of the main learning rules implemented directly in neuromorphic hardware</strong> (see <a class="wikilink" href="/neural-networks/neuromorphic-hardware/" data-topic="neural-networks/neuromorphic-hardware">Neuromorphic Hardware</a>), since it is cheap to compute locally at each synapse using only the timing of the two spikes it connects.</li>
+<li><strong>It gives a mechanistic account of causal learning</strong>: wiring strengthens exactly where timing is consistent with one neuron&#39;s spike contributing to another&#39;s, without ever computing an explicit notion of &quot;cause.&quot;</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating STDP as just a timing-free version of Hebb&#39;s rule.</strong> The sign of the update genuinely depends on spike order — Hebb&#39;s original rule has no notion of order at all.</li>
+<li><strong>Assuming the window is symmetric.</strong> Real synapses, and the worked example above, often show different magnitudes (and sometimes different time constants) for strengthening versus weakening.</li>
+<li><strong>Forgetting the effect decays with the time gap.</strong> Two spikes hundreds of milliseconds apart are treated as essentially unrelated, not as still &quot;firing together.&quot;</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What determines whether STDP strengthens or weakens a connection?</summary>
+The order of the two spikes — presynaptic before postsynaptic strengthens the connection; the reverse order weakens it.
+</details>
+
+<details><summary>2. In the worked example, why was the weakening at Δt = −10ms slightly larger in magnitude than the strengthening at Δt = +10ms?</summary>
+Because `A₋ = 0.12` was set larger than `A₊ = 0.1` — a real, commonly observed asymmetry between the strengthening and weakening amplitudes.
+</details>
+
+<details><summary>3. What happens to the size of the weight change as the time gap between the two spikes grows?</summary>
+It shrinks exponentially toward zero in either direction — STDP's effect is concentrated in a narrow window around a zero time gap.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Presynaptic / postsynaptic:</strong> the sending neuron and the receiving neuron of a given connection, respectively.</li>
+<li><strong>Causal (pre-before-post) window:</strong> the time range where the presynaptic spike precedes the postsynaptic one, where STDP strengthens the connection.</li>
+<li><strong>Learning window:</strong> the shape of weight change as a function of the time gap between two spikes, typically peaked near zero and decaying exponentially.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/hebbian-learning/" data-topic="neural-networks/hebbian-learning">Hebbian Learning</a> · <a class="wikilink" href="/neural-networks/rate-and-temporal-coding/" data-topic="neural-networks/rate-and-temporal-coding">Rate and Temporal Coding</a> · <a class="wikilink" href="/neural-networks/neuromorphic-hardware/" data-topic="neural-networks/neuromorphic-hardware">Neuromorphic Hardware</a> · <a class="wikilink" href="/neural-networks/why-this-planet-looks-different-from-deep-learning/" data-topic="neural-networks/why-this-planet-looks-different-from-deep-learning">Why This Planet Looks Different from Deep Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/spike-timing-dependent-plasticity">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/neuromorphic-hardware/"><small>Read next</small><b>Neuromorphic Hardware</b><p>A GPU evaluates every unit in a layer on every clock cycle, whether or not that unit has anything new to say.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/hebbian-learning/"><b>Hebbian Learning</b><p>&quot;Cells that fire together wire together.&quot; Hebbian learning strengthens the connection between two neurons in direct proportion to how often they&#39;re active at the same time — no error signal, no…</p></a><a class="rc-card" href="/neural-networks/rate-and-temporal-coding/"><b>Rate and Temporal Coding</b><p>A spike itself carries almost no information — it is the same all-or-nothing event every time.</p></a><a class="rc-card" href="/neural-networks/why-this-planet-looks-different-from-deep-learning/"><b>Why This Planet Looks Different from Deep Learning</b><p>Every architecture on the Deep Learning planet is trained the same fundamental way: compute an error against a known target, and adjust every weight to reduce it, by backpropagation.</p></a><a class="rc-card" href="/neural-networks/neuromorphic-hardware/"><b>Neuromorphic Hardware</b><p>A GPU evaluates every unit in a layer on every clock cycle, whether or not that unit has anything new to say.</p></a><a class="rc-card" href="/neural-networks/spiking-and-neuromorphic-computing/"><b>Spiking and Neuromorphic Computing</b><p>A real neuron doesn&#39;t output a continuous number — it stays silent, then fires a brief, discrete spike.</p></a><a class="rc-card" href="/neural-networks/spiking-neural-networks/"><b>Spiking Neural Networks</b><p>Every network so far on this planet, and every one on Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/rate-and-temporal-coding/">← Previous: Rate and Temporal Coding</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diversity and Mode Collapse in Generation — AI Base</title>
+<meta name="description" content="A generative model can score well on fidelity — every individual sample looks great — while quietly producing almost the same thing every time.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/diversity-and-mode-collapse-in-generation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Diversity and Mode Collapse in Generation — AI Base">
+<meta property="og:description" content="A generative model can score well on fidelity — every individual sample looks great — while quietly producing almost the same thing every time.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/diversity-and-mode-collapse-in-generation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Diversity and Mode Collapse in Generation","item":"https://ai.saranmahadev.in/generative-ai/diversity-and-mode-collapse-in-generation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Diversity and Mode Collapse in Generation","description":"A generative model can score well on fidelity — every individual sample looks great — while quietly producing almost the same thing every time.","url":"https://ai.saranmahadev.in/generative-ai/diversity-and-mode-collapse-in-generation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What specifically is mode collapse, as distinct from low-quality generation?","acceptedAnswer":{"@type":"Answer","text":"A generative model producing a narrow range of outputs instead of the true diversity of its training distribution — individual samples can still look high-quality; the problem is the lack of variety across samples."}},{"@type":"Question","name":"In the worked example, what evidence pointed to mode collapse?","acceptedAnswer":{"@type":"Answer","text":"Average pairwise distance among generated samples shrank sharply across training epochs, from 2.348 down to 0.201 — samples were converging toward each other rather than staying spread out."}},{"@type":"Question","name":"Why can't mode collapse be detected by looking at individual samples one at a time?","acceptedAnswer":{"@type":"Answer","text":"Because a collapsed generator's individual samples can each look perfectly plausible on their own — the problem only becomes visible by comparing multiple samples against each other to see how similar they've become."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Evaluating Generative Models</p>
+        <h1 class="doc-title">Diversity and Mode Collapse in Generation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cf2kz2obg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="cf2kz2opl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cf2kz2obg)"/>
+  <circle cx="882" cy="143" r="188" fill="#8a5989" opacity="0.52"/><circle cx="3" cy="357" r="208" fill="#ffbfe0" opacity="0.50"/><circle cx="745" cy="403" r="71" fill="#ffbfe0" opacity="0.23"/><circle cx="938" cy="283" r="102" fill="#ffe9f4" opacity="0.42"/><circle cx="984" cy="236" r="172" fill="#ffbeba" opacity="0.56"/>
+  <path d="M0,420 L0,337 L30,340 L60,342 L90,345 L120,347 L150,348 L180,349 L210,350 L240,349 L270,349 L300,348 L330,346 L360,344 L390,341 L420,338 L450,335 L480,332 L510,329 L540,325 L570,322 L600,318 L630,315 L660,313 L690,310 L720,308 L750,307 L780,306 L810,306 L840,306 L870,306 L900,308 L930,309 L960,311 L990,314 L1020,317 L1050,320 L1080,323 L1110,327 L1140,330 L1170,333 L1200,337 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,390 L60,387 L90,384 L120,380 L150,376 L180,373 L210,369 L240,366 L270,364 L300,363 L330,362 L360,362 L390,363 L420,365 L450,368 L480,371 L510,375 L540,378 L570,382 L600,386 L630,389 L660,391 L690,393 L720,394 L750,394 L780,393 L810,391 L840,389 L870,386 L900,383 L930,379 L960,375 L990,371 L1020,368 L1050,366 L1080,364 L1110,362 L1140,362 L1170,363 L1200,364 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="745" cy="136" rx="149" ry="42" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(24.0 745 136)"/><ellipse cx="745" cy="136" rx="206" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(30.0 745 136)"/>
+  <circle cx="745" cy="136" r="58" fill="url(#cf2kz2opl)"/>
+  <circle cx="675" cy="59" r="10" fill="#ffffff" opacity="0.83"/><circle cx="653" cy="197" r="12" fill="#ffffff" opacity="0.73"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A generative model can score well on fidelity — every individual sample looks great — while quietly producing almost the same thing every time. This note covers checking for that specific failure directly, rather than assuming high-quality samples mean a healthy generator.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/" data-topic="generative-ai/distributional-metrics-fid-inception-score-and-clip-score">Distributional Metrics (FID, Inception Score and CLIP Score)</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Is a generative model actually producing a varied range of outputs, or collapsing onto a few safe ones?&quot; <strong>Mode collapse</strong> is when a generative model stops covering the real diversity of its training distribution and instead produces a narrow range of outputs — sometimes nearly identical ones — regardless of how good any individual sample looks. A simple, direct check is <strong>average pairwise distance</strong>: generate several samples and measure how far apart they typically are from each other; a collapsing generator&#39;s samples get closer and closer together over time.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine a student asked to write five different short stories, who instead writes the same basic plot five times with minor cosmetic changes. Each individual story might be perfectly well-written — mode collapse isn&#39;t about quality — but something has clearly gone wrong with the <em>diversity</em> the assignment actually called for. A generative model that&#39;s collapsed behaves the same way: every sample might look plausible on its own, while the set of samples as a whole has stopped exploring the real range of possibilities.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">average pairwise distance over N samples:
+  (1 / C(N,2)) · Σᵢ&lt;ⱼ distance(sampleᵢ, sampleⱼ)
+
+  shrinking average pairwise distance over training ⟹ samples are
+  converging toward each other ⟹ a warning sign of mode collapse
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Eight toy samples drawn at each of several training &quot;epochs,&quot; with their spread intentionally shrinking over time to simulate collapse:</p>
+<pre><code class="language-text">epoch 0:  average pairwise distance = 2.348
+epoch 2:  average pairwise distance = 1.380
+epoch 4:  average pairwise distance = 0.823
+epoch 6:  average pairwise distance = 0.201
+</code></pre>
+<p>By epoch 6, the samples sit more than ten times closer together on average than they did at epoch 0 — a clear, measurable signature of collapsing diversity, visible directly from the samples themselves with no reference to any particular &quot;correct&quot; output at all.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="mode-collapse-diversity" data-title="Sample diversity shrinking over training"><p class="bench-fallback"><strong>Interactive bench: Sample diversity shrinking over training.</strong> Step through training epochs and watch generated samples cluster more tightly together, along with their average pairwise distance.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at epoch 0 and note how spread out the samples are.</li>
+<li>Advance through the epochs and watch the samples cluster increasingly tightly.</li>
+<li>Compare the average-pairwise-distance readout across epochs.</li>
+</ol>
+<p><strong>What you should notice:</strong> nothing about any individual sample looks obviously wrong at any epoch — the collapse is only visible by looking at the <em>set</em> of samples together, which is exactly why a diversity-specific check is needed on top of per-sample quality checks.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Mode collapse is a well-known, specific failure mode of GANs</strong>, where the generator can find a narrow range of outputs that reliably fools the discriminator, and has no further incentive (under that training signal alone) to explore beyond it.</li>
+<li><strong><a class="wikilink" href="/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/" data-topic="generative-ai/distributional-metrics-fid-inception-score-and-clip-score">FID itself partially captures this</a></strong> — a collapsed generator&#39;s variance term diverges sharply from real data&#39;s variance — but a direct diversity check like average pairwise distance is simpler to interpret on its own.</li>
+<li><strong>Diffusion models are generally considered less prone to mode collapse than GANs</strong>, though they aren&#39;t immune to related diversity issues, especially under strong <a class="wikilink" href="/generative-ai/classifier-free-guidance/" data-topic="generative-ai/classifier-free-guidance">guidance</a> that pushes samples hard toward a narrow target.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Judging diversity from a handful of generated samples.</strong> Average pairwise distance (or any diversity measure) needs a reasonably large sample to be meaningful — a small handful of samples can look diverse or collapsed by chance.</li>
+<li><strong>Confusing low diversity with high quality.</strong> A model that always produces the exact same, very good output has a diversity problem, not a quality success — the two properties are independent, and a generative model is typically expected to have both.</li>
+<li><strong>Assuming any diversity measure applies unchanged across modalities.</strong> &quot;Distance between two images&quot; and &quot;distance between two sentences&quot; are very different measurements — the general idea here transfers across modalities, but the specific metric has to be adapted to each one.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What specifically is mode collapse, as distinct from low-quality generation?</summary>
+A generative model producing a narrow range of outputs instead of the true diversity of its training distribution — individual samples can still look high-quality; the problem is the lack of variety across samples.
+</details>
+
+<details><summary>2. In the worked example, what evidence pointed to mode collapse?</summary>
+Average pairwise distance among generated samples shrank sharply across training epochs, from 2.348 down to 0.201 — samples were converging toward each other rather than staying spread out.
+</details>
+
+<details><summary>3. Why can't mode collapse be detected by looking at individual samples one at a time?</summary>
+Because a collapsed generator's individual samples can each look perfectly plausible on their own — the problem only becomes visible by comparing multiple samples against each other to see how similar they've become.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Mode collapse:</strong> a generative model producing a narrow range of outputs instead of covering its training distribution&#39;s real diversity.</li>
+<li><strong>Average pairwise distance:</strong> the average distance between every pair of samples in a generated set, used as a direct diversity measure.</li>
+<li><strong>Diversity:</strong> how varied a generative model&#39;s outputs are, as distinct from how individually plausible any one output is.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/" data-topic="generative-ai/distributional-metrics-fid-inception-score-and-clip-score">Distributional Metrics (FID, Inception Score and CLIP Score)</a> · <a class="wikilink" href="/deep-learning/generative-adversarial-networks/" data-topic="deep-learning/generative-adversarial-networks">Generative Adversarial Networks</a> · <a class="wikilink" href="/generative-ai/classifier-free-guidance/" data-topic="generative-ai/classifier-free-guidance">Classifier-Free Guidance</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/diversity-and-mode-collapse-in-generation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/human-evaluation-of-generated-content/"><small>Read next</small><b>Human Evaluation of Generated Content</b><p>Every metric so far on this planet is automatic — computed from numbers, with no judgment involved.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/"><b>Distributional Metrics (FID, Inception Score and CLIP Score)</b><p>BLEU and ROUGE work by comparing a generation directly against one specific reference.</p></a><a class="rc-card" href="/generative-ai/classifier-free-guidance/"><b>Classifier-Free Guidance</b><p>Classifier Guidance works, but it needs a second model — a classifier trained specifically to work on noisy, partially-denoised samples.</p></a><a class="rc-card" href="/deep-learning/generative-adversarial-networks/"><b>Generative Adversarial Networks</b><p>A generative adversarial network (GAN) trains two networks against each other: a generator that turns random noise into fake samples, trying to fool the second network, and a discriminator that…</p></a><a class="rc-card" href="/generative-ai/evaluating-generative-models/"><b>Evaluating Generative Models</b><p>A classifier has a right answer to check against; a generated poem or image usually doesn&#39;t.</p></a><a class="rc-card" href="/llms/synthetic-data-for-pretraining/"><b>Synthetic Data for Pretraining</b><p>When real data for a domain or language is scarce, a tempting fix is to generate more of it — have a model write the text you wish you had more of.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/">← Previous: Distributional Metrics (FID, Inception Score and CLIP Score)</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fine-Tuning for a Specific Task — AI Base</title>
+<meta name="description" content="An aligned, general-purpose assistant is often not what a product actually needs — a narrower model trained specifically on one job&#39;s data can do that one job better, cheaper, and more predictably.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/fine-tuning-for-a-specific-task/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Fine-Tuning for a Specific Task — AI Base">
+<meta property="og:description" content="An aligned, general-purpose assistant is often not what a product actually needs — a narrower model trained specifically on one job&#39;s data can do that one job better, cheaper, and more predictably.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/fine-tuning-for-a-specific-task/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Fine-Tuning for a Specific Task","item":"https://ai.saranmahadev.in/llms/fine-tuning-for-a-specific-task/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Fine-Tuning for a Specific Task","description":"An aligned, general-purpose assistant is often not what a product actually needs — a narrower model trained specifically on one job's data can do that one job better, cheaper, and more predictably.","url":"https://ai.saranmahadev.in/llms/fine-tuning-for-a-specific-task/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the parameter-count gap between full fine-tuning and LoRA widen as the base model's hidden size grows?","acceptedAnswer":{"@type":"Answer","text":"Full fine-tuning's parameter count scales with d² while LoRA's scales with d·r (r fixed and small), so as d grows, the full fine-tune's cost grows quadratically while LoRA's grows only linearly."}},{"@type":"Question","name":"Does task-specific fine-tuning typically teach a model large amounts of brand-new factual knowledge?","acceptedAnswer":{"@type":"Answer","text":"Not usually — it mostly reshapes how the model applies knowledge it already has from pretraining; injecting substantial new knowledge is better handled by continued pretraining or retrieval."}},{"@type":"Question","name":"What's the main practical benefit of updating 64× fewer parameters, beyond raw training speed?","acceptedAnswer":{"@type":"Answer","text":"Far less optimizer state and memory during training, and a much smaller artifact to store and distribute per task — important when a product needs many task-specific fine-tunes of the same base model."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · LLMs in Practice</p>
+        <h1 class="doc-title">Fine-Tuning for a Specific Task</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c190wlqkbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c190wlqkpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c190wlqkbg)"/>
+  <circle cx="1115" cy="352" r="213" fill="#8a5f5e" opacity="0.30"/><circle cx="1170" cy="358" r="157" fill="#8a5f5e" opacity="0.47"/><circle cx="360" cy="304" r="184" fill="#ffece0" opacity="0.44"/><circle cx="571" cy="343" r="175" fill="#ffece0" opacity="0.24"/><circle cx="508" cy="274" r="147" fill="#8a5f5e" opacity="0.58"/><circle cx="228" cy="26" r="63" fill="#ffc7a2" opacity="0.23"/>
+  <path d="M0,420 L0,306 L30,308 L60,310 L90,314 L120,319 L150,323 L180,329 L210,334 L240,338 L270,343 L300,346 L330,348 L360,349 L390,349 L420,348 L450,346 L480,342 L510,338 L540,333 L570,328 L600,323 L630,318 L660,314 L690,310 L720,308 L750,306 L780,306 L810,306 L840,308 L870,312 L900,316 L930,320 L960,325 L990,330 L1020,335 L1050,340 L1080,344 L1110,347 L1140,349 L1170,350 L1200,349 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,364 L90,367 L120,371 L150,376 L180,381 L210,385 L240,389 L270,392 L300,394 L330,394 L360,392 L390,389 L420,385 L450,380 L480,375 L510,371 L540,367 L570,364 L600,362 L630,362 L660,364 L690,367 L720,371 L750,376 L780,381 L810,385 L840,389 L870,392 L900,394 L930,394 L960,392 L990,389 L1020,385 L1050,380 L1080,375 L1110,371 L1140,367 L1170,364 L1200,362 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="798" cy="252" rx="210" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-24.2 798 252)"/><ellipse cx="798" cy="252" rx="291" ry="81" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-18.2 798 252)"/>
+  <circle cx="798" cy="252" r="83" fill="url(#c190wlqkpl)"/>
+  <circle cx="914" cy="162" r="18" fill="#ffffff" opacity="0.69"/><circle cx="928" cy="163" r="17" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An aligned, general-purpose assistant is often not what a product actually needs — a narrower model trained specifically on one job&#39;s data can do that one job better, cheaper, and more predictably. Task-specific fine-tuning is how a general model becomes a specialist.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/supervised-fine-tuning-sft/" data-topic="llms/supervised-fine-tuning-sft">Supervised Fine-Tuning (SFT)</a>, <a class="wikilink" href="/llms/direct-preference-optimization-dpo/" data-topic="llms/direct-preference-optimization-dpo">Direct Preference Optimization (DPO)</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;After pretraining and alignment, how does a model actually get adapted to one narrow job?&quot; The same supervised fine-tuning mechanism covered earlier on this road — more gradient steps, on a new, narrower dataset — is reused, but now the goal is narrowing the model&#39;s behavior to one task rather than broadening it into a general assistant. The practical question is how much of the model to update: a full fine-tune updates every parameter; a low-rank update (already derived on the Generative AI planet as <a class="wikilink" href="/generative-ai/parameter-efficient-adaptation-for-generation/" data-topic="generative-ai/parameter-efficient-adaptation-for-generation">LoRA</a>) updates a tiny fraction of that, added on top of the frozen base weights.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Retraining a generalist doctor to become a specialist doesn&#39;t mean re-teaching them anatomy from scratch — it means a focused residency on top of everything they already know. Full fine-tuning is closer to re-schooling from scratch (expensive, every parameter moves); a low-rank update is the focused residency: a small number of new, targeted parameters layered on top of a frozen foundation.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">full fine-tune params  = d²         (every weight in a d×d matrix updated)
+LoRA-style params      = 2·d·r      (two low-rank d×r matrices, r ≪ d)
+</code></pre>
+<p>This is the exact mechanism already derived in <a class="wikilink" href="/generative-ai/parameter-efficient-adaptation-for-generation/" data-topic="generative-ai/parameter-efficient-adaptation-for-generation">LoRA</a>; this topic is about <em>when</em> and <em>why</em> you&#39;d reach for task-specific fine-tuning at all, not re-deriving the low-rank update itself.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>For a hidden size d = 1024 and a low rank r = 8:</p>
+<pre><code class="language-text">full fine-tune: 1024² = 1,048,576 parameters updated
+LoRA:           2 × 1024 × 8 = 16,384 parameters updated
+ratio: 1,048,576 / 16,384 = 64× fewer trainable parameters with LoRA
+</code></pre>
+<p>Updating 64× fewer parameters means far less optimizer state, far less memory, and a far smaller file to store and ship per task — often the deciding factor when a product needs many task-specific variants of the same base model.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="lora-vs-full-finetune" data-title="How many parameters actually need to change"><p class="bench-fallback"><strong>Interactive bench: How many parameters actually need to change.</strong> Slide hidden size and rank and compare full fine-tuning's parameter count against LoRA's.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at d=1024, r=8 and note the 64× gap.</li>
+<li>Raise r toward d and watch the gap shrink — at r=d/2, LoRA&#39;s efficiency advantage mostly disappears.</li>
+<li>Raise d (hidden size) and watch the full fine-tune bar grow quadratically while LoRA&#39;s grows only linearly.</li>
+</ol>
+<p><strong>What you should notice:</strong> the full fine-tune&#39;s parameter count grows with d², while LoRA&#39;s grows only with d·r — the gap between them widens as the base model gets larger, which is exactly when the memory savings matter most.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This reuses the exact low-rank mechanism derived in <a class="wikilink" href="/generative-ai/parameter-efficient-adaptation-for-generation/" data-topic="generative-ai/parameter-efficient-adaptation-for-generation">LoRA</a> on the Generative AI planet</strong> — the mechanism doesn&#39;t change for LLMs, only the motivation (task specialization rather than style or subject adaptation).</li>
+<li><strong>A fine-tuned model can be merged with others (<a class="wikilink" href="/llms/model-merging-and-weight-averaging/" data-topic="llms/model-merging-and-weight-averaging">Model Merging and Weight Averaging</a>) or risk forgetting what it knew before fine-tuning (<a class="wikilink" href="/llms/catastrophic-forgetting-in-fine-tuning/" data-topic="llms/catastrophic-forgetting-in-fine-tuning">Catastrophic Forgetting in Fine-Tuning</a>)</strong> — both are direct consequences of how fine-tuning updates the model&#39;s weights.</li>
+<li><strong>Choosing whether to fine-tune at all, versus prompting a general model, is part of <a class="wikilink" href="/llms/choosing-a-model-for-a-task/" data-topic="llms/choosing-a-model-for-a-task">Choosing a Model for a Task</a>.</strong></li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming fine-tuning for a task always means a full fine-tune.</strong> In practice, low-rank and other parameter-efficient methods are the default for most task adaptation precisely because of the gap the worked example shows.</li>
+<li><strong>Expecting fine-tuning to add new knowledge the base model never saw.</strong> Fine-tuning mostly reshapes <em>how</em> the model uses what it already learned during pretraining; it&#39;s a poor tool for injecting large amounts of new factual knowledge (that&#39;s closer to <a class="wikilink" href="/llms/continued-pretraining-and-domain-adaptation/" data-topic="llms/continued-pretraining-and-domain-adaptation">Continued Pretraining and Domain Adaptation</a> or retrieval).</li>
+<li><strong>Ignoring catastrophic forgetting.</strong> Narrowing a model to one task can measurably degrade its performance on everything else — covered next.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does the parameter-count gap between full fine-tuning and LoRA widen as the base model's hidden size grows?</summary>
+Full fine-tuning's parameter count scales with d² while LoRA's scales with d·r (r fixed and small), so as d grows, the full fine-tune's cost grows quadratically while LoRA's grows only linearly.
+</details>
+
+<details><summary>2. Does task-specific fine-tuning typically teach a model large amounts of brand-new factual knowledge?</summary>
+Not usually — it mostly reshapes how the model applies knowledge it already has from pretraining; injecting substantial new knowledge is better handled by continued pretraining or retrieval.
+</details>
+
+<details><summary>3. What's the main practical benefit of updating 64× fewer parameters, beyond raw training speed?</summary>
+Far less optimizer state and memory during training, and a much smaller artifact to store and distribute per task — important when a product needs many task-specific fine-tunes of the same base model.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Task-specific fine-tuning:</strong> further training a pretrained, aligned model on a narrower dataset to specialize it for one job.</li>
+<li><strong>Full fine-tune:</strong> updating every parameter of the base model during fine-tuning.</li>
+<li><strong>Low-rank update:</strong> adding a small number of new parameters (two low-rank matrices) on top of a frozen base model, as in LoRA.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/supervised-fine-tuning-sft/" data-topic="llms/supervised-fine-tuning-sft">Supervised Fine-Tuning (SFT)</a> · <a class="wikilink" href="/llms/catastrophic-forgetting-in-fine-tuning/" data-topic="llms/catastrophic-forgetting-in-fine-tuning">Catastrophic Forgetting in Fine-Tuning</a> · <a class="wikilink" href="/llms/model-merging-and-weight-averaging/" data-topic="llms/model-merging-and-weight-averaging">Model Merging and Weight Averaging</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/fine-tuning-for-a-specific-task">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/catastrophic-forgetting-in-fine-tuning/"><small>Read next</small><b>Catastrophic Forgetting in Fine-Tuning</b><p>Fine-tuning a model to be excellent at one narrow task can quietly make it worse at everything it used to do.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/supervised-fine-tuning-sft/"><b>Supervised Fine-Tuning (SFT)</b><p>A pretrained model is extremely good at continuing text in whatever style it appears in — but &quot;the internet&quot; doesn&#39;t naturally produce the specific pattern of a helpful assistant replying to a…</p></a><a class="rc-card" href="/llms/direct-preference-optimization-dpo/"><b>Direct Preference Optimization (DPO)</b><p>RLHF&#39;s reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones.</p></a><a class="rc-card" href="/generative-ai/parameter-efficient-adaptation-for-generation/"><b>Parameter-Efficient Adaptation for Generation</b><p>Adapting a huge generative model to a specific style, domain, or speaker (as in Voice Cloning and Speaker Adaptation) by retraining all of its weights would mean storing and updating a full new…</p></a><a class="rc-card" href="/llms/model-merging-and-weight-averaging/"><b>Model Merging and Weight Averaging</b><p>Training a brand-new model that&#39;s good at two different tasks usually means training on both tasks&#39; data together.</p></a><a class="rc-card" href="/llms/catastrophic-forgetting-in-fine-tuning/"><b>Catastrophic Forgetting in Fine-Tuning</b><p>Fine-tuning a model to be excellent at one narrow task can quietly make it worse at everything it used to do.</p></a><a class="rc-card" href="/llms/choosing-a-model-for-a-task/"><b>Choosing a Model for a Task</b><p>There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/llms-in-practice/">← Previous: LLMs in Practice</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estimation and Bias — AI Base</title>
+<meta name="description" content="An estimator is a recipe for guessing an unknown quantity from data, such as using the sample mean to estimate the population mean.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/estimation-and-bias/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Estimation and Bias — AI Base">
+<meta property="og:description" content="An estimator is a recipe for guessing an unknown quantity from data, such as using the sample mean to estimate the population mean.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/estimation-and-bias/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Estimation and Bias","item":"https://ai.saranmahadev.in/math/estimation-and-bias/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Estimation and Bias","description":"An estimator is a recipe for guessing an unknown quantity from data, such as using the sample mean to estimate the population mean.","url":"https://ai.saranmahadev.in/math/estimation-and-bias/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the bias of an estimator with E[θ̂] = θ?","acceptedAnswer":{"@type":"Answer","text":"Zero."}},{"@type":"Question","name":"With n = 10, the divide-by-n variance estimate is on average what fraction of the truth?","acceptedAnswer":{"@type":"Answer","text":"9/10."}},{"@type":"Question","name":"Total mean squared error equals what?","acceptedAnswer":{"@type":"Answer","text":"Bias squared plus variance."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Statistics</p>
+        <h1 class="doc-title">Estimation and Bias</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cat7ri8bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cat7ri8pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cat7ri8bg)"/>
+  <circle cx="359" cy="76" r="172" fill="#cebff9" opacity="0.45"/><circle cx="1079" cy="54" r="83" fill="#ddbecb" opacity="0.56"/><circle cx="186" cy="328" r="147" fill="#eee9fd" opacity="0.59"/><circle cx="727" cy="108" r="142" fill="#cebff9" opacity="0.37"/><circle cx="480" cy="75" r="158" fill="#68599a" opacity="0.53"/><circle cx="714" cy="402" r="90" fill="#cebff9" opacity="0.40"/>
+  <path d="M0,420 L0,337 L30,342 L60,347 L90,349 L120,349 L150,348 L180,344 L210,338 L240,332 L270,325 L300,318 L330,313 L360,308 L390,306 L420,306 L450,308 L480,311 L510,317 L540,323 L570,330 L600,337 L630,342 L660,347 L690,349 L720,349 L750,348 L780,344 L810,338 L840,332 L870,325 L900,318 L930,313 L960,308 L990,306 L1020,306 L1050,308 L1080,311 L1110,317 L1140,323 L1170,330 L1200,337 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,378 L30,375 L60,371 L90,368 L120,365 L150,363 L180,362 L210,362 L240,363 L270,364 L300,366 L330,369 L360,373 L390,376 L420,380 L450,384 L480,387 L510,390 L540,392 L570,393 L600,394 L630,394 L660,392 L690,390 L720,388 L750,384 L780,381 L810,377 L840,373 L870,370 L900,367 L930,365 L960,363 L990,362 L1020,362 L1050,363 L1080,365 L1110,367 L1140,370 L1170,374 L1200,378 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="830" cy="278" rx="248" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(7.6 830 278)"/><ellipse cx="830" cy="278" rx="343" ry="96" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(13.6 830 278)"/>
+  <circle cx="830" cy="278" r="97" fill="url(#cat7ri8pl)"/>
+  <circle cx="1079" cy="305" r="16" fill="#ffffff" opacity="0.76"/><circle cx="1225" cy="226" r="16" fill="#ffffff" opacity="0.70"/><circle cx="1111" cy="350" r="11" fill="#ffffff" opacity="0.72"/><circle cx="1199" cy="323" r="10" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An <strong>estimator</strong> is a recipe for guessing an unknown quantity from data, such as using the sample mean to estimate the population mean. A good estimator is right on average (<strong>unbiased</strong>) and does not vary much from sample to sample (<strong>low variance</strong>). The two goals can pull against each other.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/sampling-and-bias/" data-topic="math/sampling-and-bias">Sampling and Bias</a>, <a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a> and <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I turn data into a good guess, and how do I judge the guess?&quot; A model&#39;s parameters are estimates, so the same questions apply to training.</p>
+<h2 id="intuition-repeated-shots-at-a-target">Intuition: repeated shots at a target</h2>
+<p>Imagine drawing many samples and computing the estimator on each. The results form a cloud. Its <strong>centre</strong> relative to the truth is the <strong>bias</strong>; its <strong>spread</strong> is the <strong>variance</strong>.</p>
+<pre><code class="language-text">bias(θ̂)     = E[θ̂] − θ            (θ = the true value, θ̂ = the estimate)
+variance(θ̂) = spread of θ̂ across samples
+</code></pre>
+<ul>
+<li>Unbiased and low variance: shots clustered on the bullseye.</li>
+<li>Biased but low variance: tight cluster, off target.</li>
+<li>Unbiased but high variance: scattered around the bullseye.</li>
+</ul>
+<h2 id="the-classic-example-variance-itself">The classic example: variance itself</h2>
+<p>For the variance of a population, two natural recipes:</p>
+<pre><code class="language-text">divide by n:      (1/n)   Σ (xᵢ − x̄)²      biased: on average too small
+divide by n − 1:  (1/(n−1)) Σ (xᵢ − x̄)²    unbiased
+</code></pre>
+<p>The <code>n</code> version is too small because the sample mean <code>x̄</code> sits closer to the data than the true mean does, so deviations from it are a bit too small. On average the divide-by-<code>n</code> version equals <code>(n − 1)/n</code> times the truth.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Take samples of size <code>n = 5</code> from a population with variance <code>σ² = 4</code>.</p>
+<pre><code class="language-text">average of the divide-by-n estimates:   4 × (5 − 1)/5 = 3.2      (too low by 0.8)
+average of the divide-by-(n−1) estimates: 4                     (right on average)
+</code></pre>
+<p>The unbiased estimator can be a little more spread out from sample to sample. A slightly biased estimator with less variance can have a smaller overall error, since the total mean squared error is <code>bias² + variance</code>. That trade-off returns in the <a class="wikilink" href="/math/bias-variance-and-the-whole-picture/" data-topic="math/bias-variance-and-the-whole-picture">Bias, Variance and the Whole Picture</a>.</p>
+<p>The sample mean is unbiased for the population mean, with standard error <code>σ / √n</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="estimator-shootout" data-title="Two ways to estimate a variance"><p class="bench-fallback"><strong>Interactive bench: Two ways to estimate a variance.</strong> Many small samples are drawn from a population with known variance; two estimators, dividing by n and by n minus 1, are computed on each and shown as histograms with their averages compared to the truth.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With small n (say 5), compare the two averages with the true variance.</li>
+<li>Increase n and watch the gap between them shrink.</li>
+<li>Compare the spreads of the two histograms.</li>
+<li>Try n = 2.</li>
+</ol>
+<p><strong>What you should notice:</strong> dividing by n is too small on average, especially for small samples, while dividing by n − 1 is right on average.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every learned parameter</strong> is an estimate with bias and variance.</li>
+<li><strong>Batch normalisation</strong> uses sample means and variances.</li>
+<li><strong>Regularisation</strong> deliberately accepts a little bias for lower variance.</li>
+<li><strong>Evaluation:</strong> a metric on a test set estimates true performance.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Using the biased variance</strong> for small samples.</li>
+<li><strong>Confusing unbiased with accurate.</strong> A single estimate can still be far off.</li>
+<li><strong>Ignoring variance</strong> when comparing estimators.</li>
+<li><strong>Judging an estimator from one sample.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the bias of an estimator with E[θ̂] = θ?</summary>
+Zero.
+</details>
+
+<details><summary>2. With n = 10, the divide-by-n variance estimate is on average what fraction of the truth?</summary>
+9/10.
+</details>
+
+<details><summary>3. Total mean squared error equals what?</summary>
+Bias squared plus variance.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Estimator:</strong> a rule for estimating an unknown from data.</li>
+<li><strong>Bias:</strong> the average error of an estimator.</li>
+<li><strong>Variance (of an estimator):</strong> how much it varies between samples.</li>
+<li><strong>Unbiased:</strong> having zero bias.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/sampling-and-bias/" data-topic="math/sampling-and-bias">Sampling and Bias</a> · <a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a> · <a class="wikilink" href="/math/maximum-likelihood/" data-topic="math/maximum-likelihood">Maximum Likelihood</a> · <a class="wikilink" href="/math/confidence-intervals/" data-topic="math/confidence-intervals">Confidence Intervals</a> · <a class="wikilink" href="/math/bias-variance-and-the-whole-picture/" data-topic="math/bias-variance-and-the-whole-picture">Bias, Variance and the Whole Picture</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/estimation-and-bias">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/maximum-likelihood/"><small>Read next</small><b>Maximum Likelihood</b><p>Maximum likelihood estimation picks the parameter value that makes the observed data as probable as possible.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/sampling-and-bias/"><b>Sampling and Bias</b><p>A sample is the part of a population you actually observe, and statistics uses it to say something about the whole.</p></a><a class="rc-card" href="/math/expectation/"><b>Expectation</b><p>The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/math/bias-variance-and-the-whole-picture/"><b>Bias, Variance and the Whole Picture</b><p>A model&#39;s error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…</p></a><a class="rc-card" href="/math/maximum-likelihood/"><b>Maximum Likelihood</b><p>Maximum likelihood estimation picks the parameter value that makes the observed data as probable as possible.</p></a><a class="rc-card" href="/math/confidence-intervals/"><b>Confidence Intervals</b><p>A confidence interval is a range built from a sample that expresses how uncertain an estimate is: &quot;the average is 52, give or take about 2&quot;.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/correlation-vs-causation/">← Previous: Correlation vs Causation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

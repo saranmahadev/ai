@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Batch Size and Training Dynamics — AI Base</title>
+<meta name="description" content="Stochastic Gradient Descent estimates the true gradient (averaged over the whole dataset) using only a batch of examples at a time.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/batch-size-and-training-dynamics/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Batch Size and Training Dynamics — AI Base">
+<meta property="og:description" content="Stochastic Gradient Descent estimates the true gradient (averaged over the whole dataset) using only a batch of examples at a time.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/batch-size-and-training-dynamics/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Batch Size and Training Dynamics","item":"https://ai.saranmahadev.in/deep-learning/batch-size-and-training-dynamics/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Batch Size and Training Dynamics","description":"Stochastic Gradient Descent estimates the true gradient (averaged over the whole dataset) using only a batch of examples at a time.","url":"https://ai.saranmahadev.in/deep-learning/batch-size-and-training-dynamics/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"If the per-example gradient noise has standard deviation 2, what is the noise of a batch-of-16 gradient?","acceptedAnswer":{"@type":"Answer","text":"2 / √16 = 2 / 4 = 0.5."}},{"@type":"Question","name":"Why does cutting the noise by a factor of 10 need a 100× larger batch, not a 10× larger one?","acceptedAnswer":{"@type":"Answer","text":"Noise scales as `1/√B`, so to shrink it by 10 you need `B` to grow by `10² = 100`."}},{"@type":"Question","name":"Is a batch of the entire dataset's gradient noisy?","acceptedAnswer":{"@type":"Answer","text":"No — it is exactly the true gradient, with no sampling noise at all (though it is the most expensive single step to compute)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Training Deep Networks</p>
+        <h1 class="doc-title">Batch Size and Training Dynamics</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1tpikbxbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1tpikbxpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1tpikbxbg)"/>
+  <circle cx="1022" cy="386" r="113" fill="#ffe6e6" opacity="0.58"/><circle cx="10" cy="44" r="115" fill="#8a546c" opacity="0.62"/><circle cx="950" cy="44" r="132" fill="#ffe6e6" opacity="0.60"/><circle cx="148" cy="103" r="141" fill="#ffb6b6" opacity="0.50"/><circle cx="731" cy="325" r="210" fill="#ffb6b6" opacity="0.57"/><circle cx="334" cy="130" r="96" fill="#8a546c" opacity="0.61"/><circle cx="1100" cy="9" r="226" fill="#ffb89d" opacity="0.59"/>
+  <path d="M0,420 L0,309 L30,314 L60,320 L90,326 L120,333 L150,339 L180,345 L210,348 L240,350 L270,349 L300,346 L330,342 L360,336 L390,329 L420,322 L450,316 L480,311 L510,307 L540,306 L570,306 L600,309 L630,314 L660,320 L690,326 L720,333 L750,339 L780,345 L810,348 L840,350 L870,349 L900,346 L930,342 L960,336 L990,329 L1020,322 L1050,316 L1080,311 L1110,307 L1140,306 L1170,306 L1200,309 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,379 L60,376 L90,374 L120,371 L150,369 L180,367 L210,365 L240,364 L270,363 L300,362 L330,362 L360,362 L390,363 L420,364 L450,365 L480,366 L510,368 L540,370 L570,373 L600,375 L630,377 L660,380 L690,382 L720,385 L750,387 L780,389 L810,391 L840,392 L870,393 L900,394 L930,394 L960,394 L990,393 L1020,392 L1050,391 L1080,390 L1110,388 L1140,386 L1170,383 L1200,381 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="975" cy="172" rx="244" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.8 975 172)"/><ellipse cx="975" cy="172" rx="337" ry="94" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.8 975 172)"/>
+  <circle cx="975" cy="172" r="96" fill="url(#c1tpikbxpl)"/>
+  <circle cx="1203" cy="123" r="17" fill="#ffffff" opacity="0.66"/><circle cx="799" cy="66" r="10" fill="#ffffff" opacity="0.72"/><circle cx="1337" cy="124" r="16" fill="#ffffff" opacity="0.80"/><circle cx="1345" cy="172" r="10" fill="#ffffff" opacity="0.66"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a> estimates the true gradient (averaged over the whole dataset) using only a <strong>batch</strong> of examples at a time. That estimate is noisy, and how noisy it is — and therefore how the whole training run behaves — depends directly on how many examples go into the batch.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a> and <a class="wikilink" href="/deep-learning/learning-rate-schedules-and-warmup/" data-topic="deep-learning/learning-rate-schedules-and-warmup">Learning Rate Schedules and Warmup</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does batch size just trade speed for memory, or does it change how training actually behaves?&quot; It changes both: a larger batch gives a less noisy gradient estimate, which changes how smoothly — and sometimes how well — training converges, not just how fast each step runs.</p>
+<h2 id="intuition-averaging-quiets-the-noise">Intuition: averaging quiets the noise</h2>
+<p>Each training example&#39;s gradient points in a slightly different direction; a batch gradient is their average. Averaging more independent, noisy measurements always produces a steadier estimate — exactly the <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">law of large numbers</a> at work. A batch of 1 example is as noisy as gradients get; a batch of the whole dataset has no sampling noise left at all (it is the true gradient).</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">if each example&#39;s gradient has standard deviation σ (around the true gradient),
+a batch of B examples averages to a gradient with standard deviation  σ / √B
+</code></pre>
+<p>Quadrupling the batch size halves the noise&#39;s standard deviation; it takes a 100× larger batch to cut the noise by a factor of 10.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>With per-example gradient noise <code>σ = 1</code>:</p>
+<pre><code class="language-text">batch size (B)    1      4      16      64     256
+noise std (σ/√B)  1.00   0.50   0.25    0.125  0.0625
+</code></pre>
+<p>Going from a batch of 1 to a batch of 4 (four times the data per step) only halves the noise; reaching a noise level eight times smaller than a single example needs a batch 64 times larger. Shrinking noise gets expensive fast — which is why batch size is usually chosen for a practical sweet spot, not driven all the way down to zero noise.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="batch-noise" data-title="Batch size and the noisiness of a training run"><p class="bench-fallback"><strong>Interactive bench: Batch size and the noisiness of a training run.</strong> Gradient descent on a simple bowl-shaped loss, with noise added to every step scaled by 1/√(batch size). Compare the wobbly path of small batches against the smooth path of large ones.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set batch size to 1 and watch the path zig-zag noisily toward the minimum.</li>
+<li>Raise it to 64 and compare how much smoother the same number of steps looks.</li>
+<li>Try a very large batch and notice the path becomes almost deterministic — but doesn&#39;t necessarily get there faster in wall-clock time, since each step now costs more to compute.</li>
+</ol>
+<p><strong>What you should notice:</strong> a smaller batch&#39;s path is noisier step to step but can still reach the minimum; a larger batch&#39;s path is smoother but needs more computation per step to get the same noise reduction.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Small-batch noise can act like a mild regulariser:</strong> some research credits part of why small-batch SGD sometimes generalises better to this noise helping escape sharp, narrow minima.</li>
+<li><strong>Large-batch training</strong> (see <a class="wikilink" href="/deep-learning/training-at-scale/" data-topic="deep-learning/training-at-scale">Training at Scale</a> and <a class="wikilink" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training">Distributed and Data-Parallel Training</a>) needs techniques like learning-rate warmup specifically because a suddenly much cleaner gradient estimate can otherwise take too-large, unstable steps.</li>
+<li><strong>Batch normalization&#39;s statistics</strong> (see <a class="wikilink" href="/deep-learning/batch-normalization/" data-topic="deep-learning/batch-normalization">Batch Normalization</a>) are themselves computed per batch, so very small batches make those statistics noisy too — another reason batch size is rarely taken to the extreme.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming bigger batches are strictly better.</strong> They reduce gradient noise but cost more memory and compute per step, and can need a different learning rate to match.</li>
+<li><strong>Changing batch size without revisiting the learning rate.</strong> A noise level appropriate for batch 32 is not automatically appropriate for batch 1024.</li>
+<li><strong>Forgetting batch size interacts with normalization layers.</strong> Very small batches make batch statistics unreliable (see <a class="wikilink" href="/deep-learning/batch-normalization/" data-topic="deep-learning/batch-normalization">Batch Normalization</a>).</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. If the per-example gradient noise has standard deviation 2, what is the noise of a batch-of-16 gradient?</summary>
+2 / √16 = 2 / 4 = 0.5.
+</details>
+
+<details><summary>2. Why does cutting the noise by a factor of 10 need a 100× larger batch, not a 10× larger one?</summary>
+Noise scales as `1/√B`, so to shrink it by 10 you need `B` to grow by `10² = 100`.
+</details>
+
+<details><summary>3. Is a batch of the entire dataset's gradient noisy?</summary>
+No — it is exactly the true gradient, with no sampling noise at all (though it is the most expensive single step to compute).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Batch size:</strong> the number of examples averaged into one gradient estimate.</li>
+<li><strong>Gradient noise:</strong> the random variation of a batch gradient around the true, full-dataset gradient.</li>
+<li><strong>Law of large numbers:</strong> the statistical fact that averaging more samples reduces estimation noise.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a> · <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a> · <a class="wikilink" href="/deep-learning/learning-rate-schedules-and-warmup/" data-topic="deep-learning/learning-rate-schedules-and-warmup">Learning Rate Schedules and Warmup</a> · <a class="wikilink" href="/deep-learning/training-at-scale/" data-topic="deep-learning/training-at-scale">Training at Scale</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/batch-size-and-training-dynamics">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/second-order-and-natural-gradient-ideas/"><small>Read next</small><b>Second-Order and Natural Gradient Ideas</b><p>Plain gradient descent uses only the slope — first-derivative information — to decide which way to step.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/stochastic-gradient-descent/"><b>Stochastic Gradient Descent</b><p>Stochastic gradient descent (SGD) takes each step using the gradient from a small random mini-batch of examples instead of the whole data set.</p></a><a class="rc-card" href="/deep-learning/learning-rate-schedules-and-warmup/"><b>Learning Rate Schedules and Warmup</b><p>A fixed learning rate is rarely the best choice for an entire training run: a step size that is safe once the network has settled down can be unstable right at the start, and a step size that…</p></a><a class="rc-card" href="/math/law-of-large-numbers/"><b>Law of Large Numbers</b><p>The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.</p></a><a class="rc-card" href="/deep-learning/training-at-scale/"><b>Training at Scale</b><p>Training a large network is an engineering problem as much as a mathematical one: it runs on specific hardware, for hours or weeks, and can silently fail in ways a small model never would.</p></a><a class="rc-card" href="/deep-learning/distributed-and-data-parallel-training/"><b>Distributed and Data-Parallel Training</b><p>One accelerator has a limit to how much data it can process at once.</p></a><a class="rc-card" href="/deep-learning/batch-normalization/"><b>Batch Normalization</b><p>Batch normalization re-centres and re-scales a layer&#39;s activations, using the statistics of the current mini-batch, so every unit sees roughly mean-0, unit-variance inputs no matter how the layers…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/learning-rate-schedules-and-warmup/">← Previous: Learning Rate Schedules and Warmup</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

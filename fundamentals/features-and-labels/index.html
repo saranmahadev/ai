@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Features and Labels — AI Base</title>
+<meta name="description" content="Features are the measurable facts a model looks at, and a label is the answer it is asked to predict.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/features-and-labels/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Features and Labels — AI Base">
+<meta property="og:description" content="Features are the measurable facts a model looks at, and a label is the answer it is asked to predict.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/features-and-labels/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Features and Labels","item":"https://ai.saranmahadev.in/fundamentals/features-and-labels/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Features and Labels","description":"Features are the measurable facts a model looks at, and a label is the answer it is asked to predict.","url":"https://ai.saranmahadev.in/fundamentals/features-and-labels/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In predicting a house price, what is the label and what are the features?","acceptedAnswer":{"@type":"Answer","text":"The label is the sale price. The features are facts such as size, bedrooms and location."}},{"@type":"Question","name":"Why can an extra, irrelevant feature hurt?","acceptedAnswer":{"@type":"Answer","text":"It adds noise and can lead the model to find patterns that are not real."}},{"@type":"Question","name":"What is feature engineering?","acceptedAnswer":{"@type":"Answer","text":"Choosing and shaping the input features by hand so the model has useful information to work with."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · Data and Models</p>
+        <h1 class="doc-title">Features and Labels</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="czj61xmbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="czj61xmpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#czj61xmbg)"/>
+  <circle cx="28" cy="129" r="139" fill="#e2f5f1" opacity="0.43"/><circle cx="917" cy="151" r="199" fill="#a8e2d7" opacity="0.60"/><circle cx="1112" cy="170" r="93" fill="#a8e2d7" opacity="0.46"/><circle cx="455" cy="300" r="153" fill="#e2f5f1" opacity="0.38"/><circle cx="66" cy="343" r="174" fill="#4e7283" opacity="0.57"/>
+  <path d="M0,420 L0,319 L30,315 L60,311 L90,308 L120,306 L150,306 L180,306 L210,308 L240,311 L270,315 L300,319 L330,324 L360,330 L390,335 L420,339 L450,343 L480,346 L510,349 L540,350 L570,349 L600,348 L630,345 L660,342 L690,337 L720,333 L750,327 L780,322 L810,317 L840,313 L870,310 L900,307 L930,306 L960,306 L990,307 L1020,309 L1050,312 L1080,316 L1110,321 L1140,326 L1170,331 L1200,336 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,380 L30,384 L60,387 L90,390 L120,392 L150,393 L180,394 L210,394 L240,392 L270,390 L300,388 L330,384 L360,381 L390,377 L420,373 L450,370 L480,367 L510,365 L540,363 L570,362 L600,362 L630,363 L660,365 L690,367 L720,370 L750,374 L780,378 L810,381 L840,385 L870,388 L900,391 L930,393 L960,394 L990,394 L1020,393 L1050,392 L1080,390 L1110,387 L1140,383 L1170,380 L1200,376 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="962" cy="255" rx="181" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(3.2 962 255)"/><ellipse cx="962" cy="255" rx="250" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(9.2 962 255)"/>
+  <circle cx="962" cy="255" r="71" fill="url(#czj61xmpl)"/>
+  <circle cx="776" cy="202" r="18" fill="#ffffff" opacity="0.69"/><circle cx="1113" cy="192" r="16" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Features</strong> are the measurable facts a model looks at, and a <strong>label</strong> is the answer it is asked to predict. Describing each example as a list of features, its <strong>feature vector</strong>, is how a messy real-world thing becomes something a model can compare.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/data-as-raw-material/" data-topic="fundamentals/data-as-raw-material">Data as Raw Material</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>Given a fruit, an email or a customer, what exactly does the model look at, and what is it trying to get right?</p>
+<h2 id="intuition-describing-a-thing-then-naming-it">Intuition: describing a thing, then naming it</h2>
+<p>To tell an apple from an orange over the phone, you would describe it: &quot;reddish, smooth, about 150 grams&quot;. Each fact is a <strong>feature</strong>. The thing you want at the end, &quot;apple&quot; or &quot;orange&quot;, is the <strong>label</strong>. Training examples come as pairs: features plus the correct label. A model learns which features point to which label.</p>
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Features (inputs)</th>
+<th>Label (answer)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A fruit</td>
+<td>redness, bumpiness, weight</td>
+<td>apple or orange</td>
+</tr>
+<tr>
+<td>An email</td>
+<td>words it contains, sender, time sent</td>
+<td>spam or not spam</td>
+</tr>
+<tr>
+<td>A house</td>
+<td>size, bedrooms, location</td>
+<td>sale price</td>
+</tr>
+<tr>
+<td>A customer</td>
+<td>months subscribed, support calls</td>
+<td>will cancel or not</td>
+</tr>
+</tbody></table>
+<h2 id="good-and-bad-features">Good and bad features</h2>
+<p>Some features carry a lot of information about the label, and others carry almost none. A feature that tells apples from oranges well (redness, bumpiness) is worth far more than one that varies at random (the number of seeds counted). Giving a model useless features does not just waste effort; it can lead it to find patterns that are not real.</p>
+<p>Choosing and shaping features by hand is called <strong>feature engineering</strong>. One of the big shifts of <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a> is that the model learns useful features for itself from raw data, though hand-crafted features are still valuable, especially for tables of data.</p>
+<h2 id="a-worked-example-a-new-fruit">A worked example: a new fruit</h2>
+<p>The centre (typical values) of each group, as redness and bumpiness scores from 0 to 1:</p>
+<pre><code class="language-text">apple:  redness 0.72, bumpiness 0.30
+orange: redness 0.35, bumpiness 0.70
+</code></pre>
+<p>A new fruit has redness 0.40 and bumpiness 0.65. Which group is it closer to? Measure the straight-line distance in feature space:</p>
+<pre><code class="language-text">distance to apple  = √((0.40 − 0.72)² + (0.65 − 0.30)²) = √(0.1024 + 0.1225) ≈ 0.47
+distance to orange = √((0.40 − 0.35)² + (0.65 − 0.70)²) = √(0.0025 + 0.0025) ≈ 0.07
+</code></pre>
+<p>It is far closer to the orange centre, so the prediction is &quot;orange&quot;. A model that compares distances like this is doing exactly what the features let it do: with poor features, the distances mean little.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="feature-picker" data-title="Which features separate apples from oranges?"><p class="bench-fallback"><strong>Interactive bench: Which features separate apples from oranges?.</strong> A scatter plot of 90 fruits on any two of four features (redness, bumpiness, weight, seeds). A simple classifier reports how many fruits land on the correct side of the dividing line.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with <strong>weight</strong> against <strong>seeds</strong>. What percentage lands on the right side? Do the two colours overlap?</li>
+<li>Switch to <strong>redness</strong> against <strong>bumpiness</strong>. What changed?</li>
+<li>Put <strong>seeds</strong> on both axes. Is one feature enough to separate the groups?</li>
+<li>Find a pair that gets above 95%, and a pair that gets below 65%.</li>
+</ol>
+<p><strong>What you should notice:</strong> with weight and seeds only about 63% of fruits are correct, hardly better than guessing, while redness with bumpiness reaches about 98%. The model and the data are the same in both cases. Only the features changed.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<p>Feature vectors are the input to almost everything in <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a>. Many of the distance and similarity ideas in <a class="wikilink" href="/math/math/" data-topic="math/math">Math</a>, such as <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a>, measure how alike two feature vectors are. In <a class="wikilink" href="/llms/llms/" data-topic="llms/llms">LLMs</a> the features are learned embeddings of words.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Features that leak the answer.</strong> A feature that would not be known at prediction time (such as &quot;was refunded&quot; when predicting cancellations) makes a model look brilliant and fail in use.</li>
+<li><strong>Irrelevant features.</strong> They add noise and cost.</li>
+<li><strong>Different scales.</strong> A weight in grams dwarfs a score between 0 and 1 unless you rescale.</li>
+<li><strong>Labels can be wrong.</strong> If people labelled examples carelessly, the model learns their mistakes.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In predicting a house price, what is the label and what are the features?</summary>
+The label is the sale price. The features are facts such as size, bedrooms and location.
+</details>
+
+<details><summary>2. Why can an extra, irrelevant feature hurt?</summary>
+It adds noise and can lead the model to find patterns that are not real.
+</details>
+
+<details><summary>3. What is feature engineering?</summary>
+Choosing and shaping the input features by hand so the model has useful information to work with.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Feature:</strong> one measurable fact about an example.</li>
+<li><strong>Feature vector:</strong> the list of an example&#39;s features.</li>
+<li><strong>Label:</strong> the answer the model is asked to predict.</li>
+<li><strong>Feature engineering:</strong> choosing and shaping features by hand to give a model useful information.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/data-as-raw-material/" data-topic="fundamentals/data-as-raw-material">Data as Raw Material</a> · <a class="wikilink" href="/fundamentals/a-model-is-a-function/" data-topic="fundamentals/a-model-is-a-function">A Model Is a Function</a> · <a class="wikilink" href="/fundamentals/types-of-tasks/" data-topic="fundamentals/types-of-tasks">Types of Tasks</a> · <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a> · <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/features-and-labels">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/a-model-is-a-function/"><small>Read next</small><b>A Model Is a Function</b><p>A model is a function: give it inputs and it returns a prediction.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/data-as-raw-material/"><b>Data as Raw Material</b><p>Data is recorded information about the world: measurements, text, images, sound, clicks, transactions.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a><a class="rc-card" href="/math/math/"><b>Math</b><p>Every AI model is, underneath, arithmetic done at enormous scale.</p></a><a class="rc-card" href="/math/dot-product/"><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p></a><a class="rc-card" href="/llms/llms/"><b>LLMs</b><p>A large language model is, mechanically, nothing more than the decoder-only transformer and the decoding, conditioning and evaluation machinery already covered on Transformers and Generative AI.</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/data-as-raw-material/">← Previous: Data as Raw Material</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

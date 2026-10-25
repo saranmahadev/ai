@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assembling One Transformer Block — AI Base</title>
+<meta name="description" content="Every piece needed is now on the table: attention itself, residual connections, normalization placement, and the feed-forward sublayer.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/assembling-one-transformer-block/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Assembling One Transformer Block — AI Base">
+<meta property="og:description" content="Every piece needed is now on the table: attention itself, residual connections, normalization placement, and the feed-forward sublayer.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/assembling-one-transformer-block/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Assembling One Transformer Block","item":"https://ai.saranmahadev.in/transformers/assembling-one-transformer-block/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Assembling One Transformer Block","description":"Every piece needed is now on the table: attention itself, residual connections, normalization placement, and the feed-forward sublayer.","url":"https://ai.saranmahadev.in/transformers/assembling-one-transformer-block/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How many sublayers does one transformer block contain, and what does each one do?","acceptedAnswer":{"@type":"Answer","text":"Two: a self-attention sublayer that mixes information across positions, and a feed-forward sublayer that processes each position independently — both wrapped in normalization and a residual connection."}},{"@type":"Question","name":"In a pre-norm block, what exactly gets added back to the residual stream after the attention sublayer?","acceptedAnswer":{"@type":"Answer","text":"The output of self-attention applied to the normalized input — the residual stream itself (the unnormalized `X`) is never altered directly, only added to."}},{"@type":"Question","name":"What changes between a transformer's blocks when they're stacked, and what stays the same?","acceptedAnswer":{"@type":"Answer","text":"Each block's own weights are independently trained and different; the overall structure — normalize, attend, add; normalize, feed forward, add — is identical at every depth."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · The Transformer Block</p>
+        <h1 class="doc-title">Assembling One Transformer Block</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cjxm23kbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="cjxm23kpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cjxm23kbg)"/>
+  <circle cx="213" cy="328" r="141" fill="#4f669f" opacity="0.42"/><circle cx="4" cy="306" r="227" fill="#4f669f" opacity="0.58"/><circle cx="180" cy="32" r="97" fill="#abd0ff" opacity="0.24"/><circle cx="873" cy="75" r="163" fill="#abd0ff" opacity="0.58"/><circle cx="282" cy="142" r="183" fill="#e2efff" opacity="0.61"/><circle cx="232" cy="41" r="206" fill="#e2efff" opacity="0.30"/><circle cx="174" cy="169" r="87" fill="#e2efff" opacity="0.43"/>
+  <path d="M0,420 L0,327 L30,322 L60,317 L90,313 L120,309 L150,307 L180,306 L210,306 L240,307 L270,309 L300,313 L330,317 L360,322 L390,327 L420,332 L450,337 L480,341 L510,345 L540,348 L570,349 L600,350 L630,349 L660,347 L690,344 L720,340 L750,335 L780,330 L810,325 L840,320 L870,315 L900,311 L930,308 L960,306 L990,306 L1020,306 L1050,308 L1080,310 L1110,314 L1140,319 L1170,323 L1200,329 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,390 L60,388 L90,386 L120,384 L150,382 L180,379 L210,377 L240,374 L270,372 L300,370 L330,368 L360,366 L390,364 L420,363 L450,362 L480,362 L510,362 L540,362 L570,363 L600,364 L630,366 L660,368 L690,370 L720,372 L750,374 L780,377 L810,379 L840,382 L870,384 L900,386 L930,388 L960,390 L990,392 L1020,393 L1050,394 L1080,394 L1110,394 L1140,394 L1170,393 L1200,392 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="773" cy="246" rx="186" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(4.7 773 246)"/><ellipse cx="773" cy="246" rx="257" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(10.7 773 246)"/>
+  <circle cx="773" cy="246" r="73" fill="url(#cjxm23kpl)"/>
+  <circle cx="509" cy="212" r="18" fill="#ffffff" opacity="0.62"/><circle cx="1020" cy="263" r="12" fill="#ffffff" opacity="0.61"/><circle cx="615" cy="152" r="18" fill="#ffffff" opacity="0.62"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every piece needed is now on the table: <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">attention</a> itself, <a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">residual connections</a>, <a class="wikilink" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/" data-topic="transformers/layer-normalization-placement-pre-norm-vs-post-norm">normalization placement</a>, and <a class="wikilink" href="/transformers/the-feed-forward-sublayer/" data-topic="transformers/the-feed-forward-sublayer">the feed-forward sublayer</a>. This topic puts them together into the one block that gets stacked, unchanged, a dozen or a hundred times to build an entire transformer.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>, <a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">Residual Connections in Transformers</a>, <a class="wikilink" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/" data-topic="transformers/layer-normalization-placement-pre-norm-vs-post-norm">Layer Normalization Placement: Pre-Norm vs Post-Norm</a>, <a class="wikilink" href="/transformers/the-feed-forward-sublayer/" data-topic="transformers/the-feed-forward-sublayer">The Feed-Forward Sublayer</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What is the exact sequence of operations inside one transformer block, from input to output?&quot; A pre-norm block (the modern default) runs two residual sublayers in order: normalize, then attend, then add back to the input; normalize again, then feed forward, then add back to that result. Every piece covered earlier on this planet has exactly one job inside this sequence.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Think of the block as two &quot;detours,&quot; each one leaving from and returning to the same running total (the residual stream). The first detour: take a cleaned-up look at the whole sequence (normalize), gather information from every other position (attend), then merge whatever was gathered back into the running total. The second detour: take another cleaned-up look at just this position&#39;s own current content (normalize again), process it in isolation (feed forward), then merge that back in too. Nothing about the running total itself is ever replaced — only added to.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">pre-norm transformer block, for a sequence of position vectors X:
+
+1. X₁ = X + SelfAttention(LayerNorm(X))
+2. X₂ = X₁ + FeedForward(LayerNorm(X₁))     — applied to each position independently
+
+output: X₂
+</code></pre>
+<p>Every sublayer follows the identical shape: normalize an input, transform it, add the result back to the (untouched) residual stream. The exact same block, with its own trained weights, is stacked many times — the output <code>X₂</code> of one block becomes the input <code>X</code> of the next.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 3-position, 4-dimensional toy sequence, pushed through one complete pre-norm block (random small weights, for traceability):</p>
+<pre><code class="language-text">input X, three positions&#39; vector norms:        1.28, 1.61, 0.96
+
+step 1 — LayerNorm(X), then self-attention, then add back (X₁):
+  X₁&#39;s vector norms:                           1.08, 1.79, 1.34
+
+step 2 — LayerNorm(X₁), then feed-forward, then add back (X₂, final output):
+  X₂&#39;s vector norms:                           1.40, 1.91, 1.42
+</code></pre>
+<p>Every position&#39;s output norm ended up larger than its input norm — each residual addition contributed something new on top of the original signal, exactly as <a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">residual connections</a> are designed to do, without ever discarding what came before.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="transformer-block" data-title="One block, start to finish"><p class="bench-fallback"><strong>Interactive bench: One block, start to finish.</strong> Trace a small sequence of vectors through one complete pre-norm transformer block — attention sublayer, then feed-forward sublayer, each wrapped in normalization and a residual connection.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through the block one sublayer at a time and watch each position&#39;s vector change.</li>
+<li>Compare the input and final output vector norms for each position.</li>
+<li>Stack the same block&#39;s output back through itself as a second block, and see the norms grow further.</li>
+</ol>
+<p><strong>What you should notice:</strong> nothing about this process depends on how many times the block is repeated — the same four-step recipe (normalize, attend, add; normalize, feed forward, add) is exactly what every layer of a real transformer runs, with its own independently trained weights at each depth.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is literally the building block of every transformer</strong>, from a small research model to a frontier-scale one — the only things that change between models are the number of blocks, their width, and small variant choices (RMSNorm vs LayerNorm, gated vs plain feed-forward) covered earlier in this district.</li>
+<li><strong><a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-only</a>, <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">decoder-only</a> and <a class="wikilink" href="/transformers/encoder-decoder-architectures-as-a-pattern/" data-topic="transformers/encoder-decoder-architectures-as-a-pattern">encoder-decoder</a> architectures</strong>, covered next, differ only in what masking is applied to the attention sublayer and whether a second, cross-attention sublayer is added — the block&#39;s core shape stays the same.</li>
+<li><strong><a class="wikilink" href="/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/" data-topic="transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up">the planet&#39;s own capstone</a></strong> extends exactly this worked example into a full, multi-block transformer.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting the feed-forward sublayer is applied position by position.</strong> Only the attention sublayer mixes information across positions; the feed-forward sublayer, inside the same block, processes each position independently.</li>
+<li><strong>Mixing up pre-norm and post-norm while assembling a block.</strong> The order of normalize-then-sublayer versus sublayer-then-normalize changes which quantity is being added to the residual stream.</li>
+<li><strong>Assuming every block in a stack is identical in its weights.</strong> The structure is identical at every depth, but each block has its own independently trained parameters.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. How many sublayers does one transformer block contain, and what does each one do?</summary>
+Two: a self-attention sublayer that mixes information across positions, and a feed-forward sublayer that processes each position independently — both wrapped in normalization and a residual connection.
+</details>
+
+<details><summary>2. In a pre-norm block, what exactly gets added back to the residual stream after the attention sublayer?</summary>
+The output of self-attention applied to the normalized input — the residual stream itself (the unnormalized `X`) is never altered directly, only added to.
+</details>
+
+<details><summary>3. What changes between a transformer's blocks when they're stacked, and what stays the same?</summary>
+Each block's own weights are independently trained and different; the overall structure — normalize, attend, add; normalize, feed forward, add — is identical at every depth.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Transformer block:</strong> the repeated unit of a transformer, containing one attention sublayer and one feed-forward sublayer, each wrapped in normalization and a residual connection.</li>
+<li><strong>Sublayer:</strong> one of the two main computations (attention or feed-forward) inside a transformer block.</li>
+<li><strong>Stacking:</strong> repeating the same block structure many times, with independently trained weights at each depth, to build a full transformer.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a> · <a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">Residual Connections in Transformers</a> · <a class="wikilink" href="/transformers/the-feed-forward-sublayer/" data-topic="transformers/the-feed-forward-sublayer">The Feed-Forward Sublayer</a> · <a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-Only Architectures</a> · <a class="wikilink" href="/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/" data-topic="transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up">Capstone: Assembling a Tiny Transformer from the Ground Up</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/assembling-one-transformer-block">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/positional-information-beyond-sinusoids/"><small>Read next</small><b>Positional Information Beyond Sinusoids</b><p>The fixed sinusoidal encoding from Deep Learning was the original transformer&#39;s answer to &quot;where is this token in the sequence?&quot; — but it was never the only answer, and modern models mostly use…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/transformers/residual-connections-in-transformers/"><b>Residual Connections in Transformers</b><p>Stack enough layers on top of each other, and a signal passed through all of them — unless something stops it — tends to either vanish or blow up.</p></a><a class="rc-card" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/"><b>Layer Normalization Placement: Pre-Norm vs Post-Norm</b><p>The residual connection guarantees a direct path for the input to reach the output.</p></a><a class="rc-card" href="/transformers/the-feed-forward-sublayer/"><b>The Feed-Forward Sublayer</b><p>Attention lets every position look at every other position — but it never actually transforms a position&#39;s own content on its own.</p></a><a class="rc-card" href="/transformers/encoder-only-architectures/"><b>Encoder-Only Architectures</b><p>The masking topic introduced two patterns: padding masks and causal masks.</p></a><a class="rc-card" href="/transformers/decoder-only-architectures/"><b>Decoder-Only Architectures</b><p>The previous topic&#39;s bidirectional attention works because the whole input is available at once.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/modern-feed-forward-variants-swiglu-and-geglu/">← Previous: Modern Feed-Forward Variants: SwiGLU and GeGLU</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

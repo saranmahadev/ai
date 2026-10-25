@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decoder-Only Architectures — AI Base</title>
+<meta name="description" content="The previous topic&#39;s bidirectional attention works because the whole input is available at once.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/decoder-only-architectures/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Decoder-Only Architectures — AI Base">
+<meta property="og:description" content="The previous topic&#39;s bidirectional attention works because the whole input is available at once.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/decoder-only-architectures/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Decoder-Only Architectures","item":"https://ai.saranmahadev.in/transformers/decoder-only-architectures/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Decoder-Only Architectures","description":"The previous topic's bidirectional attention works because the whole input is available at once.","url":"https://ai.saranmahadev.in/transformers/decoder-only-architectures/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What masking choice defines a decoder-only architecture, and why is it necessary rather than arbitrary?","acceptedAnswer":{"@type":"Answer","text":"Causal masking everywhere — necessary because generation produces tokens one at a time, and later tokens genuinely don't exist yet when an earlier one is being predicted."}},{"@type":"Question","name":"In the worked example, how does the visible context change from one generation step to the next?","acceptedAnswer":{"@type":"Answer","text":"It grows by exactly one token — predicting position t uses positions 0 through t−1, and once that token is generated, predicting position t+1 can use positions 0 through t."}},{"@type":"Question","name":"What does \"autoregressive\" mean in this context?","acceptedAnswer":{"@type":"Answer","text":"Each newly generated token is appended to the sequence and becomes part of the input context for predicting the next one."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Architectural Families</p>
+        <h1 class="doc-title">Decoder-Only Architectures</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1wc90qobg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1wc90qopl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1wc90qobg)"/>
+  <circle cx="374" cy="277" r="63" fill="#e2efff" opacity="0.44"/><circle cx="1012" cy="34" r="92" fill="#c5cacf" opacity="0.27"/><circle cx="1039" cy="368" r="162" fill="#4f669f" opacity="0.30"/><circle cx="668" cy="161" r="198" fill="#c5cacf" opacity="0.51"/><circle cx="701" cy="326" r="179" fill="#4f669f" opacity="0.60"/>
+  <path d="M0,420 L0,306 L30,306 L60,308 L90,311 L120,315 L150,320 L180,325 L210,330 L240,335 L270,340 L300,344 L330,347 L360,349 L390,350 L420,349 L450,348 L480,345 L510,341 L540,337 L570,332 L600,327 L630,322 L660,317 L690,313 L720,309 L750,307 L780,306 L810,306 L840,307 L870,309 L900,312 L930,317 L960,321 L990,326 L1020,332 L1050,337 L1080,341 L1110,345 L1140,347 L1170,349 L1200,350 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,391 L90,388 L120,385 L150,382 L180,378 L210,374 L240,371 L270,368 L300,365 L330,363 L360,362 L390,362 L420,363 L450,364 L480,367 L510,370 L540,373 L570,377 L600,381 L630,384 L660,387 L690,390 L720,392 L750,394 L780,394 L810,394 L840,392 L870,390 L900,387 L930,384 L960,380 L990,377 L1020,373 L1050,370 L1080,367 L1110,364 L1140,363 L1170,362 L1200,362 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="838" cy="267" rx="176" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-17.7 838 267)"/><ellipse cx="838" cy="267" rx="243" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-11.7 838 267)"/>
+  <circle cx="838" cy="267" r="69" fill="url(#c1wc90qopl)"/>
+  <circle cx="1109" cy="293" r="19" fill="#ffffff" opacity="0.90"/><circle cx="1079" cy="275" r="14" fill="#ffffff" opacity="0.83"/><circle cx="766" cy="163" r="12" fill="#ffffff" opacity="0.63"/><circle cx="644" cy="297" r="11" fill="#ffffff" opacity="0.65"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">The previous topic&#39;s</a> bidirectional attention works because the whole input is available at once. Generating text one token at a time breaks that assumption completely: the tokens after &quot;now&quot; genuinely don&#39;t exist yet. A decoder-only architecture is built around that constraint from the ground up — causal masking, everywhere, always.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-Only Architectures</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What does a transformer look like when it has to generate its output one token at a time, each one depending only on what came before?&quot; A decoder-only architecture: every attention computation in the stack uses a causal mask, so a position can never attend to anything later than itself. This isn&#39;t an arbitrary restriction — it&#39;s the only option that makes sense once the goal is producing the next token in a sequence that doesn&#39;t fully exist yet.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine writing a sentence one word at a time, where each new word has to be chosen based only on the words already written — you can&#39;t peek ahead at a word you haven&#39;t written yet, because it doesn&#39;t exist until you write it. A decoder-only transformer is in exactly that position at every single token it generates: predict the next token using only the tokens generated (or given) so far, then append that new token to the sequence and repeat. This is called <strong>autoregressive</strong> generation — each new output feeds back in as part of the input for the next step.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">decoder-only attention mask: causal mask only
+  allowed(i, j) = (j ≤ i)
+
+generation, one step at a time:
+  step t:  predict token at position t, using only positions 0 … t−1
+  append the predicted token, now position t is &quot;known&quot; too
+  step t+1: predict position t+1, using positions 0 … t
+</code></pre>
+<p>Every layer of a decoder-only transformer applies this same causal restriction — there is no point in the stack where a position can see ahead of itself.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Generating a 5-token sequence, tracking exactly how much context is visible at each generation step:</p>
+<pre><code class="language-text">step 1: predicting position 0 — context: {}               (0 tokens visible)
+step 2: predicting position 1 — context: {0}               (1 token visible)
+step 3: predicting position 2 — context: {0, 1}             (2 tokens visible)
+step 4: predicting position 3 — context: {0, 1, 2}           (3 tokens visible)
+step 5: predicting position 4 — context: {0, 1, 2, 3}         (4 tokens visible)
+</code></pre>
+<p>Compare this to <a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">the previous topic&#39;s</a> worked example, where every position saw all 5 other tokens simultaneously, regardless of position. Here, the visible context grows by exactly one token at each step — never more, and crucially, never including anything &quot;ahead&quot; of the position currently being predicted.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="decoder-generate" data-title="Generating one token, with only what came before"><p class="bench-fallback"><strong>Interactive bench: Generating one token, with only what came before.</strong> Step through generating a sequence one token at a time, watching exactly which positions are visible to the model at each step.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through generation and watch the visible context grow by exactly one position each time.</li>
+<li>Compare the final step&#39;s visible context to the encoder-only bench&#39;s full-sentence visibility.</li>
+<li>Consider what would happen if a later position&#39;s information somehow leaked into an earlier prediction.</li>
+</ol>
+<p><strong>What you should notice:</strong> the causal mask isn&#39;t an arbitrary training-time restriction — it&#39;s the architecture correctly matching the actual information available at generation time, step by step.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>GPT-style models are the canonical decoder-only architecture</strong>, trained to predict the next token given everything before it — exactly the generation process traced in the worked example.</li>
+<li><strong>This is the architecture <a class="wikilink" href="/llms/llms/" data-topic="llms/llms">most modern large language models</a> are built on</strong>, since their core capability — generating fluent, coherent text one token at a time — is precisely what causal masking makes consistent between training and actual use.</li>
+<li><strong><a class="wikilink" href="/transformers/kv-caching-for-autoregressive-inference/" data-topic="transformers/kv-caching-for-autoregressive-inference">KV-caching</a>, covered later on this planet</strong>, exists specifically because decoder-only generation repeats the same growing-context computation at every single step — a real cost this architecture&#39;s generation process creates.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a decoder-only model could use bidirectional attention if trained differently.</strong> The mismatch between bidirectional training and strictly left-to-right generation would make training and actual use inconsistent — training would see context the model will never have at generation time.</li>
+<li><strong>Confusing &quot;decoder-only&quot; with &quot;has no encoder, so it can&#39;t understand anything.&quot;</strong> Decoder-only models still build up a rich internal understanding of the input — the causal restriction limits what they attend to, not what they&#39;re capable of representing.</li>
+<li><strong>Forgetting every layer applies the same causal mask.</strong> It isn&#39;t just the final output step that&#39;s restricted — every attention computation in every layer, at every depth, respects the same causal boundary.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What masking choice defines a decoder-only architecture, and why is it necessary rather than arbitrary?</summary>
+Causal masking everywhere — necessary because generation produces tokens one at a time, and later tokens genuinely don't exist yet when an earlier one is being predicted.
+</details>
+
+<details><summary>2. In the worked example, how does the visible context change from one generation step to the next?</summary>
+It grows by exactly one token — predicting position t uses positions 0 through t−1, and once that token is generated, predicting position t+1 can use positions 0 through t.
+</details>
+
+<details><summary>3. What does "autoregressive" mean in this context?</summary>
+Each newly generated token is appended to the sequence and becomes part of the input context for predicting the next one.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Autoregressive:</strong> generating output one step at a time, where each new output becomes part of the input for the next step.</li>
+<li><strong>Causal masking:</strong> restricting attention so a position can only see itself and earlier positions, never later ones.</li>
+<li><strong>Decoder-only:</strong> a transformer architecture using causal masking throughout, suited to generating text one token at a time.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-Only Architectures</a> · <a class="wikilink" href="/transformers/encoder-decoder-architectures-as-a-pattern/" data-topic="transformers/encoder-decoder-architectures-as-a-pattern">Encoder-Decoder Architectures as a Pattern</a> · <a class="wikilink" href="/transformers/choosing-an-architecture-family-for-a-task/" data-topic="transformers/choosing-an-architecture-family-for-a-task">Choosing an Architecture Family for a Task</a> · <a class="wikilink" href="/transformers/kv-caching-for-autoregressive-inference/" data-topic="transformers/kv-caching-for-autoregressive-inference">KV-Caching for Autoregressive Inference</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/decoder-only-architectures">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/encoder-decoder-architectures-as-a-pattern/"><small>Read next</small><b>Encoder-Decoder Architectures as a Pattern</b><p>Encoder-only and decoder-only architectures each use one kind of self-attention throughout.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/encoder-only-architectures/"><b>Encoder-Only Architectures</b><p>The masking topic introduced two patterns: padding masks and causal masks.</p></a><a class="rc-card" href="/llms/llms/"><b>LLMs</b><p>A large language model is, mechanically, nothing more than the decoder-only transformer and the decoding, conditioning and evaluation machinery already covered on Transformers and Generative AI.</p></a><a class="rc-card" href="/transformers/kv-caching-for-autoregressive-inference/"><b>KV-Caching for Autoregressive Inference</b><p>Generating text one token at a time means recomputing attention at every single step.</p></a><a class="rc-card" href="/transformers/encoder-decoder-architectures-as-a-pattern/"><b>Encoder-Decoder Architectures as a Pattern</b><p>Encoder-only and decoder-only architectures each use one kind of self-attention throughout.</p></a><a class="rc-card" href="/transformers/choosing-an-architecture-family-for-a-task/"><b>Choosing an Architecture Family for a Task</b><p>Three architecture families, three different attention patterns, three different costs.</p></a><a class="rc-card" href="/transformers/attention-masks-padding-and-causal-masking/"><b>Attention Masks: Padding and Causal Masking</b><p>Plain attention lets every position look at every other position.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/encoder-only-architectures/">← Previous: Encoder-Only Architectures</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tool-Augmented Reasoning (ReAct-Style) — AI Base</title>
+<meta name="description" content="No amount of chain-of-thought or tree search fixes a problem the model simply can&#39;t solve on its own — exact large-number arithmetic, a live lookup, running actual code.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/tool-augmented-reasoning-react-style/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Tool-Augmented Reasoning (ReAct-Style) — AI Base">
+<meta property="og:description" content="No amount of chain-of-thought or tree search fixes a problem the model simply can&#39;t solve on its own — exact large-number arithmetic, a live lookup, running actual code.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/tool-augmented-reasoning-react-style/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Tool-Augmented Reasoning (ReAct-Style)","item":"https://ai.saranmahadev.in/llms/tool-augmented-reasoning-react-style/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Tool-Augmented Reasoning (ReAct-Style)","description":"No amount of chain-of-thought or tree search fixes a problem the model simply can't solve on its own — exact large-number arithmetic, a live lookup, running actual code.","url":"https://ai.saranmahadev.in/llms/tool-augmented-reasoning-react-style/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the four stages of the ReAct loop, in order?","acceptedAnswer":{"@type":"Answer","text":"Thought (reasoning about what to do next), Action (calling an external tool), Observation (the tool's actual result), and Answer (the final response) — with Thought, Action and Observation potentially repeating before a final Answer."}},{"@type":"Question","name":"In the worked example, why was the mental-math-only guess wrong while the tool-augmented answer was correct?","acceptedAnswer":{"@type":"Answer","text":"Precise multiplication of large numbers is a sub-step the model itself is unreliable at; the calculator tool performed that exact computation instead, replacing the model's rough mental estimate with an exact result."}},{"@type":"Question","name":"What does the model's own reasoning handle in a ReAct loop, versus what the tool handles?","acceptedAnswer":{"@type":"Answer","text":"The model's reasoning decides when and how to use a tool (recognizing which sub-steps need it, and with what arguments); the tool itself performs the specific operation (calculation, lookup, code execution) the model delegated to it."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Reasoning</p>
+        <h1 class="doc-title">Tool-Augmented Reasoning (ReAct-Style)</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1k9r3labg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1k9r3lapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1k9r3labg)"/>
+  <circle cx="945" cy="188" r="94" fill="#ffc7a2" opacity="0.32"/><circle cx="117" cy="29" r="221" fill="#8a5f5e" opacity="0.46"/><circle cx="236" cy="21" r="142" fill="#ffc7a2" opacity="0.47"/><circle cx="881" cy="356" r="64" fill="#ffc38f" opacity="0.50"/><circle cx="252" cy="150" r="111" fill="#ffece0" opacity="0.35"/><circle cx="162" cy="63" r="80" fill="#ffc38f" opacity="0.43"/>
+  <path d="M0,420 L0,318 L30,324 L60,331 L90,338 L120,343 L150,347 L180,349 L210,349 L240,347 L270,343 L300,337 L330,331 L360,324 L390,317 L420,312 L450,308 L480,306 L510,306 L540,308 L570,312 L600,318 L630,324 L660,331 L690,338 L720,343 L750,347 L780,349 L810,349 L840,347 L870,343 L900,337 L930,331 L960,324 L990,317 L1020,312 L1050,308 L1080,306 L1110,306 L1140,308 L1170,312 L1200,318 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,385 L60,387 L90,389 L120,391 L150,392 L180,393 L210,394 L240,394 L270,394 L300,393 L330,392 L360,391 L390,389 L420,388 L450,385 L480,383 L510,381 L540,378 L570,376 L600,373 L630,371 L660,369 L690,367 L720,365 L750,364 L780,363 L810,362 L840,362 L870,362 L900,363 L930,364 L960,365 L990,367 L1020,368 L1050,371 L1080,373 L1110,375 L1140,378 L1170,380 L1200,383 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="910" cy="239" rx="159" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.8 910 239)"/><ellipse cx="910" cy="239" rx="220" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.8 910 239)"/>
+  <circle cx="910" cy="239" r="62" fill="url(#c1k9r3lapl)"/>
+  <circle cx="715" cy="288" r="12" fill="#ffffff" opacity="0.68"/><circle cx="1134" cy="259" r="16" fill="#ffffff" opacity="0.78"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>No amount of chain-of-thought or tree search fixes a problem the model simply can&#39;t solve on its own — exact large-number arithmetic, a live lookup, running actual code. For that, reasoning needs to reach outside itself.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/chain-of-thought-prompting/" data-topic="llms/chain-of-thought-prompting">Chain-of-Thought Prompting</a>, <a class="wikilink" href="/generative-ai/code-generation-and-program-synthesis/" data-topic="generative-ai/code-generation-and-program-synthesis">Code Generation and Program Synthesis</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does a model combine reasoning with calling an external tool mid-task?&quot; The <strong>ReAct</strong> pattern interleaves <strong>Thought</strong> (reasoning about what to do next), <strong>Action</strong> (calling a tool — a calculator, a search function, code execution), and <strong>Observation</strong> (the tool&#39;s actual result), repeated as many times as needed before a final <strong>Answer</strong>. The tool handles whatever the model itself is unreliable at; the model&#39;s own reasoning handles deciding <em>when</em> and <em>how</em> to use it.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A person doing mental arithmetic on small numbers is usually fine; asked to multiply two large, awkward numbers precisely, most people reach for a calculator rather than trusting their own mental math. The calculator doesn&#39;t replace their reasoning about the problem — it replaces the one specific sub-step (precise large-number arithmetic) that mental computation is unreliable at. ReAct gives a model the same option: reason about the problem, recognize a sub-step that calls for an external tool, use the tool, and continue reasoning with its exact result in hand.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">ReAct loop:
+  Thought:     reasoning about what to do next
+  Action:      a call to an external tool, with specific arguments
+  Observation: the tool&#39;s actual returned result
+  (repeat Thought → Action → Observation as needed)
+  Answer:      the final response, informed by every observation so far
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Computing <code>847 × 293</code> two different ways:</p>
+<pre><code class="language-text">mental-math-only guess:  248,000        — WRONG (true value: 248,171)
+
+ReAct-style trace:
+  Thought: I need 847 × 293. Let me estimate... roughly 248,000.
+  Action:  call calculator(847, 293)
+  Observation: 248171
+  Answer: 248171                        — CORRECT
+</code></pre>
+<p>The model&#39;s own &quot;mental&quot; estimate (248,000) was wrong by 171 — a small but real error, exactly the kind large-number multiplication is prone to without a tool. Calling the calculator mid-reasoning replaced that one unreliable sub-step with an exact result, which the final answer then used directly.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="react-tool-call" data-title="Thought, action, observation, answer"><p class="bench-fallback"><strong>Interactive bench: Thought, action, observation, answer.</strong> Step through a ReAct-style trace and compare the mental-math-only guess against the tool-augmented exact answer.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the initial &quot;Thought&quot; stage&#39;s rough mental estimate.</li>
+<li>Step through the &quot;Action&quot; and &quot;Observation&quot; stages.</li>
+<li>Compare the final answer to the original mental estimate.</li>
+</ol>
+<p><strong>What you should notice:</strong> the model&#39;s own reasoning (recognizing it needed precise multiplication, and deciding to call a tool for it) is doing real work here — the tool only handles the one specific computation it was asked for, not the whole problem.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Production &quot;agentic&quot; LLM systems use this exact pattern constantly</strong>: deciding when to search the web, run code, query a database, or call any other external function, interleaved with ordinary reasoning about the overall task.</li>
+<li><strong><a class="wikilink" href="/llms/structured-output-and-tool-calling-apis/" data-topic="llms/structured-output-and-tool-calling-apis">the practical mechanics of a tool call</a> — getting a model to emit a well-formed function call with the right arguments — is a separate, engineering-level concern from the ReAct reasoning pattern itself.</strong></li>
+<li><strong>It&#39;s the direct ancestor of what later became formalized as <a class="wikilink" href="/agents/agents/" data-topic="agents/agents">agentic systems</a></strong> on the next planet — repeated cycles of reasoning, acting, and observing results, chained together to complete a larger task.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a model always correctly recognizes when it needs a tool.</strong> A model can just as easily attempt (and fail at) a calculation it should have delegated, or call a tool unnecessarily for something it could handle directly.</li>
+<li><strong>Treating tool results as infallible once retrieved.</strong> The tool&#39;s observation is only as reliable as the tool itself — a flawed or outdated external tool can feed wrong information into otherwise sound reasoning.</li>
+<li><strong>Forgetting the loop can repeat.</strong> Real tasks often need several rounds of thought-action-observation, not just one tool call — a single call is the simplest case, not the general pattern.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are the four stages of the ReAct loop, in order?</summary>
+Thought (reasoning about what to do next), Action (calling an external tool), Observation (the tool's actual result), and Answer (the final response) — with Thought, Action and Observation potentially repeating before a final Answer.
+</details>
+
+<details><summary>2. In the worked example, why was the mental-math-only guess wrong while the tool-augmented answer was correct?</summary>
+Precise multiplication of large numbers is a sub-step the model itself is unreliable at; the calculator tool performed that exact computation instead, replacing the model's rough mental estimate with an exact result.
+</details>
+
+<details><summary>3. What does the model's own reasoning handle in a ReAct loop, versus what the tool handles?</summary>
+The model's reasoning decides when and how to use a tool (recognizing which sub-steps need it, and with what arguments); the tool itself performs the specific operation (calculation, lookup, code execution) the model delegated to it.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>ReAct:</strong> a pattern interleaving reasoning (Thought), tool calls (Action), and tool results (Observation) before a final answer.</li>
+<li><strong>Tool-augmented reasoning:</strong> reasoning that delegates specific sub-steps to external tools rather than attempting them directly.</li>
+<li><strong>Observation:</strong> the actual result returned by a tool call, used to inform subsequent reasoning.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/chain-of-thought-prompting/" data-topic="llms/chain-of-thought-prompting">Chain-of-Thought Prompting</a> · <a class="wikilink" href="/generative-ai/code-generation-and-program-synthesis/" data-topic="generative-ai/code-generation-and-program-synthesis">Code Generation and Program Synthesis</a> · <a class="wikilink" href="/llms/structured-output-and-tool-calling-apis/" data-topic="llms/structured-output-and-tool-calling-apis">Structured Output and Tool-Calling APIs</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/tool-augmented-reasoning-react-style">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/test-time-compute-scaling/"><small>Read next</small><b>Test-Time Compute Scaling</b><p>Every technique in this district so far — longer chains, wider search, more refinement rounds, tool calls — shares something in common: none of them change the model&#39;s weights.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/chain-of-thought-prompting/"><b>Chain-of-Thought Prompting</b><p>Ask a model for a multi-step answer directly, and it has to get everything right in one uninterrupted guess.</p></a><a class="rc-card" href="/generative-ai/code-generation-and-program-synthesis/"><b>Code Generation and Program Synthesis</b><p>a grammar mask guarantees generated arithmetic is syntactically valid — but valid syntax and a program that actually does what you want are two different guarantees entirely.</p></a><a class="rc-card" href="/llms/structured-output-and-tool-calling-apis/"><b>Structured Output and Tool-Calling APIs</b><p>Code that calls an LLM usually needs the response in a specific shape — valid JSON with particular fields, or a specific function call with typed arguments — not free-flowing prose.</p></a><a class="rc-card" href="/agents/agents/"><b>Agents</b><p>Every planet before this one covered a model answering one request at a time: a prompt goes in, an answer comes out.</p></a><a class="rc-card" href="/llms/reasoning/"><b>Reasoning</b><p>An aligned, instruction-following model still has to decide how to actually arrive at an answer — straight to a conclusion, or by working through intermediate steps the way a person solving the…</p></a><a class="rc-card" href="/agents/plan-and-execute-agents/"><b>Plan-and-Execute Agents</b><p>Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/distilling-reasoning-into-smaller-models/">← Previous: Distilling Reasoning into Smaller Models</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

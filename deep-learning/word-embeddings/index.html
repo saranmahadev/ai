@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Embeddings — AI Base</title>
+<meta name="description" content="Embeddings and Similarity Search described what an embedding is: a vector placing similar things near each other in space.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/word-embeddings/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Word Embeddings — AI Base">
+<meta property="og:description" content="Embeddings and Similarity Search described what an embedding is: a vector placing similar things near each other in space.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/word-embeddings/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Word Embeddings","item":"https://ai.saranmahadev.in/deep-learning/word-embeddings/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Word Embeddings","description":"Embeddings and Similarity Search described what an embedding is: a vector placing similar things near each other in space.","url":"https://ai.saranmahadev.in/deep-learning/word-embeddings/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does skip-gram decide a word's embedding, with no hand-labelled meaning given to it?","acceptedAnswer":{"@type":"Answer","text":"By training the vector to be good at predicting that word's actual nearby context words, using nothing but raw text — similar context requirements push similar words toward similar vectors."}},{"@type":"Question","name":"Why does word2vec use negative sampling instead of a full softmax over the whole vocabulary?","acceptedAnswer":{"@type":"Answer","text":"A full softmax requires scoring every word in a (potentially huge) vocabulary at every training step; negative sampling scores only the true context word against a handful of random alternatives, which is far cheaper."}},{"@type":"Question","name":"In the worked example, why does cat predict dog as a context word with much higher probability than truck?","acceptedAnswer":{"@type":"Answer","text":"Their vectors have a much larger dot product (2.0 for dog versus −0.3 for truck), because they were placed closer together in the embedding space."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Sequence Models</p>
+        <h1 class="doc-title">Word Embeddings</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1e0ste5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1e0ste5pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1e0ste5bg)"/>
+  <circle cx="1073" cy="83" r="199" fill="#ffe6e6" opacity="0.58"/><circle cx="1032" cy="55" r="64" fill="#ffe6e6" opacity="0.60"/><circle cx="831" cy="104" r="94" fill="#8a546c" opacity="0.49"/><circle cx="440" cy="115" r="128" fill="#ffb89d" opacity="0.53"/><circle cx="925" cy="293" r="219" fill="#ffb89d" opacity="0.26"/><circle cx="452" cy="12" r="193" fill="#8a546c" opacity="0.26"/>
+  <path d="M0,420 L0,349 L30,350 L60,349 L90,349 L120,348 L150,346 L180,344 L210,342 L240,339 L270,336 L300,332 L330,329 L360,325 L390,322 L420,319 L450,316 L480,313 L510,311 L540,309 L570,307 L600,306 L630,306 L660,306 L690,306 L720,307 L750,309 L780,311 L810,314 L840,316 L870,320 L900,323 L930,326 L960,330 L990,333 L1020,336 L1050,339 L1080,342 L1110,345 L1140,347 L1170,348 L1200,349 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,365 L60,366 L90,368 L120,370 L150,372 L180,375 L210,377 L240,380 L270,382 L300,384 L330,387 L360,389 L390,390 L420,392 L450,393 L480,394 L510,394 L540,394 L570,393 L600,393 L630,391 L660,390 L690,388 L720,386 L750,384 L780,381 L810,379 L840,376 L870,374 L900,372 L930,369 L960,367 L990,366 L1020,364 L1050,363 L1080,362 L1110,362 L1140,362 L1170,363 L1200,363 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="938" cy="212" rx="174" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-2.0 938 212)"/><ellipse cx="938" cy="212" rx="240" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(4.0 938 212)"/>
+  <circle cx="938" cy="212" r="68" fill="url(#c1e0ste5pl)"/>
+  <circle cx="955" cy="137" r="13" fill="#ffffff" opacity="0.66"/><circle cx="1118" cy="267" r="14" fill="#ffffff" opacity="0.66"/><circle cx="714" cy="202" r="16" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a> described what an embedding is: a vector placing similar things near each other in space. <strong>word2vec</strong> and <strong>GloVe</strong> are the two classic recipes for actually <em>learning</em> word embeddings — not hand-designed, but trained from nothing but which words tend to appear near which other words in ordinary text.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a> and <a class="wikilink" href="/deep-learning/sequence-to-sequence-models/" data-topic="deep-learning/sequence-to-sequence-models">Sequence-to-Sequence Models</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Embeddings put similar words near each other — but how does a model ever learn <em>which</em> words are similar, with no labels telling it so?&quot; From context alone: train the model to predict a word&#39;s neighbours, and words that tend to share neighbours end up with similar vectors, purely as a side effect of getting good at that prediction task.</p>
+<h2 id="intuition-you-are-the-company-you-keep">Intuition: you are the company you keep</h2>
+<p>&quot;Cat&quot; and &quot;dog&quot; show up near words like &quot;pet,&quot; &quot;feed,&quot; and &quot;walk&quot; far more often than &quot;car&quot; and &quot;truck&quot; do — and &quot;car&quot; and &quot;truck&quot; show up near &quot;drive&quot; and &quot;engine&quot; far more often than &quot;cat&quot; and &quot;dog&quot; do. <strong>Skip-gram</strong> (word2vec&#39;s main variant) trains a model to predict a word&#39;s nearby context words directly from its own vector; words that need similar context predictions end up needing similar vectors, and the embedding geometry falls out of that requirement, not out of any hand-coded rule about meaning. <strong>GloVe</strong> reaches a similar destination by a different route, directly factoring a table of how often each pair of words co-occurs.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">skip-gram objective (schematically):
+  for a center word c with embedding vector v_c, and every real nearby context word w:
+     score(w | c) = v_c · v_w
+     train v_c and every v_w to make P(w | c) = softmax(score(w | c)) large for true neighbours
+</code></pre>
+<p>In practice, computing a full softmax over an entire vocabulary (which can be millions of words) is far too slow, so word2vec uses <strong>negative sampling</strong>: instead of scoring every possible word, it scores the true context word against just a handful of randomly sampled &quot;negative&quot; words, and only needs the true word to score higher than those few.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four toy word vectors, already placed to reflect two semantic clusters:</p>
+<pre><code class="language-text">cat   = (1.0, 1.0)      dog   = (1.2, 0.8)
+car   = (−1.0, 1.0)     truck = (−1.2, 0.9)
+</code></pre>
+<p>Scoring <code>dog</code>, <code>car</code> and <code>truck</code> as context-word candidates for the center word <code>cat</code> (dot product, then softmax):</p>
+<pre><code class="language-text">score(dog | cat)   = 1.0(1.2) + 1.0(0.8) =  2.000
+score(car | cat)   = 1.0(−1.0) + 1.0(1.0) =  0.000
+score(truck | cat) = 1.0(−1.2) + 1.0(0.9) = −0.300
+
+softmax → P(dog | cat) = 0.8093,  P(car | cat) = 0.1095,  P(truck | cat) = 0.0811
+</code></pre>
+<p><code>cat</code> and <code>dog</code>&#39;s vectors happen to be close together (by construction here, but the point of training is to <em>make</em> this true for real semantically related words) and the skip-gram objective rewards exactly that: it predicts <code>dog</code> as <code>cat</code>&#39;s most likely context word with over 80% of the probability mass.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="skipgram-score" data-title="Scoring a word's likely neighbours"><p class="bench-fallback"><strong>Interactive bench: Scoring a word's likely neighbours.</strong> Four adjustable word vectors in 2D. Pick a centre word and see the skip-gram score and probability for each other word as a context-word candidate, and watch how moving a vector changes its predicted neighbours.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move <code>dog</code>&#39;s vector further from <code>cat</code>&#39;s and watch <code>P(dog | cat)</code> fall.</li>
+<li>Move <code>car</code>&#39;s vector closer to <code>cat</code>&#39;s and watch it start to compete with <code>dog</code> for predicted-context probability.</li>
+<li>Pick a different centre word and compare which other words it predicts most strongly.</li>
+</ol>
+<p><strong>What you should notice:</strong> the predicted probability for a candidate word depends entirely on the dot product between the two vectors — nothing else about the words&#39; &quot;meaning&quot; is involved at all; the geometry alone drives the prediction.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>word2vec and GloVe embeddings</strong> were, for years, the standard starting point for almost any text-processing pipeline, often reused via <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a> rather than trained from scratch each time.</li>
+<li><strong>Modern transformer-based models</strong> (see <a class="wikilink" href="/deep-learning/attention-and-the-road-to-transformers/" data-topic="deep-learning/attention-and-the-road-to-transformers">Attention and the Road to Transformers</a>) learn embeddings as part of training the whole model end to end, rather than as a separate pretraining step — but the underlying idea, that context shapes a word&#39;s vector, carries over directly.</li>
+<li><strong>The classic &quot;king − man + woman ≈ queen&quot; analogy result</strong> is a famous (if sometimes overstated) demonstration that these learned geometries capture more than pairwise similarity alone.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming embeddings capture a word&#39;s meaning directly, with nothing else going on.</strong> They capture distributional patterns — what tends to appear near what — which strongly correlates with meaning but is not meaning itself.</li>
+<li><strong>Forgetting a word has only one embedding in this scheme</strong>, regardless of which sense is meant (&quot;bank&quot; the river&#39;s edge and &quot;bank&quot; the financial institution share one vector) — a limitation that contextual embeddings from transformers later addressed.</li>
+<li><strong>Expecting negative sampling to change what the model learns, rather than just how fast it trains.</strong> It is primarily a computational shortcut around scoring the entire vocabulary every step.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. How does skip-gram decide a word's embedding, with no hand-labelled meaning given to it?</summary>
+By training the vector to be good at predicting that word's actual nearby context words, using nothing but raw text — similar context requirements push similar words toward similar vectors.
+</details>
+
+<details><summary>2. Why does word2vec use negative sampling instead of a full softmax over the whole vocabulary?</summary>
+A full softmax requires scoring every word in a (potentially huge) vocabulary at every training step; negative sampling scores only the true context word against a handful of random alternatives, which is far cheaper.
+</details>
+
+<details><summary>3. In the worked example, why does cat predict dog as a context word with much higher probability than truck?</summary>
+Their vectors have a much larger dot product (2.0 for dog versus −0.3 for truck), because they were placed closer together in the embedding space.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>word2vec:</strong> a family of methods (including skip-gram) that learn word embeddings by predicting context words.</li>
+<li><strong>Negative sampling:</strong> approximating the full softmax by scoring the true context word against a small set of random negative examples.</li>
+<li><strong>GloVe:</strong> an alternative method learning embeddings directly from word co-occurrence statistics.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a> · <a class="wikilink" href="/deep-learning/sequence-to-sequence-models/" data-topic="deep-learning/sequence-to-sequence-models">Sequence-to-Sequence Models</a> · <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a> · <a class="wikilink" href="/deep-learning/attention-and-the-road-to-transformers/" data-topic="deep-learning/attention-and-the-road-to-transformers">Attention and the Road to Transformers</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/word-embeddings">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/attention-and-the-road-to-transformers/"><small>Read next</small><b>Attention and the Road to Transformers</b><p>Attention as Dot Products on the Math planet already covers the core mechanism: compare a query with every key, weight by the result, and average the values.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/deep-learning/sequence-to-sequence-models/"><b>Sequence-to-Sequence Models</b><p>A sequence-to-sequence (seq2seq) model turns one sequence into another, possibly of a different length — a sentence in one language into a sentence in another, say.</p></a><a class="rc-card" href="/deep-learning/transfer-learning-and-fine-tuning/"><b>Transfer Learning and Fine-Tuning</b><p>A network trained on one large task has already learned a great deal of generally useful structure — edges and textures for vision, grammar and common phrasing for language.</p></a><a class="rc-card" href="/deep-learning/attention-and-the-road-to-transformers/"><b>Attention and the Road to Transformers</b><p>Attention as Dot Products on the Math planet already covers the core mechanism: compare a query with every key, weight by the result, and average the values.</p></a><a class="rc-card" href="/deep-learning/sequence-models/"><b>Sequence Models</b><p>Text, audio and time series are sequences: order matters, and length varies. This district covers the networks built to read one step at a time while keeping a memory of what came before.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/sequence-to-sequence-models/">← Previous: Sequence-to-Sequence Models</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

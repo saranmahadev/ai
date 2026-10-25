@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encoding Categories — AI Base</title>
+<meta name="description" content="Models do arithmetic, so categories such as &quot;Paris&quot; or &quot;XL&quot; must become numbers. The way you do it decides what the model thinks about them.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/encoding-categories/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Encoding Categories — AI Base">
+<meta property="og:description" content="Models do arithmetic, so categories such as &quot;Paris&quot; or &quot;XL&quot; must become numbers. The way you do it decides what the model thinks about them.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/encoding-categories/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Encoding Categories","item":"https://ai.saranmahadev.in/machine-learning/encoding-categories/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Encoding Categories","description":"Models do arithmetic, so categories such as \"Paris\" or \"XL\" must become numbers. The way you do it decides what the model thinks about them.","url":"https://ai.saranmahadev.in/machine-learning/encoding-categories/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How many one-hot columns for 5 categories?","acceptedAnswer":{"@type":"Answer","text":"Five."}},{"@type":"Question","name":"When are integer codes appropriate?","acceptedAnswer":{"@type":"Answer","text":"When the categories have a real order, such as sizes or ratings."}},{"@type":"Question","name":"What is the distance between any two categories under one-hot encoding?","acceptedAnswer":{"@type":"Answer","text":"√2 (about 1.41), the same for every pair."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Data and Features</p>
+        <h1 class="doc-title">Encoding Categories</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ci3zptobg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="ci3zptopl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ci3zptobg)"/>
+  <circle cx="1089" cy="181" r="106" fill="#8a6b5c" opacity="0.27"/><circle cx="698" cy="209" r="159" fill="#ffd99f" opacity="0.48"/><circle cx="380" cy="160" r="131" fill="#ffd99f" opacity="0.33"/><circle cx="33" cy="236" r="73" fill="#fff2de" opacity="0.59"/><circle cx="114" cy="37" r="190" fill="#ffd08d" opacity="0.43"/><circle cx="877" cy="87" r="107" fill="#8a6b5c" opacity="0.27"/>
+  <path d="M0,420 L0,306 L30,307 L60,309 L90,313 L120,317 L150,322 L180,327 L210,332 L240,337 L270,341 L300,345 L330,348 L360,349 L390,350 L420,349 L450,347 L480,344 L510,340 L540,335 L570,330 L600,325 L630,320 L660,315 L690,311 L720,308 L750,306 L780,306 L810,306 L840,308 L870,310 L900,314 L930,318 L960,323 L990,328 L1020,334 L1050,338 L1080,342 L1110,346 L1140,348 L1170,349 L1200,349 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,363 L60,365 L90,368 L120,373 L150,378 L180,383 L210,387 L240,391 L270,393 L300,394 L330,393 L360,391 L390,388 L420,383 L450,378 L480,373 L510,369 L540,365 L570,363 L600,362 L630,363 L660,365 L690,368 L720,373 L750,378 L780,383 L810,387 L840,391 L870,393 L900,394 L930,393 L960,391 L990,388 L1020,383 L1050,378 L1080,373 L1110,369 L1140,365 L1170,363 L1200,362 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="899" cy="151" rx="257" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(14.1 899 151)"/><ellipse cx="899" cy="151" rx="355" ry="100" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(20.1 899 151)"/>
+  <circle cx="899" cy="151" r="101" fill="url(#ci3zptopl)"/>
+  <circle cx="744" cy="253" r="17" fill="#ffffff" opacity="0.63"/><circle cx="950" cy="17" r="10" fill="#ffffff" opacity="0.78"/><circle cx="928" cy="279" r="15" fill="#ffffff" opacity="0.65"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Models do arithmetic, so categories such as &quot;Paris&quot; or &quot;XL&quot; must become numbers. The way you do it decides what the model thinks about them. <strong>Integer codes</strong> claim an order and equal spacing; <strong>one-hot encoding</strong> makes every category equally different from every other.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a> and <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I turn words into numbers without lying?&quot; If Paris is 0, Tokyo 1, Lima 2, Oslo 3, the model may conclude Oslo is three times as far from Paris as Tokyo is, and that Lima is halfway between them. None of that is true of cities.</p>
+<h2 id="intuition-an-honest-number-line-or-separate-switches">Intuition: an honest number line or separate switches</h2>
+<p>Some categories really are ordered: S &lt; M &lt; L &lt; XL. A number line is honest for those. Cities have no order, so give each its own switch (a column) and turn on exactly one. Then no city is &quot;closer&quot; to another than any other pair.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">integer (label) codes   Paris→0, Tokyo→1, Lima→2, Oslo→3     one column, imposes order
+ordinal codes           S→1, M→2, L→3, XL→4                  right when the order is real
+one-hot                 Paris→(1,0,0,0)  Tokyo→(0,1,0,0) …   one column per category
+</code></pre>
+<p>A category with many levels (thousands of postcodes) makes one-hot enormous, so alternatives exist: group rare levels into &quot;other&quot;, use <strong>target encoding</strong> (replace each level with the average label, computed carefully to avoid leakage), or learn an <strong>embedding</strong>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Distances between cities (Euclidean, from <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a>):</p>
+<pre><code class="language-text">integer codes:   Paris–Tokyo = |0 − 1| = 1      Paris–Oslo = |0 − 3| = 3
+one-hot:         any two cities = √(1² + 1²) = √2 ≈ 1.41
+</code></pre>
+<p>With integer codes the model sees Paris and Tokyo as close and Paris and Oslo as far, purely because of the arbitrary order in the list. With one-hot every pair is 1.41 apart, which is the honest statement &quot;these are all different&quot;. For shirt sizes the opposite holds: S and M really are closer than S and XL, so ordinal codes are correct and one-hot would throw that information away.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="encode-categories" data-title="Encode the categories"><p class="bench-fallback"><strong>Interactive bench: Encode the categories.</strong> Switch between city names and shirt sizes, and between integer codes and one-hot columns; the bench shows each category's encoded vector and the table of distances between every pair.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With cities, use integer codes and read the distance table.</li>
+<li>Switch to one-hot and compare.</li>
+<li>Switch to shirt sizes and repeat both.</li>
+</ol>
+<p><strong>What you should notice:</strong> integer codes invent distances between unordered categories, one-hot treats every pair alike, and for genuinely ordered categories the integer distances are actually right.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Tabular models:</strong> one-hot and target encoding are the standard tools.</li>
+<li><strong>Language models</strong> turn each token into an embedding, a learned dense vector.</li>
+<li><strong>Recommenders</strong> embed users and items rather than one-hot encoding millions of IDs.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Integer-coding unordered categories</strong> for models that read numbers as magnitudes.</li>
+<li><strong>Categories in test data unseen in training,</strong> which need an &quot;unknown&quot; bucket.</li>
+<li><strong>Target encoding without care,</strong> which leaks the label.</li>
+<li><strong>The dummy trap:</strong> with an intercept, one one-hot column is redundant (it equals one minus the sum of the others).</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. How many one-hot columns for 5 categories?</summary>
+Five.
+</details>
+
+<details><summary>2. When are integer codes appropriate?</summary>
+When the categories have a real order, such as sizes or ratings.
+</details>
+
+<details><summary>3. What is the distance between any two categories under one-hot encoding?</summary>
+√2 (about 1.41), the same for every pair.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>One-hot encoding:</strong> one column per category with a single 1.</li>
+<li><strong>Ordinal encoding:</strong> integer codes that respect a real order.</li>
+<li><strong>Target encoding:</strong> replacing a category with the average label for it.</li>
+<li><strong>Embedding:</strong> a learned dense vector standing for a category.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a> · <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a> · <a class="wikilink" href="/machine-learning/feature-engineering/" data-topic="machine-learning/feature-engineering">Feature Engineering</a> · <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/encoding-categories">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/feature-engineering/"><small>Read next</small><b>Feature Engineering</b><p>Feature engineering means creating better inputs from the raw columns: ratios, squares, counts, differences, dates unpacked into weekday and month.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/scaling-and-normalisation/"><b>Scaling and Normalisation</b><p>Features measured in different units can have wildly different sizes: age in tens, income in tens of thousands.</p></a><a class="rc-card" href="/math/vector-operations/"><b>Vector Operations</b><p>Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a><a class="rc-card" href="/machine-learning/feature-engineering/"><b>Feature Engineering</b><p>Feature engineering means creating better inputs from the raw columns: ratios, squares, counts, differences, dates unpacked into weekday and month.</p></a><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/machine-learning/data-and-features/"><b>Data and Features</b><p>Models see numbers, not the world, so how data is cleaned and represented decides most of what a model can learn.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/scaling-and-normalisation/">← Previous: Scaling and Normalisation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

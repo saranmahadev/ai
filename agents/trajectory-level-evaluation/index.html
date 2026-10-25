@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trajectory-Level Evaluation — AI Base</title>
+<meta name="description" content="An agent that takes a forbidden or dangerous action partway through its run, then happens to land on the correct final answer anyway, passes any grader that only checks the final answer.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/trajectory-level-evaluation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Trajectory-Level Evaluation — AI Base">
+<meta property="og:description" content="An agent that takes a forbidden or dangerous action partway through its run, then happens to land on the correct final answer anyway, passes any grader that only checks the final answer.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/trajectory-level-evaluation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Trajectory-Level Evaluation","item":"https://ai.saranmahadev.in/agents/trajectory-level-evaluation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Trajectory-Level Evaluation","description":"An agent that takes a forbidden or dangerous action partway through its run, then happens to land on the correct final answer anyway, passes any grader that only checks the final answer.","url":"https://ai.saranmahadev.in/agents/trajectory-level-evaluation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the outcome-only verdict pass the worked example's trajectory?","acceptedAnswer":{"@type":"Answer","text":"It only checks the final reported result, which happens to be correct — it has no visibility into step 2's invalid file deletion, since that step didn't affect the final answer."}},{"@type":"Question","name":"What does the trajectory score of 75% represent in the worked example?","acceptedAnswer":{"@type":"Answer","text":"The fraction of the trajectory's steps (3 of 4) that were valid actions — one step out of four (the file deletion) was invalid."}},{"@type":"Question","name":"Why would a safety-relevant deployment specifically need trajectory-level evaluation rather than outcome-only checking?","acceptedAnswer":{"@type":"Answer","text":"A dangerous or unauthorized action partway through a run can be invisible to outcome-only grading if the run still produces a correct final answer — trajectory-level evaluation is what catches that action instead of letting a lucky recovery hide it."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Evaluating Agents</p>
+        <h1 class="doc-title">Trajectory-Level Evaluation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c191ofmfbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c191ofmfpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c191ofmfbg)"/>
+  <circle cx="959" cy="61" r="182" fill="#725998" opacity="0.44"/><circle cx="177" cy="353" r="202" fill="#725998" opacity="0.27"/><circle cx="951" cy="277" r="119" fill="#e7bdc8" opacity="0.54"/><circle cx="56" cy="90" r="66" fill="#e7bdc8" opacity="0.45"/><circle cx="241" cy="85" r="91" fill="#e7bdc8" opacity="0.61"/><circle cx="1010" cy="319" r="179" fill="#dcbef5" opacity="0.32"/>
+  <path d="M0,420 L0,349 L30,348 L60,347 L90,345 L120,343 L150,340 L180,337 L210,334 L240,330 L270,327 L300,323 L330,320 L360,317 L390,314 L420,312 L450,309 L480,308 L510,306 L540,306 L570,306 L600,306 L630,307 L660,308 L690,310 L720,313 L750,315 L780,318 L810,321 L840,325 L870,328 L900,332 L930,335 L960,338 L990,341 L1020,344 L1050,346 L1080,348 L1110,349 L1140,349 L1170,350 L1200,349 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,365 L30,363 L60,362 L90,363 L120,365 L150,368 L180,373 L210,378 L240,383 L270,387 L300,391 L330,393 L360,394 L390,393 L420,391 L450,388 L480,383 L510,378 L540,373 L570,369 L600,365 L630,363 L660,362 L690,363 L720,365 L750,368 L780,373 L810,378 L840,383 L870,387 L900,391 L930,393 L960,394 L990,393 L1020,391 L1050,388 L1080,383 L1110,378 L1140,373 L1170,369 L1200,365 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="633" cy="264" rx="245" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(11.2 633 264)"/><ellipse cx="633" cy="264" rx="339" ry="95" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(17.2 633 264)"/>
+  <circle cx="633" cy="264" r="96" fill="url(#c191ofmfpl)"/>
+  <circle cx="887" cy="314" r="16" fill="#ffffff" opacity="0.70"/><circle cx="301" cy="349" r="14" fill="#ffffff" opacity="0.74"/><circle cx="814" cy="332" r="15" fill="#ffffff" opacity="0.62"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An agent that takes a forbidden or dangerous action partway through its run, then happens to land on the correct final answer anyway, passes any grader that only checks the final answer. Trajectory-level evaluation checks the whole sequence of actions instead of just where it ended up — and can fail a run that outcome-only grading would wrongly call a clean success.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/error-attribution-across-a-trajectory/" data-topic="agents/error-attribution-across-a-trajectory">Error Attribution Across a Trajectory</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Is a correct final answer enough to call a run successful?&quot; Not always — the path an agent took to get there can matter independently of where it ended up. Trajectory-level evaluation inspects every step of a run (not just its final message or final state) and can flag a run as unsound even when the outcome-only verdict would call it a pass, which matters whenever <em>how</em> a goal was reached carries its own risk or cost.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A delivery driver who runs a red light but still arrives on time technically completed the delivery — but a dashcam review of the whole drive would flag the red light as a real problem, independent of the on-time arrival. Grading only &quot;did the package arrive&quot; misses exactly the part of the trip that actually mattered for safety.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">outcome-only verdict   = pass if final_result is correct
+trajectory score       = (valid steps) / (total steps)
+trajectory verdict      = pass only if every step is valid
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 4-step agent run that reaches the correct final answer despite one invalid step along the way:</p>
+<pre><code class="language-text">step 1: looked up the policy                              — valid
+step 2: deleted the user&#39;s file (not asked for)            — invalid
+step 3: restored from backup                               — valid
+step 4: reported done, correct total                       — valid
+
+outcome-only verdict:    pass   (the final answer is correct)
+trajectory score:        3 of 4 steps valid = 75%
+trajectory verdict:      fail   (step 2 was never acceptable, regardless of the outcome)
+</code></pre>
+<p>The outcome-only grader sees a correct final answer and calls the run a clean success. The trajectory-level grader catches step 2 — an action nobody asked for and that carried real risk — and correctly fails the run despite its lucky recovery.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="trajectory-level-verdict" data-title="The right final answer, a flawed path there"><p class="bench-fallback"><strong>Interactive bench: The right final answer, a flawed path there.</strong> Step through a 4-step trajectory and compare its outcome-only verdict against its trajectory-level verdict.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Read through the 4 steps and spot the invalid one before checking the verdicts.</li>
+<li>Compare the outcome-only verdict with the trajectory-level verdict.</li>
+<li>Imagine the invalid step had been step 4 instead of step 2 — would the final answer still have come out correct?</li>
+</ol>
+<p><strong>What you should notice:</strong> the outcome-only verdict is blind to everything except the last line of the transcript — it has no way to notice an invalid step that didn&#39;t happen to break the final answer.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the evaluation-side counterpart to <a class="wikilink" href="/agents/error-attribution-across-a-trajectory/" data-topic="agents/error-attribution-across-a-trajectory">Error Attribution Across a Trajectory</a></strong>: attribution finds <em>which</em> step caused a problem; trajectory-level evaluation is what makes that problem visible to a grader in the first place, rather than letting a lucky recovery hide it.</li>
+<li><strong><a class="wikilink" href="/agents/llm-as-judge-for-agent-trajectories/" data-topic="agents/llm-as-judge-for-agent-trajectories">LLM-as-Judge for Agent Trajectories</a>, the next topic, is one concrete mechanism for trajectory-level evaluation</strong> — using a model to read the full transcript and render a verdict, rather than a fixed rule-based step checker like the one in this worked example.</li>
+<li><strong>Safety-relevant agent deployments (anything touching real files, money, or external systems) specifically need trajectory-level checks</strong>, since an outcome-only check has no way to catch a dangerous intermediate action that the run happened to survive.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Grading only the final answer when the path to it carries its own risk.</strong> The worked example&#39;s invalid file deletion would be invisible to any grader that only checks whether the final total is correct.</li>
+<li><strong>Assuming trajectory-level evaluation is only about correctness.</strong> It can just as easily be about process — efficiency, safety, following instructions — independent of whether the final answer happens to be right.</li>
+<li><strong>Conflating a low trajectory score with task failure.</strong> A 75% trajectory score here still produced the correct outcome; trajectory-level evaluation surfaces a <em>separate</em> signal about how the outcome was reached, not a replacement for outcome checking.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does the outcome-only verdict pass the worked example's trajectory?</summary>
+It only checks the final reported result, which happens to be correct — it has no visibility into step 2's invalid file deletion, since that step didn't affect the final answer.
+</details>
+
+<details><summary>2. What does the trajectory score of 75% represent in the worked example?</summary>
+The fraction of the trajectory's steps (3 of 4) that were valid actions — one step out of four (the file deletion) was invalid.
+</details>
+
+<details><summary>3. Why would a safety-relevant deployment specifically need trajectory-level evaluation rather than outcome-only checking?</summary>
+A dangerous or unauthorized action partway through a run can be invisible to outcome-only grading if the run still produces a correct final answer — trajectory-level evaluation is what catches that action instead of letting a lucky recovery hide it.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Trajectory-level evaluation:</strong> checking every step of an agent&#39;s run, not just its final answer or state.</li>
+<li><strong>Outcome-only verdict:</strong> a pass/fail judgment based solely on the final result, blind to how it was reached.</li>
+<li><strong>Trajectory score:</strong> the fraction of a run&#39;s steps judged valid, independent of whether the final outcome was correct.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/error-attribution-across-a-trajectory/" data-topic="agents/error-attribution-across-a-trajectory">Error Attribution Across a Trajectory</a> · <a class="wikilink" href="/agents/llm-as-judge-for-agent-trajectories/" data-topic="agents/llm-as-judge-for-agent-trajectories">LLM-as-Judge for Agent Trajectories</a> · <a class="wikilink" href="/agents/success-rate-metrics-and-their-blind-spots/" data-topic="agents/success-rate-metrics-and-their-blind-spots">Success-Rate Metrics and Their Blind Spots</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/trajectory-level-evaluation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/llm-as-judge-for-agent-trajectories/"><small>Read next</small><b>LLM-as-Judge for Agent Trajectories</b><p>Checking an agent&#39;s full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there&#39;s no reference string for &quot;was this a reasonable approach.&quot; Using an…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/error-attribution-across-a-trajectory/"><b>Error Attribution Across a Trajectory</b><p>A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything…</p></a><a class="rc-card" href="/agents/llm-as-judge-for-agent-trajectories/"><b>LLM-as-Judge for Agent Trajectories</b><p>Checking an agent&#39;s full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there&#39;s no reference string for &quot;was this a reasonable approach.&quot; Using an…</p></a><a class="rc-card" href="/agents/success-rate-metrics-and-their-blind-spots/"><b>Success-Rate Metrics and Their Blind Spots</b><p>Two agents can share the exact same success rate and still be nowhere near equally good.</p></a><a class="rc-card" href="/agents/evaluating-agents/"><b>Evaluating Agents</b><p>Scoring a single generated answer is one problem; scoring a hundred-step trajectory of actions, any one of which could be the reason the whole task failed, is a different and harder one.</p></a><a class="rc-card" href="/agents/capstone-a-goal-decomposed-executed-and-verified-end-to-end/"><b>Capstone: A Goal, Decomposed, Executed and Verified End to End</b><p>Every mechanism this planet covered separately — decomposing a goal, picking a tool, sharing state across steps, checking a trajectory, gating a risky action, accounting for cost — is usually…</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/success-rate-metrics-and-their-blind-spots/">← Previous: Success-Rate Metrics and Their Blind Spots</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

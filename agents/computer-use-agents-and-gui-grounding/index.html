@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Computer-Use Agents and GUI Grounding — AI Base</title>
+<meta name="description" content="A web agent that can read a page&#39;s DOM knows exactly where the Submit button is, by name.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/computer-use-agents-and-gui-grounding/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Computer-Use Agents and GUI Grounding — AI Base">
+<meta property="og:description" content="A web agent that can read a page&#39;s DOM knows exactly where the Submit button is, by name.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/computer-use-agents-and-gui-grounding/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Computer-Use Agents and GUI Grounding","item":"https://ai.saranmahadev.in/agents/computer-use-agents-and-gui-grounding/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Computer-Use Agents and GUI Grounding","description":"A web agent that can read a page's DOM knows exactly where the Submit button is, by name.","url":"https://ai.saranmahadev.in/agents/computer-use-agents-and-gui-grounding/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does a 15-pixel click error hit the button but miss the icon in the worked example?","acceptedAnswer":{"@type":"Answer","text":"The button's half-size (60×20) comfortably exceeds the 12×9 error in both directions, while the icon's half-size (8×8) is smaller than the 12-pixel horizontal error — the same absolute error is well within one target's margin and outside the other's."}},{"@type":"Question","name":"What is grounding, in this context?","acceptedAnswer":{"@type":"Answer","text":"The step of mapping an intended or described target into an actual pixel coordinate to click, based on perceiving the screen rather than reading a structured representation like a DOM."}},{"@type":"Question","name":"Why do computer-use agents need grounding at all, when web-browsing agents often don't?","acceptedAnswer":{"@type":"Answer","text":"Computer-use agents generally lack a DOM or accessibility tree for the application they're controlling, so there's no stable identity to target directly — the only information available is the pixels of a screenshot."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Agent Environments and Action Spaces</p>
+        <h1 class="doc-title">Computer-Use Agents and GUI Grounding</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c12oxlwfbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c12oxlwfpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c12oxlwfbg)"/>
+  <circle cx="229" cy="45" r="83" fill="#f3e9fc" opacity="0.46"/><circle cx="772" cy="161" r="78" fill="#f3e9fc" opacity="0.33"/><circle cx="273" cy="175" r="168" fill="#e7bdc8" opacity="0.43"/><circle cx="1111" cy="418" r="224" fill="#725998" opacity="0.60"/><circle cx="1038" cy="80" r="194" fill="#725998" opacity="0.51"/>
+  <path d="M0,420 L0,347 L30,349 L60,349 L90,347 L120,343 L150,337 L180,331 L210,324 L240,317 L270,312 L300,308 L330,306 L360,306 L390,308 L420,312 L450,318 L480,324 L510,331 L540,338 L570,343 L600,347 L630,349 L660,349 L690,347 L720,343 L750,337 L780,331 L810,324 L840,317 L870,312 L900,308 L930,306 L960,306 L990,308 L1020,312 L1050,318 L1080,324 L1110,331 L1140,338 L1170,343 L1200,347 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,387 L60,391 L90,393 L120,394 L150,393 L180,391 L210,388 L240,383 L270,378 L300,373 L330,369 L360,365 L390,363 L420,362 L450,363 L480,365 L510,368 L540,373 L570,378 L600,383 L630,387 L660,391 L690,393 L720,394 L750,393 L780,391 L810,388 L840,383 L870,378 L900,373 L930,369 L960,365 L990,363 L1020,362 L1050,363 L1080,365 L1110,368 L1140,373 L1170,378 L1200,383 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="890" cy="241" rx="149" ry="42" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-10.4 890 241)"/><ellipse cx="890" cy="241" rx="207" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-4.4 890 241)"/>
+  <circle cx="890" cy="241" r="59" fill="url(#c12oxlwfpl)"/>
+  <circle cx="706" cy="229" r="19" fill="#ffffff" opacity="0.83"/><circle cx="754" cy="278" r="13" fill="#ffffff" opacity="0.74"/><circle cx="820" cy="323" r="13" fill="#ffffff" opacity="0.80"/><circle cx="1025" cy="178" r="8" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A web agent that can read a page&#39;s DOM knows exactly where the Submit button is, by name. A computer-use agent looking at a plain screenshot has no such luxury — it has to turn &quot;click Submit&quot; into an actual pixel coordinate, purely by looking at the image. That translation step, from a described target to a point on screen, is <strong>grounding</strong>, and the same small aiming error that a big button shrugs off can be a complete miss on a small icon.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/web-browsing-agents/" data-topic="agents/web-browsing-agents">Web-Browsing Agents</a>, <a class="wikilink" href="/deep-learning/deep-learning-across-modalities/" data-topic="deep-learning/deep-learning-across-modalities">Deep Learning Across Modalities</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What&#39;s different about controlling a whole desktop instead of a web page?&quot; A computer-use agent isn&#39;t limited to one page&#39;s structure — it can act on any application, which means it generally has no equivalent of a DOM to read element identities from. Its observation is a screenshot (or a stream of them), and its actions are raw mouse and keyboard events at pixel coordinates. <strong>Grounding</strong> is the step of mapping an intended target, described in words or inferred from the image, onto the actual (x, y) location to click — and it inherits all the usual limits of visual perception: a model&#39;s click prediction is only ever approximately right.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Pointing at a photo and saying &quot;click there&quot; is easy to do accurately for a large button that takes up a good chunk of the screen. Pointing at the same photo and trying to hit a tiny 16-pixel close icon with the same hand-steadiness is a much less forgiving task — the margin for error shrinks with the target, even though your aim didn&#39;t get any worse.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">grounding: target description → predicted (x, y) pixel coordinate
+hit test:  |predicted_x − target_center_x| ≤ target_half_width
+           AND |predicted_y − target_center_y| ≤ target_half_height
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The same predicted click, off by exactly 15 pixels (a 9–12–15 right-triangle offset) from the true center, checked against two different target sizes:</p>
+<pre><code class="language-text">click error: dx = 12px, dy = 9px  (euclidean distance = 15px exactly)
+
+Submit button (120×40px, half-size 60×20): |12|≤60 and |9|≤20 → hit
+Close icon (16×16px, half-size 8×8):       |12|≤8  is false    → miss
+</code></pre>
+<p>The exact same aiming error — 15 pixels off, in the exact same direction — lands inside the button&#39;s generous margin but outside the icon&#39;s tight one. Nothing about the model&#39;s perception changed between the two cases; only the target&#39;s size relative to a fixed error budget did.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="gui-grounding-click" data-title="The same pixel error, two target sizes"><p class="bench-fallback"><strong>Interactive bench: The same pixel error, two target sizes.</strong> Adjust a click's pixel error and watch it hit a large button but miss a small icon at the same distance.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>At the default 12,9 error, confirm the button is hit and the icon is missed.</li>
+<li>Reduce the error sliders until the icon starts registering hits — how small does the error need to be?</li>
+<li>Increase the error until even the button starts missing — compare that threshold to the icon&#39;s.</li>
+</ol>
+<p><strong>What you should notice:</strong> a fixed click-error budget doesn&#39;t fail uniformly — it fails exactly on the smallest, most precision-demanding targets, which are often the ones (close buttons, checkboxes, small icons) where a miss matters most.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the same perception-to-action gap <a class="wikilink" href="/agents/web-browsing-agents/" data-topic="agents/web-browsing-agents">Web-Browsing Agents</a> mostly avoids</strong> by having a DOM to target identities in — computer-use agents give that up for the ability to act on any application, at the cost of needing grounding at all.</li>
+<li><strong>The underlying visual localization problem draws on <a class="wikilink" href="/deep-learning/deep-learning-across-modalities/" data-topic="deep-learning/deep-learning-across-modalities">Deep Learning Across Modalities</a>&#39;s vision-language grounding</strong>, applied here specifically to turning a description into a click target rather than a caption or a bounding box for its own sake.</li>
+<li><strong><a class="wikilink" href="/agents/hybrid-code-and-gui-action-spaces/" data-topic="agents/hybrid-code-and-gui-action-spaces">Hybrid Code-and-GUI Action Spaces</a>, the next topic but one, often routes around this exact fragility</strong> by using code-level APIs where they exist and only falling back to pixel-level clicking where they don&#39;t.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating a small aiming error as negligible.</strong> The worked example shows the same 15-pixel error is harmless on one target and a complete miss on another — &quot;small&quot; is only meaningful relative to the target&#39;s own size.</li>
+<li><strong>Assuming grounding accuracy is uniform across an interface.</strong> Real interfaces mix large buttons with small icons and dense toolbars; a single accuracy number for &quot;click success&quot; hides which elements are actually at risk.</li>
+<li><strong>Confusing a grounding failure with a planning failure.</strong> The agent may have correctly decided to click the close icon and still miss it purely on the pixel-targeting step — the two are separate sources of error.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does a 15-pixel click error hit the button but miss the icon in the worked example?</summary>
+The button's half-size (60×20) comfortably exceeds the 12×9 error in both directions, while the icon's half-size (8×8) is smaller than the 12-pixel horizontal error — the same absolute error is well within one target's margin and outside the other's.
+</details>
+
+<details><summary>2. What is grounding, in this context?</summary>
+The step of mapping an intended or described target into an actual pixel coordinate to click, based on perceiving the screen rather than reading a structured representation like a DOM.
+</details>
+
+<details><summary>3. Why do computer-use agents need grounding at all, when web-browsing agents often don't?</summary>
+Computer-use agents generally lack a DOM or accessibility tree for the application they're controlling, so there's no stable identity to target directly — the only information available is the pixels of a screenshot.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Grounding:</strong> mapping a described or inferred target onto an actual pixel coordinate to act on.</li>
+<li><strong>Hit test:</strong> checking whether a predicted click falls within a target&#39;s bounding box.</li>
+<li><strong>Click error:</strong> the distance between a predicted click location and the target&#39;s true center.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/web-browsing-agents/" data-topic="agents/web-browsing-agents">Web-Browsing Agents</a> · <a class="wikilink" href="/deep-learning/deep-learning-across-modalities/" data-topic="deep-learning/deep-learning-across-modalities">Deep Learning Across Modalities</a> · <a class="wikilink" href="/agents/hybrid-code-and-gui-action-spaces/" data-topic="agents/hybrid-code-and-gui-action-spaces">Hybrid Code-and-GUI Action Spaces</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/computer-use-agents-and-gui-grounding">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/code-execution-agents/"><small>Read next</small><b>Code-Execution Agents</b><p>Running code one snippet at a time from a clean slate means every new snippet has to re-establish everything the previous ones already set up — reload the data, redefine the variables — before it…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/web-browsing-agents/"><b>Web-Browsing Agents</b><p>A web page an agent is clicking through doesn&#39;t hold still: an ad can load, a banner can appear, a list can re-sort, all between the moment the agent decides what to click and the moment the click…</p></a><a class="rc-card" href="/deep-learning/deep-learning-across-modalities/"><b>Deep Learning Across Modalities</b><p>Vision, speech and language look like completely different fields from the outside — but underneath, the same handful of architectural ideas (convolution, recurrence, attention, embeddings) keep…</p></a><a class="rc-card" href="/agents/hybrid-code-and-gui-action-spaces/"><b>Hybrid Code-and-GUI Action Spaces</b><p>A script can rename fifty files in one call; clicking through a file manager to do the same thing takes fifty clicks.</p></a><a class="rc-card" href="/agents/agent-environments-and-action-spaces/"><b>Agent Environments and Action Spaces</b><p>What an agent can actually do depends entirely on what it&#39;s acting inside — clicking around a web page needs a different action space than running shell commands in a terminal.</p></a><a class="rc-card" href="/agents/action-space-design-and-its-failure-modes/"><b>Action-Space Design and Its Failure Modes</b><p>Giving an agent one distinct action per object it might ever need to pick seems safe — until the number of objects grows and a correct first guess becomes a lottery ticket.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/web-browsing-agents/">← Previous: Web-Browsing Agents</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

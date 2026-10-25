@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Responsible Scaling Policies and Frontier Safety — AI Base</title>
+<meta name="description" content="As models get more capable, the safety work expected to accompany their release scales up too — a model barely useful for anything dangerous needs far less scrutiny than one capable of…">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/responsible-scaling-policies-and-frontier-safety/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Responsible Scaling Policies and Frontier Safety — AI Base">
+<meta property="og:description" content="As models get more capable, the safety work expected to accompany their release scales up too — a model barely useful for anything dangerous needs far less scrutiny than one capable of…">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/responsible-scaling-policies-and-frontier-safety/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Responsible Scaling Policies and Frontier Safety","item":"https://ai.saranmahadev.in/llms/responsible-scaling-policies-and-frontier-safety/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Responsible Scaling Policies and Frontier Safety","description":"As models get more capable, the safety work expected to accompany their release scales up too — a model barely useful for anything dangerous needs far less scrutiny than one capable of…","url":"https://ai.saranmahadev.in/llms/responsible-scaling-policies-and-frontier-safety/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does a model moving from capability 0.29 to 0.31 face a much bigger change in required commitments than one moving from 0.31 to 0.59?","acceptedAnswer":{"@type":"Answer","text":"0.29 to 0.31 crosses the tier-1/tier-2 threshold, jumping to a new, stricter set of requirements; 0.31 to 0.59 stays within tier 2 the whole way, so the required commitments don't change at all despite the larger capability gap."}},{"@type":"Question","name":"Why might an RSP restrict open-weight release specifically at the highest capability tiers?","acceptedAnswer":{"@type":"Answer","text":"Because open-weight release is irreversible — once published, a safety issue discovered later can't be patched in copies already downloaded and run elsewhere, unlike a closed, API-served model the provider can update or restrict."}},{"@type":"Question","name":"Does a responsible scaling policy replace the need for a model card?","acceptedAnswer":{"@type":"Answer","text":"No — they serve different purposes: a model card documents what's known about a specific model's behavior and limitations, while an RSP sets the safety process and commitments required before and during a release, scaled to measured capability."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · The LLM Landscape</p>
+        <h1 class="doc-title">Responsible Scaling Policies and Frontier Safety</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1npuwkbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1npuwkpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1npuwkbg)"/>
+  <circle cx="578" cy="42" r="211" fill="#ffc38f" opacity="0.51"/><circle cx="580" cy="125" r="103" fill="#8a5f5e" opacity="0.31"/><circle cx="1101" cy="107" r="193" fill="#ffece0" opacity="0.47"/><circle cx="892" cy="27" r="72" fill="#8a5f5e" opacity="0.39"/><circle cx="469" cy="32" r="81" fill="#ffc38f" opacity="0.55"/>
+  <path d="M0,420 L0,337 L30,340 L60,343 L90,345 L120,347 L150,348 L180,349 L210,350 L240,349 L270,349 L300,347 L330,346 L360,343 L390,341 L420,338 L450,335 L480,331 L510,328 L540,325 L570,321 L600,318 L630,315 L660,312 L690,310 L720,308 L750,307 L780,306 L810,306 L840,306 L870,307 L900,308 L930,310 L960,312 L990,314 L1020,317 L1050,320 L1080,324 L1110,327 L1140,331 L1170,334 L1200,337 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,390 L60,387 L90,382 L120,377 L150,372 L180,368 L210,364 L240,362 L270,362 L300,363 L330,366 L360,369 L390,374 L420,379 L450,384 L480,388 L510,392 L540,394 L570,394 L600,393 L630,390 L660,387 L690,382 L720,377 L750,372 L780,368 L810,364 L840,362 L870,362 L900,363 L930,366 L960,369 L990,374 L1020,379 L1050,384 L1080,388 L1110,392 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="942" cy="222" rx="225" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.0 942 222)"/><ellipse cx="942" cy="222" rx="312" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.0 942 222)"/>
+  <circle cx="942" cy="222" r="88" fill="url(#c1npuwkpl)"/>
+  <circle cx="848" cy="335" r="18" fill="#ffffff" opacity="0.89"/><circle cx="1098" cy="115" r="11" fill="#ffffff" opacity="0.78"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>As models get more capable, the safety work expected to accompany their release scales up too — a model barely useful for anything dangerous needs far less scrutiny than one capable of meaningfully assisting with serious harm. A responsible scaling policy ties the required safety commitments directly to measured capability, rather than treating every release the same way.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/model-cards-and-responsible-release/" data-topic="llms/model-cards-and-responsible-release">Model Cards and Responsible Release</a>, <a class="wikilink" href="/llms/licensing-and-model-governance/" data-topic="llms/licensing-and-model-governance">Licensing and Model Governance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do labs decide how much safety work a given model release needs?&quot; A responsible scaling policy (RSP) sets capability thresholds, each mapping to a safety tier with its own required commitments (more rigorous evaluation, stronger deployment safeguards, tighter access controls); crossing a threshold is what triggers the next tier&#39;s requirements, not calendar time or a fixed release schedule.</p>
+<h2 id="intuition">Intuition</h2>
+<p>It&#39;s like staged clearance for a new chemical compound: a compound with low toxicity needs minimal paperwork, one with moderate toxicity needs controlled handling procedures, and one that&#39;s genuinely hazardous needs restricted access and a dedicated containment plan. Nobody applies the hazardous-compound procedure to every substance, and nobody skips it just because a substance happens to be new — the required tier tracks the measured property, not the calendar.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">tier 1: capability &lt; 0.30   → baseline safety practices
+tier 2: 0.30 ≤ capability &lt; 0.60   → enhanced evaluation
+tier 3: 0.60 ≤ capability &lt; 0.85   → strong deployment safeguards
+tier 4: capability ≥ 0.85   → the strictest controls (restricted access, dedicated oversight)
+</code></pre>
+<p>(The specific thresholds above are illustrative; real policies define their own capability measures and cutoffs.)</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four models with different measured capability scores, checked against the threshold ladder:</p>
+<pre><code class="language-text">capability 0.10  → tier 1 (baseline practices)
+capability 0.40  → tier 2 (enhanced evaluation)
+capability 0.70  → tier 3 (strong deployment safeguards)
+capability 0.90  → tier 4 (strictest controls)
+</code></pre>
+<p>A model&#39;s required tier is a step function of its measured capability: moving from 0.10 to 0.40 crosses one threshold and jumps straight from tier 1 to tier 2&#39;s requirements, with nothing gradual in between.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rsp-capability-tier" data-title="More capable, more required"><p class="bench-fallback"><strong>Interactive bench: More capable, more required.</strong> Slide a model's measured capability and see which safety tier's commitments it requires.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide capability from 0.10 up past 0.30 and watch the required tier jump from 1 to 2.</li>
+<li>Keep sliding past 0.60 and 0.85 and watch the tier jump twice more.</li>
+<li>Notice the tier only changes exactly at a threshold crossing, not gradually.</li>
+</ol>
+<p><strong>What you should notice:</strong> required safety commitments are a step function of measured capability, not a smooth scale — crossing a threshold, however slightly, changes what&#39;s required.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Open-weight release (<a class="wikilink" href="/llms/open-weight-vs-closed-models/" data-topic="llms/open-weight-vs-closed-models">Open-Weight vs. Closed Models</a>) of a tier-4-level model is a one-way decision under an RSP</strong> — once weights are public, no later safety fix reaches every downloaded copy, which is why the highest tiers often restrict release mode itself.</li>
+<li><strong>A model card&#39;s known-biases and limitations sections (<a class="wikilink" href="/llms/model-cards-and-responsible-release/" data-topic="llms/model-cards-and-responsible-release">Model Cards and Responsible Release</a>) are part of what an RSP&#39;s evaluation requirements at higher tiers call for.</strong></li>
+<li><strong>Benchmark-based capability evaluation (covered on the Evaluating LLMs stretch of this road) is exactly what feeds the capability score an RSP&#39;s thresholds are checked against.</strong></li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming higher-tier requirements apply gradually as capability rises.</strong> The worked example&#39;s step function shows requirements jump exactly at each threshold, with no partial tier in between.</li>
+<li><strong>Treating an RSP&#39;s thresholds as universal across labs.</strong> Different organizations define capability differently and set different cutoffs; the worked example&#39;s specific numbers are illustrative, not a shared standard.</li>
+<li><strong>Assuming a lower-capability model needs no safety work at all.</strong> Tier 1 still requires baseline safety practices — the tiers scale required rigor, they don&#39;t turn it off entirely at the low end.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does a model moving from capability 0.29 to 0.31 face a much bigger change in required commitments than one moving from 0.31 to 0.59?</summary>
+0.29 to 0.31 crosses the tier-1/tier-2 threshold, jumping to a new, stricter set of requirements; 0.31 to 0.59 stays within tier 2 the whole way, so the required commitments don't change at all despite the larger capability gap.
+</details>
+
+<details><summary>2. Why might an RSP restrict open-weight release specifically at the highest capability tiers?</summary>
+Because open-weight release is irreversible — once published, a safety issue discovered later can't be patched in copies already downloaded and run elsewhere, unlike a closed, API-served model the provider can update or restrict.
+</details>
+
+<details><summary>3. Does a responsible scaling policy replace the need for a model card?</summary>
+No — they serve different purposes: a model card documents what's known about a specific model's behavior and limitations, while an RSP sets the safety process and commitments required before and during a release, scaled to measured capability.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Responsible scaling policy (RSP):</strong> a framework tying required safety commitments to a model&#39;s measured capability via defined thresholds.</li>
+<li><strong>Capability threshold:</strong> the specific measured-capability value at which a model&#39;s required safety tier changes.</li>
+<li><strong>Safety tier:</strong> a bundle of required commitments (evaluation rigor, deployment safeguards, access controls) that applies once a capability threshold is crossed.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/model-cards-and-responsible-release/" data-topic="llms/model-cards-and-responsible-release">Model Cards and Responsible Release</a> · <a class="wikilink" href="/llms/licensing-and-model-governance/" data-topic="llms/licensing-and-model-governance">Licensing and Model Governance</a> · <a class="wikilink" href="/llms/open-weight-vs-closed-models/" data-topic="llms/open-weight-vs-closed-models">Open-Weight vs. Closed Models</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/responsible-scaling-policies-and-frontier-safety">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/llms-in-practice/"><small>Read next</small><b>LLMs in Practice</b><p>The last stretch of this planet&#39;s road: adapting a model to a specific task, prompting and serving it as part of a real product, the practical failure modes of each, and a capstone that traces the…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/model-cards-and-responsible-release/"><b>Model Cards and Responsible Release</b><p>A model card is a short document that ships alongside a model, stating what it was trained on, what it&#39;s good and bad at, and where it&#39;s known to fail.</p></a><a class="rc-card" href="/llms/licensing-and-model-governance/"><b>Licensing and Model Governance</b><p>Publishing a model&#39;s weights doesn&#39;t by itself say what anyone is actually allowed to do with them.</p></a><a class="rc-card" href="/llms/open-weight-vs-closed-models/"><b>Open-Weight vs. Closed Models</b><p>Two LLMs with similar benchmark scores can offer radically different things to the people using them, depending on whether the weights themselves are published or only an API sits in front of them.</p></a><a class="rc-card" href="/llms/the-llm-landscape/"><b>The LLM Landscape</b><p>Outside the technical mechanics, LLMs exist inside a fast-moving ecosystem of model families, release decisions, licenses and governance frameworks that shape who can actually build on what.</p></a><a class="rc-card" href="/llms/guardrails-and-deployment-time-safety-filters/"><b>Guardrails and Deployment-Time Safety Filters</b><p>Alignment training shapes what a model tends to do on its own, but a deployed product rarely relies on that alone.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/licensing-and-model-governance/">← Previous: Licensing and Model Governance</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

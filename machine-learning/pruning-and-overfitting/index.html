@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pruning and Overfitting — AI Base</title>
+<meta name="description" content="Left alone, a tree keeps splitting until every leaf is pure, which means it memorises noise.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/pruning-and-overfitting/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Pruning and Overfitting — AI Base">
+<meta property="og:description" content="Left alone, a tree keeps splitting until every leaf is pure, which means it memorises noise.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/pruning-and-overfitting/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Pruning and Overfitting","item":"https://ai.saranmahadev.in/machine-learning/pruning-and-overfitting/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Pruning and Overfitting","description":"Left alone, a tree keeps splitting until every leaf is pure, which means it memorises noise.","url":"https://ai.saranmahadev.in/machine-learning/pruning-and-overfitting/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does raising the minimum leaf size do to the tree?","acceptedAnswer":{"@type":"Answer","text":"It makes the tree smaller and smoother by forbidding leaves with few points."}},{"@type":"Question","name":"Why does training accuracy always rise with depth?","acceptedAnswer":{"@type":"Answer","text":"More questions can fit the training points ever more closely, including noise."}},{"@type":"Question","name":"Where should the best depth be chosen?","acceptedAnswer":{"@type":"Answer","text":"On validation data (or cross-validation), not on training data."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Trees and Ensembles</p>
+        <h1 class="doc-title">Pruning and Overfitting</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1tl3m7obg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1tl3m7opl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1tl3m7obg)"/>
+  <circle cx="1064" cy="209" r="86" fill="#ffd99f" opacity="0.49"/><circle cx="895" cy="295" r="68" fill="#8a6b5c" opacity="0.59"/><circle cx="999" cy="313" r="215" fill="#fff2de" opacity="0.26"/><circle cx="380" cy="240" r="90" fill="#ffd99f" opacity="0.49"/><circle cx="394" cy="350" r="100" fill="#ffd08d" opacity="0.44"/>
+  <path d="M0,420 L0,313 L30,318 L60,323 L90,328 L120,333 L150,338 L180,342 L210,346 L240,348 L270,349 L300,350 L330,348 L360,346 L390,343 L420,339 L450,334 L480,329 L510,324 L540,319 L570,315 L600,311 L630,308 L660,306 L690,306 L720,306 L750,308 L780,311 L810,315 L840,319 L870,324 L900,330 L930,335 L960,339 L990,343 L1020,346 L1050,349 L1080,350 L1110,349 L1140,348 L1170,345 L1200,342 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,378 L60,373 L90,369 L120,365 L150,363 L180,362 L210,363 L240,365 L270,368 L300,373 L330,378 L360,383 L390,387 L420,391 L450,393 L480,394 L510,393 L540,391 L570,388 L600,383 L630,378 L660,373 L690,369 L720,365 L750,363 L780,362 L810,363 L840,365 L870,368 L900,373 L930,378 L960,383 L990,387 L1020,391 L1050,393 L1080,394 L1110,393 L1140,391 L1170,388 L1200,383 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="647" cy="251" rx="202" ry="57" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-0.5 647 251)"/><ellipse cx="647" cy="251" rx="280" ry="78" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(5.5 647 251)"/>
+  <circle cx="647" cy="251" r="79" fill="url(#c1tl3m7opl)"/>
+  <circle cx="862" cy="335" r="8" fill="#ffffff" opacity="0.72"/><circle cx="431" cy="268" r="14" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Left alone, a tree keeps splitting until every leaf is pure, which means it memorises noise. <strong>Pruning</strong> limits or trims the tree so it captures the pattern and not the accidents: cap the depth, require a minimum number of points per leaf, or cut back branches that do not pay for themselves.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/decision-trees/" data-topic="machine-learning/decision-trees">Decision Trees</a>, <a class="wikilink" href="/machine-learning/impurity-and-splits/" data-topic="machine-learning/impurity-and-splits">Impurity and Splits</a> and <a class="wikilink" href="/math/overfitting-in-statistics/" data-topic="math/overfitting-in-statistics">Overfitting in Statistics</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How big should the tree be?&quot; Too small and it misses real structure (underfitting); too big and it fits noise (overfitting). The right size is found on validation data, never on the training data.</p>
+<h2 id="intuition-a-rule-needs-enough-evidence">Intuition: a rule needs enough evidence</h2>
+<p>A leaf holding one point says &quot;everything like this is class 1&quot;, based on a single example. A leaf holding thirty points has evidence behind it. Restricting leaf size, or stopping splits that barely help, demands that each rule be backed by enough data.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">max depth          stop splitting below this many levels
+min leaf size      never create a leaf with fewer than m points
+min gain           skip splits whose impurity drop is below a threshold
+cost-complexity    grow big, then remove the branches that add least accuracy per leaf
+</code></pre>
+<p>The first three are <strong>pre-pruning</strong> (stop early); the last is <strong>post-pruning</strong> (grow, then cut). All are knobs (hyperparameters), tuned on validation data or by cross-validation (<a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a>).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>On the bench&#39;s half-moon data (120 training points, 280 unseen), allow depth up to 10 and vary the minimum leaf size:</p>
+<pre><code class="language-text">min leaf    leaves    training    unseen
+    1         12       100%        81%
+    3         10        96%        86%
+    5          8        93%        83%
+   10          7        91%        84%
+   20          5        89%        80%
+</code></pre>
+<p>With a leaf size of 1 the tree reaches 100% on the training data and 81% on new data. A modest minimum of 3 gives up four points of training accuracy and gains five on unseen data. At 20 the tree is too crude and unseen accuracy falls again. Differences of a few points are within noise for 280 test points, so the lesson is the shape (rise then fall), not the exact winner.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="pruning-overfitting" data-title="Depth, leaf size and overfitting"><p class="bench-fallback"><strong>Interactive bench: Depth, leaf size and overfitting.</strong> Two sliders set a tree's maximum depth and minimum leaf size on noisy data; a chart shows training and unseen accuracy against depth for the chosen leaf size, with the current depth marked.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With leaf size 1, raise the depth and watch the two curves separate.</li>
+<li>Raise the minimum leaf size to 5 and to 20.</li>
+<li>Find the depth and leaf size with the best unseen accuracy.</li>
+<li>Note how the gap between the curves changes.</li>
+</ol>
+<p><strong>What you should notice:</strong> the training curve keeps rising while the unseen curve peaks and falls, and pruning narrows the gap at the cost of some training accuracy.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every tree-based model</strong> has these hyperparameters.</li>
+<li><strong>The same idea</strong> is early stopping, dropout and weight decay in neural networks.</li>
+<li><strong>Model selection</strong> in general: complexity is chosen on validation data.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Choosing the size on training accuracy.</strong></li>
+<li><strong>Over-tuning on one validation set,</strong> which then overfits it.</li>
+<li><strong>Judging on tiny test sets:</strong> a few points of difference is noise.</li>
+<li><strong>Believing small trees are always better:</strong> underfitting is also failure.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does raising the minimum leaf size do to the tree?</summary>
+It makes the tree smaller and smoother by forbidding leaves with few points.
+</details>
+
+<details><summary>2. Why does training accuracy always rise with depth?</summary>
+More questions can fit the training points ever more closely, including noise.
+</details>
+
+<details><summary>3. Where should the best depth be chosen?</summary>
+On validation data (or cross-validation), not on training data.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Pruning:</strong> limiting or trimming a tree to prevent overfitting.</li>
+<li><strong>Pre-pruning:</strong> stopping growth early with limits.</li>
+<li><strong>Post-pruning:</strong> growing a large tree, then cutting branches.</li>
+<li><strong>Hyperparameter:</strong> a setting chosen by the modeller, not learned from data.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/decision-trees/" data-topic="machine-learning/decision-trees">Decision Trees</a> · <a class="wikilink" href="/machine-learning/impurity-and-splits/" data-topic="machine-learning/impurity-and-splits">Impurity and Splits</a> · <a class="wikilink" href="/math/overfitting-in-statistics/" data-topic="math/overfitting-in-statistics">Overfitting in Statistics</a> · <a class="wikilink" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets">Train, Validation and Test Sets</a> · <a class="wikilink" href="/machine-learning/random-forests/" data-topic="machine-learning/random-forests">Random Forests</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/pruning-and-overfitting">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/random-forests/"><small>Read next</small><b>Random Forests</b><p>A single tree is unstable: change a few training points and its questions change. A random forest trains many trees on slightly different versions of the data and lets them vote.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/decision-trees/"><b>Decision Trees</b><p>A decision tree predicts by asking a chain of yes/no questions about the features, like a flowchart: &quot;is income above 50k? is age over 30?&quot;.</p></a><a class="rc-card" href="/machine-learning/impurity-and-splits/"><b>Impurity and Splits</b><p>How does a tree decide which question to ask? It scores every candidate split by how much impurity it removes. A group is pure if all its members share a class and impure if the classes are mixed.</p></a><a class="rc-card" href="/math/overfitting-in-statistics/"><b>Overfitting in Statistics</b><p>Overfitting happens when a model fits the quirks and noise of its training data instead of the underlying pattern, so it does well on the data it saw and badly on new data.</p></a><a class="rc-card" href="/machine-learning/cross-validation/"><b>Cross-Validation</b><p>One train/validation split gives one score, and that score depends on which points happened to land where.</p></a><a class="rc-card" href="/machine-learning/train-validation-and-test-sets/"><b>Train, Validation and Test Sets</b><p>To know whether a model works you must measure it on data it has not learned from.</p></a><a class="rc-card" href="/machine-learning/random-forests/"><b>Random Forests</b><p>A single tree is unstable: change a few training points and its questions change. A random forest trains many trees on slightly different versions of the data and lets them vote.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/impurity-and-splits/">← Previous: Impurity and Splits</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

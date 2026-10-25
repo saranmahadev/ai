@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loss Functions — AI Base</title>
+<meta name="description" content="A loss function turns &quot;how wrong is the model?&quot; into a single number: small when predictions are good, large when they are bad.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/loss-functions/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Loss Functions — AI Base">
+<meta property="og:description" content="A loss function turns &quot;how wrong is the model?&quot; into a single number: small when predictions are good, large when they are bad.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/loss-functions/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Loss Functions","item":"https://ai.saranmahadev.in/math/loss-functions/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Loss Functions","description":"A loss function turns \"how wrong is the model?\" into a single number: small when predictions are good, large when they are bad.","url":"https://ai.saranmahadev.in/math/loss-functions/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Errors (1, −3): MSE and MAE?","acceptedAnswer":{"@type":"Answer","text":"MSE = (1 + 9)/2 = 5; MAE = (1 + 3)/2 = 2."}},{"@type":"Question","name":"Which loss is more sensitive to outliers, squared or absolute?","acceptedAnswer":{"@type":"Answer","text":"Squared."}},{"@type":"Question","name":"What is log loss for y = 1 and p = 0.5?","acceptedAnswer":{"@type":"Answer","text":"−ln 0.5 ≈ 0.693."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Optimization</p>
+        <h1 class="doc-title">Loss Functions</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1sanphfbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1sanphfpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1sanphfbg)"/>
+  <circle cx="442" cy="3" r="204" fill="#ddbecb" opacity="0.47"/><circle cx="752" cy="227" r="219" fill="#ddbecb" opacity="0.36"/><circle cx="591" cy="303" r="76" fill="#eee9fd" opacity="0.39"/><circle cx="378" cy="10" r="204" fill="#ddbecb" opacity="0.44"/><circle cx="555" cy="190" r="189" fill="#eee9fd" opacity="0.49"/><circle cx="290" cy="196" r="117" fill="#ddbecb" opacity="0.53"/><circle cx="1069" cy="392" r="137" fill="#ddbecb" opacity="0.28"/>
+  <path d="M0,420 L0,324 L30,319 L60,314 L90,311 L120,308 L150,306 L180,306 L210,306 L240,308 L270,311 L300,315 L330,319 L360,324 L390,330 L420,335 L450,339 L480,343 L510,347 L540,349 L570,350 L600,349 L630,348 L660,345 L690,342 L720,337 L750,332 L780,327 L810,322 L840,317 L870,313 L900,310 L930,307 L960,306 L990,306 L1020,307 L1050,309 L1080,312 L1110,316 L1140,321 L1170,326 L1200,331 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,372 L60,377 L90,382 L120,386 L150,390 L180,393 L210,394 L240,394 L270,392 L300,388 L330,384 L360,379 L390,374 L420,370 L450,366 L480,363 L510,362 L540,362 L570,364 L600,368 L630,372 L660,377 L690,382 L720,386 L750,390 L780,393 L810,394 L840,394 L870,392 L900,388 L930,384 L960,379 L990,374 L1020,370 L1050,366 L1080,363 L1110,362 L1140,362 L1170,364 L1200,368 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="661" cy="161" rx="239" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(7.8 661 161)"/><ellipse cx="661" cy="161" rx="330" ry="92" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(13.8 661 161)"/>
+  <circle cx="661" cy="161" r="94" fill="url(#c1sanphfpl)"/>
+  <circle cx="767" cy="274" r="17" fill="#ffffff" opacity="0.82"/><circle cx="862" cy="37" r="11" fill="#ffffff" opacity="0.71"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>loss function</strong> turns &quot;how wrong is the model?&quot; into a single number: small when predictions are good, large when they are bad. Training is the search for the model parameters that make the average loss as small as possible.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/functions/" data-topic="math/functions">Functions</a>, <a class="wikilink" href="/math/rounding-absolute-value-and-modulo/" data-topic="math/rounding-absolute-value-and-modulo">Rounding, Absolute Value and Modulo</a> and <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I score a prediction so that a computer can improve it?&quot; The score must be a number, ideally smooth, so that calculus can say which way is better.</p>
+<h2 id="intuition-a-penalty-for-each-miss">Intuition: a penalty for each miss</h2>
+<p>For each example, compare the prediction <code>ŷ</code> with the truth <code>y</code> and compute a penalty. Average over the data set. Different penalties encode different opinions about what matters.</p>
+<pre><code class="language-text">squared error (MSE):   L = (1/n) Σ (ŷᵢ − yᵢ)²        large misses hurt a lot
+absolute error (MAE):  L = (1/n) Σ |ŷᵢ − yᵢ|          every unit of miss counts equally
+log loss (yes/no):     L = −[ y ln p + (1 − y) ln(1 − p) ]   punishes confident mistakes
+</code></pre>
+<p>Squaring makes the loss smooth and gives a unique best fit for lines (see <a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a>), but it lets one outlier dominate. Absolute error is more robust but has a corner at zero. <strong>Huber loss</strong> blends the two: squared for small misses, absolute for big ones.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three predictions <code>ŷ = (2, 6, 10)</code> against truth <code>y = (3, 5, 8)</code>. The errors are <code>−1, +1, +2</code>.</p>
+<pre><code class="language-text">MSE  = (1 + 1 + 4) / 3   = 2.0        RMSE = √2 = 1.414
+MAE  = (1 + 1 + 2) / 3   = 1.333
+</code></pre>
+<p>Now add one bad prediction with error 10: MSE becomes <code>(1 + 1 + 4 + 100) / 4 = 26.5</code> (it jumped more than tenfold), while MAE becomes <code>(1 + 1 + 2 + 10) / 4 = 3.5</code> (up only about 2.6 times).</p>
+<p>Log loss for a true label <code>y = 1</code>:</p>
+<pre><code class="language-text">p = 0.9:  −ln 0.9 = 0.105       p = 0.5:  −ln 0.5 = 0.693       p = 0.1:  −ln 0.1 = 2.303
+</code></pre>
+<p>The more confident and wrong, the steeper the penalty: <code>p = 0.01</code> costs <code>4.6</code>. That pushes a classifier away from certain mistakes (see <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="loss-explorer" data-title="How different losses punish errors"><p class="bench-fallback"><strong>Interactive bench: How different losses punish errors.</strong> A chosen loss (squared, absolute or Huber) is drawn against the size of the error; sliders set five example errors, and the bench shows the average loss for each choice so you can see how an outlier changes the picture.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set all five errors small and compare the three averages.</li>
+<li>Push one error to the maximum: which loss reacts most?</li>
+<li>Look at the curve shapes near zero.</li>
+<li>Find where Huber switches from squared to absolute behaviour.</li>
+</ol>
+<p><strong>What you should notice:</strong> squared loss reacts violently to one large error, while absolute and Huber losses stay calm.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Regression</strong> uses squared or absolute error.</li>
+<li><strong>Classification</strong> uses cross-entropy (log loss).</li>
+<li><strong>Robust training</strong> uses Huber loss when data has outliers.</li>
+<li><strong>Custom objectives</strong> encode what a project cares about (for example missing a disease costs more than a false alarm).</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Optimising the wrong loss.</strong> The loss defines what &quot;good&quot; means.</li>
+<li><strong>Ignoring outliers</strong> under squared error.</li>
+<li><strong>Confusing the loss with the evaluation metric.</strong> They can differ.</li>
+<li><strong>Taking <code>ln 0</code>.</strong> Predictions of exactly 0 or 1 break log loss (see <a class="wikilink" href="/math/numerical-stability/" data-topic="math/numerical-stability">Numerical Stability</a>).</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Errors (1, −3): MSE and MAE?</summary>
+MSE = (1 + 9)/2 = 5; MAE = (1 + 3)/2 = 2.
+</details>
+
+<details><summary>2. Which loss is more sensitive to outliers, squared or absolute?</summary>
+Squared.
+</details>
+
+<details><summary>3. What is log loss for y = 1 and p = 0.5?</summary>
+−ln 0.5 ≈ 0.693.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Loss function:</strong> a number measuring how wrong predictions are.</li>
+<li><strong>MSE / MAE:</strong> mean squared / mean absolute error.</li>
+<li><strong>Log loss:</strong> the negative log of the probability given to the truth.</li>
+<li><strong>Huber loss:</strong> squared for small errors, absolute for large ones.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a> · <a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a> · <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> · <a class="wikilink" href="/math/linear-regression-end-to-end/" data-topic="math/linear-regression-end-to-end">Linear Regression End to End</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/loss-functions">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/minima-maxima-and-saddle-points/"><small>Read next</small><b>Minima, Maxima and Saddle Points</b><p>A minimum is a low point of a function, a maximum a high point, and a saddle point is flat but rises in some directions and falls in others.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/functions/"><b>Functions</b><p>A function is a rule that takes an input and gives back exactly one output.</p></a><a class="rc-card" href="/math/rounding-absolute-value-and-modulo/"><b>Rounding, Absolute Value and Modulo</b><p>Four small operations show up constantly: rounding (to the nearest whole number or a set of decimals), floor and ceiling (always down or always up), absolute value (distance from zero) and modulo…</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a><a class="rc-card" href="/math/least-squares/"><b>Least Squares</b><p>When a system of equations has more equations than unknowns, it usually has no exact solution. Least squares finds the values that come closest, by minimising the total squared error.</p></a><a class="rc-card" href="/math/cross-entropy/"><b>Cross-Entropy</b><p>Cross-entropy is the average surprise you feel when the world follows distribution p but you predicted with distribution q: H(p, q) = −Σ p log q.</p></a><a class="rc-card" href="/math/numerical-stability/"><b>Numerical Stability</b><p>A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/optimization/">← Previous: Optimization</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

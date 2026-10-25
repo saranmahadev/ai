@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scaling the Block — AI Base</title>
+<meta name="description" content="Making a transformer bigger raises three separate questions: whether every parameter has to run on every input, how big &quot;bigger&quot; actually is in concrete numbers, and how a single block&#39;s…">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/scaling-the-block/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Scaling the Block — AI Base">
+<meta property="og:description" content="Making a transformer bigger raises three separate questions: whether every parameter has to run on every input, how big &quot;bigger&quot; actually is in concrete numbers, and how a single block&#39;s…">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/scaling-the-block/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Scaling the Block","item":"https://ai.saranmahadev.in/transformers/scaling-the-block/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Scaling the Block","description":"Making a transformer bigger raises three separate questions: whether every parameter has to run on every input, how big \"bigger\" actually is in concrete numbers, and how a single block's…","url":"https://ai.saranmahadev.in/transformers/scaling-the-block/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Scaling the Block</p>
+        <h1 class="doc-title">Scaling the Block</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>1 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cvpadygbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="cvpadygpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cvpadygbg)"/>
+  <circle cx="885" cy="32" r="203" fill="#abd0ff" opacity="0.47"/><circle cx="268" cy="143" r="157" fill="#abd0ff" opacity="0.50"/><circle cx="489" cy="45" r="182" fill="#4f669f" opacity="0.56"/><circle cx="451" cy="283" r="155" fill="#abd0ff" opacity="0.52"/><circle cx="821" cy="289" r="88" fill="#e2efff" opacity="0.41"/><circle cx="829" cy="246" r="153" fill="#abd0ff" opacity="0.37"/><circle cx="1002" cy="126" r="60" fill="#4f669f" opacity="0.40"/>
+  <path d="M0,420 L0,334 L30,329 L60,324 L90,319 L120,315 L150,311 L180,308 L210,306 L240,306 L270,306 L300,308 L330,311 L360,315 L390,319 L420,324 L450,329 L480,334 L510,339 L540,343 L570,346 L600,348 L630,350 L660,349 L690,348 L720,345 L750,342 L780,338 L810,333 L840,328 L870,323 L900,318 L930,313 L960,310 L990,307 L1020,306 L1050,306 L1080,307 L1110,309 L1140,312 L1170,316 L1200,321 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,384 L30,386 L60,388 L90,390 L120,392 L150,393 L180,394 L210,394 L240,394 L270,394 L300,393 L330,392 L360,390 L390,388 L420,386 L450,384 L480,382 L510,379 L540,377 L570,374 L600,372 L630,370 L660,368 L690,366 L720,364 L750,363 L780,362 L810,362 L840,362 L870,362 L900,363 L930,364 L960,366 L990,368 L1020,370 L1050,372 L1080,374 L1110,377 L1140,379 L1170,382 L1200,384 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="753" cy="286" rx="248" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.5 753 286)"/><ellipse cx="753" cy="286" rx="342" ry="96" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.5 753 286)"/>
+  <circle cx="753" cy="286" r="97" fill="url(#cvpadygpl)"/>
+  <circle cx="1091" cy="222" r="13" fill="#ffffff" opacity="0.74"/><circle cx="1096" cy="223" r="12" fill="#ffffff" opacity="0.69"/><circle cx="972" cy="363" r="16" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Making a transformer bigger raises three separate questions: whether every parameter has to run on every input, how big &quot;bigger&quot; actually is in concrete numbers, and how a single block&#39;s computation gets spread across hardware that no longer fits it on one device. This district answers each in turn.</p>
+<p>Topics on this stretch of the road:</p>
+<ul>
+<li><a class="wikilink" href="/transformers/mixture-of-experts-transformer-blocks/" data-topic="transformers/mixture-of-experts-transformer-blocks">Mixture-of-Experts Transformer Blocks</a>: routing each token to a handful of specialist feed-forward sublayers instead of running all of them.</li>
+<li><a class="wikilink" href="/transformers/counting-a-transformer-s-parameters-and-flops/" data-topic="transformers/counting-a-transformer-s-parameters-and-flops">Counting a Transformer&#39;s Parameters and FLOPs</a>: working out exactly how big and how expensive one block is.</li>
+<li><a class="wikilink" href="/transformers/splitting-a-transformer-across-devices/" data-topic="transformers/splitting-a-transformer-across-devices">Splitting a Transformer Across Devices</a>: dividing a single block&#39;s own weight matrices and sequence dimension across hardware.</li>
+</ul>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/scaling-the-block">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/mixture-of-experts-transformer-blocks/"><small>Read next</small><b>Mixture-of-Experts Transformer Blocks</b><p>The feed-forward sublayer runs the same, single network on every position.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/mixture-of-experts-transformer-blocks/"><b>Mixture-of-Experts Transformer Blocks</b><p>The feed-forward sublayer runs the same, single network on every position.</p></a><a class="rc-card" href="/transformers/counting-a-transformer-s-parameters-and-flops/"><b>Counting a Transformer&#39;s Parameters and FLOPs</b><p>Every number quoted for a transformer&#39;s size — &quot;110 million parameters,&quot; &quot;175 billion parameters&quot; — comes from literally adding up the matrices covered earlier on this planet.</p></a><a class="rc-card" href="/transformers/splitting-a-transformer-across-devices/"><b>Splitting a Transformer Across Devices</b><p>A large transformer&#39;s matrices can be far too big to fit on one device at all.</p></a><a class="rc-card" href="/transformers/transformers/"><b>Transformers</b><p>Every modern transformer is built from one mechanism — the scaled dot-product attention already derived on Math and Deep Learning — wrapped in the same handful of engineering decisions, over and…</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/io-aware-attention-computation/">← Previous: IO-Aware Attention Computation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

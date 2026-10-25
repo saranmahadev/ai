@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Citation and Source Attribution — AI Base</title>
+<meta name="description" content="An answer that cites its sources lets a reader check it; an answer that doesn&#39;t asks for blind trust.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/citation-and-source-attribution/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Citation and Source Attribution — AI Base">
+<meta property="og:description" content="An answer that cites its sources lets a reader check it; an answer that doesn&#39;t asks for blind trust.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/citation-and-source-attribution/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Citation and Source Attribution","item":"https://ai.saranmahadev.in/rag/citation-and-source-attribution/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Citation and Source Attribution","description":"An answer that cites its sources lets a reader check it; an answer that doesn't asks for blind trust.","url":"https://ai.saranmahadev.in/rag/citation-and-source-attribution/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the third claim fail to get cited even though it finds a \"best match\" among the retrieved passages?","acceptedAnswer":{"@type":"Answer","text":"Every claim has some best match by construction (whichever passage is relatively closest), but that best match's similarity (0.781) falls below the citation threshold (0.8), signaling that even the closest passage isn't actually close enough to count as real support."}},{"@type":"Question","name":"What's the risk of setting the citation threshold too low?","acceptedAnswer":{"@type":"Answer","text":"An unsupported or fabricated claim can end up cited to an unrelated passage just because it happens to be the closest match among a weak field — a false citation that looks just as trustworthy as a real one."}},{"@type":"Question","name":"Does passing the citation check guarantee a claim is factually correct?","acceptedAnswer":{"@type":"Answer","text":"No — it only confirms the claim is similar to a retrieved passage, which could itself be inaccurate, outdated, or simply misread by the generating model in a way that still happens to resemble its source."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Generation with Retrieved Context</p>
+        <h1 class="doc-title">Citation and Source Attribution</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cq5g01zbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="cq5g01zpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cq5g01zbg)"/>
+  <circle cx="241" cy="353" r="162" fill="#97e1e6" opacity="0.53"/><circle cx="316" cy="179" r="227" fill="#dcf5f7" opacity="0.22"/><circle cx="360" cy="67" r="138" fill="#97e1e6" opacity="0.51"/><circle cx="23" cy="27" r="206" fill="#b7d5be" opacity="0.34"/><circle cx="121" cy="288" r="189" fill="#b7d5be" opacity="0.31"/><circle cx="806" cy="135" r="82" fill="#42718e" opacity="0.28"/><circle cx="915" cy="173" r="66" fill="#42718e" opacity="0.28"/>
+  <path d="M0,420 L0,349 L30,349 L60,348 L90,346 L120,344 L150,341 L180,338 L210,335 L240,332 L270,328 L300,325 L330,321 L360,318 L390,315 L420,313 L450,310 L480,308 L510,307 L540,306 L570,306 L600,306 L630,306 L660,308 L690,309 L720,312 L750,314 L780,317 L810,320 L840,323 L870,327 L900,330 L930,334 L960,337 L990,340 L1020,343 L1050,345 L1080,347 L1110,348 L1140,349 L1170,350 L1200,349 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,393 L120,391 L150,388 L180,385 L210,382 L240,378 L270,374 L300,371 L330,368 L360,365 L390,363 L420,362 L450,362 L480,363 L510,364 L540,367 L570,370 L600,373 L630,377 L660,380 L690,384 L720,387 L750,390 L780,392 L810,394 L840,394 L870,394 L900,392 L930,390 L960,387 L990,384 L1020,381 L1050,377 L1080,373 L1110,370 L1140,367 L1170,364 L1200,363 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="637" cy="225" rx="265" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-0.8 637 225)"/><ellipse cx="637" cy="225" rx="366" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(5.2 637 225)"/>
+  <circle cx="637" cy="225" r="104" fill="url(#cq5g01zpl)"/>
+  <circle cx="922" cy="251" r="13" fill="#ffffff" opacity="0.61"/><circle cx="1015" cy="175" r="19" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An answer that cites its sources lets a reader check it; an answer that doesn&#39;t asks for blind trust. Attribution means tracing each specific claim in a generated answer back to the retrieved passage that actually supports it — and noticing when a claim has no such passage at all.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you know which retrieved passage actually backs up a specific sentence in the generated answer?&quot; For each claim in an answer, attribution finds the retrieved passage whose embedding is most similar to that claim — the passage it&#39;s most likely paraphrasing or drawing from — and cites that passage, as long as the similarity clears a minimum threshold. A claim whose best match falls below that threshold isn&#39;t cited at all, because nothing retrieved actually supports it closely enough.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Checking a student&#39;s essay against the sources they claim to have used means matching each specific sentence back to the source passage that actually contains that information — and flagging any sentence that doesn&#39;t match any source closely, because it was either invented or drawn from somewhere not actually cited.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">best_support(claim) = passage with highest cosine similarity to the claim
+cite(claim) = best_support(claim)   if similarity ≥ threshold
+            = unsupported            otherwise
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three claims in a generated answer, checked against two retrieved passages (one about refunds, one about shipping), at a 0.8 similarity threshold:</p>
+<pre><code class="language-text">&quot;Refunds are issued within 5 business days.&quot;  → best match p1 (refunds), similarity 1.000 → cited
+&quot;Shipping takes 3-5 days.&quot;                     → best match p2 (shipping), similarity 1.000 → cited
+&quot;The company was founded in 1998.&quot;             → best match p1 (refunds), similarity 0.781 → unsupported
+</code></pre>
+<p>The first two claims closely match a retrieved passage and get cited to it directly. The third claim — a fact never actually in either retrieved passage — only reaches a 0.781 similarity to its <em>closest</em> match, below the 0.8 threshold, so it&#39;s correctly flagged as unsupported rather than falsely attributed to an unrelated passage.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="citation-attribution" data-title="Can every claim point back to a source?"><p class="bench-fallback"><strong>Interactive bench: Can every claim point back to a source?.</strong> Trace each claim in a generated answer back to its best-supporting passage, flagging anything too weakly supported to cite.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at which claims get cited at the default threshold.</li>
+<li>Lower the threshold and watch the third claim start getting (falsely) cited too.</li>
+<li>Raise the threshold and see if either of the first two claims eventually loses its citation.</li>
+</ol>
+<p><strong>What you should notice:</strong> the threshold is doing real work — set it too low, and an unsupported claim gets a false citation that looks just as credible as a real one; set it too high, and genuinely supported claims might lose their citations too.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This reuses the same cosine-similarity mechanism as <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a></strong>, applied after generation rather than before it — attribution is retrieval&#39;s comparison operation, run one more time.</li>
+<li><strong><a class="wikilink" href="/rag/grounded-generation-and-faithfulness/" data-topic="rag/grounded-generation-and-faithfulness">Grounded Generation and Faithfulness</a> aggregates exactly this per-claim check into a single score for the whole answer</strong> — attribution is the per-claim mechanism; faithfulness is the summary statistic.</li>
+<li><strong>A claim that fails attribution is a strong, concrete signal of the kind of problem <a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a> catalogs as hallucinated content slipping past retrieval&#39;s own grounding.</strong></li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Setting the citation threshold too low.</strong> The worked example shows a genuinely unsupported claim scoring 0.781 — a threshold below that would falsely cite it to an unrelated passage, which looks more credible than no citation at all, and is arguably worse.</li>
+<li><strong>Assuming a passed citation check guarantees the claim is true.</strong> Attribution checks that a claim is <em>similar</em> to a retrieved passage, not that the passage (or the claim drawn from it) is actually accurate.</li>
+<li><strong>Running attribution only after the full answer is generated, with no way to revise.</strong> A claim that fails attribution has already been written and shown — attribution alone doesn&#39;t prevent an unsupported claim from reaching the user, only detects it.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the third claim fail to get cited even though it finds a "best match" among the retrieved passages?</summary>
+Every claim has some best match by construction (whichever passage is relatively closest), but that best match's similarity (0.781) falls below the citation threshold (0.8), signaling that even the closest passage isn't actually close enough to count as real support.
+</details>
+
+<details><summary>2. What's the risk of setting the citation threshold too low?</summary>
+An unsupported or fabricated claim can end up cited to an unrelated passage just because it happens to be the closest match among a weak field — a false citation that looks just as trustworthy as a real one.
+</details>
+
+<details><summary>3. Does passing the citation check guarantee a claim is factually correct?</summary>
+No — it only confirms the claim is similar to a retrieved passage, which could itself be inaccurate, outdated, or simply misread by the generating model in a way that still happens to resemble its source.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Citation:</strong> linking a specific claim in a generated answer to the retrieved passage that supports it.</li>
+<li><strong>Source attribution:</strong> the broader practice of tracing generated content back to its retrieved origins.</li>
+<li><strong>Citation threshold:</strong> the minimum similarity a claim&#39;s best-matching passage must reach to be cited rather than flagged unsupported.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a> · <a class="wikilink" href="/rag/grounded-generation-and-faithfulness/" data-topic="rag/grounded-generation-and-faithfulness">Grounded Generation and Faithfulness</a> · <a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/citation-and-source-attribution">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/handling-noisy-or-conflicting-retrieved-context/"><small>Read next</small><b>Handling Noisy or Conflicting Retrieved Context</b><p>Retrieval sometimes returns two passages that answer the same question differently — an old policy document and a new one, say, each stating a different number for the same thing.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/dense-retrieval/"><b>Dense Retrieval</b><p>&quot;Automobile repair&quot; and &quot;car maintenance&quot; share not a single word, yet mean almost the same thing.</p></a><a class="rc-card" href="/rag/grounded-generation-and-faithfulness/"><b>Grounded Generation and Faithfulness</b><p>Retrieving the right passages doesn&#39;t guarantee the generated answer actually uses them.</p></a><a class="rc-card" href="/rag/common-rag-failure-modes/"><b>Common RAG Failure Modes</b><p>Across this planet&#39;s road, the same handful of failure symptoms keep recurring — a stale fact, a result count that&#39;s mysteriously short, an answer that confidently cites the wrong thing.</p></a><a class="rc-card" href="/rag/generation-with-retrieved-context/"><b>Generation with Retrieved Context</b><p>Retrieval only hands a model raw material; what the model does with that material is a separate problem.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/context-assembly-and-ordering/">← Previous: Context Assembly and Ordering</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

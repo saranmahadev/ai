@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dimensionality Reduction in Practice — AI Base</title>
+<meta name="description" content="Real data often has many columns that mostly move together, so its true variety is far smaller than its width suggests.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/dimensionality-reduction-in-practice/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Dimensionality Reduction in Practice — AI Base">
+<meta property="og:description" content="Real data often has many columns that mostly move together, so its true variety is far smaller than its width suggests.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/dimensionality-reduction-in-practice/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Dimensionality Reduction in Practice","item":"https://ai.saranmahadev.in/machine-learning/dimensionality-reduction-in-practice/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Dimensionality Reduction in Practice","description":"Real data often has many columns that mostly move together, so its true variety is far smaller than its width suggests.","url":"https://ai.saranmahadev.in/machine-learning/dimensionality-reduction-in-practice/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the first principal component point along?","acceptedAnswer":{"@type":"Answer","text":"The direction of greatest variance in the data."}},{"@type":"Question","name":"Components explain 70%, 20%, 5%, 5%. How many keep at least 90%?","acceptedAnswer":{"@type":"Answer","text":"Two (70% + 20%)."}},{"@type":"Question","name":"Why might PCA discard something useful for prediction?","acceptedAnswer":{"@type":"Answer","text":"It ranks directions by variance, not by relevance to the label."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Unsupervised Learning</p>
+        <h1 class="doc-title">Dimensionality Reduction in Practice</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ci96kafbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="ci96kafpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ci96kafbg)"/>
+  <circle cx="91" cy="57" r="199" fill="#8a6b5c" opacity="0.33"/><circle cx="483" cy="68" r="171" fill="#8a6b5c" opacity="0.40"/><circle cx="906" cy="104" r="144" fill="#ffd99f" opacity="0.37"/><circle cx="728" cy="213" r="135" fill="#8a6b5c" opacity="0.53"/><circle cx="1165" cy="393" r="83" fill="#8a6b5c" opacity="0.32"/><circle cx="860" cy="55" r="227" fill="#fff2de" opacity="0.54"/><circle cx="226" cy="346" r="118" fill="#fff2de" opacity="0.48"/>
+  <path d="M0,420 L0,312 L30,308 L60,306 L90,306 L120,308 L150,312 L180,318 L210,324 L240,331 L270,338 L300,343 L330,347 L360,349 L390,349 L420,347 L450,343 L480,337 L510,331 L540,324 L570,318 L600,312 L630,308 L660,306 L690,306 L720,308 L750,312 L780,318 L810,324 L840,331 L870,338 L900,343 L930,347 L960,349 L990,349 L1020,347 L1050,343 L1080,337 L1110,331 L1140,324 L1170,318 L1200,312 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,393 L120,392 L150,390 L180,387 L210,383 L240,380 L270,376 L300,372 L330,369 L360,366 L390,364 L420,363 L450,362 L480,362 L510,364 L540,366 L570,368 L600,371 L630,375 L660,379 L690,383 L720,386 L750,389 L780,391 L810,393 L840,394 L870,394 L900,393 L930,391 L960,389 L990,386 L1020,382 L1050,378 L1080,375 L1110,371 L1140,368 L1170,365 L1200,363 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="811" cy="198" rx="246" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-22.5 811 198)"/><ellipse cx="811" cy="198" rx="340" ry="95" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-16.5 811 198)"/>
+  <circle cx="811" cy="198" r="97" fill="url(#ci96kafpl)"/>
+  <circle cx="646" cy="93" r="8" fill="#ffffff" opacity="0.75"/><circle cx="559" cy="84" r="14" fill="#ffffff" opacity="0.78"/><circle cx="708" cy="59" r="17" fill="#ffffff" opacity="0.72"/><circle cx="1087" cy="210" r="12" fill="#ffffff" opacity="0.69"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Real data often has many columns that mostly move together, so its true variety is far smaller than its width suggests. <strong>Dimensionality reduction</strong> finds a few new directions that keep most of the information. PCA, the standard tool, rotates the data to the directions of greatest spread and lets you keep only the leading ones.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a>, <a class="wikilink" href="/machine-learning/the-curse-of-dimensionality/" data-topic="machine-learning/the-curse-of-dimensionality">The Curse of Dimensionality</a> and <a class="wikilink" href="/math/covariance-and-correlation/" data-topic="math/covariance-and-correlation">Covariance and Correlation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can I describe this data with fewer numbers without losing much?&quot; Fewer dimensions mean faster models, less overfitting, and the chance to visualise the data.</p>
+<h2 id="intuition-keep-the-directions-with-the-most-spread">Intuition: keep the directions with the most spread</h2>
+<p>Five sensor readings that all rise and fall with two underlying causes are really two-dimensional data wearing five columns. Rotate the axes so the first points along the direction of greatest variation, the next along the greatest remaining variation at right angles, and so on. Later directions capture mostly noise. Keep the first few, and every example needs only that many numbers.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">principal components   the eigenvectors of the covariance matrix, sorted by eigenvalue
+explained variance     eigenvalue_k / (sum of all eigenvalues)
+project                z = (x − mean) · component        (the coordinates you keep)
+reconstruct            x̂ = mean + Σ zₖ · componentₖ      error = what the dropped components held
+</code></pre>
+<p>Centre the data first; standardise the features if their scales differ (<a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a>). PCA is linear and unsupervised: it keeps high-variance directions, which are not always the ones useful for prediction. Non-linear alternatives (t-SNE, UMAP, autoencoders) suit visualising curved structure.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>One hundred examples with five features generated from two hidden causes plus a little noise (bench data). The share of variance in each principal component:</p>
+<pre><code class="language-text">component          1      2      3      4      5
+share of variance  85.9%  10.8%  1.4%   1.1%   0.8%
+cumulative         85.9%  96.7%  98.1%  99.2%  100%
+
+components kept    1      2      3      4      5
+reconstruction     0.454  0.221  0.169  0.109  0.000     (RMS error per value)
+</code></pre>
+<p>Two components keep 96.7% of the variance; the remaining three hold only noise. Storing 2 numbers per example instead of 5 cuts the data by 60% while the reconstruction is off by about 0.22 per value, against readings whose overall spread is several times that. The steep drop after component 2 (the &quot;scree&quot;) is the hint that the data is really two-dimensional.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="pca-variance" data-title="Keep the components that matter"><p class="bench-fallback"><strong>Interactive bench: Keep the components that matter.</strong> Five correlated features are decomposed by PCA; a bar chart shows the share of variance in each component with the cumulative total, and a slider sets how many components are kept, showing the variance retained and the reconstruction error.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Keep 1 component and read the variance kept.</li>
+<li>Raise to 2, then 3.</li>
+<li>Find the smallest number of components that keeps 95%.</li>
+<li>Compare the reconstruction error at 2 and at 5 components.</li>
+</ol>
+<p><strong>What you should notice:</strong> a couple of components carry nearly everything, adding more buys little, and keeping all of them reconstructs the data exactly.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Preprocessing:</strong> compress features before another model.</li>
+<li><strong>Visualisation:</strong> project embeddings to two dimensions.</li>
+<li><strong>Denoising and compression:</strong> drop the low-variance components.</li>
+<li><strong>Embeddings and autoencoders</strong> are learned, non-linear relatives.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting to centre or scale the data.</strong></li>
+<li><strong>Assuming high variance means high usefulness for the label.</strong></li>
+<li><strong>Fitting PCA on all the data</strong> before splitting.</li>
+<li><strong>Interpreting components as real-world causes;</strong> they are mathematical axes.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does the first principal component point along?</summary>
+The direction of greatest variance in the data.
+</details>
+
+<details><summary>2. Components explain 70%, 20%, 5%, 5%. How many keep at least 90%?</summary>
+Two (70% + 20%).
+</details>
+
+<details><summary>3. Why might PCA discard something useful for prediction?</summary>
+It ranks directions by variance, not by relevance to the label.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Principal component:</strong> a direction of high variance found by PCA.</li>
+<li><strong>Explained variance:</strong> the share of total variance a component holds.</li>
+<li><strong>Scree plot:</strong> the chart of variance per component.</li>
+<li><strong>Reconstruction error:</strong> what is lost by keeping fewer components.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a> · <a class="wikilink" href="/math/covariance-and-correlation/" data-topic="math/covariance-and-correlation">Covariance and Correlation</a> · <a class="wikilink" href="/machine-learning/the-curse-of-dimensionality/" data-topic="machine-learning/the-curse-of-dimensionality">The Curse of Dimensionality</a> · <a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a> · <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/dimensionality-reduction-in-practice">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/anomaly-detection/"><small>Read next</small><b>Anomaly Detection</b><p>Anomaly detection looks for the rare points that do not fit: a fraudulent payment, a failing machine, a corrupt record.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/svd-and-pca/"><b>SVD and PCA</b><p>The singular value decomposition (SVD) breaks any matrix into a rotation, a stretch along perpendicular axes, and another rotation: A = U Σ Vᵀ.</p></a><a class="rc-card" href="/machine-learning/the-curse-of-dimensionality/"><b>The Curse of Dimensionality</b><p>Every feature you add is a new dimension, and high-dimensional space behaves strangely: it is enormous, data points end up far from everything, and &quot;nearest&quot; stops meaning much.</p></a><a class="rc-card" href="/math/covariance-and-correlation/"><b>Covariance and Correlation</b><p>Covariance measures whether two variables tend to be above or below their means together.</p></a><a class="rc-card" href="/machine-learning/scaling-and-normalisation/"><b>Scaling and Normalisation</b><p>Features measured in different units can have wildly different sizes: age in tens, income in tens of thousands.</p></a><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/machine-learning/unsupervised-learning/"><b>Unsupervised Learning</b><p>When no answers are given, a model can still find structure: groups of similar points, the true number of dimensions in the data, or the odd ones out.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/gaussian-mixtures-and-em/">← Previous: Gaussian Mixtures and EM</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

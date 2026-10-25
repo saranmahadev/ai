@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neural ODEs — AI Base</title>
+<meta name="description" content="A residual block&#39;s update, h_(t+1) = h_t + F(h_t), looks suspiciously like a single step of a very basic way to solve a differential equation.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/neural-odes/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Neural ODEs — AI Base">
+<meta property="og:description" content="A residual block&#39;s update, h_(t+1) = h_t + F(h_t), looks suspiciously like a single step of a very basic way to solve a differential equation.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/neural-odes/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Neural ODEs","item":"https://ai.saranmahadev.in/deep-learning/neural-odes/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Neural ODEs","description":"A residual block's update, h_(t+1) = h_t + F(h_t), looks suspiciously like a single step of a very basic way to solve a differential equation.","url":"https://ai.saranmahadev.in/deep-learning/neural-odes/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a plain ResNet's residual update resemble, numerically?","acceptedAnswer":{"@type":"Answer","text":"One step of Euler's method, solving a differential equation with a fixed step size of 1."}},{"@type":"Question","name":"In the worked example, why does a smaller Euler step size give a more accurate result?","acceptedAnswer":{"@type":"Answer","text":"Smaller steps better approximate the true, continuously changing rate, accumulating less error over the same total interval."}},{"@type":"Question","name":"What does a Neural ODE replace a fixed number of residual blocks with?","acceptedAnswer":{"@type":"Answer","text":"A differential equation describing the hidden state's rate of change, solved by a numerical ODE solver that can choose its own step size (and count)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Graphs, Structure and Beyond Grids</p>
+        <h1 class="doc-title">Neural ODEs</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cree9dxbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cree9dxpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cree9dxbg)"/>
+  <circle cx="566" cy="10" r="229" fill="#ffe6e6" opacity="0.36"/><circle cx="200" cy="323" r="120" fill="#8a546c" opacity="0.55"/><circle cx="835" cy="189" r="74" fill="#ffb6b6" opacity="0.32"/><circle cx="565" cy="374" r="191" fill="#ffb89d" opacity="0.39"/><circle cx="153" cy="260" r="223" fill="#ffb89d" opacity="0.33"/><circle cx="623" cy="138" r="142" fill="#ffb6b6" opacity="0.33"/>
+  <path d="M0,420 L0,317 L30,312 L60,308 L90,306 L120,306 L150,308 L180,313 L210,318 L240,325 L270,332 L300,338 L330,344 L360,348 L390,349 L420,349 L450,347 L480,343 L510,337 L540,330 L570,323 L600,317 L630,312 L660,308 L690,306 L720,306 L750,308 L780,313 L810,318 L840,325 L870,332 L900,338 L930,344 L960,348 L990,349 L1020,349 L1050,347 L1080,343 L1110,337 L1140,330 L1170,323 L1200,317 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,389 L30,392 L60,394 L90,394 L120,392 L150,389 L180,385 L210,381 L240,376 L270,371 L300,367 L330,364 L360,362 L390,362 L420,364 L450,367 L480,371 L510,375 L540,380 L570,385 L600,389 L630,392 L660,394 L690,394 L720,392 L750,389 L780,385 L810,381 L840,376 L870,371 L900,367 L930,364 L960,362 L990,362 L1020,364 L1050,367 L1080,371 L1110,375 L1140,380 L1170,385 L1200,389 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="768" cy="169" rx="213" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-17.9 768 169)"/><ellipse cx="768" cy="169" rx="294" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-11.9 768 169)"/>
+  <circle cx="768" cy="169" r="84" fill="url(#cree9dxpl)"/>
+  <circle cx="751" cy="252" r="12" fill="#ffffff" opacity="0.65"/><circle cx="1019" cy="170" r="18" fill="#ffffff" opacity="0.76"/><circle cx="621" cy="268" r="14" fill="#ffffff" opacity="0.76"/><circle cx="654" cy="60" r="7" fill="#ffffff" opacity="0.81"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <a class="wikilink" href="/deep-learning/residual-and-skip-connections/" data-topic="deep-learning/residual-and-skip-connections">residual block</a>&#39;s update, <code>h_(t+1) = h_t + F(h_t)</code>, looks suspiciously like a single step of a very basic way to solve a differential equation. A <strong>Neural ODE</strong> takes that resemblance seriously: instead of a fixed number of discrete residual blocks, it treats &quot;depth&quot; as continuous time and solves <code>dh/dt = F(h, t)</code> directly with an ODE solver.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/residual-and-skip-connections/" data-topic="deep-learning/residual-and-skip-connections">Residual and Skip Connections</a> and <a class="wikilink" href="/math/rate-of-change/" data-topic="math/rate-of-change">Rate of Change</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;A ResNet&#39;s depth is a fixed number you choose ahead of time — what if the transformation it&#39;s approximating is more naturally continuous?&quot; Treat it as one: define how <code>h</code> changes <em>per unit of continuous depth</em> (a rate of change, <code>dh/dt</code>), and let a numerical ODE solver decide how finely to step through it, rather than fixing the number of steps in advance.</p>
+<h2 id="intuition-counting-discrete-floors-versus-riding-a-continuously-moving-elevator">Intuition: counting discrete floors versus riding a continuously moving elevator</h2>
+<p>A plain deep (or residual) network is like a building with a fixed number of floors — however coarse or fine, that number is baked in when it&#39;s built. A Neural ODE is more like a continuously moving elevator: you specify the <em>rate</em> at which it moves at any given position, and a solver figures out how many stops (steps) to actually take to get you there accurately, potentially using more small steps where the rate is changing quickly and fewer where it isn&#39;t.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">residual block:    h_(t+1) = h_t + F(h_t)              — looks like one step of Euler&#39;s method
+Neural ODE:         dh/dt = F(h, t, θ)                  — the continuous version
+                     h(T) = h(0) + ∫₀ᵀ F(h, t, θ) dt     — solved by any ODE solver, with any step size
+
+Euler&#39;s method (the simplest solver):   x_(n+1) = x_n + h · f(x_n)     (h = step size)
+</code></pre>
+<p>A plain ResNet is, in effect, always using Euler&#39;s method with a step size fixed at exactly 1, for exactly as many steps as it has residual blocks.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Solving the simple differential equation <code>dx/dt = x</code> (true solution <code>x(t) = x₀eᵗ</code>) from <code>x₀ = 1</code> to <code>t = 2</code>, using Euler&#39;s method with different step sizes:</p>
+<pre><code class="language-text">step size h=1    (2 steps):   x(2) ≈ 4.0000
+step size h=0.5  (4 steps):   x(2) ≈ 5.0625
+step size h=0.25 (8 steps):   x(2) ≈ 5.9605
+
+true value:  e² ≈ 7.3891
+</code></pre>
+<p>Smaller steps get steadily closer to the true value — exactly the trade-off a Neural ODE&#39;s solver can make automatically: more (smaller) steps where accuracy matters, fewer (larger) steps where it doesn&#39;t, rather than committing to one fixed number of &quot;layers&quot; for the whole network regardless of how complex the underlying transformation actually is.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="euler-steps" data-title="Solving a differential equation with more or fewer steps"><p class="bench-fallback"><strong>Interactive bench: Solving a differential equation with more or fewer steps.</strong> A step-size slider for Euler's method solving dx/dt = x from x₀ = 1 to t = 2. See the approximation converge toward the true value as the step size shrinks (more steps).</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with a large step size and compare the result to the true value.</li>
+<li>Shrink the step size and watch the approximation steadily improve.</li>
+<li>Think about what a plain ResNet is implicitly committing to by using one fixed step size, forever.</li>
+</ol>
+<p><strong>What you should notice:</strong> this is exactly the resemblance Neural ODEs exploit — a ResNet&#39;s depth is, numerically, a step-size (and step-count) choice baked into the architecture, which a continuous-time formulation can instead leave to an adaptive solver.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Memory efficiency</strong> is a practical advantage: a Neural ODE&#39;s &quot;depth&quot; at inference is a solver choice, not a fixed number of stored layer weights, which can save memory during training via the adjoint method (not covered in depth here).</li>
+<li><strong>Irregularly-sampled time series</strong> (medical records, sensor data with gaps) are a natural fit, since a Neural ODE can evaluate the hidden state at <em>any</em> continuous time, not just at fixed, evenly-spaced layer indices.</li>
+<li><strong>Normalizing flows</strong> (see <a class="wikilink" href="/deep-learning/normalizing-flows/" data-topic="deep-learning/normalizing-flows">Normalizing Flows</a>) have a continuous-time variant built on exactly this same differential-equation framing.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming Neural ODEs are always more efficient than a plain deep network.</strong> Solving an ODE accurately can require many solver evaluations, sometimes costing more compute than a fixed-depth network for the same task.</li>
+<li><strong>Expecting Euler&#39;s method specifically to be used in practice.</strong> It&#39;s the simplest solver (and the one that looks most like a plain residual block), but real Neural ODE implementations typically use far more accurate adaptive solvers.</li>
+<li><strong>Confusing &quot;continuous depth&quot; with &quot;continuous input.&quot;</strong> The continuity here is about how the <em>hidden state</em> evolves with depth, not necessarily about the kind of input data the network accepts.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does a plain ResNet's residual update resemble, numerically?</summary>
+One step of Euler's method, solving a differential equation with a fixed step size of 1.
+</details>
+
+<details><summary>2. In the worked example, why does a smaller Euler step size give a more accurate result?</summary>
+Smaller steps better approximate the true, continuously changing rate, accumulating less error over the same total interval.
+</details>
+
+<details><summary>3. What does a Neural ODE replace a fixed number of residual blocks with?</summary>
+A differential equation describing the hidden state's rate of change, solved by a numerical ODE solver that can choose its own step size (and count).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Neural ODE:</strong> a network whose depth is treated as continuous time, with the hidden state&#39;s evolution defined by a differential equation.</li>
+<li><strong>Euler&#39;s method:</strong> the simplest way to numerically solve a differential equation, taking fixed-size steps along the rate of change.</li>
+<li><strong>Adaptive step size:</strong> letting a solver choose smaller steps where accuracy requires it and larger steps where it doesn&#39;t.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/residual-and-skip-connections/" data-topic="deep-learning/residual-and-skip-connections">Residual and Skip Connections</a> · <a class="wikilink" href="/math/rate-of-change/" data-topic="math/rate-of-change">Rate of Change</a> · <a class="wikilink" href="/deep-learning/normalizing-flows/" data-topic="deep-learning/normalizing-flows">Normalizing Flows</a> · <a class="wikilink" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps">Why Depth Helps</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/neural-odes">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/mixture-of-experts/"><small>Read next</small><b>Mixture of Experts</b><p>A plain dense layer runs every input through the exact same weights.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/residual-and-skip-connections/"><b>Residual and Skip Connections</b><p>ResNet&#39;s fix for the degradation problem is almost absurdly simple: instead of a block computing output = F(x), make it compute output = F(x) + x — adding the block&#39;s own input straight back onto…</p></a><a class="rc-card" href="/math/rate-of-change/"><b>Rate of Change</b><p>A rate of change says how much one quantity changes per unit of another, such as kilometres per hour or dollars per item.</p></a><a class="rc-card" href="/deep-learning/normalizing-flows/"><b>Normalizing Flows</b><p>Neither a VAE nor a GAN can tell you the exact probability their model assigns to a specific data point — a VAE only has an approximation, and a GAN has no likelihood at all.</p></a><a class="rc-card" href="/deep-learning/why-depth-helps/"><b>Why Depth Helps</b><p>Universal Approximation showed one wide hidden layer can represent almost anything.</p></a><a class="rc-card" href="/deep-learning/graphs-structure-and-beyond-grids/"><b>Graphs, Structure and Beyond Grids</b><p>Not every input is a grid of pixels or a left-to-right sequence.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/graph-neural-networks/">← Previous: Graph Neural Networks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

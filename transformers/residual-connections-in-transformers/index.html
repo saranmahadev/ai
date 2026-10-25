@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Residual Connections in Transformers — AI Base</title>
+<meta name="description" content="Stack enough layers on top of each other, and a signal passed through all of them — unless something stops it — tends to either vanish or blow up.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/residual-connections-in-transformers/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Residual Connections in Transformers — AI Base">
+<meta property="og:description" content="Stack enough layers on top of each other, and a signal passed through all of them — unless something stops it — tends to either vanish or blow up.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/residual-connections-in-transformers/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Residual Connections in Transformers","item":"https://ai.saranmahadev.in/transformers/residual-connections-in-transformers/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Residual Connections in Transformers","description":"Stack enough layers on top of each other, and a signal passed through all of them — unless something stops it — tends to either vanish or blow up.","url":"https://ai.saranmahadev.in/transformers/residual-connections-in-transformers/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key structural difference between a residual sublayer and a non-residual one?","acceptedAnswer":{"@type":"Answer","text":"A residual sublayer adds its output to its input (`x + Sublayer(x)`); a non-residual one replaces the input with the sublayer's output (`Sublayer(x)`)."}},{"@type":"Question","name":"In the worked example, why did the non-residual output nearly vanish after six layers?","acceptedAnswer":{"@type":"Answer","text":"Each layer's small linear transformation compounded multiplicatively with the others, and six multiplications by small-valued matrices shrank the signal toward zero."}},{"@type":"Question","name":"Why does a residual connection help gradients flow during training, not just signals during the forward pass?","acceptedAnswer":{"@type":"Answer","text":"The identity term in a residual sublayer's gradient gives every layer a direct path back to its input, so the gradient doesn't have to pass through every sublayer's own (possibly small) derivative to reach earlier layers."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · The Transformer Block</p>
+        <h1 class="doc-title">Residual Connections in Transformers</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1u1dn4abg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1u1dn4apl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1u1dn4abg)"/>
+  <circle cx="775" cy="129" r="194" fill="#c5cacf" opacity="0.34"/><circle cx="103" cy="123" r="210" fill="#e2efff" opacity="0.50"/><circle cx="580" cy="321" r="159" fill="#c5cacf" opacity="0.52"/><circle cx="640" cy="159" r="192" fill="#4f669f" opacity="0.39"/><circle cx="306" cy="181" r="86" fill="#e2efff" opacity="0.22"/><circle cx="67" cy="78" r="137" fill="#abd0ff" opacity="0.44"/>
+  <path d="M0,420 L0,350 L30,349 L60,349 L90,347 L120,346 L150,343 L180,341 L210,338 L240,335 L270,331 L300,328 L330,324 L360,321 L390,318 L420,315 L450,312 L480,310 L510,308 L540,307 L570,306 L600,306 L630,306 L660,307 L690,308 L720,310 L750,312 L780,315 L810,317 L840,321 L870,324 L900,327 L930,331 L960,334 L990,337 L1020,340 L1050,343 L1080,345 L1110,347 L1140,348 L1170,349 L1200,350 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,393 L90,391 L120,388 L150,384 L180,379 L210,374 L240,369 L270,365 L300,363 L330,362 L360,363 L390,365 L420,368 L450,372 L480,377 L510,382 L540,387 L570,391 L600,393 L630,394 L660,393 L690,391 L720,388 L750,384 L780,379 L810,374 L840,369 L870,365 L900,363 L930,362 L960,363 L990,365 L1020,368 L1050,372 L1080,377 L1110,382 L1140,387 L1170,391 L1200,393 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="626" cy="153" rx="184" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(6.2 626 153)"/><ellipse cx="626" cy="153" rx="255" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(12.2 626 153)"/>
+  <circle cx="626" cy="153" r="72" fill="url(#c1u1dn4apl)"/>
+  <circle cx="479" cy="90" r="16" fill="#ffffff" opacity="0.64"/><circle cx="462" cy="87" r="19" fill="#ffffff" opacity="0.82"/><circle cx="419" cy="159" r="10" fill="#ffffff" opacity="0.79"/><circle cx="499" cy="88" r="14" fill="#ffffff" opacity="0.66"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Stack enough layers on top of each other, and a signal passed through all of them — unless something stops it — tends to either vanish or blow up. A residual connection is the simplest possible fix: instead of replacing the input with each sublayer&#39;s output, add the two together.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>, <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why does every sublayer in a transformer add its output to the input instead of just computing a new value?&quot; Because a deep stack of layers that each <em>replace</em> their input, rather than <em>adjust</em> it, tends to destroy the original signal entirely by the time it reaches the output — and the same problem hits gradients flowing the other way during training. Adding instead of replacing gives every layer&#39;s output a guaranteed, undistorted path straight back to its input.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine passing a message through a long chain of people, where each person is asked to <em>rewrite</em> the message in their own words before handing it on. After six people, the message has likely drifted far from the original, or been garbled into nothing. Now imagine instead that each person is asked to write a short <em>note</em> which gets stapled alongside the original message — the message itself keeps moving forward untouched, with small notes accumulating alongside it. The second version guarantees the original content survives no matter how many people (layers) it passes through.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">without residual:  x_{i+1} = Sublayer(x_i)
+with residual:      x_{i+1} = x_i + Sublayer(x_i)
+</code></pre>
+<p>Every sublayer in a transformer block — the attention sublayer and the feed-forward sublayer alike — is wrapped this way. The gradient of a residual sublayer&#39;s output with respect to its input always contains an identity term (from the <code>x_i</code> on the right), on top of whatever the sublayer itself contributes — that identity term is what keeps a gradient from vanishing as it&#39;s pushed back through many layers.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Six small, fixed linear &quot;sublayers&quot; (random 3×3 weight matrices, entries scaled to stay small) applied to the same input <code>x = [1, 1, 1]</code> (vector norm ≈ 1.73), two ways:</p>
+<pre><code class="language-text">without residuals (x_{i+1} = W_i · x_i), after 6 layers:
+  output ≈ [-0.0002, 0.0001, -0.0003]     ‖output‖ ≈ 0.0004
+
+with residuals (x_{i+1} = x_i + W_i · x_i), after 6 layers:
+  output ≈ [1.2015, 1.2272, 0.5980]       ‖output‖ ≈ 1.8185
+</code></pre>
+<p>Without residual connections, six layers of small transformations compounded multiplicatively and the signal collapsed to almost nothing — over 4,000 times smaller than the input. With residual connections, the output stayed close in magnitude to the original input, even after the same six transformations.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="residual-signal" data-title="What survives six layers, with and without residuals"><p class="bench-fallback"><strong>Interactive bench: What survives six layers, with and without residuals.</strong> Push a vector through six small random linear layers, with and without residual connections, and compare how much of the original signal survives.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the output norm with and without residuals after all six layers.</li>
+<li>Increase the number of layers and watch the gap between the two widen further.</li>
+<li>Shrink each layer&#39;s weight scale and see the no-residual case collapse even faster.</li>
+</ol>
+<p><strong>What you should notice:</strong> the residual output never strays far from the input&#39;s scale, no matter how many layers are stacked — the non-residual output&#39;s fate depends entirely on the specific (and here, small) weights, which is exactly the instability residual connections are designed to remove.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is what makes very deep transformer stacks trainable at all</strong> — the same reason residual connections were introduced for deep convolutional networks on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>, now applied to every sublayer of every transformer block.</li>
+<li><strong>It interacts directly with <a class="wikilink" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/" data-topic="transformers/layer-normalization-placement-pre-norm-vs-post-norm">where normalization is placed</a></strong>, covered next — the residual path&#39;s stability depends on whether normalization happens inside or outside of it.</li>
+<li><strong><a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">Assembling a full block</a></strong> uses residual connections around both of its sublayers, attention and feed-forward alike.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming the sublayer&#39;s output should dominate.</strong> The whole point is that the sublayer only needs to learn a <em>small adjustment</em> to the input, not reconstruct it from scratch.</li>
+<li><strong>Forgetting residual connections require matching dimensions.</strong> <code>x_i</code> and <code>Sublayer(x_i)</code> must have the same shape to be added — a real constraint on how sublayers are designed.</li>
+<li><strong>Treating this as specific to transformers.</strong> The same idea predates transformers entirely, from deep residual networks in computer vision.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key structural difference between a residual sublayer and a non-residual one?</summary>
+A residual sublayer adds its output to its input (`x + Sublayer(x)`); a non-residual one replaces the input with the sublayer's output (`Sublayer(x)`).
+</details>
+
+<details><summary>2. In the worked example, why did the non-residual output nearly vanish after six layers?</summary>
+Each layer's small linear transformation compounded multiplicatively with the others, and six multiplications by small-valued matrices shrank the signal toward zero.
+</details>
+
+<details><summary>3. Why does a residual connection help gradients flow during training, not just signals during the forward pass?</summary>
+The identity term in a residual sublayer's gradient gives every layer a direct path back to its input, so the gradient doesn't have to pass through every sublayer's own (possibly small) derivative to reach earlier layers.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Residual connection:</strong> adding a sublayer&#39;s input to its output, instead of replacing the input entirely.</li>
+<li><strong>Sublayer:</strong> one of the two main computations inside a transformer block — the attention sublayer or the feed-forward sublayer.</li>
+<li><strong>Signal preservation:</strong> how much of an original input&#39;s information survives after passing through many layers.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a> · <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> · <a class="wikilink" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/" data-topic="transformers/layer-normalization-placement-pre-norm-vs-post-norm">Layer Normalization Placement: Pre-Norm vs Post-Norm</a> · <a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">Assembling One Transformer Block</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/residual-connections-in-transformers">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/"><small>Read next</small><b>Layer Normalization Placement: Pre-Norm vs Post-Norm</b><p>The residual connection guarantees a direct path for the input to reach the output.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/"><b>Layer Normalization Placement: Pre-Norm vs Post-Norm</b><p>The residual connection guarantees a direct path for the input to reach the output.</p></a><a class="rc-card" href="/transformers/assembling-one-transformer-block/"><b>Assembling One Transformer Block</b><p>Every piece needed is now on the table: attention itself, residual connections, normalization placement, and the feed-forward sublayer.</p></a><a class="rc-card" href="/transformers/the-transformer-block/"><b>The Transformer Block</b><p>Attention on its own is only half of a transformer layer.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/the-transformer-block/">← Previous: The Transformer Block</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reinforcement Learning from Human Feedback (RLHF) — AI Base</title>
+<meta name="description" content="A reward model can score any response — but scoring responses isn&#39;t the same as producing better ones.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/reinforcement-learning-from-human-feedback-rlhf/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Reinforcement Learning from Human Feedback (RLHF) — AI Base">
+<meta property="og:description" content="A reward model can score any response — but scoring responses isn&#39;t the same as producing better ones.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/reinforcement-learning-from-human-feedback-rlhf/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Reinforcement Learning from Human Feedback (RLHF)","item":"https://ai.saranmahadev.in/llms/reinforcement-learning-from-human-feedback-rlhf/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Reinforcement Learning from Human Feedback (RLHF)","description":"A reward model can score any response — but scoring responses isn't the same as producing better ones.","url":"https://ai.saranmahadev.in/llms/reinforcement-learning-from-human-feedback-rlhf/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a REINFORCE-style policy-gradient update push a candidate's probability toward, and based on what signal?","acceptedAnswer":{"@type":"Answer","text":"It pushes probability up for candidates whose reward is above the current expected reward (the baseline), and down for candidates below it — the signal is purely the reward model's score relative to that baseline."}},{"@type":"Question","name":"In the worked example, why did candidate B's probability rise fastest?","acceptedAnswer":{"@type":"Answer","text":"Its reward (0.9) was the highest among the four candidates, giving it the largest positive gap above the baseline at every step, and so the largest positive push."}},{"@type":"Question","name":"What's a key practical difference between RLHF and DPO?","acceptedAnswer":{"@type":"Answer","text":"RLHF requires a separately trained reward model and a reinforcement-learning policy-gradient loop; DPO optimizes the policy directly from preference pairs, with no separate reward model and no RL loop at all."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Instruction Tuning and Alignment</p>
+        <h1 class="doc-title">Reinforcement Learning from Human Feedback (RLHF)</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1xhv0vzbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1xhv0vzpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1xhv0vzbg)"/>
+  <circle cx="918" cy="221" r="225" fill="#ffc7a2" opacity="0.22"/><circle cx="803" cy="171" r="116" fill="#ffc7a2" opacity="0.46"/><circle cx="188" cy="79" r="173" fill="#ffc7a2" opacity="0.32"/><circle cx="572" cy="408" r="146" fill="#ffc7a2" opacity="0.27"/><circle cx="306" cy="160" r="62" fill="#ffc7a2" opacity="0.41"/><circle cx="502" cy="296" r="145" fill="#ffc7a2" opacity="0.43"/>
+  <path d="M0,420 L0,348 L30,349 L60,350 L90,349 L120,349 L150,347 L180,346 L210,344 L240,341 L270,338 L300,335 L330,332 L360,328 L390,325 L420,321 L450,318 L480,315 L510,312 L540,310 L570,308 L600,307 L630,306 L660,306 L690,306 L720,307 L750,308 L780,309 L810,312 L840,314 L870,317 L900,320 L930,324 L960,327 L990,330 L1020,334 L1050,337 L1080,340 L1110,343 L1140,345 L1170,347 L1200,348 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,365 L30,363 L60,362 L90,363 L120,365 L150,369 L180,373 L210,378 L240,383 L270,387 L300,391 L330,393 L360,394 L390,393 L420,391 L450,387 L480,383 L510,378 L540,373 L570,369 L600,365 L630,363 L660,362 L690,363 L720,365 L750,369 L780,373 L810,378 L840,383 L870,387 L900,391 L930,393 L960,394 L990,393 L1020,391 L1050,387 L1080,383 L1110,378 L1140,373 L1170,369 L1200,365 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="659" cy="163" rx="187" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(14.1 659 163)"/><ellipse cx="659" cy="163" rx="259" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(20.1 659 163)"/>
+  <circle cx="659" cy="163" r="73" fill="url(#c1xhv0vzpl)"/>
+  <circle cx="534" cy="266" r="13" fill="#ffffff" opacity="0.79"/><circle cx="433" cy="158" r="10" fill="#ffffff" opacity="0.76"/><circle cx="841" cy="256" r="15" fill="#ffffff" opacity="0.90"/><circle cx="399" cy="162" r="10" fill="#ffffff" opacity="0.78"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A reward model can score any response — but scoring responses isn&#39;t the same as producing better ones. RLHF closes that loop: it uses the reward model&#39;s scores as a training signal to actually push the policy (the language model being aligned) toward generating higher-scoring responses.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you use a reward model&#39;s scores to actually change a language model&#39;s behavior?&quot; <strong>RLHF</strong> treats the language model as a policy in a reinforcement learning setup: generate candidate responses, score them with the reward model, and update the policy&#39;s parameters to make higher-reward responses more likely and lower-reward ones less likely. The simplest version of this update — <strong>REINFORCE</strong>, a basic policy-gradient method — nudges each candidate&#39;s probability in proportion to how much its reward exceeds the <em>average</em> reward across candidates (the baseline), so above-average candidates get boosted and below-average ones get suppressed.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Picture rolling several differently-weighted dice, where each face represents a possible response, and getting paid according to how good the response turns out to be. After a round, a policy-gradient update is like filing down the faces that paid worst and building up the faces that paid best — not based on some external rule about which face is which, but purely based on how much better or worse each face did compared to the average payoff that round. Repeat that enough rounds, and the dice drift toward favoring whichever faces keep paying well.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">policy π gives a probability to each candidate response (via softmax over logits)
+baseline = expected reward under the current policy = Σᵢ π(i) · R(i)
+
+REINFORCE gradient step, for each candidate i:
+  logit(i) += learning_rate × π(i) × (R(i) − baseline)
+
+→ candidates with reward above the baseline get a positive push;
+  candidates below it get a negative push
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four candidate responses with fixed rewards <code>[0.2, 0.9, 0.4, 0.1]</code> from a reward model, starting from a uniform policy and taking repeated REINFORCE steps:</p>
+<pre><code class="language-text">step 0: probabilities  0.250, 0.250, 0.250, 0.250   (uniform)
+step 1: probabilities  0.244, 0.266, 0.250, 0.241
+step 3: probabilities  0.230, 0.302, 0.247, 0.222
+step 5: probabilities  0.214, 0.342, 0.241, 0.203
+</code></pre>
+<p>Candidate B (reward 0.9, the highest) steadily gains probability mass — from 0.250 up to 0.342 after just 5 steps — while every other candidate loses some, in proportion to how far below the average reward they sit. Nothing was told &quot;B is correct&quot;; the policy simply drifted toward whichever candidate the reward model consistently scored highest.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rlhf-policy-gradient" data-title="Pulling probability toward what the reward model likes"><p class="bench-fallback"><strong>Interactive bench: Pulling probability toward what the reward model likes.</strong> Step through policy-gradient updates and watch probability mass shift toward the highest-reward candidate.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through several updates and track probability for the highest-reward candidate.</li>
+<li>Compare how quickly the lowest-reward candidate&#39;s probability falls.</li>
+<li>Consider what would happen if two candidates had identical, high rewards.</li>
+</ol>
+<p><strong>What you should notice:</strong> the shift is gradual and proportional — one update doesn&#39;t jump straight to favoring the best candidate exclusively; many small, reward-proportional nudges accumulate into the final shift.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>RLHF (using PPO, a more stable policy-gradient variant than plain REINFORCE) was the method behind the first widely-deployed instruction-following LLMs</strong>, applied after SFT to sharpen a model&#39;s behavior using a trained reward model.</li>
+<li><strong>RLHF training is notoriously more complex and less stable to run than SFT alone</strong>, requiring careful tuning of the reward model, the policy update, and typically a KL-divergence penalty keeping the policy from drifting too far from its SFT starting point.</li>
+<li><strong><a class="wikilink" href="/llms/direct-preference-optimization-dpo/" data-topic="llms/direct-preference-optimization-dpo">DPO</a> was developed specifically to get a similar effect without RLHF&#39;s reinforcement-learning machinery</strong> — no separate reward model, no policy-gradient loop, just a direct loss on preference pairs.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming RLHF directly optimizes for &quot;truth&quot; or &quot;goodness.&quot;</strong> It optimizes for whatever the reward model scores highly — see <a class="wikilink" href="/llms/reward-hacking-and-sycophancy/" data-topic="llms/reward-hacking-and-sycophancy">Reward Hacking and Sycophancy</a> for what happens when that diverges from true quality.</li>
+<li><strong>Forgetting the baseline matters.</strong> Without subtracting the expected reward, every candidate&#39;s probability would simply increase, with no meaningful comparison between them — the baseline is what makes the update push <em>relatively</em> better candidates up and relatively worse ones down.</li>
+<li><strong>Expecting one policy-gradient update to produce a large behavior change.</strong> As the worked example shows, each update is a small, proportional nudge; meaningful shifts require many accumulated steps.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does a REINFORCE-style policy-gradient update push a candidate's probability toward, and based on what signal?</summary>
+It pushes probability up for candidates whose reward is above the current expected reward (the baseline), and down for candidates below it — the signal is purely the reward model's score relative to that baseline.
+</details>
+
+<details><summary>2. In the worked example, why did candidate B's probability rise fastest?</summary>
+Its reward (0.9) was the highest among the four candidates, giving it the largest positive gap above the baseline at every step, and so the largest positive push.
+</details>
+
+<details><summary>3. What's a key practical difference between RLHF and DPO?</summary>
+RLHF requires a separately trained reward model and a reinforcement-learning policy-gradient loop; DPO optimizes the policy directly from preference pairs, with no separate reward model and no RL loop at all.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>RLHF:</strong> using a reward model&#39;s scores to update a language model&#39;s behavior via reinforcement learning.</li>
+<li><strong>Policy gradient:</strong> an update rule that shifts a policy&#39;s probabilities in proportion to how much a candidate&#39;s reward exceeds a baseline.</li>
+<li><strong>Baseline:</strong> the expected reward under the current policy, subtracted so updates reflect relative, not absolute, reward.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a> · <a class="wikilink" href="/llms/direct-preference-optimization-dpo/" data-topic="llms/direct-preference-optimization-dpo">Direct Preference Optimization (DPO)</a> · <a class="wikilink" href="/llms/reward-hacking-and-sycophancy/" data-topic="llms/reward-hacking-and-sycophancy">Reward Hacking and Sycophancy</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/reinforcement-learning-from-human-feedback-rlhf">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/direct-preference-optimization-dpo/"><small>Read next</small><b>Direct Preference Optimization (DPO)</b><p>RLHF&#39;s reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/reward-modeling/"><b>Reward Modeling</b><p>Judging &quot;which of these two responses is better&quot; is a question most people can answer confidently; assigning an absolute numerical quality score to a single response, consistently, is much harder…</p></a><a class="rc-card" href="/llms/direct-preference-optimization-dpo/"><b>Direct Preference Optimization (DPO)</b><p>RLHF&#39;s reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones.</p></a><a class="rc-card" href="/llms/reward-hacking-and-sycophancy/"><b>Reward Hacking and Sycophancy</b><p>Every method in this district optimizes a policy to satisfy a reward signal — a reward model&#39;s score, an AI judge&#39;s ranking.</p></a><a class="rc-card" href="/llms/instruction-tuning-and-alignment/"><b>Instruction Tuning and Alignment</b><p>A model pretrained purely to predict the next token has no particular reason to follow an instruction, refuse a harmful request, or prefer a helpful answer over a merely plausible one.</p></a><a class="rc-card" href="/llms/supervised-fine-tuning-sft/"><b>Supervised Fine-Tuning (SFT)</b><p>A pretrained model is extremely good at continuing text in whatever style it appears in — but &quot;the internet&quot; doesn&#39;t naturally produce the specific pattern of a helpful assistant replying to a…</p></a><a class="rc-card" href="/llms/rejection-sampling-and-best-of-n-fine-tuning/"><b>Rejection Sampling and Best-of-N Fine-Tuning</b><p>best-of-N sampling picks the best of several candidates at answer time. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/reward-modeling/">← Previous: Reward Modeling</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

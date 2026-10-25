@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encoder-Decoder Architectures as a Pattern — AI Base</title>
+<meta name="description" content="Encoder-only and decoder-only architectures each use one kind of self-attention throughout.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/encoder-decoder-architectures-as-a-pattern/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Encoder-Decoder Architectures as a Pattern — AI Base">
+<meta property="og:description" content="Encoder-only and decoder-only architectures each use one kind of self-attention throughout.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/encoder-decoder-architectures-as-a-pattern/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Encoder-Decoder Architectures as a Pattern","item":"https://ai.saranmahadev.in/transformers/encoder-decoder-architectures-as-a-pattern/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Encoder-Decoder Architectures as a Pattern","description":"Encoder-only and decoder-only architectures each use one kind of self-attention throughout.","url":"https://ai.saranmahadev.in/transformers/encoder-decoder-architectures-as-a-pattern/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the three kinds of attention present in an encoder-decoder transformer block?","acceptedAnswer":{"@type":"Answer","text":"Bidirectional self-attention in the encoder, causal self-attention in the decoder, and cross-attention connecting the decoder's queries to the encoder's keys and values."}},{"@type":"Question","name":"In the worked example, why did cross-attention weights sum to 1 across all three encoder positions, for every decoder position?","acceptedAnswer":{"@type":"Answer","text":"Cross-attention has no causal restriction — every decoder position's query is compared against the entire, already-complete encoder output, with the softmax normalizing the weights over all of it."}},{"@type":"Question","name":"What distinguishes cross-attention from self-attention, mechanically?","acceptedAnswer":{"@type":"Answer","text":"Cross-attention's queries come from one sequence (the decoder) while its keys and values come from a different, already-computed sequence (the encoder) — self-attention draws all three from the same sequence."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Architectural Families</p>
+        <h1 class="doc-title">Encoder-Decoder Architectures as a Pattern</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1o0wuufbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1o0wuufpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1o0wuufbg)"/>
+  <circle cx="747" cy="13" r="223" fill="#abd0ff" opacity="0.39"/><circle cx="239" cy="409" r="75" fill="#abd0ff" opacity="0.55"/><circle cx="963" cy="375" r="177" fill="#e2efff" opacity="0.53"/><circle cx="501" cy="233" r="135" fill="#c5cacf" opacity="0.60"/><circle cx="389" cy="298" r="140" fill="#e2efff" opacity="0.40"/>
+  <path d="M0,420 L0,307 L30,309 L60,312 L90,316 L120,321 L150,326 L180,331 L210,336 L240,341 L270,345 L300,347 L330,349 L360,350 L390,349 L420,347 L450,344 L480,340 L510,336 L540,331 L570,325 L600,320 L630,316 L660,312 L690,309 L720,307 L750,306 L780,306 L810,307 L840,310 L870,314 L900,318 L930,323 L960,328 L990,333 L1020,338 L1050,342 L1080,346 L1110,348 L1140,349 L1170,349 L1200,348 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,389 L60,385 L90,380 L120,375 L150,370 L180,366 L210,364 L240,362 L270,362 L300,364 L330,367 L360,371 L390,376 L420,381 L450,386 L480,390 L510,392 L540,394 L570,394 L600,392 L630,389 L660,385 L690,380 L720,375 L750,370 L780,366 L810,364 L840,362 L870,362 L900,364 L930,367 L960,371 L990,376 L1020,381 L1050,386 L1080,390 L1110,392 L1140,394 L1170,394 L1200,392 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="728" cy="226" rx="248" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(15.4 728 226)"/><ellipse cx="728" cy="226" rx="342" ry="96" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(21.4 728 226)"/>
+  <circle cx="728" cy="226" r="97" fill="url(#c1o0wuufpl)"/>
+  <circle cx="470" cy="172" r="9" fill="#ffffff" opacity="0.64"/><circle cx="1067" cy="280" r="18" fill="#ffffff" opacity="0.82"/><circle cx="796" cy="371" r="8" fill="#ffffff" opacity="0.70"/><circle cx="450" cy="266" r="13" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-only</a> and <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">decoder-only</a> architectures each use one kind of self-attention throughout. An encoder-decoder architecture uses both — a full bidirectional encoder stack, a full causal decoder stack, and a third kind of attention connecting them: the decoder looking directly at the encoder&#39;s finished output.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-Only Architectures</a>, <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">Decoder-Only Architectures</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What does a transformer look like when the task is genuinely two different jobs — fully understand one piece of text, then generate a different piece of text based on it?&quot; An encoder-decoder architecture: the encoder stack reads the input bidirectionally, exactly as in <a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-Only Architectures</a>; the decoder stack generates output causally, exactly as in <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">Decoder-Only Architectures</a>; and a new attention sublayer, <strong>cross-attention</strong>, lets every decoder position look at the <em>entire</em> finished encoder output, with no causal restriction at all.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Think of translating a sentence from one language to another. Understanding the full source sentence benefits from seeing it all at once, in both directions — exactly the encoder&#39;s job. Producing the translation, word by word, has to respect that later words don&#39;t exist yet — exactly the decoder&#39;s job. But generating each word of the translation also needs to look back at the <em>entire</em> source sentence, not just the part already covered — translating the first word of the output might still depend on something near the end of the input. Cross-attention is exactly that: a decoder position&#39;s query, compared against keys and values drawn from the finished encoder output, with no restriction on which source positions it can see.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">encoder:  bidirectional self-attention, same as Encoder-Only Architectures
+decoder (per block):
+  1. causal self-attention among the decoder&#39;s own positions so far
+  2. cross-attention: decoder queries, encoder keys and values — no masking
+  3. feed-forward sublayer, as usual
+</code></pre>
+<p>Cross-attention uses the same scaled dot-product formula as self-attention — the only difference is that queries come from one sequence (the decoder) while keys and values come from a different, already-computed sequence (the encoder&#39;s output).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 3-position encoder output and a 2-position decoder, so far, both 4-dimensional:</p>
+<pre><code class="language-text">decoder&#39;s own causal self-attention weights:
+  position 0: [1.000, 0.000]        (can only see itself)
+  position 1: [0.509, 0.491]        (sees itself and position 0)
+
+cross-attention weights (decoder position → encoder positions), no masking:
+  decoder position 0: [0.341, 0.327, 0.333]   (sums to 1.000)
+  decoder position 1: [0.322, 0.344, 0.334]   (sums to 1.000)
+</code></pre>
+<p>Both decoder positions spread their cross-attention across <em>all three</em> encoder positions, regardless of how little of the decoder&#39;s own sequence has been generated so far — position 0, despite only having itself available in self-attention, still has full access to the entire encoder output through cross-attention.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="cross-attention-demo" data-title="Looking back at the whole source while generating"><p class="bench-fallback"><strong>Interactive bench: Looking back at the whole source while generating.</strong> Compare a decoder position's causal self-attention (restricted to earlier decoder positions) against its cross-attention (full access to every encoder position), side by side.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare how restricted decoder self-attention is for an early position against how unrestricted its cross-attention is.</li>
+<li>Add more decoder positions and watch self-attention&#39;s visible context grow while cross-attention&#39;s stays full every time.</li>
+<li>Consider what cross-attention would need to be masked for a task like translation with aligned padding.</li>
+</ol>
+<p><strong>What you should notice:</strong> causal restriction applies only to the decoder&#39;s own, still-being-generated sequence — it says nothing about the encoder&#39;s already-complete output, which stays fully visible through cross-attention at every single decoder step.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>T5 and other sequence-to-sequence transformer models follow exactly this pattern</strong>, and it is the direct transformer-era descendant of <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">the RNN-based encoder-decoder attention</a> covered on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a> — same cross-attention idea, built from transformer blocks instead of recurrent ones.</li>
+<li><strong>It is the natural fit for genuinely input-to-output tasks</strong>: translation, summarization, and other jobs where the output is a transformation of a complete input, not a continuation of it.</li>
+<li><strong><a class="wikilink" href="/transformers/choosing-an-architecture-family-for-a-task/" data-topic="transformers/choosing-an-architecture-family-for-a-task">the next topic</a> weighs this pattern&#39;s extra cost and complexity</strong> (two stacks instead of one, plus cross-attention) against when it&#39;s actually worth it over a simpler architecture.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming cross-attention is masked like decoder self-attention.</strong> It generally isn&#39;t — the encoder&#39;s output is already complete and fixed, so there&#39;s no &quot;future&quot; to hide from it (padding masking on the encoder side still applies).</li>
+<li><strong>Confusing cross-attention with a second self-attention pass.</strong> Queries and keys/values come from two different sequences here, unlike self-attention, where they all come from the same one.</li>
+<li><strong>Treating this as strictly more powerful than encoder-only or decoder-only.</strong> It solves a genuinely different kind of task (transforming one sequence into another) at the cost of two stacks instead of one — not a universal upgrade.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are the three kinds of attention present in an encoder-decoder transformer block?</summary>
+Bidirectional self-attention in the encoder, causal self-attention in the decoder, and cross-attention connecting the decoder's queries to the encoder's keys and values.
+</details>
+
+<details><summary>2. In the worked example, why did cross-attention weights sum to 1 across all three encoder positions, for every decoder position?</summary>
+Cross-attention has no causal restriction — every decoder position's query is compared against the entire, already-complete encoder output, with the softmax normalizing the weights over all of it.
+</details>
+
+<details><summary>3. What distinguishes cross-attention from self-attention, mechanically?</summary>
+Cross-attention's queries come from one sequence (the decoder) while its keys and values come from a different, already-computed sequence (the encoder) — self-attention draws all three from the same sequence.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Cross-attention:</strong> attention where queries come from one sequence and keys/values come from a separately computed sequence.</li>
+<li><strong>Encoder-decoder architecture:</strong> a transformer combining a bidirectional encoder stack, a causal decoder stack, and cross-attention connecting them.</li>
+<li><strong>Sequence-to-sequence:</strong> a task that transforms one complete input sequence into a different output sequence, such as translation.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-Only Architectures</a> · <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">Decoder-Only Architectures</a> · <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Encoder-Decoder Architectures with Attention</a> · <a class="wikilink" href="/transformers/choosing-an-architecture-family-for-a-task/" data-topic="transformers/choosing-an-architecture-family-for-a-task">Choosing an Architecture Family for a Task</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/encoder-decoder-architectures-as-a-pattern">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/choosing-an-architecture-family-for-a-task/"><small>Read next</small><b>Choosing an Architecture Family for a Task</b><p>Three architecture families, three different attention patterns, three different costs.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/encoder-only-architectures/"><b>Encoder-Only Architectures</b><p>The masking topic introduced two patterns: padding masks and causal masks.</p></a><a class="rc-card" href="/transformers/decoder-only-architectures/"><b>Decoder-Only Architectures</b><p>The previous topic&#39;s bidirectional attention works because the whole input is available at once.</p></a><a class="rc-card" href="/deep-learning/encoder-decoder-architectures-with-attention/"><b>Encoder-Decoder Architectures with Attention</b><p>The plain seq2seq decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/transformers/choosing-an-architecture-family-for-a-task/"><b>Choosing an Architecture Family for a Task</b><p>Three architecture families, three different attention patterns, three different costs.</p></a><a class="rc-card" href="/transformers/assembling-one-transformer-block/"><b>Assembling One Transformer Block</b><p>Every piece needed is now on the table: attention itself, residual connections, normalization placement, and the feed-forward sublayer.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/decoder-only-architectures/">← Previous: Decoder-Only Architectures</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

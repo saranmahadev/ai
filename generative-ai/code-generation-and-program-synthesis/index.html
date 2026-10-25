@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code Generation and Program Synthesis — AI Base</title>
+<meta name="description" content="a grammar mask guarantees generated arithmetic is syntactically valid — but valid syntax and a program that actually does what you want are two different guarantees entirely.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/code-generation-and-program-synthesis/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Code Generation and Program Synthesis — AI Base">
+<meta property="og:description" content="a grammar mask guarantees generated arithmetic is syntactically valid — but valid syntax and a program that actually does what you want are two different guarantees entirely.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/code-generation-and-program-synthesis/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Code Generation and Program Synthesis","item":"https://ai.saranmahadev.in/generative-ai/code-generation-and-program-synthesis/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Code Generation and Program Synthesis","description":"a grammar mask guarantees generated arithmetic is syntactically valid — but valid syntax and a program that actually does what you want are two different guarantees entirely.","url":"https://ai.saranmahadev.in/generative-ai/code-generation-and-program-synthesis/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key advantage code generation has over natural-language generation, for checking correctness?","acceptedAnswer":{"@type":"Answer","text":"Code is directly executable, so a candidate's correctness can often be checked exactly by running it and comparing the output to a target, rather than only estimated."}},{"@type":"Question","name":"In the worked example, why were all 243 candidates \"valid\" but only 10 \"correct\"?","acceptedAnswer":{"@type":"Answer","text":"All 243 satisfied the grammar (correct token types in the correct positions); only 10 of them, when actually executed, happened to evaluate to the target value of 7."}},{"@type":"Question","name":"Why doesn't brute-force enumeration scale to real program synthesis?","acceptedAnswer":{"@type":"Answer","text":"The number of grammar-valid candidates grows combinatorially with program length, making exhaustive enumeration infeasible for anything beyond very short toy programs — real systems need a model to propose likely candidates instead of checking every possibility."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Video, 3D and Code Generation</p>
+        <h1 class="doc-title">Code Generation and Program Synthesis</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="culdptbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="culdptpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#culdptbg)"/>
+  <circle cx="435" cy="232" r="122" fill="#ffe9f4" opacity="0.43"/><circle cx="173" cy="417" r="183" fill="#8a5989" opacity="0.26"/><circle cx="66" cy="376" r="73" fill="#8a5989" opacity="0.62"/><circle cx="383" cy="393" r="92" fill="#ffbfe0" opacity="0.58"/><circle cx="1042" cy="200" r="133" fill="#ffbfe0" opacity="0.54"/>
+  <path d="M0,420 L0,329 L30,335 L60,339 L90,343 L120,346 L150,349 L180,350 L210,349 L240,348 L270,345 L300,342 L330,337 L360,333 L390,327 L420,322 L450,317 L480,313 L510,310 L540,307 L570,306 L600,306 L630,307 L660,309 L690,312 L720,316 L750,321 L780,326 L810,331 L840,336 L870,341 L900,344 L930,347 L960,349 L990,350 L1020,349 L1050,347 L1080,344 L1110,340 L1140,336 L1170,331 L1200,326 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,386 L30,382 L60,377 L90,372 L120,368 L150,364 L180,362 L210,362 L240,363 L270,366 L300,370 L330,374 L360,379 L390,384 L420,388 L450,392 L480,394 L510,394 L540,393 L570,390 L600,386 L630,382 L660,377 L690,372 L720,368 L750,364 L780,362 L810,362 L840,363 L870,366 L900,370 L930,374 L960,379 L990,384 L1020,388 L1050,392 L1080,394 L1110,394 L1140,393 L1170,390 L1200,386 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="951" cy="289" rx="204" ry="57" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(3.8 951 289)"/><ellipse cx="951" cy="289" rx="281" ry="79" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(9.8 951 289)"/>
+  <circle cx="951" cy="289" r="80" fill="url(#culdptpl)"/>
+  <circle cx="1099" cy="219" r="13" fill="#ffffff" opacity="0.66"/><circle cx="1086" cy="224" r="19" fill="#ffffff" opacity="0.88"/><circle cx="1260" cy="294" r="17" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/generative-ai/constrained-and-structured-generation/" data-topic="generative-ai/constrained-and-structured-generation">a grammar mask</a> guarantees generated arithmetic is syntactically valid — but valid syntax and a program that actually does what you want are two different guarantees entirely. This note covers the second one, and a method that can check it directly: generating candidates and testing whether they actually compute the right thing.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/constrained-and-structured-generation/" data-topic="generative-ai/constrained-and-structured-generation">Constrained and Structured Generation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you generate a program that doesn&#39;t just parse, but actually produces a desired result?&quot; <strong>Program synthesis</strong> adds a layer on top of grammar-constrained generation: don&#39;t just mask out invalid syntax, also <em>run</em> each candidate and check whether it produces the target output. Unlike natural-language generation, code has an unusually sharp advantage here — it&#39;s directly executable, so &quot;is this candidate correct?&quot; can often be answered exactly, by running it, rather than only estimated.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Guessing a sentence that correctly describes a situation has no simple check beyond human judgment. Guessing a short arithmetic expression that evaluates to exactly 7, on the other hand, can be checked by literally running the expression and comparing the result — no judgment call required. Program synthesis leans hard into that asymmetry: search (or generate many candidates) and keep only the ones that pass an automatic, exact test.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">grammar-valid candidate programs: generated (or enumerated) under a syntax
+  constraint, as in grammar-masked decoding
+
+program synthesis: additionally keep only candidates c such that
+  execute(c) == target
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Every grammar-valid 5-token postfix (reverse Polish) arithmetic program built from digits <code>{1, 2, 3}</code> and operators <code>{+, -, *}</code>, in the fixed shape <code>a b op1 c op2</code>:</p>
+<pre><code class="language-text">total grammar-valid candidates:  3 × 3 × 3 × 3 × 3 = 243
+candidates that evaluate to 7:   10
+
+first few matches:
+  1 3 + 3 +  =  7     (1+3=4, 4+3=7)
+  2 2 + 3 +  =  7     (2+2=4, 4+3=7)
+  2 2 * 3 +  =  7     (2*2=4, 4+3=7)
+  2 3 + 2 +  =  7     (2+3=5, 5+2=7)
+  2 3 * 1 +  =  7     (2*3=6, 6+1=7)
+</code></pre>
+<p>Every one of the 243 grammar-valid candidates is syntactically fine — none would be rejected by a grammar mask. But only 10 of them actually compute 7, and finding those 10 required <em>executing</em> each candidate and checking its output, something a grammar mask alone has no way to do.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="program-synthesis-search" data-title="Searching for a program that computes a target"><p class="bench-fallback"><strong>Interactive bench: Searching for a program that computes a target.</strong> Pick a target value and see how many grammar-valid toy programs, out of all the candidates searched, actually evaluate to it.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Try a few different target values and compare how many candidates match each one.</li>
+<li>Notice some targets have many matching programs, while others may have very few.</li>
+<li>Look at the matching programs&#39; structures — some use <code>+</code>, some <code>*</code>, in different combinations.</li>
+</ol>
+<p><strong>What you should notice:</strong> every candidate searched is already guaranteed syntactically valid (that&#39;s what the grammar enforces); it&#39;s execution — not syntax checking — that separates a merely-valid program from a correct one.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Real code-generation models rely on exactly this execution-based check wherever it&#39;s available</strong>: running generated code against test cases, compiling it, or checking a unit test, is a far sharper correctness signal than anything available for free-form natural language.</li>
+<li><strong>This worked example&#39;s brute-force search doesn&#39;t scale to real programs</strong> — the number of grammar-valid candidates explodes combinatorially with program length, which is exactly why real program synthesis uses a learned model to propose promising candidates rather than enumerating every possibility.</li>
+<li><strong><a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">best-of-N sampling</a> combines naturally with this idea</strong>: generate many candidate programs from a model, execute each one, and keep whichever actually passes.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming grammar validity implies correctness.</strong> The worked example&#39;s own numbers make this concrete: all 243 candidates are grammar-valid, but only 10 are correct — syntax and correctness are entirely separate properties.</li>
+<li><strong>Forgetting execution-based checking requires the program to be safely runnable.</strong> Toy arithmetic is trivially safe to execute; real code-generation systems need sandboxing and resource limits before running arbitrary generated code.</li>
+<li><strong>Treating brute-force search as a real synthesis method.</strong> It works here because the candidate space is tiny (243 programs); real-world code has far too large a space to enumerate, which is why practical synthesis guides the search with a learned model instead.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key advantage code generation has over natural-language generation, for checking correctness?</summary>
+Code is directly executable, so a candidate's correctness can often be checked exactly by running it and comparing the output to a target, rather than only estimated.
+</details>
+
+<details><summary>2. In the worked example, why were all 243 candidates "valid" but only 10 "correct"?</summary>
+All 243 satisfied the grammar (correct token types in the correct positions); only 10 of them, when actually executed, happened to evaluate to the target value of 7.
+</details>
+
+<details><summary>3. Why doesn't brute-force enumeration scale to real program synthesis?</summary>
+The number of grammar-valid candidates grows combinatorially with program length, making exhaustive enumeration infeasible for anything beyond very short toy programs — real systems need a model to propose likely candidates instead of checking every possibility.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Program synthesis:</strong> generating a program that satisfies a target behavior, not just valid syntax.</li>
+<li><strong>Execution-based checking:</strong> verifying a candidate&#39;s correctness by actually running it and comparing its output to a target.</li>
+<li><strong>Postfix (reverse Polish) notation:</strong> writing an expression with operators after their operands, avoiding the need for parentheses.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/constrained-and-structured-generation/" data-topic="generative-ai/constrained-and-structured-generation">Constrained and Structured Generation</a> · <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a> · <a class="wikilink" href="/generative-ai/building-a-generative-product/" data-topic="generative-ai/building-a-generative-product">Building a Generative Product</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/code-generation-and-program-synthesis">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/multimodal-generation/"><small>Read next</small><b>Multimodal Generation</b><p>Every district so far generates one modality at a time.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/constrained-and-structured-generation/"><b>Constrained and Structured Generation</b><p>A model&#39;s raw next-token distribution has no idea your downstream code needs valid JSON, a specific grammar, or a well-formed arithmetic expression — it just assigns probabilities, and the most…</p></a><a class="rc-card" href="/generative-ai/self-consistency-and-best-of-n-sampling/"><b>Self-Consistency and Best-of-N Sampling</b><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.</p></a><a class="rc-card" href="/generative-ai/building-a-generative-product/"><b>Building a Generative Product</b><p>Everything on this planet so far has been about a single request: decode it well, condition it correctly, evaluate it fairly.</p></a><a class="rc-card" href="/generative-ai/music-generation/"><b>Music Generation</b><p>Speech has to be intelligible; music, rather famously, has to sound right in a way that&#39;s much harder to pin down — but at least one piece of that is concrete and checkable: whether the notes…</p></a><a class="rc-card" href="/generative-ai/video-3d-and-code-generation/"><b>Video, 3D and Code Generation</b><p>Three modalities that each push generation past where images and audio stop: video adds time, 3D adds an extra spatial dimension and viewpoint consistency, and code adds a requirement neither has…</p></a><a class="rc-card" href="/llms/synthetic-data-for-pretraining/"><b>Synthetic Data for Pretraining</b><p>When real data for a domain or language is scarce, a tempting fix is to generate more of it — have a model write the text you wish you had more of.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/3d-asset-and-scene-generation/">← Previous: 3D Asset and Scene Generation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

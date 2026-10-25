@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generative vs Discriminative Models — AI Base</title>
+<meta name="description" content="There are two ways to build a classifier. A generative model learns what each class looks like (how its examples are distributed) and uses Bayes&#39; rule to decide.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/generative-vs-discriminative-models/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Generative vs Discriminative Models — AI Base">
+<meta property="og:description" content="There are two ways to build a classifier. A generative model learns what each class looks like (how its examples are distributed) and uses Bayes&#39; rule to decide.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/generative-vs-discriminative-models/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Generative vs Discriminative Models","item":"https://ai.saranmahadev.in/machine-learning/generative-vs-discriminative-models/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Generative vs Discriminative Models","description":"There are two ways to build a classifier. A generative model learns what each class looks like (how its examples are distributed) and uses Bayes' rule to decide.","url":"https://ai.saranmahadev.in/machine-learning/generative-vs-discriminative-models/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which of naive Bayes and logistic regression is generative?","acceptedAnswer":{"@type":"Answer","text":"Naive Bayes."}},{"@type":"Question","name":"What does a generative model learn that a discriminative one does not?","acceptedAnswer":{"@type":"Answer","text":"How the features are distributed within each class, P(x | class)."}},{"@type":"Question","name":"Why can extreme, easy points move a generative boundary?","acceptedAnswer":{"@type":"Answer","text":"They change its estimates of each class's shape (mean and spread), which the boundary is computed from."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Instance and Probability Methods</p>
+        <h1 class="doc-title">Generative vs Discriminative Models</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1ww9lxnbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1ww9lxnpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1ww9lxnbg)"/>
+  <circle cx="533" cy="203" r="200" fill="#8a6b5c" opacity="0.60"/><circle cx="1199" cy="365" r="161" fill="#ffd08d" opacity="0.38"/><circle cx="267" cy="358" r="135" fill="#ffd99f" opacity="0.24"/><circle cx="504" cy="373" r="182" fill="#ffd08d" opacity="0.42"/><circle cx="1088" cy="379" r="116" fill="#8a6b5c" opacity="0.60"/>
+  <path d="M0,420 L0,313 L30,310 L60,307 L90,306 L120,306 L150,307 L180,309 L210,312 L240,316 L270,321 L300,326 L330,331 L360,336 L390,341 L420,345 L450,347 L480,349 L510,350 L540,349 L570,347 L600,344 L630,340 L660,336 L690,331 L720,325 L750,320 L780,316 L810,312 L840,309 L870,307 L900,306 L930,306 L960,307 L990,310 L1020,314 L1050,318 L1080,323 L1110,328 L1140,333 L1170,338 L1200,342 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,390 L60,389 L90,387 L120,384 L150,382 L180,380 L210,377 L240,375 L270,372 L300,370 L330,368 L360,366 L390,365 L420,363 L450,363 L480,362 L510,362 L540,362 L570,363 L600,364 L630,366 L660,367 L690,369 L720,372 L750,374 L780,376 L810,379 L840,381 L870,384 L900,386 L930,388 L960,390 L990,391 L1020,393 L1050,393 L1080,394 L1110,394 L1140,394 L1170,393 L1200,392 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="695" cy="186" rx="232" ry="65" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-2.8 695 186)"/><ellipse cx="695" cy="186" rx="320" ry="90" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(3.2 695 186)"/>
+  <circle cx="695" cy="186" r="91" fill="url(#c1ww9lxnpl)"/>
+  <circle cx="1057" cy="183" r="17" fill="#ffffff" opacity="0.90"/><circle cx="913" cy="141" r="11" fill="#ffffff" opacity="0.88"/><circle cx="944" cy="224" r="8" fill="#ffffff" opacity="0.88"/><circle cx="557" cy="307" r="12" fill="#ffffff" opacity="0.66"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>There are two ways to build a classifier. A <strong>generative</strong> model learns what each class looks like (how its examples are distributed) and uses Bayes&#39; rule to decide. A <strong>discriminative</strong> model skips that and learns the boundary between classes directly. Naive Bayes is generative; logistic regression and support vector machines are discriminative.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/naive-bayes/" data-topic="machine-learning/naive-bayes">Naive Bayes</a> and <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Should I model the data, or just the decision?&quot; Each choice has strengths, and the difference shows up when the data is unusual.</p>
+<h2 id="intuition-portraits-or-a-border">Intuition: portraits or a border</h2>
+<p>A generative model paints a portrait of each class: &quot;spam looks like this, ham like that&quot;. To classify, it asks which portrait a new example resembles more. A discriminative model never paints portraits; it only asks &quot;which side of the border is this on?&quot; Portraits can also be used to <em>generate</em> new examples, and they are efficient when data is scarce and the portrait&#39;s assumptions hold. Borders make fewer assumptions and are usually more accurate when there is plenty of data.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">generative       learns P(x | class) and P(class), classifies with Bayes&#39; rule
+                 examples: naive Bayes, Gaussian class models, hidden Markov models, language models
+discriminative   learns P(class | x) directly (or just a boundary)
+                 examples: logistic regression, SVM, neural-network classifiers
+</code></pre>
+<p>Setting class-wise Gaussian bell curves with a shared spread gives a straight boundary through the midpoint of the class means, tilted by the priors. Logistic regression also gives a straight boundary, but it places it by minimising classification error rather than by describing each class.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Sixty points from two overlapping clouds (bench data). Fit both models.</p>
+<pre><code class="language-text">                                generative (Gaussians)   logistic regression
+accuracy on the 60 points              96.7%                   96.7%
+</code></pre>
+<p>Now add eight extreme but easy class-1 points far to the right (around <code>x = 4.2</code>). They are on the right side of any sensible boundary, so a discriminative model barely needs to care.</p>
+<pre><code class="language-text">                                generative (Gaussians)   logistic regression
+accuracy on the original 60            93.3%                   96.7%
+</code></pre>
+<p>The generative model&#39;s class-1 mean has been dragged rightward by the far points, dragging its boundary with it, and it now misclassifies two original points. Logistic regression ignores points that are already correctly and confidently classified. The generative model was forced to describe <em>all</em> the data, including parts irrelevant to the decision.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="two-approaches" data-title="Model the classes, or model the boundary"><p class="bench-fallback"><strong>Interactive bench: Model the classes, or model the boundary.</strong> Two classes with two decision lines, one from class-wise Gaussian models and one from logistic regression; a switch adds extreme but easy class-1 points and the accuracies on the original points are shown.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the two lines on the original data.</li>
+<li>Add the extreme class-1 points.</li>
+<li>Watch which line moves and read both accuracies.</li>
+</ol>
+<p><strong>What you should notice:</strong> the generative boundary shifts because its class description changed, while the discriminative boundary stays put.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Language models</strong> are generative: they model the probability of text itself.</li>
+<li><strong>Image generators</strong> are generative models of pictures.</li>
+<li><strong>Most production classifiers</strong> are discriminative.</li>
+<li><strong>Generative classifiers</strong> shine with little data, missing features, or when you also need to sample or detect outliers.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Believing generative models are always better because they &quot;understand&quot; the data.</strong> Their assumptions can be wrong.</li>
+<li><strong>Believing discriminative models can&#39;t handle missing data,</strong> which is harder for them, not impossible.</li>
+<li><strong>Comparing them on tiny test sets.</strong></li>
+<li><strong>Using a generative model&#39;s probabilities without checking calibration.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Which of naive Bayes and logistic regression is generative?</summary>
+Naive Bayes.
+</details>
+
+<details><summary>2. What does a generative model learn that a discriminative one does not?</summary>
+How the features are distributed within each class, P(x | class).
+</details>
+
+<details><summary>3. Why can extreme, easy points move a generative boundary?</summary>
+They change its estimates of each class's shape (mean and spread), which the boundary is computed from.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Generative model:</strong> a model of how each class produces data.</li>
+<li><strong>Discriminative model:</strong> a model of the boundary or of P(class | x).</li>
+<li><strong>Class-conditional distribution:</strong> the distribution of features within one class.</li>
+<li><strong>Decision boundary:</strong> the surface where two classes are equally likely.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/naive-bayes/" data-topic="machine-learning/naive-bayes">Naive Bayes</a> · <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a> · <a class="wikilink" href="/math/maximum-likelihood/" data-topic="math/maximum-likelihood">Maximum Likelihood</a> · <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> · <a class="wikilink" href="/machine-learning/support-vector-machines/" data-topic="machine-learning/support-vector-machines">Support Vector Machines</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/generative-vs-discriminative-models">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/kernel-methods/"><small>Read next</small><b>Kernel Methods</b><p>A straight line cannot separate every problem, but a straight line in a richer space can.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/naive-bayes/"><b>Naive Bayes</b><p>Naive Bayes classifies by asking, for each class, how well the observed features fit it, then combining the answers with Bayes&#39; rule.</p></a><a class="rc-card" href="/machine-learning/logistic-regression-as-a-classifier/"><b>Logistic Regression as a Classifier</b><p>Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.</p></a><a class="rc-card" href="/math/maximum-likelihood/"><b>Maximum Likelihood</b><p>Maximum likelihood estimation picks the parameter value that makes the observed data as probable as possible.</p></a><a class="rc-card" href="/math/continuous-distributions/"><b>Continuous Distributions</b><p>A continuous random variable can take any value in a range, so no single value has positive probability.</p></a><a class="rc-card" href="/machine-learning/support-vector-machines/"><b>Support Vector Machines</b><p>Many lines separate two classes, so which is best? A support vector machine picks the one with the widest empty street between the classes: the maximum margin.</p></a><a class="rc-card" href="/machine-learning/instance-and-probability-methods/"><b>Instance and Probability Methods</b><p>Not every learner fits a formula.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/text-classification-with-naive-bayes/">← Previous: Text Classification with Naive Bayes</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

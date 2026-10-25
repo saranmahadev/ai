@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metadata Filtering and Hybrid Indexes — AI Base</title>
+<meta name="description" content="Asking for &quot;the 20 most relevant chunks, but only from documents I have permission to see&quot; sounds like one request — but a vector index has to decide when to apply that permission check.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/metadata-filtering-and-hybrid-indexes/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Metadata Filtering and Hybrid Indexes — AI Base">
+<meta property="og:description" content="Asking for &quot;the 20 most relevant chunks, but only from documents I have permission to see&quot; sounds like one request — but a vector index has to decide when to apply that permission check.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/metadata-filtering-and-hybrid-indexes/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Metadata Filtering and Hybrid Indexes","item":"https://ai.saranmahadev.in/rag/metadata-filtering-and-hybrid-indexes/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Metadata Filtering and Hybrid Indexes","description":"Asking for \"the 20 most relevant chunks, but only from documents I have permission to see\" sounds like one request — but a vector index has to decide when to apply that permission check.","url":"https://ai.saranmahadev.in/rag/metadata-filtering-and-hybrid-indexes/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does post-filtering a request for 20 results at a 5% match rate leave only about 1 survivor?","acceptedAnswer":{"@type":"Answer","text":"The ANN search's top 20 were chosen purely by similarity, with no regard for the filter, so only roughly 5% of them — about 1 — happen to also satisfy it; the rest are discarded after the fact."}},{"@type":"Question","name":"Does pre-filtering guarantee the requested number of results no matter how restrictive the filter is?","acceptedAnswer":{"@type":"Answer","text":"No — it guarantees up to the requested number, limited by how many eligible candidates actually exist in the collection; an extremely restrictive filter can still leave fewer than requested if there simply aren't enough matching chunks."}},{"@type":"Question","name":"What does a hybrid index add that makes pre-filtering practical?","acceptedAnswer":{"@type":"Answer","text":"A fast way to check metadata eligibility combined with the vector index, so narrowing to eligible candidates before the similarity search doesn't itself require a slow scan of the whole collection."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Vector Search and Indexing</p>
+        <h1 class="doc-title">Metadata Filtering and Hybrid Indexes</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1vw6lvvbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1vw6lvvpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1vw6lvvbg)"/>
+  <circle cx="1054" cy="332" r="162" fill="#42718e" opacity="0.36"/><circle cx="1190" cy="160" r="211" fill="#97e1e6" opacity="0.56"/><circle cx="557" cy="249" r="114" fill="#97e1e6" opacity="0.54"/><circle cx="995" cy="87" r="149" fill="#b7d5be" opacity="0.37"/><circle cx="146" cy="60" r="71" fill="#b7d5be" opacity="0.24"/><circle cx="316" cy="386" r="166" fill="#97e1e6" opacity="0.60"/><circle cx="1077" cy="381" r="120" fill="#b7d5be" opacity="0.34"/>
+  <path d="M0,420 L0,350 L30,349 L60,348 L90,347 L120,345 L150,343 L180,340 L210,337 L240,334 L270,330 L300,327 L330,323 L360,320 L390,317 L420,314 L450,311 L480,309 L510,308 L540,306 L570,306 L600,306 L630,306 L660,307 L690,308 L720,310 L750,313 L780,315 L810,318 L840,322 L870,325 L900,328 L930,332 L960,335 L990,338 L1020,341 L1050,344 L1080,346 L1110,348 L1140,349 L1170,349 L1200,350 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,372 L60,377 L90,382 L120,387 L150,391 L180,393 L210,394 L240,393 L270,391 L300,388 L330,384 L360,379 L390,374 L420,369 L450,365 L480,363 L510,362 L540,363 L570,365 L600,368 L630,372 L660,377 L690,382 L720,387 L750,391 L780,393 L810,394 L840,393 L870,391 L900,388 L930,384 L960,379 L990,374 L1020,369 L1050,365 L1080,363 L1110,362 L1140,363 L1170,365 L1200,368 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="865" cy="200" rx="161" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-18.2 865 200)"/><ellipse cx="865" cy="200" rx="222" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-12.2 865 200)"/>
+  <circle cx="865" cy="200" r="63" fill="url(#c1vw6lvvpl)"/>
+  <circle cx="691" cy="204" r="18" fill="#ffffff" opacity="0.75"/><circle cx="911" cy="263" r="16" fill="#ffffff" opacity="0.63"/><circle cx="753" cy="121" r="15" fill="#ffffff" opacity="0.72"/><circle cx="1129" cy="181" r="15" fill="#ffffff" opacity="0.84"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Asking for &quot;the 20 most relevant chunks, but only from documents I have permission to see&quot; sounds like one request — but a vector index has to decide <em>when</em> to apply that permission check. Do it after finding the top 20 by similarity, and most of them might belong to documents the user can&#39;t see at all, leaving almost nothing behind. Do it first, and the search never wastes effort on candidates that were never eligible.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a>, <a class="wikilink" href="/rag/metadata-extraction-and-enrichment/" data-topic="rag/metadata-extraction-and-enrichment">Metadata Extraction and Enrichment</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Should a metadata filter be applied before or after the similarity search?&quot; <strong>Post-filtering</strong> runs the ANN search first, gets its top-k by similarity, and only then checks each result against the metadata filter — if the filter and similarity are unrelated to each other, most of the top-k can fail the filter, leaving far fewer usable results than requested. <strong>Pre-filtering</strong> applies the metadata filter first, narrowing the collection down to only eligible candidates, and only then searches for the nearest ones among <em>those</em> — guaranteeing the requested number of results, as long as enough eligible candidates exist at all.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Asking a restaurant for &quot;the best vegetarian dish on the menu&quot; by first picking the ten best-reviewed dishes overall and only then checking which ones happen to be vegetarian might leave you with one option, if none of the top ten happen to be vegetarian. Asking by first filtering to just the vegetarian dishes, then ranking only those by review score, reliably gets you a real top choice.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">post-filter:  top-k by similarity  →  then apply metadata filter  →  survivors ≈ k × match_rate
+pre-filter:   apply metadata filter first  →  then rank by similarity within survivors  →  up to k results
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Requesting the top 20 results from a 1,000-chunk collection where only 5% match a metadata filter (say, a permission check):</p>
+<pre><code class="language-text">post-filter: ANN returns its top 20 by similarity (ignoring the filter),
+             then filters → only 1 of the 20 survives
+
+pre-filter:  filter first → 50 eligible chunks (5% of 1,000),
+             then rank by similarity within those → up to 20 returned
+</code></pre>
+<p>Post-filtering a 5%-match-rate filter against the top 20 leaves, on average, only about 1 usable result — nineteen out of twenty requested results get discarded. Pre-filtering guarantees up to the full 20, limited only by how many eligible chunks actually exist in the collection.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="prefilter-vs-postfilter" data-title="Filtering after search can come back nearly empty"><p class="bench-fallback"><strong>Interactive bench: Filtering after search can come back nearly empty.</strong> Compare how many results actually survive when a metadata filter is applied before vs. after an ANN search.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the match rate down toward 1% and watch post-filtering&#39;s survivor count collapse.</li>
+<li>Slide it up toward 50% and watch the gap between the two approaches shrink.</li>
+<li>Think about a permission filter that only 2% of a collection satisfies for a given user — what would post-filtering return for a request of &quot;give me 20 results&quot;?</li>
+</ol>
+<p><strong>What you should notice:</strong> pre-filtering&#39;s advantage is largest exactly when the filter is most restrictive — which is often exactly when getting it right matters most (strict permission checks, narrow date ranges).</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This directly extends the freshness-filtering problem from <a class="wikilink" href="/rag/metadata-extraction-and-enrichment/" data-topic="rag/metadata-extraction-and-enrichment">Metadata Extraction and Enrichment</a></strong> — the same metadata that lets you <em>identify</em> a stale chunk also needs to be applied at the right point in the search to actually exclude it reliably.</li>
+<li><strong>A hybrid index is what makes efficient pre-filtering possible</strong>: combining a metadata index (fast to check &quot;is this eligible?&quot;) with the vector index (fast to check &quot;is this similar?&quot;) so pre-filtering doesn&#39;t itself become a slow linear scan.</li>
+<li><strong><a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a> lists &quot;returned far fewer results than requested&quot; as a recognizable symptom</strong> — frequently traceable to post-filtering against a restrictive metadata condition.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Defaulting to post-filtering because it&#39;s simpler to implement on top of an existing ANN index.</strong> The worked example shows this can silently return far fewer usable results than requested, with no error raised — just a quietly short result list.</li>
+<li><strong>Assuming pre-filtering is always better.</strong> A very restrictive filter still needs enough eligible candidates in the collection in the first place — pre-filtering can&#39;t conjure up results that don&#39;t exist, it only avoids wasting effort on ineligible ones.</li>
+<li><strong>Building a metadata index as an afterthought, bolted onto an existing vector index.</strong> Efficient pre-filtering depends on the metadata filter itself being fast to check — a slow metadata lookup undermines the whole point of filtering before the (potentially even more expensive) similarity search.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does post-filtering a request for 20 results at a 5% match rate leave only about 1 survivor?</summary>
+The ANN search's top 20 were chosen purely by similarity, with no regard for the filter, so only roughly 5% of them — about 1 — happen to also satisfy it; the rest are discarded after the fact.
+</details>
+
+<details><summary>2. Does pre-filtering guarantee the requested number of results no matter how restrictive the filter is?</summary>
+No — it guarantees up to the requested number, limited by how many eligible candidates actually exist in the collection; an extremely restrictive filter can still leave fewer than requested if there simply aren't enough matching chunks.
+</details>
+
+<details><summary>3. What does a hybrid index add that makes pre-filtering practical?</summary>
+A fast way to check metadata eligibility combined with the vector index, so narrowing to eligible candidates before the similarity search doesn't itself require a slow scan of the whole collection.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Post-filtering:</strong> applying a metadata filter after an ANN search has already produced its top-k results by similarity.</li>
+<li><strong>Pre-filtering:</strong> applying a metadata filter before similarity search, ranking only among already-eligible candidates.</li>
+<li><strong>Hybrid index:</strong> an index combining metadata filtering with vector similarity search, supporting efficient pre-filtering.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a> · <a class="wikilink" href="/rag/metadata-extraction-and-enrichment/" data-topic="rag/metadata-extraction-and-enrichment">Metadata Extraction and Enrichment</a> · <a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/metadata-filtering-and-hybrid-indexes">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/retrieval-strategies/"><small>Read next</small><b>Retrieval Strategies</b><p>Having a fast index doesn&#39;t yet say what to search it with.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/vector-databases-and-index-management/"><b>Vector Databases and Index Management</b><p>An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest?</p></a><a class="rc-card" href="/rag/metadata-extraction-and-enrichment/"><b>Metadata Extraction and Enrichment</b><p>A chunk&#39;s text alone often can&#39;t say whether it&#39;s still true.</p></a><a class="rc-card" href="/rag/common-rag-failure-modes/"><b>Common RAG Failure Modes</b><p>Across this planet&#39;s road, the same handful of failure symptoms keep recurring — a stale fact, a result count that&#39;s mysteriously short, an answer that confidently cites the wrong thing.</p></a><a class="rc-card" href="/rag/vector-search-and-indexing/"><b>Vector Search and Indexing</b><p>Once a collection has a few million chunks, each with its own embedding, finding the handful nearest to a query vector stops being a problem you can solve by checking every single one.</p></a><a class="rc-card" href="/rag/handling-noisy-or-conflicting-retrieved-context/"><b>Handling Noisy or Conflicting Retrieved Context</b><p>Retrieval sometimes returns two passages that answer the same question differently — an old policy document and a new one, say, each stating a different number for the same thing.</p></a><a class="rc-card" href="/rag/security-and-data-leakage-in-rag/"><b>Security and Data Leakage in RAG</b><p>Retrieval is a search over documents, and search has always needed access control — a public user&#39;s question shouldn&#39;t be able to pull an internal finance document into its retrieved context,…</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/vector-databases-and-index-management/">← Previous: Vector Databases and Index Management</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

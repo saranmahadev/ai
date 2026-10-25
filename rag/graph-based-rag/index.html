@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graph-Based RAG — AI Base</title>
+<meta name="description" content="&quot;What did the studio behind Movie X&#39;s director also produce?&quot; isn&#39;t answered by any single document — it&#39;s answered by chaining three separate facts together: who directed Movie X, who they work…">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/graph-based-rag/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Graph-Based RAG — AI Base">
+<meta property="og:description" content="&quot;What did the studio behind Movie X&#39;s director also produce?&quot; isn&#39;t answered by any single document — it&#39;s answered by chaining three separate facts together: who directed Movie X, who they work…">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/graph-based-rag/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Graph-Based RAG","item":"https://ai.saranmahadev.in/rag/graph-based-rag/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Graph-Based RAG","description":"\"What did the studio behind Movie X's director also produce?\" isn't answered by any single document — it's answered by chaining three separate facts together: who directed Movie X, who they work…","url":"https://ai.saranmahadev.in/rag/graph-based-rag/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why can't flat document retrieval answer the full question in one pass?","acceptedAnswer":{"@type":"Answer","text":"The full chain spans three separate facts, each likely stated in a different document — no single document is likely to state \"Movie X's director's employer's other production\" all at once."}},{"@type":"Question","name":"What does each individual edge in the graph represent?","acceptedAnswer":{"@type":"Answer","text":"A single, directly stated fact connecting two entities through a named relationship — simple enough that one document could plausibly state it on its own."}},{"@type":"Question","name":"How does graph-based RAG relate to multi-hop retrieval?","acceptedAnswer":{"@type":"Answer","text":"It's the same underlying idea (chaining intermediate facts to reach a final answer), but implemented by following explicit labeled edges in a pre-built graph, rather than re-running a document search at each step."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Advanced RAG Patterns</p>
+        <h1 class="doc-title">Graph-Based RAG</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cudbokfbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="cudbokfpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cudbokfbg)"/>
+  <circle cx="16" cy="136" r="148" fill="#dcf5f7" opacity="0.34"/><circle cx="984" cy="376" r="78" fill="#97e1e6" opacity="0.59"/><circle cx="533" cy="362" r="201" fill="#b7d5be" opacity="0.49"/><circle cx="908" cy="41" r="146" fill="#b7d5be" opacity="0.45"/><circle cx="1089" cy="83" r="128" fill="#42718e" opacity="0.57"/><circle cx="418" cy="274" r="152" fill="#dcf5f7" opacity="0.35"/><circle cx="229" cy="193" r="148" fill="#b7d5be" opacity="0.38"/>
+  <path d="M0,420 L0,347 L30,349 L60,349 L90,348 L120,344 L150,339 L180,332 L210,325 L240,319 L270,313 L300,309 L330,306 L360,306 L390,307 L420,311 L450,317 L480,323 L510,330 L540,336 L570,342 L600,347 L630,349 L660,349 L690,348 L720,344 L750,339 L780,332 L810,325 L840,319 L870,313 L900,309 L930,306 L960,306 L990,307 L1020,311 L1050,317 L1080,323 L1110,330 L1140,336 L1170,342 L1200,347 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,391 L30,392 L60,393 L90,394 L120,394 L150,394 L180,393 L210,392 L240,391 L270,389 L300,387 L330,385 L360,383 L390,380 L420,378 L450,375 L480,373 L510,370 L540,368 L570,366 L600,365 L630,364 L660,363 L690,362 L720,362 L750,362 L780,363 L810,364 L840,365 L870,367 L900,369 L930,371 L960,373 L990,376 L1020,378 L1050,381 L1080,383 L1110,386 L1140,388 L1170,390 L1200,391 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="936" cy="199" rx="224" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(2.7 936 199)"/><ellipse cx="936" cy="199" rx="310" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(8.7 936 199)"/>
+  <circle cx="936" cy="199" r="88" fill="url(#cudbokfpl)"/>
+  <circle cx="601" cy="226" r="14" fill="#ffffff" opacity="0.77"/><circle cx="624" cy="136" r="18" fill="#ffffff" opacity="0.79"/><circle cx="675" cy="286" r="14" fill="#ffffff" opacity="0.61"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>&quot;What did the studio behind Movie X&#39;s director also produce?&quot; isn&#39;t answered by any single document — it&#39;s answered by chaining three separate facts together: who directed Movie X, who they work for, and what that studio produced. A knowledge graph makes those facts, and the connections between them, explicit and traversable, rather than hoping one lucky chunk happens to state the whole chain at once.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/multi-hop-and-iterative-retrieval/" data-topic="rag/multi-hop-and-iterative-retrieval">Multi-Hop and Iterative Retrieval</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can retrieval answer a question whose answer is spread across a chain of relationships, rather than sitting in one document?&quot; A <strong>knowledge graph</strong> stores entities (people, movies, studios) and labeled relationships between them (directed_by, works_at, produced) as explicit edges. <strong>Graph-based RAG</strong> answers a question by <em>traversing</em> those edges — following directed_by from &quot;Movie X,&quot; then works_at from whatever that led to, then produced from there — building the answer one hop at a time, the same chaining idea as <a class="wikilink" href="/rag/multi-hop-and-iterative-retrieval/" data-topic="rag/multi-hop-and-iterative-retrieval">Multi-Hop and Iterative Retrieval</a>, but over an explicit graph structure instead of re-running document search at each step.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Answering &quot;who is my coworker&#39;s childhood best friend&#39;s current employer&quot; by flipping through a company directory (coworker → their profile) and then a social network (childhood friend → their current job) is exactly graph traversal: each step follows a known, labeled connection to the next entity, rather than hoping a single document states the whole multi-step relationship outright.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">graph = { entities, edges: [(from, relation, to), ...] }
+traverse(start, hops) = follow one matching edge per hop, building a path of entities and relations
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 3-edge graph, traversed from &quot;Movie X&quot; to answer a chained question:</p>
+<pre><code class="language-text">edges:
+  Movie X  --directed_by--&gt;  Director Y
+  Director Y  --works_at--&gt;  Studio Z
+  Studio Z  --produced--&gt;  Film A
+
+question: &quot;what did the studio behind Movie X&#39;s director also produce?&quot;
+
+flat document retrieval: no single document states this full 3-hop chain
+graph traversal (3 hops): Movie X --directed_by--&gt; Director Y --works_at--&gt; Studio Z --produced--&gt; Film A
+</code></pre>
+<p>Each edge on its own is a simple, directly stated fact — &quot;Movie X was directed by Director Y&quot; is exactly the kind of sentence a single document would contain. The <em>question</em>, though, needs all three facts chained together, which graph traversal does explicitly, one labeled hop at a time.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="graph-rag-traversal" data-title="A fact built from three separate edges"><p class="bench-fallback"><strong>Interactive bench: A fact built from three separate edges.</strong> Step through a graph traversal that chains three relations no single document states together.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through all three hops and read each labeled edge as it&#39;s followed.</li>
+<li>Notice each individual edge is a simple fact — the complexity is entirely in chaining three of them.</li>
+<li>Imagine the same question answered by flat document retrieval alone — what would it find?</li>
+</ol>
+<p><strong>What you should notice:</strong> the graph doesn&#39;t need to store the final 3-hop fact anywhere explicitly — it only needs the three individual edges, and traversal reconstructs the chain on demand.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the same chaining idea as <a class="wikilink" href="/rag/multi-hop-and-iterative-retrieval/" data-topic="rag/multi-hop-and-iterative-retrieval">Multi-Hop and Iterative Retrieval</a></strong>, made explicit: instead of re-running a text search at each hop, each hop follows a labeled edge already stored in the graph.</li>
+<li><strong>Building the graph itself (extracting entities and relations from raw documents) is a document-processing problem</strong>, related to but beyond what <a class="wikilink" href="/rag/metadata-extraction-and-enrichment/" data-topic="rag/metadata-extraction-and-enrichment">Metadata Extraction and Enrichment</a> covers for simpler per-chunk attributes.</li>
+<li><strong><a class="wikilink" href="/rag/retrieval-over-structured-data/" data-topic="rag/retrieval-over-structured-data">Retrieval over Structured Data</a> is a related but different idea</strong>: querying a table or database directly, rather than traversing a graph of entities and relationships.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a knowledge graph can answer any question flat document retrieval couldn&#39;t.</strong> It only helps for questions whose answer genuinely decomposes into a chain of stored relationships — a question with no relevant edges in the graph at all gets no benefit from this approach.</li>
+<li><strong>Underestimating the cost of building and maintaining the graph itself.</strong> Extracting entities and relationships from raw documents accurately enough to traverse reliably is a substantial undertaking on its own, separate from the traversal mechanism.</li>
+<li><strong>Following the wrong edge when a node has several relations of the same type.</strong> &quot;Director Y&quot; might work at more than one studio over their career — traversal needs some way to pick the right edge, not just any matching one.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why can't flat document retrieval answer the full question in one pass?</summary>
+The full chain spans three separate facts, each likely stated in a different document — no single document is likely to state "Movie X's director's employer's other production" all at once.
+</details>
+
+<details><summary>2. What does each individual edge in the graph represent?</summary>
+A single, directly stated fact connecting two entities through a named relationship — simple enough that one document could plausibly state it on its own.
+</details>
+
+<details><summary>3. How does graph-based RAG relate to multi-hop retrieval?</summary>
+It's the same underlying idea (chaining intermediate facts to reach a final answer), but implemented by following explicit labeled edges in a pre-built graph, rather than re-running a document search at each step.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Knowledge graph:</strong> a structure of entities and labeled relationships (edges) between them.</li>
+<li><strong>Graph traversal:</strong> following edges from one entity to the next to answer a question spanning multiple relationships.</li>
+<li><strong>Entity extraction:</strong> identifying entities and relationships from raw documents to build a knowledge graph in the first place.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/multi-hop-and-iterative-retrieval/" data-topic="rag/multi-hop-and-iterative-retrieval">Multi-Hop and Iterative Retrieval</a> · <a class="wikilink" href="/rag/retrieval-over-structured-data/" data-topic="rag/retrieval-over-structured-data">Retrieval over Structured Data</a> · <a class="wikilink" href="/rag/metadata-extraction-and-enrichment/" data-topic="rag/metadata-extraction-and-enrichment">Metadata Extraction and Enrichment</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/graph-based-rag">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/retrieval-over-structured-data/"><small>Read next</small><b>Retrieval over Structured Data</b><p>&quot;How many orders were placed in 2024?&quot; has an exact answer sitting in a table of order records — but no chunk of retrieved text, however well-chosen, can ever compute that count.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/multi-hop-and-iterative-retrieval/"><b>Multi-Hop and Iterative Retrieval</b><p>&quot;What else did the director of Movie X direct?&quot; can&#39;t be answered by one search.</p></a><a class="rc-card" href="/rag/metadata-extraction-and-enrichment/"><b>Metadata Extraction and Enrichment</b><p>A chunk&#39;s text alone often can&#39;t say whether it&#39;s still true.</p></a><a class="rc-card" href="/rag/retrieval-over-structured-data/"><b>Retrieval over Structured Data</b><p>&quot;How many orders were placed in 2024?&quot; has an exact answer sitting in a table of order records — but no chunk of retrieved text, however well-chosen, can ever compute that count.</p></a><a class="rc-card" href="/rag/advanced-rag-patterns/"><b>Advanced RAG Patterns</b><p>The basic retrieve-then-generate loop has limits: it trusts whatever came back from a single search, treats every document the same whether it&#39;s prose or a spreadsheet, and has no way to notice…</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/corrective-rag/">← Previous: Corrective RAG</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

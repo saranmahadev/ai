@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Augmented LLM — AI Base</title>
+<meta name="description" content="A bare model call can only ever draw on what was baked into its weights during training.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/the-augmented-llm/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="The Augmented LLM — AI Base">
+<meta property="og:description" content="A bare model call can only ever draw on what was baked into its weights during training.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/the-augmented-llm/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"The Augmented LLM","item":"https://ai.saranmahadev.in/agents/the-augmented-llm/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Augmented LLM","description":"A bare model call can only ever draw on what was baked into its weights during training.","url":"https://ai.saranmahadev.in/agents/the-augmented-llm/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can't a bare LLM take an action in the real world, no matter how capable it is?","acceptedAnswer":{"@type":"Answer","text":"Taking an action requires something outside the model itself — a tool wired to actually do something — a bare call only produces text, with nothing connecting that text to any real-world effect."}},{"@type":"Question","name":"If an agent has tools and retrieval but no memory, what specific capability is it still missing?","acceptedAnswer":{"@type":"Answer","text":"It can't recall something from a past conversation — tools let it act and retrieval lets it search documents, but neither substitutes for state that persists across turns."}},{"@type":"Question","name":"Does \"augmenting\" an LLM require retraining or fine-tuning the model itself?","acceptedAnswer":{"@type":"Answer","text":"No — tools, memory and retrieval are all wired around the existing model call (function definitions, stored state, a search step before generation), not changes to the model's own weights."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Foundations of Agentic Systems</p>
+        <h1 class="doc-title">The Augmented LLM</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c16tdfv9bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c16tdfv9pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c16tdfv9bg)"/>
+  <circle cx="463" cy="166" r="89" fill="#e7bdc8" opacity="0.57"/><circle cx="965" cy="381" r="130" fill="#e7bdc8" opacity="0.33"/><circle cx="397" cy="359" r="85" fill="#dcbef5" opacity="0.32"/><circle cx="443" cy="149" r="92" fill="#dcbef5" opacity="0.22"/><circle cx="146" cy="234" r="121" fill="#725998" opacity="0.59"/>
+  <path d="M0,420 L0,317 L30,324 L60,330 L90,337 L120,343 L150,347 L180,349 L210,349 L240,347 L270,344 L300,338 L330,332 L360,325 L390,318 L420,312 L450,308 L480,306 L510,306 L540,308 L570,312 L600,317 L630,324 L660,330 L690,337 L720,343 L750,347 L780,349 L810,349 L840,347 L870,344 L900,338 L930,332 L960,325 L990,318 L1020,312 L1050,308 L1080,306 L1110,306 L1140,308 L1170,312 L1200,317 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,362 L90,364 L120,366 L150,369 L180,372 L210,376 L240,379 L270,383 L300,387 L330,389 L360,392 L390,393 L420,394 L450,394 L480,393 L510,391 L540,388 L570,385 L600,382 L630,378 L660,374 L690,371 L720,367 L750,365 L780,363 L810,362 L840,362 L870,363 L900,364 L930,367 L960,370 L990,373 L1020,377 L1050,381 L1080,384 L1110,388 L1140,390 L1170,392 L1200,394 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="960" cy="178" rx="161" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(5.8 960 178)"/><ellipse cx="960" cy="178" rx="223" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(11.8 960 178)"/>
+  <circle cx="960" cy="178" r="63" fill="url(#c16tdfv9pl)"/>
+  <circle cx="940" cy="243" r="17" fill="#ffffff" opacity="0.69"/><circle cx="1168" cy="170" r="9" fill="#ffffff" opacity="0.72"/><circle cx="973" cy="112" r="15" fill="#ffffff" opacity="0.86"/><circle cx="1005" cy="245" r="13" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A bare model call can only ever draw on what was baked into its weights during training. Give it a way to call tools, a way to remember across turns, and a way to search outside documents, and it can suddenly do things none of those weights alone ever could — act on the real world, recall a past conversation, answer from something it&#39;s never seen.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/parametric-vs-non-parametric-knowledge/" data-topic="rag/parametric-vs-non-parametric-knowledge">Parametric vs. Non-Parametric Knowledge</a>, <a class="wikilink" href="/llms/structured-output-and-tool-calling-apis/" data-topic="llms/structured-output-and-tool-calling-apis">Structured Output and Tool-Calling APIs</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What&#39;s the minimal set of additions that turns a plain model call into the building block almost every agent is made of?&quot; Three additions, each already derived elsewhere on this road: tools (<a class="wikilink" href="/llms/structured-output-and-tool-calling-apis/" data-topic="llms/structured-output-and-tool-calling-apis">the ability to call a function and act</a>), memory (state that persists across turns), and retrieval (<a class="wikilink" href="/rag/parametric-vs-non-parametric-knowledge/" data-topic="rag/parametric-vs-non-parametric-knowledge">a document store searched at answer-time</a>). None of these require a different model — they&#39;re capabilities wired around the same underlying call.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A brilliant scholar locked in a room with no phone, no notes and no library can only ever answer from what they&#39;ve already memorized. Give them a phone (tools), a notebook they can write in and read back (memory), and a library card (retrieval), and the same scholar can now do things that were never possible from memorization alone — not because they got smarter, but because they&#39;re no longer limited to what&#39;s already in their head.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">augmented LLM = bare LLM + tools + memory + retrieval
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four capabilities, checked against a bare LLM and the same model augmented with tools, memory and retrieval:</p>
+<pre><code class="language-text">capability                                          bare LLM   augmented LLM
+answer from training data alone                        ✓            ✓
+take an action in the real world                         ✗            ✓
+recall something from a past conversation                ✗            ✓
+answer using a document it&#39;s never seen                   ✗            ✓
+</code></pre>
+<p>A bare LLM handles exactly 1 of these 4 capabilities — whatever it can answer purely from its own training. Every other capability requires one of the three augmentations: tools to act, memory to recall, retrieval to answer from unseen documents.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="augmented-llm-capabilities" data-title="What augmentation actually unlocks"><p class="bench-fallback"><strong>Interactive bench: What augmentation actually unlocks.</strong> Compare what a bare LLM can do against the same model augmented with tools, memory and retrieval.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Switch to &quot;bare LLM&quot; and note only one capability is checked.</li>
+<li>Switch to &quot;augmented LLM&quot; and see all four checked.</li>
+<li>Match each newly unlocked capability to the specific augmentation (tools, memory, or retrieval) responsible for it.</li>
+</ol>
+<p><strong>What you should notice:</strong> each of the three new capabilities maps to exactly one augmentation — acting needs tools, recalling needs memory, answering from unseen documents needs retrieval — none of the three substitutes for either of the others.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the single building block nearly every pattern on this road is built from</strong> — <a class="wikilink" href="/agents/workflow-patterns-before-autonomy/" data-topic="agents/workflow-patterns-before-autonomy">Workflow Patterns Before Autonomy</a>&#39;s structured patterns and <a class="wikilink" href="/agents/planning-and-task-decomposition/" data-topic="agents/planning-and-task-decomposition">Planning and Task Decomposition</a>&#39;s autonomous loops are both arrangements of augmented LLM calls, not a different underlying mechanism.</li>
+<li><strong>Tools are covered in depth in <a class="wikilink" href="/agents/tool-use-and-function-calling/" data-topic="agents/tool-use-and-function-calling">Tool Use and Function Calling</a></strong>, memory in <a class="wikilink" href="/agents/memory-and-state-management/" data-topic="agents/memory-and-state-management">Memory and State Management</a>, retrieval across the entire RAG planet — this topic is only about naming the three as one shared building block.</li>
+<li><strong>Removing any one augmentation removes exactly the capabilities tied to it</strong> — an agent with tools and memory but no retrieval still can&#39;t answer from a document it&#39;s never seen, however good its other two augmentations are.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a bigger model closes the gap a bare call has with an augmented one.</strong> The worked example&#39;s gap isn&#39;t about capability or quality — a bare call, however large the model, still can&#39;t take a real-world action without a tool wired to it.</li>
+<li><strong>Treating the three augmentations as interchangeable.</strong> Memory doesn&#39;t help an agent search a document it&#39;s never seen, and retrieval doesn&#39;t let an agent recall what happened earlier in the same conversation — each covers a specific, non-overlapping gap.</li>
+<li><strong>Adding all three augmentations to every task regardless of need.</strong> A task that never needs to act on the real world doesn&#39;t benefit from tools, and wiring them in anyway only adds complexity and new failure modes.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why can't a bare LLM take an action in the real world, no matter how capable it is?</summary>
+Taking an action requires something outside the model itself — a tool wired to actually do something — a bare call only produces text, with nothing connecting that text to any real-world effect.
+</details>
+
+<details><summary>2. If an agent has tools and retrieval but no memory, what specific capability is it still missing?</summary>
+It can't recall something from a past conversation — tools let it act and retrieval lets it search documents, but neither substitutes for state that persists across turns.
+</details>
+
+<details><summary>3. Does "augmenting" an LLM require retraining or fine-tuning the model itself?</summary>
+No — tools, memory and retrieval are all wired around the existing model call (function definitions, stored state, a search step before generation), not changes to the model's own weights.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Augmented LLM:</strong> a model call combined with tools, memory and retrieval as its three standard additions.</li>
+<li><strong>Tool:</strong> a function an agent can call to take an action or fetch information beyond its own training.</li>
+<li><strong>Memory (in this context):</strong> state that persists across turns or runs, as opposed to what&#39;s baked into the model&#39;s weights.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/structured-output-and-tool-calling-apis/" data-topic="llms/structured-output-and-tool-calling-apis">Structured Output and Tool-Calling APIs</a> · <a class="wikilink" href="/agents/tool-use-and-function-calling/" data-topic="agents/tool-use-and-function-calling">Tool Use and Function Calling</a> · <a class="wikilink" href="/agents/memory-and-state-management/" data-topic="agents/memory-and-state-management">Memory and State Management</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/the-augmented-llm">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/open-loop-vs-closed-loop-behavior/"><small>Read next</small><b>Open-Loop vs. Closed-Loop Behavior</b><p>An agent that fires off four actions in a row and reports &quot;done&quot; might be lying — not out of any intent to deceive, but because it never actually checked whether any of those four actions worked.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/parametric-vs-non-parametric-knowledge/"><b>Parametric vs. Non-Parametric Knowledge</b><p>A language model&#39;s &quot;knowledge&quot; isn&#39;t stored the way a database stores facts.</p></a><a class="rc-card" href="/llms/structured-output-and-tool-calling-apis/"><b>Structured Output and Tool-Calling APIs</b><p>Code that calls an LLM usually needs the response in a specific shape — valid JSON with particular fields, or a specific function call with typed arguments — not free-flowing prose.</p></a><a class="rc-card" href="/agents/workflow-patterns-before-autonomy/"><b>Workflow Patterns Before Autonomy</b><p>Not every multi-step task needs a fully autonomous agent deciding what to do next.</p></a><a class="rc-card" href="/agents/planning-and-task-decomposition/"><b>Planning and Task Decomposition</b><p>A genuinely open-ended goal can&#39;t be handled by a fixed workflow written in advance — nobody knows the steps until the agent starts looking at the specific situation.</p></a><a class="rc-card" href="/agents/tool-use-and-function-calling/"><b>Tool Use and Function Calling</b><p>Calling one tool correctly is a solved problem, already covered on the LLMs planet.</p></a><a class="rc-card" href="/agents/memory-and-state-management/"><b>Memory and State Management</b><p>An agent running for hundreds of steps can&#39;t keep everything it&#39;s ever seen in its context window — and some of what it learns along the way needs to survive past the current run entirely.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/agents-vs-assistants-vs-workflows/">← Previous: Agents vs. Assistants vs. Workflows</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

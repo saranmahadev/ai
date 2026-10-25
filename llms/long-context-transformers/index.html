@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Long-Context Transformers — AI Base</title>
+<meta name="description" content="Every mechanism this road has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more…">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/long-context-transformers/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Long-Context Transformers — AI Base">
+<meta property="og:description" content="Every mechanism this road has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more…">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/long-context-transformers/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Long-Context Transformers","item":"https://ai.saranmahadev.in/llms/long-context-transformers/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Long-Context Transformers","description":"Every mechanism this road has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more…","url":"https://ai.saranmahadev.in/llms/long-context-transformers/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does doubling a sequence's length roughly quadruple attention's FLOPs cost?","acceptedAnswer":{"@type":"Answer","text":"Self-attention computes a score for every pair of positions in the sequence; doubling the number of positions roughly quadruples the number of pairs, since every one of the doubled positions can attend to every other doubled position."}},{"@type":"Question","name":"In the worked example, what FLOPs ratio resulted from a 16× increase in sequence length?","acceptedAnswer":{"@type":"Answer","text":"256× — exactly matching 16², confirming the quadratic relationship between sequence length and attention cost."}},{"@type":"Question","name":"Is \"long context\" purely a matter of raw compute capacity?","acceptedAnswer":{"@type":"Answer","text":"No — handling longer sequences cheaply enough typically requires architectural techniques (sparsity, linear attention, IO-aware computation) on top of raw compute, and separately requires the model to have learned to use positional information that far apart meaningfully."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Context, Memory and Long-Range Behavior</p>
+        <h1 class="doc-title">Long-Context Transformers</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cagq5jfbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="cagq5jfpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cagq5jfbg)"/>
+  <circle cx="141" cy="341" r="129" fill="#8a5f5e" opacity="0.61"/><circle cx="1032" cy="281" r="68" fill="#ffc7a2" opacity="0.42"/><circle cx="967" cy="151" r="210" fill="#8a5f5e" opacity="0.33"/><circle cx="1177" cy="193" r="92" fill="#ffece0" opacity="0.61"/><circle cx="26" cy="341" r="97" fill="#ffc7a2" opacity="0.40"/>
+  <path d="M0,420 L0,346 L30,343 L60,338 L90,334 L120,329 L150,323 L180,318 L210,314 L240,310 L270,308 L300,306 L330,306 L360,306 L390,308 L420,311 L450,315 L480,320 L510,325 L540,330 L570,335 L600,340 L630,344 L660,347 L690,349 L720,350 L750,349 L780,348 L810,345 L840,341 L870,337 L900,332 L930,327 L960,322 L990,317 L1020,313 L1050,309 L1080,307 L1110,306 L1140,306 L1170,307 L1200,309 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,386 L30,390 L60,393 L90,394 L120,394 L150,392 L180,389 L210,385 L240,380 L270,375 L300,370 L330,366 L360,363 L390,362 L420,362 L450,364 L480,367 L510,371 L540,376 L570,381 L600,386 L630,390 L660,393 L690,394 L720,394 L750,392 L780,389 L810,385 L840,380 L870,375 L900,370 L930,366 L960,363 L990,362 L1020,362 L1050,364 L1080,367 L1110,371 L1140,376 L1170,381 L1200,386 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="794" cy="285" rx="236" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(4.7 794 285)"/><ellipse cx="794" cy="285" rx="326" ry="91" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(10.7 794 285)"/>
+  <circle cx="794" cy="285" r="93" fill="url(#cagq5jfpl)"/>
+  <circle cx="947" cy="159" r="12" fill="#ffffff" opacity="0.87"/><circle cx="748" cy="396" r="17" fill="#ffffff" opacity="0.65"/><circle cx="740" cy="196" r="12" fill="#ffffff" opacity="0.68"/><circle cx="644" cy="355" r="9" fill="#ffffff" opacity="0.61"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every mechanism this road has covered for making attention cheaper — <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">windowed</a>, <a class="wikilink" href="/transformers/linear-attention-approximations/" data-topic="transformers/linear-attention-approximations">linear</a>, <a class="wikilink" href="/transformers/io-aware-attention-computation/" data-topic="transformers/io-aware-attention-computation">IO-aware</a> — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more expensive as context grows, and &quot;long context&quot; means running straight into that wall.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention</a>, <a class="wikilink" href="/transformers/io-aware-attention-computation/" data-topic="transformers/io-aware-attention-computation">IO-Aware Attention Computation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why is handling a longer context fundamentally harder than just &#39;using a bigger number&#39;?&quot; Ordinary self-attention computes a score between every pair of positions in a sequence — for a sequence of length <code>n</code>, that&#39;s <code>n²</code> pairwise scores. Double the sequence length, and the attention computation doesn&#39;t double in cost; it quadruples. Long-context transformers aren&#39;t just models with a larger number written in a config file — they specifically have to grapple with this quadratic wall, usually through the efficient-attention techniques already covered earlier on this road.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Doubling the number of people at a party doesn&#39;t double the number of possible one-on-one conversations — it roughly quadruples it, since every new person can talk to every existing person, and every existing person gains one more possible conversation partner. Self-attention&#39;s cost scales the same way: every new token in the sequence can attend to every other token, so the total number of pairwise interactions grows quadratically, not linearly, with sequence length.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">self-attention FLOPs for sequence length n, model dimension d:
+  ≈ 2 · n² · d
+
+doubling n → FLOPs increase by a factor of 4 (not 2)
+16× the sequence length → FLOPs increase by a factor of 256
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Attention&#39;s FLOPs cost at several sequence lengths, with model dimension fixed at 128:</p>
+<pre><code class="language-text">n =   512:  6.711 × 10⁷ FLOPs
+n =  1024:  2.684 × 10⁸ FLOPs
+n =  2048:  1.074 × 10⁹ FLOPs
+n =  4096:  4.295 × 10⁹ FLOPs
+n =  8192:  1.718 × 10¹⁰ FLOPs
+</code></pre>
+<p>Going from <code>n=512</code> to <code>n=8192</code> — a 16× increase in sequence length — increased attention&#39;s FLOPs cost by exactly 256×, precisely matching <code>16² = 256</code>. This is the quadratic wall in concrete numbers: context length can&#39;t simply be scaled up for free, which is exactly why <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">windowed</a> and <a class="wikilink" href="/transformers/linear-attention-approximations/" data-topic="transformers/linear-attention-approximations">linear</a> attention variants exist in the first place.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="attention-quadratic-cost" data-title="Doubling the sequence quadruples the cost"><p class="bench-fallback"><strong>Interactive bench: Doubling the sequence quadruples the cost.</strong> Pick a sequence length and watch how sharply attention's FLOPs cost grows compared to a shorter sequence.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the shortest and longest sequence lengths&#39; FLOPs costs.</li>
+<li>Check the ratio against the squared ratio of their lengths.</li>
+<li>Consider what this means for simply &quot;making the context window bigger&quot; as a design choice.</li>
+</ol>
+<p><strong>What you should notice:</strong> the FLOPs ratio always exactly matches the <em>squared</em> ratio of sequence lengths — this isn&#39;t an approximation, it&#39;s the direct consequence of attention computing a score for every pair of positions.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every efficient-attention technique already covered on this road</strong> — sparsity, linear-order approximations, IO-aware computation — exists specifically to avoid paying this full quadratic cost as context grows.</li>
+<li><strong>&quot;Long context&quot; as a marketed model feature usually means a combination of architectural tricks and serving-infrastructure engineering</strong>, not simply running an unmodified quadratic-attention transformer at a much larger sequence length.</li>
+<li><strong><a class="wikilink" href="/llms/context-window-extension-techniques/" data-topic="llms/context-window-extension-techniques">extending how far a model&#39;s positional understanding reaches</a> is a separate problem from the raw compute cost</strong> — a model could, in principle, have cheap-enough attention for a long sequence while still never having learned to handle positions that far apart meaningfully.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a model&#39;s maximum context length is purely a memory or compute limit that can always be raised by using better hardware.</strong> Raw compute cost is one real constraint, but <a class="wikilink" href="/llms/context-window-extension-techniques/" data-topic="llms/context-window-extension-techniques">a model&#39;s own positional understanding</a> is a separate limit that more hardware alone doesn&#39;t fix.</li>
+<li><strong>Expecting &quot;long context&quot; models to use ordinary, unmodified self-attention at huge sequence lengths.</strong> In practice, most long-context systems rely on some combination of the efficiency techniques covered earlier on this road.</li>
+<li><strong>Treating the quadratic cost as a recent problem.</strong> It&#39;s been a structural property of self-attention since it was introduced — what&#39;s changed over time is how aggressively that cost gets engineered around.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does doubling a sequence's length roughly quadruple attention's FLOPs cost?</summary>
+Self-attention computes a score for every pair of positions in the sequence; doubling the number of positions roughly quadruples the number of pairs, since every one of the doubled positions can attend to every other doubled position.
+</details>
+
+<details><summary>2. In the worked example, what FLOPs ratio resulted from a 16× increase in sequence length?</summary>
+256× — exactly matching 16², confirming the quadratic relationship between sequence length and attention cost.
+</details>
+
+<details><summary>3. Is "long context" purely a matter of raw compute capacity?</summary>
+No — handling longer sequences cheaply enough typically requires architectural techniques (sparsity, linear attention, IO-aware computation) on top of raw compute, and separately requires the model to have learned to use positional information that far apart meaningfully.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Quadratic attention cost:</strong> the FLOPs cost of self-attention growing with the square of sequence length.</li>
+<li><strong>Long-context transformer:</strong> a model engineered to handle much longer sequences than ordinary quadratic attention would make practical.</li>
+<li><strong>FLOPs:</strong> floating-point operations, the unit used to measure attention&#39;s computational cost.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention</a> · <a class="wikilink" href="/transformers/io-aware-attention-computation/" data-topic="transformers/io-aware-attention-computation">IO-Aware Attention Computation</a> · <a class="wikilink" href="/llms/context-window-extension-techniques/" data-topic="llms/context-window-extension-techniques">Context Window Extension Techniques</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/long-context-transformers">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/context-window-extension-techniques/"><small>Read next</small><b>Context Window Extension Techniques</b><p>solving the raw compute cost of attention is only half the problem.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/sparse-and-local-windowed-attention/"><b>Sparse and Local (Windowed) Attention</b><p>KV-caching fixes redundant recomputation, but the underlying attention computation itself still scales with the square of sequence length.</p></a><a class="rc-card" href="/transformers/linear-attention-approximations/"><b>Linear Attention Approximations</b><p>Windowed attention cuts cost by refusing to compute most pairs at all.</p></a><a class="rc-card" href="/transformers/io-aware-attention-computation/"><b>IO-Aware Attention Computation</b><p>Linear attention changes what gets computed — trading exact softmax for an approximation. This topic changes nothing about what&#39;s computed at all.</p></a><a class="rc-card" href="/llms/context-window-extension-techniques/"><b>Context Window Extension Techniques</b><p>solving the raw compute cost of attention is only half the problem.</p></a><a class="rc-card" href="/llms/context-memory-and-long-range-behavior/"><b>Context, Memory and Long-Range Behavior</b><p>A single forward pass has a fixed context window, but real use involves far more text than fits in one, conversations that span many turns, and sessions that return days later expecting to be…</p></a><a class="rc-card" href="/llms/context-rot-and-lost-in-the-middle-effects/"><b>Context Rot and Lost-in-the-Middle Effects</b><p>Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem:…</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/context-memory-and-long-range-behavior/">← Previous: Context, Memory and Long-Range Behavior</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

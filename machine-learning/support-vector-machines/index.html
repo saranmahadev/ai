@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support Vector Machines — AI Base</title>
+<meta name="description" content="Many lines separate two classes, so which is best? A support vector machine picks the one with the widest empty street between the classes: the maximum margin.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/support-vector-machines/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Support Vector Machines — AI Base">
+<meta property="og:description" content="Many lines separate two classes, so which is best? A support vector machine picks the one with the widest empty street between the classes: the maximum margin.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/support-vector-machines/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Support Vector Machines","item":"https://ai.saranmahadev.in/machine-learning/support-vector-machines/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Support Vector Machines","description":"Many lines separate two classes, so which is best? A support vector machine picks the one with the widest empty street between the classes: the maximum margin.","url":"https://ai.saranmahadev.in/machine-learning/support-vector-machines/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the width of the street when ‖w‖ = 0.5?","acceptedAnswer":{"@type":"Answer","text":"2 / 0.5 = 4."}},{"@type":"Question","name":"What happens to the margin when C grows large?","acceptedAnswer":{"@type":"Answer","text":"It narrows: violations are punished so the model fits the training data more tightly."}},{"@type":"Question","name":"Which points determine an SVM's boundary?","acceptedAnswer":{"@type":"Answer","text":"The support vectors: points on or inside the edges of the street."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Linear Models</p>
+        <h1 class="doc-title">Support Vector Machines</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cocb22fbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="cocb22fpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cocb22fbg)"/>
+  <circle cx="567" cy="108" r="92" fill="#fff2de" opacity="0.27"/><circle cx="276" cy="167" r="65" fill="#8a6b5c" opacity="0.23"/><circle cx="351" cy="125" r="181" fill="#8a6b5c" opacity="0.41"/><circle cx="461" cy="187" r="217" fill="#fff2de" opacity="0.50"/><circle cx="1126" cy="294" r="168" fill="#8a6b5c" opacity="0.58"/><circle cx="303" cy="84" r="97" fill="#ffd08d" opacity="0.47"/><circle cx="540" cy="342" r="64" fill="#ffd99f" opacity="0.34"/>
+  <path d="M0,420 L0,338 L30,333 L60,328 L90,322 L120,318 L150,313 L180,310 L210,307 L240,306 L270,306 L300,307 L330,309 L360,312 L390,316 L420,321 L450,326 L480,331 L510,336 L540,341 L570,344 L600,347 L630,349 L660,350 L690,349 L720,347 L750,344 L780,340 L810,336 L840,331 L870,326 L900,321 L930,316 L960,312 L990,309 L1020,307 L1050,306 L1080,306 L1110,307 L1140,310 L1170,313 L1200,318 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,369 L30,372 L60,376 L90,380 L120,383 L150,387 L180,390 L210,392 L240,393 L270,394 L300,394 L330,393 L360,391 L390,388 L420,385 L450,381 L480,378 L510,374 L540,370 L570,367 L600,365 L630,363 L660,362 L690,362 L720,363 L750,365 L780,367 L810,370 L840,373 L870,377 L900,381 L930,385 L960,388 L990,390 L1020,392 L1050,394 L1080,394 L1110,393 L1140,392 L1170,390 L1200,387 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="651" cy="169" rx="258" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(24.9 651 169)"/><ellipse cx="651" cy="169" rx="357" ry="100" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(30.9 651 169)"/>
+  <circle cx="651" cy="169" r="101" fill="url(#cocb22fpl)"/>
+  <circle cx="621" cy="49" r="17" fill="#ffffff" opacity="0.78"/><circle cx="918" cy="54" r="14" fill="#ffffff" opacity="0.64"/><circle cx="782" cy="259" r="15" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Many lines separate two classes, so which is best? A <strong>support vector machine</strong> picks the one with the widest empty street between the classes: the maximum margin. Only the points touching the edge of the street, the <strong>support vectors</strong>, decide where it goes. A strictness knob <code>C</code> decides how much the street may be violated by stray points.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/the-perceptron/" data-topic="machine-learning/the-perceptron">The Perceptron</a>, <a class="wikilink" href="/machine-learning/ridge-and-lasso/" data-topic="machine-learning/ridge-and-lasso">Ridge and Lasso</a> and <a class="wikilink" href="/math/orthogonality-and-projection/" data-topic="math/orthogonality-and-projection">Orthogonality and Projection</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Among all separating lines, which will generalise best?&quot; A line close to the data is fragile: a small nudge to a point flips its label. A line as far as possible from both classes leaves the most room for error.</p>
+<h2 id="intuition-the-widest-street">Intuition: the widest street</h2>
+<p>Draw the separating line, then push two parallel lines outward until each touches a class. The gap between them is the <strong>margin</strong>. The SVM maximises this width. Points far behind the street play no part; only the few on its edges (the support vectors) hold it in place, so the model is defined by a handful of points.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">boundary       b + w · x = 0             street edges  b + w · x = ±1
+street width   2 / ‖w‖                   → widest street = smallest ‖w‖
+soft margin    minimise  ½‖w‖² + C · Σ max(0, 1 − yᵢ(b + w · xᵢ))
+</code></pre>
+<p>The last term is the <strong>hinge loss</strong>: zero for points safely outside the street, growing for points inside it or on the wrong side. <code>C</code> is the strictness: large <code>C</code> punishes violations heavily (narrow street, fits the training data tightly); small <code>C</code> tolerates violations (wide street, smoother). Choose <code>C</code> on validation data. Non-linear boundaries come from kernels (see <a class="wikilink" href="/machine-learning/kernel-methods/" data-topic="machine-learning/kernel-methods">Kernel Methods</a>).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two points on a line: <code>x = 1</code> labelled −1 and <code>x = 3</code> labelled +1. The widest street has edges at each point, so the boundary sits halfway at <code>x = 2</code>.</p>
+<pre><code class="language-text">w · x + b = ±1 at the two points:   w·3 + b = 1,   w·1 + b = −1   →   w = 1,  b = −2
+street width = 2 / ‖w‖ = 2 / 1 = 2        (exactly the gap between the points)
+</code></pre>
+<p>Both points are support vectors. With 28 points in two clouds (bench data), strictness changes the picture:</p>
+<pre><code class="language-text">C = 0.01:  street width 7.93   support vectors 28   (everything holds the street)
+C = 1:     street width 1.11   support vectors  9
+C = 100:   street width 0.50   support vectors  5
+</code></pre>
+<p>A low <code>C</code> gives a very wide, relaxed street; a high <code>C</code> hugs the data. Adding one stray class-0 point deep in class-1 territory drags the strict solution (<code>C = 100</code>) to width 0.73 and 7 support vectors, and the stray is still misclassified: training accuracy 93% (27 of 29 points), because no straight line can fix it.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="margin-maximiser" data-title="Widest street between two classes"><p class="bench-fallback"><strong>Interactive bench: Widest street between two classes.</strong> Two classes with a linear support vector machine: a slider sets the strictness C, the bench draws the boundary, street edges and support vectors, and a switch adds a stray point in the other class.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at C = 1 and note the street width and support vectors.</li>
+<li>Lower C to 0.01, then raise it to 100.</li>
+<li>Add the stray point at each setting.</li>
+<li>Find the setting that keeps the street wide and accuracy high.</li>
+</ol>
+<p><strong>What you should notice:</strong> support vectors sit on the street&#39;s edges, the street narrows as C grows, and a stray point matters far more when C is large.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Text and image classification</strong> before deep learning made them routine.</li>
+<li><strong>Small, high-dimensional datasets,</strong> such as genomics.</li>
+<li><strong>The margin idea</strong> lives on in loss functions that demand confident, not just correct, predictions.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Unscaled features,</strong> which distort the margin (see <a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a>).</li>
+<li><strong>Choosing C on training accuracy.</strong></li>
+<li><strong>Assuming an SVM gives probabilities;</strong> its scores need calibration.</li>
+<li><strong>Large datasets:</strong> kernel SVMs scale poorly with the number of examples.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the width of the street when ‖w‖ = 0.5?</summary>
+2 / 0.5 = 4.
+</details>
+
+<details><summary>2. What happens to the margin when C grows large?</summary>
+It narrows: violations are punished so the model fits the training data more tightly.
+</details>
+
+<details><summary>3. Which points determine an SVM's boundary?</summary>
+The support vectors: points on or inside the edges of the street.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Margin:</strong> the width of the empty street between the classes.</li>
+<li><strong>Support vector:</strong> a point on or inside the street&#39;s edge.</li>
+<li><strong>Hinge loss:</strong> the penalty max(0, 1 − y · score).</li>
+<li><strong>C:</strong> the strictness parameter trading margin width against violations.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/the-perceptron/" data-topic="machine-learning/the-perceptron">The Perceptron</a> · <a class="wikilink" href="/machine-learning/kernel-methods/" data-topic="machine-learning/kernel-methods">Kernel Methods</a> · <a class="wikilink" href="/machine-learning/ridge-and-lasso/" data-topic="machine-learning/ridge-and-lasso">Ridge and Lasso</a> · <a class="wikilink" href="/math/orthogonality-and-projection/" data-topic="math/orthogonality-and-projection">Orthogonality and Projection</a> · <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/support-vector-machines">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/instance-and-probability-methods/"><small>Read next</small><b>Instance and Probability Methods</b><p>Not every learner fits a formula.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/the-perceptron/"><b>The Perceptron</b><p>The perceptron is the oldest learning machine: compute a weighted sum of the inputs, answer &quot;yes&quot; if it is positive and &quot;no&quot; otherwise, and after every mistake nudge the weights so that mistake is…</p></a><a class="rc-card" href="/machine-learning/ridge-and-lasso/"><b>Ridge and Lasso</b><p>When there are many features and little data, a linear model can fit noise with huge, contradictory weights. Regularisation adds a penalty on the weights so the model prefers small ones.</p></a><a class="rc-card" href="/math/orthogonality-and-projection/"><b>Orthogonality and Projection</b><p>Two vectors are orthogonal when their dot product is zero (they meet at a right angle), and the projection of one vector onto another is its shadow: the closest point to it along the other&#39;s…</p></a><a class="rc-card" href="/machine-learning/kernel-methods/"><b>Kernel Methods</b><p>A straight line cannot separate every problem, but a straight line in a richer space can.</p></a><a class="rc-card" href="/machine-learning/scaling-and-normalisation/"><b>Scaling and Normalisation</b><p>Features measured in different units can have wildly different sizes: age in tens, income in tens of thousands.</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/the-perceptron/">← Previous: The Perceptron</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

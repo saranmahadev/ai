@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interpretability and Attribution — AI Base</title>
+<meta name="description" content="Saliency maps are a first, useful attempt at attribution — but a single gradient at a single point can be noisy and can miss the bigger picture.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/interpretability-and-attribution/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Interpretability and Attribution — AI Base">
+<meta property="og:description" content="Saliency maps are a first, useful attempt at attribution — but a single gradient at a single point can be noisy and can miss the bigger picture.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/interpretability-and-attribution/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Interpretability and Attribution","item":"https://ai.saranmahadev.in/deep-learning/interpretability-and-attribution/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Interpretability and Attribution","description":"Saliency maps are a first, useful attempt at attribution — but a single gradient at a single point can be noisy and can miss the bigger picture.","url":"https://ai.saranmahadev.in/deep-learning/interpretability-and-attribution/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What mathematical guarantee does integrated gradients provide that a plain saliency map does not?","acceptedAnswer":{"@type":"Answer","text":"Completeness: the sum of all attributions exactly equals the difference between the model's output at the actual input and at the baseline."}},{"@type":"Question","name":"In the worked example, why did using only 1 path step give such a poor approximation?","acceptedAnswer":{"@type":"Answer","text":"A single step only evaluates the gradient at one point along the path (at t=1, the far end), missing how the gradient changes elsewhere along the journey from the baseline."}},{"@type":"Question","name":"How does Grad-CAM differ from per-pixel saliency, in what it highlights?","acceptedAnswer":{"@type":"Answer","text":"It operates on a late convolutional layer's coarser feature-map regions rather than individual pixels, typically producing a more human-readable heatmap at the cost of spatial precision."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Deep Learning in Practice</p>
+        <h1 class="doc-title">Interpretability and Attribution</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cdecxzkbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cdecxzkpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cdecxzkbg)"/>
+  <circle cx="547" cy="379" r="139" fill="#ffb6b6" opacity="0.23"/><circle cx="302" cy="356" r="146" fill="#ffe6e6" opacity="0.50"/><circle cx="1077" cy="157" r="101" fill="#8a546c" opacity="0.54"/><circle cx="840" cy="73" r="210" fill="#ffb6b6" opacity="0.46"/><circle cx="490" cy="318" r="226" fill="#ffb89d" opacity="0.24"/><circle cx="848" cy="224" r="191" fill="#ffe6e6" opacity="0.37"/>
+  <path d="M0,420 L0,349 L30,348 L60,346 L90,343 L120,339 L150,334 L180,329 L210,324 L240,319 L270,314 L300,311 L330,308 L360,306 L390,306 L420,306 L450,308 L480,311 L510,315 L540,320 L570,325 L600,330 L630,335 L660,339 L690,343 L720,347 L750,349 L780,350 L810,349 L840,348 L870,345 L900,342 L930,337 L960,332 L990,327 L1020,322 L1050,317 L1080,313 L1110,310 L1140,307 L1170,306 L1200,306 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,391 L30,392 L60,393 L90,394 L120,394 L150,394 L180,393 L210,392 L240,391 L270,389 L300,387 L330,385 L360,383 L390,380 L420,378 L450,375 L480,373 L510,371 L540,368 L570,367 L600,365 L630,364 L660,363 L690,362 L720,362 L750,362 L780,363 L810,364 L840,365 L870,367 L900,369 L930,371 L960,373 L990,376 L1020,378 L1050,381 L1080,383 L1110,385 L1140,388 L1170,389 L1200,391 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="959" cy="139" rx="194" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(24.8 959 139)"/><ellipse cx="959" cy="139" rx="268" ry="75" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(30.8 959 139)"/>
+  <circle cx="959" cy="139" r="76" fill="url(#cdecxzkpl)"/>
+  <circle cx="1169" cy="120" r="18" fill="#ffffff" opacity="0.74"/><circle cx="703" cy="125" r="12" fill="#ffffff" opacity="0.78"/><circle cx="975" cy="236" r="8" fill="#ffffff" opacity="0.86"/><circle cx="934" cy="24" r="15" fill="#ffffff" opacity="0.86"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/deep-learning/feature-visualization/" data-topic="deep-learning/feature-visualization">Saliency maps</a> are a first, useful attempt at attribution — but a single gradient at a single point can be noisy and can miss the bigger picture. <strong>Integrated gradients</strong> and <strong>Grad-CAM</strong> are two more deliberately-designed attribution methods, built specifically for deep networks, that address different weaknesses in that simple approach.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/feature-visualization/" data-topic="deep-learning/feature-visualization">Feature Visualization</a> and <a class="wikilink" href="/machine-learning/interpreting-models/" data-topic="machine-learning/interpreting-models">Interpreting Models</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;A plain saliency map is a start, but can attribution be made more reliable, or more human-readable?&quot; Yes, in two different directions: <strong>integrated gradients</strong> make attribution mathematically more principled (summing attributions recovers the exact change in output), and <strong>Grad-CAM</strong> makes it visually more readable by operating on coarser, more meaningful regions instead of individual pixels.</p>
+<h2 id="intuition-averaging-the-whole-journey-not-just-the-last-step">Intuition: averaging the whole journey, not just the last step</h2>
+<p>A single-point gradient (plain saliency) only reports the slope exactly where the input currently sits — if the function&#39;s slope changes sharply nearby, that one snapshot can be misleading. <strong>Integrated gradients</strong> instead walks a straight path from a neutral <strong>baseline</strong> input (often all zeros) to the actual input, averaging the gradient <em>along the whole journey</em>, not just at the destination. This single change buys a precise mathematical guarantee: the sum of all the attributions exactly equals the difference between the model&#39;s output at the real input and at the baseline — nothing is left unaccounted for.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">integrated gradients (1D, for intuition):
+
+IG(x) = (x − x₀) · ∫₀¹ f&#39;(x₀ + t(x − x₀)) dt        (x₀ = baseline, x = actual input)
+
+completeness property:  IG(x) = f(x) − f(x₀)          exactly, for the true integral
+</code></pre>
+<p>Grad-CAM instead weights a late convolutional layer&#39;s feature-map channels by how much each one&#39;s average gradient contributed to the prediction, then combines those weighted channels into one coarse heatmap over the image — coarser than per-pixel saliency, but usually far more interpretable to a human.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy &quot;model&quot; <code>f(x) = x²</code>, baseline <code>x₀ = 0</code>, actual input <code>x = 2</code>:</p>
+<pre><code class="language-text">exact integrated-gradients attribution:  (2 − 0) · ∫₀¹ f&#39;(2t) dt = (2 − 0) · ∫₀¹ 4t dt = 2 × 2 = 4
+
+check against completeness:  f(2) − f(0) = 4 − 0 = 4      ✓ exact match
+
+approximated with a Riemann sum of m steps (how it&#39;s actually computed for real models, where no closed form exists):
+m=1:   8.000     m=5:   4.800     m=10:  4.400     m=50:  4.080
+</code></pre>
+<p>The approximation converges toward the exact value of 4 as the number of steps grows — with only one step, the approximation is noticeably off (matching the &quot;single gradient snapshot&quot; weakness integrated gradients is built to fix); by fifty steps, it is already quite close.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="integrated-gradients" data-title="Walking the path from a baseline to the input"><p class="bench-fallback"><strong>Interactive bench: Walking the path from a baseline to the input.</strong> A toy function, a baseline and an input. See the integrated-gradients attribution approximated with more or fewer path steps, converging toward the exact change in output.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the number of path steps to 1 and compare the (poor) approximation to the exact value.</li>
+<li>Increase the number of steps and watch the approximation converge.</li>
+<li>Change the baseline and see how the attribution (and the exact completeness check) changes.</li>
+</ol>
+<p><strong>What you should notice:</strong> more steps along the path always get closer to the exact value — the same way a Riemann sum converges to a true integral — which is why real implementations use enough steps (often 20–300) to approximate the integral well.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Debugging a model&#39;s predictions</strong>, beyond just visualizing what it generally looks for, often uses exactly these attribution methods to explain one specific decision.</li>
+<li><strong>Grad-CAM-style heatmaps</strong> are common in medical imaging and other high-stakes vision applications, where a human needs to check <em>where</em> a model focused, not just what it predicted.</li>
+<li><strong>Regulatory and trust requirements</strong> in some domains increasingly expect some form of attribution or explanation alongside a model&#39;s prediction, not the prediction alone.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Choosing a baseline that isn&#39;t actually neutral for the task.</strong> An all-zero baseline may not represent &quot;no information&quot; for every kind of input, and a poorly chosen baseline can produce misleading attributions.</li>
+<li><strong>Using too few path steps in integrated gradients.</strong> As the worked example shows, very few steps can produce an attribution noticeably different from the true value.</li>
+<li><strong>Treating any attribution method&#39;s output as a complete causal explanation.</strong> These methods describe sensitivity and contribution under specific mathematical definitions, not necessarily the full story of &quot;why&quot; a model decided what it did.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What mathematical guarantee does integrated gradients provide that a plain saliency map does not?</summary>
+Completeness: the sum of all attributions exactly equals the difference between the model's output at the actual input and at the baseline.
+</details>
+
+<details><summary>2. In the worked example, why did using only 1 path step give such a poor approximation?</summary>
+A single step only evaluates the gradient at one point along the path (at t=1, the far end), missing how the gradient changes elsewhere along the journey from the baseline.
+</details>
+
+<details><summary>3. How does Grad-CAM differ from per-pixel saliency, in what it highlights?</summary>
+It operates on a late convolutional layer's coarser feature-map regions rather than individual pixels, typically producing a more human-readable heatmap at the cost of spatial precision.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Integrated gradients:</strong> an attribution method that averages the gradient along a path from a baseline input to the actual input.</li>
+<li><strong>Baseline:</strong> the neutral reference input (often all zeros) integrated gradients measures attribution relative to.</li>
+<li><strong>Completeness:</strong> the property that attributions sum exactly to the change in output between the input and the baseline.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/feature-visualization/" data-topic="deep-learning/feature-visualization">Feature Visualization</a> · <a class="wikilink" href="/machine-learning/interpreting-models/" data-topic="machine-learning/interpreting-models">Interpreting Models</a> · <a class="wikilink" href="/deep-learning/adversarial-examples-and-robustness/" data-topic="deep-learning/adversarial-examples-and-robustness">Adversarial Examples and Robustness</a> · <a class="wikilink" href="/deep-learning/ethics-and-safety-of-deep-systems/" data-topic="deep-learning/ethics-and-safety-of-deep-systems">Ethics and Safety of Deep Systems</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/interpretability-and-attribution">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/scaling-laws-and-model-capacity/"><small>Read next</small><b>Scaling Laws and Model Capacity</b><p>Double descent showed overparameterized models often generalise well.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/feature-visualization/"><b>Feature Visualization</b><p>A trained network is millions of numbers that produced a correct answer — but which numbers mattered, and what pattern was each hidden unit actually responding to?</p></a><a class="rc-card" href="/machine-learning/interpreting-models/"><b>Interpreting Models</b><p>When a model makes a decision that matters, people ask why. Some models can be read directly (a short tree, the weights of a linear model), but the most accurate ones cannot.</p></a><a class="rc-card" href="/deep-learning/adversarial-examples-and-robustness/"><b>Adversarial Examples and Robustness</b><p>Saliency measures how sensitive a prediction is to each input pixel — and that same sensitivity can be turned around and used against a model.</p></a><a class="rc-card" href="/deep-learning/ethics-and-safety-of-deep-systems/"><b>Ethics and Safety of Deep Systems</b><p>Where AI Goes Wrong and Fairness Metrics cover risks shared across machine learning generally.</p></a><a class="rc-card" href="/deep-learning/deep-learning-in-practice/"><b>Deep Learning in Practice</b><p>The last stretch of the road is judgment: picking an architecture, trusting it, knowing where it breaks, and seeing the whole planet in one project.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/adversarial-examples-and-robustness/">← Previous: Adversarial Examples and Robustness</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

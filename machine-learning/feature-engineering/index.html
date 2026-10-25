@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feature Engineering — AI Base</title>
+<meta name="description" content="Feature engineering means creating better inputs from the raw columns: ratios, squares, counts, differences, dates unpacked into weekday and month.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/feature-engineering/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Feature Engineering — AI Base">
+<meta property="og:description" content="Feature engineering means creating better inputs from the raw columns: ratios, squares, counts, differences, dates unpacked into weekday and month.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/feature-engineering/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Feature Engineering","item":"https://ai.saranmahadev.in/machine-learning/feature-engineering/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Feature Engineering","description":"Feature engineering means creating better inputs from the raw columns: ratios, squares, counts, differences, dates unpacked into weekday and month.","url":"https://ai.saranmahadev.in/machine-learning/feature-engineering/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What feature separates a bullseye class from a surrounding ring?","acceptedAnswer":{"@type":"Answer","text":"The squared distance from the centre, x² + y²."}},{"@type":"Question","name":"Why is a ratio such as debt ÷ income useful?","acceptedAnswer":{"@type":"Answer","text":"It captures a relationship that neither number shows alone."}},{"@type":"Question","name":"How do you check a new feature is really helping?","acceptedAnswer":{"@type":"Answer","text":"Compare validation or held-out performance with and without it."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Data and Features</p>
+        <h1 class="doc-title">Feature Engineering</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c7goq5qbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c7goq5qpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c7goq5qbg)"/>
+  <circle cx="581" cy="3" r="176" fill="#8a6b5c" opacity="0.60"/><circle cx="322" cy="120" r="224" fill="#8a6b5c" opacity="0.28"/><circle cx="220" cy="219" r="108" fill="#8a6b5c" opacity="0.45"/><circle cx="860" cy="308" r="178" fill="#fff2de" opacity="0.31"/><circle cx="535" cy="261" r="212" fill="#ffd08d" opacity="0.58"/><circle cx="1015" cy="18" r="155" fill="#ffd99f" opacity="0.34"/><circle cx="1034" cy="27" r="163" fill="#ffd99f" opacity="0.50"/>
+  <path d="M0,420 L0,336 L30,341 L60,345 L90,347 L120,349 L150,350 L180,349 L210,347 L240,344 L270,340 L300,336 L330,331 L360,325 L390,320 L420,316 L450,312 L480,309 L510,307 L540,306 L570,306 L600,307 L630,310 L660,314 L690,318 L720,323 L750,328 L780,333 L810,338 L840,342 L870,346 L900,348 L930,349 L960,349 L990,348 L1020,346 L1050,343 L1080,339 L1110,334 L1140,329 L1170,324 L1200,319 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,388 L30,390 L60,391 L90,393 L120,393 L150,394 L180,394 L210,394 L240,393 L270,392 L300,390 L330,389 L360,387 L390,384 L420,382 L450,380 L480,377 L510,375 L540,372 L570,370 L600,368 L630,366 L660,365 L690,363 L720,363 L750,362 L780,362 L810,362 L840,363 L870,364 L900,366 L930,367 L960,369 L990,372 L1020,374 L1050,376 L1080,379 L1110,381 L1140,384 L1170,386 L1200,388 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="777" cy="261" rx="215" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-18.0 777 261)"/><ellipse cx="777" cy="261" rx="297" ry="83" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-12.0 777 261)"/>
+  <circle cx="777" cy="261" r="84" fill="url(#c7goq5qpl)"/>
+  <circle cx="463" cy="272" r="15" fill="#ffffff" opacity="0.68"/><circle cx="510" cy="321" r="15" fill="#ffffff" opacity="0.82"/><circle cx="1026" cy="227" r="7" fill="#ffffff" opacity="0.73"/><circle cx="612" cy="358" r="13" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Feature engineering</strong> means creating better inputs from the raw columns: ratios, squares, counts, differences, dates unpacked into weekday and month. A simple model with well-chosen features often beats a complex one on raw data, because it lets a straight line do a curved problem&#39;s work.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/encoding-categories/" data-topic="machine-learning/encoding-categories">Encoding Categories</a> and <a class="wikilink" href="/math/functions-ai-loves/" data-topic="math/functions-ai-loves">Functions AI Loves</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;The model can&#39;t find the pattern. Can I make the pattern easier to see?&quot; Often the answer is to hand the model a quantity that turns a hard boundary into an easy one.</p>
+<h2 id="intuition-change-the-coordinates">Intuition: change the coordinates</h2>
+<p>Imagine a target with a bullseye class in the middle and a ring class around it. No straight line separates them in the <code>(x, y)</code> plane. But look at a new feature: the squared distance from the centre, <code>r² = x² + y²</code>. Now the bullseye points all have small <code>r²</code> and the ring points large <code>r²</code>, and a single cut-off separates them perfectly. The problem did not change; the way it is described did.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">interaction     x·y                 effect of one feature depends on another
+polynomial      x², x³              curves from a linear model
+ratio           debt / income       often more meaningful than either alone
+date parts      weekday, month, hour, &quot;days since signup&quot;
+aggregate       a user&#39;s average purchase in the last 30 days
+</code></pre>
+<p>Good features encode domain knowledge. Deep networks learn features automatically from raw data, but for tabular problems handmade features remain powerful.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two points from the ring problem: inner class at <code>(0.4, 0)</code>, outer class at <code>(1.1, 0)</code>.</p>
+<pre><code class="language-text">r² of the inner point = 0.4² + 0² = 0.16
+r² of the outer point = 1.1² + 0² = 1.21        →  cut at r² ≈ 0.7 separates them
+</code></pre>
+<p>On 100 training points the bench&#39;s logistic regression reaches:</p>
+<pre><code class="language-text">features x, y          60% on training points,  47% on held-out points   (no better than guessing)
+features x, y, r²     100% on training points, 100% on held-out points
+</code></pre>
+<p>One extra column moved a linear classifier from useless to perfect. The held-out score confirms the gain is real, not memorisation.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="feature-lab" data-title="Feature lab"><p class="bench-fallback"><strong>Interactive bench: Feature lab.</strong> Two classes form a core and a ring; tick which features a logistic regression may use, including squares and the squared distance from the centre, and see the learned regions and the training and held-out accuracy.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With only x and y, read the accuracy.</li>
+<li>Tick x² and y² and watch the regions change.</li>
+<li>Untick everything except x² + y².</li>
+<li>Try adding x·y and see whether it helps.</li>
+</ol>
+<p><strong>What you should notice:</strong> a straight boundary in the new feature space is a curved boundary in the original one, and the right single feature does the job of many.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Tabular competitions and industry models</strong> are often won on features.</li>
+<li><strong>Kernel methods</strong> (see <a class="wikilink" href="/machine-learning/kernel-methods/" data-topic="machine-learning/kernel-methods">Kernel Methods</a>) and <strong>neural networks</strong> build such features implicitly.</li>
+<li><strong>Time series:</strong> lags, rolling averages and calendar effects.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Leaky features,</strong> computed using future information.</li>
+<li><strong>Feature explosion:</strong> too many features for too little data invites overfitting.</li>
+<li><strong>Features that cannot be computed at prediction time.</strong></li>
+<li><strong>Unscaled new features</strong> (squares get large; see <a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a>).</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What feature separates a bullseye class from a surrounding ring?</summary>
+The squared distance from the centre, x² + y².
+</details>
+
+<details><summary>2. Why is a ratio such as debt ÷ income useful?</summary>
+It captures a relationship that neither number shows alone.
+</details>
+
+<details><summary>3. How do you check a new feature is really helping?</summary>
+Compare validation or held-out performance with and without it.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Feature engineering:</strong> creating informative inputs from raw data.</li>
+<li><strong>Interaction feature:</strong> a product of two features.</li>
+<li><strong>Polynomial feature:</strong> a power of a feature.</li>
+<li><strong>Feature space:</strong> the space of all feature values.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/encoding-categories/" data-topic="machine-learning/encoding-categories">Encoding Categories</a> · <a class="wikilink" href="/machine-learning/linear-regression-in-practice/" data-topic="machine-learning/linear-regression-in-practice">Linear Regression in Practice</a> · <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a> · <a class="wikilink" href="/machine-learning/kernel-methods/" data-topic="machine-learning/kernel-methods">Kernel Methods</a> · <a class="wikilink" href="/machine-learning/the-curse-of-dimensionality/" data-topic="machine-learning/the-curse-of-dimensionality">The Curse of Dimensionality</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/feature-engineering">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/the-curse-of-dimensionality/"><small>Read next</small><b>The Curse of Dimensionality</b><p>Every feature you add is a new dimension, and high-dimensional space behaves strangely: it is enormous, data points end up far from everything, and &quot;nearest&quot; stops meaning much.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/encoding-categories/"><b>Encoding Categories</b><p>Models do arithmetic, so categories such as &quot;Paris&quot; or &quot;XL&quot; must become numbers. The way you do it decides what the model thinks about them.</p></a><a class="rc-card" href="/math/functions-ai-loves/"><b>Functions AI Loves</b><p>A few specific functions turn up in almost every neural network: the sigmoid, tanh, ReLU, its leaky variant and softplus.</p></a><a class="rc-card" href="/machine-learning/kernel-methods/"><b>Kernel Methods</b><p>A straight line cannot separate every problem, but a straight line in a richer space can.</p></a><a class="rc-card" href="/machine-learning/scaling-and-normalisation/"><b>Scaling and Normalisation</b><p>Features measured in different units can have wildly different sizes: age in tens, income in tens of thousands.</p></a><a class="rc-card" href="/machine-learning/linear-regression-in-practice/"><b>Linear Regression in Practice</b><p>Linear regression predicts a number as a weighted sum of features plus a constant, with the weights chosen to minimise squared error.</p></a><a class="rc-card" href="/machine-learning/logistic-regression-as-a-classifier/"><b>Logistic Regression as a Classifier</b><p>Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/encoding-categories/">← Previous: Encoding Categories</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

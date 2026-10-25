@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Debugging a Training Run — AI Base</title>
+<meta name="description" content="A training run that looks &quot;broken&quot; is usually not a mystery — most failures leave a recognisable signature in the loss curve or the gradient statistics, and reading that signature correctly points…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/debugging-a-training-run/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Debugging a Training Run — AI Base">
+<meta property="og:description" content="A training run that looks &quot;broken&quot; is usually not a mystery — most failures leave a recognisable signature in the loss curve or the gradient statistics, and reading that signature correctly points…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/debugging-a-training-run/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Debugging a Training Run","item":"https://ai.saranmahadev.in/deep-learning/debugging-a-training-run/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Debugging a Training Run","description":"A training run that looks \"broken\" is usually not a mystery — most failures leave a recognisable signature in the loss curve or the gradient statistics, and reading that signature correctly points…","url":"https://ai.saranmahadev.in/deep-learning/debugging-a-training-run/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are two possible causes of a training loss that never moves at all?","acceptedAnswer":{"@type":"Answer","text":"A learning rate far too small to make visible progress, or a bug preventing gradients from actually flowing to the weights being updated."}},{"@type":"Question","name":"In the worked example, at which step does the gradient norm first show a clear warning sign, and what tool exists specifically to handle it?","acceptedAnswer":{"@type":"Answer","text":"Step 4 (norm 15.3, an order of magnitude larger than the previous steps); gradient clipping exists specifically to cap spikes like this before they cascade."}},{"@type":"Question","name":"What does a suspiciously perfect training loss, appearing immediately, often indicate?","acceptedAnswer":{"@type":"Answer","text":"A data leakage bug — the model has access, somewhere in the pipeline, to information it shouldn't have, such as the true label leaking into the input features."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Training at Scale</p>
+        <h1 class="doc-title">Debugging a Training Run</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1pa9ts3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1pa9ts3pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1pa9ts3bg)"/>
+  <circle cx="556" cy="380" r="175" fill="#ffb89d" opacity="0.56"/><circle cx="1075" cy="195" r="206" fill="#ffb6b6" opacity="0.61"/><circle cx="269" cy="211" r="130" fill="#ffb6b6" opacity="0.59"/><circle cx="993" cy="253" r="225" fill="#ffb89d" opacity="0.31"/><circle cx="422" cy="40" r="171" fill="#ffb89d" opacity="0.35"/>
+  <path d="M0,420 L0,318 L30,322 L60,325 L90,328 L120,332 L150,335 L180,338 L210,341 L240,344 L270,346 L300,348 L330,349 L360,349 L390,350 L420,349 L450,348 L480,347 L510,345 L540,343 L570,340 L600,337 L630,334 L660,330 L690,327 L720,323 L750,320 L780,317 L810,314 L840,312 L870,309 L900,308 L930,306 L960,306 L990,306 L1020,306 L1050,307 L1080,308 L1110,310 L1140,313 L1170,315 L1200,318 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,393 L120,392 L150,389 L180,386 L210,383 L240,379 L270,375 L300,372 L330,369 L360,366 L390,364 L420,362 L450,362 L480,362 L510,364 L540,366 L570,369 L600,372 L630,376 L660,379 L690,383 L720,386 L750,389 L780,392 L810,393 L840,394 L870,394 L900,393 L930,391 L960,388 L990,385 L1020,382 L1050,378 L1080,374 L1110,371 L1140,368 L1170,365 L1200,363 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="764" cy="274" rx="220" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.1 764 274)"/><ellipse cx="764" cy="274" rx="304" ry="85" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.1 764 274)"/>
+  <circle cx="764" cy="274" r="86" fill="url(#c1pa9ts3pl)"/>
+  <circle cx="710" cy="182" r="11" fill="#ffffff" opacity="0.80"/><circle cx="723" cy="182" r="19" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A training run that looks &quot;broken&quot; is usually not a mystery — most failures leave a recognisable signature in the loss curve or the gradient statistics, and reading that signature correctly points straight at the likely cause.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> and <a class="wikilink" href="/deep-learning/learning-rate-schedules-and-warmup/" data-topic="deep-learning/learning-rate-schedules-and-warmup">Learning Rate Schedules and Warmup</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;The loss isn&#39;t behaving — where do I even start looking?&quot; Start with the shape of the loss curve (and the gradient norm, if available) — a handful of recognisable patterns cover most real training failures.</p>
+<h2 id="intuition-a-doctor-reading-symptoms-not-guessing-blindly">Intuition: a doctor reading symptoms, not guessing blindly</h2>
+<p>A flat loss that never moves, a loss that suddenly shoots to infinity, a loss that looks great on training data but terrible on validation data — each of these is a distinct &quot;symptom&quot; with a short list of usual causes, the same way a doctor narrows down a diagnosis from a specific set of symptoms rather than guessing at random.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">symptom                          likely cause(s)
+loss never moves                 learning rate far too small; a bug stopping gradients from flowing;
+                                  bad initialization (see Weight Initialization)
+loss explodes to NaN/Infinity    learning rate far too large; exploding gradients (see
+                                  Vanishing and Exploding Gradients); missing gradient clipping
+train loss great, val loss bad   overfitting; see Overfitting and Double Descent
+train loss suspiciously perfect, immediately   data leakage: the model can &quot;see&quot; the answer
+                                  somewhere it shouldn&#39;t (see Pipelines and Leakage)
+loss oscillates noisily          learning rate too high; batch size too small (see
+                                  Batch Size and Training Dynamics)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Gradient norms logged at six consecutive training steps:</p>
+<pre><code class="language-text">step        1     2     3      4       5       6
+grad norm  1.2   1.5   1.8   15.3    890.2    NaN
+</code></pre>
+<p>Steps 1–3 look healthy (small, slowly changing norms). Step 4&#39;s jump to 15.3 (an order of magnitude larger) is the first clear warning sign — exactly the kind of spike <a class="wikilink" href="/deep-learning/gradient-clipping/" data-topic="deep-learning/gradient-clipping">Gradient Clipping</a> exists to cap. By step 5 the norm has exploded further (890.2), and by step 6 it has become <code>NaN</code> — a training run that has, numerically, already failed. Catching this at step 4, before it cascades, is exactly what gradient-norm monitoring and clipping are for.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="loss-symptoms" data-title="Reading a loss curve's symptoms"><p class="bench-fallback"><strong>Interactive bench: Reading a loss curve's symptoms.</strong> Pick a common failure pattern (flat loss, exploding loss, overfitting gap, noisy oscillation) and see an example curve alongside the likely causes to check first.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through each failure pattern and compare its curve shape to the others.</li>
+<li>For &quot;exploding loss,&quot; find the step the gradient norm first crosses a danger threshold.</li>
+<li>For &quot;overfitting gap,&quot; compare how early the train and validation curves start to diverge.</li>
+</ol>
+<p><strong>What you should notice:</strong> each failure pattern has a visually distinct shape — flat, diverging-to-infinity, train-vs-val-gap, or noisy-but-not-diverging — and that shape alone narrows down the likely cause well before any deeper investigation.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Monitoring gradient norms (not just the loss) during training</strong> is standard practice precisely because it can catch an impending explosion before the loss itself turns to <code>NaN</code>.</li>
+<li><strong>A suspiciously perfect early training loss is one of the most common signs of a labelling or data-leakage bug</strong> (see <a class="wikilink" href="/machine-learning/pipelines-and-leakage/" data-topic="machine-learning/pipelines-and-leakage">Pipelines and Leakage</a>), worth checking before assuming the model is simply very good.</li>
+<li><strong>Logging and visualization tooling</strong> (TensorBoard and similar) exist largely to make exactly these symptom patterns easy to spot quickly during a long training run.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a flat loss always means &quot;wrong learning rate.&quot;</strong> It is the most common cause, but a bug that silently stops gradients from flowing to some part of the network produces the identical symptom.</li>
+<li><strong>Not checking validation performance until training is &quot;done.&quot;</strong> Catching an overfitting gap early can save a great deal of wasted training time.</li>
+<li><strong>Treating a single <code>NaN</code> step as unrecoverable without investigation.</strong> Sometimes resuming from the last good <a class="wikilink" href="/deep-learning/checkpointing-and-reproducibility/" data-topic="deep-learning/checkpointing-and-reproducibility">checkpoint</a> with a lower learning rate (or with gradient clipping newly enabled) is enough to continue successfully.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are two possible causes of a training loss that never moves at all?</summary>
+A learning rate far too small to make visible progress, or a bug preventing gradients from actually flowing to the weights being updated.
+</details>
+
+<details><summary>2. In the worked example, at which step does the gradient norm first show a clear warning sign, and what tool exists specifically to handle it?</summary>
+Step 4 (norm 15.3, an order of magnitude larger than the previous steps); gradient clipping exists specifically to cap spikes like this before they cascade.
+</details>
+
+<details><summary>3. What does a suspiciously perfect training loss, appearing immediately, often indicate?</summary>
+A data leakage bug — the model has access, somewhere in the pipeline, to information it shouldn't have, such as the true label leaking into the input features.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Gradient norm:</strong> the size (magnitude) of the overall gradient vector at a given training step, often monitored to catch instability early.</li>
+<li><strong>Data leakage:</strong> information about the target leaking into the training inputs in a way that inflates apparent performance unrealistically.</li>
+<li><strong>Loss curve:</strong> the plot of training (and validation) loss over time, the first and most informative diagnostic tool for a training run.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> · <a class="wikilink" href="/deep-learning/learning-rate-schedules-and-warmup/" data-topic="deep-learning/learning-rate-schedules-and-warmup">Learning Rate Schedules and Warmup</a> · <a class="wikilink" href="/deep-learning/gradient-clipping/" data-topic="deep-learning/gradient-clipping">Gradient Clipping</a> · <a class="wikilink" href="/deep-learning/checkpointing-and-reproducibility/" data-topic="deep-learning/checkpointing-and-reproducibility">Checkpointing and Reproducibility</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/debugging-a-training-run">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/checkpointing-and-reproducibility/"><small>Read next</small><b>Checkpointing and Reproducibility</b><p>A training run that takes days can fail for all kinds of reasons that have nothing to do with the model — a machine reboots, a job gets pre-empted, a bug crashes the process.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/learning-rate-schedules-and-warmup/"><b>Learning Rate Schedules and Warmup</b><p>A fixed learning rate is rarely the best choice for an entire training run: a step size that is safe once the network has settled down can be unstable right at the start, and a step size that…</p></a><a class="rc-card" href="/deep-learning/gradient-clipping/"><b>Gradient Clipping</b><p>Even with good initialization, one unlucky batch can produce a gradient with an enormous spike in one direction — enough to blow up the weights in a single step.</p></a><a class="rc-card" href="/machine-learning/pipelines-and-leakage/"><b>Pipelines and Leakage</b><p>Leakage is when information the model should not have sneaks into training, making test scores look wonderful and real performance poor.</p></a><a class="rc-card" href="/deep-learning/checkpointing-and-reproducibility/"><b>Checkpointing and Reproducibility</b><p>A training run that takes days can fail for all kinds of reasons that have nothing to do with the model — a machine reboots, a job gets pre-empted, a bug crashes the process.</p></a><a class="rc-card" href="/deep-learning/training-at-scale/"><b>Training at Scale</b><p>Training a large network is an engineering problem as much as a mathematical one: it runs on specific hardware, for hours or weeks, and can silently fail in ways a small model never would.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/hyperparameter-tuning-for-deep-networks/">← Previous: Hyperparameter Tuning for Deep Networks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Causal Language Modeling as a Pretraining Objective — AI Base</title>
+<meta name="description" content="With a curated corpus in hand, there&#39;s still a question of what, exactly, a model is being trained to do with it.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/causal-language-modeling-as-a-pretraining-objective/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Causal Language Modeling as a Pretraining Objective — AI Base">
+<meta property="og:description" content="With a curated corpus in hand, there&#39;s still a question of what, exactly, a model is being trained to do with it.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/causal-language-modeling-as-a-pretraining-objective/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Causal Language Modeling as a Pretraining Objective","item":"https://ai.saranmahadev.in/llms/causal-language-modeling-as-a-pretraining-objective/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Causal Language Modeling as a Pretraining Objective","description":"With a curated corpus in hand, there's still a question of what, exactly, a model is being trained to do with it.","url":"https://ai.saranmahadev.in/llms/causal-language-modeling-as-a-pretraining-objective/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a model's loss based on at each position, under causal language modeling?","acceptedAnswer":{"@type":"Answer","text":"The negative log-probability the model assigned to the single token that actually came next, given everything true that preceded it."}},{"@type":"Question","name":"In the worked example, why did \"down\" incur the highest loss?","acceptedAnswer":{"@type":"Answer","text":"The model's assigned probability to \"down\" being the true next token was only 0.25 — barely above chance among the four options — so its negative log-probability (loss) was correspondingly the largest."}},{"@type":"Question","name":"What's the key difference between how a sequence is processed during training (teacher forcing) versus during generation?","acceptedAnswer":{"@type":"Answer","text":"During training, the model always conditions on the true preceding tokens regardless of what it itself would have predicted; during generation, there's no ground truth, so the model conditions on its own previously generated tokens."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Pretraining Data and Objectives</p>
+        <h1 class="doc-title">Causal Language Modeling as a Pretraining Objective</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ctogqrwbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="ctogqrwpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ctogqrwbg)"/>
+  <circle cx="907" cy="15" r="215" fill="#ffc38f" opacity="0.42"/><circle cx="342" cy="65" r="168" fill="#ffc38f" opacity="0.27"/><circle cx="1165" cy="46" r="171" fill="#ffc38f" opacity="0.50"/><circle cx="710" cy="224" r="70" fill="#8a5f5e" opacity="0.31"/><circle cx="313" cy="124" r="74" fill="#ffc38f" opacity="0.47"/><circle cx="1091" cy="353" r="128" fill="#ffc38f" opacity="0.49"/>
+  <path d="M0,420 L0,306 L30,306 L60,306 L90,308 L120,311 L150,314 L180,319 L210,324 L240,329 L270,334 L300,339 L330,343 L360,346 L390,348 L420,350 L450,349 L480,348 L510,346 L540,342 L570,338 L600,333 L630,328 L660,323 L690,318 L720,313 L750,310 L780,307 L810,306 L840,306 L870,307 L900,309 L930,312 L960,316 L990,321 L1020,326 L1050,331 L1080,336 L1110,340 L1140,344 L1170,347 L1200,349 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,384 L60,386 L90,388 L120,390 L150,391 L180,393 L210,393 L240,394 L270,394 L300,394 L330,393 L360,392 L390,390 L420,389 L450,387 L480,385 L510,382 L540,380 L570,377 L600,375 L630,372 L660,370 L690,368 L720,366 L750,365 L780,363 L810,363 L840,362 L870,362 L900,362 L930,363 L960,364 L990,366 L1020,367 L1050,369 L1080,371 L1110,374 L1140,376 L1170,379 L1200,381 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="887" cy="191" rx="251" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.1 887 191)"/><ellipse cx="887" cy="191" rx="347" ry="97" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.9 887 191)"/>
+  <circle cx="887" cy="191" r="98" fill="url(#ctogqrwpl)"/>
+  <circle cx="1052" cy="112" r="16" fill="#ffffff" opacity="0.83"/><circle cx="739" cy="91" r="10" fill="#ffffff" opacity="0.69"/><circle cx="737" cy="324" r="10" fill="#ffffff" opacity="0.79"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>With a curated corpus in hand, there&#39;s still a question of what, exactly, a model is being trained to <em>do</em> with it. For almost every modern LLM, the answer is strikingly simple: predict the next token, over and over, across trillions of examples.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/pretraining-corpora-and-data-curation/" data-topic="llms/pretraining-corpora-and-data-curation">Pretraining Corpora and Data Curation</a>, <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What is a language model actually optimizing during pretraining?&quot; <strong>Causal language modeling</strong> trains a model to predict each token in a sequence from only the tokens before it — never the tokens after, which is exactly what the <a class="wikilink" href="/transformers/attention-masks-padding-and-causal-masking/" data-topic="transformers/attention-masks-padding-and-causal-masking">causal mask</a> enforces architecturally. The loss, averaged over every position in every training sequence, is simply the negative log-probability the model assigned to the token that actually came next — this is <strong>teacher forcing</strong>: the model is always shown the <em>true</em> preceding tokens, never its own previous guesses, while learning.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine being handed a sentence one word at a time, and before seeing each new word, you have to guess it. After you guess, you&#39;re told the real word (not your guess) and move on to guessing the next one. Across millions of sentences, getting better at this one game — &quot;guess the very next word, given everything true that came before&quot; — is the entire training signal; nothing more exotic is going on beneath the surface of a pretrained LLM.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">for a sequence of tokens t₁, ..., t_n:
+  loss = -(1/n) · Σᵢ log P(tᵢ | t₁, ..., tᵢ₋₁)
+
+teacher forcing: the model&#39;s input at every position is always the TRUE
+  prefix t₁...tᵢ₋₁, regardless of what the model itself would have predicted
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy 4-token sequence, scored position by position against the model&#39;s predicted probability for the actual next token:</p>
+<pre><code class="language-text">&quot;the&quot;:  P(true) = 0.657   loss = 0.420
+&quot;cat&quot;:  P(true) = 0.622   loss = 0.475
+&quot;sat&quot;:  P(true) = 0.780   loss = 0.248
+&quot;down&quot;: P(true) = 0.250   loss = 1.386
+
+mean loss across the sequence: 0.6324
+</code></pre>
+<p>The model was most confident (and paid the smallest loss) on &quot;sat,&quot; and least confident on &quot;down&quot; (where its probability of 0.25 matches pure chance among four options) — the mean loss of 0.6324 is simply the average of these four per-position penalties, and is exactly what gradient descent is minimizing during pretraining.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="clm-loss-teacher-forcing" data-title="Scoring the token that actually comes next"><p class="bench-fallback"><strong>Interactive bench: Scoring the token that actually comes next.</strong> Step through a sequence and watch the loss computed at each position, under teacher forcing.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through all four positions and watch the loss at each one.</li>
+<li>Compare the position with the highest assigned probability against the one with the lowest.</li>
+<li>Check that the running mean matches the overall average once all positions are shown.</li>
+</ol>
+<p><strong>What you should notice:</strong> every position&#39;s loss depends only on how much probability the model assigned to the one token that actually happened — not on how plausible any of the <em>other</em> tokens the model considered might have been.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This single objective, scaled up, is responsible for essentially every capability a pretrained LLM has</strong> before any instruction tuning or alignment — grammar, facts, reasoning patterns, and style are all learned purely as side effects of getting better at next-token prediction.</li>
+<li><strong>Teacher forcing is why training and generation look different</strong>: during training, every position sees the true prefix; during generation (as in <a class="wikilink" href="/generative-ai/greedy-and-beam-search-decoding/" data-topic="generative-ai/greedy-and-beam-search-decoding">Greedy and Beam Search Decoding</a>), a model has only its own previous outputs to condition on, which is where compounding errors can creep in.</li>
+<li><strong><a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">the same objective</a> underlies both encoder-decoder and decoder-only models&#39; pretraining</strong>, though decoder-only models apply it to the entire sequence rather than splitting it into separately-handled source and target halves.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming the loss cares about the full probability distribution.</strong> It only looks at the probability assigned to the single token that actually came next — a model that was &quot;close&quot; (assigning decent probability to a near-synonym) but didn&#39;t put enough probability on the exact true token still pays a real loss.</li>
+<li><strong>Confusing teacher forcing with how generation actually works.</strong> Training always conditions on the ground truth; generation has no ground truth to condition on beyond what the model itself already produced.</li>
+<li><strong>Thinking causal language modeling is a special, LLM-specific invention.</strong> It&#39;s the direct continuation of the same cross-entropy loss used throughout this road&#39;s earlier planets — the only LLM-specific part is doing it at a vastly larger scale.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is a model's loss based on at each position, under causal language modeling?</summary>
+The negative log-probability the model assigned to the single token that actually came next, given everything true that preceded it.
+</details>
+
+<details><summary>2. In the worked example, why did "down" incur the highest loss?</summary>
+The model's assigned probability to "down" being the true next token was only 0.25 — barely above chance among the four options — so its negative log-probability (loss) was correspondingly the largest.
+</details>
+
+<details><summary>3. What's the key difference between how a sequence is processed during training (teacher forcing) versus during generation?</summary>
+During training, the model always conditions on the true preceding tokens regardless of what it itself would have predicted; during generation, there's no ground truth, so the model conditions on its own previously generated tokens.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Causal language modeling:</strong> training a model to predict each token from only the tokens before it.</li>
+<li><strong>Teacher forcing:</strong> training on the true preceding tokens rather than the model&#39;s own previous predictions.</li>
+<li><strong>Cross-entropy loss:</strong> the negative log-probability assigned to the correct outcome, averaged across positions.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/pretraining-corpora-and-data-curation/" data-topic="llms/pretraining-corpora-and-data-curation">Pretraining Corpora and Data Curation</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a> · <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">Decoder-Only Architectures</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/causal-language-modeling-as-a-pretraining-objective">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/data-deduplication-and-quality-filtering/"><small>Read next</small><b>Data Deduplication and Quality Filtering</b><p>A web-scale crawl doesn&#39;t just contain low-quality text — it contains the same text, copied across mirrors, syndicated articles, and boilerplate, over and over.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/pretraining-corpora-and-data-curation/"><b>Pretraining Corpora and Data Curation</b><p>Before any training happens, someone has to decide what text a model is even allowed to learn from.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/transformers/attention-masks-padding-and-causal-masking/"><b>Attention Masks: Padding and Causal Masking</b><p>Plain attention lets every position look at every other position.</p></a><a class="rc-card" href="/generative-ai/greedy-and-beam-search-decoding/"><b>Greedy and Beam Search Decoding</b><p>A trained language model hands back a probability distribution over the next token at every step, not a finished sentence — something has to decide, step after step, which token actually gets…</p></a><a class="rc-card" href="/transformers/decoder-only-architectures/"><b>Decoder-Only Architectures</b><p>The previous topic&#39;s bidirectional attention works because the whole input is available at once.</p></a><a class="rc-card" href="/llms/pretraining-data-and-objectives/"><b>Pretraining Data and Objectives</b><p>Before any alignment, reasoning, or instruction-following, an LLM starts as a plain next-token predictor, trained on a specific objective over a specific (and heavily engineered) pile of text.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/pretraining-corpora-and-data-curation/">← Previous: Pretraining Corpora and Data Curation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Momentum and Adam — AI Base</title>
+<meta name="description" content="Momentum lets a walker keep some of its previous velocity, so it speeds up along steady slopes and smooths out zig-zags.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/momentum-and-adam/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Momentum and Adam — AI Base">
+<meta property="og:description" content="Momentum lets a walker keep some of its previous velocity, so it speeds up along steady slopes and smooths out zig-zags.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/momentum-and-adam/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Momentum and Adam","item":"https://ai.saranmahadev.in/math/momentum-and-adam/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Momentum and Adam","description":"Momentum lets a walker keep some of its previous velocity, so it speeds up along steady slopes and smooths out zig-zags.","url":"https://ai.saranmahadev.in/math/momentum-and-adam/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"With β = 0.9 and constant gradient 2, what velocity does momentum approach?","acceptedAnswer":{"@type":"Answer","text":"2 / (1 − 0.9) = 20."}},{"@type":"Question","name":"What does Adam divide the step by?","acceptedAnswer":{"@type":"Answer","text":"√v̂, the typical size of recent gradients."}},{"@type":"Question","name":"What does momentum do to alternating +1, −1 gradients?","acceptedAnswer":{"@type":"Answer","text":"Largely cancels them, so the velocity stays small."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Optimization</p>
+        <h1 class="doc-title">Momentum and Adam</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1ng0f11bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1ng0f11pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1ng0f11bg)"/>
+  <circle cx="709" cy="142" r="66" fill="#ddbecb" opacity="0.54"/><circle cx="782" cy="302" r="105" fill="#cebff9" opacity="0.27"/><circle cx="776" cy="142" r="197" fill="#cebff9" opacity="0.59"/><circle cx="408" cy="125" r="174" fill="#cebff9" opacity="0.37"/><circle cx="203" cy="270" r="120" fill="#cebff9" opacity="0.50"/><circle cx="152" cy="161" r="159" fill="#cebff9" opacity="0.45"/><circle cx="179" cy="363" r="186" fill="#68599a" opacity="0.33"/>
+  <path d="M0,420 L0,306 L30,307 L60,309 L90,313 L120,317 L150,322 L180,327 L210,332 L240,337 L270,341 L300,345 L330,348 L360,349 L390,350 L420,349 L450,347 L480,344 L510,340 L540,335 L570,330 L600,325 L630,320 L660,315 L690,311 L720,308 L750,306 L780,306 L810,306 L840,308 L870,310 L900,314 L930,319 L960,323 L990,329 L1020,334 L1050,338 L1080,343 L1110,346 L1140,348 L1170,349 L1200,349 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,385 L30,381 L60,378 L90,374 L120,370 L150,367 L180,365 L210,363 L240,362 L270,362 L300,363 L330,365 L360,367 L390,370 L420,373 L450,377 L480,381 L510,384 L540,388 L570,390 L600,392 L630,394 L660,394 L690,393 L720,392 L750,390 L780,387 L810,384 L840,380 L870,376 L900,373 L930,369 L960,366 L990,364 L1020,363 L1050,362 L1080,362 L1110,363 L1140,365 L1170,368 L1200,371 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="672" cy="280" rx="227" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-11.7 672 280)"/><ellipse cx="672" cy="280" rx="314" ry="88" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-5.7 672 280)"/>
+  <circle cx="672" cy="280" r="89" fill="url(#c1ng0f11pl)"/>
+  <circle cx="574" cy="198" r="19" fill="#ffffff" opacity="0.76"/><circle cx="439" cy="312" r="18" fill="#ffffff" opacity="0.67"/><circle cx="502" cy="196" r="7" fill="#ffffff" opacity="0.81"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Momentum</strong> lets a walker keep some of its previous velocity, so it speeds up along steady slopes and smooths out zig-zags. <strong>Adam</strong> goes further: it also gives each parameter its own step size, based on how large its recent gradients have been. Together they are why modern networks train faster and more reliably than with plain gradient descent.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a>, <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a> and <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I move faster along shallow directions without bouncing across steep ones?&quot; In a long narrow valley, plain gradient descent zig-zags across the walls and creeps along the floor.</p>
+<h2 id="intuition-a-heavy-ball">Intuition: a heavy ball</h2>
+<p>Momentum treats the parameters as a heavy ball rolling downhill. It builds up speed in the direction it keeps going, and side-to-side pushes that alternate in sign cancel out.</p>
+<pre><code class="language-text">velocity:   v ← β · v + g                 β ≈ 0.9 keeps 90% of the old velocity
+update:     w ← w − η · v
+</code></pre>
+<p>If the gradient stays <code>g = 1</code> step after step, the velocity climbs <code>1, 1.9, 2.71, 3.44, …</code> towards <code>1 / (1 − β) = 10</code>: ten times faster than plain descent. If it alternates <code>+1, −1, +1, …</code> the velocity stays small.</p>
+<h2 id="adam-momentum-plus-per-parameter-step-sizes">Adam: momentum plus per-parameter step sizes</h2>
+<p>Adam tracks two running averages of the gradient <code>g</code>: its mean <code>m</code> (the direction) and its mean square <code>v</code> (the typical size), with bias correction for the first steps.</p>
+<pre><code class="language-text">m ← β₁ m + (1 − β₁) g          v ← β₂ v + (1 − β₂) g²        (β₁ ≈ 0.9, β₂ ≈ 0.999)
+m̂ = m / (1 − β₁ᵗ)              v̂ = v / (1 − β₂ᵗ)
+w ← w − η · m̂ / (√v̂ + ε)                                     ε ≈ 10⁻⁸ avoids dividing by zero
+</code></pre>
+<p>Dividing by <code>√v̂</code> normalises each parameter&#39;s step: parameters with big, noisy gradients take smaller steps, and those with small steady gradients take relatively larger ones.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>First Adam step with <code>g = 0.5</code>, <code>β₁ = 0.9</code>, <code>β₂ = 0.999</code>, starting from <code>m = v = 0</code>:</p>
+<pre><code class="language-text">m = 0.1 · 0.5 = 0.05          v = 0.001 · 0.25 = 0.00025
+m̂ = 0.05 / 0.1 = 0.5          v̂ = 0.00025 / 0.001 = 0.25       √v̂ = 0.5
+step = η · 0.5 / 0.5 = η
+</code></pre>
+<p>So the first Adam step is about <code>η</code> in size whatever the gradient&#39;s scale: it is close to <code>η · sign(g)</code>. That scale-invariance makes Adam forgiving about how gradients are scaled, and it is why many people start with Adam at <code>η = 0.001</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="optimizer-race" data-title="Race the optimisers"><p class="bench-fallback"><strong>Interactive bench: Race the optimisers.</strong> Plain gradient descent, momentum and Adam start from the same point on a narrow valley; sliders set the learning rates and the momentum, and a step slider shows how far each has travelled, with paths drawn on a contour map.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Advance 30 steps and compare the three paths.</li>
+<li>Raise the momentum and watch it overshoot, then settle.</li>
+<li>Change the terrain to a round bowl and compare.</li>
+<li>Change Adam&#39;s learning rate.</li>
+</ol>
+<p><strong>What you should notice:</strong> plain descent zig-zags in the valley, momentum builds speed along it, and Adam takes steps of a steady size.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Adam and AdamW</strong> are the default optimisers for most deep-learning models, including Transformers.</li>
+<li><strong>SGD with momentum</strong> remains common in computer vision.</li>
+<li><strong>Learning-rate schedules</strong> are usually combined with these optimisers.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Momentum too high</strong> overshoots and oscillates.</li>
+<li><strong>Assuming Adam removes the need to tune η.</strong> It is more forgiving, not free.</li>
+<li><strong>Forgetting the bias correction</strong> in a hand-written version.</li>
+<li><strong>Dividing by a tiny <code>√v̂</code></strong> without <code>ε</code>.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. With β = 0.9 and constant gradient 2, what velocity does momentum approach?</summary>
+2 / (1 − 0.9) = 20.
+</details>
+
+<details><summary>2. What does Adam divide the step by?</summary>
+√v̂, the typical size of recent gradients.
+</details>
+
+<details><summary>3. What does momentum do to alternating +1, −1 gradients?</summary>
+Largely cancels them, so the velocity stays small.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Momentum:</strong> keeping a running velocity of past gradients.</li>
+<li><strong>Adam:</strong> an optimiser with momentum and per-parameter step sizes.</li>
+<li><strong>Bias correction:</strong> rescaling early running averages.</li>
+<li><strong>Adaptive learning rate:</strong> a step size adjusted per parameter.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> · <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a> · <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a> · <a class="wikilink" href="/math/sequences-and-series/" data-topic="math/sequences-and-series">Sequences and Series</a> · <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/momentum-and-adam">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/constraints-and-lagrange-multipliers/"><small>Read next</small><b>Constraints and Lagrange Multipliers</b><p>Often you want the best value subject to a condition: the cheapest plan that still meets a target, or the largest area for a fixed perimeter.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/learning-rate/"><b>Learning Rate</b><p>The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.</p></a><a class="rc-card" href="/math/stochastic-gradient-descent/"><b>Stochastic Gradient Descent</b><p>Stochastic gradient descent (SGD) takes each step using the gradient from a small random mini-batch of examples instead of the whole data set.</p></a><a class="rc-card" href="/math/sequences-and-series/"><b>Sequences and Series</b><p>A sequence is an ordered list of numbers that follows a rule, and a series is what you get by adding its terms.</p></a><a class="rc-card" href="/math/backpropagation-by-hand/"><b>Backpropagation by Hand</b><p>Backpropagation computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs.</p></a><a class="rc-card" href="/math/optimization/"><b>Optimization</b><p>Optimization is the art of finding the best values: the parameters that make a model&#39;s error as small as possible.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/stochastic-gradient-descent/">← Previous: Stochastic Gradient Descent</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

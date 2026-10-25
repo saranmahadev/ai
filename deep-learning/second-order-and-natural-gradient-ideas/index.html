@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Second-Order and Natural Gradient Ideas — AI Base</title>
+<meta name="description" content="Plain gradient descent uses only the slope — first-derivative information — to decide which way to step.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/second-order-and-natural-gradient-ideas/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Second-Order and Natural Gradient Ideas — AI Base">
+<meta property="og:description" content="Plain gradient descent uses only the slope — first-derivative information — to decide which way to step.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/second-order-and-natural-gradient-ideas/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Second-Order and Natural Gradient Ideas","item":"https://ai.saranmahadev.in/deep-learning/second-order-and-natural-gradient-ideas/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Second-Order and Natural Gradient Ideas","description":"Plain gradient descent uses only the slope — first-derivative information — to decide which way to step.","url":"https://ai.saranmahadev.in/deep-learning/second-order-and-natural-gradient-ideas/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does gradient descent need many more steps than Newton's method?","acceptedAnswer":{"@type":"Answer","text":"Its single learning rate is tuned to be safe for the steep `x` direction, which makes it far too small to make fast progress in the shallow `y` direction."}},{"@type":"Question","name":"Why isn't Newton's method used directly to train deep networks?","acceptedAnswer":{"@type":"Answer","text":"Its Hessian has one entry per pair of parameters — computationally far too large to store or invert for networks with millions of parameters."}},{"@type":"Question","name":"Does Adam use the true Hessian?","acceptedAnswer":{"@type":"Answer","text":"No — it uses a cheap, diagonal approximation built from tracking each parameter's own gradient statistics, not the full curvature matrix."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Training Deep Networks</p>
+        <h1 class="doc-title">Second-Order and Natural Gradient Ideas</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1wgssbcbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1wgssbcpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1wgssbcbg)"/>
+  <circle cx="422" cy="171" r="60" fill="#8a546c" opacity="0.58"/><circle cx="753" cy="293" r="142" fill="#ffe6e6" opacity="0.40"/><circle cx="1057" cy="30" r="111" fill="#ffb6b6" opacity="0.58"/><circle cx="375" cy="378" r="79" fill="#ffb6b6" opacity="0.40"/><circle cx="330" cy="222" r="191" fill="#ffe6e6" opacity="0.57"/>
+  <path d="M0,420 L0,334 L30,340 L60,345 L90,348 L120,350 L150,349 L180,346 L210,341 L240,335 L270,328 L300,321 L330,315 L360,310 L390,307 L420,306 L450,306 L480,309 L510,314 L540,320 L570,327 L600,334 L630,340 L660,345 L690,348 L720,350 L750,349 L780,346 L810,341 L840,335 L870,328 L900,321 L930,315 L960,310 L990,307 L1020,306 L1050,306 L1080,309 L1110,314 L1140,320 L1170,327 L1200,334 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,373 L30,371 L60,369 L90,367 L120,365 L150,364 L180,363 L210,362 L240,362 L270,362 L300,363 L330,364 L360,365 L390,366 L420,368 L450,370 L480,373 L510,375 L540,378 L570,380 L600,383 L630,385 L660,387 L690,389 L720,391 L750,392 L780,393 L810,394 L840,394 L870,394 L900,393 L930,392 L960,391 L990,390 L1020,388 L1050,386 L1080,383 L1110,381 L1140,378 L1170,376 L1200,373 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="941" cy="190" rx="176" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(8.9 941 190)"/><ellipse cx="941" cy="190" rx="244" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(14.9 941 190)"/>
+  <circle cx="941" cy="190" r="69" fill="url(#c1wgssbcpl)"/>
+  <circle cx="940" cy="297" r="8" fill="#ffffff" opacity="0.79"/><circle cx="731" cy="236" r="7" fill="#ffffff" opacity="0.86"/><circle cx="669" cy="224" r="10" fill="#ffffff" opacity="0.80"/><circle cx="1132" cy="162" r="13" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Plain gradient descent uses only the slope — first-derivative information — to decide which way to step. <strong>Second-order methods</strong> also use the <a class="wikilink" href="/math/hessian/" data-topic="math/hessian">Hessian</a> (curvature) to decide not just <em>which way</em> but <em>how far</em>, and can reach a quadratic minimum exactly, in one step. They are rarely used directly in deep learning, for a very concrete reason: the Hessian is too big to compute.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/hessian/" data-topic="math/hessian">Hessian</a> and <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Gradient descent crawls down shallow directions and bounces across steep ones — why not just use curvature to fix the step size per direction?&quot; That is exactly what second-order methods do, and it works strikingly well — the catch is cost, not effectiveness.</p>
+<h2 id="intuition-a-ravine-and-knowing-its-shape">Intuition: a ravine, and knowing its shape</h2>
+<p>Picture a loss surface shaped like a steep-walled, shallow-floored ravine. Gradient descent, using only the slope, takes a step that is too large for the steep walls (so it bounces back and forth across them) or too small for the shallow floor (so it crawls slowly along it) — whichever single step size you pick, it&#39;s wrong for one of the two directions. A second-order method measures the curvature in <em>each</em> direction separately and divides the step size by it: steep directions get small steps, shallow directions get large ones, both tuned exactly right.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">gradient descent:     Δx = −lr · g
+Newton&#39;s method:      Δx = −H⁻¹ g             (H = the Hessian, the matrix of second derivatives)
+</code></pre>
+<p>For a quadratic loss, Newton&#39;s method reaches the exact minimum in a single step, because <code>H⁻¹g</code> is exactly the step that undoes the curvature in every direction at once. The cost: <code>H</code> has one entry per <em>pair</em> of parameters — for a network with a million parameters, that is 10¹² numbers, far too many to even store, let alone invert.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A loss <code>L(x, y) = 5x² + 0.5y²</code> — steep in <code>x</code>, shallow in <code>y</code> — starting at <code>(x, y) = (1, 1)</code>. The gradient there is <code>g = (10, 1)</code> and the Hessian is <code>diag(10, 1)</code>.</p>
+<pre><code class="language-text">Newton&#39;s step:   Δ = −H⁻¹g = −(10/10, 1/1) = (−1, −1)   →  new point (0, 0): exact minimum, one step.
+
+gradient descent, lr = 0.1 (the largest safe rate for the steep x direction):
+step 1:  x = 1 − 0.1(10) = 0.0      y = 1 − 0.1(1) = 0.9
+step 2:  x = 0.0                     y = 0.9 − 0.1(0.9) = 0.81
+step 3:  x = 0.0                     y = 0.81 − 0.1(0.81) = 0.729
+         ⋮  (y keeps shrinking by a factor of 0.9 every step)
+</code></pre>
+<p>Gradient descent reaches the minimum in <code>x</code> immediately — but the same learning rate, safe for <code>x</code>&#39;s steep curvature, is far too cautious for <code>y</code>&#39;s shallow curvature, so <code>y</code> crawls toward 0 at 90% of its previous value every step, needing dozens of steps to get as close as Newton&#39;s single step already is.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="newton-vs-gd" data-title="One Newton step vs many gradient-descent steps"><p class="bench-fallback"><strong>Interactive bench: One Newton step vs many gradient-descent steps.</strong> An elongated bowl with two independently adjustable curvatures. Compare Newton's single, exact step against gradient descent's slower path, stepping through the gradient-descent path one step at a time.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Keep the default steep/shallow bowl and watch Newton land exactly on the minimum in one step.</li>
+<li>Step gradient descent forward and count how many steps it needs to get as close as Newton already is.</li>
+<li>Make the bowl more extreme (steeper in one direction, shallower in the other) and watch gradient descent&#39;s path get even slower while Newton is unaffected.</li>
+</ol>
+<p><strong>What you should notice:</strong> Newton&#39;s step size automatically adapts to each direction&#39;s curvature; gradient descent&#39;s single learning rate is always a compromise, exactly right for no direction unless the bowl happens to be perfectly round.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Why Newton&#39;s method itself is not used for deep networks:</strong> storing and inverting a Hessian over millions of parameters is computationally impossible.</li>
+<li><strong>Adam and other adaptive optimizers</strong> (see <a class="wikilink" href="/math/momentum-and-adam/" data-topic="math/momentum-and-adam">Momentum and Adam</a>) use a cheap, diagonal approximation to curvature — tracking each parameter&#39;s own gradient variance — as a lightweight substitute for the full Hessian.</li>
+<li><strong>K-FAC and natural gradient methods</strong> approximate the curvature with structured, cheaper-to-invert matrices, trading some accuracy for tractability.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming Adam is &quot;second-order.&quot;</strong> It only tracks a per-parameter scale from gradient statistics, not true curvature information between different parameters.</li>
+<li><strong>Expecting Newton&#39;s method to generalise to non-quadratic losses in one step.</strong> Real loss surfaces are not perfectly quadratic, so Newton&#39;s method there takes several steps too, just usually far fewer than gradient descent.</li>
+<li><strong>Ignoring that an ill-conditioned loss (very different curvatures in different directions) is exactly where gradient descent struggles most</strong>, and exactly where second-order information helps most.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does gradient descent need many more steps than Newton's method?</summary>
+Its single learning rate is tuned to be safe for the steep `x` direction, which makes it far too small to make fast progress in the shallow `y` direction.
+</details>
+
+<details><summary>2. Why isn't Newton's method used directly to train deep networks?</summary>
+Its Hessian has one entry per pair of parameters — computationally far too large to store or invert for networks with millions of parameters.
+</details>
+
+<details><summary>3. Does Adam use the true Hessian?</summary>
+No — it uses a cheap, diagonal approximation built from tracking each parameter's own gradient statistics, not the full curvature matrix.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Second-order method:</strong> an optimization method that uses curvature (second-derivative) information, not just the gradient.</li>
+<li><strong>Newton&#39;s method:</strong> the second-order update <code>Δx = −H⁻¹g</code>, exact in one step for a quadratic loss.</li>
+<li><strong>Ill-conditioned loss:</strong> a loss surface with very different curvatures in different directions.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/hessian/" data-topic="math/hessian">Hessian</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> · <a class="wikilink" href="/math/momentum-and-adam/" data-topic="math/momentum-and-adam">Momentum and Adam</a> · <a class="wikilink" href="/math/convex-vs-non-convex/" data-topic="math/convex-vs-non-convex">Convex vs Non-Convex</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/second-order-and-natural-gradient-ideas">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/regularization-and-generalization/"><small>Read next</small><b>Regularization and Generalization</b><p>A deep network has enough parameters to memorise its training set outright.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/hessian/"><b>Hessian</b><p>The Hessian is the matrix of all second partial derivatives of a function.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/momentum-and-adam/"><b>Momentum and Adam</b><p>Momentum lets a walker keep some of its previous velocity, so it speeds up along steady slopes and smooths out zig-zags.</p></a><a class="rc-card" href="/math/convex-vs-non-convex/"><b>Convex vs Non-Convex</b><p>A function is convex if it is bowl-shaped: the straight line between any two points on its graph never dips below the graph.</p></a><a class="rc-card" href="/deep-learning/training-deep-networks/"><b>Training Deep Networks</b><p>Gradient descent and backpropagation (see Gradient Descent and Backpropagation by Hand on the Math planet) are the engine; this district covers the practical decisions that decide whether that…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/batch-size-and-training-dynamics/">← Previous: Batch Size and Training Dynamics</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

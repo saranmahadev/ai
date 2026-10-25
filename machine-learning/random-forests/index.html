@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random Forests — AI Base</title>
+<meta name="description" content="A single tree is unstable: change a few training points and its questions change. A random forest trains many trees on slightly different versions of the data and lets them vote.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/random-forests/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Random Forests — AI Base">
+<meta property="og:description" content="A single tree is unstable: change a few training points and its questions change. A random forest trains many trees on slightly different versions of the data and lets them vote.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/random-forests/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Random Forests","item":"https://ai.saranmahadev.in/machine-learning/random-forests/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Random Forests","description":"A single tree is unstable: change a few training points and its questions change. A random forest trains many trees on slightly different versions of the data and lets them vote.","url":"https://ai.saranmahadev.in/machine-learning/random-forests/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is bagging?","acceptedAnswer":{"@type":"Answer","text":"Training each model on a bootstrap resample of the data and averaging their predictions."}},{"@type":"Question","name":"Why choose random subsets of features at each split?","acceptedAnswer":{"@type":"Answer","text":"To make the trees different from each other so their errors cancel."}},{"@type":"Question","name":"Does adding more trees cause overfitting?","acceptedAnswer":{"@type":"Answer","text":"No, extra trees only smooth the average; the gain simply levels off."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Trees and Ensembles</p>
+        <h1 class="doc-title">Random Forests</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cyqmhckbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="cyqmhckpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cyqmhckbg)"/>
+  <circle cx="466" cy="343" r="102" fill="#ffd08d" opacity="0.39"/><circle cx="291" cy="303" r="137" fill="#ffd99f" opacity="0.32"/><circle cx="947" cy="62" r="76" fill="#ffd08d" opacity="0.51"/><circle cx="659" cy="143" r="77" fill="#fff2de" opacity="0.59"/><circle cx="67" cy="82" r="158" fill="#fff2de" opacity="0.24"/>
+  <path d="M0,420 L0,348 L30,344 L60,339 L90,332 L120,325 L150,319 L180,313 L210,309 L240,306 L270,306 L300,307 L330,311 L360,317 L390,323 L420,330 L450,336 L480,342 L510,347 L540,349 L570,349 L600,348 L630,344 L660,339 L690,332 L720,325 L750,319 L780,313 L810,309 L840,306 L870,306 L900,307 L930,311 L960,317 L990,323 L1020,330 L1050,336 L1080,342 L1110,347 L1140,349 L1170,349 L1200,348 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,378 L60,374 L90,370 L120,367 L150,365 L180,363 L210,362 L240,362 L270,363 L300,365 L330,367 L360,370 L390,374 L420,377 L450,381 L480,385 L510,388 L540,390 L570,392 L600,394 L630,394 L660,393 L690,392 L720,390 L750,387 L780,384 L810,380 L840,376 L870,373 L900,369 L930,366 L960,364 L990,363 L1020,362 L1050,362 L1080,363 L1110,365 L1140,368 L1170,371 L1200,375 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="744" cy="137" rx="186" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(18.7 744 137)"/><ellipse cx="744" cy="137" rx="257" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(24.7 744 137)"/>
+  <circle cx="744" cy="137" r="73" fill="url(#cyqmhckpl)"/>
+  <circle cx="856" cy="75" r="11" fill="#ffffff" opacity="0.68"/><circle cx="978" cy="183" r="13" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A single tree is unstable: change a few training points and its questions change. A <strong>random forest</strong> trains many trees on slightly different versions of the data and lets them vote. Individual trees make different mistakes, and votes cancel much of the noise, so the forest is steadier and more accurate than any one tree.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/pruning-and-overfitting/" data-topic="machine-learning/pruning-and-overfitting">Pruning and Overfitting</a>, <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a> and <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I get a strong model from weak, unstable ones?&quot; Average many that are individually noisy but not identically wrong.</p>
+<h2 id="intuition-the-wisdom-of-a-crowd">Intuition: the wisdom of a crowd</h2>
+<p>Ask one person to guess the weight of an ox and they may be far off. Average a hundred independent guesses and the errors largely cancel. That works only if the guessers are different from each other. A forest makes trees different in two ways:</p>
+<ul>
+<li><strong>Bootstrap sampling (&quot;bagging&quot;):</strong> each tree trains on a sample of the data drawn with replacement, so it sees about 63% of the distinct examples, some repeated.</li>
+<li><strong>Random feature choice:</strong> at each split a tree may consider only a random subset of the features, so trees do not all copy the same strong feature.</li>
+</ul>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">forest prediction     classification: the majority vote (or the average probability)
+                      regression:     the average
+bagging               bootstrap aggregating: train on resamples, average the results
+out-of-bag error      each example is tested only by the trees that did not train on it,
+                      a free validation estimate
+</code></pre>
+<p>If each of <code>T</code> roughly independent trees has variance <code>σ²</code>, their average has variance <code>σ²/T</code>. Real trees are correlated, so the reduction is smaller, but it is large. Forests reduce <strong>variance</strong>, not bias: the trees can be deep and overfit individually.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>On the half-moon data (120 training points, 280 unseen), full-depth trees (up to depth 10):</p>
+<pre><code class="language-text">one tree grown to the end:         training 100%   unseen 81%
+forest of 1 (bootstrap + random feature): training  93%   unseen 77%
+forest of 5 trees:                 training  99%   unseen 84%
+forest of 25 trees:                training 100%   unseen 86%
+forest of 100 trees:               training 100%   unseen 87%
+</code></pre>
+<p>A single randomised tree is worse than a careful one, but averaging just five already beats it, and returns diminish after a few dozen trees. Adding more trees never overfits by itself: it only smooths the vote. Note the 100% training accuracy: it comes from each point being memorised by many trees; only unseen accuracy matters.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="random-forest" data-title="A forest votes"><p class="bench-fallback"><strong>Interactive bench: A forest votes.</strong> A slider sets the number of trees in a random forest on noisy half-moon data; the bench shows the smooth probability regions and the forest's training and unseen accuracy next to a single fully grown tree.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set one tree and look at the jagged regions.</li>
+<li>Increase to 5, 25 and 100 trees.</li>
+<li>Compare the unseen accuracy with the single full tree.</li>
+<li>Watch how the region edges soften as trees are added.</li>
+</ol>
+<p><strong>What you should notice:</strong> the boundary smooths out as trees are added, unseen accuracy rises above one tree&#39;s, and the last trees add little.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Tabular prediction:</strong> a strong default that needs little tuning.</li>
+<li><strong>Feature importance:</strong> how much each feature improves splits across the forest.</li>
+<li><strong>Out-of-bag estimates</strong> for quick validation.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Correlated trees:</strong> if one feature dominates and every tree uses it, averaging helps less.</li>
+<li><strong>Interpretability lost:</strong> a hundred trees are not a short rule list.</li>
+<li><strong>Slow predictions and large models</strong> with thousands of deep trees.</li>
+<li><strong>Extrapolation:</strong> trees cannot predict beyond the range of training targets.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is bagging?</summary>
+Training each model on a bootstrap resample of the data and averaging their predictions.
+</details>
+
+<details><summary>2. Why choose random subsets of features at each split?</summary>
+To make the trees different from each other so their errors cancel.
+</details>
+
+<details><summary>3. Does adding more trees cause overfitting?</summary>
+No, extra trees only smooth the average; the gain simply levels off.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Ensemble:</strong> a group of models whose predictions are combined.</li>
+<li><strong>Bootstrap sample:</strong> a sample drawn with replacement.</li>
+<li><strong>Bagging:</strong> averaging models trained on bootstrap samples.</li>
+<li><strong>Out-of-bag error:</strong> error measured on the examples each tree did not see.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/decision-trees/" data-topic="machine-learning/decision-trees">Decision Trees</a> · <a class="wikilink" href="/machine-learning/pruning-and-overfitting/" data-topic="machine-learning/pruning-and-overfitting">Pruning and Overfitting</a> · <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a> · <a class="wikilink" href="/machine-learning/gradient-boosting/" data-topic="machine-learning/gradient-boosting">Gradient Boosting</a> · <a class="wikilink" href="/math/bias-variance-and-the-whole-picture/" data-topic="math/bias-variance-and-the-whole-picture">Bias, Variance and the Whole Picture</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/random-forests">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/gradient-boosting/"><small>Read next</small><b>Gradient Boosting</b><p>Boosting builds a model in rounds. Start with a crude prediction, look at what it still gets wrong (the residuals), fit a small tree to those errors, add it in, and repeat.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/pruning-and-overfitting/"><b>Pruning and Overfitting</b><p>Left alone, a tree keeps splitting until every leaf is pure, which means it memorises noise.</p></a><a class="rc-card" href="/math/law-of-large-numbers/"><b>Law of Large Numbers</b><p>The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/machine-learning/decision-trees/"><b>Decision Trees</b><p>A decision tree predicts by asking a chain of yes/no questions about the features, like a flowchart: &quot;is income above 50k? is age over 30?&quot;.</p></a><a class="rc-card" href="/machine-learning/gradient-boosting/"><b>Gradient Boosting</b><p>Boosting builds a model in rounds. Start with a crude prediction, look at what it still gets wrong (the residuals), fit a small tree to those errors, add it in, and repeat.</p></a><a class="rc-card" href="/math/bias-variance-and-the-whole-picture/"><b>Bias, Variance and the Whole Picture</b><p>A model&#39;s error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/pruning-and-overfitting/">← Previous: Pruning and Overfitting</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

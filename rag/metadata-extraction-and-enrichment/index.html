@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metadata Extraction and Enrichment — AI Base</title>
+<meta name="description" content="A chunk&#39;s text alone often can&#39;t say whether it&#39;s still true.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/metadata-extraction-and-enrichment/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Metadata Extraction and Enrichment — AI Base">
+<meta property="og:description" content="A chunk&#39;s text alone often can&#39;t say whether it&#39;s still true.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/metadata-extraction-and-enrichment/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Metadata Extraction and Enrichment","item":"https://ai.saranmahadev.in/rag/metadata-extraction-and-enrichment/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Metadata Extraction and Enrichment","description":"A chunk's text alone often can't say whether it's still true.","url":"https://ai.saranmahadev.in/rag/metadata-extraction-and-enrichment/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why can't cosine similarity alone distinguish the three chunks?","acceptedAnswer":{"@type":"Answer","text":"Their text is nearly identical (two have the exact same wording), so their embeddings are extremely close together — the signal that would distinguish \"current\" from \"outdated\" isn't present in the text at all, only in each chunk's date metadata."}},{"@type":"Question","name":"What's required for a freshness filter to work reliably across a whole document collection?","acceptedAnswer":{"@type":"Answer","text":"Accurate, consistently extracted date metadata on every chunk — a filter can only exclude what it can correctly identify as stale, so any chunk missing or carrying wrong date metadata silently escapes the filter."}},{"@type":"Question","name":"Is a freshness cutoff always the right kind of metadata filter?","acceptedAnswer":{"@type":"Answer","text":"No — recency is just one example; the same mechanism applies to filtering by source, access permission, or section, whatever dimension actually distinguishes which chunks should be eligible for a given query."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Document Processing and Chunking</p>
+        <h1 class="doc-title">Metadata Extraction and Enrichment</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cfmxxhdbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="cfmxxhdpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cfmxxhdbg)"/>
+  <circle cx="922" cy="377" r="163" fill="#97e1e6" opacity="0.43"/><circle cx="951" cy="83" r="153" fill="#b7d5be" opacity="0.39"/><circle cx="1014" cy="258" r="82" fill="#97e1e6" opacity="0.28"/><circle cx="345" cy="69" r="155" fill="#42718e" opacity="0.61"/><circle cx="915" cy="66" r="69" fill="#b7d5be" opacity="0.22"/>
+  <path d="M0,420 L0,343 L30,346 L60,348 L90,349 L120,349 L150,348 L180,346 L210,342 L240,338 L270,333 L300,328 L330,323 L360,318 L390,314 L420,310 L450,308 L480,306 L510,306 L540,306 L570,308 L600,312 L630,315 L660,320 L690,325 L720,330 L750,335 L780,340 L810,344 L840,347 L870,349 L900,350 L930,349 L960,348 L990,345 L1020,341 L1050,337 L1080,332 L1110,327 L1140,321 L1170,317 L1200,313 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,367 L60,371 L90,376 L120,381 L150,385 L180,389 L210,392 L240,394 L270,394 L300,392 L330,389 L360,385 L390,380 L420,375 L450,371 L480,367 L510,364 L540,362 L570,362 L600,364 L630,367 L660,371 L690,376 L720,381 L750,385 L780,389 L810,392 L840,394 L870,394 L900,392 L930,389 L960,385 L990,380 L1020,375 L1050,371 L1080,367 L1110,364 L1140,362 L1170,362 L1200,364 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="821" cy="161" rx="164" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.0 821 161)"/><ellipse cx="821" cy="161" rx="226" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.0 821 161)"/>
+  <circle cx="821" cy="161" r="64" fill="url(#cfmxxhdpl)"/>
+  <circle cx="697" cy="103" r="14" fill="#ffffff" opacity="0.87"/><circle cx="769" cy="232" r="16" fill="#ffffff" opacity="0.75"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A chunk&#39;s text alone often can&#39;t say whether it&#39;s still true. Three versions of the same shipping policy, written almost identically, differ only in when each one was published — information the chunk&#39;s own words don&#39;t carry at all. Metadata (a date, a source, a section) attaches exactly that extra context, so a retrieval system can filter on it without re-reading the text.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/semantic-and-structure-aware-chunking/" data-topic="rag/semantic-and-structure-aware-chunking">Semantic and Structure-Aware Chunking</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What has to be attached to a chunk beyond its own text?&quot; Metadata is structured information about a chunk that isn&#39;t part of its searchable content but is essential for deciding whether to use it: the document it came from, the date it was last updated, its section or author, access permissions. Without it, near-duplicate chunks that differ only in currency are indistinguishable to similarity search alone — a retrieval system can rank them all equally relevant and return a stale one right alongside the current one.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Three near-identical memos about an office policy, stapled together with no dates on any of them, are useless for figuring out which one is actually still in effect — the memos read almost the same. Stamp each one with its date, and suddenly &quot;which one is current&quot; becomes a one-line filter instead of a judgment call.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">freshnessFilter(chunks, cutoffDate) = chunks with date ≥ cutoffDate, most recent first
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three near-duplicate chunks about the same shipping policy, differing only in date:</p>
+<pre><code class="language-text">[2022-01-01] &quot;Shipping takes 3-5 days.&quot;
+[2023-06-01] &quot;Shipping takes 3-5 days.&quot;
+[2025-09-01] &quot;Shipping takes 2-3 days.&quot;
+
+unfiltered top-3 (similarity search alone can&#39;t distinguish them): all 3 returned
+freshness-filtered (date ≥ 2024-01-01): only [2025-09-01] &quot;Shipping takes 2-3 days.&quot;
+</code></pre>
+<p>All three chunks are about equally similar to a query like &quot;how long does shipping take&quot; — their text is nearly identical. Without a date filter, a retrieval system has no reason to prefer the current policy over the two outdated ones it happens to also find. With the date attached as metadata, the two stale chunks are excluded before similarity ever comes into play.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="metadata-freshness-filter" data-title="Three near-duplicates, only one still true"><p class="bench-fallback"><strong>Interactive bench: Three near-duplicates, only one still true.</strong> Toggle a freshness filter and watch stale duplicate chunks disappear from the results.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the unfiltered results and notice all three near-identical chunks are returned.</li>
+<li>Turn on the freshness filter and watch it keep only the most recent one.</li>
+<li>Imagine a user&#39;s answer coming from the 2022 chunk instead of the 2025 one — what would be wrong with it?</li>
+</ol>
+<p><strong>What you should notice:</strong> the three chunks&#39; text alone gives a similarity-based retriever no reason to prefer one over another — the date metadata is what makes &quot;prefer the current one&quot; possible at all.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong><a class="wikilink" href="/rag/metadata-filtering-and-hybrid-indexes/" data-topic="rag/metadata-filtering-and-hybrid-indexes">Metadata Filtering and Hybrid Indexes</a> covers how a vector database actually executes a metadata filter alongside a similarity search</strong>, combining both into one query.</li>
+<li><strong>This is a second, independent fix for the staleness problem <a class="wikilink" href="/rag/hallucination-and-knowledge-cutoff/" data-topic="rag/hallucination-and-knowledge-cutoff">Hallucination and Knowledge Cutoff</a> describes at the model level</strong> — here the staleness lives in the document collection itself, not in the model&#39;s training data.</li>
+<li><strong><a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a> lists &quot;retrieved the wrong (stale) version of a fact&quot; as one of the recurring ways a RAG system fails</strong> — exactly what this topic&#39;s metadata filter prevents.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming similarity search alone will prefer the most relevant version.</strong> The worked example shows near-duplicate chunks can score almost identically regardless of which one is actually current — similarity measures topical closeness, not correctness or recency.</li>
+<li><strong>Extracting metadata inconsistently across a document collection.</strong> A freshness filter is only as reliable as every chunk actually having an accurate date attached — a few chunks missing it undermines the whole mechanism.</li>
+<li><strong>Filtering so aggressively that relevant older content disappears entirely.</strong> Not every older chunk is wrong — a cutoff needs to reflect when the information in question actually changed, not an arbitrary recency preference.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why can't cosine similarity alone distinguish the three chunks?</summary>
+Their text is nearly identical (two have the exact same wording), so their embeddings are extremely close together — the signal that would distinguish "current" from "outdated" isn't present in the text at all, only in each chunk's date metadata.
+</details>
+
+<details><summary>2. What's required for a freshness filter to work reliably across a whole document collection?</summary>
+Accurate, consistently extracted date metadata on every chunk — a filter can only exclude what it can correctly identify as stale, so any chunk missing or carrying wrong date metadata silently escapes the filter.
+</details>
+
+<details><summary>3. Is a freshness cutoff always the right kind of metadata filter?</summary>
+No — recency is just one example; the same mechanism applies to filtering by source, access permission, or section, whatever dimension actually distinguishes which chunks should be eligible for a given query.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Metadata:</strong> structured information about a chunk (date, source, section, permissions) kept separate from its searchable text.</li>
+<li><strong>Near-duplicate chunks:</strong> chunks with very similar or identical text that differ in some attribute, such as when they were last updated.</li>
+<li><strong>Freshness filter:</strong> a metadata-based filter that excludes chunks older than a given cutoff date.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/semantic-and-structure-aware-chunking/" data-topic="rag/semantic-and-structure-aware-chunking">Semantic and Structure-Aware Chunking</a> · <a class="wikilink" href="/rag/metadata-filtering-and-hybrid-indexes/" data-topic="rag/metadata-filtering-and-hybrid-indexes">Metadata Filtering and Hybrid Indexes</a> · <a class="wikilink" href="/rag/hallucination-and-knowledge-cutoff/" data-topic="rag/hallucination-and-knowledge-cutoff">Hallucination and Knowledge Cutoff</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/metadata-extraction-and-enrichment">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/handling-tables-code-and-structured-content/"><small>Read next</small><b>Handling Tables, Code and Structured Content</b><p>Flattening a pricing table into one run-on paragraph destroys the one thing that made it useful — knowing which number went with which row.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/semantic-and-structure-aware-chunking/"><b>Semantic and Structure-Aware Chunking</b><p>Recursive chunking keeps sentences whole, but a sentence boundary isn&#39;t the same thing as a topic boundary — five sentences in a row about the same subject will still get split wherever the size…</p></a><a class="rc-card" href="/rag/metadata-filtering-and-hybrid-indexes/"><b>Metadata Filtering and Hybrid Indexes</b><p>Asking for &quot;the 20 most relevant chunks, but only from documents I have permission to see&quot; sounds like one request — but a vector index has to decide when to apply that permission check.</p></a><a class="rc-card" href="/rag/hallucination-and-knowledge-cutoff/"><b>Hallucination and Knowledge Cutoff</b><p>Every model has a training cutoff — a date after which nothing happened in its training data. Ask it about something before that date, and it usually answers confidently and correctly.</p></a><a class="rc-card" href="/rag/common-rag-failure-modes/"><b>Common RAG Failure Modes</b><p>Across this planet&#39;s road, the same handful of failure symptoms keep recurring — a stale fact, a result count that&#39;s mysteriously short, an answer that confidently cites the wrong thing.</p></a><a class="rc-card" href="/rag/document-processing-and-chunking/"><b>Document Processing and Chunking</b><p>Before anything can be retrieved, raw documents — PDFs, web pages, spreadsheets, code — have to become a collection of individually retrievable pieces.</p></a><a class="rc-card" href="/rag/handling-tables-code-and-structured-content/"><b>Handling Tables, Code and Structured Content</b><p>Flattening a pricing table into one run-on paragraph destroys the one thing that made it useful — knowing which number went with which row.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/chunk-overlap-and-size-trade-offs/">← Previous: Chunk Overlap and Size Trade-offs</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

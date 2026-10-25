@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Semantic and Structure-Aware Chunking — AI Base</title>
+<meta name="description" content="Recursive chunking keeps sentences whole, but a sentence boundary isn&#39;t the same thing as a topic boundary — five sentences in a row about the same subject will still get split wherever the size…">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/semantic-and-structure-aware-chunking/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Semantic and Structure-Aware Chunking — AI Base">
+<meta property="og:description" content="Recursive chunking keeps sentences whole, but a sentence boundary isn&#39;t the same thing as a topic boundary — five sentences in a row about the same subject will still get split wherever the size…">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/semantic-and-structure-aware-chunking/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Semantic and Structure-Aware Chunking","item":"https://ai.saranmahadev.in/rag/semantic-and-structure-aware-chunking/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Semantic and Structure-Aware Chunking","description":"Recursive chunking keeps sentences whole, but a sentence boundary isn't the same thing as a topic boundary — five sentences in a row about the same subject will still get split wherever the size…","url":"https://ai.saranmahadev.in/rag/semantic-and-structure-aware-chunking/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the similarity between sentence 1 and sentence 2 drop so much more than any other consecutive pair?","acceptedAnswer":{"@type":"Answer","text":"Sentences 0 and 1 are both about returns, and sentences 2 through 4 are all about shipping — sentence 1 and sentence 2 are the only consecutive pair that actually straddles the topic change, so their embeddings are far less similar than any same-topic pair."}},{"@type":"Question","name":"What happens to the detected boundary if the similarity threshold is set to 0.1, below the real topic-shift value of 0.281?","acceptedAnswer":{"@type":"Answer","text":"No pair would fall below 0.1, so no boundary would be detected at all — the chunker would treat the whole passage as one chunk, missing the real topic change."}},{"@type":"Question","name":"How does structure-aware chunking avoid the cost of computing sentence embeddings just to find a boundary?","acceptedAnswer":{"@type":"Answer","text":"It uses structure the document's author already provided — headings, paragraph breaks — as a proxy for topic boundaries, skipping the similarity computation entirely."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Document Processing and Chunking</p>
+        <h1 class="doc-title">Semantic and Structure-Aware Chunking</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1jcl9gtbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1jcl9gtpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1jcl9gtbg)"/>
+  <circle cx="1143" cy="317" r="95" fill="#97e1e6" opacity="0.50"/><circle cx="544" cy="279" r="190" fill="#97e1e6" opacity="0.26"/><circle cx="155" cy="335" r="119" fill="#b7d5be" opacity="0.43"/><circle cx="422" cy="47" r="118" fill="#b7d5be" opacity="0.36"/><circle cx="50" cy="36" r="110" fill="#dcf5f7" opacity="0.44"/>
+  <path d="M0,420 L0,319 L30,323 L60,329 L90,334 L120,339 L150,343 L180,346 L210,348 L240,349 L270,349 L300,348 L330,346 L360,342 L390,338 L420,333 L450,328 L480,323 L510,318 L540,314 L570,310 L600,308 L630,306 L660,306 L690,306 L720,308 L750,312 L780,316 L810,320 L840,325 L870,330 L900,335 L930,340 L960,344 L990,347 L1020,349 L1050,350 L1080,349 L1110,348 L1140,345 L1170,341 L1200,337 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,363 L60,365 L90,367 L120,370 L150,374 L180,377 L210,381 L240,385 L270,388 L300,391 L330,393 L360,394 L390,394 L420,393 L450,392 L480,390 L510,387 L540,384 L570,380 L600,376 L630,372 L660,369 L690,366 L720,364 L750,363 L780,362 L810,362 L840,363 L870,365 L900,368 L930,371 L960,375 L990,379 L1020,382 L1050,386 L1080,389 L1110,391 L1140,393 L1170,394 L1200,394 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="963" cy="137" rx="181" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(5.7 963 137)"/><ellipse cx="963" cy="137" rx="251" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(11.7 963 137)"/>
+  <circle cx="963" cy="137" r="71" fill="url(#c1jcl9gtpl)"/>
+  <circle cx="1140" cy="100" r="16" fill="#ffffff" opacity="0.63"/><circle cx="1163" cy="192" r="10" fill="#ffffff" opacity="0.81"/><circle cx="841" cy="213" r="12" fill="#ffffff" opacity="0.68"/><circle cx="977" cy="58" r="17" fill="#ffffff" opacity="0.60"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Recursive chunking keeps sentences whole, but a sentence boundary isn&#39;t the same thing as a topic boundary — five sentences in a row about the same subject will still get split wherever the size limit happens to land, right through the middle of a coherent idea. Semantic chunking looks at <em>meaning</em> instead of character count: it places a boundary exactly where the topic actually shifts.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/fixed-size-and-recursive-chunking/" data-topic="rag/fixed-size-and-recursive-chunking">Fixed-Size and Recursive Chunking</a>, <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you split a document at the points where its meaning actually changes, instead of an arbitrary size limit?&quot; Each sentence gets embedded, and the cosine similarity between consecutive sentences is checked — a high similarity means they&#39;re still on the same topic, and a sharp drop marks a real topic shift. A chunk boundary is placed exactly where that drop happens, however long or short the resulting chunks turn out to be. <strong>Structure-aware chunking</strong> uses the same idea at a coarser level, splitting at document structure the author already provided — markdown headings, paragraph breaks — instead of computing similarity at all.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Reading a document and noticing &quot;everything up to here was about returns, and everything after is about shipping&quot; is a judgment about meaning, not a character count. Semantic chunking automates exactly that judgment: it measures how similar each sentence is to the one before it, and calls a sharp drop in similarity the sign of a real topic change.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">sims[i] = cosine_similarity(sentence_i, sentence_{i+1})
+boundary after sentence i   if  sims[i] &lt; threshold
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Five sentences — two about returns, three about shipping — with their consecutive-sentence similarities:</p>
+<pre><code class="language-text">sentence 0: &quot;Returns are accepted within 30 days.&quot;        \ similar (0.998)
+sentence 1: &quot;Items must be in original packaging.&quot;        /
+                                                             ← similarity drops to 0.281
+sentence 2: &quot;Shipping takes 3-5 business days.&quot;            \
+sentence 3: &quot;Orders over $50 ship free.&quot;                    | similar (0.998, 0.996)
+sentence 4: &quot;Tracking is emailed once shipped.&quot;             /
+
+similarities between consecutive sentences: 0.998, 0.281, 0.998, 0.996
+→ boundary placed after sentence 1 (the only drop below a 0.5 threshold)
+</code></pre>
+<p>Every similarity except one sits above 0.99 — these sentence pairs are clearly on the same topic. The one pair that drops to 0.281 is exactly the pair spanning the actual topic change, from returns to shipping, and that&#39;s precisely where the chunk boundary lands.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="semantic-chunk-boundary" data-title="A boundary where the topic actually shifts"><p class="bench-fallback"><strong>Interactive bench: A boundary where the topic actually shifts.</strong> Slide a similarity threshold and watch where semantic chunking places its boundary.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with the threshold around 0.5 and note the boundary falls after sentence 1.</li>
+<li>Lower the threshold toward 0.1 and watch the boundary disappear — 0.281 no longer counts as a &quot;drop.&quot;</li>
+<li>Raise the threshold above 0.99 and watch every gap start to look like a boundary.</li>
+</ol>
+<p><strong>What you should notice:</strong> the threshold has to sit meaningfully below the &quot;same topic&quot; similarity (≈0.99 here) and above the &quot;topic shift&quot; similarity (0.281) for the boundary to land in the one place that actually reflects a real change in subject.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>The similarity computation itself is exactly <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">cosine similarity</a></strong>, already covered on the Math planet — this topic is about using it to decide <em>where</em> to cut, not re-deriving the metric.</li>
+<li><strong>Structure-aware chunking is the cheaper, no-embedding alternative</strong>: splitting at a document&#39;s own markdown headings or paragraph breaks instead of computing sentence-by-sentence similarity.</li>
+<li><strong>A badly placed threshold produces the same symptom as naive fixed-size chunking</strong> (<a class="wikilink" href="/rag/fixed-size-and-recursive-chunking/" data-topic="rag/fixed-size-and-recursive-chunking">Fixed-Size and Recursive Chunking</a>) — a chunk that straddles two unrelated topics, diluting whatever gets embedded from it.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Picking a threshold without checking what &quot;same topic&quot; and &quot;different topic&quot; actually look like in your own data.</strong> The worked example&#39;s 0.99-vs-0.28 gap is unusually clean; real text often has a narrower gap, making the threshold choice far more sensitive.</li>
+<li><strong>Assuming semantic chunking always beats recursive chunking.</strong> It costs an embedding call per sentence just to decide where to cut — for short, already-well-structured documents, that cost may not be worth the improvement.</li>
+<li><strong>Treating a similarity drop as proof of a <em>meaningful</em> topic change, rather than just <em>a</em> change.</strong> A drop can also come from a stylistic shift, a quoted aside, or noisy sentence embeddings, not only a genuine subject change.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the similarity between sentence 1 and sentence 2 drop so much more than any other consecutive pair?</summary>
+Sentences 0 and 1 are both about returns, and sentences 2 through 4 are all about shipping — sentence 1 and sentence 2 are the only consecutive pair that actually straddles the topic change, so their embeddings are far less similar than any same-topic pair.
+</details>
+
+<details><summary>2. What happens to the detected boundary if the similarity threshold is set to 0.1, below the real topic-shift value of 0.281?</summary>
+No pair would fall below 0.1, so no boundary would be detected at all — the chunker would treat the whole passage as one chunk, missing the real topic change.
+</details>
+
+<details><summary>3. How does structure-aware chunking avoid the cost of computing sentence embeddings just to find a boundary?</summary>
+It uses structure the document's author already provided — headings, paragraph breaks — as a proxy for topic boundaries, skipping the similarity computation entirely.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Semantic chunking:</strong> placing chunk boundaries where consecutive sentences&#39; embedding similarity drops, rather than at a fixed size.</li>
+<li><strong>Structure-aware chunking:</strong> splitting at a document&#39;s own structural markers (headings, paragraphs) instead of computing similarity.</li>
+<li><strong>Similarity threshold:</strong> the cutoff below which two consecutive sentences are considered different enough to warrant a chunk boundary.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/fixed-size-and-recursive-chunking/" data-topic="rag/fixed-size-and-recursive-chunking">Fixed-Size and Recursive Chunking</a> · <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a> · <a class="wikilink" href="/rag/chunk-overlap-and-size-trade-offs/" data-topic="rag/chunk-overlap-and-size-trade-offs">Chunk Overlap and Size Trade-offs</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/semantic-and-structure-aware-chunking">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/chunk-overlap-and-size-trade-offs/"><small>Read next</small><b>Chunk Overlap and Size Trade-offs</b><p>A fact that happens to straddle a chunk boundary disappears — split in half across two chunks, it may be incomplete in both and never score high enough against a query to be retrieved.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/fixed-size-and-recursive-chunking/"><b>Fixed-Size and Recursive Chunking</b><p>The simplest way to split a document is to cut it every N characters and move on.</p></a><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/rag/chunk-overlap-and-size-trade-offs/"><b>Chunk Overlap and Size Trade-offs</b><p>A fact that happens to straddle a chunk boundary disappears — split in half across two chunks, it may be incomplete in both and never score high enough against a query to be retrieved.</p></a><a class="rc-card" href="/rag/document-processing-and-chunking/"><b>Document Processing and Chunking</b><p>Before anything can be retrieved, raw documents — PDFs, web pages, spreadsheets, code — have to become a collection of individually retrievable pieces.</p></a><a class="rc-card" href="/rag/metadata-extraction-and-enrichment/"><b>Metadata Extraction and Enrichment</b><p>A chunk&#39;s text alone often can&#39;t say whether it&#39;s still true.</p></a><a class="rc-card" href="/rag/handling-tables-code-and-structured-content/"><b>Handling Tables, Code and Structured Content</b><p>Flattening a pricing table into one run-on paragraph destroys the one thing that made it useful — knowing which number went with which row.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/fixed-size-and-recursive-chunking/">← Previous: Fixed-Size and Recursive Chunking</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

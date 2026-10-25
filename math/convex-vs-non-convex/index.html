@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Convex vs Non-Convex — AI Base</title>
+<meta name="description" content="A function is convex if it is bowl-shaped: the straight line between any two points on its graph never dips below the graph.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/convex-vs-non-convex/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Convex vs Non-Convex — AI Base">
+<meta property="og:description" content="A function is convex if it is bowl-shaped: the straight line between any two points on its graph never dips below the graph.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/convex-vs-non-convex/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Convex vs Non-Convex","item":"https://ai.saranmahadev.in/math/convex-vs-non-convex/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Convex vs Non-Convex","description":"A function is convex if it is bowl-shaped: the straight line between any two points on its graph never dips below the graph.","url":"https://ai.saranmahadev.in/math/convex-vs-non-convex/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is f(x) = x² convex?","acceptedAnswer":{"@type":"Answer","text":"Yes: f″ = 2 ≥ 0."}},{"@type":"Question","name":"Can a convex function have two different local minima?","acceptedAnswer":{"@type":"Answer","text":"Not separate ones: any local minimum is global (a flat bottom is still one value)."}},{"@type":"Question","name":"Why does the start matter on non-convex functions?","acceptedAnswer":{"@type":"Answer","text":"Different starts roll into different valleys."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Optimization</p>
+        <h1 class="doc-title">Convex vs Non-Convex</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1oumnaabg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1oumnaapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1oumnaabg)"/>
+  <circle cx="875" cy="186" r="104" fill="#ddbecb" opacity="0.62"/><circle cx="301" cy="164" r="211" fill="#68599a" opacity="0.44"/><circle cx="393" cy="85" r="215" fill="#ddbecb" opacity="0.43"/><circle cx="188" cy="244" r="200" fill="#ddbecb" opacity="0.23"/><circle cx="170" cy="367" r="64" fill="#68599a" opacity="0.41"/><circle cx="575" cy="411" r="114" fill="#ddbecb" opacity="0.34"/>
+  <path d="M0,420 L0,309 L30,306 L60,306 L90,307 L120,310 L150,315 L180,321 L210,328 L240,335 L270,341 L300,346 L330,349 L360,350 L390,348 L420,345 L450,340 L480,334 L510,327 L540,320 L570,314 L600,309 L630,306 L660,306 L690,307 L720,310 L750,315 L780,321 L810,328 L840,335 L870,341 L900,346 L930,349 L960,350 L990,348 L1020,345 L1050,340 L1080,334 L1110,327 L1140,320 L1170,314 L1200,309 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,380 L30,378 L60,375 L90,373 L120,371 L150,368 L180,367 L210,365 L240,364 L270,363 L300,362 L330,362 L360,362 L390,363 L420,364 L450,365 L480,367 L510,369 L540,371 L570,373 L600,376 L630,378 L660,381 L690,383 L720,385 L750,388 L780,389 L810,391 L840,392 L870,393 L900,394 L930,394 L960,394 L990,393 L1020,392 L1050,391 L1080,389 L1110,387 L1140,385 L1170,383 L1200,380 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="763" cy="127" rx="179" ry="50" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(11.6 763 127)"/><ellipse cx="763" cy="127" rx="247" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(17.6 763 127)"/>
+  <circle cx="763" cy="127" r="70" fill="url(#c1oumnaapl)"/>
+  <circle cx="1032" cy="166" r="10" fill="#ffffff" opacity="0.63"/><circle cx="733" cy="219" r="15" fill="#ffffff" opacity="0.81"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A function is <strong>convex</strong> if it is bowl-shaped: the straight line between any two points on its graph never dips below the graph. A convex function has a single valley, so any downhill walk ends at the global minimum. <strong>Non-convex</strong> functions have several valleys and hills, and where you start decides where you end up.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/minima-maxima-and-saddle-points/" data-topic="math/minima-maxima-and-saddle-points">Minima, Maxima and Saddle Points</a>, <a class="wikilink" href="/math/higher-derivatives-and-curvature/" data-topic="math/higher-derivatives-and-curvature">Higher Derivatives and Curvature</a> and <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can I trust gradient descent to find the best answer?&quot; For convex problems, yes. For non-convex ones, only sometimes, and the starting point matters.</p>
+<h2 id="intuition-does-a-taut-string-touch-only-the-ends">Intuition: does a taut string touch only the ends?</h2>
+<p>Pick any two points on the curve and stretch a string between them. On a <strong>convex</strong> curve the string lies on or above the curve everywhere. On a <strong>non-convex</strong> curve it dips below somewhere.</p>
+<pre><code class="language-text">convex:  f( (a + b)/2 )  ≤  ( f(a) + f(b) ) / 2       for all a, b (the midpoint test)
+</code></pre>
+<p>For smooth functions, convex means <code>f″(x) ≥ 0</code> everywhere (in many variables, the Hessian has no negative eigenvalues). A convex function&#39;s every local minimum is a global minimum.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Test the midpoint rule:</p>
+<pre><code class="language-text">f(x) = x²,    a = −1, b = 3:    f(1) = 1     (f(−1) + f(3))/2 = (1 + 9)/2 = 5      1 ≤ 5   ✓ convex
+f(x) = x⁴ − 2x², a = −1, b = 1:  f(0) = 0     (f(−1) + f(1))/2 = (−1 + −1)/2 = −1    0 ≤ −1  ✗ not convex
+</code></pre>
+<p>The quartic has two valleys at <code>x = ±1</code> and a hill at 0. Start gradient descent at <code>x = 0.5</code> and it slides to the valley at <code>+1</code>; start at <code>−0.5</code> and it goes to <code>−1</code>. Here both valleys are equally deep, but in general they may differ, and descent can settle in a worse one.</p>
+<p><strong>Convex</strong> losses include squared error for linear models and logistic loss: training them has one answer. <strong>Non-convex</strong> losses include neural networks: many minima and saddles, yet in practice good minima are usually easy to reach.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="bowl-bumpy" data-title="One valley or many?"><p class="bench-fallback"><strong>Interactive bench: One valley or many?.</strong> Choose a bowl or a bumpy curve; two sliders pick points a and b, the chord between them is drawn and the midpoint test is reported; a start-point slider runs gradient descent and shows where it settles.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>On the bowl, place a and b anywhere. Does the chord ever go below the curve?</li>
+<li>Switch to the bumpy curve and find a chord that dips below.</li>
+<li>Run descent from several starts on the bumpy curve.</li>
+<li>Compare where each run ends up and its final height.</li>
+</ol>
+<p><strong>What you should notice:</strong> on a convex curve the result never depends on the start, while on a non-convex one it does.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Linear and logistic regression</strong> have convex losses.</li>
+<li><strong>Neural networks</strong> are non-convex; different initialisations give different (but often similarly good) models.</li>
+<li><strong>Restarts and noise</strong> (like SGD) help escape poor valleys.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming the minimum found is global</strong> on a non-convex problem.</li>
+<li><strong>Testing convexity at one point only.</strong></li>
+<li><strong>Confusing convex with monotonic.</strong> A convex function can fall then rise.</li>
+<li><strong>Assuming non-convex means hopeless.</strong> Many are trainable in practice.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Is f(x) = x² convex?</summary>
+Yes: f″ = 2 ≥ 0.
+</details>
+
+<details><summary>2. Can a convex function have two different local minima?</summary>
+Not separate ones: any local minimum is global (a flat bottom is still one value).
+</details>
+
+<details><summary>3. Why does the start matter on non-convex functions?</summary>
+Different starts roll into different valleys.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Convex function:</strong> a chord never lies below the curve.</li>
+<li><strong>Non-convex:</strong> having multiple valleys or hills.</li>
+<li><strong>Global minimum:</strong> the lowest point overall.</li>
+<li><strong>Initialisation:</strong> the starting parameter values.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/minima-maxima-and-saddle-points/" data-topic="math/minima-maxima-and-saddle-points">Minima, Maxima and Saddle Points</a> · <a class="wikilink" href="/math/higher-derivatives-and-curvature/" data-topic="math/higher-derivatives-and-curvature">Higher Derivatives and Curvature</a> · <a class="wikilink" href="/math/hessian/" data-topic="math/hessian">Hessian</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> · <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/convex-vs-non-convex">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/stochastic-gradient-descent/"><small>Read next</small><b>Stochastic Gradient Descent</b><p>Stochastic gradient descent (SGD) takes each step using the gradient from a small random mini-batch of examples instead of the whole data set.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/minima-maxima-and-saddle-points/"><b>Minima, Maxima and Saddle Points</b><p>A minimum is a low point of a function, a maximum a high point, and a saddle point is flat but rises in some directions and falls in others.</p></a><a class="rc-card" href="/math/higher-derivatives-and-curvature/"><b>Higher Derivatives and Curvature</b><p>The second derivative is the derivative of the derivative: it says how the slope itself is changing. Positive means the curve bends upward like a bowl, negative means it bends downward like a hill.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/hessian/"><b>Hessian</b><p>The Hessian is the matrix of all second partial derivatives of a function.</p></a><a class="rc-card" href="/math/stochastic-gradient-descent/"><b>Stochastic Gradient Descent</b><p>Stochastic gradient descent (SGD) takes each step using the gradient from a small random mini-batch of examples instead of the whole data set.</p></a><a class="rc-card" href="/math/reading-proofs-and-quantifiers/"><b>Reading Proofs and Quantifiers</b><p>A proof is an argument that a statement is true in every case, built from clear steps. Quantifiers (&quot;for all&quot;, &quot;there exists&quot;) say how many cases a statement covers.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/learning-rate/">← Previous: Learning Rate</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

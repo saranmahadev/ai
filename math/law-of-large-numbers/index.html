@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Law of Large Numbers — AI Base</title>
+<meta name="description" content="The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/law-of-large-numbers/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Law of Large Numbers — AI Base">
+<meta property="og:description" content="The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/law-of-large-numbers/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Law of Large Numbers","item":"https://ai.saranmahadev.in/math/law-of-large-numbers/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Law of Large Numbers","description":"The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.","url":"https://ai.saranmahadev.in/math/law-of-large-numbers/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"To cut the typical error of a sample mean in half, how much more data?","acceptedAnswer":{"@type":"Answer","text":"Four times as much."}},{"@type":"Question","name":"Does the law say the number of heads becomes exactly half?","acceptedAnswer":{"@type":"Answer","text":"No, only the fraction does."}},{"@type":"Question","name":"What does the sample mean approach as n grows?","acceptedAnswer":{"@type":"Answer","text":"The expectation."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Probability</p>
+        <h1 class="doc-title">Law of Large Numbers</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1jdn919bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1jdn919pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1jdn919bg)"/>
+  <circle cx="63" cy="242" r="138" fill="#ddbecb" opacity="0.31"/><circle cx="135" cy="80" r="102" fill="#cebff9" opacity="0.42"/><circle cx="479" cy="271" r="221" fill="#68599a" opacity="0.23"/><circle cx="587" cy="401" r="219" fill="#68599a" opacity="0.22"/><circle cx="83" cy="359" r="112" fill="#68599a" opacity="0.51"/><circle cx="668" cy="241" r="177" fill="#eee9fd" opacity="0.25"/>
+  <path d="M0,420 L0,348 L30,345 L60,340 L90,334 L120,327 L150,321 L180,315 L210,310 L240,307 L270,306 L300,307 L330,310 L360,315 L390,321 L420,328 L450,335 L480,341 L510,346 L540,349 L570,350 L600,348 L630,345 L660,340 L690,334 L720,327 L750,321 L780,315 L810,310 L840,307 L870,306 L900,307 L930,310 L960,315 L990,321 L1020,328 L1050,335 L1080,341 L1110,346 L1140,349 L1170,350 L1200,348 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,369 L30,366 L60,364 L90,363 L120,362 L150,362 L180,363 L210,365 L240,368 L270,371 L300,375 L330,379 L360,382 L390,386 L420,389 L450,391 L480,393 L510,394 L540,394 L570,393 L600,391 L630,389 L660,386 L690,382 L720,379 L750,375 L780,371 L810,368 L840,366 L870,364 L900,362 L930,362 L960,363 L990,364 L1020,366 L1050,369 L1080,372 L1110,376 L1140,380 L1170,383 L1200,387 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="704" cy="218" rx="205" ry="57" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(24.4 704 218)"/><ellipse cx="704" cy="218" rx="283" ry="79" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(30.4 704 218)"/>
+  <circle cx="704" cy="218" r="80" fill="url(#c1jdn919pl)"/>
+  <circle cx="724" cy="312" r="18" fill="#ffffff" opacity="0.68"/><circle cx="976" cy="228" r="14" fill="#ffffff" opacity="0.72"/><circle cx="560" cy="308" r="11" fill="#ffffff" opacity="0.86"/><circle cx="968" cy="231" r="14" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>law of large numbers</strong> says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half. It is why casinos win, why polls work, and why a model&#39;s average loss on a big enough sample tells you about its true performance.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a>, <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> and <a class="wikilink" href="/math/independence/" data-topic="math/independence">Independence</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why do averages become predictable even when single outcomes are not?&quot; One flip is a coin toss; a thousand flips are nearly always close to half heads.</p>
+<h2 id="intuition-randomness-averages-out">Intuition: randomness averages out</h2>
+<p>Each new observation is a small random nudge to the running average. Early on, one lucky streak matters a lot. Later, each new value is a tiny fraction of a large total, so streaks are diluted.</p>
+<pre><code class="language-text">sample mean  X̄ₙ = (X₁ + … + Xₙ) / n      →      E[X]      as n grows
+</code></pre>
+<p>How fast? The spread of the sample mean shrinks like <code>σ / √n</code>. To halve the typical error you need four times the data.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Flip a fair coin (<code>p = 0.5</code>, <code>σ = 0.5</code> per flip). The standard deviation of the fraction of heads after <code>n</code> flips is <code>0.5 / √n</code>:</p>
+<pre><code class="language-text">n = 100:     0.5 / 10   = 0.05        fraction of heads usually within about ±0.10 of 0.5
+n = 10,000:  0.5 / 100  = 0.005       usually within about ±0.01
+</code></pre>
+<p>Rolling a die: the average of many rolls approaches 3.5. Ten rolls might average anywhere from 2.5 to 4.5; ten thousand rolls average within about 0.03 of 3.5 (<code>1.708 / 100 = 0.017</code> per standard deviation).</p>
+<p>A caution: the law describes the <em>average</em>, not the <em>count</em>. After 100 flips the number of heads can still be 6 away from 50; only the <em>fraction</em> converges. The &quot;gambler&#39;s fallacy&quot; (expecting tails after a run of heads) misreads this: flips have no memory, and the average settles by dilution rather than correction.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="running-average" data-title="Watch an average settle"><p class="bench-fallback"><strong>Interactive bench: Watch an average settle.</strong> Simulate flipping a coin or rolling a die up to a chosen number of times; the running average is plotted with the true expectation as a reference, and several runs can be overlaid.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Run 100 flips and watch the running fraction of heads.</li>
+<li>Increase to 10,000 and compare.</li>
+<li>Overlay several runs. Where do they differ most?</li>
+<li>Switch to a die and watch the average approach 3.5.</li>
+</ol>
+<p><strong>What you should notice:</strong> runs wander widely at first, then all funnel toward the same value, and the funnel narrows like one over the square root of n.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Evaluation:</strong> average performance on a large test set estimates true performance.</li>
+<li><strong>Monte Carlo methods</strong> estimate integrals by averaging random samples.</li>
+<li><strong>SGD</strong> relies on averages of mini-batches being close to the full gradient.</li>
+<li><strong>A/B tests</strong> need enough samples for averages to stabilise.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>The gambler&#39;s fallacy.</strong></li>
+<li><strong>Assuming small samples are reliable.</strong></li>
+<li><strong>Forgetting that dependent samples may not average out</strong> as fast.</li>
+<li><strong>Expecting the law to fix bias.</strong> It converges to the wrong value if the sampling is biased.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. To cut the typical error of a sample mean in half, how much more data?</summary>
+Four times as much.
+</details>
+
+<details><summary>2. Does the law say the number of heads becomes exactly half?</summary>
+No, only the fraction does.
+</details>
+
+<details><summary>3. What does the sample mean approach as n grows?</summary>
+The expectation.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Law of large numbers:</strong> sample means converge to the expectation.</li>
+<li><strong>Sample mean:</strong> the average of the observations.</li>
+<li><strong>Convergence:</strong> getting arbitrarily close.</li>
+<li><strong>Standard error:</strong> the spread of a sample mean, <code>σ / √n</code>.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a> · <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> · <a class="wikilink" href="/math/central-limit-theorem/" data-topic="math/central-limit-theorem">Central Limit Theorem</a> · <a class="wikilink" href="/math/sampling-and-bias/" data-topic="math/sampling-and-bias">Sampling and Bias</a> · <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/law-of-large-numbers">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/central-limit-theorem/"><small>Read next</small><b>Central Limit Theorem</b><p>The central limit theorem says that the average (or sum) of many independent random values follows a bell curve, whatever shape the individual values have. Its spread shrinks as σ / √n.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/expectation/"><b>Expectation</b><p>The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/math/independence/"><b>Independence</b><p>Two events are independent when knowing one happened tells you nothing about the other: P(A | B) = P(A). Equivalently, the probability of both is the product: P(A and B) = P(A) · P(B).</p></a><a class="rc-card" href="/math/central-limit-theorem/"><b>Central Limit Theorem</b><p>The central limit theorem says that the average (or sum) of many independent random values follows a bell curve, whatever shape the individual values have. Its spread shrinks as σ / √n.</p></a><a class="rc-card" href="/math/sampling-and-bias/"><b>Sampling and Bias</b><p>A sample is the part of a population you actually observe, and statistics uses it to say something about the whole.</p></a><a class="rc-card" href="/math/stochastic-gradient-descent/"><b>Stochastic Gradient Descent</b><p>Stochastic gradient descent (SGD) takes each step using the gradient from a small random mini-batch of examples instead of the whole data set.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/joint-and-marginal-distributions/">← Previous: Joint and Marginal Distributions</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

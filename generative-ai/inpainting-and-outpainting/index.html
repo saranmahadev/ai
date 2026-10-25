@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inpainting and Outpainting — AI Base</title>
+<meta name="description" content="structural conditioning locks part of a generated output to an exact value.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/inpainting-and-outpainting/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Inpainting and Outpainting — AI Base">
+<meta property="og:description" content="structural conditioning locks part of a generated output to an exact value.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/inpainting-and-outpainting/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Inpainting and Outpainting","item":"https://ai.saranmahadev.in/generative-ai/inpainting-and-outpainting/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Inpainting and Outpainting","description":"structural conditioning locks part of a generated output to an exact value.","url":"https://ai.saranmahadev.in/generative-ai/inpainting-and-outpainting/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why is inpainting generally more reliable than outpainting?","acceptedAnswer":{"@type":"Answer","text":"Inpainting has known pixels constraining the missing region from multiple directions, while outpainting only has known pixels on one side, leaving the generated content progressively less constrained the further it extends."}},{"@type":"Question","name":"In the worked example, what determined how quickly outpainted values decayed toward the prior mean?","acceptedAnswer":{"@type":"Answer","text":"The strength of the prior-pull term, λ — a larger λ caused faster decay toward the prior mean, while a smaller λ let the known anchor's value persist longer."}},{"@type":"Question","name":"What's the exact mathematical solution to the inpainting worked example, and why?","acceptedAnswer":{"@type":"Answer","text":"Linear interpolation between the two known anchors — it's the exact minimizer of total squared adjacent differences with both endpoints fixed, a discrete harmonic (smoothness-prior) solution."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Image Generation and Editing</p>
+        <h1 class="doc-title">Inpainting and Outpainting</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ct1tvf3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="ct1tvf3pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ct1tvf3bg)"/>
+  <circle cx="43" cy="337" r="93" fill="#ffe9f4" opacity="0.31"/><circle cx="957" cy="42" r="106" fill="#8a5989" opacity="0.61"/><circle cx="65" cy="348" r="107" fill="#8a5989" opacity="0.44"/><circle cx="493" cy="341" r="182" fill="#ffe9f4" opacity="0.27"/><circle cx="422" cy="18" r="133" fill="#ffbfe0" opacity="0.47"/>
+  <path d="M0,420 L0,340 L30,345 L60,348 L90,350 L120,349 L150,346 L180,341 L210,335 L240,328 L270,321 L300,315 L330,310 L360,307 L390,306 L420,307 L450,309 L480,314 L510,320 L540,327 L570,334 L600,340 L630,345 L660,348 L690,350 L720,349 L750,346 L780,341 L810,335 L840,328 L870,321 L900,315 L930,310 L960,307 L990,306 L1020,307 L1050,309 L1080,314 L1110,320 L1140,327 L1170,334 L1200,340 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,385 L30,382 L60,380 L90,377 L120,375 L150,372 L180,370 L210,368 L240,366 L270,365 L300,363 L330,363 L360,362 L390,362 L420,362 L450,363 L480,364 L510,366 L540,367 L570,369 L600,371 L630,374 L660,376 L690,379 L720,381 L750,384 L780,386 L810,388 L840,390 L870,391 L900,393 L930,393 L960,394 L990,394 L1020,394 L1050,393 L1080,392 L1110,390 L1140,389 L1170,387 L1200,385 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="888" cy="152" rx="192" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-17.3 888 152)"/><ellipse cx="888" cy="152" rx="266" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-11.3 888 152)"/>
+  <circle cx="888" cy="152" r="75" fill="url(#ct1tvf3pl)"/>
+  <circle cx="1153" cy="197" r="11" fill="#ffffff" opacity="0.68"/><circle cx="1170" cy="160" r="15" fill="#ffffff" opacity="0.75"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/generative-ai/controlnet-style-structural-conditioning/" data-topic="generative-ai/controlnet-style-structural-conditioning">structural conditioning</a> locks part of a generated output to an exact value. This note covers the specific, very common case where that &quot;exact value&quot; comes from a real image: part of the output is known (because it&#39;s an existing photo), and the rest has to be generated to match.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/controlnet-style-structural-conditioning/" data-topic="generative-ai/controlnet-style-structural-conditioning">ControlNet-Style Structural Conditioning</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you fill in a missing region of an image, or extend one past its original edges?&quot; <strong>Inpainting</strong> fills a masked-out region that&#39;s surrounded by known pixels on multiple sides, so the generation has strong evidence from every direction about what belongs there. <strong>Outpainting</strong> extends an image past its original border, where the generated region has evidence from only one direction — and, intuitively, should become progressively less certain the further it gets from the known content.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Filling in a torn-out piece from the <em>middle</em> of an old photograph is a much better-constrained problem than guessing what&#39;s past its <em>edge</em> — in the middle, the surrounding pixels on every side all constrain the answer; past the edge, only the content immediately bordering it offers any clue, and that clue gets weaker and weaker in influence the further out you go. The mechanism in both cases is the same locking idea from <a class="wikilink" href="/generative-ai/controlnet-style-structural-conditioning/" data-topic="generative-ai/controlnet-style-structural-conditioning">structural conditioning</a>, but where the known pixels sit around the gap determines how confident the result can be.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">inpainting: minimize Σ(x_{i+1} − x_i)²  given both endpoints fixed
+  → the exact minimizer is linear interpolation between the two known values
+    (a discrete harmonic / smoothness-prior solution)
+
+outpainting: minimize Σ(x_{i+1} − x_i)² + λ·Σxᵢ²  given only one endpoint fixed
+  → the solution decays from the known value toward the prior mean (here, 0)
+    as it moves away from the anchor; larger λ decays faster
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Filling 3 missing values between two known anchors, 10 and 50, by minimizing total squared adjacent differences — the exact solution is linear interpolation, confirmed by gradient descent landing on the same answer:</p>
+<pre><code class="language-text">inpaint 10 → 50 over 5 positions:  10.00  20.00  30.00  40.00  50.00
+</code></pre>
+<p>Extending past a single known anchor of 50, with no second anchor to pull toward, instead decays toward a prior mean of 0 — and how fast it decays depends entirely on how strongly that prior pulls (λ):</p>
+<pre><code class="language-text">λ = 0.30 (strong pull to prior):  50.00  29.25  17.28  10.49   6.86   5.27
+λ = 0.05 (weak pull to prior):    50.00  41.78  35.65  31.30  28.52  27.16
+</code></pre>
+<p>Inpainting&#39;s result is fully determined by two known values and stays exactly linear between them. Outpainting&#39;s result starts at the known value but drifts toward an arbitrary prior the further it goes — exactly the intuition that content &quot;far from the edge&quot; should get less certain, not more.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="inpaint-outpaint" data-title="Filling a gap vs. extending past the edge"><p class="bench-fallback"><strong>Interactive bench: Filling a gap vs. extending past the edge.</strong> Compare values generated between two known anchors against values generated past a single anchor, at different prior strengths.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at inpaint mode and confirm the filled values interpolate linearly.</li>
+<li>Switch to outpaint mode and watch the generated sequence decay away from the known anchor.</li>
+<li>Raise the prior strength λ and watch the decay happen faster.</li>
+</ol>
+<p><strong>What you should notice:</strong> inpainting&#39;s result only depends on the two known values and λ plays no role; outpainting&#39;s result depends on both the one known value and how strongly λ pulls it toward a generic answer.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Production inpainting tools (removing an object from a photo, filling a torn region) rely on exactly this &quot;constrained from multiple sides&quot; property</strong> to produce confident, consistent fills.</li>
+<li><strong>Outpainting tools (extending a photo&#39;s canvas) are a known weaker guarantee</strong> — content generated far from the original image&#39;s edge is, by the nature of the problem, less constrained by real evidence.</li>
+<li><strong><a class="wikilink" href="/generative-ai/video-editing-and-interpolation/" data-topic="generative-ai/video-editing-and-interpolation">frame interpolation</a> is inpainting applied along the time axis instead of space</strong>: filling in a frame that&#39;s &quot;missing&quot; between two known frames, with evidence from both sides.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting outpainted content far from the edge to be as reliable as inpainted content.</strong> The worked example&#39;s own math shows why it can&#39;t be — outpainting has only one-sided evidence, which necessarily weakens with distance.</li>
+<li><strong>Assuming inpainting and outpainting use fundamentally different algorithms.</strong> Both are the same &quot;some pixels locked, some free, minimize a smoothness-plus-prior objective&quot; idea — what differs is only how many sides of the gap have known values.</li>
+<li><strong>Forgetting a mask&#39;s shape matters, not just its size.</strong> A thin gap surrounded almost entirely by known pixels is a much better-constrained inpainting problem than a large gap with a short known boundary.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why is inpainting generally more reliable than outpainting?</summary>
+Inpainting has known pixels constraining the missing region from multiple directions, while outpainting only has known pixels on one side, leaving the generated content progressively less constrained the further it extends.
+</details>
+
+<details><summary>2. In the worked example, what determined how quickly outpainted values decayed toward the prior mean?</summary>
+The strength of the prior-pull term, λ — a larger λ caused faster decay toward the prior mean, while a smaller λ let the known anchor's value persist longer.
+</details>
+
+<details><summary>3. What's the exact mathematical solution to the inpainting worked example, and why?</summary>
+Linear interpolation between the two known anchors — it's the exact minimizer of total squared adjacent differences with both endpoints fixed, a discrete harmonic (smoothness-prior) solution.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Inpainting:</strong> generating a masked region surrounded by known pixels on multiple sides.</li>
+<li><strong>Outpainting:</strong> extending an image past its original border, with known pixels only on one side of the generated region.</li>
+<li><strong>Prior mean:</strong> the generic value a one-sided generation process drifts toward as it moves away from known evidence.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/controlnet-style-structural-conditioning/" data-topic="generative-ai/controlnet-style-structural-conditioning">ControlNet-Style Structural Conditioning</a> · <a class="wikilink" href="/generative-ai/image-to-image-translation-and-style-transfer/" data-topic="generative-ai/image-to-image-translation-and-style-transfer">Image-to-Image Translation and Style Transfer</a> · <a class="wikilink" href="/generative-ai/video-editing-and-interpolation/" data-topic="generative-ai/video-editing-and-interpolation">Video Editing and Interpolation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/inpainting-and-outpainting">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/image-to-image-translation-and-style-transfer/"><small>Read next</small><b>Image-to-Image Translation and Style Transfer</b><p>Structural conditioning keeps a generated output faithful to an exact structure; this note covers a different kind of faithfulness — matching an image&#39;s statistics rather than its exact values,…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/controlnet-style-structural-conditioning/"><b>ControlNet-Style Structural Conditioning</b><p>Guidance and cross-attention both steer generation toward a concept — a class, a prompt — expressed as a direction or an attended-to embedding. Neither one forces an exact structure.</p></a><a class="rc-card" href="/generative-ai/video-editing-and-interpolation/"><b>Video Editing and Interpolation</b><p>inpainting fills in missing pixels surrounded by known ones.</p></a><a class="rc-card" href="/generative-ai/image-to-image-translation-and-style-transfer/"><b>Image-to-Image Translation and Style Transfer</b><p>Structural conditioning keeps a generated output faithful to an exact structure; this note covers a different kind of faithfulness — matching an image&#39;s statistics rather than its exact values,…</p></a><a class="rc-card" href="/generative-ai/image-generation-and-editing/"><b>Image Generation and Editing</b><p>With decoding and conditioning covered as general mechanisms, this district applies them to the modality generative AI is best known for: pictures — generating them from text, and then editing…</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/super-resolution-and-upscaling/">← Previous: Super-Resolution and Upscaling</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

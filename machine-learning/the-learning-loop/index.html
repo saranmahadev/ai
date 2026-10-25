@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Learning Loop — AI Base</title>
+<meta name="description" content="Training a model is a loop: predict with the current parameters, measure the loss, work out which way each parameter should move to lower it, nudge the parameters, and repeat.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/the-learning-loop/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="The Learning Loop — AI Base">
+<meta property="og:description" content="Training a model is a loop: predict with the current parameters, measure the loss, work out which way each parameter should move to lower it, nudge the parameters, and repeat.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/the-learning-loop/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"The Learning Loop","item":"https://ai.saranmahadev.in/machine-learning/the-learning-loop/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Learning Loop","description":"Training a model is a loop: predict with the current parameters, measure the loss, work out which way each parameter should move to lower it, nudge the parameters, and repeat.","url":"https://ai.saranmahadev.in/machine-learning/the-learning-loop/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the learning rate control?","acceptedAnswer":{"@type":"Answer","text":"The size of each parameter update."}},{"@type":"Question","name":"If the gradient of the loss with respect to w is positive, which way should w move?","acceptedAnswer":{"@type":"Answer","text":"Down (decrease), because increasing w would increase the loss."}},{"@type":"Question","name":"Why does the loss fall fast and then slowly?","acceptedAnswer":{"@type":"Answer","text":"The gradient shrinks as you approach the bottom, so steps get smaller."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · The Learning Problem</p>
+        <h1 class="doc-title">The Learning Loop</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1sfbwnkbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1sfbwnkpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1sfbwnkbg)"/>
+  <circle cx="900" cy="393" r="117" fill="#ffd99f" opacity="0.36"/><circle cx="629" cy="294" r="109" fill="#8a6b5c" opacity="0.39"/><circle cx="242" cy="390" r="189" fill="#ffd08d" opacity="0.52"/><circle cx="150" cy="255" r="164" fill="#ffd08d" opacity="0.37"/><circle cx="751" cy="106" r="97" fill="#8a6b5c" opacity="0.42"/><circle cx="270" cy="102" r="74" fill="#8a6b5c" opacity="0.24"/>
+  <path d="M0,420 L0,337 L30,331 L60,324 L90,317 L120,312 L150,308 L180,306 L210,306 L240,308 L270,312 L300,318 L330,324 L360,331 L390,338 L420,343 L450,347 L480,349 L510,349 L540,347 L570,343 L600,337 L630,331 L660,324 L690,317 L720,312 L750,308 L780,306 L810,306 L840,308 L870,312 L900,318 L930,324 L960,331 L990,338 L1020,343 L1050,347 L1080,349 L1110,349 L1140,347 L1170,343 L1200,337 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,389 L30,386 L60,383 L90,379 L120,375 L150,372 L180,368 L210,366 L240,364 L270,362 L300,362 L330,363 L360,364 L390,366 L420,369 L450,372 L480,376 L510,380 L540,383 L570,387 L600,389 L630,392 L660,393 L690,394 L720,394 L750,393 L780,391 L810,388 L840,385 L870,381 L900,378 L930,374 L960,371 L990,367 L1020,365 L1050,363 L1080,362 L1110,362 L1140,363 L1170,364 L1200,367 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="813" cy="198" rx="263" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-7.5 813 198)"/><ellipse cx="813" cy="198" rx="364" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-1.5 813 198)"/>
+  <circle cx="813" cy="198" r="103" fill="url(#c1sfbwnkpl)"/>
+  <circle cx="806" cy="40" r="8" fill="#ffffff" opacity="0.63"/><circle cx="559" cy="108" r="9" fill="#ffffff" opacity="0.62"/><circle cx="444" cy="238" r="16" fill="#ffffff" opacity="0.64"/><circle cx="1177" cy="209" r="17" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Training a model is a loop: <strong>predict</strong> with the current parameters, <strong>measure</strong> the loss, work out which way each parameter should move to lower it, <strong>nudge</strong> the parameters, and repeat. This loop, gradient descent, is how almost every model in this planet and the next ones learns.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/what-is-machine-learning/" data-topic="machine-learning/what-is-machine-learning">What Is Machine Learning</a>, <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> and <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does a model actually improve?&quot; Not by being told the answer, but by repeatedly noticing that a small change to a parameter makes its errors smaller or larger.</p>
+<h2 id="intuition-walking-downhill-in-fog">Intuition: walking downhill in fog</h2>
+<p>The loss is a landscape whose height is the model&#39;s error and whose coordinates are the parameters. You cannot see the whole landscape, but you can feel the slope under your feet. Take a step downhill, feel again, repeat. The <strong>learning rate</strong> is the step size: too small and you crawl, too large and you overshoot the valley.</p>
+<h2 id="definitions">Definitions</h2>
+<p>For a line <code>ŷ = w·x + b</code> and mean squared error over <code>n</code> points:</p>
+<pre><code class="language-text">loss     L = (1/n) Σ (w·xᵢ + b − yᵢ)²
+gradient ∂L/∂w = (2/n) Σ (w·xᵢ + b − yᵢ)·xᵢ        ∂L/∂b = (2/n) Σ (w·xᵢ + b − yᵢ)
+update   w ← w − η·∂L/∂w         b ← b − η·∂L/∂b      (η is the learning rate)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three points <code>(1, 2)</code>, <code>(2, 3)</code>, <code>(3, 5)</code>; start at <code>w = 0, b = 0</code>; learning rate <code>η = 0.1</code>.</p>
+<pre><code class="language-text">step 0:  w = 0.000  b = 0.000   loss 12.667   gradient (−15.333, −6.667)
+step 1:  w = 1.533  b = 0.667   loss  0.216   gradient ( 1.644,  0.800)
+step 2:  w = 1.369  b = 0.587   loss  0.067
+step 3:  w = 1.390  b = 0.588   loss  0.065
+</code></pre>
+<p>The loss drops from 12.7 to 0.07 in two steps and then settles. The best possible line (found exactly by <a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a>) has <code>w = 1.5, b = 0.333</code>; gradient descent has come close and is still creeping toward it. With a very large learning rate the same loop would overshoot and grow without bound.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="learning-loop" data-title="The learning loop"><p class="bench-fallback"><strong>Interactive bench: The learning loop.</strong> A line starts in a bad place over a cloud of points; you step the learning loop or play it, watching the line move and the loss curve fall, with a slider for the learning rate.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Press <strong>One step</strong> several times and watch the line and loss.</li>
+<li>Reset and play at learning rate 0.05.</li>
+<li>Reset and raise the learning rate to 0.5.</li>
+<li>Find the largest learning rate that still settles smoothly.</li>
+</ol>
+<p><strong>What you should notice:</strong> loss drops quickly at first and then slowly; too small a rate is slow, and too large a rate makes the loss bounce or explode.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Everything trained by gradients:</strong> linear models, neural networks and transformers.</li>
+<li><strong>Variants:</strong> stochastic gradient descent on mini-batches and Adam (see <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a> and <a class="wikilink" href="/math/momentum-and-adam/" data-topic="math/momentum-and-adam">Momentum and Adam</a>).</li>
+<li><strong>Learning-rate schedules</strong> shrink the step as training proceeds.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Learning rate too large,</strong> so the loss diverges.</li>
+<li><strong>Stopping too early</strong> while the loss is still falling.</li>
+<li><strong>Watching only training loss;</strong> also watch validation loss.</li>
+<li><strong>Assuming the loop finds the global best.</strong> On bumpy landscapes it finds a nearby low point.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does the learning rate control?</summary>
+The size of each parameter update.
+</details>
+
+<details><summary>2. If the gradient of the loss with respect to w is positive, which way should w move?</summary>
+Down (decrease), because increasing w would increase the loss.
+</details>
+
+<details><summary>3. Why does the loss fall fast and then slowly?</summary>
+The gradient shrinks as you approach the bottom, so steps get smaller.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Gradient:</strong> the direction of steepest increase of the loss.</li>
+<li><strong>Learning rate:</strong> the step size of each update.</li>
+<li><strong>Epoch:</strong> one pass through the training data.</li>
+<li><strong>Convergence:</strong> the loss settling near its minimum.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> · <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a> · <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a> · <a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a> · <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/the-learning-loop">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/data-and-features/"><small>Read next</small><b>Data and Features</b><p>Models see numbers, not the world, so how data is cleaned and represented decides most of what a model can learn.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/what-is-machine-learning/"><b>What Is Machine Learning</b><p>Machine learning is building a program by showing it examples instead of writing its rules.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/learning-rate/"><b>Learning Rate</b><p>The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.</p></a><a class="rc-card" href="/math/least-squares/"><b>Least Squares</b><p>When a system of equations has more equations than unknowns, it usually has no exact solution. Least squares finds the values that come closest, by minimising the total squared error.</p></a><a class="rc-card" href="/math/stochastic-gradient-descent/"><b>Stochastic Gradient Descent</b><p>Stochastic gradient descent (SGD) takes each step using the gradient from a small random mini-batch of examples instead of the whole data set.</p></a><a class="rc-card" href="/math/momentum-and-adam/"><b>Momentum and Adam</b><p>Momentum lets a walker keep some of its previous velocity, so it speeds up along steady slopes and smooths out zig-zags.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/train-validation-and-test-sets/">← Previous: Train, Validation and Test Sets</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

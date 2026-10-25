@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Feed-Forward Sublayer — AI Base</title>
+<meta name="description" content="Attention lets every position look at every other position — but it never actually transforms a position&#39;s own content on its own.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/the-feed-forward-sublayer/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="The Feed-Forward Sublayer — AI Base">
+<meta property="og:description" content="Attention lets every position look at every other position — but it never actually transforms a position&#39;s own content on its own.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/the-feed-forward-sublayer/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"The Feed-Forward Sublayer","item":"https://ai.saranmahadev.in/transformers/the-feed-forward-sublayer/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Feed-Forward Sublayer","description":"Attention lets every position look at every other position — but it never actually transforms a position's own content on its own.","url":"https://ai.saranmahadev.in/transformers/the-feed-forward-sublayer/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the key difference between what attention processes and what the feed-forward sublayer processes?","acceptedAnswer":{"@type":"Answer","text":"Attention mixes information across every position in the sequence; the feed-forward sublayer processes each position entirely independently, with no access to any other position's content."}},{"@type":"Question","name":"In the worked example, what fraction of hidden units survived the ReLU activation?","acceptedAnswer":{"@type":"Answer","text":"2 of 8 — the other 6 were negative before the activation and got zeroed out by ReLU."}},{"@type":"Question","name":"What is the conventional relationship between the feed-forward hidden dimension and d_model?","acceptedAnswer":{"@type":"Answer","text":"The hidden dimension (d_ff) is conventionally 4 times d_model — for example, 3072 for a 768-wide model."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · The Transformer Block</p>
+        <h1 class="doc-title">The Feed-Forward Sublayer</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1sex7qrbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1sex7qrpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1sex7qrbg)"/>
+  <circle cx="1075" cy="130" r="200" fill="#c5cacf" opacity="0.61"/><circle cx="139" cy="288" r="138" fill="#c5cacf" opacity="0.54"/><circle cx="122" cy="278" r="179" fill="#e2efff" opacity="0.28"/><circle cx="916" cy="77" r="114" fill="#c5cacf" opacity="0.57"/><circle cx="271" cy="57" r="149" fill="#c5cacf" opacity="0.26"/>
+  <path d="M0,420 L0,316 L30,313 L60,311 L90,309 L120,307 L150,306 L180,306 L210,306 L240,306 L270,307 L300,309 L330,311 L360,313 L390,316 L420,319 L450,323 L480,326 L510,330 L540,333 L570,336 L600,339 L630,342 L660,344 L690,346 L720,348 L750,349 L780,350 L810,350 L840,349 L870,348 L900,346 L930,344 L960,342 L990,339 L1020,336 L1050,333 L1080,329 L1110,326 L1140,322 L1170,319 L1200,316 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,393 L120,391 L150,389 L180,386 L210,382 L240,379 L270,375 L300,371 L330,368 L360,365 L390,363 L420,362 L450,362 L480,363 L510,364 L540,366 L570,369 L600,372 L630,376 L660,380 L690,383 L720,387 L750,390 L780,392 L810,393 L840,394 L870,394 L900,393 L930,391 L960,388 L990,385 L1020,381 L1050,377 L1080,374 L1110,370 L1140,367 L1170,365 L1200,363 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="690" cy="230" rx="253" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.5 690 230)"/><ellipse cx="690" cy="230" rx="350" ry="98" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.5 690 230)"/>
+  <circle cx="690" cy="230" r="99" fill="url(#c1sex7qrpl)"/>
+  <circle cx="600" cy="120" r="16" fill="#ffffff" opacity="0.76"/><circle cx="487" cy="329" r="16" fill="#ffffff" opacity="0.82"/><circle cx="630" cy="101" r="15" fill="#ffffff" opacity="0.67"/><circle cx="368" cy="302" r="8" fill="#ffffff" opacity="0.79"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Attention lets every position look at every other position — but it never actually transforms a position&#39;s own content on its own. That job belongs to the feed-forward sublayer: a small, ordinary two-layer network applied identically and independently to every position in the sequence.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">Residual Connections in Transformers</a>, <a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">The Artificial Neuron and Activation Functions</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;After attention has mixed information across positions, what actually processes each position&#39;s own content?&quot; The feed-forward sublayer: expand each position&#39;s vector to a wider hidden dimension, apply a nonlinearity, then project back down to the original width — exactly the same computation, with the exact same weights, applied to every position in the sequence, one at a time, with no mixing between positions at all.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Think of attention as the &quot;communication&quot; step — every position gathers information from everywhere else. The feed-forward sublayer is the &quot;thinking&quot; step that follows — each position, now holding whatever it gathered, processes that information entirely on its own, using the exact same small network every other position also uses. Expanding to a wider hidden layer first gives that processing more room to work with before compressing back down to the model&#39;s normal width.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">FFN(x) = W₂ · activation(W₁ · x + b₁) + b₂
+</code></pre>
+<p><code>x</code> is one position&#39;s vector, of width <code>d_model</code>. <code>W₁</code> expands it to a wider hidden dimension <code>d_ff</code> (conventionally <code>4 × d_model</code> — for example, BERT-base uses <code>d_model = 768</code> and <code>d_ff = 3072</code>); <code>W₂</code> projects back down to <code>d_model</code>. The exact same <code>W₁, b₁, W₂, b₂</code> are applied to every position in the sequence — this sublayer has no notion of sequence position or neighbouring tokens at all.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A single position&#39;s 4-dimensional vector, expanded to an 8-wide hidden layer with ReLU, then projected back to 4 dimensions:</p>
+<pre><code class="language-text">x = [0.5, -0.3, 0.8, 0.1]
+
+hidden (after W₁x + b₁, before ReLU, then ReLU applied):
+  [0.000, 0.000, 0.000, 0.000, 0.175, 0.388, 0.000, 0.000]
+  → 6 of 8 hidden units zeroed out by ReLU
+
+output (after W₂ · hidden + b₂):
+  [0.1182, -0.2757, 0.0638, 0.2591]
+</code></pre>
+<p>Parameter count for this small example: <code>W₁</code> contributes <code>8 × 4 = 32</code>, <code>b₁</code> contributes <code>8</code>, <code>W₂</code> contributes <code>4 × 8 = 32</code>, <code>b₂</code> contributes <code>4</code> — <code>76</code> parameters total, applied identically to every position the sublayer processes.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="ffn-sublayer" data-title="Expand, activate, project back down"><p class="bench-fallback"><strong>Interactive bench: Expand, activate, project back down.</strong> Push a vector through a two-layer feed-forward sublayer and watch the hidden layer's values, including how many get zeroed by the activation function.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Change the input vector and watch which hidden units activate versus get zeroed by ReLU.</li>
+<li>Widen the hidden dimension and see the parameter count grow.</li>
+<li>Compare the same input processed twice — confirm the output is identical both times, since the same weights apply regardless of position.</li>
+</ol>
+<p><strong>What you should notice:</strong> this sublayer never looks at any other position&#39;s vector — everything it computes depends only on the one input vector it was given, unlike attention, which depends on the whole sequence.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is where most of a transformer&#39;s parameters typically live</strong>: with <code>d_ff = 4 × d_model</code>, the two feed-forward matrices together usually outweigh the attention sublayer&#39;s own parameters at a given layer.</li>
+<li><strong><a class="wikilink" href="/transformers/modern-feed-forward-variants-swiglu-and-geglu/" data-topic="transformers/modern-feed-forward-variants-swiglu-and-geglu">the next topic</a> replaces the plain ReLU activation used here</strong> with a gated variant that most modern large transformers use instead.</li>
+<li><strong><a class="wikilink" href="/transformers/mixture-of-experts-transformer-blocks/" data-topic="transformers/mixture-of-experts-transformer-blocks">Mixture-of-Experts Transformer Blocks</a>, much later on this planet, replaces this entire sublayer</strong> with several specialist copies and a router choosing which to use per token — directly building on the structure introduced here.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming the feed-forward sublayer mixes information across positions.</strong> It explicitly does not — that&#39;s attention&#39;s job; this sublayer processes each position in complete isolation from every other.</li>
+<li><strong>Forgetting the hidden dimension is usually much wider than <code>d_model</code>.</strong> The <code>4×</code> expansion is a real, consistent convention across most transformer designs, not an arbitrary implementation detail.</li>
+<li><strong>Treating this as a minor, lightweight component.</strong> Given the typical 4× expansion, it is often the single largest parameter block in a transformer layer.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the key difference between what attention processes and what the feed-forward sublayer processes?</summary>
+Attention mixes information across every position in the sequence; the feed-forward sublayer processes each position entirely independently, with no access to any other position's content.
+</details>
+
+<details><summary>2. In the worked example, what fraction of hidden units survived the ReLU activation?</summary>
+2 of 8 — the other 6 were negative before the activation and got zeroed out by ReLU.
+</details>
+
+<details><summary>3. What is the conventional relationship between the feed-forward hidden dimension and d_model?</summary>
+The hidden dimension (d_ff) is conventionally 4 times d_model — for example, 3072 for a 768-wide model.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>d_ff:</strong> the width of the feed-forward sublayer&#39;s hidden layer, conventionally 4 times d_model.</li>
+<li><strong>Position-wise:</strong> applied identically and independently to each position in a sequence, with no mixing between positions.</li>
+<li><strong>Expansion-then-projection:</strong> widening a vector to a larger hidden dimension before compressing it back to the original width.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">Residual Connections in Transformers</a> · <a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">The Artificial Neuron and Activation Functions</a> · <a class="wikilink" href="/transformers/modern-feed-forward-variants-swiglu-and-geglu/" data-topic="transformers/modern-feed-forward-variants-swiglu-and-geglu">Modern Feed-Forward Variants: SwiGLU and GeGLU</a> · <a class="wikilink" href="/transformers/mixture-of-experts-transformer-blocks/" data-topic="transformers/mixture-of-experts-transformer-blocks">Mixture-of-Experts Transformer Blocks</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/the-feed-forward-sublayer">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/modern-feed-forward-variants-swiglu-and-geglu/"><small>Read next</small><b>Modern Feed-Forward Variants: SwiGLU and GeGLU</b><p>The plain feed-forward sublayer expands, activates, and projects back down with one activation function applied directly.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/residual-connections-in-transformers/"><b>Residual Connections in Transformers</b><p>Stack enough layers on top of each other, and a signal passed through all of them — unless something stops it — tends to either vanish or blow up.</p></a><a class="rc-card" href="/deep-learning/the-artificial-neuron-and-activation-functions/"><b>The Artificial Neuron and Activation Functions</b><p>An artificial neuron is a dot product plus a bias, passed through a non-linear activation function: a = f(w · x + b).</p></a><a class="rc-card" href="/transformers/modern-feed-forward-variants-swiglu-and-geglu/"><b>Modern Feed-Forward Variants: SwiGLU and GeGLU</b><p>The plain feed-forward sublayer expands, activates, and projects back down with one activation function applied directly.</p></a><a class="rc-card" href="/transformers/mixture-of-experts-transformer-blocks/"><b>Mixture-of-Experts Transformer Blocks</b><p>The feed-forward sublayer runs the same, single network on every position.</p></a><a class="rc-card" href="/transformers/the-transformer-block/"><b>The Transformer Block</b><p>Attention on its own is only half of a transformer layer.</p></a><a class="rc-card" href="/transformers/rmsnorm-vs-layernorm/"><b>RMSNorm vs LayerNorm</b><p>The previous topic was about where normalization sits.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/rmsnorm-vs-layernorm/">← Previous: RMSNorm vs LayerNorm</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

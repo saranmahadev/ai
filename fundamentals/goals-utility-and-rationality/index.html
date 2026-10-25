@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Goals, Utility and Rationality — AI Base</title>
+<meta name="description" content="An agent needs a way to choose between options.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/goals-utility-and-rationality/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Goals, Utility and Rationality — AI Base">
+<meta property="og:description" content="An agent needs a way to choose between options.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/goals-utility-and-rationality/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Goals, Utility and Rationality","item":"https://ai.saranmahadev.in/fundamentals/goals-utility-and-rationality/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Goals, Utility and Rationality","description":"An agent needs a way to choose between options.","url":"https://ai.saranmahadev.in/fundamentals/goals-utility-and-rationality/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the expected time of a route that usually takes 30 minutes but has a 10% chance of a 20-minute delay?","acceptedAnswer":{"@type":"Answer","text":"30 + 0.10 × 20 = 32 minutes."}},{"@type":"Question","name":"Is a rational agent one that never makes mistakes?","acceptedAnswer":{"@type":"Answer","text":"No. It chooses the action with the best expected result given what it knows, which can still turn out badly."}},{"@type":"Question","name":"Why is choosing the goal risky?","acceptedAnswer":{"@type":"Answer","text":"The agent optimises exactly what it was told, which may differ from what was intended, for example rewarding clicks instead of quality."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · The Agent</p>
+        <h1 class="doc-title">Goals, Utility and Rationality</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1t6a9x2bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="c1t6a9x2pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1t6a9x2bg)"/>
+  <circle cx="820" cy="2" r="106" fill="#c3d6b3" opacity="0.25"/><circle cx="467" cy="179" r="162" fill="#a8e2d7" opacity="0.46"/><circle cx="726" cy="144" r="223" fill="#e2f5f1" opacity="0.61"/><circle cx="670" cy="279" r="68" fill="#a8e2d7" opacity="0.46"/><circle cx="999" cy="339" r="73" fill="#c3d6b3" opacity="0.38"/><circle cx="493" cy="358" r="138" fill="#c3d6b3" opacity="0.57"/><circle cx="224" cy="30" r="190" fill="#a8e2d7" opacity="0.25"/>
+  <path d="M0,420 L0,314 L30,320 L60,326 L90,333 L120,340 L150,345 L180,348 L210,350 L240,349 L270,346 L300,341 L330,335 L360,329 L390,322 L420,316 L450,310 L480,307 L510,306 L540,306 L570,309 L600,314 L630,320 L660,326 L690,333 L720,340 L750,345 L780,348 L810,350 L840,349 L870,346 L900,341 L930,335 L960,329 L990,322 L1020,316 L1050,310 L1080,307 L1110,306 L1140,306 L1170,309 L1200,314 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,371 L30,374 L60,376 L90,379 L120,381 L150,384 L180,386 L210,388 L240,390 L270,391 L300,393 L330,393 L360,394 L390,394 L420,394 L450,393 L480,392 L510,391 L540,389 L570,387 L600,385 L630,382 L660,380 L690,377 L720,375 L750,372 L780,370 L810,368 L840,366 L870,365 L900,363 L930,363 L960,362 L990,362 L1020,362 L1050,363 L1080,364 L1110,365 L1140,367 L1170,369 L1200,371 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="935" cy="153" rx="162" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(13.2 935 153)"/><ellipse cx="935" cy="153" rx="225" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(19.2 935 153)"/>
+  <circle cx="935" cy="153" r="64" fill="url(#c1t6a9x2pl)"/>
+  <circle cx="947" cy="217" r="9" fill="#ffffff" opacity="0.66"/><circle cx="1190" cy="137" r="11" fill="#ffffff" opacity="0.61"/><circle cx="1095" cy="127" r="12" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An agent needs a way to choose between options. A <strong>goal</strong> says what it wants, a <strong>utility</strong> score turns each possible outcome into a number, and a <strong>rational</strong> agent picks the action with the best <em>expected</em> outcome, given what it knows.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a> and <a class="wikilink" href="/fundamentals/pda-loop/" data-topic="fundamentals/pda-loop">PDA Loop</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>When several actions are possible, how does an agent pick one? A rule of thumb is not enough when the options trade one thing against another, such as speed against cost.</p>
+<h2 id="intuition-turning-wants-into-numbers">Intuition: turning wants into numbers</h2>
+<p>A goal like &quot;get home&quot; is too vague to compare two routes. <strong>Utility</strong> gives the agent a single score for each outcome, so the &quot;best&quot; option is the one with the highest score. Different priorities give different scores, so the same options can produce different choices.</p>
+<p><strong>Rational</strong> does not mean <em>perfect</em> or <em>all-knowing</em>. It means choosing the action that is expected to do best according to the goal, using the information available at the time. A rational agent can still be unlucky.</p>
+<h2 id="expected-outcomes-weighing-the-chances">Expected outcomes: weighing the chances</h2>
+<p>Real choices involve uncertainty. The standard fix is to weigh each possible result by its chance:</p>
+<pre><code class="language-text">expected value = (chance of outcome A × value of A) + (chance of outcome B × value of B) + …
+</code></pre>
+<h2 id="a-worked-example-three-routes">A worked example: three routes</h2>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Usual time</th>
+<th>Cost</th>
+<th>Chance of a delay</th>
+<th>Delay length</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Highway</td>
+<td>25 min</td>
+<td>$6 toll</td>
+<td>30%</td>
+<td>20 min</td>
+</tr>
+<tr>
+<td>Back roads</td>
+<td>35 min</td>
+<td>$0</td>
+<td>5%</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>Train</td>
+<td>40 min</td>
+<td>$4</td>
+<td>2%</td>
+<td>15 min</td>
+</tr>
+</tbody></table>
+<p>Expected time is the usual time plus the chance of delay times the delay:</p>
+<pre><code class="language-text">Highway:    25 + 0.30 × 20 = 31 min
+Back roads: 35 + 0.05 × 10 = 35.5 min
+Train:      40 + 0.02 × 15 = 40.3 min
+</code></pre>
+<p>Now the goal decides the choice:</p>
+<ul>
+<li>Care only about <strong>time</strong>: the highway wins (31 min).</li>
+<li>Care only about <strong>cost</strong>: the back roads win ($0).</li>
+<li>Care only about <strong>predictability</strong> (expected delay 6, 0.5 and 0.3 minutes): the train wins.</li>
+</ul>
+<p>No route is best in the abstract. The best route depends on what the agent&#39;s goal rewards.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="route-chooser" data-title="Choosing a route"><p class="bench-fallback"><strong>Interactive bench: Choosing a route.</strong> Three routes are scored from sliders for how much the agent cares about time, cost and risk. The best route changes as the priorities change.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Press <strong>In a hurry</strong>, <strong>On a budget</strong> and <strong>Hates surprises</strong>. Which route wins each time?</li>
+<li>Set time to 5 and cost to 0, and slide risk from 0 up to 10. At what point does the winner change?</li>
+<li>Find priorities where all three routes score nearly the same. What does that tell you about the choice?</li>
+</ol>
+<p><strong>What you should notice:</strong> the <em>options</em> did not change, only the goal. The action is decided jointly by what the agent can do and what it values.</p>
+<h2 id="a-warning-goals-can-be-wrong">A warning: goals can be wrong</h2>
+<p>The agent maximises the goal you gave it, not the one you meant. A feed that maximises <em>clicks</em> may promote outrage. A cleaning robot rewarded for &quot;no visible dirt&quot; may hide dirt under the rug. Choosing the goal is as important as building the agent.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<p>Goals and utility become <strong>loss functions</strong> in <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a> (a number to make small) and <strong>reward functions</strong> in reinforcement learning (a number to make large). Finding the best action is <a class="wikilink" href="/math/optimization/" data-topic="math/optimization">Optimization</a>. Weighing chances is the subject of <a class="wikilink" href="/math/probability/" data-topic="math/probability">Probability</a>.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Rational is not perfect.</strong> It means best given the available information, not best in hindsight.</li>
+<li><strong>A score is only as good as its ingredients.</strong> Bad weights or a badly chosen goal give confident, wrong choices.</li>
+<li><strong>Averages hide risk.</strong> Two options with the same expected value can feel very different if one has a rare disaster.</li>
+<li><strong>Different people, different utilities.</strong> There is no neutral score for &quot;best&quot;.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the expected time of a route that usually takes 30 minutes but has a 10% chance of a 20-minute delay?</summary>
+30 + 0.10 × 20 = 32 minutes.
+</details>
+
+<details><summary>2. Is a rational agent one that never makes mistakes?</summary>
+No. It chooses the action with the best expected result given what it knows, which can still turn out badly.
+</details>
+
+<details><summary>3. Why is choosing the goal risky?</summary>
+The agent optimises exactly what it was told, which may differ from what was intended, for example rewarding clicks instead of quality.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Goal:</strong> what the agent is trying to achieve.</li>
+<li><strong>Utility:</strong> a number scoring how good an outcome is for the agent.</li>
+<li><strong>Expected value:</strong> the average result when each possible outcome is weighted by its chance.</li>
+<li><strong>Rational:</strong> choosing the action with the best expected result given what is known, not necessarily the best in hindsight.</li>
+<li><strong>Misspecified goal:</strong> an objective that differs from what its designers actually wanted.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a> · <a class="wikilink" href="/fundamentals/pda-loop/" data-topic="fundamentals/pda-loop">PDA Loop</a> · <a class="wikilink" href="/math/optimization/" data-topic="math/optimization">Optimization</a> · <a class="wikilink" href="/math/probability/" data-topic="math/probability">Probability</a> · <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/goals-utility-and-rationality">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/state-and-representation/"><small>Read next</small><b>State and Representation</b><p>The state is the agent&#39;s summary of the situation: everything it needs to know to choose a good action, and nothing more.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/agents-and-environments/"><b>Agents and Environments</b><p>An agent is anything that perceives its surroundings through sensors and acts on them through actuators to pursue a goal. The surroundings it lives in are its environment.</p></a><a class="rc-card" href="/fundamentals/pda-loop/"><b>PDA Loop</b><p>The Perception → Decision → Action loop is the heartbeat of every intelligent system.</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a><a class="rc-card" href="/math/optimization/"><b>Optimization</b><p>Optimization is the art of finding the best values: the parameters that make a model&#39;s error as small as possible.</p></a><a class="rc-card" href="/math/probability/"><b>Probability</b><p>Probability is the maths of uncertainty. It gives numbers to &quot;how likely?&quot;, and rules for combining those numbers.</p></a><a class="rc-card" href="/fundamentals/the-agent/"><b>The Agent</b><p>Almost every AI system, however different it looks, has the same shape: it is an agent inside an environment. It senses what is happening, decides what to do to reach a goal, and acts, over and over.</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/pda-loop/">← Previous: PDA Loop</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relative Position and RoPE — AI Base</title>
+<meta name="description" content="Both the sinusoidal encoding and learned positional embeddings tell a token its absolute position — &quot;you are token number 7.&quot; Rotary position embedding (RoPE) asks a different question: instead of…">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/relative-position-and-rope/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Relative Position and RoPE — AI Base">
+<meta property="og:description" content="Both the sinusoidal encoding and learned positional embeddings tell a token its absolute position — &quot;you are token number 7.&quot; Rotary position embedding (RoPE) asks a different question: instead of…">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/relative-position-and-rope/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Relative Position and RoPE","item":"https://ai.saranmahadev.in/transformers/relative-position-and-rope/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Relative Position and RoPE","description":"Both the sinusoidal encoding and learned positional embeddings tell a token its absolute position — \"you are token number 7.\" Rotary position embedding (RoPE) asks a different question: instead of…","url":"https://ai.saranmahadev.in/transformers/relative-position-and-rope/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does RoPE do to a query or key vector, and what does it never do?","acceptedAnswer":{"@type":"Answer","text":"It rotates the vector by an angle proportional to its position; it never adds anything to the vector, unlike the sinusoidal encoding or learned positional embeddings."}},{"@type":"Question","name":"In the worked example, why did three different position pairs all produce the exact same dot product?","acceptedAnswer":{"@type":"Answer","text":"Because all three pairs shared the same relative distance (−3), and RoPE's rotation makes the dot product of two rotated vectors depend only on that relative distance, not on the absolute positions themselves."}},{"@type":"Question","name":"What happens to the dot product when two positions are equal (relative distance 0)?","acceptedAnswer":{"@type":"Answer","text":"It equals the original, unrotated dot product of the two vectors — rotating both by the same angle doesn't change their relationship to each other."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Positional Information Beyond Sinusoids</p>
+        <h1 class="doc-title">Relative Position and RoPE</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ckd0bxrbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="ckd0bxrpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ckd0bxrbg)"/>
+  <circle cx="209" cy="152" r="222" fill="#4f669f" opacity="0.34"/><circle cx="73" cy="279" r="164" fill="#4f669f" opacity="0.39"/><circle cx="554" cy="355" r="173" fill="#abd0ff" opacity="0.37"/><circle cx="989" cy="165" r="94" fill="#abd0ff" opacity="0.33"/><circle cx="112" cy="65" r="112" fill="#4f669f" opacity="0.28"/><circle cx="223" cy="347" r="66" fill="#abd0ff" opacity="0.24"/>
+  <path d="M0,420 L0,309 L30,307 L60,306 L90,306 L120,307 L150,309 L180,313 L210,317 L240,321 L270,327 L300,332 L330,337 L360,341 L390,345 L420,347 L450,349 L480,350 L510,349 L540,347 L570,344 L600,340 L630,335 L660,330 L690,325 L720,320 L750,316 L780,312 L810,309 L840,306 L870,306 L900,306 L930,308 L960,310 L990,314 L1020,318 L1050,323 L1080,328 L1110,333 L1140,338 L1170,342 L1200,346 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,382 L30,386 L60,389 L90,391 L120,393 L150,394 L180,394 L210,393 L240,391 L270,389 L300,386 L330,383 L360,379 L390,375 L420,371 L450,368 L480,366 L510,364 L540,362 L570,362 L600,363 L630,364 L660,366 L690,369 L720,372 L750,376 L780,380 L810,383 L840,387 L870,390 L900,392 L930,393 L960,394 L990,394 L1020,393 L1050,391 L1080,388 L1110,385 L1140,381 L1170,378 L1200,374 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="783" cy="215" rx="223" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-9.9 783 215)"/><ellipse cx="783" cy="215" rx="309" ry="86" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-3.9 783 215)"/>
+  <circle cx="783" cy="215" r="88" fill="url(#ckd0bxrpl)"/>
+  <circle cx="787" cy="341" r="18" fill="#ffffff" opacity="0.85"/><circle cx="487" cy="268" r="18" fill="#ffffff" opacity="0.71"/><circle cx="721" cy="90" r="18" fill="#ffffff" opacity="0.74"/><circle cx="592" cy="277" r="13" fill="#ffffff" opacity="0.63"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Both the sinusoidal encoding and <a class="wikilink" href="/transformers/learned-positional-embeddings/" data-topic="transformers/learned-positional-embeddings">learned positional embeddings</a> tell a token its <em>absolute</em> position — &quot;you are token number 7.&quot; Rotary position embedding (RoPE) asks a different question: instead of encoding where a token is, what if positional information only ever showed up as <em>how far apart</em> two tokens are, built directly into the attention computation itself?</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/learned-positional-embeddings/" data-topic="transformers/learned-positional-embeddings">Learned Positional Embeddings</a>, <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can positional information be built into attention so that only the <em>relative</em> distance between two tokens matters, with no notion of absolute position anywhere?&quot; RoPE&#39;s answer: rotate each query and key vector by an angle proportional to its position, before computing attention scores. Because rotating two vectors by different amounts and then taking their dot product depends only on the <em>difference</em> between the two rotation angles, the resulting attention score ends up depending only on how far apart the two tokens are — never on their absolute positions.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Picture a query vector and a key vector as two hands on two separate clocks. Instead of writing a token&#39;s absolute position somewhere in the vector, RoPE spins each vector&#39;s clock hand by an angle proportional to its position. When two spun vectors are compared (via a dot product), the comparison naturally only &quot;sees&quot; how far apart the two clocks were spun relative to each other — spinning both clocks forward by the same extra amount changes nothing about how they compare to each other. That&#39;s exactly the relative-position property this topic is after.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>For a 2D pair of a vector&#39;s components <code>(x₁, x₂)</code> and position <code>pos</code>, RoPE applies a rotation by angle <code>pos × θ</code>:</p>
+<pre><code class="language-text">rotate(x₁, x₂, angle) = (x₁ cos(angle) − x₂ sin(angle),  x₁ sin(angle) + x₂ cos(angle))
+</code></pre>
+<p>A full query or key vector is split into pairs of dimensions, each pair rotated by a position-dependent angle (different pairs typically use different frequencies, the same idea as the sinusoidal encoding&#39;s varying frequencies). The key mathematical fact: for query position <code>m</code> and key position <code>n</code>, <code>dot(rotate(q, m), rotate(k, n))</code> depends only on <code>m − n</code>, never on <code>m</code> and <code>n</code> individually.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A single 2D query <code>q = [1, 0.5]</code> and key <code>k = [0.3, -0.8]</code>, rotated by position and then compared via dot product, at several different absolute positions but the same relative distance:</p>
+<pre><code class="language-text">positions (m=2, n=5),   relative distance −3:  dot = 0.233063
+positions (m=10, n=13), relative distance −3:  dot = 0.233063
+positions (m=0, n=3),   relative distance −3:  dot = 0.233063
+
+positions (m=5, n=5),     relative distance 0:  dot = −0.100000
+positions (m=100, n=100), relative distance 0:  dot = −0.100000
+raw dot(q, k), no rotation at all:              −0.100000
+</code></pre>
+<p>Three completely different pairs of absolute positions, all three at a relative distance of <code>−3</code>, produce the <em>exact same</em> attention score. And a relative distance of <code>0</code> always recovers the original, unrotated dot product — whatever the shared absolute position actually is.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rope-relative" data-title="Rotation that only sees relative distance"><p class="bench-fallback"><strong>Interactive bench: Rotation that only sees relative distance.</strong> Rotate a query and a key vector by two chosen positions and see that their dot product depends only on the distance between the two positions, not where they are absolutely.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Fix the relative distance between two positions and slide both positions together — watch the dot product stay fixed.</li>
+<li>Change only the relative distance and watch the dot product change.</li>
+<li>Set both positions equal (distance 0) and confirm the result matches the unrotated dot product.</li>
+</ol>
+<p><strong>What you should notice:</strong> the dot product is a function of exactly one number — the relative distance — no matter how large or small the two absolute positions themselves are.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the positional scheme used by many modern large language models</strong>, directly addressing <a class="wikilink" href="/transformers/learned-positional-embeddings/" data-topic="transformers/learned-positional-embeddings">the fixed-table problem</a>: there&#39;s no table to run out of, since the rotation formula is defined for any position.</li>
+<li><strong>It composes naturally with <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a></strong>: the rotation is applied to queries and keys before the usual scaled dot-product computation, with nothing else about attention changed.</li>
+<li><strong><a class="wikilink" href="/transformers/alibi-and-length-extrapolation/" data-topic="transformers/alibi-and-length-extrapolation">the next topic</a> takes a different, even simpler route</strong> to a related goal — generalizing well to sequences longer than anything seen during training.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming RoPE adds anything to the vectors.</strong> Unlike the sinusoidal encoding or learned embeddings, nothing is added — RoPE only rotates the existing query and key vectors.</li>
+<li><strong>Forgetting RoPE applies to queries and keys, not values.</strong> The rotation specifically targets the vectors used to compute attention scores; the values being averaged together are untouched.</li>
+<li><strong>Expecting the relative-distance property to hold for arbitrary transformations.</strong> It specifically relies on rotation&#39;s particular mathematical structure (rotating by <code>m</code> then comparing to rotating by <code>n</code> depends only on <code>m − n</code>) — not every positional scheme has this property.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does RoPE do to a query or key vector, and what does it never do?</summary>
+It rotates the vector by an angle proportional to its position; it never adds anything to the vector, unlike the sinusoidal encoding or learned positional embeddings.
+</details>
+
+<details><summary>2. In the worked example, why did three different position pairs all produce the exact same dot product?</summary>
+Because all three pairs shared the same relative distance (−3), and RoPE's rotation makes the dot product of two rotated vectors depend only on that relative distance, not on the absolute positions themselves.
+</details>
+
+<details><summary>3. What happens to the dot product when two positions are equal (relative distance 0)?</summary>
+It equals the original, unrotated dot product of the two vectors — rotating both by the same angle doesn't change their relationship to each other.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Relative position:</strong> positional information expressed as the distance between two tokens, rather than either token&#39;s absolute index.</li>
+<li><strong>Rotation angle:</strong> the position-proportional angle RoPE uses to rotate a vector&#39;s paired dimensions.</li>
+<li><strong>Rotary position embedding (RoPE):</strong> a positional scheme that rotates queries and keys so attention scores depend only on relative distance.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/learned-positional-embeddings/" data-topic="transformers/learned-positional-embeddings">Learned Positional Embeddings</a> · <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a> · <a class="wikilink" href="/transformers/alibi-and-length-extrapolation/" data-topic="transformers/alibi-and-length-extrapolation">ALiBi and Length Extrapolation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/relative-position-and-rope">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/alibi-and-length-extrapolation/"><small>Read next</small><b>ALiBi and Length Extrapolation</b><p>RoPE builds relative position into attention through rotation.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/learned-positional-embeddings/"><b>Learned Positional Embeddings</b><p>The sinusoidal encoding from Deep Learning computes a position&#39;s vector from a fixed formula — nothing about it is trained.</p></a><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/transformers/alibi-and-length-extrapolation/"><b>ALiBi and Length Extrapolation</b><p>RoPE builds relative position into attention through rotation.</p></a><a class="rc-card" href="/transformers/positional-information-beyond-sinusoids/"><b>Positional Information Beyond Sinusoids</b><p>The fixed sinusoidal encoding from Deep Learning was the original transformer&#39;s answer to &quot;where is this token in the sequence?&quot; — but it was never the only answer, and modern models mostly use…</p></a><a class="rc-card" href="/llms/context-window-extension-techniques/"><b>Context Window Extension Techniques</b><p>solving the raw compute cost of attention is only half the problem.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/learned-positional-embeddings/">← Previous: Learned Positional Embeddings</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

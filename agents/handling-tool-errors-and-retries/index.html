@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handling Tool Errors and Retries — AI Base</title>
+<meta name="description" content="A flaky network call that succeeds 70% of the time individually succeeds 99.19% of the time within four tries — failures that are transient are exactly the kind retrying is good for.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/handling-tool-errors-and-retries/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Handling Tool Errors and Retries — AI Base">
+<meta property="og:description" content="A flaky network call that succeeds 70% of the time individually succeeds 99.19% of the time within four tries — failures that are transient are exactly the kind retrying is good for.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/handling-tool-errors-and-retries/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Handling Tool Errors and Retries","item":"https://ai.saranmahadev.in/agents/handling-tool-errors-and-retries/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Handling Tool Errors and Retries","description":"A flaky network call that succeeds 70% of the time individually succeeds 99.19% of the time within four tries — failures that are transient are exactly the kind retrying is good for.","url":"https://ai.saranmahadev.in/agents/handling-tool-errors-and-retries/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does success probability keep climbing with more tries for the transient error but not for the permanent one?","acceptedAnswer":{"@type":"Answer","text":"A transient error has some real chance (70% here) of not recurring on the next try, so each additional try adds a genuine independent chance of success. A permanent error has a 0% per-try success rate by its nature, so every additional try adds exactly nothing."}},{"@type":"Question","name":"What's the practical difference between treating an error as transient versus permanent?","acceptedAnswer":{"@type":"Answer","text":"Treating it as transient means retrying is worth spending more calls on, since each one has a real chance of succeeding; treating it as permanent means retrying is pointless and the actual request needs to be fixed (or a different tool used) instead."}},{"@type":"Question","name":"What does the formula 1 − (1 − p)ⁿ reveal about why permanent errors can never be fixed by retrying?","acceptedAnswer":{"@type":"Answer","text":"With p = 0, the term (1 − p) equals 1, and 1 raised to any power n is still 1 — so the whole expression stays at 1 − 1 = 0 regardless of how large n gets."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Tool Use and Function Calling</p>
+        <h1 class="doc-title">Handling Tool Errors and Retries</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1k3hooabg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1k3hooapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1k3hooabg)"/>
+  <circle cx="410" cy="16" r="73" fill="#dcbef5" opacity="0.29"/><circle cx="813" cy="137" r="172" fill="#dcbef5" opacity="0.31"/><circle cx="92" cy="250" r="156" fill="#f3e9fc" opacity="0.48"/><circle cx="1153" cy="239" r="216" fill="#e7bdc8" opacity="0.32"/><circle cx="1128" cy="59" r="89" fill="#e7bdc8" opacity="0.57"/>
+  <path d="M0,420 L0,350 L30,348 L60,344 L90,339 L120,332 L150,326 L180,319 L210,313 L240,309 L270,306 L300,306 L330,307 L360,311 L390,316 L420,323 L450,330 L480,336 L510,342 L540,347 L570,349 L600,350 L630,348 L660,344 L690,339 L720,332 L750,326 L780,319 L810,313 L840,309 L870,306 L900,306 L930,307 L960,311 L990,316 L1020,323 L1050,330 L1080,336 L1110,342 L1140,347 L1170,349 L1200,350 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,387 L60,391 L90,393 L120,394 L150,393 L180,391 L210,388 L240,383 L270,378 L300,373 L330,369 L360,365 L390,363 L420,362 L450,363 L480,365 L510,368 L540,373 L570,378 L600,383 L630,387 L660,391 L690,393 L720,394 L750,393 L780,391 L810,388 L840,383 L870,378 L900,373 L930,369 L960,365 L990,363 L1020,362 L1050,363 L1080,365 L1110,368 L1140,373 L1170,378 L1200,383 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="831" cy="204" rx="185" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.4 831 204)"/><ellipse cx="831" cy="204" rx="255" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.4 831 204)"/>
+  <circle cx="831" cy="204" r="72" fill="url(#c1k3hooapl)"/>
+  <circle cx="924" cy="270" r="8" fill="#ffffff" opacity="0.68"/><circle cx="574" cy="238" r="11" fill="#ffffff" opacity="0.79"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A flaky network call that succeeds 70% of the time individually succeeds 99.19% of the time within four tries — failures that are transient are exactly the kind retrying is good for. A call that fails because its arguments are malformed succeeds 0% of the time no matter how many times it&#39;s retried, because nothing about trying again fixes a request that was wrong to begin with.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;When does retrying a failed tool call actually help, and when is it pointless?&quot; A <strong>transient</strong> error (a timeout, a momentary rate limit, a flaky network) has some real chance of succeeding if tried again under the same conditions — each retry is an independent new chance. A <strong>permanent</strong> error (malformed arguments, calling a tool that doesn&#39;t exist, a request the API will reject in exactly the same way every time) will fail identically on every retry, because nothing about the retry itself changes what made it fail.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A coffee shop having a brief run of noisy, dropped orders might fill yours correctly if you ask again — the problem was circumstantial, not about what you ordered. Ordering an item that&#39;s not on the menu at all will keep failing no matter how many times you repeat the exact same order — repeating it doesn&#39;t make the item exist.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">success within n tries = 1 − (1 − p)ⁿ      where p = per-try success probability
+transient error:  p &gt; 0   → success probability climbs toward 100% with more tries
+permanent error:  p = 0   → success probability stays at 0% no matter how many tries
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A transient error with a 70% per-try success rate, and a permanent error that always fails, both retried up to four times:</p>
+<pre><code class="language-text">transient (p = 0.70):
+  1 try:  70.00%
+  2 tries: 91.00%
+  3 tries: 97.30%
+  4 tries: 99.19%
+
+permanent (p = 0):
+  any number of tries: 0.00%
+</code></pre>
+<p>Four retries of the transient call turn a 30%-chance-of-failure single attempt into a call that fails only about 1 time in 125. The permanent error&#39;s probability never moves at all — the formula itself shows why: with p = 0, every term in (1 − p)ⁿ stays at 1, so 1 minus it stays at 0 regardless of n.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="tool-retry-success" data-title="Retrying a flaky call, or a broken one"><p class="bench-fallback"><strong>Interactive bench: Retrying a flaky call, or a broken one.</strong> Step through retries of a transient and a permanent tool error and watch cumulative success probability.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through all four tries on the transient error and watch the probability climb toward 100%.</li>
+<li>Switch to the permanent error and step through the same four tries.</li>
+<li>Imagine a per-try success probability of 95% instead of 70% — would fewer retries reach the same cumulative success?</li>
+</ol>
+<p><strong>What you should notice:</strong> retrying only ever helps when the failure has some non-zero chance of not recurring — the bench&#39;s permanent-error case isn&#39;t a different retry strategy, it&#39;s a demonstration that no retry strategy helps when the underlying cause is deterministic.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the same detect-and-recover shape as <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a></strong>, but at the level of a single tool call rather than a whole plan — the key judgment call in both cases is distinguishing a fixable failure from one that will recur identically.</li>
+<li><strong><a class="wikilink" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability">Designing Tools for Agent Reliability</a>, later in this district, is about reducing how often permanent errors happen in the first place</strong> — a well-designed tool interface prevents many &quot;malformed arguments&quot; failures before any retry logic is even needed.</li>
+<li><strong>Blind retries without this distinction waste calls and money on errors retrying can never fix</strong>, which is exactly why production agent systems need to classify an error before deciding whether to retry it at all.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Retrying every failure the same way regardless of its cause.</strong> The worked example makes the cost of this explicit: retrying a permanent error four times spends four calls to arrive at exactly the same 0% success the first call already showed.</li>
+<li><strong>Giving up after one failure without trying again.</strong> For a genuinely transient error, this throws away most of the benefit — a single try at 70% leaves a 30% failure rate that four tries would cut to under 1%.</li>
+<li><strong>Assuming every error that &quot;looks&quot; like a server hiccup is actually transient.</strong> A malformed request might happen to also return a generic server error, making a permanent problem look retryable when it isn&#39;t — the error needs to be inspected, not just its symptom.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does success probability keep climbing with more tries for the transient error but not for the permanent one?</summary>
+A transient error has some real chance (70% here) of not recurring on the next try, so each additional try adds a genuine independent chance of success. A permanent error has a 0% per-try success rate by its nature, so every additional try adds exactly nothing.
+</details>
+
+<details><summary>2. What's the practical difference between treating an error as transient versus permanent?</summary>
+Treating it as transient means retrying is worth spending more calls on, since each one has a real chance of succeeding; treating it as permanent means retrying is pointless and the actual request needs to be fixed (or a different tool used) instead.
+</details>
+
+<details><summary>3. What does the formula 1 − (1 − p)ⁿ reveal about why permanent errors can never be fixed by retrying?</summary>
+With p = 0, the term (1 − p) equals 1, and 1 raised to any power n is still 1 — so the whole expression stays at 1 − 1 = 0 regardless of how large n gets.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Transient error:</strong> a failure with some real chance of not recurring if the same call is tried again.</li>
+<li><strong>Permanent error:</strong> a failure that will recur identically on every retry, because its cause doesn&#39;t change between tries.</li>
+<li><strong>Cumulative success probability:</strong> the chance that at least one of n independent tries succeeds.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a> · <a class="wikilink" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability">Designing Tools for Agent Reliability</a> · <a class="wikilink" href="/agents/tool-result-verification/" data-topic="agents/tool-result-verification">Tool Result Verification</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/handling-tool-errors-and-retries">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/tool-result-verification/"><small>Read next</small><b>Tool Result Verification</b><p>A weather tool call that returns no exception isn&#39;t the same as a weather tool call that actually returned a usable result.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/re-planning-on-failure/"><b>Re-Planning on Failure</b><p>A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5.</p></a><a class="rc-card" href="/agents/designing-tools-for-agent-reliability/"><b>Designing Tools for Agent Reliability</b><p>A tool with a free-text date field lets an agent write &quot;03/14/2025,&quot; &quot;March 14, 2025,&quot; or &quot;14/03/2025&quot; — three formats, at least two of them genuinely ambiguous about which number is the month.</p></a><a class="rc-card" href="/agents/tool-result-verification/"><b>Tool Result Verification</b><p>A weather tool call that returns no exception isn&#39;t the same as a weather tool call that actually returned a usable result.</p></a><a class="rc-card" href="/agents/tool-use-and-function-calling/"><b>Tool Use and Function Calling</b><p>Calling one tool correctly is a solved problem, already covered on the LLMs planet.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/parallel-vs-sequential-tool-calls/">← Previous: Parallel vs. Sequential Tool Calls</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

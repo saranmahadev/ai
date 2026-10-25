@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>End-to-End RAG Evaluation Frameworks — AI Base</title>
+<meta name="description" content="Two RAG systems can score identically on an overall end-to-end quality check and still be broken in completely different places — one failing at retrieval, the other at generation.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/end-to-end-rag-evaluation-frameworks/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="End-to-End RAG Evaluation Frameworks — AI Base">
+<meta property="og:description" content="Two RAG systems can score identically on an overall end-to-end quality check and still be broken in completely different places — one failing at retrieval, the other at generation.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/end-to-end-rag-evaluation-frameworks/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"End-to-End RAG Evaluation Frameworks","item":"https://ai.saranmahadev.in/rag/end-to-end-rag-evaluation-frameworks/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"End-to-End RAG Evaluation Frameworks","description":"Two RAG systems can score identically on an overall end-to-end quality check and still be broken in completely different places — one failing at retrieval, the other at generation.","url":"https://ai.saranmahadev.in/rag/end-to-end-rag-evaluation-frameworks/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does focusing on the lowest-scoring metric matter more than averaging all four?","acceptedAnswer":{"@type":"Answer","text":"Averaging can produce similar-looking overall scores for systems with completely different underlying problems, while the lowest individual metric directly identifies which stage is actually failing."}},{"@type":"Question","name":"What does System A's scorecard suggest about where to focus improvement effort?","acceptedAnswer":{"@type":"Answer","text":"Its context precision and recall are both strong, meaning retrieval is finding good context; its faithfulness is weak, meaning the generation stage isn't actually using that good context well — the fix belongs in generation, not retrieval."}},{"@type":"Question","name":"Could a system score well on every metric and still produce a bad answer?","acceptedAnswer":{"@type":"Answer","text":"In principle a system could still produce answers a human judges unsatisfying for reasons none of these specific metrics capture (tone, completeness, formatting) — the scorecard measures the dimensions it's designed to measure, not every possible way an answer can fall short."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Evaluating RAG Systems</p>
+        <h1 class="doc-title">End-to-End RAG Evaluation Frameworks</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cyy25lbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="cyy25lpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cyy25lbg)"/>
+  <circle cx="432" cy="2" r="97" fill="#42718e" opacity="0.36"/><circle cx="1086" cy="60" r="118" fill="#b7d5be" opacity="0.40"/><circle cx="597" cy="137" r="215" fill="#97e1e6" opacity="0.39"/><circle cx="148" cy="372" r="141" fill="#97e1e6" opacity="0.46"/><circle cx="275" cy="88" r="226" fill="#42718e" opacity="0.55"/><circle cx="698" cy="119" r="124" fill="#97e1e6" opacity="0.50"/><circle cx="302" cy="289" r="66" fill="#97e1e6" opacity="0.31"/>
+  <path d="M0,420 L0,310 L30,307 L60,306 L90,307 L120,310 L150,315 L180,321 L210,327 L240,334 L270,340 L300,345 L330,348 L360,350 L390,349 L420,345 L450,341 L480,335 L510,328 L540,321 L570,315 L600,310 L630,307 L660,306 L690,307 L720,310 L750,315 L780,321 L810,327 L840,334 L870,340 L900,345 L930,348 L960,350 L990,349 L1020,345 L1050,341 L1080,335 L1110,328 L1140,321 L1170,315 L1200,310 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,385 L30,388 L60,391 L90,393 L120,394 L150,394 L180,393 L210,392 L240,390 L270,387 L300,383 L330,380 L360,376 L390,372 L420,369 L450,366 L480,364 L510,363 L540,362 L570,362 L600,364 L630,366 L660,368 L690,371 L720,375 L750,379 L780,383 L810,386 L840,389 L870,391 L900,393 L930,394 L960,394 L990,393 L1020,391 L1050,389 L1080,386 L1110,382 L1140,378 L1170,375 L1200,371 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="654" cy="230" rx="212" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.2 654 230)"/><ellipse cx="654" cy="230" rx="293" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.8 654 230)"/>
+  <circle cx="654" cy="230" r="83" fill="url(#cyy25lpl)"/>
+  <circle cx="749" cy="148" r="11" fill="#ffffff" opacity="0.71"/><circle cx="422" cy="197" r="9" fill="#ffffff" opacity="0.64"/><circle cx="708" cy="332" r="16" fill="#ffffff" opacity="0.73"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Two RAG systems can score identically on an overall end-to-end quality check and still be broken in completely different places — one failing at retrieval, the other at generation. A single pass/fail number can&#39;t tell them apart; a full scorecard, broken out by stage, can.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/retrieval-metrics-precision-recall-mrr-and-ndcg/" data-topic="rag/retrieval-metrics-precision-recall-mrr-and-ndcg">Retrieval Metrics: Precision, Recall, MRR and NDCG</a>, <a class="wikilink" href="/rag/faithfulness-and-answer-relevancy-metrics/" data-topic="rag/faithfulness-and-answer-relevancy-metrics">Faithfulness and Answer Relevancy Metrics</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you combine retrieval-side and generation-side metrics into one evaluation that actually localizes problems?&quot; An end-to-end framework runs a scorecard of several metrics at once — retrieval metrics like context precision and context recall, generation metrics like faithfulness and answer relevancy — and looks at the <em>lowest</em> score to identify which specific stage of the pipeline is actually weak, rather than relying on one blended number that could hide the problem.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A car that fails inspection on exactly one system — brakes, say — needs the same single clear flag whether every other system passed with flying colors or barely scraped by. A combined &quot;67% roadworthy&quot; score tells you nothing about which system to actually fix; a full checklist, item by item, does.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">scorecard = { contextPrecision, contextRecall, faithfulness, answerRelevancy, ... }
+weakest_stage = the metric with the lowest score, and whichever pipeline stage it belongs to
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two systems, each strong on one half of the pipeline and weak on the other:</p>
+<pre><code class="language-text">System A: contextPrecision 0.90, contextRecall 0.85, faithfulness 0.30, answerRelevancy 0.90
+  → weakest metric: faithfulness (0.30) → retrieval is fine, generation is the problem
+
+System B: contextPrecision 0.40, contextRecall 0.35, faithfulness 0.90, answerRelevancy 0.85
+  → weakest metric: contextRecall (0.35) → generation is fine, retrieval is the problem
+</code></pre>
+<p>Both systems could easily land at a similar <em>average</em> score across all four metrics — but their weakest individual metric points at completely different places to fix. System A&#39;s retrieval is working well; its generation stage is ignoring good context. System B&#39;s generation is working well; it&#39;s simply not finding enough of the right context to work with in the first place.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rag-scorecard" data-title="The lowest score names the broken stage"><p class="bench-fallback"><strong>Interactive bench: The lowest score names the broken stage.</strong> Compare two RAG systems' full metric scorecards and spot which pipeline stage is actually weak in each.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at System A&#39;s full scorecard and find its weakest metric.</li>
+<li>Switch to System B and find its weakest metric.</li>
+<li>Imagine averaging all four metrics for each system — would that average alone tell you where to look?</li>
+</ol>
+<p><strong>What you should notice:</strong> the weakest individual metric, not the average, is what actually tells you which stage of the pipeline needs attention — the two systems&#39; averages could be deceptively similar despite having opposite problems.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This combines exactly <a class="wikilink" href="/rag/retrieval-metrics-precision-recall-mrr-and-ndcg/" data-topic="rag/retrieval-metrics-precision-recall-mrr-and-ndcg">Retrieval Metrics: Precision, Recall, MRR and NDCG</a> and <a class="wikilink" href="/rag/faithfulness-and-answer-relevancy-metrics/" data-topic="rag/faithfulness-and-answer-relevancy-metrics">Faithfulness and Answer Relevancy Metrics</a></strong> into one scorecard — the framework&#39;s value is in combining them, not in any new metric of its own.</li>
+<li><strong>Diagnosing System A&#39;s problem (good retrieval, bad generation) points directly at <a class="wikilink" href="/rag/grounded-generation-and-faithfulness/" data-topic="rag/grounded-generation-and-faithfulness">Grounded Generation and Faithfulness</a> as the place to fix it; System B&#39;s problem points at the retrieval strategies covered across this planet&#39;s earlier districts.</strong></li>
+<li><strong><a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a> catalogs the specific symptoms each kind of weak metric tends to produce</strong>, giving a faster first guess before running the full scorecard.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Reporting a single blended quality score for a RAG system.</strong> The worked example&#39;s two systems show exactly how this can mask which stage actually needs work, even when the overall averages look deceptively similar.</li>
+<li><strong>Running only generation-side metrics because they&#39;re easier to compute.</strong> System B&#39;s problem is entirely on the retrieval side — a generation-only evaluation would never surface it, and might even look reasonably healthy.</li>
+<li><strong>Treating the scorecard as a one-time evaluation rather than a recurring check.</strong> A system that scores well today can regress in just one metric after a change (a new embedding model, an index rebuild) — only re-running the full scorecard would catch which specific metric moved.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does focusing on the lowest-scoring metric matter more than averaging all four?</summary>
+Averaging can produce similar-looking overall scores for systems with completely different underlying problems, while the lowest individual metric directly identifies which stage is actually failing.
+</details>
+
+<details><summary>2. What does System A's scorecard suggest about where to focus improvement effort?</summary>
+Its context precision and recall are both strong, meaning retrieval is finding good context; its faithfulness is weak, meaning the generation stage isn't actually using that good context well — the fix belongs in generation, not retrieval.
+</details>
+
+<details><summary>3. Could a system score well on every metric and still produce a bad answer?</summary>
+In principle a system could still produce answers a human judges unsatisfying for reasons none of these specific metrics capture (tone, completeness, formatting) — the scorecard measures the dimensions it's designed to measure, not every possible way an answer can fall short.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>End-to-end evaluation framework:</strong> a combined scorecard covering both retrieval-side and generation-side metrics.</li>
+<li><strong>Context precision/recall:</strong> retrieval-side metrics measuring how much of the retrieved context is relevant, and how much of the relevant content was retrieved.</li>
+<li><strong>Stage localization:</strong> identifying which specific pipeline stage (retrieval vs. generation) a low score points to.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/retrieval-metrics-precision-recall-mrr-and-ndcg/" data-topic="rag/retrieval-metrics-precision-recall-mrr-and-ndcg">Retrieval Metrics: Precision, Recall, MRR and NDCG</a> · <a class="wikilink" href="/rag/faithfulness-and-answer-relevancy-metrics/" data-topic="rag/faithfulness-and-answer-relevancy-metrics">Faithfulness and Answer Relevancy Metrics</a> · <a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/end-to-end-rag-evaluation-frameworks">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/common-rag-failure-modes/"><small>Read next</small><b>Common RAG Failure Modes</b><p>Across this planet&#39;s road, the same handful of failure symptoms keep recurring — a stale fact, a result count that&#39;s mysteriously short, an answer that confidently cites the wrong thing.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/retrieval-metrics-precision-recall-mrr-and-ndcg/"><b>Retrieval Metrics: Precision, Recall, MRR and NDCG</b><p>Precision and recall, already covered as classification metrics, adapt naturally to retrieval — but a ranked list has structure a classifier&#39;s yes/no decision doesn&#39;t: where a relevant result…</p></a><a class="rc-card" href="/rag/faithfulness-and-answer-relevancy-metrics/"><b>Faithfulness and Answer Relevancy Metrics</b><p>An answer can be perfectly grounded in its retrieved context and still completely fail to address what was asked — faithful to the wrong thing.</p></a><a class="rc-card" href="/rag/grounded-generation-and-faithfulness/"><b>Grounded Generation and Faithfulness</b><p>Retrieving the right passages doesn&#39;t guarantee the generated answer actually uses them.</p></a><a class="rc-card" href="/rag/common-rag-failure-modes/"><b>Common RAG Failure Modes</b><p>Across this planet&#39;s road, the same handful of failure symptoms keep recurring — a stale fact, a result count that&#39;s mysteriously short, an answer that confidently cites the wrong thing.</p></a><a class="rc-card" href="/rag/evaluating-rag-systems/"><b>Evaluating RAG Systems</b><p>A RAG system can fail in two independent places — retrieval can find the wrong passages, or generation can answer badly even from the right ones — and a single end-to-end score can&#39;t tell you which.</p></a><a class="rc-card" href="/rag/synthetic-test-set-generation-for-rag/"><b>Synthetic Test-Set Generation for RAG</b><p>Hand-writing one evaluation question per chunk doesn&#39;t scale — a person can write maybe a few dozen good questions in a day, but a real document collection can hold thousands or millions of chunks.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/faithfulness-and-answer-relevancy-metrics/">← Previous: Faithfulness and Answer Relevancy Metrics</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

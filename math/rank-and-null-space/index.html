@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rank and Null Space — AI Base</title>
+<meta name="description" content="The rank of a matrix is the number of independent directions it keeps, and its null space is the set of inputs it sends to zero.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/rank-and-null-space/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Rank and Null Space — AI Base">
+<meta property="og:description" content="The rank of a matrix is the number of independent directions it keeps, and its null space is the set of inputs it sends to zero.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/rank-and-null-space/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Rank and Null Space","item":"https://ai.saranmahadev.in/math/rank-and-null-space/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Rank and Null Space","description":"The rank of a matrix is the number of independent directions it keeps, and its null space is the set of inputs it sends to zero.","url":"https://ai.saranmahadev.in/math/rank-and-null-space/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the rank of [[1, 1], [2, 2]]?","acceptedAnswer":{"@type":"Answer","text":"1."}},{"@type":"Question","name":"A (5 × 5) matrix has rank 3. What is the dimension of its null space?","acceptedAnswer":{"@type":"Answer","text":"2."}},{"@type":"Question","name":"Is a full-rank square matrix invertible?","acceptedAnswer":{"@type":"Answer","text":"Yes."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Linear Algebra</p>
+        <h1 class="doc-title">Rank and Null Space</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c60zkftbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c60zkftpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c60zkftbg)"/>
+  <circle cx="553" cy="13" r="102" fill="#68599a" opacity="0.44"/><circle cx="950" cy="33" r="137" fill="#68599a" opacity="0.44"/><circle cx="934" cy="202" r="99" fill="#eee9fd" opacity="0.40"/><circle cx="355" cy="205" r="170" fill="#eee9fd" opacity="0.24"/><circle cx="451" cy="60" r="93" fill="#cebff9" opacity="0.24"/>
+  <path d="M0,420 L0,308 L30,311 L60,317 L90,323 L120,330 L150,337 L180,342 L210,347 L240,349 L270,349 L300,348 L330,344 L360,339 L390,332 L420,325 L450,319 L480,313 L510,308 L540,306 L570,306 L600,308 L630,311 L660,317 L690,323 L720,330 L750,337 L780,342 L810,347 L840,349 L870,349 L900,348 L930,344 L960,339 L990,332 L1020,325 L1050,319 L1080,313 L1110,308 L1140,306 L1170,306 L1200,308 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,365 L30,363 L60,362 L90,362 L120,363 L150,364 L180,367 L210,370 L240,373 L270,377 L300,381 L330,384 L360,388 L390,390 L420,392 L450,394 L480,394 L510,394 L540,392 L570,390 L600,387 L630,384 L660,380 L690,377 L720,373 L750,369 L780,367 L810,364 L840,363 L870,362 L900,362 L930,363 L960,365 L990,368 L1020,371 L1050,374 L1080,378 L1110,382 L1140,385 L1170,389 L1200,391 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="694" cy="232" rx="211" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-11.5 694 232)"/><ellipse cx="694" cy="232" rx="292" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-5.5 694 232)"/>
+  <circle cx="694" cy="232" r="83" fill="url(#c60zkftpl)"/>
+  <circle cx="903" cy="147" r="18" fill="#ffffff" opacity="0.73"/><circle cx="390" cy="170" r="7" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>rank</strong> of a matrix is the number of independent directions it keeps, and its <strong>null space</strong> is the set of inputs it sends to zero. Together they say how much information a transformation preserves and how much it throws away.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/linear-independence-and-basis/" data-topic="math/linear-independence-and-basis">Linear Independence and Basis</a>, <a class="wikilink" href="/math/matrices-as-transformations/" data-topic="math/matrices-as-transformations">Matrices as Transformations</a> and <a class="wikilink" href="/math/determinant/" data-topic="math/determinant">Determinant</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How much does this matrix actually use, and what does it forget?&quot; A wide matrix of features may only carry a few independent directions; the rank counts them.</p>
+<h2 id="intuition-how-flat-does-it-squash-space">Intuition: how flat does it squash space?</h2>
+<p>A transformation can preserve all directions (a full-rank matrix), squash the plane onto a line (rank 1), or crush everything to a point (rank 0). The set of all possible outputs is the <strong>image</strong> (or column space): the span of the matrix&#39;s columns. <strong>Rank = the dimension of the image</strong>.</p>
+<p>The inputs that get crushed to the zero vector form the <strong>null space</strong>. If a matrix squashes the plane onto a line, a whole line of inputs collapses to zero, and that line is the null space.</p>
+<pre><code class="language-text">rank(A) + dim(null space of A) = number of columns of A       (rank–nullity)
+</code></pre>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-text">[1 0]   rank 2: the columns are independent; the image is the whole plane; null space = {0}
+[0 1]
+
+[1 2]   rank 1: the second column is twice the first; the image is a line
+[2 4]   null space: inputs (x, y) with x + 2y = 0, i.e. multiples of (−2, 1)
+</code></pre>
+<p>Check: <code>[[1,2],[2,4]] · (−2, 1) = (−2 + 2, −4 + 4) = (0, 0)</code> ✓. Here <code>1 + 1 = 2</code> columns, matching rank–nullity.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Is the matrix below full rank?</p>
+<pre><code class="language-text">[1 2 3]
+[4 5 6]
+[7 8 9]
+</code></pre>
+<p>Notice <code>row 3 = 2·row 2 − row 1</code>: <code>2(4, 5, 6) − (1, 2, 3) = (7, 8, 9)</code> ✓. So the rows are dependent, and the rank is <strong>2</strong> (not 3). Its determinant is 0, so it has no inverse, and its null space has dimension <code>3 − 2 = 1</code>: one direction, <code>(1, −2, 1)</code>, is sent to zero (<code>1 − 4 + 3 = 0</code>, <code>4 − 10 + 6 = 0</code>, <code>7 − 16 + 9 = 0</code> ✓).</p>
+<p>A matrix with a full set of independent columns is <strong>full rank</strong>. For a square matrix, full rank is the same as being invertible.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rank-collapser" data-title="How flat does the matrix squash space?"><p class="bench-fallback"><strong>Interactive bench: How flat does the matrix squash space?.</strong> Sliders set a 2 by 2 matrix; the bench shows the transformed grid, reports the rank, describes the image (plane, line or point), and gives a direction that is sent to zero when there is one.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with the identity: rank 2, and nothing is lost.</li>
+<li>Make the second column a multiple of the first. What does the image become?</li>
+<li>Find the direction that gets sent to zero.</li>
+<li>Set all four numbers to zero.</li>
+</ol>
+<p><strong>What you should notice:</strong> when the columns line up, the whole plane collapses onto a line and one direction of inputs vanishes.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Low-rank structure:</strong> weight matrices and data often have far fewer independent directions than their size suggests, which is what makes compression work (see <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a>).</li>
+<li><strong>Low-rank adaptation (LoRA)</strong> fine-tunes large models by adding a low-rank update.</li>
+<li><strong>Redundant features</strong> reduce the rank of a data matrix.</li>
+<li><strong>Solvability:</strong> a system <code>A x = b</code> has a unique solution only for full rank.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing rank with size.</strong> A 100 × 100 matrix can have rank 3.</li>
+<li><strong>Ignoring near-dependence.</strong> Numerically, a tiny singular value behaves like a missing direction.</li>
+<li><strong>Forgetting the null space</strong> when a solution &quot;is not unique&quot;.</li>
+<li><strong>Reading rank from a determinant</strong> for non-square matrices (not defined).</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the rank of [[1, 1], [2, 2]]?</summary>
+1.
+</details>
+
+<details><summary>2. A (5 × 5) matrix has rank 3. What is the dimension of its null space?</summary>
+2.
+</details>
+
+<details><summary>3. Is a full-rank square matrix invertible?</summary>
+Yes.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Rank:</strong> the number of independent columns.</li>
+<li><strong>Image (column space):</strong> all outputs of a matrix.</li>
+<li><strong>Null space:</strong> the inputs mapped to zero.</li>
+<li><strong>Full rank:</strong> as much rank as the matrix&#39;s smaller dimension allows.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/linear-independence-and-basis/" data-topic="math/linear-independence-and-basis">Linear Independence and Basis</a> · <a class="wikilink" href="/math/determinant/" data-topic="math/determinant">Determinant</a> · <a class="wikilink" href="/math/solving-linear-systems/" data-topic="math/solving-linear-systems">Solving Linear Systems</a> · <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a> · <a class="wikilink" href="/math/tensors-and-shapes/" data-topic="math/tensors-and-shapes">Tensors and Shapes</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/rank-and-null-space">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/orthogonality-and-projection/"><small>Read next</small><b>Orthogonality and Projection</b><p>Two vectors are orthogonal when their dot product is zero (they meet at a right angle), and the projection of one vector onto another is its shadow: the closest point to it along the other&#39;s…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/linear-independence-and-basis/"><b>Linear Independence and Basis</b><p>Vectors are linearly independent if none of them can be built from the others, and a basis is a smallest set of independent vectors that spans a space.</p></a><a class="rc-card" href="/math/matrices-as-transformations/"><b>Matrices as Transformations</b><p>A matrix is a grid of numbers, and multiplying a vector by a matrix transforms it: stretching, rotating, flipping or shearing space.</p></a><a class="rc-card" href="/math/determinant/"><b>Determinant</b><p>The determinant of a square matrix is a single number telling you how the transformation scales area (or volume): a determinant of 3 makes shapes three times larger, 0.5 halves them, 0 flattens…</p></a><a class="rc-card" href="/math/svd-and-pca/"><b>SVD and PCA</b><p>The singular value decomposition (SVD) breaks any matrix into a rotation, a stretch along perpendicular axes, and another rotation: A = U Σ Vᵀ.</p></a><a class="rc-card" href="/math/solving-linear-systems/"><b>Solving Linear Systems</b><p>A linear system is several linear equations that must all hold at once, such as x + y = 5 and x − y = 1.</p></a><a class="rc-card" href="/math/tensors-and-shapes/"><b>Tensors and Shapes</b><p>A tensor is a grid of numbers with any number of dimensions: a scalar is 0-dimensional, a vector 1-dimensional, a matrix 2-dimensional, and a stack of images 4-dimensional.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/solving-linear-systems/">← Previous: Solving Linear Systems</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

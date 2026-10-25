@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning from Feedback Without Weight Updates — AI Base</title>
+<meta name="description" content="An agent that gets told &quot;that approach was wrong, try this instead&quot; and then keeps making the identical mistake on the next attempt hasn&#39;t actually used the feedback it was given.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/learning-from-feedback-without-weight-updates/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Learning from Feedback Without Weight Updates — AI Base">
+<meta property="og:description" content="An agent that gets told &quot;that approach was wrong, try this instead&quot; and then keeps making the identical mistake on the next attempt hasn&#39;t actually used the feedback it was given.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/learning-from-feedback-without-weight-updates/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Learning from Feedback Without Weight Updates","item":"https://ai.saranmahadev.in/agents/learning-from-feedback-without-weight-updates/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Learning from Feedback Without Weight Updates","description":"An agent that gets told \"that approach was wrong, try this instead\" and then keeps making the identical mistake on the next attempt hasn't actually used the feedback it was given.","url":"https://ai.saranmahadev.in/agents/learning-from-feedback-without-weight-updates/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does attempt 1 fail in both the \"with feedback\" and \"without feedback\" modes in the worked example?","acceptedAnswer":{"@type":"Answer","text":"There's no feedback from a prior attempt yet for either mode to use — the first attempt always starts from the same place."}},{"@type":"Question","name":"What's actually different between the two agents in the worked example — their weights, or something else?","acceptedAnswer":{"@type":"Answer","text":"Nothing about their weights differs; the only difference is what's included in the context window for attempts 2 through 5, specifically whether it contains the correction from attempt 1."}},{"@type":"Question","name":"Does this kind of behavior change survive into a new, separate run with a fresh context window?","acceptedAnswer":{"@type":"Answer","text":"No — because nothing was actually learned at the weight level, a new run with no memory of the previous context starts from the same mistake again, unless the feedback is carried forward some other way (such as the longer-horizon memory mechanisms covered elsewhere on this road)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Reflection and Self-Improvement</p>
+        <h1 class="doc-title">Learning from Feedback Without Weight Updates</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cpa6vgabg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="cpa6vgapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cpa6vgabg)"/>
+  <circle cx="231" cy="246" r="182" fill="#725998" opacity="0.55"/><circle cx="442" cy="191" r="63" fill="#e7bdc8" opacity="0.28"/><circle cx="219" cy="138" r="159" fill="#dcbef5" opacity="0.29"/><circle cx="692" cy="344" r="102" fill="#f3e9fc" opacity="0.32"/><circle cx="466" cy="309" r="227" fill="#e7bdc8" opacity="0.60"/><circle cx="498" cy="249" r="229" fill="#dcbef5" opacity="0.39"/>
+  <path d="M0,420 L0,309 L30,306 L60,306 L90,307 L120,310 L150,315 L180,321 L210,328 L240,335 L270,341 L300,346 L330,349 L360,350 L390,348 L420,345 L450,340 L480,334 L510,327 L540,320 L570,314 L600,309 L630,306 L660,306 L690,307 L720,310 L750,315 L780,321 L810,328 L840,335 L870,341 L900,346 L930,349 L960,350 L990,348 L1020,345 L1050,340 L1080,334 L1110,327 L1140,320 L1170,314 L1200,309 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,390 L60,387 L90,384 L120,380 L150,376 L180,373 L210,369 L240,366 L270,364 L300,363 L330,362 L360,362 L390,363 L420,365 L450,368 L480,371 L510,375 L540,378 L570,382 L600,386 L630,389 L660,391 L690,393 L720,394 L750,394 L780,393 L810,391 L840,389 L870,386 L900,383 L930,379 L960,375 L990,371 L1020,368 L1050,366 L1080,364 L1110,362 L1140,362 L1170,363 L1200,364 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="749" cy="153" rx="153" ry="43" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.8 749 153)"/><ellipse cx="749" cy="153" rx="212" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.8 749 153)"/>
+  <circle cx="749" cy="153" r="60" fill="url(#cpa6vgapl)"/>
+  <circle cx="546" cy="154" r="8" fill="#ffffff" opacity="0.60"/><circle cx="930" cy="183" r="10" fill="#ffffff" opacity="0.72"/><circle cx="746" cy="236" r="18" fill="#ffffff" opacity="0.90"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An agent that gets told &quot;that approach was wrong, try this instead&quot; and then keeps making the identical mistake on the next attempt hasn&#39;t actually used the feedback it was given. One that folds the correction into what it already knows — without anyone touching its weights — gets the next attempt right, and every attempt after that.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/prompting-and-in-context-learning/" data-topic="generative-ai/prompting-and-in-context-learning">Prompting and In-Context Learning</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does an agent change its behavior mid-run, with no training step involved?&quot; An agent&#39;s weights are fixed once it&#39;s deployed — nothing about this run updates them. But its <em>behavior</em> can still change within that run, because its context window can carry what it&#39;s already observed: a correction, a failed attempt, an example of what worked. Folding feedback into context this way is exactly the in-context learning already covered on the Generative AI planet, applied here specifically to an agent incorporating its own feedback across repeated attempts at the same task.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Someone told &quot;that&#39;s the wrong formula, use this one instead&quot; doesn&#39;t need brain surgery to use the correction on their very next attempt — they just remember what they were told and apply it. An agent that reads its own prior feedback back into its next prompt is doing the same thing: carrying a correction forward without anything underneath it being retrained.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">without feedback carried forward:  every attempt repeats the same mistake
+with feedback carried forward:     attempt 1 fails (no feedback exists yet)
+                                    every attempt after the correction is appended succeeds
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Five attempts at the same task, compared with and without the previous attempt&#39;s feedback folded into the next prompt:</p>
+<pre><code class="language-text">without feedback: ✗ ✗ ✗ ✗ ✗     (0 of 5 correct — the same mistake repeats every time)
+with feedback:     ✗ ✓ ✓ ✓ ✓     (4 of 5 correct — attempt 1 fails, then the correction sticks)
+</code></pre>
+<p>Attempt 1 fails in both cases — there&#39;s no feedback yet for either agent to use. The difference is everything after that: without feedback carried forward, attempts 2 through 5 repeat the exact same mistake attempt 1 made, because nothing informed them otherwise. With the correction appended to context after attempt 1, every later attempt starts from a prompt that already contains what went wrong — and gets it right.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="feedback-without-weights" data-title="Repeating the mistake, or learning from it mid-run"><p class="bench-fallback"><strong>Interactive bench: Repeating the mistake, or learning from it mid-run.</strong> Compare five attempts at a task with and without the previous attempt's feedback carried into the next one's context.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the &quot;no feedback carried forward&quot; mode and notice every attempt fails identically.</li>
+<li>Switch to &quot;feedback appended to context&quot; and see attempts 2 through 5 succeed.</li>
+<li>Imagine a task where the first attempt&#39;s mistake was actually a lucky guess that happened to look wrong — would appending that &quot;feedback&quot; help or hurt attempt 2?</li>
+</ol>
+<p><strong>What you should notice:</strong> nothing about the model&#39;s weights changed between the two modes — the entire difference comes from what&#39;s sitting in the context window when the next attempt starts.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is exactly <a class="wikilink" href="/generative-ai/prompting-and-in-context-learning/" data-topic="generative-ai/prompting-and-in-context-learning">in-context learning</a>, already covered on the Generative AI planet</strong> — what&#39;s new here is using it specifically to carry an agent&#39;s own feedback forward across repeated attempts at one task, rather than across unrelated few-shot examples.</li>
+<li><strong><a class="wikilink" href="/agents/episodic-memory-and-experience-logs/" data-topic="agents/episodic-memory-and-experience-logs">Episodic Memory and Experience Logs</a>, covered earlier, is the longer-horizon version of the same idea</strong> — carrying a lesson forward across many separate task instances rather than across attempts within one run.</li>
+<li><strong>This is the mechanism underneath <a class="wikilink" href="/agents/self-critique-loops-in-agents/" data-topic="agents/self-critique-loops-in-agents">self-critique</a> and <a class="wikilink" href="/agents/verifier-guided-agent-loops/" data-topic="agents/verifier-guided-agent-loops">verifier-guided loops</a></strong>: once a mistake is detected, folding it into context is how the next attempt actually changes.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting a correction to help if it&#39;s never actually read back into the next prompt.</strong> The worked example&#39;s gain only exists because attempt 2 onward includes attempt 1&#39;s feedback — a correction generated but never carried forward changes nothing.</li>
+<li><strong>Treating in-context behavior change as if it were permanent learning.</strong> Nothing here updates any weights — the moment this run&#39;s context is gone (a new session, a cleared context window), the lesson is gone with it, and the next run starts from the same mistake all over again.</li>
+<li><strong>Assuming every piece of feedback is equally useful once appended.</strong> Vague or incorrect feedback appended to context can mislead the next attempt just as easily as accurate feedback can correct it — the mechanism works in either direction.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does attempt 1 fail in both the "with feedback" and "without feedback" modes in the worked example?</summary>
+There's no feedback from a prior attempt yet for either mode to use — the first attempt always starts from the same place.
+</details>
+
+<details><summary>2. What's actually different between the two agents in the worked example — their weights, or something else?</summary>
+Nothing about their weights differs; the only difference is what's included in the context window for attempts 2 through 5, specifically whether it contains the correction from attempt 1.
+</details>
+
+<details><summary>3. Does this kind of behavior change survive into a new, separate run with a fresh context window?</summary>
+No — because nothing was actually learned at the weight level, a new run with no memory of the previous context starts from the same mistake again, unless the feedback is carried forward some other way (such as the longer-horizon memory mechanisms covered elsewhere on this road).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>In-context learning:</strong> a model&#39;s behavior changing based on what&#39;s included in its current context, with no weight updates involved.</li>
+<li><strong>Feedback carried forward:</strong> appending the result or correction from one attempt into the prompt for the next.</li>
+<li><strong>Weight update:</strong> a change to a model&#39;s trained parameters — explicitly absent from everything in this topic.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/prompting-and-in-context-learning/" data-topic="generative-ai/prompting-and-in-context-learning">Prompting and In-Context Learning</a> · <a class="wikilink" href="/agents/episodic-memory-and-experience-logs/" data-topic="agents/episodic-memory-and-experience-logs">Episodic Memory and Experience Logs</a> · <a class="wikilink" href="/agents/verifier-guided-agent-loops/" data-topic="agents/verifier-guided-agent-loops">Verifier-Guided Agent Loops</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/learning-from-feedback-without-weight-updates">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/verifier-guided-agent-loops/"><small>Read next</small><b>Verifier-Guided Agent Loops</b><p>An agent that runs six actions in sequence, one of which is subtly wrong, finds out it failed only once all six are done — by which point the bad action has already fed into whatever came after it.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/prompting-and-in-context-learning/"><b>Prompting and In-Context Learning</b><p>None of the decoding controls so far change what the model &quot;knows&quot; — they only change how its existing distribution gets turned into tokens.</p></a><a class="rc-card" href="/agents/episodic-memory-and-experience-logs/"><b>Episodic Memory and Experience Logs</b><p>The first time an agent faces a task, it has to actually discover which approach works — try something, see it fail, try something else.</p></a><a class="rc-card" href="/agents/self-critique-loops-in-agents/"><b>Self-Critique Loops in Agents</b><p>An arithmetic mistake made at step two of a four-step calculation doesn&#39;t stay contained to step two — every later step builds on the wrong number, and the final answer comes out wrong even though…</p></a><a class="rc-card" href="/agents/verifier-guided-agent-loops/"><b>Verifier-Guided Agent Loops</b><p>An agent that runs six actions in sequence, one of which is subtly wrong, finds out it failed only once all six are done — by which point the bad action has already fed into whatever came after it.</p></a><a class="rc-card" href="/agents/reflection-and-self-improvement/"><b>Reflection and Self-Improvement</b><p>An agent that never looks back at its own work repeats the same mistake at every step that triggers it.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/error-attribution-across-a-trajectory/">← Previous: Error Attribution Across a Trajectory</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNN Architectures: From LeNet to ResNet — AI Base</title>
+<meta name="description" content="Convolutional architectures did not arrive all at once.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/cnn-architectures-from-lenet-to-resnet/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="CNN Architectures: From LeNet to ResNet — AI Base">
+<meta property="og:description" content="Convolutional architectures did not arrive all at once.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/cnn-architectures-from-lenet-to-resnet/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"CNN Architectures: From LeNet to ResNet","item":"https://ai.saranmahadev.in/deep-learning/cnn-architectures-from-lenet-to-resnet/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"CNN Architectures: From LeNet to ResNet","description":"Convolutional architectures did not arrive all at once.","url":"https://ai.saranmahadev.in/deep-learning/cnn-architectures-from-lenet-to-resnet/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What was LeNet's main contribution?","acceptedAnswer":{"@type":"Answer","text":"It demonstrated the basic convolution-and-pooling recipe could successfully read handwritten digits, establishing the pattern later architectures built on."}},{"@type":"Question","name":"What two choices, beyond depth, did AlexNet make that are now near-universal in deep networks?","acceptedAnswer":{"@type":"Answer","text":"Using ReLU instead of saturating activations, and using dropout for regularisation."}},{"@type":"Question","name":"Why does VGGNet's \"two 3×3 filters instead of one 5×5\" trade make sense, by the numbers?","acceptedAnswer":{"@type":"Answer","text":"Both cover the same receptive field, but two 3×3 filters use fewer total weights (18 versus 25) and add an extra non-linearity in between."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Convolutional Neural Networks</p>
+        <h1 class="doc-title">CNN Architectures: From LeNet to ResNet</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c13uiz04bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c13uiz04pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c13uiz04bg)"/>
+  <circle cx="406" cy="386" r="187" fill="#ffb6b6" opacity="0.53"/><circle cx="873" cy="22" r="152" fill="#8a546c" opacity="0.33"/><circle cx="542" cy="58" r="106" fill="#ffb89d" opacity="0.49"/><circle cx="490" cy="165" r="128" fill="#8a546c" opacity="0.26"/><circle cx="1200" cy="250" r="62" fill="#ffb89d" opacity="0.54"/><circle cx="165" cy="391" r="102" fill="#ffb6b6" opacity="0.44"/>
+  <path d="M0,420 L0,318 L30,312 L60,308 L90,306 L120,306 L150,308 L180,312 L210,317 L240,324 L270,331 L300,337 L330,343 L360,347 L390,349 L420,349 L450,347 L480,343 L510,338 L540,331 L570,324 L600,318 L630,312 L660,308 L690,306 L720,306 L750,308 L780,312 L810,317 L840,324 L870,331 L900,337 L930,343 L960,347 L990,349 L1020,349 L1050,347 L1080,343 L1110,338 L1140,331 L1170,324 L1200,318 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,379 L30,382 L60,384 L90,387 L120,389 L150,390 L180,392 L210,393 L240,394 L270,394 L300,394 L330,394 L360,393 L390,392 L420,390 L450,388 L480,386 L510,384 L540,382 L570,379 L600,377 L630,374 L660,372 L690,369 L720,367 L750,366 L780,364 L810,363 L840,362 L870,362 L900,362 L930,362 L960,363 L990,364 L1020,366 L1050,368 L1080,370 L1110,372 L1140,374 L1170,377 L1200,379 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="941" cy="229" rx="230" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.2 941 229)"/><ellipse cx="941" cy="229" rx="317" ry="89" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.2 941 229)"/>
+  <circle cx="941" cy="229" r="90" fill="url(#c13uiz04pl)"/>
+  <circle cx="1102" cy="128" r="17" fill="#ffffff" opacity="0.86"/><circle cx="747" cy="172" r="12" fill="#ffffff" opacity="0.78"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Convolutional architectures did not arrive all at once. <strong>LeNet</strong> (1998) showed a few convolution-and-pooling layers could read handwritten digits; <strong>AlexNet</strong> (2012) showed the same idea, made much deeper and trained on a GPU, could beat every prior approach on natural images by a wide margin; <strong>VGGNet</strong> (2014) showed you could go deeper still by stacking many small, uniform filters; <strong>ResNet</strong> (2015) showed how to keep going past the point where adding more layers had started making things worse.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/padding-stride-and-pooling/" data-topic="deep-learning/padding-stride-and-pooling">Padding, Stride and Pooling</a> and <a class="wikilink" href="/deep-learning/filters-feature-maps-and-channels/" data-topic="deep-learning/filters-feature-maps-and-channels">Filters, Feature Maps and Channels</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How did convolutional networks go from reading digits to recognising a thousand kinds of real-world object?&quot; Mostly by getting deeper — and by each generation solving the specific problem that stopped the previous one from getting deeper still.</p>
+<h2 id="intuition-four-generations-four-lessons">Intuition: four generations, four lessons</h2>
+<ul>
+<li><strong>LeNet</strong> (Yann LeCun, 1998): a handful of convolution and pooling layers, proving the basic recipe — convolve, pool, repeat, then classify — works at all.</li>
+<li><strong>AlexNet</strong> (Krizhevsky, Sutskever and Hinton, 2012): the same recipe, much deeper, trained on GPUs, using ReLU instead of saturating activations and dropout for regularisation — and it beat the previous best approach on ImageNet by a wide margin, igniting the deep learning boom in computer vision.</li>
+<li><strong>VGGNet</strong> (Simonyan and Zisserman, 2014): replaced AlexNet&#39;s larger filters with a uniform stack of small 3×3 filters, going deeper (16–19 layers) while keeping the design simple and regular.</li>
+<li><strong>ResNet</strong> (He et al., 2015): discovered that simply stacking more layers eventually made networks <em>worse</em>, not better — and fixed it with the idea in <a class="wikilink" href="/deep-learning/residual-and-skip-connections/" data-topic="deep-learning/residual-and-skip-connections">Residual and Skip Connections</a>, reaching over a hundred layers.</li>
+</ul>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">LeNet    (1998)   a few conv+pool layers, for digit recognition
+AlexNet  (2012)   deeper, ReLU, dropout, GPU-trained; ImageNet breakthrough
+VGGNet   (2014)   16-19 layers, uniform small (3×3) filters throughout
+ResNet   (2015)   adds skip connections; scales past 100 layers
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>VGG&#39;s &quot;small filters, more layers&quot; idea, counted in weights: a single 5×5 filter versus two stacked 3×3 filters, both covering the same 5×5 patch of the input (per input–output channel pair):</p>
+<pre><code class="language-text">one 5×5 filter:       5 × 5 = 25 weights
+two stacked 3×3s:      9 + 9 = 18 weights, plus a non-linearity between them
+</code></pre>
+<p>Two small filters cover exactly the same input area (stacking two 3×3 convolutions grows the receptive field by <code>(3−1)+(3−1) = 4</code>, matching a single 5×5&#39;s reach) using <em>fewer</em> weights, and add an extra non-linear kink in between — strictly more expressive for less cost, which is exactly the trade VGG made throughout its design.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="architecture-timeline" data-title="Four generations of CNN design"><p class="bench-fallback"><strong>Interactive bench: Four generations of CNN design.</strong> A timeline of LeNet, AlexNet, VGGNet and ResNet. Pick one to see its year, rough depth, and the one design idea it introduced, and compare the weight cost of a 5×5 filter against two stacked 3×3 filters.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through the four architectures in order and read what each one added over the last.</li>
+<li>Compare AlexNet&#39;s depth to VGGNet&#39;s — both solved different bottlenecks of their time.</li>
+<li>Toggle the filter-size comparison and see the weight-count difference for yourself.</li>
+</ol>
+<p><strong>What you should notice:</strong> each generation&#39;s one headline idea exists to remove whatever was stopping the previous generation from going deeper or wider.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>&quot;Backbones&quot; built on these ideas</strong> (or ResNet directly) remain common starting points for vision tasks even now, often reused via <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a> rather than retrained from scratch.</li>
+<li><strong>ImageNet</strong>, the benchmark these architectures competed on, was itself a major driver of the deep learning boom in computer vision.</li>
+<li><strong>VGG&#39;s &quot;small filters, more layers&quot; principle</strong> generalised well beyond VGG itself and influenced most architectures that followed.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming newer always means strictly better for every use case.</strong> VGGNet is simple and still used as a feature extractor; ResNet&#39;s extra machinery (skip connections) is only needed once depth is large enough for degradation to bite.</li>
+<li><strong>Forgetting AlexNet&#39;s breakthrough was partly about engineering, not only architecture</strong> — GPU training made training a network of that depth practical at all.</li>
+<li><strong>Treating these as the only four CNN designs that matter.</strong> They are the four that marked a clear jump in what became possible; many refinements followed each one.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What was LeNet's main contribution?</summary>
+It demonstrated the basic convolution-and-pooling recipe could successfully read handwritten digits, establishing the pattern later architectures built on.
+</details>
+
+<details><summary>2. What two choices, beyond depth, did AlexNet make that are now near-universal in deep networks?</summary>
+Using ReLU instead of saturating activations, and using dropout for regularisation.
+</details>
+
+<details><summary>3. Why does VGGNet's "two 3×3 filters instead of one 5×5" trade make sense, by the numbers?</summary>
+Both cover the same receptive field, but two 3×3 filters use fewer total weights (18 versus 25) and add an extra non-linearity in between.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>LeNet, AlexNet, VGGNet, ResNet:</strong> four landmark CNN architectures, each solving a bottleneck of the one before it.</li>
+<li><strong>ImageNet:</strong> the large-scale image classification benchmark these architectures competed on.</li>
+<li><strong>Backbone:</strong> a pretrained architecture (often one of these) reused as the starting point for another vision task.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/padding-stride-and-pooling/" data-topic="deep-learning/padding-stride-and-pooling">Padding, Stride and Pooling</a> · <a class="wikilink" href="/deep-learning/filters-feature-maps-and-channels/" data-topic="deep-learning/filters-feature-maps-and-channels">Filters, Feature Maps and Channels</a> · <a class="wikilink" href="/deep-learning/residual-and-skip-connections/" data-topic="deep-learning/residual-and-skip-connections">Residual and Skip Connections</a> · <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/cnn-architectures-from-lenet-to-resnet">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/residual-and-skip-connections/"><small>Read next</small><b>Residual and Skip Connections</b><p>ResNet&#39;s fix for the degradation problem is almost absurdly simple: instead of a block computing output = F(x), make it compute output = F(x) + x — adding the block&#39;s own input straight back onto…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/padding-stride-and-pooling/"><b>Padding, Stride and Pooling</b><p>Three simple knobs control how a convolution&#39;s output is sized and how fast a network shrinks an image down: padding adds a border so the filter can reach the edges, stride sets how far the filter…</p></a><a class="rc-card" href="/deep-learning/filters-feature-maps-and-channels/"><b>Filters, Feature Maps and Channels</b><p>A convolutional layer rarely uses just one filter.</p></a><a class="rc-card" href="/deep-learning/residual-and-skip-connections/"><b>Residual and Skip Connections</b><p>ResNet&#39;s fix for the degradation problem is almost absurdly simple: instead of a block computing output = F(x), make it compute output = F(x) + x — adding the block&#39;s own input straight back onto…</p></a><a class="rc-card" href="/deep-learning/transfer-learning-and-fine-tuning/"><b>Transfer Learning and Fine-Tuning</b><p>A network trained on one large task has already learned a great deal of generally useful structure — edges and textures for vision, grammar and common phrasing for language.</p></a><a class="rc-card" href="/deep-learning/convolutional-neural-networks/"><b>Convolutional Neural Networks</b><p>A photograph has structure a plain feedforward network ignores: a cat&#39;s ear looks the same whether it is in the top-left or bottom-right corner.</p></a><a class="rc-card" href="/deep-learning/the-convolution-operation/"><b>The Convolution Operation</b><p>A convolution slides a small grid of numbers — a filter or kernel — across an image, computing one weighted sum per position.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/padding-stride-and-pooling/">← Previous: Padding, Stride and Pooling</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

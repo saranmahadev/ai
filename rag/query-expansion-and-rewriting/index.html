@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Query Expansion and Rewriting — AI Base</title>
+<meta name="description" content="Sparse retrieval only ever matches the exact words a query happens to use.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/query-expansion-and-rewriting/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Query Expansion and Rewriting — AI Base">
+<meta property="og:description" content="Sparse retrieval only ever matches the exact words a query happens to use.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/query-expansion-and-rewriting/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Query Expansion and Rewriting","item":"https://ai.saranmahadev.in/rag/query-expansion-and-rewriting/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Query Expansion and Rewriting","description":"Sparse retrieval only ever matches the exact words a query happens to use.","url":"https://ai.saranmahadev.in/rag/query-expansion-and-rewriting/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the original query have zero overlap with the document?","acceptedAnswer":{"@type":"Answer","text":"The query uses \"automobile\" and \"repair,\" while the document uses \"car,\" \"maintenance,\" and \"servicing\" — none of the exact words match, even though both describe the same topic."}},{"@type":"Question","name":"What's the main risk of adding too many synonyms to a query?","acceptedAnswer":{"@type":"Answer","text":"Each added term can also match documents that aren't actually relevant, trading away some precision in exchange for the added recall — expansion isn't a pure improvement."}},{"@type":"Question","name":"Is query expansion useful for dense retrieval the same way it is for sparse retrieval?","acceptedAnswer":{"@type":"Answer","text":"Less so — dense retrieval already captures semantic similarity through embeddings, so it doesn't suffer from the exact-vocabulary-matching problem expansion is specifically designed to fix for sparse methods."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Retrieval Strategies</p>
+        <h1 class="doc-title">Query Expansion and Rewriting</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cv6o11gbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="cv6o11gpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cv6o11gbg)"/>
+  <circle cx="1148" cy="306" r="96" fill="#b7d5be" opacity="0.40"/><circle cx="442" cy="192" r="129" fill="#b7d5be" opacity="0.25"/><circle cx="50" cy="297" r="187" fill="#b7d5be" opacity="0.24"/><circle cx="417" cy="342" r="77" fill="#b7d5be" opacity="0.46"/><circle cx="800" cy="210" r="78" fill="#97e1e6" opacity="0.39"/><circle cx="950" cy="189" r="145" fill="#b7d5be" opacity="0.56"/><circle cx="59" cy="138" r="211" fill="#42718e" opacity="0.37"/>
+  <path d="M0,420 L0,307 L30,311 L60,316 L90,323 L120,329 L150,336 L180,342 L210,346 L240,349 L270,350 L300,348 L330,344 L360,339 L390,333 L420,326 L450,319 L480,313 L510,309 L540,306 L570,306 L600,307 L630,311 L660,316 L690,323 L720,329 L750,336 L780,342 L810,346 L840,349 L870,350 L900,348 L930,344 L960,339 L990,333 L1020,326 L1050,319 L1080,313 L1110,309 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,362 L60,362 L90,363 L120,366 L150,370 L180,374 L210,379 L240,384 L270,388 L300,392 L330,394 L360,394 L390,393 L420,390 L450,386 L480,382 L510,377 L540,372 L570,368 L600,364 L630,362 L660,362 L690,363 L720,366 L750,370 L780,374 L810,379 L840,384 L870,388 L900,392 L930,394 L960,394 L990,393 L1020,390 L1050,386 L1080,382 L1110,377 L1140,372 L1170,368 L1200,364 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="952" cy="172" rx="241" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(7.4 952 172)"/><ellipse cx="952" cy="172" rx="333" ry="93" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(13.4 952 172)"/>
+  <circle cx="952" cy="172" r="95" fill="url(#cv6o11gpl)"/>
+  <circle cx="678" cy="242" r="11" fill="#ffffff" opacity="0.63"/><circle cx="884" cy="81" r="9" fill="#ffffff" opacity="0.77"/><circle cx="815" cy="269" r="18" fill="#ffffff" opacity="0.67"/><circle cx="619" cy="190" r="13" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Sparse retrieval only ever matches the exact words a query happens to use. Query expansion sidesteps that limitation at the query side, before any retrieval happens at all — add related words the document might actually use, and a query that originally shared nothing with a document can suddenly share several.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/sparse-retrieval-with-tf-idf-and-bm25/" data-topic="rag/sparse-retrieval-with-tf-idf-and-bm25">Sparse Retrieval with TF-IDF and BM25</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can a query be improved before retrieval even runs?&quot; <strong>Query expansion</strong> adds related terms — synonyms, alternate phrasings, related concepts — to a query before it&#39;s matched against documents. For sparse retrieval specifically, this directly compensates for the exact-vocabulary matching problem: a query that originally had zero overlap with a relevant document can gain several matching terms once expanded with the right synonyms.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Searching a library catalog for &quot;automobile&quot; and getting nothing, then thinking to also try &quot;car&quot; and &quot;vehicle,&quot; is something a person does instinctively when a first search comes up empty. Query expansion automates exactly that instinct, adding likely alternate words before the search even runs once.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">expand(query) = query&#39;s own terms ∪ known synonyms of each term
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The query &quot;automobile repair&quot; against a document about &quot;car maintenance and servicing&quot;:</p>
+<pre><code class="language-text">original query terms:  automobile, repair
+expanded query terms:  automobile, repair, car, vehicle, maintenance, fix, servicing
+
+original overlap with document: 0 terms
+expanded overlap with document: 3 terms  (car, maintenance, servicing)
+</code></pre>
+<p>With no expansion, a sparse retrieval method sees zero shared vocabulary and scores this document as entirely unrelated. After expansion, three of the document&#39;s words now match the expanded query — a sparse method would now rank this document as a real candidate, where before it couldn&#39;t have been found at all.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="query-expansion" data-title="Matching words the query never used"><p class="bench-fallback"><strong>Interactive bench: Matching words the query never used.</strong> Toggle query expansion and watch a zero-overlap query gain matching terms against a document.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the unexpanded query and note zero terms match the document.</li>
+<li>Turn on expansion and watch three new matches appear.</li>
+<li>Consider what happens if the synonym list is wrong or too broad — what risk does that introduce?</li>
+</ol>
+<p><strong>What you should notice:</strong> expansion doesn&#39;t change the document or the retrieval algorithm at all — it only changes what the query itself contains before matching ever starts.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This directly targets the exact-vocabulary limitation shown in <a class="wikilink" href="/rag/sparse-retrieval-with-tf-idf-and-bm25/" data-topic="rag/sparse-retrieval-with-tf-idf-and-bm25">Sparse Retrieval with TF-IDF and BM25</a>&#39;s worked example</strong> — expansion is one fix for that limitation; switching to <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a> entirely is another.</li>
+<li><strong><a class="wikilink" href="/rag/hypothetical-document-embeddings-hyde/" data-topic="rag/hypothetical-document-embeddings-hyde">Hypothetical Document Embeddings (HyDE)</a> takes a related but different approach</strong>: instead of adding synonyms, it generates an entire hypothetical answer and searches with that.</li>
+<li><strong>A poorly chosen synonym can introduce false matches</strong>, which <a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a> covers as &quot;retrieved an irrelevant document because of over-broad query expansion.&quot;</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming expansion is free.</strong> Every added term is also a term that can accidentally match an irrelevant document — expansion trades some precision for recall, not purely a win.</li>
+<li><strong>Using a fixed, hand-built synonym list that doesn&#39;t generalize.</strong> A synonym dictionary built for one domain may add the wrong associations in another (medical &quot;MI&quot; expanding toward geography-related terms, for instance).</li>
+<li><strong>Expanding so aggressively that the query drifts away from its original intent.</strong> Each added synonym should still be something a document actually answering the question might plausibly contain.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the original query have zero overlap with the document?</summary>
+The query uses "automobile" and "repair," while the document uses "car," "maintenance," and "servicing" — none of the exact words match, even though both describe the same topic.
+</details>
+
+<details><summary>2. What's the main risk of adding too many synonyms to a query?</summary>
+Each added term can also match documents that aren't actually relevant, trading away some precision in exchange for the added recall — expansion isn't a pure improvement.
+</details>
+
+<details><summary>3. Is query expansion useful for dense retrieval the same way it is for sparse retrieval?</summary>
+Less so — dense retrieval already captures semantic similarity through embeddings, so it doesn't suffer from the exact-vocabulary-matching problem expansion is specifically designed to fix for sparse methods.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Query expansion:</strong> adding related terms to a query before retrieval, to compensate for exact-vocabulary matching limitations.</li>
+<li><strong>Synonym:</strong> a word with a similar meaning used to expand a query&#39;s matching vocabulary.</li>
+<li><strong>Precision/recall trade-off:</strong> the cost of expansion — more matching terms can mean more irrelevant matches too.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/sparse-retrieval-with-tf-idf-and-bm25/" data-topic="rag/sparse-retrieval-with-tf-idf-and-bm25">Sparse Retrieval with TF-IDF and BM25</a> · <a class="wikilink" href="/rag/hypothetical-document-embeddings-hyde/" data-topic="rag/hypothetical-document-embeddings-hyde">Hypothetical Document Embeddings (HyDE)</a> · <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/query-expansion-and-rewriting">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/hypothetical-document-embeddings-hyde/"><small>Read next</small><b>Hypothetical Document Embeddings (HyDE)</b><p>A short question and the long passage that answers it don&#39;t always sit very close together in embedding space — a question is phrased like a question, while the answer is phrased like an answer,…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/sparse-retrieval-with-tf-idf-and-bm25/"><b>Sparse Retrieval with TF-IDF and BM25</b><p>Counting how many query words a document shares is the simplest possible retrieval method — and it treats every word as equally informative, which &quot;the&quot; and &quot;cat&quot; obviously aren&#39;t.</p></a><a class="rc-card" href="/rag/dense-retrieval/"><b>Dense Retrieval</b><p>&quot;Automobile repair&quot; and &quot;car maintenance&quot; share not a single word, yet mean almost the same thing.</p></a><a class="rc-card" href="/rag/hypothetical-document-embeddings-hyde/"><b>Hypothetical Document Embeddings (HyDE)</b><p>A short question and the long passage that answers it don&#39;t always sit very close together in embedding space — a question is phrased like a question, while the answer is phrased like an answer,…</p></a><a class="rc-card" href="/rag/common-rag-failure-modes/"><b>Common RAG Failure Modes</b><p>Across this planet&#39;s road, the same handful of failure symptoms keep recurring — a stale fact, a result count that&#39;s mysteriously short, an answer that confidently cites the wrong thing.</p></a><a class="rc-card" href="/rag/retrieval-strategies/"><b>Retrieval Strategies</b><p>Having a fast index doesn&#39;t yet say what to search it with.</p></a><a class="rc-card" href="/rag/corrective-rag/"><b>Corrective RAG</b><p>Self-RAG discards an individual irrelevant passage; Corrective RAG asks a broader question about the whole retrieval — is this collection of results even worth generating from, or should the…</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/hybrid-retrieval-fusion/">← Previous: Hybrid Retrieval Fusion</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

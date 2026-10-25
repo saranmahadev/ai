@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan-and-Execute Agents — AI Base</title>
+<meta name="description" content="Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/plan-and-execute-agents/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Plan-and-Execute Agents — AI Base">
+<meta property="og:description" content="Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/plan-and-execute-agents/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Plan-and-Execute Agents","item":"https://ai.saranmahadev.in/agents/plan-and-execute-agents/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Plan-and-Execute Agents","description":"Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop.","url":"https://ai.saranmahadev.in/agents/plan-and-execute-agents/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does plan-and-execute need only 1 + n calls for n steps?","acceptedAnswer":{"@type":"Answer","text":"One call produces the entire ordered plan up front, and then each step is executed with a single call that just carries out what the plan already decided — no further \"what should I do\" reasoning is needed per step."}},{"@type":"Question","name":"Why does interleaving cost roughly twice as many calls as plan-and-execute for the same number of steps?","acceptedAnswer":{"@type":"Answer","text":"Interleaving makes a separate thinking call and a separate acting call at every step, rather than deciding the whole sequence once — so each step costs two calls instead of plan-and-execute's roughly one."}},{"@type":"Question","name":"What does plan-and-execute give up in exchange for its lower call count?","acceptedAnswer":{"@type":"Answer","text":"The ability to reconsider what to do next in light of something the original plan didn't anticipate — a plan-and-execute agent just keeps executing the plan it already committed to, unless something explicitly triggers re-planning."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Planning and Task Decomposition</p>
+        <h1 class="doc-title">Plan-and-Execute Agents</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1jty4m2bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1jty4m2pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1jty4m2bg)"/>
+  <circle cx="103" cy="44" r="219" fill="#dcbef5" opacity="0.48"/><circle cx="124" cy="71" r="105" fill="#725998" opacity="0.35"/><circle cx="839" cy="184" r="128" fill="#725998" opacity="0.61"/><circle cx="433" cy="155" r="95" fill="#725998" opacity="0.57"/><circle cx="151" cy="228" r="104" fill="#e7bdc8" opacity="0.41"/><circle cx="383" cy="335" r="167" fill="#f3e9fc" opacity="0.22"/><circle cx="910" cy="113" r="97" fill="#f3e9fc" opacity="0.36"/>
+  <path d="M0,420 L0,314 L30,310 L60,307 L90,306 L120,306 L150,307 L180,309 L210,312 L240,316 L270,321 L300,326 L330,331 L360,336 L390,340 L420,344 L450,347 L480,349 L510,350 L540,349 L570,347 L600,345 L630,341 L660,336 L690,331 L720,326 L750,321 L780,316 L810,312 L840,309 L870,307 L900,306 L930,306 L960,307 L990,310 L1020,313 L1050,317 L1080,322 L1110,327 L1140,332 L1170,337 L1200,342 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,391 L60,388 L90,385 L120,381 L150,378 L180,374 L210,370 L240,367 L270,365 L300,363 L330,362 L360,362 L390,363 L420,365 L450,367 L480,370 L510,373 L540,377 L570,381 L600,384 L630,388 L660,390 L690,392 L720,394 L750,394 L780,393 L810,392 L840,390 L870,387 L900,384 L930,380 L960,376 L990,373 L1020,369 L1050,366 L1080,364 L1110,363 L1140,362 L1170,362 L1200,363 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="881" cy="281" rx="217" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-6.7 881 281)"/><ellipse cx="881" cy="281" rx="300" ry="84" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-0.7 881 281)"/>
+  <circle cx="881" cy="281" r="85" fill="url(#c1jty4m2pl)"/>
+  <circle cx="1059" cy="348" r="12" fill="#ffffff" opacity="0.63"/><circle cx="1121" cy="228" r="10" fill="#ffffff" opacity="0.79"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop. Deciding each stop fresh, in the moment, right before taking it, takes roughly twice as many conversations — one to think, one to act — at every single stop. Plan-and-execute agents choose the first shape: decompose the goal into an ordered plan once, then execute each step with no further planning call, unless something goes wrong.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/goal-decomposition-into-subtasks/" data-topic="agents/goal-decomposition-into-subtasks">Goal Decomposition into Subtasks</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Should an agent decide its whole sequence of steps up front, or decide each next step as it goes?&quot; A <strong>plan-and-execute</strong> agent makes one planning call that decomposes the goal into an ordered list of steps, then makes one additional call per step to execute it — no further reasoning about <em>what</em> to do next, just doing what the plan already said. An <strong>interleaved</strong> agent (the <a class="wikilink" href="/llms/tool-augmented-reasoning-react-style/" data-topic="llms/tool-augmented-reasoning-react-style">ReAct-style</a> pattern already covered on the LLMs planet) instead reasons about what to do at every single step, which costs roughly twice as many calls for the same number of steps but can react to new information the plan never anticipated.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A tourist who plans an entire day&#39;s itinerary over breakfast, then just follows it stop by stop, needs one planning conversation and one action at each stop. A tourist who stops to think &quot;what should I do next?&quot; before every single stop is doing the same amount of deciding, just spread across every stop instead of concentrated once — at roughly double the total thinking.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">plan-and-execute calls(n steps) = 1 (planning) + n (one per step)
+interleaved calls(n steps)      = 2n (think + act, every step)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Total calls for a task broken into a varying number of steps, under both approaches:</p>
+<pre><code class="language-text">n = 3 steps:  plan-and-execute = 4 calls   interleaved = 6 calls
+n = 5 steps:  plan-and-execute = 6 calls   interleaved = 10 calls
+n = 8 steps:  plan-and-execute = 9 calls   interleaved = 16 calls
+</code></pre>
+<p>The gap widens as the number of steps grows — plan-and-execute adds exactly one call per extra step, while interleaving adds two. The saving only holds, though, as long as the original plan stays good; a plan that goes stale partway through needs <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">re-planning</a> to recover, which spends some of that saved budget back.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="plan-execute-calls" data-title="One plan then act, or think at every step"><p class="bench-fallback"><strong>Interactive bench: One plan then act, or think at every step.</strong> Compare total LLM calls for plan-and-execute against interleaving a think-then-act call at every step.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the number of steps up and watch both call counts grow.</li>
+<li>Notice the gap between the two bars widening as steps increase.</li>
+<li>Imagine a task where step 3&#39;s outcome changes what step 4 should be — would plan-and-execute still work as written?</li>
+</ol>
+<p><strong>What you should notice:</strong> the call-count saving is real and grows with plan length, but it comes with a cost the bench doesn&#39;t show directly: a plan-and-execute agent can&#39;t adapt mid-plan to something it didn&#39;t anticipate, which is exactly the gap <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">re-planning</a> exists to close.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Interleaved planning is the <a class="wikilink" href="/llms/tool-augmented-reasoning-react-style/" data-topic="llms/tool-augmented-reasoning-react-style">ReAct pattern</a> from the LLMs planet</strong>, applied here as the alternative to committing to a full plan up front.</li>
+<li><strong><a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a> is what a plan-and-execute agent needs when the world doesn&#39;t match the plan it committed to</strong> — without it, a stale plan just keeps executing anyway.</li>
+<li><strong><a class="wikilink" href="/agents/hierarchical-task-planning/" data-topic="agents/hierarchical-task-planning">Hierarchical Task Planning</a> extends the same idea</strong> by planning at more than one level of detail, rather than producing one flat list of steps.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming plan-and-execute is simply &quot;better&quot; because it costs fewer calls.</strong> The call-count saving only pays off when the plan stays valid — in a fast-changing environment, the saved calls can be dwarfed by the cost of acting on a now-wrong plan.</li>
+<li><strong>Using plan-and-execute for a task whose later steps genuinely depend on earlier results in ways that can&#39;t be anticipated.</strong> If step 4 truly can&#39;t be decided until step 3&#39;s result is known, the plan has to leave it open, which is closer to interleaving than to a full upfront plan.</li>
+<li><strong>Forgetting that interleaving&#39;s extra cost buys real adaptability.</strong> The comparison isn&#39;t &quot;cheap but rigid vs. expensive and pointless&quot; — interleaving&#39;s extra think step is what lets it notice and react to things the plan never anticipated.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does plan-and-execute need only 1 + n calls for n steps?</summary>
+One call produces the entire ordered plan up front, and then each step is executed with a single call that just carries out what the plan already decided — no further "what should I do" reasoning is needed per step.
+</details>
+
+<details><summary>2. Why does interleaving cost roughly twice as many calls as plan-and-execute for the same number of steps?</summary>
+Interleaving makes a separate thinking call and a separate acting call at every step, rather than deciding the whole sequence once — so each step costs two calls instead of plan-and-execute's roughly one.
+</details>
+
+<details><summary>3. What does plan-and-execute give up in exchange for its lower call count?</summary>
+The ability to reconsider what to do next in light of something the original plan didn't anticipate — a plan-and-execute agent just keeps executing the plan it already committed to, unless something explicitly triggers re-planning.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Plan-and-execute:</strong> an agent pattern that decomposes a goal into a full ordered plan once, then executes each step without further planning calls.</li>
+<li><strong>Interleaved (ReAct-style):</strong> an agent pattern that reasons about what to do at every step, rather than committing to a plan in advance.</li>
+<li><strong>Call budget:</strong> the number of LLM calls an approach needs for a given number of steps.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/goal-decomposition-into-subtasks/" data-topic="agents/goal-decomposition-into-subtasks">Goal Decomposition into Subtasks</a> · <a class="wikilink" href="/llms/tool-augmented-reasoning-react-style/" data-topic="llms/tool-augmented-reasoning-react-style">Tool-Augmented Reasoning (ReAct-Style)</a> · <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/plan-and-execute-agents">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/re-planning-on-failure/"><small>Read next</small><b>Re-Planning on Failure</b><p>A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/goal-decomposition-into-subtasks/"><b>Goal Decomposition into Subtasks</b><p>Told to &quot;launch the product,&quot; an agent that lists tasks in whatever order they occur to it can end up trying to launch before the thing it&#39;s launching has been tested — the launch step depends on…</p></a><a class="rc-card" href="/llms/tool-augmented-reasoning-react-style/"><b>Tool-Augmented Reasoning (ReAct-Style)</b><p>No amount of chain-of-thought or tree search fixes a problem the model simply can&#39;t solve on its own — exact large-number arithmetic, a live lookup, running actual code.</p></a><a class="rc-card" href="/agents/re-planning-on-failure/"><b>Re-Planning on Failure</b><p>A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5.</p></a><a class="rc-card" href="/agents/hierarchical-task-planning/"><b>Hierarchical Task Planning</b><p>&quot;Organize a conference&quot; eventually breaks down into 36 individual primitive actions — booking a specific venue, sending a specific email, printing a specific badge.</p></a><a class="rc-card" href="/agents/parallelization-sectioning-and-voting/"><b>Parallelization: Sectioning and Voting</b><p>Running three independent pieces of a task one after another wastes time that didn&#39;t need to be spent sequentially at all — none of the three pieces needed the others to finish first.</p></a><a class="rc-card" href="/agents/planning-and-task-decomposition/"><b>Planning and Task Decomposition</b><p>A genuinely open-ended goal can&#39;t be handled by a fixed workflow written in advance — nobody knows the steps until the agent starts looking at the specific situation.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/goal-decomposition-into-subtasks/">← Previous: Goal Decomposition into Subtasks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

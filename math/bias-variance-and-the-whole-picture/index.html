@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bias, Variance and the Whole Picture — AI Base</title>
+<meta name="description" content="A model&#39;s error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/bias-variance-and-the-whole-picture/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Bias, Variance and the Whole Picture — AI Base">
+<meta property="og:description" content="A model&#39;s error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/bias-variance-and-the-whole-picture/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Bias, Variance and the Whole Picture","item":"https://ai.saranmahadev.in/math/bias-variance-and-the-whole-picture/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bias, Variance and the Whole Picture","description":"A model's error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…","url":"https://ai.saranmahadev.in/math/bias-variance-and-the-whole-picture/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"A model gets the same wrong answer on every training set. Is that bias or variance?","acceptedAnswer":{"@type":"Answer","text":"Bias."}},{"@type":"Question","name":"Which helps with high variance: more data or a bigger model?","acceptedAnswer":{"@type":"Answer","text":"More data (a bigger model would raise variance)."}},{"@type":"Question","name":"Can any model beat the noise floor?","acceptedAnswer":{"@type":"Answer","text":"No."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Math in AI</p>
+        <h1 class="doc-title">Bias, Variance and the Whole Picture</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1tbhhb0bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1tbhhb0pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1tbhhb0bg)"/>
+  <circle cx="277" cy="149" r="210" fill="#cebff9" opacity="0.62"/><circle cx="903" cy="284" r="173" fill="#eee9fd" opacity="0.39"/><circle cx="471" cy="248" r="115" fill="#68599a" opacity="0.30"/><circle cx="513" cy="397" r="88" fill="#ddbecb" opacity="0.28"/><circle cx="1129" cy="358" r="64" fill="#68599a" opacity="0.55"/>
+  <path d="M0,420 L0,344 L30,347 L60,349 L90,350 L120,349 L150,347 L180,344 L210,341 L240,336 L270,331 L300,326 L330,321 L360,316 L390,312 L420,309 L450,307 L480,306 L510,306 L540,307 L570,310 L600,313 L630,317 L660,322 L690,327 L720,333 L750,337 L780,342 L810,345 L840,348 L870,349 L900,350 L930,349 L960,346 L990,343 L1020,339 L1050,335 L1080,329 L1110,324 L1140,319 L1170,315 L1200,311 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,371 L30,373 L60,376 L90,378 L120,381 L150,383 L180,386 L210,388 L240,390 L270,391 L300,392 L330,393 L360,394 L390,394 L420,394 L450,393 L480,392 L510,391 L540,389 L570,387 L600,385 L630,383 L660,380 L690,378 L720,375 L750,373 L780,370 L810,368 L840,366 L870,365 L900,364 L930,363 L960,362 L990,362 L1020,362 L1050,363 L1080,364 L1110,365 L1140,367 L1170,369 L1200,371 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="988" cy="140" rx="194" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(14.0 988 140)"/><ellipse cx="988" cy="140" rx="268" ry="75" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(20.0 988 140)"/>
+  <circle cx="988" cy="140" r="76" fill="url(#c1tbhhb0pl)"/>
+  <circle cx="837" cy="245" r="14" fill="#ffffff" opacity="0.71"/><circle cx="853" cy="50" r="17" fill="#ffffff" opacity="0.83"/><circle cx="1238" cy="199" r="8" fill="#ffffff" opacity="0.62"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A model&#39;s error on new data comes from three sources: <strong>bias</strong> (the model is too simple to capture the pattern), <strong>variance</strong> (the model is so flexible it changes wildly with the particular training data) and <strong>noise</strong> (randomness no model can predict). Tuning a model is largely a trade between the first two. This topic also pulls the whole planet together.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a>, <a class="wikilink" href="/math/overfitting-in-statistics/" data-topic="math/overfitting-in-statistics">Overfitting in Statistics</a>, <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> and <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why does my model make errors, and what should I change?&quot; The right remedy depends on which source dominates: a simpler model cannot fix noise, and more data cannot fix a model that is too rigid.</p>
+<h2 id="the-decomposition">The decomposition</h2>
+<p>For a prediction at a point, averaged over many possible training sets:</p>
+<pre><code class="language-text">expected squared error  =  bias²  +  variance  +  noise²
+
+bias²    = (average prediction − true value)²          the systematic miss
+variance = how much predictions vary between training sets
+noise²   = the irreducible randomness in the data itself
+</code></pre>
+<ul>
+<li><strong>High bias, low variance</strong> (underfitting): a straight line fitted to a curve gives about the same wrong answer whatever data you show it.</li>
+<li><strong>Low bias, high variance</strong> (overfitting): a wiggly polynomial fits each dataset&#39;s noise, so its predictions swing from dataset to dataset.</li>
+</ul>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Fit polynomials of increasing degree to 15 noisy points from a smooth curve (noise 0.3, so noise² = 0.09), repeating on 30 fresh datasets and measuring at 41 points:</p>
+<pre><code class="language-text">degree   bias²    variance   noise²   total
+   0     0.536     0.005     0.090    0.631     far too simple: bias dominates
+   1     0.045     0.012     0.090    0.148
+   3     0.001     0.028     0.090    0.118     the sweet spot
+   5     0.001     0.060     0.090    0.151
+   7     0.003     0.167     0.090    0.260
+   9     0.125     1.316     0.090    1.531     variance explodes
+</code></pre>
+<p>(These numbers come from the bench&#39;s own code.) Bias falls and variance rises as the model gets more flexible; the total is smallest in between. The noise floor of <code>0.09</code> never goes away.</p>
+<h2 id="how-to-steer">How to steer</h2>
+<ul>
+<li><strong>High bias:</strong> use a richer model, add useful features, train longer.</li>
+<li><strong>High variance:</strong> get more data, simplify the model, regularise (see <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a>), average many models.</li>
+<li><strong>Noise-limited:</strong> no model will do better; look for better data.</li>
+</ul>
+<h2 id="the-whole-picture">The whole picture</h2>
+<p>Every district fed into this. <strong>Linear algebra</strong> stores data and computes predictions; <strong>calculus</strong> and <strong>optimization</strong> train the parameters; <strong>probability</strong> and <strong>information theory</strong> define what a good prediction and a good loss are; <strong>statistics</strong> tells you how far to trust the result; <strong>numerical computing</strong> keeps it all running on real hardware. A model is a function with parameters, fitted by minimising a loss over data, judged on data it has not seen.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="bias-variance" data-title="The bias–variance trade-off"><p class="bench-fallback"><strong>Interactive bench: The bias–variance trade-off.</strong> A slider sets the degree of a polynomial fitted to thirty fresh noisy datasets; thin curves show the individual fits, a thick curve their average and a dashed curve the truth, with bars for bias squared, variance and noise and the total error.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>At degree 0 or 1, note how similar the fits are and how far they are from the truth.</li>
+<li>Raise the degree and watch the fits fan out.</li>
+<li>Find the degree with the smallest total.</li>
+<li>Increase the training points and see how the best degree changes.</li>
+</ol>
+<p><strong>What you should notice:</strong> simple models are consistent but wrong, flexible ones are right on average but erratic, and more data tames the erratic ones.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Model selection</strong> (how big, how deep) is a bias–variance decision.</li>
+<li><strong>Ensembles</strong> average many high-variance models to cut variance.</li>
+<li><strong>Regularisation, dropout and early stopping</strong> reduce variance.</li>
+<li><strong>Scaling laws:</strong> more data and parameters together push the total error down.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Chasing lower training error,</strong> which reduces bias but can inflate variance.</li>
+<li><strong>Blaming the algorithm</strong> when the data is noisy.</li>
+<li><strong>Assuming more data always fixes bias.</strong> It does not.</li>
+<li><strong>Ignoring the noise floor</strong> when setting targets.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. A model gets the same wrong answer on every training set. Is that bias or variance?</summary>
+Bias.
+</details>
+
+<details><summary>2. Which helps with high variance: more data or a bigger model?</summary>
+More data (a bigger model would raise variance).
+</details>
+
+<details><summary>3. Can any model beat the noise floor?</summary>
+No.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Bias:</strong> the systematic error from a model that is too simple.</li>
+<li><strong>Variance:</strong> sensitivity of the fit to the particular training data.</li>
+<li><strong>Irreducible noise:</strong> randomness in the data no model can predict.</li>
+<li><strong>Bias–variance trade-off:</strong> the tension between the two as flexibility changes.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a> · <a class="wikilink" href="/math/overfitting-in-statistics/" data-topic="math/overfitting-in-statistics">Overfitting in Statistics</a> · <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a> · <a class="wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a> · <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/bias-variance-and-the-whole-picture">Open in the interactive site →</a></p>
+        
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/estimation-and-bias/"><b>Estimation and Bias</b><p>An estimator is a recipe for guessing an unknown quantity from data, such as using the sample mean to estimate the population mean.</p></a><a class="rc-card" href="/math/overfitting-in-statistics/"><b>Overfitting in Statistics</b><p>Overfitting happens when a model fits the quirks and noise of its training data instead of the underlying pattern, so it does well on the data it saw and badly on new data.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/math/regularization-as-a-constraint/"><b>Regularization as a Constraint</b><p>Regularization keeps a model from fitting noise by discouraging large weights: add a penalty such as λ‖w‖² to the loss.</p></a><a class="rc-card" href="/fundamentals/generalization/"><b>Generalization</b><p>Generalization is a model&#39;s ability to do well on examples it has never seen. A model that merely memorises its training examples, noise and all, scores perfectly on them and poorly on anything new.</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/attention-as-dot-products/">← Previous: Attention as Dot Products</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

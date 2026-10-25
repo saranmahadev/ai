@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rounding, Absolute Value and Modulo — AI Base</title>
+<meta name="description" content="Four small operations show up constantly: rounding (to the nearest whole number or a set of decimals), floor and ceiling (always down or always up), absolute value (distance from zero) and modulo…">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/rounding-absolute-value-and-modulo/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Rounding, Absolute Value and Modulo — AI Base">
+<meta property="og:description" content="Four small operations show up constantly: rounding (to the nearest whole number or a set of decimals), floor and ceiling (always down or always up), absolute value (distance from zero) and modulo…">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/rounding-absolute-value-and-modulo/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Rounding, Absolute Value and Modulo","item":"https://ai.saranmahadev.in/math/rounding-absolute-value-and-modulo/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Rounding, Absolute Value and Modulo","description":"Four small operations show up constantly: rounding (to the nearest whole number or a set of decimals), floor and ceiling (always down or always up), absolute value (distance from zero) and modulo…","url":"https://ai.saranmahadev.in/math/rounding-absolute-value-and-modulo/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are ⌊4.9⌋ and ⌈4.1⌉?","acceptedAnswer":{"@type":"Answer","text":"4 and 5."}},{"@type":"Question","name":"What is 23 mod 7?","acceptedAnswer":{"@type":"Answer","text":"2 (23 = 3 × 7 + 2)."}},{"@type":"Question","name":"What is |3 − 9|?","acceptedAnswer":{"@type":"Answer","text":"6."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Arithmetic and Number Sense</p>
+        <h1 class="doc-title">Rounding, Absolute Value and Modulo</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1nk6j0abg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1nk6j0apl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1nk6j0abg)"/>
+  <circle cx="162" cy="293" r="120" fill="#cebff9" opacity="0.56"/><circle cx="251" cy="85" r="141" fill="#cebff9" opacity="0.46"/><circle cx="1005" cy="135" r="91" fill="#ddbecb" opacity="0.42"/><circle cx="734" cy="236" r="100" fill="#68599a" opacity="0.24"/><circle cx="502" cy="378" r="131" fill="#68599a" opacity="0.54"/><circle cx="1175" cy="136" r="157" fill="#eee9fd" opacity="0.27"/>
+  <path d="M0,420 L0,318 L30,315 L60,312 L90,310 L120,308 L150,307 L180,306 L210,306 L240,306 L270,307 L300,308 L330,309 L360,312 L390,314 L420,317 L450,320 L480,324 L510,327 L540,331 L570,334 L600,337 L630,340 L660,343 L690,345 L720,347 L750,348 L780,349 L810,350 L840,349 L870,349 L900,347 L930,346 L960,344 L990,341 L1020,338 L1050,335 L1080,332 L1110,328 L1140,325 L1170,321 L1200,318 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,392 L120,389 L150,385 L180,380 L210,375 L240,370 L270,366 L300,363 L330,362 L360,362 L390,364 L420,367 L450,371 L480,376 L510,381 L540,386 L570,390 L600,393 L630,394 L660,394 L690,392 L720,389 L750,385 L780,380 L810,375 L840,370 L870,366 L900,363 L930,362 L960,362 L990,364 L1020,367 L1050,371 L1080,376 L1110,381 L1140,386 L1170,390 L1200,393 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="945" cy="230" rx="183" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-1.8 945 230)"/><ellipse cx="945" cy="230" rx="253" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(4.2 945 230)"/>
+  <circle cx="945" cy="230" r="72" fill="url(#c1nk6j0apl)"/>
+  <circle cx="917" cy="163" r="10" fill="#ffffff" opacity="0.66"/><circle cx="1197" cy="266" r="14" fill="#ffffff" opacity="0.79"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Four small operations show up constantly: <strong>rounding</strong> (to the nearest whole number or a set of decimals), <strong>floor and ceiling</strong> (always down or always up), <strong>absolute value</strong> (distance from zero) and <strong>modulo</strong> (the remainder after division, which wraps around like a clock).</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/numbers-and-their-kinds/" data-topic="math/numbers-and-their-kinds">Numbers and Their Kinds</a> and <a class="wikilink" href="/math/order-of-operations-and-properties/" data-topic="math/order-of-operations-and-properties">Order of Operations and Properties</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I turn a messy number into a tidy one, and how do I measure size regardless of sign?&quot; These operations turn continuous values into whole steps, measure errors, and make indices wrap around.</p>
+<h2 id="intuition">Intuition</h2>
+<p><strong>Rounding</strong> picks the nearest value at some precision. 3.14159 rounded to two decimals is 3.14. A halfway value such as 2.5 needs a tie rule: many programming languages round halves to the nearest <em>even</em> number, so 2.5 becomes 2 and 3.5 becomes 4. Others round halves up.</p>
+<p><strong>Floor</strong> ⌊x⌋ always goes down and <strong>ceiling</strong> ⌈x⌉ always goes up: ⌊3.7⌋ = 3, ⌈3.2⌉ = 4, and for negatives ⌊−2.3⌋ = −3. <strong>Truncation</strong> simply drops the decimal part: trunc(−2.3) = −2. Floor and truncation differ for negative numbers.</p>
+<p><strong>Absolute value</strong> |x| is the distance from zero, so it is never negative: |−5| = 5 = |5|. The distance between two numbers is |a − b|.</p>
+<p><strong>Modulo</strong> <code>a mod n</code> is the remainder when <code>a</code> is divided by <code>n</code>. Picture a clock: 14 o&#39;clock is 2 o&#39;clock, because <code>14 mod 12 = 2</code>. The result always lies from 0 up to <code>n − 1</code>.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">round(x)   nearest integer            round(2.4) = 2, round(2.6) = 3
+⌊x⌋        largest integer ≤ x        ⌊−2.3⌋ = −3
+⌈x⌉        smallest integer ≥ x       ⌈−2.3⌉ = −2
+|x|        x if x ≥ 0, else −x        |−7.5| = 7.5
+a mod n    a − n × ⌊a / n⌋            17 mod 5 = 2
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>You have 17 items to pack into boxes of 5.</p>
+<pre><code class="language-text">full boxes  = ⌊17 / 5⌋ = 3
+left over   = 17 mod 5 = 2
+boxes needed in total = ⌈17 / 5⌉ = 4
+</code></pre>
+<p>Check: <code>3 × 5 + 2 = 17</code>. ✓</p>
+<p>A prediction of 8.4 for a true value of 10 has error <code>|8.4 − 10| = 1.6</code>. A prediction of 11.5 has error <code>|11.5 − 10| = 1.5</code>. The absolute value lets over- and under-shoot count equally.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rounding-dial" data-title="Round, floor, ceiling, absolute value and modulo"><p class="bench-fallback"><strong>Interactive bench: Round, floor, ceiling, absolute value and modulo.</strong> A slider picks a number; the bench shows its rounded, floor, ceiling, truncated and absolute values, and a clock face showing the result of modulo for a chosen divisor.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move the number through 2.5 and 3.5 and watch how rounding handles the tie.</li>
+<li>Slide into negative numbers. Where do floor and truncation disagree?</li>
+<li>Change the modulo divisor and watch the clock hand wrap.</li>
+<li>Compare |x| with x for negatives.</li>
+</ol>
+<p><strong>What you should notice:</strong> floor, ceiling and truncation agree for positive numbers and split for negatives. Modulo always lands on the clock, however large the input.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Absolute error</strong> (<code>|prediction − truth|</code>) and its cousins measure how wrong a model is (see <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a>).</li>
+<li><strong>Quantisation</strong> rounds weights to a few bits to shrink models.</li>
+<li><strong>Batching and padding</strong> use floor, ceiling and modulo to split data into chunks.</li>
+<li><strong>Circular buffers and positional patterns</strong> use modulo to wrap around.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Floor vs truncation for negatives.</strong> ⌊−2.3⌋ = −3 but trunc(−2.3) = −2.</li>
+<li><strong>Assuming &quot;round half up&quot;.</strong> Languages differ; check the tie rule.</li>
+<li><strong>Modulo of a negative number.</strong> Conventions differ between languages; <code>−1 mod 5</code> is 4 in maths and Python, but −1 in some others.</li>
+<li><strong>Thinking |a − b| ≠ |b − a|.</strong> They are equal.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are ⌊4.9⌋ and ⌈4.1⌉?</summary>
+4 and 5.
+</details>
+
+<details><summary>2. What is 23 mod 7?</summary>
+2 (23 = 3 × 7 + 2).
+</details>
+
+<details><summary>3. What is |3 − 9|?</summary>
+6.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Rounding:</strong> replacing a number by the nearest one at a chosen precision.</li>
+<li><strong>Floor and ceiling:</strong> the nearest integer below and above.</li>
+<li><strong>Absolute value:</strong> a number&#39;s distance from zero.</li>
+<li><strong>Modulo:</strong> the remainder after division.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/numbers-and-their-kinds/" data-topic="math/numbers-and-their-kinds">Numbers and Their Kinds</a> · <a class="wikilink" href="/math/estimation-and-sanity-checks/" data-topic="math/estimation-and-sanity-checks">Estimation and Sanity Checks</a> · <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a> · <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/rounding-absolute-value-and-modulo">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/estimation-and-sanity-checks/"><small>Read next</small><b>Estimation and Sanity Checks</b><p>Estimation is getting an answer that is close enough, quickly, and a sanity check is asking whether an answer is even plausible.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/numbers-and-their-kinds/"><b>Numbers and Their Kinds</b><p>Numbers come in nested families: natural numbers for counting, integers that add negatives, rational numbers that are fractions, and real numbers that fill the whole number line.</p></a><a class="rc-card" href="/math/order-of-operations-and-properties/"><b>Order of Operations and Properties</b><p>An expression such as 2 + 3 × 4 has one right answer because everyone agrees on the order of operations: parentheses first, then powers, then multiplication and division, then addition and…</p></a><a class="rc-card" href="/math/loss-functions/"><b>Loss Functions</b><p>A loss function turns &quot;how wrong is the model?&quot; into a single number: small when predictions are good, large when they are bad.</p></a><a class="rc-card" href="/math/estimation-and-sanity-checks/"><b>Estimation and Sanity Checks</b><p>Estimation is getting an answer that is close enough, quickly, and a sanity check is asking whether an answer is even plausible.</p></a><a class="rc-card" href="/math/floating-point/"><b>Floating Point</b><p>Computers store real numbers in floating point: a fixed number of significant binary digits and an exponent.</p></a><a class="rc-card" href="/math/arithmetic-and-number-sense/"><b>Arithmetic and Number Sense</b><p>Before vectors and gradients come the numbers themselves.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/logarithms/">← Previous: Logarithms</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

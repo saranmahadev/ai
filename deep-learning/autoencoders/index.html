@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autoencoders — AI Base</title>
+<meta name="description" content="An autoencoder is a network trained to do something that sounds pointless — reproduce its own input — except it must pass the signal through a narrow bottleneck on the way.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/autoencoders/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Autoencoders — AI Base">
+<meta property="og:description" content="An autoencoder is a network trained to do something that sounds pointless — reproduce its own input — except it must pass the signal through a narrow bottleneck on the way.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/autoencoders/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Autoencoders","item":"https://ai.saranmahadev.in/deep-learning/autoencoders/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Autoencoders","description":"An autoencoder is a network trained to do something that sounds pointless — reproduce its own input — except it must pass the signal through a narrow bottleneck on the way.","url":"https://ai.saranmahadev.in/deep-learning/autoencoders/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why must an autoencoder's bottleneck be smaller than its input, for the trick to be useful?","acceptedAnswer":{"@type":"Answer","text":"If the bottleneck could carry everything the input contains, the network would have no need to learn a genuinely compressed, useful representation — it could simply pass the input through."}},{"@type":"Question","name":"What loss is an autoencoder typically trained to minimise?","acceptedAnswer":{"@type":"Answer","text":"Reconstruction error — the difference between the original input and the decoder's reconstruction of it."}},{"@type":"Question","name":"Does training an autoencoder require labelled data?","acceptedAnswer":{"@type":"Answer","text":"No — the input itself serves as its own target, which is why autoencoders need no human-provided labels at all."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Representation Learning</p>
+        <h1 class="doc-title">Autoencoders</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c19wfvo3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c19wfvo3pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c19wfvo3bg)"/>
+  <circle cx="1080" cy="358" r="104" fill="#ffe6e6" opacity="0.61"/><circle cx="344" cy="47" r="172" fill="#ffe6e6" opacity="0.30"/><circle cx="336" cy="253" r="179" fill="#ffe6e6" opacity="0.54"/><circle cx="1108" cy="49" r="225" fill="#8a546c" opacity="0.51"/><circle cx="27" cy="386" r="228" fill="#ffb6b6" opacity="0.50"/>
+  <path d="M0,420 L0,307 L30,310 L60,313 L90,318 L120,323 L150,328 L180,333 L210,338 L240,342 L270,346 L300,348 L330,349 L360,350 L390,348 L420,346 L450,343 L480,339 L510,334 L540,329 L570,324 L600,319 L630,314 L660,311 L690,308 L720,306 L750,306 L780,306 L810,308 L840,311 L870,315 L900,319 L930,324 L960,330 L990,335 L1020,339 L1050,343 L1080,346 L1110,349 L1140,350 L1170,349 L1200,348 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,372 L30,374 L60,377 L90,379 L120,382 L150,384 L180,386 L210,388 L240,390 L270,392 L300,393 L330,394 L360,394 L390,394 L420,394 L450,393 L480,392 L510,390 L540,388 L570,386 L600,384 L630,382 L660,379 L690,377 L720,374 L750,372 L780,370 L810,368 L840,366 L870,364 L900,363 L930,362 L960,362 L990,362 L1020,362 L1050,363 L1080,364 L1110,366 L1140,368 L1170,370 L1200,372 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="960" cy="287" rx="166" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-22.8 960 287)"/><ellipse cx="960" cy="287" rx="229" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-16.8 960 287)"/>
+  <circle cx="960" cy="287" r="65" fill="url(#c19wfvo3pl)"/>
+  <circle cx="1214" cy="276" r="7" fill="#ffffff" opacity="0.80"/><circle cx="1145" cy="261" r="14" fill="#ffffff" opacity="0.87"/><circle cx="1032" cy="374" r="10" fill="#ffffff" opacity="0.60"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An <strong>autoencoder</strong> is a network trained to do something that sounds pointless — reproduce its own input — except it must pass the signal through a narrow <strong>bottleneck</strong> on the way. Forcing the data through a smaller space than it started in is what makes the trick useful: whatever the bottleneck keeps is, by necessity, a compressed representation of the input.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> and <a class="wikilink" href="/machine-learning/dimensionality-reduction-in-practice/" data-topic="machine-learning/dimensionality-reduction-in-practice">Dimensionality Reduction in Practice</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can a network learn a useful, compressed representation of data with no labels at all?&quot; Train it to reconstruct its own input through a bottleneck too small to pass the input through unchanged — whatever the network keeps in that bottleneck must be the most useful summary it could find.</p>
+<h2 id="intuition-packing-for-a-trip-with-half-the-suitcase-space">Intuition: packing for a trip with half the suitcase space</h2>
+<p>If you must describe a 4-item outfit using only 2 numbers, you&#39;re forced to find some compressed code that still lets someone reconstruct a reasonable approximation of the outfit — you can&#39;t just copy it over. An autoencoder&#39;s <strong>encoder</strong> does exactly this compression; its <strong>decoder</strong> does the reverse, expanding the small code back toward the original size; and training pushes both halves to cooperate so the round trip loses as little as possible.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">encoder:        z = f_enc(x)             (x is high-dimensional, z is a small &quot;bottleneck&quot; vector)
+decoder:        x̂ = f_dec(z)             (reconstruction, same shape as x)
+
+loss = ‖x − x̂‖²         (reconstruction error, no labels needed at all)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 4-dimensional input <code>x = (1, 0, 1, 0)</code>, compressed to a 2-dimensional bottleneck and reconstructed:</p>
+<pre><code class="language-text">encoder:  z = (0.5x₁ + 0.5x₃,  0.5x₂ + 0.5x₄) = (1, 0)
+decoder:  x̂ = (0.9z₁ + 0.1z₂, 0.1z₁ + 0.9z₂, 0.9z₁ + 0.1z₂, 0.1z₁ + 0.9z₂)
+            = (0.9, 0.1, 0.9, 0.1)
+
+reconstruction error (MSE) = ((1−0.9)² + (0−0.1)² + (1−0.9)² + (0−0.1)²) / 4 = 0.01
+</code></pre>
+<p>The reconstruction isn&#39;t perfect — the 2-number bottleneck couldn&#39;t carry everything — but it&#39;s close, and the bottleneck vector <code>(1, 0)</code> is itself a legitimate, compressed 2D stand-in for the original 4D input.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="autoencoder-bottleneck" data-title="Squeezing data through a bottleneck"><p class="bench-fallback"><strong>Interactive bench: Squeezing data through a bottleneck.</strong> A 4-dimensional input and an adjustable 2-dimensional bottleneck. See the compressed code and the reconstruction, and watch the reconstruction error change as the input or the encoder/decoder weights change.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Try an input the current encoder/decoder weights handle well, and one they handle poorly, and compare reconstruction error.</li>
+<li>Shrink the bottleneck further (if the bench allows it) and watch reconstruction get worse on average.</li>
+<li>Find an input that reconstructs almost perfectly, and think about why those particular inputs survive the bottleneck well.</li>
+</ol>
+<p><strong>What you should notice:</strong> reconstruction quality depends on how well a given input&#39;s structure matches what the encoder/decoder pair has learned (or, here, been hand-set) to compress — not every input compresses equally well through the same bottleneck.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Denoising and sparse autoencoders</strong>, variants not covered in full detail here, add extra constraints (noise robustness, sparsity) to shape what the bottleneck learns to represent.</li>
+<li><strong>Variational autoencoders</strong> (see <a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">Variational Autoencoders</a>) extend this idea to generate new data, not just compress existing data.</li>
+<li><strong>Anomaly detection</strong> (see <a class="wikilink" href="/machine-learning/anomaly-detection/" data-topic="machine-learning/anomaly-detection">Anomaly Detection</a>) can reuse a trained autoencoder directly: inputs unlike anything seen during training tend to reconstruct unusually badly.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a smaller bottleneck is always better (or always worse).</strong> Too large a bottleneck can let the network &quot;cheat&quot; by nearly copying the input through without learning anything useful; too small loses real information.</li>
+<li><strong>Forgetting autoencoders need no labels at all.</strong> The &quot;label&quot; for reconstruction is just the input itself — this is why they&#39;re a building block for <a class="wikilink" href="/deep-learning/self-supervised-learning/" data-topic="deep-learning/self-supervised-learning">Self-Supervised Learning</a>.</li>
+<li><strong>Confusing a plain autoencoder&#39;s bottleneck with a probability distribution.</strong> A plain autoencoder&#39;s code is just a fixed vector; sampling new data from it the way a generative model would needs the extra machinery in <a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">Variational Autoencoders</a>.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why must an autoencoder's bottleneck be smaller than its input, for the trick to be useful?</summary>
+If the bottleneck could carry everything the input contains, the network would have no need to learn a genuinely compressed, useful representation — it could simply pass the input through.
+</details>
+
+<details><summary>2. What loss is an autoencoder typically trained to minimise?</summary>
+Reconstruction error — the difference between the original input and the decoder's reconstruction of it.
+</details>
+
+<details><summary>3. Does training an autoencoder require labelled data?</summary>
+No — the input itself serves as its own target, which is why autoencoders need no human-provided labels at all.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Bottleneck:</strong> the smallest, most compressed layer in an autoencoder, between the encoder and decoder.</li>
+<li><strong>Reconstruction error:</strong> the difference between an autoencoder&#39;s input and its reconstructed output.</li>
+<li><strong>Encoder / decoder:</strong> the two halves of an autoencoder, compressing and then expanding the representation.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> · <a class="wikilink" href="/machine-learning/dimensionality-reduction-in-practice/" data-topic="machine-learning/dimensionality-reduction-in-practice">Dimensionality Reduction in Practice</a> · <a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">Variational Autoencoders</a> · <a class="wikilink" href="/deep-learning/self-supervised-learning/" data-topic="deep-learning/self-supervised-learning">Self-Supervised Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/autoencoders">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/transfer-learning-and-fine-tuning/"><small>Read next</small><b>Transfer Learning and Fine-Tuning</b><p>A network trained on one large task has already learned a great deal of generally useful structure — edges and textures for vision, grammar and common phrasing for language.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/the-multilayer-feedforward-network/"><b>The Multilayer Feedforward Network</b><p>A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.</p></a><a class="rc-card" href="/machine-learning/dimensionality-reduction-in-practice/"><b>Dimensionality Reduction in Practice</b><p>Real data often has many columns that mostly move together, so its true variety is far smaller than its width suggests.</p></a><a class="rc-card" href="/deep-learning/variational-autoencoders/"><b>Variational Autoencoders</b><p>A plain autoencoder&#39;s bottleneck is one fixed vector per input — useful for compression, but there&#39;s no obvious way to &quot;make up&quot; a new, realistic vector to decode into something new.</p></a><a class="rc-card" href="/machine-learning/anomaly-detection/"><b>Anomaly Detection</b><p>Anomaly detection looks for the rare points that do not fit: a fraudulent payment, a failing machine, a corrupt record.</p></a><a class="rc-card" href="/deep-learning/self-supervised-learning/"><b>Self-Supervised Learning</b><p>Autoencoders showed one way to train without human labels: reconstruct the input itself.</p></a><a class="rc-card" href="/deep-learning/representation-learning/"><b>Representation Learning</b><p>A trained network&#39;s real product is not just its predictions but the representations its hidden layers learned along the way.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/representation-learning/">← Previous: Representation Learning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

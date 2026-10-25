@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kernel Methods — AI Base</title>
+<meta name="description" content="A straight line cannot separate every problem, but a straight line in a richer space can.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/kernel-methods/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Kernel Methods — AI Base">
+<meta property="og:description" content="A straight line cannot separate every problem, but a straight line in a richer space can.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/kernel-methods/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Kernel Methods","item":"https://ai.saranmahadev.in/machine-learning/kernel-methods/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Kernel Methods","description":"A straight line cannot separate every problem, but a straight line in a richer space can.","url":"https://ai.saranmahadev.in/machine-learning/kernel-methods/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the kernel k(a, b) compute?","acceptedAnswer":{"@type":"Answer","text":"The dot product of a and b in the lifted feature space, that is a similarity."}},{"@type":"Question","name":"What does a very large γ do in the RBF kernel?","acceptedAnswer":{"@type":"Answer","text":"Only very close points count as similar, giving a wiggly boundary that may overfit."}},{"@type":"Question","name":"Why is the kernel trick useful?","acceptedAnswer":{"@type":"Answer","text":"It gives the power of a huge feature space without ever computing the features."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Instance and Probability Methods</p>
+        <h1 class="doc-title">Kernel Methods</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1t40pjybg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1t40pjypl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1t40pjybg)"/>
+  <circle cx="1159" cy="371" r="168" fill="#fff2de" opacity="0.48"/><circle cx="73" cy="78" r="107" fill="#ffd99f" opacity="0.25"/><circle cx="1004" cy="1" r="78" fill="#8a6b5c" opacity="0.61"/><circle cx="223" cy="170" r="74" fill="#8a6b5c" opacity="0.42"/><circle cx="249" cy="248" r="121" fill="#ffd99f" opacity="0.46"/><circle cx="511" cy="353" r="68" fill="#8a6b5c" opacity="0.24"/>
+  <path d="M0,420 L0,348 L30,350 L60,349 L90,348 L120,346 L150,342 L180,338 L210,333 L240,328 L270,323 L300,318 L330,314 L360,310 L390,307 L420,306 L450,306 L480,307 L510,309 L540,312 L570,316 L600,321 L630,326 L660,331 L690,336 L720,340 L750,344 L780,347 L810,349 L840,350 L870,349 L900,347 L930,345 L960,341 L990,336 L1020,331 L1050,326 L1080,321 L1110,316 L1140,312 L1170,309 L1200,307 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,377 L30,372 L60,368 L90,364 L120,362 L150,362 L180,363 L210,366 L240,370 L270,374 L300,379 L330,384 L360,388 L390,392 L420,394 L450,394 L480,393 L510,390 L540,386 L570,382 L600,377 L630,372 L660,368 L690,364 L720,362 L750,362 L780,363 L810,366 L840,370 L870,374 L900,379 L930,384 L960,388 L990,392 L1020,394 L1050,394 L1080,393 L1110,390 L1140,386 L1170,382 L1200,377 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="956" cy="281" rx="238" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-17.5 956 281)"/><ellipse cx="956" cy="281" rx="329" ry="92" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-11.5 956 281)"/>
+  <circle cx="956" cy="281" r="93" fill="url(#c1t40pjypl)"/>
+  <circle cx="681" cy="357" r="16" fill="#ffffff" opacity="0.60"/><circle cx="758" cy="408" r="10" fill="#ffffff" opacity="0.78"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A straight line cannot separate every problem, but a straight line in a <em>richer</em> space can. The <strong>kernel trick</strong> lets a method such as a support vector machine work as if every point had been lifted into a huge, even infinite, feature space, while only ever computing a similarity between pairs of points.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/support-vector-machines/" data-topic="machine-learning/support-vector-machines">Support Vector Machines</a>, <a class="wikilink" href="/machine-learning/feature-engineering/" data-topic="machine-learning/feature-engineering">Feature Engineering</a> and <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I draw a curved boundary with a method that only draws straight lines?&quot; By changing the space, not the method: add the right features and the curve becomes straight.</p>
+<h2 id="intuition-lift-then-cut">Intuition: lift, then cut</h2>
+<p>Points on a line: class 0 in the middle, class 1 on both sides. No single cut on that line separates them. Add a second feature <code>x²</code> and the points rise onto a parabola: middle points stay low, outer points climb high, and one horizontal cut separates the classes. A straight line in the lifted space is a curved boundary in the original.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">feature map       φ(x) = (x, x²)            a lift into a new space
+kernel            k(a, b) = φ(a) · φ(b)     similarity of two points in the lifted space
+linear kernel     k(a, b) = a · b
+polynomial kernel k(a, b) = (a · b + 1)^d
+RBF kernel        k(a, b) = exp(−γ · ‖a − b‖²)    1 for identical points, → 0 far apart
+</code></pre>
+<p>SVMs and other methods only ever need dot products between points. Replace each dot product with <code>k(a, b)</code> and you get the lifted model without computing φ, which for the RBF kernel would need infinitely many features. The RBF parameter <code>γ</code> sets how local the similarity is: large <code>γ</code> means only very near points count, giving a wiggly boundary; small <code>γ</code> gives a smooth one.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four points on a line: class 1 at <code>x = −1.8</code> and <code>x = 1.8</code>, class 0 at <code>x = −0.5</code> and <code>x = 0.5</code>. The best single cut on <code>x</code> gets three of four right (75%).</p>
+<pre><code class="language-text">x      x²      class
+−1.8   3.24    1
+−0.5   0.25    0
+ 0.5   0.25    0
+ 1.8   3.24    1        cut at x² = 1  →  all four correct
+</code></pre>
+<p>RBF similarities with <code>γ = 1</code>:</p>
+<pre><code class="language-text">k(0, 0) = e⁰  = 1.000       k(0, 1) = e⁻¹ = 0.368       k(0, 2) = e⁻⁴ = 0.018
+</code></pre>
+<p>Similarity is 1 for the same point, drops to about a third at distance 1, and is nearly zero at distance 2: it is a soft neighbourhood. On the bench&#39;s 36 points, the best single cut in <code>x</code> reaches 75%, while a cut on <code>x²</code> at height 1 to 1.4 reaches 100%; a badly placed cut at 2.0 drops to 92%.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="kernel-lift" data-title="Lift the data one dimension up"><p class="bench-fallback"><strong>Interactive bench: Lift the data one dimension up.</strong> Points from two classes lie on a line so no cut separates them; a switch adds the feature x squared, lifting them onto a parabola where a slider-controlled horizontal cut can separate the classes.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Note the best possible cut in the original one-dimensional x.</li>
+<li>Turn on <strong>add the feature x²</strong>.</li>
+<li>Slide the cut height until accuracy is 100%.</li>
+<li>Push the cut too high or too low.</li>
+</ol>
+<p><strong>What you should notice:</strong> nothing about the points changed, only the space they live in, and a flat cut in the new space is two cuts in the old one.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Kernel SVMs</strong> were the state of the art for many tasks before deep learning.</li>
+<li><strong>Gaussian processes and kernel ridge regression</strong> use the same idea.</li>
+<li><strong>Neural networks</strong> learn their lift instead of fixing a kernel.</li>
+<li><strong>Attention scores</strong> are similarities between vectors, a cousin of kernels.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Choosing γ too large,</strong> which memorises the training data.</li>
+<li><strong>Kernel methods on huge datasets,</strong> since they compare every pair of points.</li>
+<li><strong>Skipping feature scaling,</strong> which distorts every distance-based kernel.</li>
+<li><strong>Believing the kernel removes the need to choose a model:</strong> it is a choice of geometry.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does the kernel k(a, b) compute?</summary>
+The dot product of a and b in the lifted feature space, that is a similarity.
+</details>
+
+<details><summary>2. What does a very large γ do in the RBF kernel?</summary>
+Only very close points count as similar, giving a wiggly boundary that may overfit.
+</details>
+
+<details><summary>3. Why is the kernel trick useful?</summary>
+It gives the power of a huge feature space without ever computing the features.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Feature map:</strong> a function lifting inputs into a new space.</li>
+<li><strong>Kernel:</strong> a similarity function equal to a dot product in some feature space.</li>
+<li><strong>RBF kernel:</strong> the similarity exp(−γ‖a − b‖²).</li>
+<li><strong>Kernel trick:</strong> using k(a, b) in place of explicit features.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/support-vector-machines/" data-topic="machine-learning/support-vector-machines">Support Vector Machines</a> · <a class="wikilink" href="/machine-learning/feature-engineering/" data-topic="machine-learning/feature-engineering">Feature Engineering</a> · <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a> · <a class="wikilink" href="/math/cosine-similarity/" data-topic="math/cosine-similarity">Cosine Similarity</a> · <a class="wikilink" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products">Attention as Dot Products</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/kernel-methods">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/trees-and-ensembles/"><small>Read next</small><b>Trees and Ensembles</b><p>Trees turn learning into a flowchart of yes/no questions, and ensembles combine many trees into something far stronger.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/support-vector-machines/"><b>Support Vector Machines</b><p>Many lines separate two classes, so which is best? A support vector machine picks the one with the widest empty street between the classes: the maximum margin.</p></a><a class="rc-card" href="/machine-learning/feature-engineering/"><b>Feature Engineering</b><p>Feature engineering means creating better inputs from the raw columns: ratios, squares, counts, differences, dates unpacked into weekday and month.</p></a><a class="rc-card" href="/math/dot-product/"><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p></a><a class="rc-card" href="/math/cosine-similarity/"><b>Cosine Similarity</b><p>Cosine similarity measures how closely two vectors point in the same direction, ignoring how long they are: cos θ = (a · b) / (‖a‖ ‖b‖).</p></a><a class="rc-card" href="/math/attention-as-dot-products/"><b>Attention as Dot Products</b><p>Attention lets a model decide, for each item, which other items to focus on.</p></a><a class="rc-card" href="/machine-learning/instance-and-probability-methods/"><b>Instance and Probability Methods</b><p>Not every learner fits a formula.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/generative-vs-discriminative-models/">← Previous: Generative vs Discriminative Models</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

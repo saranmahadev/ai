@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multimodal Transformers as an Architecture Pattern — AI Base</title>
+<meta name="description" content="Image patches and text tokens both end up as the exact same thing by the time attention sees them: a vector of width d_model.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/multimodal-transformers-as-an-architecture-pattern/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Multimodal Transformers as an Architecture Pattern — AI Base">
+<meta property="og:description" content="Image patches and text tokens both end up as the exact same thing by the time attention sees them: a vector of width d_model.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/multimodal-transformers-as-an-architecture-pattern/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Multimodal Transformers as an Architecture Pattern","item":"https://ai.saranmahadev.in/transformers/multimodal-transformers-as-an-architecture-pattern/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Multimodal Transformers as an Architecture Pattern","description":"Image patches and text tokens both end up as the exact same thing by the time attention sees them: a vector of width d_model.","url":"https://ai.saranmahadev.in/transformers/multimodal-transformers-as-an-architecture-pattern/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What has to be true of text and image embeddings before they can be combined into one sequence?","acceptedAnswer":{"@type":"Answer","text":"They have to be the same width (d_model) — each modality can use its own front-end to get there, but the output dimension has to match for concatenation to make sense."}},{"@type":"Question","name":"In the worked example, what fraction of the text token's attention went to the image patches, and what does that demonstrate?","acceptedAnswer":{"@type":"Answer","text":"About 53% — demonstrating that a single attention computation genuinely mixes information across modalities, with no special cross-modal mechanism required beyond ordinary self-attention."}},{"@type":"Question","name":"What, if anything, does the attention computation itself need to know about which positions are text and which are images?","acceptedAnswer":{"@type":"Answer","text":"Nothing — attention only operates on vectors and has no built-in notion of modality; any distinction between modalities exists only in how the sequence and its positional information were constructed."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Transformers Beyond Text</p>
+        <h1 class="doc-title">Multimodal Transformers as an Architecture Pattern</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="clry8ojbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="clry8ojpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#clry8ojbg)"/>
+  <circle cx="493" cy="140" r="154" fill="#4f669f" opacity="0.48"/><circle cx="1174" cy="52" r="143" fill="#e2efff" opacity="0.40"/><circle cx="126" cy="59" r="151" fill="#e2efff" opacity="0.61"/><circle cx="838" cy="289" r="207" fill="#4f669f" opacity="0.31"/><circle cx="1150" cy="418" r="215" fill="#c5cacf" opacity="0.47"/>
+  <path d="M0,420 L0,310 L30,307 L60,306 L90,306 L120,307 L150,309 L180,312 L210,316 L240,321 L270,326 L300,331 L330,336 L360,341 L390,344 L420,347 L450,349 L480,350 L510,349 L540,347 L570,344 L600,341 L630,336 L660,331 L690,326 L720,321 L750,316 L780,312 L810,309 L840,307 L870,306 L900,306 L930,307 L960,310 L990,313 L1020,318 L1050,322 L1080,328 L1110,333 L1140,338 L1170,342 L1200,345 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,389 L30,384 L60,379 L90,374 L120,370 L150,366 L180,363 L210,362 L240,362 L270,364 L300,367 L330,372 L360,377 L390,382 L420,386 L450,390 L480,393 L510,394 L540,394 L570,392 L600,389 L630,384 L660,379 L690,374 L720,370 L750,366 L780,363 L810,362 L840,362 L870,364 L900,367 L930,372 L960,377 L990,382 L1020,386 L1050,390 L1080,393 L1110,394 L1140,394 L1170,392 L1200,389 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="671" cy="268" rx="224" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-19.8 671 268)"/><ellipse cx="671" cy="268" rx="310" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-13.8 671 268)"/>
+  <circle cx="671" cy="268" r="88" fill="url(#clry8ojpl)"/>
+  <circle cx="363" cy="282" r="8" fill="#ffffff" opacity="0.76"/><circle cx="864" cy="216" r="15" fill="#ffffff" opacity="0.65"/><circle cx="627" cy="158" r="10" fill="#ffffff" opacity="0.80"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/vision-transformers/" data-topic="transformers/vision-transformers">Image patches</a> and text tokens both end up as the exact same thing by the time attention sees them: a vector of width <code>d_model</code>. Once that&#39;s true, nothing stops putting both kinds of vectors in the <em>same</em> sequence and letting one attention computation mix freely across both.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/vision-transformers/" data-topic="transformers/vision-transformers">Vision Transformers</a>, <a class="wikilink" href="/transformers/token-embeddings-and-embedding-scaling/" data-topic="transformers/token-embeddings-and-embedding-scaling">Token Embeddings and Embedding Scaling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does a transformer combine information from genuinely different kinds of input — text and images — in a single model?&quot; By making every modality produce vectors of the same width, however each one gets there: a text token through the embedding-table lookup from <a class="wikilink" href="/transformers/token-embeddings-and-embedding-scaling/" data-topic="transformers/token-embeddings-and-embedding-scaling">Token Embeddings and Embedding Scaling</a>, an image patch through the linear projection from <a class="wikilink" href="/transformers/vision-transformers/" data-topic="transformers/vision-transformers">Vision Transformers</a>. Concatenate both sets of vectors into one sequence, and ordinary self-attention does the rest — every position, text or image, can attend to every other position, with no architectural distinction between the two once they&#39;re in the sequence.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Attention doesn&#39;t actually know or care where a vector in its input sequence came from — it just computes queries, keys and values from whatever vectors it&#39;s handed and compares them. That&#39;s exactly what makes multimodal transformers possible with so little new machinery: get text and images into the same vector width through their own, separate front-ends, lay them out one after another as a single longer sequence, and the self-attention mechanism built for one modality turns out to require no changes at all to mix information across two.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">text_embeddings  = [embedding_table[id] for id in text_token_ids]       — d_model-wide
+patch_embeddings = [W_proj · patch for patch in image_patches]          — d_model-wide
+
+combined_sequence = text_embeddings ++ patch_embeddings
+run the combined sequence through ordinary transformer blocks
+</code></pre>
+<p>Each modality keeps its own front-end (an embedding table for text, a linear projection for patches) — only the output width has to match for the sequences to be concatenated and processed together.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A combined sequence of 2 text tokens and 2 image patches, all projected to <code>d_model = 4</code>, run through one self-attention sublayer:</p>
+<pre><code class="language-text">combined sequence: [text₀, text₁, patch₀, patch₁]   (4 positions total)
+
+text position 0&#39;s attention weights over all four positions:
+  [0.2027, 0.2683, 0.2706, 0.2584]    (sums to 1.0000)
+
+attention spent on the two image patches alone: 0.2706 + 0.2584 = 0.5290
+</code></pre>
+<p>A text token&#39;s attention spreads across <em>both</em> the other text token and both image patches, in a single computation — more than half its attention mass (52.9%) went to the image patches here, with no special mechanism needed to let that happen; it&#39;s the same self-attention formula used throughout this entire planet.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="multimodal-attention" data-title="One sequence, two modalities"><p class="bench-fallback"><strong>Interactive bench: One sequence, two modalities.</strong> Combine a few text tokens and image patches into one sequence and see how attention spreads across both modalities at once.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare how much of a text position&#39;s attention goes to text versus image positions.</li>
+<li>Change the number of text tokens or image patches and watch the attention distribution shift.</li>
+<li>Consider what would need to change if text and image embeddings had different widths.</li>
+</ol>
+<p><strong>What you should notice:</strong> the attention computation itself has no notion of &quot;modality&quot; at all — it only sees a sequence of same-width vectors, and whatever structure the sequence has (which vectors came from text, which from images) is entirely a property of how the sequence was built, not of attention itself.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the standard pattern behind models that jointly process text and images</strong>, extending cleanly to audio, video, or any other modality with its own front-end producing <code>d_model</code>-wide vectors.</li>
+<li><strong>It requires no new attention mechanism at all</strong> — every efficiency and architecture topic covered earlier on this planet (masking, positional schemes, KV-caching) applies to a multimodal sequence exactly as it would to a single-modality one.</li>
+<li><strong>It closes the loop this planet opened in <a class="wikilink" href="/transformers/tokenizing-beyond-text/" data-topic="transformers/tokenizing-beyond-text">Tokenizing Beyond Text</a></strong>: once anything can become a token sequence, combining several different anythings into one sequence is a natural, almost free extension.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming multimodal transformers need a fundamentally different attention mechanism.</strong> They don&#39;t — the entire trick is getting every modality into the same vector width before attention ever runs.</li>
+<li><strong>Forgetting positional information needs care across modalities.</strong> A position in the text portion and a position in the image portion aren&#39;t comparable the same way two text positions are — real multimodal models often use modality-aware positional schemes.</li>
+<li><strong>Expecting equal attention split across modalities by default.</strong> Nothing enforces a particular split — how much a position attends to each modality is entirely learned, as the worked example&#39;s roughly-even-but-not-exact split shows.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What has to be true of text and image embeddings before they can be combined into one sequence?</summary>
+They have to be the same width (d_model) — each modality can use its own front-end to get there, but the output dimension has to match for concatenation to make sense.
+</details>
+
+<details><summary>2. In the worked example, what fraction of the text token's attention went to the image patches, and what does that demonstrate?</summary>
+About 53% — demonstrating that a single attention computation genuinely mixes information across modalities, with no special cross-modal mechanism required beyond ordinary self-attention.
+</details>
+
+<details><summary>3. What, if anything, does the attention computation itself need to know about which positions are text and which are images?</summary>
+Nothing — attention only operates on vectors and has no built-in notion of modality; any distinction between modalities exists only in how the sequence and its positional information were constructed.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Modality:</strong> a type of input data (text, image, audio) with its own front-end producing vectors of a shared width.</li>
+<li><strong>Combined sequence:</strong> a single sequence built by concatenating vectors from more than one modality.</li>
+<li><strong>Cross-modal attention:</strong> attention weights spreading across positions from different modalities within one computation.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/vision-transformers/" data-topic="transformers/vision-transformers">Vision Transformers</a> · <a class="wikilink" href="/transformers/token-embeddings-and-embedding-scaling/" data-topic="transformers/token-embeddings-and-embedding-scaling">Token Embeddings and Embedding Scaling</a> · <a class="wikilink" href="/transformers/tokenizing-beyond-text/" data-topic="transformers/tokenizing-beyond-text">Tokenizing Beyond Text</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/multimodal-transformers-as-an-architecture-pattern">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/transformers-in-practice/"><small>Read next</small><b>Transformers in Practice</b><p>The last stretch of the road is about running a trained transformer well, and a capstone that walks the whole planet in one place.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/vision-transformers/"><b>Vision Transformers</b><p>Patches became a token sequence several districts ago.</p></a><a class="rc-card" href="/transformers/token-embeddings-and-embedding-scaling/"><b>Token Embeddings and Embedding Scaling</b><p>A tokenizer hands back a sequence of integer ids — vocabulary indices, not vectors.</p></a><a class="rc-card" href="/transformers/tokenizing-beyond-text/"><b>Tokenizing Beyond Text</b><p>Nothing about attention requires its inputs to be words.</p></a><a class="rc-card" href="/transformers/transformers-beyond-text/"><b>Transformers Beyond Text</b><p>Nothing about the transformer block is specific to language — it only needs a sequence of vectors to attend over.</p></a><a class="rc-card" href="/transformers/graph-transformers/"><b>Graph Transformers</b><p>A graph neural network restricts every node to messages from its direct neighbours, layer after layer.</p></a><a class="rc-card" href="/generative-ai/unified-multimodal-generation/"><b>Unified Multimodal Generation</b><p>a multimodal transformer can take text and image patches as input together.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/graph-transformers/">← Previous: Graph Transformers</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

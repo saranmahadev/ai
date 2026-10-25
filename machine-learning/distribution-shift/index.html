@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distribution Shift — AI Base</title>
+<meta name="description" content="A model is trained on yesterday&#39;s data and used on tomorrow&#39;s.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/distribution-shift/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Distribution Shift — AI Base">
+<meta property="og:description" content="A model is trained on yesterday&#39;s data and used on tomorrow&#39;s.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/distribution-shift/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Distribution Shift","item":"https://ai.saranmahadev.in/machine-learning/distribution-shift/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Distribution Shift","description":"A model is trained on yesterday's data and used on tomorrow's.","url":"https://ai.saranmahadev.in/machine-learning/distribution-shift/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which kind of shift changes the class proportions?","acceptedAnswer":{"@type":"Answer","text":"Label (prior) shift."}},{"@type":"Question","name":"Why does the fixed model lose accuracy while the task is no harder?","acceptedAnswer":{"@type":"Answer","text":"Its decision rule was fitted to the old data, so it no longer matches where the classes now lie."}},{"@type":"Question","name":"Name one way to detect drift without labels.","acceptedAnswer":{"@type":"Answer","text":"Monitor input statistics (means, spreads, category shares) and compare them with the training data."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Bias, Fairness and Failure</p>
+        <h1 class="doc-title">Distribution Shift</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c3exnsrbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c3exnsrpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c3exnsrbg)"/>
+  <circle cx="150" cy="317" r="103" fill="#ffd08d" opacity="0.31"/><circle cx="812" cy="172" r="137" fill="#8a6b5c" opacity="0.47"/><circle cx="537" cy="22" r="110" fill="#ffd08d" opacity="0.41"/><circle cx="190" cy="107" r="71" fill="#ffd08d" opacity="0.56"/><circle cx="37" cy="34" r="157" fill="#8a6b5c" opacity="0.23"/><circle cx="1" cy="51" r="119" fill="#ffd08d" opacity="0.27"/>
+  <path d="M0,420 L0,306 L30,306 L60,306 L90,308 L120,311 L150,315 L180,320 L210,325 L240,330 L270,335 L300,340 L330,344 L360,347 L390,349 L420,350 L450,349 L480,348 L510,345 L540,341 L570,337 L600,332 L630,327 L660,322 L690,317 L720,313 L750,309 L780,307 L810,306 L840,306 L870,307 L900,309 L930,313 L960,317 L990,321 L1020,327 L1050,332 L1080,337 L1110,341 L1140,345 L1170,347 L1200,349 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,393 L120,391 L150,388 L180,385 L210,381 L240,378 L270,374 L300,370 L330,367 L360,365 L390,363 L420,362 L450,362 L480,363 L510,365 L540,367 L570,370 L600,374 L630,377 L660,381 L690,385 L720,388 L750,390 L780,392 L810,394 L840,394 L870,393 L900,392 L930,390 L960,387 L990,384 L1020,380 L1050,376 L1080,373 L1110,369 L1140,366 L1170,364 L1200,363 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="632" cy="150" rx="227" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(23.7 632 150)"/><ellipse cx="632" cy="150" rx="314" ry="88" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(29.7 632 150)"/>
+  <circle cx="632" cy="150" r="89" fill="url(#c3exnsrpl)"/>
+  <circle cx="320" cy="176" r="11" fill="#ffffff" opacity="0.68"/><circle cx="984" cy="139" r="14" fill="#ffffff" opacity="0.81"/><circle cx="301" cy="107" r="18" fill="#ffffff" opacity="0.88"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A model is trained on yesterday&#39;s data and used on tomorrow&#39;s. If the world changes between them (new cameras, new customers, a new season, a pandemic), inputs drift away from what the model saw and its accuracy quietly falls. <strong>Distribution shift</strong> is any difference between the training data and the data met in use.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/bias-in-data/" data-topic="machine-learning/bias-in-data">Bias in Data</a>, <a class="wikilink" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets">Train, Validation and Test Sets</a> and <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why did a model that tested well stop working?&quot; A test set drawn from the same source as the training data only certifies the model for <em>that</em> source. Change the source and the guarantee lapses.</p>
+<h2 id="intuition-the-ground-moved">Intuition: the ground moved</h2>
+<p>A classifier learned that &quot;bright pixels mean class 1&quot;. Deploy it with a camera that produces brighter images across the board, and everything looks like class 1. Nothing in the model is broken; it faithfully applies a rule that no longer matches the world.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">covariate shift     the inputs change, the rule from input to label stays          P(x) changes
+label (prior) shift the class proportions change                                   P(y) changes
+concept drift       the rule itself changes over time (fraud tactics, fashion)     P(y | x) changes
+out-of-distribution inputs unlike anything in training
+</code></pre>
+<p>Ways to cope: monitor input statistics and accuracy in production, compare recent data with the training data (a drift test), retrain regularly on fresh data, collect labels from the new setting, and use models that are robust to the shifts you expect. Prevention begins with training data that covers the conditions you will really face.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two classes sit at <code>x = −1</code> and <code>x = +1</code> (spread 0.8). A logistic regression is trained with no shift. Then every feature value in the test data moves by a fixed amount. Accuracy on 1,000 test points at each shift:</p>
+<pre><code class="language-text">shift of all features      −2      −1     −0.5     0     +0.5     +1     +1.5     +2
+fixed model               54.9%  74.5%   86.2%   88.1%  85.1%  74.0%   63.6%   55.1%
+retrained on new data     87.7%  88.9%   89.8%   89.2%  88.0%  89.3%   87.6%   89.0%
+</code></pre>
+<p>Without any shift the model scores 88.1%. A shift of one unit costs about 14 points (to about 74%), and a shift of two brings it to 55%, barely above guessing. The task itself has not become harder: a model retrained on data from the shifted world gets 88–90% everywhere. The lesson is that the drop is caused by the mismatch, and that fresh labelled data from the new setting cures it.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="distribution-shift" data-title="When the world moves"><p class="bench-fallback"><strong>Interactive bench: When the world moves.</strong> Two classes are classified by a fixed logistic regression while every feature value is shifted by a slider amount; the bench shows the shifted test points, the decision line and the accuracy against shift, with a switch to retrain on data from the new world.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the shift to +1 and to +2 and read the accuracy.</li>
+<li>Watch the decision line stay where it was while the points move.</li>
+<li>Turn on retraining and see the line follow the data.</li>
+<li>Try negative shifts.</li>
+</ol>
+<p><strong>What you should notice:</strong> accuracy falls smoothly as the world drifts away from the training data, in either direction, and retraining on data from the new world recovers it.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Deployed models of every kind:</strong> fraud, recommendations, demand forecasts.</li>
+<li><strong>Vision and speech:</strong> new devices, environments and accents.</li>
+<li><strong>Language models:</strong> vocabulary and facts that age.</li>
+<li><strong>MLOps:</strong> drift monitoring and scheduled retraining.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Trusting the original test score forever.</strong></li>
+<li><strong>Only monitoring accuracy,</strong> which needs labels that arrive late; watch input statistics too.</li>
+<li><strong>Retraining on drifted data without checking labels.</strong></li>
+<li><strong>Assuming shift is always sudden:</strong> slow drift is easy to miss.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Which kind of shift changes the class proportions?</summary>
+Label (prior) shift.
+</details>
+
+<details><summary>2. Why does the fixed model lose accuracy while the task is no harder?</summary>
+Its decision rule was fitted to the old data, so it no longer matches where the classes now lie.
+</details>
+
+<details><summary>3. Name one way to detect drift without labels.</summary>
+Monitor input statistics (means, spreads, category shares) and compare them with the training data.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Distribution shift:</strong> a difference between training and deployment data.</li>
+<li><strong>Covariate shift:</strong> the inputs change but the input-to-label rule does not.</li>
+<li><strong>Concept drift:</strong> the input-to-label rule changes over time.</li>
+<li><strong>Out-of-distribution:</strong> inputs unlike anything seen in training.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/bias-in-data/" data-topic="machine-learning/bias-in-data">Bias in Data</a> · <a class="wikilink" href="/machine-learning/anomaly-detection/" data-topic="machine-learning/anomaly-detection">Anomaly Detection</a> · <a class="wikilink" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets">Train, Validation and Test Sets</a> · <a class="wikilink" href="/machine-learning/deployment-and-monitoring/" data-topic="machine-learning/deployment-and-monitoring">Deployment and Monitoring</a> · <a class="wikilink" href="/fundamentals/where-ai-goes-wrong/" data-topic="fundamentals/where-ai-goes-wrong">Where AI Goes Wrong</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/distribution-shift">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/interpreting-models/"><small>Read next</small><b>Interpreting Models</b><p>When a model makes a decision that matters, people ask why. Some models can be read directly (a short tree, the weights of a linear model), but the most accurate ones cannot.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/bias-in-data/"><b>Bias in Data</b><p>A model learns whatever its data shows.</p></a><a class="rc-card" href="/machine-learning/train-validation-and-test-sets/"><b>Train, Validation and Test Sets</b><p>To know whether a model works you must measure it on data it has not learned from.</p></a><a class="rc-card" href="/machine-learning/logistic-regression-as-a-classifier/"><b>Logistic Regression as a Classifier</b><p>Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.</p></a><a class="rc-card" href="/machine-learning/anomaly-detection/"><b>Anomaly Detection</b><p>Anomaly detection looks for the rare points that do not fit: a fraudulent payment, a failing machine, a corrupt record.</p></a><a class="rc-card" href="/machine-learning/deployment-and-monitoring/"><b>Deployment and Monitoring</b><p>Shipping a model is the start of its life, not the end. The world changes, so a deployed model must be watched.</p></a><a class="rc-card" href="/fundamentals/where-ai-goes-wrong/"><b>Where AI Goes Wrong</b><p>AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/fairness-metrics/">← Previous: Fairness Metrics</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

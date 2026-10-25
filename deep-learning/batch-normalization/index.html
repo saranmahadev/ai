@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Batch Normalization — AI Base</title>
+<meta name="description" content="Batch normalization re-centres and re-scales a layer&#39;s activations, using the statistics of the current mini-batch, so every unit sees roughly mean-0, unit-variance inputs no matter how the layers…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/batch-normalization/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Batch Normalization — AI Base">
+<meta property="og:description" content="Batch normalization re-centres and re-scales a layer&#39;s activations, using the statistics of the current mini-batch, so every unit sees roughly mean-0, unit-variance inputs no matter how the layers…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/batch-normalization/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Batch Normalization","item":"https://ai.saranmahadev.in/deep-learning/batch-normalization/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Batch Normalization","description":"Batch normalization re-centres and re-scales a layer's activations, using the statistics of the current mini-batch, so every unit sees roughly mean-0, unit-variance inputs no matter how the layers…","url":"https://ai.saranmahadev.in/deep-learning/batch-normalization/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does batch normalization compute the mean and variance over?","acceptedAnswer":{"@type":"Answer","text":"The values of one unit across every example in the current mini-batch."}},{"@type":"Question","name":"What can γ and β do, in principle?","acceptedAnswer":{"@type":"Answer","text":"Fully undo the normalization (recovering the original scale and shift) if that turns out to be what the network needs."}},{"@type":"Question","name":"Why is batch normalization awkward with a batch size of 1?","acceptedAnswer":{"@type":"Answer","text":"The variance of a single value is 0, so normalizing by it is undefined (or requires an added stabilising constant)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Regularization and Generalization</p>
+        <h1 class="doc-title">Batch Normalization</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1airulybg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1airulypl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1airulybg)"/>
+  <circle cx="369" cy="93" r="111" fill="#ffe6e6" opacity="0.29"/><circle cx="630" cy="309" r="218" fill="#8a546c" opacity="0.44"/><circle cx="890" cy="377" r="117" fill="#8a546c" opacity="0.31"/><circle cx="190" cy="120" r="181" fill="#ffb6b6" opacity="0.59"/><circle cx="715" cy="263" r="151" fill="#ffb6b6" opacity="0.43"/><circle cx="262" cy="100" r="152" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,319 L30,322 L60,325 L90,329 L120,332 L150,335 L180,339 L210,341 L240,344 L270,346 L300,348 L330,349 L360,349 L390,350 L420,349 L450,348 L480,347 L510,345 L540,342 L570,340 L600,337 L630,333 L660,330 L690,326 L720,323 L750,320 L780,317 L810,314 L840,311 L870,309 L900,307 L930,306 L960,306 L990,306 L1020,306 L1050,307 L1080,309 L1110,311 L1140,313 L1170,316 L1200,319 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,379 L30,376 L60,374 L90,371 L120,369 L150,367 L180,365 L210,364 L240,363 L270,362 L300,362 L330,362 L360,363 L390,364 L420,365 L450,366 L480,368 L510,370 L540,373 L570,375 L600,377 L630,380 L660,382 L690,385 L720,387 L750,389 L780,391 L810,392 L840,393 L870,394 L900,394 L930,394 L960,393 L990,392 L1020,391 L1050,390 L1080,388 L1110,386 L1140,383 L1170,381 L1200,379 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="862" cy="151" rx="221" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(21.6 862 151)"/><ellipse cx="862" cy="151" rx="305" ry="85" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(27.6 862 151)"/>
+  <circle cx="862" cy="151" r="86" fill="url(#c1airulypl)"/>
+  <circle cx="1165" cy="96" r="8" fill="#ffffff" opacity="0.60"/><circle cx="778" cy="46" r="8" fill="#ffffff" opacity="0.69"/><circle cx="1020" cy="223" r="8" fill="#ffffff" opacity="0.87"/><circle cx="952" cy="265" r="9" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Batch normalization</strong> re-centres and re-scales a layer&#39;s activations, using the statistics of the current mini-batch, so every unit sees roughly mean-0, unit-variance inputs no matter how the layers before it are shifting during training. It then lets the network undo that normalization, with two learned numbers, if a different scale turns out to work better.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/weight-initialization/" data-topic="deep-learning/weight-initialization">Weight Initialization</a> and <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;As earlier layers&#39; weights keep changing during training, doesn&#39;t every later layer have to keep adapting to a constantly shifting input distribution?&quot; Batch normalization pins that distribution down to a fixed mean and variance at every step, so later layers train against a far steadier target.</p>
+<h2 id="intuition-a-thermostat-for-each-layer">Intuition: a thermostat for each layer</h2>
+<p>Without normalization, a layer&#39;s inputs can drift in scale as training changes the weights feeding into it — like trying to cook with a stove whose heat setting keeps recalibrating itself. Batch normalization adds a thermostat: whatever the raw signal&#39;s scale happens to be this batch, rescale it back to a known, fixed range before using it. A learned scale <code>γ</code> and shift <code>β</code> then let the network dial the temperature back up or down deliberately, if that helps.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">for one unit, over a batch of values x₁, …, xₘ:
+
+mean  μ = (1/m) Σ xᵢ
+variance  σ² = (1/m) Σ (xᵢ − μ)²
+
+normalized  x̂ᵢ = (xᵢ − μ) / √σ²          (mean 0, variance 1 across the batch)
+output      yᵢ = γ · x̂ᵢ + β               (γ, β are learned, per unit)
+</code></pre>
+<p>If training ever finds that <code>γ = √σ²</code> and <code>β = μ</code> is best, the layer can fully undo the normalization — so batch normalization never removes the ability to use any scale, it just starts from a stable, fixed one.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>One unit&#39;s values across a batch of 5: <code>x = (2, 4, 4, 4, 5)</code>, with learned <code>γ = 2</code>, <code>β = 1</code>:</p>
+<pre><code class="language-text">mean  μ = 3.8
+variance σ² = 0.96,  √σ² ≈ 0.9798
+
+x̂ = (−1.8371, 0.2041, 0.2041, 0.2041, 1.2247)
+
+y = 2·x̂ + 1 = (−2.6742, 1.4082, 1.4082, 1.4082, 3.4495)
+</code></pre>
+<p>The three repeated values of 4 all normalize to the same <code>x̂</code>, and the output simply tracks their relative distance from the batch mean, rescaled to whatever <code>γ</code> and <code>β</code> the network has learned.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="batchnorm-step" data-title="Normalizing a batch of activations"><p class="bench-fallback"><strong>Interactive bench: Normalizing a batch of activations.</strong> Five adjustable activation values for one unit, plus learned scale γ and shift β. See the batch mean and variance, the normalized values, and the final output after applying γ and β.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Spread the five values far apart and watch the normalized values spread to match, always centred on 0.</li>
+<li>Set all five values equal and see what happens to the variance (and watch the small stabiliser avoid a division by zero).</li>
+<li>Set <code>γ = √(current variance)</code> and <code>β =</code> the current mean, and watch the output return to the original values.</li>
+</ol>
+<p><strong>What you should notice:</strong> the normalized values always have mean 0 regardless of the raw values&#39; scale; <code>γ</code> and <code>β</code> are the only things standing between the normalized output and recovering the original input exactly.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Convolutional networks</strong> (see <a class="wikilink" href="/deep-learning/convolutional-neural-networks/" data-topic="deep-learning/convolutional-neural-networks">Convolutional Neural Networks</a>) use batch normalization heavily between convolutional layers.</li>
+<li><strong>Why batch size matters for batch normalization:</strong> a very small batch (see <a class="wikilink" href="/deep-learning/batch-size-and-training-dynamics/" data-topic="deep-learning/batch-size-and-training-dynamics">Batch Size and Training Dynamics</a>) gives a noisy estimate of the batch mean and variance, which can hurt training.</li>
+<li><strong>At test time</strong>, batch normalization uses a running average of mean and variance collected during training, not the statistics of whatever single example is being evaluated.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Using a batch size of 1.</strong> The &quot;batch&quot; variance of a single example is 0, making normalization undefined without extra care.</li>
+<li><strong>Forgetting it behaves differently at train and test time.</strong> Training uses the current batch&#39;s statistics; inference uses accumulated running statistics instead.</li>
+<li><strong>Confusing batch normalization with <a class="wikilink" href="/deep-learning/layer-normalization/" data-topic="deep-learning/layer-normalization">Layer Normalization</a>.</strong> Batch normalization normalizes across the batch for each unit; layer normalization normalizes across the unit&#39;s own features for each example instead.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does batch normalization compute the mean and variance over?</summary>
+The values of one unit across every example in the current mini-batch.
+</details>
+
+<details><summary>2. What can γ and β do, in principle?</summary>
+Fully undo the normalization (recovering the original scale and shift) if that turns out to be what the network needs.
+</details>
+
+<details><summary>3. Why is batch normalization awkward with a batch size of 1?</summary>
+The variance of a single value is 0, so normalizing by it is undefined (or requires an added stabilising constant).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Batch normalization:</strong> normalizing a layer&#39;s activations using the current batch&#39;s mean and variance, then applying a learned scale and shift.</li>
+<li><strong>γ, β:</strong> the learned per-unit scale and shift applied after normalization.</li>
+<li><strong>Running statistics:</strong> the accumulated mean and variance used at test time instead of a single batch&#39;s.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/weight-initialization/" data-topic="deep-learning/weight-initialization">Weight Initialization</a> · <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> · <a class="wikilink" href="/deep-learning/layer-normalization/" data-topic="deep-learning/layer-normalization">Layer Normalization</a> · <a class="wikilink" href="/deep-learning/convolutional-neural-networks/" data-topic="deep-learning/convolutional-neural-networks">Convolutional Neural Networks</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/batch-normalization">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/layer-normalization/"><small>Read next</small><b>Layer Normalization</b><p>Layer normalization computes exactly the same mean-and-variance normalization as batch normalization — but across a single example&#39;s own features, instead of across the batch.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/weight-initialization/"><b>Weight Initialization</b><p>Before a single training step runs, a deep network&#39;s starting weights already decide whether signal can flow through it at all.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/deep-learning/convolutional-neural-networks/"><b>Convolutional Neural Networks</b><p>A photograph has structure a plain feedforward network ignores: a cat&#39;s ear looks the same whether it is in the top-left or bottom-right corner.</p></a><a class="rc-card" href="/deep-learning/batch-size-and-training-dynamics/"><b>Batch Size and Training Dynamics</b><p>Stochastic Gradient Descent estimates the true gradient (averaged over the whole dataset) using only a batch of examples at a time.</p></a><a class="rc-card" href="/deep-learning/layer-normalization/"><b>Layer Normalization</b><p>Layer normalization computes exactly the same mean-and-variance normalization as batch normalization — but across a single example&#39;s own features, instead of across the batch.</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/dropout/">← Previous: Dropout</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

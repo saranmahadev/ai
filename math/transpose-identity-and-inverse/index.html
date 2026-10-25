@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transpose, Identity and Inverse — AI Base</title>
+<meta name="description" content="Three special matrix ideas come up constantly: the transpose (flip rows and columns), the identity (the matrix that does nothing) and the inverse (the matrix that undoes another).">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/transpose-identity-and-inverse/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Transpose, Identity and Inverse — AI Base">
+<meta property="og:description" content="Three special matrix ideas come up constantly: the transpose (flip rows and columns), the identity (the matrix that does nothing) and the inverse (the matrix that undoes another).">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/transpose-identity-and-inverse/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Transpose, Identity and Inverse","item":"https://ai.saranmahadev.in/math/transpose-identity-and-inverse/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Transpose, Identity and Inverse","description":"Three special matrix ideas come up constantly: the transpose (flip rows and columns), the identity (the matrix that does nothing) and the inverse (the matrix that undoes another).","url":"https://ai.saranmahadev.in/math/transpose-identity-and-inverse/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the transpose of [[1, 2], [3, 4]]?","acceptedAnswer":{"@type":"Answer","text":"[[1, 3], [2, 4]]."}},{"@type":"Question","name":"Does [[1, 2], [2, 4]] have an inverse?","acceptedAnswer":{"@type":"Answer","text":"No: its determinant is 4 − 4 = 0."}},{"@type":"Question","name":"What is (AB)ᵀ?","acceptedAnswer":{"@type":"Answer","text":"BᵀAᵀ."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Linear Algebra</p>
+        <h1 class="doc-title">Transpose, Identity and Inverse</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cpwmarzbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cpwmarzpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cpwmarzbg)"/>
+  <circle cx="198" cy="358" r="86" fill="#cebff9" opacity="0.51"/><circle cx="355" cy="272" r="100" fill="#ddbecb" opacity="0.44"/><circle cx="943" cy="306" r="150" fill="#68599a" opacity="0.30"/><circle cx="64" cy="109" r="218" fill="#eee9fd" opacity="0.59"/><circle cx="580" cy="379" r="180" fill="#ddbecb" opacity="0.48"/>
+  <path d="M0,420 L0,331 L30,324 L60,318 L90,312 L120,308 L150,306 L180,306 L210,308 L240,312 L270,318 L300,324 L330,331 L360,338 L390,343 L420,347 L450,349 L480,349 L510,347 L540,343 L570,338 L600,331 L630,324 L660,318 L690,312 L720,308 L750,306 L780,306 L810,308 L840,312 L870,318 L900,324 L930,331 L960,338 L990,343 L1020,347 L1050,349 L1080,349 L1110,347 L1140,343 L1170,338 L1200,331 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,369 L30,367 L60,365 L90,364 L120,363 L150,362 L180,362 L210,362 L240,363 L270,363 L300,365 L330,366 L360,368 L390,370 L420,373 L450,375 L480,377 L510,380 L540,382 L570,385 L600,387 L630,389 L660,391 L690,392 L720,393 L750,394 L780,394 L810,394 L840,393 L870,393 L900,391 L930,390 L960,388 L990,386 L1020,383 L1050,381 L1080,379 L1110,376 L1140,374 L1170,371 L1200,369 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="732" cy="286" rx="179" ry="50" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(15.3 732 286)"/><ellipse cx="732" cy="286" rx="247" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(21.3 732 286)"/>
+  <circle cx="732" cy="286" r="70" fill="url(#cpwmarzpl)"/>
+  <circle cx="470" cy="244" r="10" fill="#ffffff" opacity="0.69"/><circle cx="735" cy="201" r="15" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Three special matrix ideas come up constantly: the <strong>transpose</strong> (flip rows and columns), the <strong>identity</strong> (the matrix that does nothing) and the <strong>inverse</strong> (the matrix that undoes another). Together they let you rearrange and solve matrix equations.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I flip a matrix, and how do I undo a transformation?&quot; To recover an input from an output, you apply the inverse.</p>
+<h2 id="transpose">Transpose</h2>
+<p>The <strong>transpose</strong> <code>Aᵀ</code> swaps rows and columns: entry <code>(i, j)</code> moves to <code>(j, i)</code>. A <code>(2 × 3)</code> matrix becomes <code>(3 × 2)</code>.</p>
+<pre><code class="language-text">A = [1 2 3]      Aᵀ = [1 4]
+    [4 5 6]           [2 5]
+                      [3 6]
+</code></pre>
+<p>Useful rules: <code>(Aᵀ)ᵀ = A</code>, <code>(AB)ᵀ = BᵀAᵀ</code> (order reverses). A matrix equal to its transpose is <strong>symmetric</strong>.</p>
+<h2 id="identity">Identity</h2>
+<p>The <strong>identity</strong> matrix <code>I</code> has 1s on the diagonal and 0s elsewhere. Multiplying by it changes nothing: <code>A I = I A = A</code>, like multiplying a number by 1.</p>
+<pre><code class="language-text">I = [1 0]
+    [0 1]
+</code></pre>
+<h2 id="inverse">Inverse</h2>
+<p>The <strong>inverse</strong> <code>A⁻¹</code> undoes <code>A</code>: <code>A A⁻¹ = A⁻¹ A = I</code>. Not every matrix has one. For a 2 × 2 matrix:</p>
+<pre><code class="language-text">A = [a b]      A⁻¹ = 1/(ad − bc) · [ d −b]
+    [c d]                          [−c  a]
+</code></pre>
+<p>The number <code>ad − bc</code> is the <strong>determinant</strong> (see <a class="wikilink" href="/math/determinant/" data-topic="math/determinant">Determinant</a>). If it is zero, the matrix has no inverse: it is <strong>singular</strong>, and the transformation squashes space so information is lost.</p>
+<p>Rule: <code>(AB)⁻¹ = B⁻¹A⁻¹</code>. Undo in reverse order, like taking shoes off before socks.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<pre><code class="language-text">A = [2 1]        determinant = 2·1 − 1·1 = 1
+    [1 1]
+
+A⁻¹ = 1/1 · [ 1 −1] = [ 1 −1]
+            [−1  2]   [−1  2]
+
+check: A A⁻¹ = [2·1 + 1·(−1)   2·(−1) + 1·2]   [1 0]
+               [1·1 + 1·(−1)   1·(−1) + 1·2] = [0 1] = I ✓
+</code></pre>
+<p>Use it: to solve <code>A x = (3, 2)</code>, compute <code>x = A⁻¹ (3, 2) = (1·3 − 1·2, −1·3 + 2·2) = (1, 1)</code>. Check: <code>A (1, 1) = (2 + 1, 1 + 1) = (3, 2)</code> ✓.</p>
+<p>In practice, software solves <code>A x = b</code> directly rather than forming <code>A⁻¹</code>, which is faster and more accurate (see <a class="wikilink" href="/math/conditioning/" data-topic="math/conditioning">Conditioning</a>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="undo-transform" data-title="Undo a transformation"><p class="bench-fallback"><strong>Interactive bench: Undo a transformation.</strong> A 2 by 2 matrix set by sliders transforms a shape; a button applies its inverse to bring the shape back, and the bench reports the determinant and says when no inverse exists.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Apply a matrix, then apply its inverse. Does the shape return?</li>
+<li>Move the sliders until the determinant reaches 0. What happens to the inverse?</li>
+<li>Transpose the matrix and compare the shapes.</li>
+<li>Try the identity.</li>
+</ol>
+<p><strong>What you should notice:</strong> a transformation that keeps the shape a proper 2D shape can be undone, and one that flattens it to a line cannot.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Normal equations</strong> in regression use <code>(XᵀX)⁻¹</code> (see <a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a>).</li>
+<li><strong>Backpropagation</strong> multiplies by transposed weight matrices.</li>
+<li><strong>Covariance matrices</strong> are symmetric.</li>
+<li><strong>Whitening</strong> and decorrelation use matrix inverses.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming every matrix has an inverse.</strong> A zero determinant means none.</li>
+<li><strong>Reversing the wrong order:</strong> <code>(AB)⁻¹ = B⁻¹A⁻¹</code>.</li>
+<li><strong>Forming an inverse when a direct solve is better.</strong></li>
+<li><strong>Confusing <code>A⁻¹</code> with <code>1/A</code> entry by entry.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the transpose of [[1, 2], [3, 4]]?</summary>
+[[1, 3], [2, 4]].
+</details>
+
+<details><summary>2. Does [[1, 2], [2, 4]] have an inverse?</summary>
+No: its determinant is 4 − 4 = 0.
+</details>
+
+<details><summary>3. What is (AB)ᵀ?</summary>
+BᵀAᵀ.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Transpose:</strong> swapping rows and columns.</li>
+<li><strong>Identity matrix:</strong> the matrix that leaves vectors unchanged.</li>
+<li><strong>Inverse:</strong> the matrix that undoes another.</li>
+<li><strong>Singular:</strong> having no inverse (determinant zero).</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a> · <a class="wikilink" href="/math/determinant/" data-topic="math/determinant">Determinant</a> · <a class="wikilink" href="/math/solving-linear-systems/" data-topic="math/solving-linear-systems">Solving Linear Systems</a> · <a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a> · <a class="wikilink" href="/math/conditioning/" data-topic="math/conditioning">Conditioning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/transpose-identity-and-inverse">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/determinant/"><small>Read next</small><b>Determinant</b><p>The determinant of a square matrix is a single number telling you how the transformation scales area (or volume): a determinant of 3 makes shapes three times larger, 0.5 halves them, 0 flattens…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/matrix-multiplication/"><b>Matrix Multiplication</b><p>Matrix multiplication combines two matrices into one that does both transformations in a row. Each entry of the result is a dot product of a row of the first matrix with a column of the second.</p></a><a class="rc-card" href="/math/determinant/"><b>Determinant</b><p>The determinant of a square matrix is a single number telling you how the transformation scales area (or volume): a determinant of 3 makes shapes three times larger, 0.5 halves them, 0 flattens…</p></a><a class="rc-card" href="/math/conditioning/"><b>Conditioning</b><p>A problem is ill-conditioned when tiny changes in its input cause huge changes in its answer, no matter how carefully you compute. The condition number measures that sensitivity.</p></a><a class="rc-card" href="/math/least-squares/"><b>Least Squares</b><p>When a system of equations has more equations than unknowns, it usually has no exact solution. Least squares finds the values that come closest, by minimising the total squared error.</p></a><a class="rc-card" href="/math/solving-linear-systems/"><b>Solving Linear Systems</b><p>A linear system is several linear equations that must all hold at once, such as x + y = 5 and x − y = 1.</p></a><a class="rc-card" href="/math/linear-algebra/"><b>Linear Algebra</b><p>Linear algebra is the maths of lists of numbers (vectors) and grids of numbers (matrices), and of the simple operations that combine them.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/matrix-multiplication/">← Previous: Matrix Multiplication</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

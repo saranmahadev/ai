@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capstone Classifier End to End — AI Base</title>
+<meta name="description" content="This capstone builds a small classifier from start to finish and brings the whole planet together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look…">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/capstone-classifier-end-to-end/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Capstone Classifier End to End — AI Base">
+<meta property="og:description" content="This capstone builds a small classifier from start to finish and brings the whole planet together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look…">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/capstone-classifier-end-to-end/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Capstone Classifier End to End","item":"https://ai.saranmahadev.in/machine-learning/capstone-classifier-end-to-end/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Capstone Classifier End to End","description":"This capstone builds a small classifier from start to finish and brings the whole planet together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look…","url":"https://ai.saranmahadev.in/machine-learning/capstone-classifier-end-to-end/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why is the raw-features logistic regression below chance?","acceptedAnswer":{"@type":"Answer","text":"The huge-scale noise column dominates the gradient updates, so the model fits noise instead of the real signal."}},{"@type":"Question","name":"Why do trees not need standardised features?","acceptedAnswer":{"@type":"Answer","text":"They only compare each feature with thresholds, so scale does not matter."}},{"@type":"Question","name":"How many times may you score the test set while choosing a model?","acceptedAnswer":{"@type":"Answer","text":"Zero: choose with cross-validation and open the test set once at the end."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Machine Learning in Practice</p>
+        <h1 class="doc-title">Capstone Classifier End to End</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1p2q90sbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1p2q90spl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1p2q90sbg)"/>
+  <circle cx="65" cy="237" r="191" fill="#fff2de" opacity="0.34"/><circle cx="504" cy="145" r="187" fill="#ffd08d" opacity="0.25"/><circle cx="965" cy="145" r="219" fill="#ffd08d" opacity="0.44"/><circle cx="873" cy="235" r="112" fill="#ffd99f" opacity="0.62"/><circle cx="468" cy="141" r="184" fill="#fff2de" opacity="0.60"/>
+  <path d="M0,420 L0,345 L30,342 L60,338 L90,333 L120,328 L150,322 L180,318 L210,313 L240,310 L270,307 L300,306 L330,306 L360,307 L390,309 L420,312 L450,316 L480,321 L510,326 L540,331 L570,336 L600,341 L630,344 L660,347 L690,349 L720,350 L750,349 L780,347 L810,344 L840,340 L870,336 L900,331 L930,326 L960,321 L990,316 L1020,312 L1050,309 L1080,307 L1110,306 L1140,306 L1170,307 L1200,310 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,387 L30,382 L60,377 L90,372 L120,368 L150,365 L180,363 L210,362 L240,363 L270,366 L300,369 L330,374 L360,379 L390,384 L420,388 L450,391 L480,393 L510,394 L540,393 L570,390 L600,387 L630,382 L660,377 L690,372 L720,368 L750,365 L780,363 L810,362 L840,363 L870,366 L900,369 L930,374 L960,379 L990,384 L1020,388 L1050,391 L1080,393 L1110,394 L1140,393 L1170,390 L1200,387 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="633" cy="205" rx="170" ry="47" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-3.8 633 205)"/><ellipse cx="633" cy="205" rx="234" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(2.2 633 205)"/>
+  <circle cx="633" cy="205" r="67" fill="url(#c1p2q90spl)"/>
+  <circle cx="627" cy="108" r="7" fill="#ffffff" opacity="0.86"/><circle cx="848" cy="191" r="19" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>This capstone builds a small classifier from start to finish and brings the whole planet together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look at a sealed test set. The data is designed so that each earlier lesson matters: a huge-scale noise column, a pattern no straight line can find, and a label with some noise.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/the-ml-workflow/" data-topic="machine-learning/the-ml-workflow">The ML Workflow</a>, <a class="wikilink" href="/machine-learning/pipelines-and-leakage/" data-topic="machine-learning/pipelines-and-leakage">Pipelines and Leakage</a>, <a class="wikilink" href="/machine-learning/feature-engineering/" data-topic="machine-learning/feature-engineering">Feature Engineering</a>, <a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a> and <a class="wikilink" href="/machine-learning/random-forests/" data-topic="machine-learning/random-forests">Random Forests</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Do the pieces really add up?&quot; Each choice (scale or not, engineer a feature or not, which model) changes the score by many points, and only honest cross-validation tells you which choices help.</p>
+<h2 id="the-problem">The problem</h2>
+<p>Four hundred training rows and 200 sealed test rows, four features:</p>
+<pre><code class="language-text">x₁, x₂    two informative features: the class is &quot;outside a circle&quot; (x₁² + x₂² &gt; 1.4), with 10% of labels flipped
+x₃        pure noise, multiplied by 1000 (a huge scale)
+x₄        a weak signal (its mean shifts slightly with the label)
+</code></pre>
+<p>Every model is scored by 5-fold cross-validation on the training rows. Any preprocessing is refitted inside each fold.</p>
+<h2 id="the-results">The results</h2>
+<p>Cross-validated accuracy (mean over folds):</p>
+<pre><code class="language-text">model                      raw features   standardised   + feature x₁²+x₂²   + drop x₃ too
+logistic regression           43.3%          59.7%            86.0%              84.7%
+7 nearest neighbours          46.5%          80.7%            83.2%              86.3%
+decision tree (depth 4)       83.0%          83.0%            88.3%              88.8%
+random forest (25 trees)      83.0%          83.0%            90.5%              90.5%
+</code></pre>
+<p>Read the table row by row:</p>
+<ul>
+<li><strong>Logistic regression</strong> is hopeless on raw features (the huge-scale column dominates, below chance) and mediocre after scaling (59.7%: a straight line cannot separate a ring), but jumps to 86.0% once given the squared-distance feature: the same lesson as <a class="wikilink" href="/machine-learning/feature-engineering/" data-topic="machine-learning/feature-engineering">Feature Engineering</a>.</li>
+<li><strong>Nearest neighbours</strong> depends on scaling (46.5% → 80.7%) and improves again when the noise column is dropped (86.3%).</li>
+<li><strong>Trees and forests</strong> ignore scale entirely (same score raw and standardised) and profit from the engineered feature (88.3%, 90.5%).</li>
+<li>Differences of a couple of points are inside the fold-to-fold spread (about ±2 to ±7 points), so do not over-read them.</li>
+</ul>
+<h2 id="the-final-exam">The final exam</h2>
+<p>Choose by cross-validation: the random forest on standardised features plus the squared-distance feature (90.5% ± 2.1). Train it on all 400 rows and score the sealed 200 once:</p>
+<pre><code class="language-text">random forest, standardised, with x₁²+x₂²:   test accuracy 91.0%
+for comparison, logistic regression on raw features:   test accuracy 55.5%
+</code></pre>
+<p>The 91.0% agrees with the cross-validated 90.5%, which is what an honest process should give. Had the test set been used to choose among the twenty combinations above, the best of them would look better than it really is, and the agreement would have been luck.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="end-to-end" data-title="A small project, start to finish"><p class="bench-fallback"><strong>Interactive bench: A small project, start to finish.</strong> Choose a model and preprocessing options (standardising, adding the squared-distance feature, dropping a huge-scale column) for a four-feature classification problem, see the cross-validated accuracy on 400 training rows, and open the sealed 200-row test set once.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with logistic regression and no options; then add them one at a time.</li>
+<li>Switch to the random forest and repeat.</li>
+<li>Pick the configuration you trust from cross-validation only.</li>
+<li>Open the test set once and compare its score with the cross-validated one.</li>
+</ol>
+<p><strong>What you should notice:</strong> scaling rescues distance-based methods, an engineered feature rescues linear ones, trees are robust to both, and a test score close to the cross-validated one shows the process was honest.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every applied tabular project</strong> follows this pattern, at larger scale.</li>
+<li><strong>The same comparison discipline</strong> decides among neural network designs.</li>
+<li><strong>Reproducible pipelines</strong> bundle the chosen steps so serving matches training.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Choosing among many variants using the test set.</strong></li>
+<li><strong>Stopping at the first good score</strong> without a baseline or an error analysis.</li>
+<li><strong>Over-reading small differences</strong> between models.</li>
+<li><strong>Leaving a step outside the pipeline,</strong> which invites leakage.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why is the raw-features logistic regression below chance?</summary>
+The huge-scale noise column dominates the gradient updates, so the model fits noise instead of the real signal.
+</details>
+
+<details><summary>2. Why do trees not need standardised features?</summary>
+They only compare each feature with thresholds, so scale does not matter.
+</details>
+
+<details><summary>3. How many times may you score the test set while choosing a model?</summary>
+Zero: choose with cross-validation and open the test set once at the end.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Capstone:</strong> a project that combines the lessons of a whole planet.</li>
+<li><strong>Sealed test set:</strong> data kept unseen until the final score.</li>
+<li><strong>Engineered feature:</strong> a new input built from existing ones.</li>
+<li><strong>Honest estimate:</strong> a score not influenced by decisions made on the test data.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/the-ml-workflow/" data-topic="machine-learning/the-ml-workflow">The ML Workflow</a> · <a class="wikilink" href="/machine-learning/pipelines-and-leakage/" data-topic="machine-learning/pipelines-and-leakage">Pipelines and Leakage</a> · <a class="wikilink" href="/machine-learning/feature-engineering/" data-topic="machine-learning/feature-engineering">Feature Engineering</a> · <a class="wikilink" href="/machine-learning/random-forests/" data-topic="machine-learning/random-forests">Random Forests</a> · <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/capstone-classifier-end-to-end">Open in the interactive site →</a></p>
+        
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/the-ml-workflow/"><b>The ML Workflow</b><p>Building a model is a sequence of steps, and the order matters as much as the choices.</p></a><a class="rc-card" href="/machine-learning/pipelines-and-leakage/"><b>Pipelines and Leakage</b><p>Leakage is when information the model should not have sneaks into training, making test scores look wonderful and real performance poor.</p></a><a class="rc-card" href="/machine-learning/feature-engineering/"><b>Feature Engineering</b><p>Feature engineering means creating better inputs from the raw columns: ratios, squares, counts, differences, dates unpacked into weekday and month.</p></a><a class="rc-card" href="/machine-learning/scaling-and-normalisation/"><b>Scaling and Normalisation</b><p>Features measured in different units can have wildly different sizes: age in tens, income in tens of thousands.</p></a><a class="rc-card" href="/machine-learning/random-forests/"><b>Random Forests</b><p>A single tree is unstable: change a few training points and its questions change. A random forest trains many trees on slightly different versions of the data and lets them vote.</p></a><a class="rc-card" href="/machine-learning/cross-validation/"><b>Cross-Validation</b><p>One train/validation split gives one score, and that score depends on which points happened to land where.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/deployment-and-monitoring/">← Previous: Deployment and Monitoring</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

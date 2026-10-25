@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Continued Pretraining and Domain Adaptation — AI Base</title>
+<meta name="description" content="A model pretrained on a broad, general corpus is a generalist — reasonably competent everywhere, expert nowhere in particular.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/continued-pretraining-and-domain-adaptation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Continued Pretraining and Domain Adaptation — AI Base">
+<meta property="og:description" content="A model pretrained on a broad, general corpus is a generalist — reasonably competent everywhere, expert nowhere in particular.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/continued-pretraining-and-domain-adaptation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Continued Pretraining and Domain Adaptation","item":"https://ai.saranmahadev.in/llms/continued-pretraining-and-domain-adaptation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Continued Pretraining and Domain Adaptation","description":"A model pretrained on a broad, general corpus is a generalist — reasonably competent everywhere, expert nowhere in particular.","url":"https://ai.saranmahadev.in/llms/continued-pretraining-and-domain-adaptation/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does continued pretraining change about a model's training, compared to its original pretraining?","acceptedAnswer":{"@type":"Answer","text":"Only the data — it uses the same causal language modeling objective, but continues training on a narrower, domain-specific corpus instead of the original general one."}},{"@type":"Question","name":"In the worked example, by roughly what factor did perplexity improve after continued pretraining?","acceptedAnswer":{"@type":"Answer","text":"It dropped from about 3.686 to about 1.291 — less than half its original value — reflecting much higher assigned probability to the domain text's actual tokens."}},{"@type":"Question","name":"What's a real risk of continued pretraining too aggressively on one narrow domain?","acceptedAnswer":{"@type":"Answer","text":"Catastrophic forgetting — eroding the model's general capabilities as training increasingly specializes on the narrow domain's data."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Pretraining Data and Objectives</p>
+        <h1 class="doc-title">Continued Pretraining and Domain Adaptation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c2oycqrbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c2oycqrpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c2oycqrbg)"/>
+  <circle cx="1122" cy="257" r="205" fill="#ffc7a2" opacity="0.49"/><circle cx="748" cy="67" r="137" fill="#ffece0" opacity="0.57"/><circle cx="1133" cy="260" r="126" fill="#ffc7a2" opacity="0.34"/><circle cx="779" cy="17" r="208" fill="#8a5f5e" opacity="0.57"/><circle cx="878" cy="97" r="106" fill="#8a5f5e" opacity="0.50"/>
+  <path d="M0,420 L0,307 L30,310 L60,313 L90,317 L120,322 L150,327 L180,332 L210,337 L240,342 L270,345 L300,348 L330,349 L360,350 L390,349 L420,347 L450,343 L480,339 L510,335 L540,330 L570,325 L600,320 L630,315 L660,311 L690,308 L720,306 L750,306 L780,306 L810,308 L840,311 L870,314 L900,319 L930,324 L960,329 L990,334 L1020,339 L1050,343 L1080,346 L1110,348 L1140,349 L1170,349 L1200,348 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,363 L90,364 L120,365 L150,367 L180,369 L210,371 L240,373 L270,376 L300,378 L330,381 L360,383 L390,385 L420,387 L450,389 L480,391 L510,392 L540,393 L570,394 L600,394 L630,394 L660,393 L690,392 L720,391 L750,389 L780,387 L810,385 L840,383 L870,380 L900,378 L930,375 L960,373 L990,371 L1020,369 L1050,367 L1080,365 L1110,364 L1140,363 L1170,362 L1200,362 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="772" cy="133" rx="198" ry="55" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-23.2 772 133)"/><ellipse cx="772" cy="133" rx="273" ry="76" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-17.2 772 133)"/>
+  <circle cx="772" cy="133" r="77" fill="url(#c2oycqrpl)"/>
+  <circle cx="899" cy="24" r="11" fill="#ffffff" opacity="0.65"/><circle cx="1059" cy="153" r="8" fill="#ffffff" opacity="0.79"/><circle cx="632" cy="195" r="16" fill="#ffffff" opacity="0.66"/><circle cx="447" cy="138" r="13" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A model pretrained on a broad, general corpus is a generalist — reasonably competent everywhere, expert nowhere in particular. Rather than training a new model from scratch for a specialized domain, it&#39;s usually far cheaper to keep training an existing one on domain-specific text.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a>, <a class="wikilink" href="/generative-ai/perplexity-as-a-generation-metric/" data-topic="generative-ai/perplexity-as-a-generation-metric">Perplexity as a Generation Metric</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you specialize an already-pretrained model for a particular domain, without starting over?&quot; <strong>Continued pretraining</strong> simply keeps running the same causal language modeling objective, but on a new, narrower corpus (medical text, legal text, a specific codebase) instead of general web text. The model&#39;s existing general knowledge and language ability carry over as a starting point; additional training on domain text sharpens its predictions specifically within that domain, measurable directly as a drop in <a class="wikilink" href="/generative-ai/perplexity-as-a-generation-metric/" data-topic="generative-ai/perplexity-as-a-generation-metric">perplexity</a> on held-out domain text.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A generalist doctor who then spends a year specifically immersed in cardiology doesn&#39;t forget how to practice general medicine — they build sharper, more specific pattern recognition on top of everything they already knew. Continued pretraining does the same thing to a model: it doesn&#39;t discard the general competence pretraining built, it adds a further, more specialized pass focused on one domain&#39;s particular vocabulary, style, and patterns.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">continued pretraining: take a pretrained model&#39;s weights as the
+  starting point; keep training with the same objective (causal LM),
+  but on domain-specific text instead of the original general corpus
+
+perplexity before vs. after measures the adaptation&#39;s effect directly:
+  lower perplexity on domain text = better domain-specific prediction
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A general base model and a continued-pretrained model, each scored on the same medical text by their assigned token probabilities:</p>
+<pre><code class="language-text">general base model:              probabilities [0.30, 0.25, 0.20, 0.35, 0.28]  →  perplexity 3.686
+continued-pretrained on domain:  probabilities [0.75, 0.80, 0.70, 0.85, 0.78]  →  perplexity 1.291
+</code></pre>
+<p>The continued-pretrained model&#39;s perplexity on this medical text is less than half the general model&#39;s — it assigns far higher probability to the tokens that actually appear in domain text, a direct, measurable sign that the additional training pass sharpened its predictions specifically within that domain.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="continued-pretrain-perplexity" data-title="Perplexity on domain text, before and after"><p class="bench-fallback"><strong>Interactive bench: Perplexity on domain text, before and after.</strong> Compare a general model's perplexity on domain-specific text against a continued-pretrained model's.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the general model&#39;s perplexity on the domain text.</li>
+<li>Switch to the continued-pretrained model and compare.</li>
+<li>Consider what this same comparison would look like on <em>general</em> (non-domain) text instead.</li>
+</ol>
+<p><strong>What you should notice:</strong> the improvement is specific to the domain the continued pretraining targeted — nothing here demonstrates the adapted model got better at <em>everything</em>, only at predicting text like what it was further trained on.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Continued pretraining is standard practice for building domain-specialized models</strong> (legal, medical, financial, code-focused variants of a general base model) without the enormous cost of training from scratch.</li>
+<li><strong>It&#39;s a different lever from <a class="wikilink" href="/llms/fine-tuning-for-a-specific-task/" data-topic="llms/fine-tuning-for-a-specific-task">task-specific fine-tuning</a></strong>: continued pretraining keeps the same general objective (predict the next token) on different data, while fine-tuning typically changes what&#39;s being optimized for a specific downstream behavior.</li>
+<li><strong><a class="wikilink" href="/llms/catastrophic-forgetting-in-fine-tuning/" data-topic="llms/catastrophic-forgetting-in-fine-tuning">too much continued pretraining on a narrow domain</a> can erode general capability</strong>, the same trade-off that shows up in task-specific fine-tuning — specializing too hard risks losing some of the breadth the original pretraining built.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming continued pretraining is the same thing as fine-tuning.</strong> Continued pretraining keeps the original objective (next-token prediction) on new data; it&#39;s a separate step from (and often precedes) task-specific fine-tuning.</li>
+<li><strong>Expecting improvement to transfer to unrelated domains.</strong> The worked example&#39;s perplexity drop is specific to the medical text the model was continued-pretrained on — it says nothing about performance elsewhere.</li>
+<li><strong>Ignoring the forgetting risk.</strong> Pushing continued pretraining too far on a narrow domain, with too little of the original broad data mixed back in, risks degrading the model&#39;s general capabilities.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does continued pretraining change about a model's training, compared to its original pretraining?</summary>
+Only the data — it uses the same causal language modeling objective, but continues training on a narrower, domain-specific corpus instead of the original general one.
+</details>
+
+<details><summary>2. In the worked example, by roughly what factor did perplexity improve after continued pretraining?</summary>
+It dropped from about 3.686 to about 1.291 — less than half its original value — reflecting much higher assigned probability to the domain text's actual tokens.
+</details>
+
+<details><summary>3. What's a real risk of continued pretraining too aggressively on one narrow domain?</summary>
+Catastrophic forgetting — eroding the model's general capabilities as training increasingly specializes on the narrow domain's data.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Continued pretraining:</strong> further training an already-pretrained model with the same objective, on domain-specific data.</li>
+<li><strong>Domain adaptation:</strong> specializing a general model&#39;s behavior for a particular subject area or style.</li>
+<li><strong>Perplexity gap:</strong> the difference in perplexity on domain text before and after adaptation, used to measure its effect.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a> · <a class="wikilink" href="/generative-ai/perplexity-as-a-generation-metric/" data-topic="generative-ai/perplexity-as-a-generation-metric">Perplexity as a Generation Metric</a> · <a class="wikilink" href="/llms/fine-tuning-for-a-specific-task/" data-topic="llms/fine-tuning-for-a-specific-task">Fine-Tuning for a Specific Task</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/continued-pretraining-and-domain-adaptation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/synthetic-data-for-pretraining/"><small>Read next</small><b>Synthetic Data for Pretraining</b><p>When real data for a domain or language is scarce, a tempting fix is to generate more of it — have a model write the text you wish you had more of.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/causal-language-modeling-as-a-pretraining-objective/"><b>Causal Language Modeling as a Pretraining Objective</b><p>With a curated corpus in hand, there&#39;s still a question of what, exactly, a model is being trained to do with it.</p></a><a class="rc-card" href="/generative-ai/perplexity-as-a-generation-metric/"><b>Perplexity as a Generation Metric</b><p>A classifier&#39;s accuracy is easy to check: right or wrong.</p></a><a class="rc-card" href="/llms/fine-tuning-for-a-specific-task/"><b>Fine-Tuning for a Specific Task</b><p>An aligned, general-purpose assistant is often not what a product actually needs — a narrower model trained specifically on one job&#39;s data can do that one job better, cheaper, and more predictably.</p></a><a class="rc-card" href="/llms/catastrophic-forgetting-in-fine-tuning/"><b>Catastrophic Forgetting in Fine-Tuning</b><p>Fine-tuning a model to be excellent at one narrow task can quietly make it worse at everything it used to do.</p></a><a class="rc-card" href="/llms/pretraining-data-and-objectives/"><b>Pretraining Data and Objectives</b><p>Before any alignment, reasoning, or instruction-following, an LLM starts as a plain next-token predictor, trained on a specific objective over a specific (and heavily engineered) pile of text.</p></a><a class="rc-card" href="/llms/data-mixture-and-domain-weighting/"><b>Data Mixture and Domain Weighting</b><p>Even after filtering, the raw amount of available text differs wildly by domain — there&#39;s vastly more web text than there is code or curated books.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/multilingual-tokenization-and-vocabulary-fairness/">← Previous: Multilingual Tokenization and Vocabulary Fairness</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

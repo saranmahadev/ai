@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hyperparameter Tuning for Deep Networks — AI Base</title>
+<meta name="description" content="Hyperparameter Tuning already covered searching over settings like regularization strength for classic models.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/hyperparameter-tuning-for-deep-networks/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Hyperparameter Tuning for Deep Networks — AI Base">
+<meta property="og:description" content="Hyperparameter Tuning already covered searching over settings like regularization strength for classic models.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/hyperparameter-tuning-for-deep-networks/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Hyperparameter Tuning for Deep Networks","item":"https://ai.saranmahadev.in/deep-learning/hyperparameter-tuning-for-deep-networks/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hyperparameter Tuning for Deep Networks","description":"Hyperparameter Tuning already covered searching over settings like regularization strength for classic models.","url":"https://ai.saranmahadev.in/deep-learning/hyperparameter-tuning-for-deep-networks/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes exhaustive grid search often infeasible for deep network hyperparameters?","acceptedAnswer":{"@type":"Answer","text":"Each trial can take hours or days to train, so evaluating every combination in a large grid becomes prohibitively expensive, unlike cheaper classical models."}},{"@type":"Question","name":"How does successive halving save compute compared to training every candidate fully?","acceptedAnswer":{"@type":"Answer","text":"It trains all candidates only briefly at first, eliminates the weaker half based on that partial result, and only gives further training budget to survivors — spending little compute on candidates that were already looking worse."}},{"@type":"Question","name":"What is the main risk of successive halving?","acceptedAnswer":{"@type":"Answer","text":"A configuration that would have performed well with more training, but looked unpromising within the short first-round budget, can be eliminated before it has a chance to prove itself."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Training at Scale</p>
+        <h1 class="doc-title">Hyperparameter Tuning for Deep Networks</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ch1f25fbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="ch1f25fpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ch1f25fbg)"/>
+  <circle cx="509" cy="241" r="148" fill="#8a546c" opacity="0.57"/><circle cx="159" cy="181" r="116" fill="#ffb89d" opacity="0.29"/><circle cx="988" cy="71" r="60" fill="#ffb89d" opacity="0.29"/><circle cx="671" cy="300" r="79" fill="#8a546c" opacity="0.43"/><circle cx="146" cy="24" r="128" fill="#ffb89d" opacity="0.60"/><circle cx="934" cy="57" r="114" fill="#ffe6e6" opacity="0.49"/><circle cx="103" cy="305" r="124" fill="#ffb89d" opacity="0.62"/>
+  <path d="M0,420 L0,306 L30,308 L60,312 L90,318 L120,325 L150,331 L180,338 L210,343 L240,347 L270,349 L300,349 L330,347 L360,343 L390,337 L420,331 L450,324 L480,317 L510,312 L540,308 L570,306 L600,306 L630,308 L660,312 L690,318 L720,325 L750,331 L780,338 L810,343 L840,347 L870,349 L900,349 L930,347 L960,343 L990,337 L1020,331 L1050,324 L1080,317 L1110,312 L1140,308 L1170,306 L1200,306 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,362 L60,362 L90,362 L120,363 L150,363 L180,365 L210,366 L240,368 L270,370 L300,372 L330,375 L360,377 L390,380 L420,382 L450,385 L480,387 L510,389 L540,390 L570,392 L600,393 L630,394 L660,394 L690,394 L720,393 L750,393 L780,391 L810,390 L840,388 L870,386 L900,384 L930,381 L960,379 L990,376 L1020,374 L1050,371 L1080,369 L1110,367 L1140,366 L1170,364 L1200,363 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="739" cy="171" rx="198" ry="56" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(20.8 739 171)"/><ellipse cx="739" cy="171" rx="274" ry="77" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(26.8 739 171)"/>
+  <circle cx="739" cy="171" r="78" fill="url(#ch1f25fpl)"/>
+  <circle cx="970" cy="128" r="9" fill="#ffffff" opacity="0.78"/><circle cx="678" cy="61" r="16" fill="#ffffff" opacity="0.77"/><circle cx="697" cy="74" r="16" fill="#ffffff" opacity="0.83"/><circle cx="700" cy="92" r="10" fill="#ffffff" opacity="0.63"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/machine-learning/hyperparameter-tuning/" data-topic="machine-learning/hyperparameter-tuning">Hyperparameter Tuning</a> already covered searching over settings like regularization strength for classic models. Deep networks raise the stakes: more hyperparameters (learning rate, batch size, warmup length, architecture choices, and more), and each trial can cost hours or days to train — making naive exhaustive search often simply too expensive to run at all.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/hyperparameter-tuning/" data-topic="machine-learning/hyperparameter-tuning">Hyperparameter Tuning</a> and <a class="wikilink" href="/deep-learning/learning-rate-schedules-and-warmup/" data-topic="deep-learning/learning-rate-schedules-and-warmup">Learning Rate Schedules and Warmup</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Grid search over every combination of hyperparameters is already expensive for small models — how is it supposed to work when a single trial takes a day to train?&quot; Mostly, it doesn&#39;t, at that scale — which is why cheaper search strategies, and especially ones that <strong>stop bad trials early</strong>, are the practical default for tuning deep networks.</p>
+<h2 id="intuition-cutting-your-losses-early-not-training-every-candidate-to-the-finish-line">Intuition: cutting your losses early, not training every candidate to the finish line</h2>
+<p>Training every candidate configuration all the way to completion before comparing them wastes enormous compute on configurations that were obviously going to lose, long before they finished. <strong>Successive halving</strong> fixes this: start many candidates, train them all for a short while, throw out the worse half based on that partial result, and give the survivors more training — repeating until only the best few remain, each having earned their way to more compute by outperforming at every checkpoint along the way.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">naive search:        train every candidate configuration to completion, then compare
+successive halving:   train all candidates for a short budget; keep the top half;
+                       give survivors more budget; repeat until few candidates remain
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>8 candidate configurations, each potentially trained for up to 100 epochs. Comparing naive search (train every candidate the full 100 epochs) against successive halving:</p>
+<pre><code class="language-text">naive:                8 candidates × 100 epochs           = 800 epoch-units
+
+successive halving:
+  round 1:  8 candidates × 25 epochs                      = 200 epoch-units
+  round 2:  keep top 4, each trains 25 more (total 50)    = 100 epoch-units
+  round 3:  keep top 2, each trains 50 more (total 100)   = 100 epoch-units
+  total:                                                     400 epoch-units
+
+savings:  (800 − 400) / 800 = 50%
+</code></pre>
+<p>Successive halving reaches the same final training depth (100 epochs) for the eventual best candidates, while spending half the total compute — because it stops investing further training time in the 6 configurations that were already looking worse after just 25 epochs.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="successive-halving" data-title="Stopping weak candidates early"><p class="bench-fallback"><strong>Interactive bench: Stopping weak candidates early.</strong> A number of candidates and a halving schedule. See the total compute budget used by successive halving compared to training every candidate to completion.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Increase the starting number of candidates and watch the naive cost grow linearly while halving&#39;s cost grows more slowly.</li>
+<li>Change how aggressively the pool is halved (keep a smaller or larger fraction each round) and see the effect on total cost.</li>
+<li>Think about the risk: what happens to a genuinely good configuration that happens to look weak early on, purely by chance?</li>
+</ol>
+<p><strong>What you should notice:</strong> the compute savings from early stopping are substantial, but they come with a real risk — a configuration that would have turned out well but looked unpromising in its first short budget gets eliminated before it had the chance to prove itself.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Hyperband</strong>, a well-known practical algorithm, runs several successive-halving schedules with different aggressiveness settings in parallel, to hedge against exactly the early-elimination risk above.</li>
+<li><strong>Random search over grid search</strong> remains a sensible default even without early stopping, since for most hyperparameter spaces, a few dimensions matter far more than others, and random sampling tends to explore the important ones more efficiently than an exhaustive grid.</li>
+<li><strong>Population-based training</strong>, a related but distinct strategy not covered in depth here, lets surviving candidates also inherit and mutate each other&#39;s hyperparameters mid-training, rather than keeping each candidate&#39;s settings fixed throughout.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Setting the first-round budget too short.</strong> If early performance is too noisy to be informative, successive halving can eliminate genuinely good configurations purely due to that early noise.</li>
+<li><strong>Assuming hyperparameter tuning for deep networks is the same problem as for classic models, just bigger.</strong> The per-trial cost changes which search strategies are even feasible to run at all.</li>
+<li><strong>Forgetting that successive halving&#39;s savings depend on early performance being predictive of final performance.</strong> For some tasks or metrics, that assumption holds poorly, and the savings come at a real cost in search quality.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What makes exhaustive grid search often infeasible for deep network hyperparameters?</summary>
+Each trial can take hours or days to train, so evaluating every combination in a large grid becomes prohibitively expensive, unlike cheaper classical models.
+</details>
+
+<details><summary>2. How does successive halving save compute compared to training every candidate fully?</summary>
+It trains all candidates only briefly at first, eliminates the weaker half based on that partial result, and only gives further training budget to survivors — spending little compute on candidates that were already looking worse.
+</details>
+
+<details><summary>3. What is the main risk of successive halving?</summary>
+A configuration that would have performed well with more training, but looked unpromising within the short first-round budget, can be eliminated before it has a chance to prove itself.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Successive halving:</strong> a search strategy that eliminates the weaker half of candidates at each checkpoint, giving only survivors further training budget.</li>
+<li><strong>Hyperband:</strong> a practical algorithm running several successive-halving schedules in parallel to hedge against early elimination risk.</li>
+<li><strong>Epoch-units:</strong> a simple measure of total training compute used, summed across every candidate and training round.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/hyperparameter-tuning/" data-topic="machine-learning/hyperparameter-tuning">Hyperparameter Tuning</a> · <a class="wikilink" href="/deep-learning/learning-rate-schedules-and-warmup/" data-topic="deep-learning/learning-rate-schedules-and-warmup">Learning Rate Schedules and Warmup</a> · <a class="wikilink" href="/deep-learning/debugging-a-training-run/" data-topic="deep-learning/debugging-a-training-run">Debugging a Training Run</a> · <a class="wikilink" href="/deep-learning/scaling-laws-and-model-capacity/" data-topic="deep-learning/scaling-laws-and-model-capacity">Scaling Laws and Model Capacity</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/hyperparameter-tuning-for-deep-networks">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/debugging-a-training-run/"><small>Read next</small><b>Debugging a Training Run</b><p>A training run that looks &quot;broken&quot; is usually not a mystery — most failures leave a recognisable signature in the loss curve or the gradient statistics, and reading that signature correctly points…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/hyperparameter-tuning/"><b>Hyperparameter Tuning</b><p>Parameters are learned; hyperparameters are chosen before training: learning rate, tree depth, penalty strength, number of neighbours.</p></a><a class="rc-card" href="/deep-learning/learning-rate-schedules-and-warmup/"><b>Learning Rate Schedules and Warmup</b><p>A fixed learning rate is rarely the best choice for an entire training run: a step size that is safe once the network has settled down can be unstable right at the start, and a step size that…</p></a><a class="rc-card" href="/deep-learning/debugging-a-training-run/"><b>Debugging a Training Run</b><p>A training run that looks &quot;broken&quot; is usually not a mystery — most failures leave a recognisable signature in the loss curve or the gradient statistics, and reading that signature correctly points…</p></a><a class="rc-card" href="/deep-learning/scaling-laws-and-model-capacity/"><b>Scaling Laws and Model Capacity</b><p>Double descent showed overparameterized models often generalise well.</p></a><a class="rc-card" href="/deep-learning/training-at-scale/"><b>Training at Scale</b><p>Training a large network is an engineering problem as much as a mathematical one: it runs on specific hardware, for hours or weeks, and can silently fail in ways a small model never would.</p></a><a class="rc-card" href="/deep-learning/checkpointing-and-reproducibility/"><b>Checkpointing and Reproducibility</b><p>A training run that takes days can fail for all kinds of reasons that have nothing to do with the model — a machine reboots, a job gets pre-empted, a bug crashes the process.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/distributed-and-data-parallel-training/">← Previous: Distributed and Data-Parallel Training</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reservoir Computing and Liquid State Machines — AI Base</title>
+<meta name="description" content="The previous topic fixed the hidden layer&#39;s placement and solved for the output.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/reservoir-computing-and-liquid-state-machines/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Reservoir Computing and Liquid State Machines — AI Base">
+<meta property="og:description" content="The previous topic fixed the hidden layer&#39;s placement and solved for the output.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/reservoir-computing-and-liquid-state-machines/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Reservoir Computing and Liquid State Machines","item":"https://ai.saranmahadev.in/neural-networks/reservoir-computing-and-liquid-state-machines/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Reservoir Computing and Liquid State Machines","description":"The previous topic fixed the hidden layer's placement and solved for the output.","url":"https://ai.saranmahadev.in/neural-networks/reservoir-computing-and-liquid-state-machines/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which part of a reservoir computing model is trained, and which part is fixed?","acceptedAnswer":{"@type":"Answer","text":"Only the final linear readout is trained; the recurrent reservoir's own weights are fixed at random and never adjusted."}},{"@type":"Question","name":"In the worked example, why did the linear readout on raw delayed inputs perform so much worse than the reservoir readout?","acceptedAnswer":{"@type":"Answer","text":"Temporal XOR is not linearly separable in the raw `[u(t−1), u(t−2)]` inputs, the same reason ordinary XOR defeats a single linear unit; the reservoir's nonlinear recurrent mixing created a representation where a linear readout could finally separate the classes."}},{"@type":"Question","name":"What does the spectral radius control, and why does it need to stay below roughly 1?","acceptedAnswer":{"@type":"Answer","text":"It controls how strongly the reservoir's own state feeds back into itself; keeping it below about 1 keeps the dynamics stable so recent inputs fade out smoothly instead of the state growing without bound."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Alternative Architectures</p>
+        <h1 class="doc-title">Reservoir Computing and Liquid State Machines</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1h2zwl8bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="c1h2zwl8pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1h2zwl8bg)"/>
+  <circle cx="910" cy="205" r="205" fill="#50736a" opacity="0.51"/><circle cx="91" cy="32" r="170" fill="#ace3b3" opacity="0.41"/><circle cx="433" cy="360" r="204" fill="#ace3b3" opacity="0.26"/><circle cx="698" cy="325" r="120" fill="#e3f6e5" opacity="0.26"/><circle cx="1151" cy="256" r="118" fill="#ace3b3" opacity="0.52"/><circle cx="638" cy="406" r="225" fill="#c5d79b" opacity="0.56"/>
+  <path d="M0,420 L0,349 L30,350 L60,349 L90,348 L120,347 L150,345 L180,343 L210,340 L240,337 L270,334 L300,331 L330,327 L360,324 L390,321 L420,317 L450,314 L480,312 L510,310 L540,308 L570,307 L600,306 L630,306 L660,306 L690,307 L720,308 L750,310 L780,312 L810,315 L840,318 L870,321 L900,324 L930,328 L960,331 L990,335 L1020,338 L1050,341 L1080,343 L1110,346 L1140,347 L1170,349 L1200,349 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,363 L60,366 L90,369 L120,374 L150,379 L180,384 L210,388 L240,391 L270,393 L300,394 L330,393 L360,390 L390,387 L420,382 L450,377 L480,372 L510,368 L540,365 L570,363 L600,362 L630,363 L660,366 L690,369 L720,374 L750,379 L780,384 L810,388 L840,391 L870,393 L900,394 L930,393 L960,390 L990,387 L1020,382 L1050,377 L1080,372 L1110,368 L1140,365 L1170,363 L1200,362 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="886" cy="136" rx="164" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-9.4 886 136)"/><ellipse cx="886" cy="136" rx="227" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-3.4 886 136)"/>
+  <circle cx="886" cy="136" r="64" fill="url(#c1h2zwl8pl)"/>
+  <circle cx="928" cy="222" r="11" fill="#ffffff" opacity="0.64"/><circle cx="933" cy="200" r="12" fill="#ffffff" opacity="0.65"/><circle cx="938" cy="206" r="14" fill="#ffffff" opacity="0.75"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/neural-networks/radial-basis-function-networks/" data-topic="neural-networks/radial-basis-function-networks">The previous topic</a> fixed the hidden layer&#39;s <em>placement</em> and solved for the output. Reservoir computing goes a step further for sequences: fix an entire recurrent network&#39;s weights at random — never train them at all — and train only a linear readout on top of whatever rich, time-mixing dynamics the fixed network produces.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/radial-basis-function-networks/" data-topic="neural-networks/radial-basis-function-networks">Radial Basis Function Networks</a>, <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Must a recurrent network&#39;s weights be trained to make it usefully encode a sequence&#39;s history?&quot; No — a large, fixed, randomly-wired recurrent network (the <strong>reservoir</strong>) already mixes an input sequence&#39;s recent history into a rich, high-dimensional, nonlinear snapshot at every time step. Training only a simple linear readout on top of that snapshot is often enough, because the hard part — nonlinearly combining several recent inputs — was already done by the untrained reservoir&#39;s own dynamics.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Drop a stone into a pond and watch the ripples. The pond&#39;s surface at any moment reflects not just the stone that just landed, but an echo of every recent splash, all mixed together by the water&#39;s own physics — no training involved, just physical dynamics with memory. A reservoir is the same idea computationally: feed a sequence in, let a fixed, recurrent network &quot;slosh&quot; that input through its untrained connections, and read the current ripple pattern as a rich summary of recent history. The name <strong>liquid state machine</strong> makes this metaphor explicit, usually built from spiking neurons; <strong>echo state network</strong> is the equivalent built from more ordinary continuous units.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">h(t) = tanh( W_in · u(t) + W_rec · h(t−1) )      — fixed, never trained
+y(t) = W_out · h(t)                               — the only part that is trained, by least squares
+</code></pre>
+<p><code>W_rec</code>&#39;s scale is kept below a stability threshold (its largest eigenvalue magnitude, the <strong>spectral radius</strong>, below roughly 1) so the reservoir&#39;s &quot;ripples&quot; fade rather than explode over time. Because <code>y(t)</code> is linear in <code>W_out</code>, fitting it to target outputs is the same kind of least-squares problem as <a class="wikilink" href="/neural-networks/radial-basis-function-networks/" data-topic="neural-networks/radial-basis-function-networks">the previous topic&#39;s</a> output layer — just reading off a snapshot of the reservoir&#39;s state at each time step instead of a Gaussian bump&#39;s response.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>An 8-unit random reservoir (spectral radius <code>0.9</code>), driven by a random binary sequence <code>u(t) ∈ {0, 1}</code>, trained to predict the <strong>temporal XOR</strong> <code>y(t) = u(t−1) XOR u(t−2)</code> — a target that needs both a two-step memory and a nonlinear combination of what it remembers:</p>
+<pre><code class="language-text">reservoir + linear readout:     85% accuracy on 290 test points
+linear readout on raw [u(t−1), u(t−2)] directly (no reservoir at all): 33% accuracy
+</code></pre>
+<p>The raw-input baseline fails for exactly the reason <a class="wikilink" href="/machine-learning/the-perceptron/" data-topic="machine-learning/the-perceptron">a single linear unit</a> fails on ordinary XOR — the target isn&#39;t linearly separable in those two delayed inputs. The reservoir&#39;s own nonlinear, recurrent mixing turns those same two bits of history into a higher-dimensional representation where a linear readout finally works well — with not a single one of the reservoir&#39;s own weights ever trained.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="reservoir-xor" data-title="A fixed, random reservoir solves temporal XOR"><p class="bench-fallback"><strong>Interactive bench: A fixed, random reservoir solves temporal XOR.</strong> Feed a random binary sequence through a fixed random reservoir, train only a linear readout to predict the XOR of the two previous inputs, and compare its accuracy against a linear readout on the raw delayed inputs alone.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the reservoir readout&#39;s accuracy against the raw-input baseline on the same sequence.</li>
+<li>Change the reservoir&#39;s spectral radius and see accuracy change as the dynamics become more or less stable.</li>
+<li>Shrink the reservoir to 2–3 units and see how much accuracy depends on reservoir size.</li>
+</ol>
+<p><strong>What you should notice:</strong> none of the reservoir&#39;s own connections were ever adjusted to solve this specific task — the same fixed, random dynamics that make it good at temporal XOR were in place before training started.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is a genuinely different route to handling sequences</strong> than training a <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">recurrent network</a> end to end with backpropagation through time — all of the &quot;remembering&quot; happens for free, in untrained dynamics.</li>
+<li><strong>Liquid state machines connect this directly to <a class="wikilink" href="/neural-networks/spiking-neural-networks/" data-topic="neural-networks/spiking-neural-networks">Spiking Neural Networks</a></strong>: a reservoir of spiking neurons gives the same idea a biologically-motivated substrate, with the same untrained-core, trained-readout structure.</li>
+<li><strong>It is a practical choice when training the recurrent core is expensive or unnecessary</strong> — a fast linear readout is far cheaper than backpropagation through time, and sometimes performs nearly as well on tasks with modest memory demands.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Setting the spectral radius above 1.</strong> The reservoir&#39;s internal dynamics can grow unbounded instead of settling into a stable, input-driven pattern, destroying the &quot;echo&quot; property the whole method depends on.</li>
+<li><strong>Expecting a reservoir to outperform a fully-trained recurrent network on every task.</strong> It trades some task-specific performance for near-zero training cost; harder tasks often still benefit from training the recurrent weights.</li>
+<li><strong>Confusing &quot;untrained&quot; with &quot;doesn&#39;t matter.&quot;</strong> The reservoir&#39;s size, connectivity, and spectral radius are still hyperparameters that strongly affect how well the fixed dynamics suit a given task.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Which part of a reservoir computing model is trained, and which part is fixed?</summary>
+Only the final linear readout is trained; the recurrent reservoir's own weights are fixed at random and never adjusted.
+</details>
+
+<details><summary>2. In the worked example, why did the linear readout on raw delayed inputs perform so much worse than the reservoir readout?</summary>
+Temporal XOR is not linearly separable in the raw `[u(t−1), u(t−2)]` inputs, the same reason ordinary XOR defeats a single linear unit; the reservoir's nonlinear recurrent mixing created a representation where a linear readout could finally separate the classes.
+</details>
+
+<details><summary>3. What does the spectral radius control, and why does it need to stay below roughly 1?</summary>
+It controls how strongly the reservoir's own state feeds back into itself; keeping it below about 1 keeps the dynamics stable so recent inputs fade out smoothly instead of the state growing without bound.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Reservoir:</strong> a large, fixed, randomly-wired recurrent network whose dynamics are never trained.</li>
+<li><strong>Readout:</strong> the trained linear layer mapping the reservoir&#39;s current state to the desired output.</li>
+<li><strong>Spectral radius:</strong> the largest eigenvalue magnitude of the reservoir&#39;s recurrent weight matrix, kept below roughly 1 for stable dynamics.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/radial-basis-function-networks/" data-topic="neural-networks/radial-basis-function-networks">Radial Basis Function Networks</a> · <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a> · <a class="wikilink" href="/neural-networks/extreme-learning-machines/" data-topic="neural-networks/extreme-learning-machines">Extreme Learning Machines</a> · <a class="wikilink" href="/neural-networks/spiking-neural-networks/" data-topic="neural-networks/spiking-neural-networks">Spiking Neural Networks</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/reservoir-computing-and-liquid-state-machines">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/extreme-learning-machines/"><small>Read next</small><b>Extreme Learning Machines</b><p>Radial Basis Function Networks fixed a few, deliberately-placed Gaussian centres.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/radial-basis-function-networks/"><b>Radial Basis Function Networks</b><p>An ordinary artificial neuron on Deep Learning responds to a direction — a weighted sum, a dot product between input and weight vector.</p></a><a class="rc-card" href="/deep-learning/recurrent-neural-networks/"><b>Recurrent Neural Networks</b><p>A recurrent neural network (RNN) reads a sequence one element at a time, carrying a hidden state forward from each step to the next — a running summary of everything seen so far.</p></a><a class="rc-card" href="/machine-learning/the-perceptron/"><b>The Perceptron</b><p>The perceptron is the oldest learning machine: compute a weighted sum of the inputs, answer &quot;yes&quot; if it is positive and &quot;no&quot; otherwise, and after every mistake nudge the weights so that mistake is…</p></a><a class="rc-card" href="/neural-networks/spiking-neural-networks/"><b>Spiking Neural Networks</b><p>Every network so far on this planet, and every one on Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.</p></a><a class="rc-card" href="/neural-networks/extreme-learning-machines/"><b>Extreme Learning Machines</b><p>Radial Basis Function Networks fixed a few, deliberately-placed Gaussian centres.</p></a><a class="rc-card" href="/neural-networks/why-this-planet-looks-different-from-deep-learning/"><b>Why This Planet Looks Different from Deep Learning</b><p>Every architecture on the Deep Learning planet is trained the same fundamental way: compute an error against a known target, and adjust every weight to reduce it, by backpropagation.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/radial-basis-function-networks/">← Previous: Radial Basis Function Networks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Organizing Maps — AI Base</title>
+<meta name="description" content="Give a grid of units nothing but unlabelled data points, and a rule that says &quot;move the unit closest to each point a little closer, and drag its neighbours along too&quot; — and the grid gradually…">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/self-organizing-maps/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Self-Organizing Maps — AI Base">
+<meta property="og:description" content="Give a grid of units nothing but unlabelled data points, and a rule that says &quot;move the unit closest to each point a little closer, and drag its neighbours along too&quot; — and the grid gradually…">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/self-organizing-maps/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Self-Organizing Maps","item":"https://ai.saranmahadev.in/neural-networks/self-organizing-maps/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Self-Organizing Maps","description":"Give a grid of units nothing but unlabelled data points, and a rule that says \"move the unit closest to each point a little closer, and drag its neighbours along too\" — and the grid gradually…","url":"https://ai.saranmahadev.in/neural-networks/self-organizing-maps/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What determines how much a given unit moves on one update?","acceptedAnswer":{"@type":"Answer","text":"Its grid distance from the best-matching unit — the BMU itself moves most, closer neighbours move less, and units beyond the neighbourhood radius don't move at all."}},{"@type":"Question","name":"In the worked example, why did unit 3 not move?","acceptedAnswer":{"@type":"Answer","text":"Its grid distance from the BMU (unit 1) was 2, which is outside the neighbourhood radius of 1."}},{"@type":"Question","name":"What typically happens to the learning rate and radius over the course of training?","acceptedAnswer":{"@type":"Answer","text":"Both are shrunk over time, so training starts with large, coarse adjustments and ends with small, local refinements."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Self-Organization and Competitive Learning</p>
+        <h1 class="doc-title">Self-Organizing Maps</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cb3z31vbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="cb3z31vpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cb3z31vbg)"/>
+  <circle cx="241" cy="233" r="87" fill="#e3f6e5" opacity="0.31"/><circle cx="686" cy="361" r="131" fill="#e3f6e5" opacity="0.35"/><circle cx="178" cy="349" r="143" fill="#ace3b3" opacity="0.48"/><circle cx="1189" cy="248" r="177" fill="#50736a" opacity="0.30"/><circle cx="382" cy="315" r="77" fill="#ace3b3" opacity="0.24"/>
+  <path d="M0,420 L0,307 L30,306 L60,307 L90,310 L120,314 L150,320 L180,327 L210,334 L240,340 L270,345 L300,348 L330,350 L360,349 L390,346 L420,341 L450,335 L480,328 L510,321 L540,315 L570,310 L600,307 L630,306 L660,307 L690,310 L720,314 L750,320 L780,327 L810,334 L840,340 L870,345 L900,348 L930,350 L960,349 L990,346 L1020,341 L1050,335 L1080,328 L1110,321 L1140,315 L1170,310 L1200,307 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,392 L120,389 L150,385 L180,380 L210,375 L240,370 L270,366 L300,363 L330,362 L360,362 L390,364 L420,367 L450,371 L480,376 L510,381 L540,386 L570,390 L600,393 L630,394 L660,394 L690,392 L720,389 L750,385 L780,380 L810,375 L840,370 L870,366 L900,363 L930,362 L960,362 L990,364 L1020,367 L1050,371 L1080,376 L1110,381 L1140,386 L1170,390 L1200,393 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="971" cy="142" rx="225" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.6 971 142)"/><ellipse cx="971" cy="142" rx="311" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.6 971 142)"/>
+  <circle cx="971" cy="142" r="88" fill="url(#cb3z31vpl)"/>
+  <circle cx="697" cy="147" r="18" fill="#ffffff" opacity="0.86"/><circle cx="1014" cy="50" r="15" fill="#ffffff" opacity="0.86"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Give a grid of units nothing but unlabelled data points, and a rule that says &quot;move the unit closest to each point a little closer, and drag its neighbours along too&quot; — and the grid gradually arranges itself to mirror the shape of the data, with nearby grid cells responding to similar inputs. That arrangement is a self-organizing map (SOM).</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can a fixed grid of units learn to lay itself out so that nearby units respond to similar inputs, with no labels and no target output at all?&quot; By competition with a twist: for each input, find the single unit whose weight vector is closest (the <strong>best-matching unit</strong>, or BMU), then move <em>that unit and its grid neighbours</em> toward the input — the neighbours just a little less than the winner itself.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Picture a grid of units, each holding a point in the same space as the data, scattered randomly at first. Show the map one data point at a time. Each time, the closest unit &quot;wins&quot; and gets pulled toward that point — and because its neighbours on the grid get pulled too (by a shrinking amount, the further away they are), the whole neighbourhood drifts together. Over many data points, units that keep winning for similar inputs end up near each other on the grid, and the grid as a whole stretches and folds to cover the shape the data actually occupies.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>Each grid unit <code>i</code> holds a weight vector <code>wᵢ</code>, the same dimension as the data. For an input <code>x</code>:</p>
+<pre><code class="language-text">BMU(x) = argmin_i ‖wᵢ − x‖              (the closest unit, by Euclidean distance)
+
+update, for every unit i within radius r of the BMU on the grid:
+  influence(i) = exp(−dist_grid(i, BMU)² / (2r²))
+  wᵢ ← wᵢ + η · influence(i) · (x − wᵢ)
+</code></pre>
+<p>Units farther than <code>r</code> on the grid are left unchanged. Both the learning rate <code>η</code> and the radius <code>r</code> are typically shrunk over training, so the map makes large, coarse adjustments early and fine, local ones later.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A tiny 1D chain of four units with 2D weight vectors, <code>w₀=[0.1,0.1], w₁=[0.4,0.6], w₂=[0.8,0.2], w₃=[0.9,0.9]</code>, shown the input <code>x = [0.5, 0.5]</code>, with <code>η = 0.5</code> and <code>r = 1</code>:</p>
+<pre><code class="language-text">distances to x: ‖w₀−x‖=0.566, ‖w₁−x‖=0.141, ‖w₂−x‖=0.361, ‖w₃−x‖=0.566
+BMU = unit 1 (closest)
+
+grid distances from unit 1: unit0=1, unit1=0, unit2=1, unit3=2
+
+unit 0 (dist 1, within radius): influence = exp(−1/2) ≈ 0.607
+  w₀ ← [0.1,0.1] + 0.5×0.607×([0.5,0.5]−[0.1,0.1]) ≈ [0.221, 0.221]
+unit 1 (dist 0, the winner): influence = 1
+  w₁ ← [0.4,0.6] + 0.5×1×([0.5,0.5]−[0.4,0.6]) = [0.450, 0.550]
+unit 2 (dist 1, within radius): influence ≈ 0.607
+  w₂ ← [0.8,0.2] + 0.5×0.607×([0.5,0.5]−[0.8,0.2]) ≈ [0.709, 0.291]
+unit 3 (dist 2, outside radius r=1): unchanged, stays [0.9, 0.9]
+</code></pre>
+<p>One input moved three of the four units toward it — most for the winner, less for its neighbours, and not at all for the unit too far away on the grid.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="som-train" data-title="Watch a grid of units organize itself"><p class="bench-fallback"><strong>Interactive bench: Watch a grid of units organize itself.</strong> Feed a self-organizing map random points from a chosen 2D shape, one at a time, and watch the grid of units bend to cover that shape.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through single updates and watch which unit wins and how far its neighbours move.</li>
+<li>Run many steps and watch the whole grid stretch to cover the data&#39;s shape.</li>
+<li>Shrink the neighbourhood radius partway through and see updates become more local.</li>
+</ol>
+<p><strong>What you should notice:</strong> nearby units on the grid end up responding to nearby regions of the data space — the grid&#39;s own 1D or 2D layout comes to mirror the structure of the data, entirely from local, competitive updates.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Topological, human-inspectable maps of high-dimensional data</strong> — a SOM can be walked across visually, in a way that a raw high-dimensional dataset cannot.</li>
+<li><strong>Vector quantization and clustering</strong>, covered next in <a class="wikilink" href="/neural-networks/competitive-learning-and-vector-quantization/" data-topic="neural-networks/competitive-learning-and-vector-quantization">Competitive Learning and Vector Quantization</a>, is the same winner-take-all idea with the neighbourhood term removed.</li>
+<li><strong>It predates and parallels unsupervised methods on <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a></strong> like <a class="wikilink" href="/machine-learning/k-means-clustering/" data-topic="machine-learning/k-means-clustering">k-means</a>, which also assigns points to the nearest of several prototype vectors, but without a grid layout or neighbourhood update.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing the grid&#39;s geometry with the data&#39;s geometry.</strong> The grid is an artificial layout chosen before training; what self-organizes is which <em>data</em> regions each grid position comes to represent.</li>
+<li><strong>Using a fixed, large radius throughout training.</strong> Without shrinking the radius, the map keeps making coarse, disruptive updates and never refines its boundaries.</li>
+<li><strong>Expecting convergence from very few data points.</strong> The worked example shows one update; a usable map needs many updates across many (or repeated) data points.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What determines how much a given unit moves on one update?</summary>
+Its grid distance from the best-matching unit — the BMU itself moves most, closer neighbours move less, and units beyond the neighbourhood radius don't move at all.
+</details>
+
+<details><summary>2. In the worked example, why did unit 3 not move?</summary>
+Its grid distance from the BMU (unit 1) was 2, which is outside the neighbourhood radius of 1.
+</details>
+
+<details><summary>3. What typically happens to the learning rate and radius over the course of training?</summary>
+Both are shrunk over time, so training starts with large, coarse adjustments and ends with small, local refinements.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Best-matching unit (BMU):</strong> the grid unit whose weight vector is closest to the current input.</li>
+<li><strong>Neighbourhood function:</strong> a function of grid distance from the BMU that scales how much each unit is updated.</li>
+<li><strong>Topological map:</strong> a layout where nearby positions on the grid correspond to similar regions of the input space.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/competitive-learning-and-vector-quantization/" data-topic="neural-networks/competitive-learning-and-vector-quantization">Competitive Learning and Vector Quantization</a> · <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a> · <a class="wikilink" href="/machine-learning/k-means-clustering/" data-topic="machine-learning/k-means-clustering">K-Means Clustering</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/self-organizing-maps">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/competitive-learning-and-vector-quantization/"><small>Read next</small><b>Competitive Learning and Vector Quantization</b><p>The previous topic&#39;s update rule has two parts: find the winner, then update the winner and its neighbours.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a><a class="rc-card" href="/neural-networks/competitive-learning-and-vector-quantization/"><b>Competitive Learning and Vector Quantization</b><p>The previous topic&#39;s update rule has two parts: find the winner, then update the winner and its neighbours.</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a><a class="rc-card" href="/machine-learning/k-means-clustering/"><b>k-Means Clustering</b><p>k-means groups unlabelled points into k clusters by repeating two steps: assign every point to its nearest centre, then move each centre to the average of its points.</p></a><a class="rc-card" href="/neural-networks/hebbian-learning/"><b>Hebbian Learning</b><p>&quot;Cells that fire together wire together.&quot; Hebbian learning strengthens the connection between two neurons in direct proportion to how often they&#39;re active at the same time — no error signal, no…</p></a><a class="rc-card" href="/neural-networks/self-organization-and-competitive-learning/"><b>Self-Organization and Competitive Learning</b><p>No labels, no reconstruction target, no energy function — just units competing to be the one that responds to each input, and the winner (and its neighbours) adjusting to respond even better next…</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/self-organization-and-competitive-learning/">← Previous: Self-Organization and Competitive Learning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

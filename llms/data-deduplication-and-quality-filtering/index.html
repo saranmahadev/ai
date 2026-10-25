@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Deduplication and Quality Filtering — AI Base</title>
+<meta name="description" content="A web-scale crawl doesn&#39;t just contain low-quality text — it contains the same text, copied across mirrors, syndicated articles, and boilerplate, over and over.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/data-deduplication-and-quality-filtering/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Data Deduplication and Quality Filtering — AI Base">
+<meta property="og:description" content="A web-scale crawl doesn&#39;t just contain low-quality text — it contains the same text, copied across mirrors, syndicated articles, and boilerplate, over and over.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/data-deduplication-and-quality-filtering/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Data Deduplication and Quality Filtering","item":"https://ai.saranmahadev.in/llms/data-deduplication-and-quality-filtering/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Data Deduplication and Quality Filtering","description":"A web-scale crawl doesn't just contain low-quality text — it contains the same text, copied across mirrors, syndicated articles, and boilerplate, over and over.","url":"https://ai.saranmahadev.in/llms/data-deduplication-and-quality-filtering/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does n-gram Jaccard similarity catch near-duplicates that exact string matching misses?","acceptedAnswer":{"@type":"Answer","text":"It compares the overlap between two documents' sets of short token sequences rather than requiring the documents to be identical — a small edit changes only a few of those sequences, leaving the overall similarity score high."}},{"@type":"Question","name":"In the worked example, why didn't a single word swap drop the similarity all the way to 0?","acceptedAnswer":{"@type":"Answer","text":"Because most of the document's 3-grams don't touch the single changed word — only the handful of 3-grams that include that word's position are affected, while the rest remain identical between the two documents."}},{"@type":"Question","name":"How does deduplication reduce the risk of a model memorizing specific training examples?","acceptedAnswer":{"@type":"Answer","text":"By removing documents that are heavily repeated across the training set, deduplication reduces how many separate chances a model gets to see (and so memorize) any one piece of content verbatim."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Pretraining Data and Objectives</p>
+        <h1 class="doc-title">Data Deduplication and Quality Filtering</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cb9zdtmbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="cb9zdtmpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cb9zdtmbg)"/>
+  <circle cx="875" cy="344" r="89" fill="#ffc38f" opacity="0.22"/><circle cx="1032" cy="130" r="191" fill="#ffc7a2" opacity="0.59"/><circle cx="690" cy="419" r="155" fill="#ffc38f" opacity="0.45"/><circle cx="36" cy="2" r="143" fill="#ffc38f" opacity="0.40"/><circle cx="671" cy="197" r="171" fill="#ffc38f" opacity="0.38"/><circle cx="680" cy="124" r="165" fill="#8a5f5e" opacity="0.29"/>
+  <path d="M0,420 L0,316 L30,313 L60,311 L90,309 L120,307 L150,306 L180,306 L210,306 L240,306 L270,307 L300,309 L330,311 L360,314 L390,316 L420,320 L450,323 L480,326 L510,330 L540,333 L570,336 L600,339 L630,342 L660,345 L690,347 L720,348 L750,349 L780,350 L810,349 L840,349 L870,348 L900,346 L930,344 L960,342 L990,339 L1020,336 L1050,332 L1080,329 L1110,325 L1140,322 L1170,319 L1200,316 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,363 L90,364 L120,366 L150,369 L180,373 L210,376 L240,380 L270,384 L300,387 L330,390 L360,392 L390,393 L420,394 L450,394 L480,392 L510,391 L540,388 L570,385 L600,381 L630,377 L660,374 L690,370 L720,367 L750,365 L780,363 L810,362 L840,362 L870,363 L900,365 L930,367 L960,370 L990,374 L1020,377 L1050,381 L1080,385 L1110,388 L1140,391 L1170,393 L1200,394 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="786" cy="273" rx="168" ry="47" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.6 786 273)"/><ellipse cx="786" cy="273" rx="232" ry="65" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.6 786 273)"/>
+  <circle cx="786" cy="273" r="66" fill="url(#cb9zdtmpl)"/>
+  <circle cx="741" cy="362" r="14" fill="#ffffff" opacity="0.80"/><circle cx="1015" cy="245" r="9" fill="#ffffff" opacity="0.76"/><circle cx="967" cy="299" r="9" fill="#ffffff" opacity="0.75"/><circle cx="645" cy="233" r="8" fill="#ffffff" opacity="0.65"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A web-scale crawl doesn&#39;t just contain low-quality text — it contains the <em>same</em> text, copied across mirrors, syndicated articles, and boilerplate, over and over. This note covers finding and removing those near-duplicates before they ever reach training.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/pretraining-corpora-and-data-curation/" data-topic="llms/pretraining-corpora-and-data-curation">Pretraining Corpora and Data Curation</a>, <a class="wikilink" href="/generative-ai/n-gram-overlap-metrics-bleu-and-rouge/" data-topic="generative-ai/n-gram-overlap-metrics-bleu-and-rouge">n-gram Overlap Metrics (BLEU and ROUGE)</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you find documents that are essentially the same, when they aren&#39;t byte-for-byte identical?&quot; <strong>N-gram Jaccard similarity</strong> compares two documents by the overlap between their sets of n-grams (short, contiguous token sequences): the fraction of combined n-grams that both documents share. Two near-duplicate documents — the same article with a word swapped, a reposted comment with minor edits — share almost all their n-grams even though they aren&#39;t identical strings, which exact-match deduplication alone would miss entirely.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Comparing two documents character-by-character for exact equality catches only perfect copies — change one word anywhere and an exact-match check sees two completely different documents. Looking instead at the <em>set</em> of short phrases each document contains is far more forgiving of small edits: a one-word change only removes a few overlapping phrases out of potentially hundreds, so the overall similarity barely drops. That&#39;s exactly what makes near-duplicate detection possible.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">n-gram set of a document: every contiguous sequence of n tokens it contains
+
+Jaccard similarity(A, B) = |A ∩ B| / |A ∪ B|
+  = 1.0 for identical sets, 0.0 for no shared n-grams at all
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A reference document compared against a near-duplicate (one word changed) and an unrelated document, using 3-grams:</p>
+<pre><code class="language-text">reference:      &quot;the quick brown fox jumps over the lazy dog&quot;
+near-duplicate:  &quot;the quick brown fox jumps over a   lazy dog&quot;   (one word swapped)
+unrelated:      &quot;completely different content about something else entirely&quot;
+
+Jaccard(reference, near-duplicate):  0.400
+Jaccard(reference, unrelated):       0.000
+</code></pre>
+<p>A single word swap drops the similarity from 1.0 to 0.4 — nowhere near zero — because most of the document&#39;s 3-grams are untouched by the single change. The unrelated document, sharing no vocabulary at all, scores exactly 0. A deduplication threshold set somewhere between those two values (say, 0.3) would correctly flag the near-duplicate while leaving the unrelated document alone.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="dedup-jaccard" data-title="Flagging near-duplicates before training"><p class="bench-fallback"><strong>Interactive bench: Flagging near-duplicates before training.</strong> Compare a document against a near-duplicate and an unrelated one, and see how a similarity threshold decides which gets flagged.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare against the near-duplicate and note the similarity score.</li>
+<li>Compare against the unrelated document instead.</li>
+<li>Adjust the threshold until the near-duplicate is flagged but the unrelated document isn&#39;t.</li>
+</ol>
+<p><strong>What you should notice:</strong> a single word change barely moves the similarity score — exact-match deduplication would have missed this pair entirely, while n-gram overlap catches it easily.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Large-scale pretraining pipelines report removing substantial fractions of raw crawled data as near-duplicates</strong>, since web content is heavily repeated (syndicated news, template pages, copy-pasted forum replies).</li>
+<li><strong>Deduplication directly reduces <a class="wikilink" href="/generative-ai/memorization-and-training-data-leakage/" data-topic="generative-ai/memorization-and-training-data-leakage">memorization risk</a></strong>: a document repeated many times across a training set gives a model many more chances to memorize it verbatim than a document seen once.</li>
+<li><strong>The exact n-gram length and similarity threshold are real tuning choices</strong>, trading off how aggressively near-duplicates are caught against how many false positives (genuinely different documents that happen to share common phrasing) get removed.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Relying on exact string matching alone.</strong> As the worked example shows, that would miss a near-duplicate pair entirely — exact matching only catches byte-identical copies.</li>
+<li><strong>Setting the similarity threshold too low.</strong> A threshold that&#39;s too permissive starts flagging genuinely distinct documents that happen to share a lot of common phrasing (quotes, boilerplate, standard idioms) as duplicates.</li>
+<li><strong>Deduplicating only within, not across, data sources.</strong> The same article syndicated to multiple news sites is a near-duplicate across sources, not just within one.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does n-gram Jaccard similarity catch near-duplicates that exact string matching misses?</summary>
+It compares the overlap between two documents' sets of short token sequences rather than requiring the documents to be identical — a small edit changes only a few of those sequences, leaving the overall similarity score high.
+</details>
+
+<details><summary>2. In the worked example, why didn't a single word swap drop the similarity all the way to 0?</summary>
+Because most of the document's 3-grams don't touch the single changed word — only the handful of 3-grams that include that word's position are affected, while the rest remain identical between the two documents.
+</details>
+
+<details><summary>3. How does deduplication reduce the risk of a model memorizing specific training examples?</summary>
+By removing documents that are heavily repeated across the training set, deduplication reduces how many separate chances a model gets to see (and so memorize) any one piece of content verbatim.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Near-duplicate:</strong> a document that is substantially, but not exactly, the same as another.</li>
+<li><strong>N-gram Jaccard similarity:</strong> the fraction of two documents&#39; combined short token sequences that they share.</li>
+<li><strong>Deduplication:</strong> removing exact or near-duplicate documents from a training corpus.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/pretraining-corpora-and-data-curation/" data-topic="llms/pretraining-corpora-and-data-curation">Pretraining Corpora and Data Curation</a> · <a class="wikilink" href="/generative-ai/n-gram-overlap-metrics-bleu-and-rouge/" data-topic="generative-ai/n-gram-overlap-metrics-bleu-and-rouge">n-gram Overlap Metrics (BLEU and ROUGE)</a> · <a class="wikilink" href="/generative-ai/memorization-and-training-data-leakage/" data-topic="generative-ai/memorization-and-training-data-leakage">Memorization and Training Data Leakage</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/data-deduplication-and-quality-filtering">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/data-mixture-and-domain-weighting/"><small>Read next</small><b>Data Mixture and Domain Weighting</b><p>Even after filtering, the raw amount of available text differs wildly by domain — there&#39;s vastly more web text than there is code or curated books.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/pretraining-corpora-and-data-curation/"><b>Pretraining Corpora and Data Curation</b><p>Before any training happens, someone has to decide what text a model is even allowed to learn from.</p></a><a class="rc-card" href="/generative-ai/n-gram-overlap-metrics-bleu-and-rouge/"><b>n-gram Overlap Metrics (BLEU and ROUGE)</b><p>Perplexity measures how well a model predicts text it&#39;s shown; it says nothing about a model&#39;s own generated output compared to a correct answer.</p></a><a class="rc-card" href="/generative-ai/memorization-and-training-data-leakage/"><b>Memorization and Training Data Leakage</b><p>overlap detection checks whether generated output matches training data verbatim.</p></a><a class="rc-card" href="/llms/pretraining-data-and-objectives/"><b>Pretraining Data and Objectives</b><p>Before any alignment, reasoning, or instruction-following, an LLM starts as a plain next-token predictor, trained on a specific objective over a specific (and heavily engineered) pile of text.</p></a><a class="rc-card" href="/llms/data-mixture-and-domain-weighting/"><b>Data Mixture and Domain Weighting</b><p>Even after filtering, the raw amount of available text differs wildly by domain — there&#39;s vastly more web text than there is code or curated books.</p></a><a class="rc-card" href="/llms/benchmark-contamination-and-leakage/"><b>Benchmark Contamination and Leakage</b><p>A benchmark score only means something if the model is actually being tested, rather than recalling something it already saw.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/causal-language-modeling-as-a-pretraining-objective/">← Previous: Causal Language Modeling as a Pretraining Objective</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

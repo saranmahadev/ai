@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear Attention Approximations — AI Base</title>
+<meta name="description" content="Windowed attention cuts cost by refusing to compute most pairs at all.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/linear-attention-approximations/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Linear Attention Approximations — AI Base">
+<meta property="og:description" content="Windowed attention cuts cost by refusing to compute most pairs at all.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/linear-attention-approximations/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Linear Attention Approximations","item":"https://ai.saranmahadev.in/transformers/linear-attention-approximations/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Linear Attention Approximations","description":"Windowed attention cuts cost by refusing to compute most pairs at all.","url":"https://ai.saranmahadev.in/transformers/linear-attention-approximations/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What mathematical property makes the linear-order computation valid?","acceptedAnswer":{"@type":"Answer","text":"Associativity of matrix multiplication — (A·B)·C and A·(B·C) always give the same result when the shapes allow it, regardless of what the matrices represent."}},{"@type":"Question","name":"In the worked example, what was the actual source of approximation error — the reordering, or something else?","acceptedAnswer":{"@type":"Answer","text":"The feature map φ replacing softmax — the reordering itself is exact, confirmed by both orders producing identical output."}},{"@type":"Question","name":"Why does the cost gap between the two orders grow with sequence length?","acceptedAnswer":{"@type":"Answer","text":"The quadratic order's cost scales with n² while the linear order's scales with n — the ratio between the two necessarily grows as n increases."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Efficient and Scaled Attention</p>
+        <h1 class="doc-title">Linear Attention Approximations</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cywp736bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="cywp736pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cywp736bg)"/>
+  <circle cx="459" cy="125" r="121" fill="#e2efff" opacity="0.33"/><circle cx="702" cy="212" r="147" fill="#e2efff" opacity="0.29"/><circle cx="97" cy="178" r="186" fill="#4f669f" opacity="0.54"/><circle cx="94" cy="36" r="89" fill="#abd0ff" opacity="0.58"/><circle cx="705" cy="323" r="164" fill="#c5cacf" opacity="0.41"/><circle cx="914" cy="42" r="102" fill="#c5cacf" opacity="0.22"/>
+  <path d="M0,420 L0,340 L30,333 L60,326 L90,320 L120,314 L150,309 L180,306 L210,306 L240,307 L270,311 L300,316 L330,322 L360,329 L390,336 L420,341 L450,346 L480,349 L510,350 L540,348 L570,345 L600,340 L630,333 L660,326 L690,320 L720,314 L750,309 L780,306 L810,306 L840,307 L870,311 L900,316 L930,322 L960,329 L990,336 L1020,341 L1050,346 L1080,349 L1110,350 L1140,348 L1170,345 L1200,340 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,366 L60,364 L90,363 L120,362 L150,362 L180,362 L210,362 L240,363 L270,364 L300,366 L330,367 L360,369 L390,372 L420,374 L450,377 L480,379 L510,382 L540,384 L570,386 L600,388 L630,390 L660,392 L690,393 L720,394 L750,394 L780,394 L810,394 L840,393 L870,392 L900,390 L930,389 L960,387 L990,384 L1020,382 L1050,379 L1080,377 L1110,374 L1140,372 L1170,370 L1200,368 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="915" cy="268" rx="230" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(8.8 915 268)"/><ellipse cx="915" cy="268" rx="318" ry="89" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(14.8 915 268)"/>
+  <circle cx="915" cy="268" r="90" fill="url(#cywp736pl)"/>
+  <circle cx="1140" cy="161" r="19" fill="#ffffff" opacity="0.86"/><circle cx="1175" cy="316" r="18" fill="#ffffff" opacity="0.72"/><circle cx="1123" cy="363" r="15" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Windowed attention</a> cuts cost by refusing to compute most pairs at all. Linear attention takes a different route to the same destination: keep every pair&#39;s influence, but restructure the arithmetic — using a different order of matrix multiplication — so the expensive n×n score matrix never has to exist in memory in the first place.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention</a>, <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Is there a way to avoid ever computing the full n×n attention matrix, without throwing away any pairs the way windowed attention does?&quot; Yes — if the softmax is replaced with a simpler, positive &quot;feature map&quot; applied to queries and keys separately, matrix multiplication&#39;s associativity lets the exact same mathematical result be computed in a completely different order: one that multiplies a <code>d×d</code> matrix instead of an <code>n×n</code> one, however long the sequence is.</p>
+<h2 id="intuition">Intuition</h2>
+<p><code>(A · B) · C</code> and <code>A · (B · C)</code> always give the same answer for matrices whose shapes allow it — that&#39;s just associativity, true regardless of what the matrices mean. Standard attention computes <code>(φ(Q) · φ(K)ᵀ) · V</code> — forming the full query-by-key score matrix first, an <code>n × n</code> object, however long the sequence is. Reorder the same three matrices to <code>φ(Q) · (φ(K)ᵀ · V)</code> instead, and the first thing computed is <code>φ(K)ᵀ · V</code> — a <code>d × d</code> matrix, whose size depends only on the model&#39;s width, never on sequence length. The <code>n × n</code> matrix is never built at all.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">quadratic order:  (φ(Q) · φ(K)ᵀ) · V      — forms an n × n matrix first; cost ∝ n²·d
+linear order:     φ(Q) · (φ(K)ᵀ · V)      — forms a d × d matrix first; cost ∝ n·d²
+</code></pre>
+<p><code>φ</code> is a positive feature map applied to queries and keys (a common choice is <code>elu(x) + 1</code>), standing in for the softmax — this substitution is the actual approximation: it changes what attention computes, trading the softmax&#39;s exact normalization for a function that makes the reordering trick valid.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 5-position sequence, 3-dimensional queries, keys and values, computed both ways:</p>
+<pre><code class="language-text">quadratic order output: identical to linear order output, to the digit — e.g. first row [4.665, 4.233, 5.187]
+</code></pre>
+<p>Both orders produce the exact same result, confirming the reordering itself is mathematically exact — only the feature map <code>φ</code> is an approximation of softmax, not the reassociation. Comparing the actual arithmetic cost (multiply-adds) at a few scales:</p>
+<pre><code class="language-text">n = 5,     d = 3:   quadratic 150        linear 90          →   1.7× fewer
+n = 1,000, d = 64:  quadratic 128,000,000  linear 8,192,000  →  15.6× fewer
+n = 10,000, d = 64: quadratic 12,800,000,000  linear 81,920,000 → 156.3× fewer
+</code></pre>
+<p>The advantage isn&#39;t fixed — it grows with sequence length, because the quadratic order&#39;s cost scales with <code>n²</code> while the linear order&#39;s scales with just <code>n</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="linear-attention-order" data-title="Same answer, two different costs"><p class="bench-fallback"><strong>Interactive bench: Same answer, two different costs.</strong> Compute the same small attention result two ways — the usual quadratic order and the linear order — confirm they match, and compare their arithmetic cost at larger scales.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Confirm both orders produce the same output on the same small example.</li>
+<li>Increase the sequence length and watch the cost gap between the two orders widen.</li>
+<li>Change the model width <code>d</code> and see how it affects the linear order&#39;s cost specifically.</li>
+</ol>
+<p><strong>What you should notice:</strong> the two orders are the <em>same computation</em>, not two different algorithms producing different answers — the entire benefit comes from the order of operations alone.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is a genuinely different strategy from <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">windowed attention</a></strong>: windowed attention throws away distant pairs entirely; linear attention keeps every pair&#39;s influence, approximated through the feature map, while changing how the computation is organized.</li>
+<li><strong>The feature map choice is itself an active area of design</strong> — different choices trade off how closely the approximation matches true softmax attention against other practical considerations.</li>
+<li><strong><a class="wikilink" href="/transformers/io-aware-attention-computation/" data-topic="transformers/io-aware-attention-computation">the next topic</a> takes yet another angle on the same underlying problem</strong>: computing <em>exact</em> softmax attention faster, not approximating it at all.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming linear attention computes exactly the same thing as softmax attention.</strong> The reassociation trick is exact; the feature map replacing softmax is not — real approximation error is introduced there, not in the reordering.</li>
+<li><strong>Expecting the linear order to help at short sequence lengths.</strong> At small <code>n</code> relative to <code>d</code>, as the worked example&#39;s first row shows, the saving can be modest — the real advantage shows up at long sequences.</li>
+<li><strong>Forgetting causal masking complicates this trick.</strong> The simple reordering shown here assumes no masking; making it work with causal masking (needed for decoder-only generation) requires a more careful, running-sum version of the same idea.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What mathematical property makes the linear-order computation valid?</summary>
+Associativity of matrix multiplication — (A·B)·C and A·(B·C) always give the same result when the shapes allow it, regardless of what the matrices represent.
+</details>
+
+<details><summary>2. In the worked example, what was the actual source of approximation error — the reordering, or something else?</summary>
+The feature map φ replacing softmax — the reordering itself is exact, confirmed by both orders producing identical output.
+</details>
+
+<details><summary>3. Why does the cost gap between the two orders grow with sequence length?</summary>
+The quadratic order's cost scales with n² while the linear order's scales with n — the ratio between the two necessarily grows as n increases.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Feature map (φ):</strong> a function applied to queries and keys in place of softmax, chosen to make the linear-order computation valid.</li>
+<li><strong>Associativity:</strong> the property that matrix multiplication gives the same result regardless of grouping, which the linear-order trick relies on.</li>
+<li><strong>Linear attention:</strong> an attention computation reorganized to scale linearly, rather than quadratically, with sequence length.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention</a> · <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a> · <a class="wikilink" href="/transformers/io-aware-attention-computation/" data-topic="transformers/io-aware-attention-computation">IO-Aware Attention Computation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/linear-attention-approximations">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/io-aware-attention-computation/"><small>Read next</small><b>IO-Aware Attention Computation</b><p>Linear attention changes what gets computed — trading exact softmax for an approximation. This topic changes nothing about what&#39;s computed at all.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/sparse-and-local-windowed-attention/"><b>Sparse and Local (Windowed) Attention</b><p>KV-caching fixes redundant recomputation, but the underlying attention computation itself still scales with the square of sequence length.</p></a><a class="rc-card" href="/math/matrix-multiplication/"><b>Matrix Multiplication</b><p>Matrix multiplication combines two matrices into one that does both transformations in a row. Each entry of the result is a dot product of a row of the first matrix with a column of the second.</p></a><a class="rc-card" href="/transformers/io-aware-attention-computation/"><b>IO-Aware Attention Computation</b><p>Linear attention changes what gets computed — trading exact softmax for an approximation. This topic changes nothing about what&#39;s computed at all.</p></a><a class="rc-card" href="/transformers/efficient-and-scaled-attention/"><b>Efficient and Scaled Attention</b><p>Plain multi-head attention gets expensive fast: its cost grows with the square of sequence length, and its memory traffic during inference grows with every token generated.</p></a><a class="rc-card" href="/llms/long-context-transformers/"><b>Long-Context Transformers</b><p>Every mechanism this road has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more…</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/sparse-and-local-windowed-attention/">← Previous: Sparse and Local (Windowed) Attention</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

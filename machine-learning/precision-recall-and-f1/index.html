@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Precision, Recall and F1 — AI Base</title>
+<meta name="description" content="Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision).">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/precision-recall-and-f1/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Precision, Recall and F1 — AI Base">
+<meta property="og:description" content="Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision).">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/precision-recall-and-f1/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Precision, Recall and F1","item":"https://ai.saranmahadev.in/machine-learning/precision-recall-and-f1/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Precision, Recall and F1","description":"Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision).","url":"https://ai.saranmahadev.in/machine-learning/precision-recall-and-f1/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Precision 0.5 and recall 0.5. What is F1?","acceptedAnswer":{"@type":"Answer","text":"0.5."}},{"@type":"Question","name":"What happens to recall when the threshold is raised?","acceptedAnswer":{"@type":"Answer","text":"It falls, because fewer real cases are flagged."}},{"@type":"Question","name":"Why the harmonic mean rather than the plain average?","acceptedAnswer":{"@type":"Answer","text":"It punishes a big imbalance: a model with tiny recall cannot look good."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Evaluation</p>
+        <h1 class="doc-title">Precision, Recall and F1</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1ivlg84bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1ivlg84pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1ivlg84bg)"/>
+  <circle cx="32" cy="254" r="75" fill="#fff2de" opacity="0.57"/><circle cx="697" cy="314" r="109" fill="#8a6b5c" opacity="0.57"/><circle cx="760" cy="78" r="168" fill="#fff2de" opacity="0.58"/><circle cx="929" cy="136" r="102" fill="#8a6b5c" opacity="0.32"/><circle cx="448" cy="35" r="73" fill="#8a6b5c" opacity="0.27"/>
+  <path d="M0,420 L0,322 L30,317 L60,313 L90,310 L120,307 L150,306 L180,306 L210,307 L240,309 L270,312 L300,316 L330,321 L360,326 L390,331 L420,336 L450,341 L480,345 L510,347 L540,349 L570,350 L600,349 L630,347 L660,344 L690,340 L720,336 L750,331 L780,325 L810,320 L840,316 L870,312 L900,309 L930,307 L960,306 L990,306 L1020,307 L1050,310 L1080,314 L1110,318 L1140,323 L1170,328 L1200,333 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,364 L90,366 L120,368 L150,371 L180,375 L210,379 L240,383 L270,386 L300,389 L330,391 L360,393 L390,394 L420,394 L450,393 L480,391 L510,389 L540,386 L570,382 L600,378 L630,375 L660,371 L690,368 L720,365 L750,363 L780,362 L810,362 L840,363 L870,364 L900,366 L930,369 L960,373 L990,376 L1020,380 L1050,384 L1080,387 L1110,390 L1140,392 L1170,393 L1200,394 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="953" cy="287" rx="189" ry="53" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.9 953 287)"/><ellipse cx="953" cy="287" rx="261" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.1 953 287)"/>
+  <circle cx="953" cy="287" r="74" fill="url(#c1ivlg84pl)"/>
+  <circle cx="923" cy="189" r="18" fill="#ffffff" opacity="0.66"/><circle cx="1089" cy="339" r="15" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision). Because you can always trade one for the other by moving the decision threshold, a model must be judged over a range of thresholds, or by a summary such as <strong>F1</strong>.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/accuracy-and-the-confusion-matrix/" data-topic="machine-learning/accuracy-and-the-confusion-matrix">Accuracy and the Confusion Matrix</a>, <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> and <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Where should I set the threshold?&quot; Every score-producing model turns a score into a yes/no by a cut-off, and the cut-off decides the balance between misses and false alarms.</p>
+<h2 id="intuition-how-wide-is-the-net">Intuition: how wide is the net?</h2>
+<p>Cast a wide net and you catch nearly every fish (high recall) along with plenty of boots (low precision). Cast a narrow net and what you haul up is nearly all fish (high precision) but you leave many behind (low recall). The score distributions of positives and negatives overlap, so no threshold avoids both errors.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">precision = TP / (TP + FP)          recall = TP / (TP + FN)
+F1        = 2 · precision · recall / (precision + recall)      the harmonic mean
+F_β       = (1 + β²) · P · R / (β² · P + R)    β &gt; 1 favours recall, β &lt; 1 favours precision
+</code></pre>
+<p>The harmonic mean is dominated by the smaller of the two, so F1 is high only when <em>both</em> are decent: precision 100% with recall 1% gives F1 of about 2%, not 50%.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Positives score around 1.5 and negatives around 0 (bell curves of spread 1); 20% of 1,000 cases are positive (200 positives, 800 negatives). Expected counts at three thresholds:</p>
+<pre><code class="language-text">threshold   caught (TP)   false alarms (FP)   precision   recall    F1
+  0.75         154.7            181.3           46.0%     77.3%   57.7%
+  1.50         100.0             53.4           65.2%     50.0%   56.6%
+  2.25          45.3              9.8           82.3%     22.7%   35.5%
+</code></pre>
+<p>Raising the threshold from 0.75 to 2.25 lifts precision from 46% to 82% while recall collapses from 77% to 23%. F1 is best in the middle and drops at the ends. Which threshold is &quot;right&quot; depends on cost: catching a rare disease favours recall; sending a legal notice favours precision.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="pr-tradeoff" data-title="Precision against recall"><p class="bench-fallback"><strong>Interactive bench: Precision against recall.</strong> Two overlapping score distributions for positives and negatives with a slider for the threshold; the bench shows precision, recall, F1 and how many cases are flagged, with sliders for the class separation and the share of positives.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the threshold from low to high and watch precision and recall.</li>
+<li>Find the threshold that maximises F1.</li>
+<li>Increase the class separation and see both metrics improve.</li>
+<li>Lower the share of positives and watch precision fall at the same threshold.</li>
+</ol>
+<p><strong>What you should notice:</strong> precision and recall move in opposite directions along the threshold, better separation lifts both, and rarer positives make precision harder.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Search and retrieval:</strong> precision of the top results against how many relevant items were found.</li>
+<li><strong>Anomaly and fraud alerts:</strong> alert fatigue (low precision) against missed events (low recall).</li>
+<li><strong>Language-model evaluation</strong> of retrieval and extraction tasks.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Quoting one number at an unstated threshold.</strong></li>
+<li><strong>Optimising F1 when costs are unequal.</strong></li>
+<li><strong>Averaging F1 across classes without saying how</strong> (micro, macro or weighted).</li>
+<li><strong>Comparing F1 across datasets</strong> with different prevalence.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Precision 0.5 and recall 0.5. What is F1?</summary>
+0.5.
+</details>
+
+<details><summary>2. What happens to recall when the threshold is raised?</summary>
+It falls, because fewer real cases are flagged.
+</details>
+
+<details><summary>3. Why the harmonic mean rather than the plain average?</summary>
+It punishes a big imbalance: a model with tiny recall cannot look good.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Threshold:</strong> the score cut-off that turns a score into a yes/no.</li>
+<li><strong>F1 score:</strong> the harmonic mean of precision and recall.</li>
+<li><strong>F-beta:</strong> F-score weighting recall β times as much as precision.</li>
+<li><strong>Trade-off:</strong> gaining on one metric costs on the other.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/accuracy-and-the-confusion-matrix/" data-topic="machine-learning/accuracy-and-the-confusion-matrix">Accuracy and the Confusion Matrix</a> · <a class="wikilink" href="/machine-learning/roc-and-auc/" data-topic="machine-learning/roc-and-auc">ROC and AUC</a> · <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a> · <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> · <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/precision-recall-and-f1">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/roc-and-auc/"><small>Read next</small><b>ROC and AUC</b><p>The ROC curve shows what a classifier achieves at every possible threshold at once: how many real positives it catches (true positive rate) against how many false alarms it raises (false positive…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/accuracy-and-the-confusion-matrix/"><b>Accuracy and the Confusion Matrix</b><p>Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it.</p></a><a class="rc-card" href="/math/continuous-distributions/"><b>Continuous Distributions</b><p>A continuous random variable can take any value in a range, so no single value has positive probability.</p></a><a class="rc-card" href="/machine-learning/logistic-regression-as-a-classifier/"><b>Logistic Regression as a Classifier</b><p>Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.</p></a><a class="rc-card" href="/machine-learning/roc-and-auc/"><b>ROC and AUC</b><p>The ROC curve shows what a classifier achieves at every possible threshold at once: how many real positives it catches (true positive rate) against how many false alarms it raises (false positive…</p></a><a class="rc-card" href="/fundamentals/measuring-performance/"><b>Measuring Performance</b><p>To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.</p></a><a class="rc-card" href="/machine-learning/evaluation/"><b>Evaluation</b><p>A model is only as good as the evidence for it.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/accuracy-and-the-confusion-matrix/">← Previous: Accuracy and the Confusion Matrix</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

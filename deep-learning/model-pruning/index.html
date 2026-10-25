@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Pruning — AI Base</title>
+<meta name="description" content="A trained network rarely needs every single weight it ended up with.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/model-pruning/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Model Pruning — AI Base">
+<meta property="og:description" content="A trained network rarely needs every single weight it ended up with.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/model-pruning/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Model Pruning","item":"https://ai.saranmahadev.in/deep-learning/model-pruning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Model Pruning","description":"A trained network rarely needs every single weight it ended up with.","url":"https://ai.saranmahadev.in/deep-learning/model-pruning/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does magnitude pruning remove?","acceptedAnswer":{"@type":"Answer","text":"The weights with the smallest absolute value, on the reasoning that they contribute the least to the output."}},{"@type":"Question","name":"Why does structured pruning speed up computation on ordinary hardware, while unstructured pruning often doesn't?","acceptedAnswer":{"@type":"Answer","text":"Structured pruning removes whole units or channels, actually shrinking the matrices involved; unstructured pruning leaves scattered zeros inside matrices of the same shape, which ordinary hardware doesn't automatically skip over."}},{"@type":"Question","name":"In the worked example, what was the cost (in relative error) of removing half the weights?","acceptedAnswer":{"@type":"Answer","text":"About 9.1% — a comparatively small change in output for a 50% reduction in the number of non-zero weights."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Efficiency and Deployment</p>
+        <h1 class="doc-title">Model Pruning</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ctsk6ylbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="ctsk6ylpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ctsk6ylbg)"/>
+  <circle cx="1157" cy="249" r="225" fill="#ffe6e6" opacity="0.55"/><circle cx="447" cy="44" r="207" fill="#ffe6e6" opacity="0.30"/><circle cx="754" cy="335" r="132" fill="#ffb6b6" opacity="0.27"/><circle cx="557" cy="340" r="62" fill="#8a546c" opacity="0.38"/><circle cx="714" cy="361" r="115" fill="#ffb6b6" opacity="0.43"/>
+  <path d="M0,420 L0,332 L30,335 L60,339 L90,341 L120,344 L150,346 L180,348 L210,349 L240,349 L270,350 L300,349 L330,348 L360,347 L390,345 L420,342 L450,340 L480,337 L510,333 L540,330 L570,326 L600,323 L630,320 L660,317 L690,314 L720,311 L750,309 L780,308 L810,306 L840,306 L870,306 L900,306 L930,307 L960,309 L990,311 L1020,313 L1050,316 L1080,319 L1110,322 L1140,325 L1170,329 L1200,332 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,392 L90,389 L120,385 L150,380 L180,375 L210,370 L240,366 L270,363 L300,362 L330,362 L360,364 L390,367 L420,371 L450,376 L480,381 L510,386 L540,390 L570,393 L600,394 L630,394 L660,392 L690,389 L720,385 L750,380 L780,375 L810,370 L840,366 L870,363 L900,362 L930,362 L960,364 L990,367 L1020,371 L1050,376 L1080,381 L1110,386 L1140,390 L1170,393 L1200,394 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="786" cy="228" rx="258" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-7.7 786 228)"/><ellipse cx="786" cy="228" rx="357" ry="100" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-1.7 786 228)"/>
+  <circle cx="786" cy="228" r="101" fill="url(#ctsk6ylpl)"/>
+  <circle cx="738" cy="118" r="8" fill="#ffffff" opacity="0.82"/><circle cx="933" cy="373" r="8" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A trained network rarely needs every single weight it ended up with. <strong>Pruning</strong> removes the ones that matter least — often simply the weights closest to zero — shrinking the model with, ideally, only a small cost to accuracy.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> and <a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;A trained network has millions of weights — are they all actually necessary?&quot; Usually not: many end up tiny, contributing almost nothing to the output, and can be removed (set to exactly zero) with little effect on what the network computes.</p>
+<h2 id="intuition-trimming-the-dead-branches-not-the-trunk">Intuition: trimming the dead branches, not the trunk</h2>
+<p>A weight with a value very close to zero barely changes the output no matter what multiplies it — it&#39;s a dead branch on an otherwise healthy tree. <strong>Magnitude pruning</strong> cuts the smallest-magnitude weights first, on the reasoning that they were contributing the least anyway. <strong>Structured pruning</strong> goes further, removing whole units, channels or filters at once (not just individual weights), which — unlike scattered individual-weight pruning — actually speeds up computation on ordinary hardware, since it shrinks the matrices themselves rather than leaving sparse holes in them.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">magnitude pruning:   remove the weights with the smallest |w|, setting them to exactly 0
+structured pruning:  remove whole units/channels/filters, not just scattered individual weights
+
+sparsity = (number of zeroed weights) / (total weights)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 6-weight layer, <code>w = (0.9, −0.05, 0.6, 0.02, −0.8, 0.1)</code>, computing a dot product against an input of all 1s:</p>
+<pre><code class="language-text">full output = 0.9 − 0.05 + 0.6 + 0.02 − 0.8 + 0.1 = 0.77
+
+prune the 3 smallest-magnitude weights (0.02, 0.05, 0.10) → set to 0:
+pruned w = (0.9, 0, 0.6, 0, −0.8, 0)
+
+pruned output = 0.9 + 0.6 − 0.8 = 0.70
+
+relative error = |0.77 − 0.70| / |0.77| ≈ 9.1%
+</code></pre>
+<p>Removing half the weights (50% sparsity) only shifted the output by about 9% — exactly the trade-off pruning aims for: a large reduction in parameters for a comparatively small change in behaviour.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="prune-weights" data-title="Pruning the smallest weights"><p class="bench-fallback"><strong>Interactive bench: Pruning the smallest weights.</strong> A short weight vector and an input. Adjust how much to prune (by magnitude) and watch the sparsity, the output, and the relative error against the unpruned output.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Increase the pruning amount gradually and watch when the relative error starts climbing sharply.</li>
+<li>Set one weight to be very large and watch how much sparsity you can apply before it (the largest weight) has to be touched.</li>
+<li>Compare pruning amounts that remove &quot;obviously small&quot; weights versus amounts that start cutting into meaningfully-sized ones.</li>
+</ol>
+<p><strong>What you should notice:</strong> error tends to stay small while pruning only removes genuinely tiny weights, then rises more sharply once pruning starts removing weights that were actually contributing something.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Deploying models on resource-constrained devices</strong> (see <a class="wikilink" href="/deep-learning/edge-and-on-device-deep-learning/" data-topic="deep-learning/edge-and-on-device-deep-learning">Edge and On-Device Deep Learning</a>) often combines pruning with <a class="wikilink" href="/deep-learning/quantization/" data-topic="deep-learning/quantization">Quantization</a> and <a class="wikilink" href="/deep-learning/knowledge-distillation/" data-topic="deep-learning/knowledge-distillation">Knowledge Distillation</a> to meet strict size and speed budgets.</li>
+<li><strong>Iterative pruning and fine-tuning</strong>, not covered in full detail here, alternates pruning a little, retraining to recover accuracy, and pruning further — usually reaching much higher sparsity than a single one-shot cut.</li>
+<li><strong>The &quot;lottery ticket hypothesis&quot;</strong>, an influential line of research, found that some pruned sub-networks, if retrained from their <em>original</em> initial weights, can match the full network&#39;s accuracy — suggesting much of a large network&#39;s benefit comes from giving training many chances to find a good sparse sub-network, not from needing every weight at inference time.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming unstructured pruning (scattered individual weights) speeds up a model on ordinary hardware.</strong> It reduces parameter count and storage, but a sparse matrix with scattered zeros usually needs specialised hardware or software support to actually run faster.</li>
+<li><strong>Pruning too aggressively in one shot.</strong> Accuracy often degrades sharply past some point; gradual pruning with retraining in between usually reaches much higher sparsity safely.</li>
+<li><strong>Forgetting pruning changes the model permanently.</strong> Unlike dropout (training-time only), pruned weights are typically gone for good at inference.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does magnitude pruning remove?</summary>
+The weights with the smallest absolute value, on the reasoning that they contribute the least to the output.
+</details>
+
+<details><summary>2. Why does structured pruning speed up computation on ordinary hardware, while unstructured pruning often doesn't?</summary>
+Structured pruning removes whole units or channels, actually shrinking the matrices involved; unstructured pruning leaves scattered zeros inside matrices of the same shape, which ordinary hardware doesn't automatically skip over.
+</details>
+
+<details><summary>3. In the worked example, what was the cost (in relative error) of removing half the weights?</summary>
+About 9.1% — a comparatively small change in output for a 50% reduction in the number of non-zero weights.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Pruning:</strong> removing weights (or whole units) from a trained network to shrink it.</li>
+<li><strong>Magnitude pruning:</strong> removing the smallest-magnitude weights specifically.</li>
+<li><strong>Sparsity:</strong> the fraction of a network&#39;s weights that have been pruned (set to zero).</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> · <a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a> · <a class="wikilink" href="/deep-learning/quantization/" data-topic="deep-learning/quantization">Quantization</a> · <a class="wikilink" href="/deep-learning/knowledge-distillation/" data-topic="deep-learning/knowledge-distillation">Knowledge Distillation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/model-pruning">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/quantization/"><small>Read next</small><b>Quantization</b><p>A weight stored as a 32-bit float can represent an enormous range of values with high precision — far more precision than most trained weights actually need.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/the-multilayer-feedforward-network/"><b>The Multilayer Feedforward Network</b><p>A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.</p></a><a class="rc-card" href="/deep-learning/overfitting-and-double-descent/"><b>Overfitting and Double Descent</b><p>The classical picture of overfitting says test error falls as a model grows, then rises once it has enough capacity to memorise noise — a U-shape.</p></a><a class="rc-card" href="/deep-learning/edge-and-on-device-deep-learning/"><b>Edge and On-Device Deep Learning</b><p>Running a model on a phone, a smartwatch, or a tiny embedded chip is a different problem from running it on a server: memory, compute, power and network connectivity are all far more constrained,…</p></a><a class="rc-card" href="/deep-learning/quantization/"><b>Quantization</b><p>A weight stored as a 32-bit float can represent an enormous range of values with high precision — far more precision than most trained weights actually need.</p></a><a class="rc-card" href="/deep-learning/knowledge-distillation/"><b>Knowledge Distillation</b><p>A large, accurate teacher network&#39;s final prediction is one number per class — but its full output, before being squashed into near-certainty, carries far more information: how confident it was,…</p></a><a class="rc-card" href="/deep-learning/efficiency-and-deployment/"><b>Efficiency and Deployment</b><p>A network that trains well is not automatically one you can afford to run.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/efficiency-and-deployment/">← Previous: Efficiency and Deployment</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

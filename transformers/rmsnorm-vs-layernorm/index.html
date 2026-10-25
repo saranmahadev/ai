@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RMSNorm vs LayerNorm — AI Base</title>
+<meta name="description" content="The previous topic was about where normalization sits.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/rmsnorm-vs-layernorm/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="RMSNorm vs LayerNorm — AI Base">
+<meta property="og:description" content="The previous topic was about where normalization sits.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/rmsnorm-vs-layernorm/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"RMSNorm vs LayerNorm","item":"https://ai.saranmahadev.in/transformers/rmsnorm-vs-layernorm/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"RMSNorm vs LayerNorm","description":"The previous topic was about where normalization sits.","url":"https://ai.saranmahadev.in/transformers/rmsnorm-vs-layernorm/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What statistic does RMSNorm skip computing that LayerNorm needs?","acceptedAnswer":{"@type":"Answer","text":"The mean — RMSNorm only needs the mean squared value (root-mean-square), while LayerNorm needs both the mean and the variance around it."}},{"@type":"Question","name":"In the worked example, why is RMSNorm's output exactly proportional to the input, but LayerNorm's is not?","acceptedAnswer":{"@type":"Answer","text":"RMSNorm divides by a single scalar with no subtraction, so every output component is the matching input component times that same constant; LayerNorm first subtracts the mean, which is not a uniform scalar operation and can change the vector's relative proportions (or even zero out a nonzero entry)."}},{"@type":"Question","name":"Which transformer families are known to use RMSNorm specifically?","acceptedAnswer":{"@type":"Answer","text":"The LLaMA family of models is a well-known example of a widely-used transformer family built with RMSNorm instead of LayerNorm."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · The Transformer Block</p>
+        <h1 class="doc-title">RMSNorm vs LayerNorm</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1k1gpqxbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1k1gpqxpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1k1gpqxbg)"/>
+  <circle cx="369" cy="43" r="90" fill="#abd0ff" opacity="0.47"/><circle cx="540" cy="261" r="203" fill="#e2efff" opacity="0.40"/><circle cx="1162" cy="245" r="190" fill="#c5cacf" opacity="0.26"/><circle cx="1182" cy="351" r="147" fill="#e2efff" opacity="0.31"/><circle cx="383" cy="346" r="197" fill="#abd0ff" opacity="0.51"/><circle cx="720" cy="262" r="211" fill="#c5cacf" opacity="0.30"/>
+  <path d="M0,420 L0,312 L30,316 L60,321 L90,326 L120,331 L150,336 L180,341 L210,345 L240,347 L270,349 L300,350 L330,349 L360,347 L390,344 L420,340 L450,336 L480,331 L510,326 L540,320 L570,316 L600,312 L630,309 L660,307 L690,306 L720,306 L750,307 L780,310 L810,314 L840,318 L870,323 L900,328 L930,333 L960,338 L990,342 L1020,346 L1050,348 L1080,349 L1110,350 L1140,348 L1170,346 L1200,343 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,369 L30,366 L60,364 L90,363 L120,362 L150,362 L180,363 L210,365 L240,368 L270,371 L300,375 L330,378 L360,382 L390,386 L420,389 L450,391 L480,393 L510,394 L540,394 L570,393 L600,391 L630,389 L660,386 L690,383 L720,379 L750,375 L780,372 L810,368 L840,366 L870,364 L900,362 L930,362 L960,363 L990,364 L1020,366 L1050,369 L1080,372 L1110,376 L1140,380 L1170,383 L1200,387 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="684" cy="136" rx="228" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-16.8 684 136)"/><ellipse cx="684" cy="136" rx="315" ry="88" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-10.8 684 136)"/>
+  <circle cx="684" cy="136" r="89" fill="url(#c1k1gpqxpl)"/>
+  <circle cx="741" cy="37" r="11" fill="#ffffff" opacity="0.83"/><circle cx="411" cy="178" r="13" fill="#ffffff" opacity="0.78"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/" data-topic="transformers/layer-normalization-placement-pre-norm-vs-post-norm">The previous topic</a> was about <em>where</em> normalization sits. This one is about <em>what it computes</em>: LayerNorm centers a vector around zero before rescaling it; RMSNorm skips the centering step entirely and just rescales.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/" data-topic="transformers/layer-normalization-placement-pre-norm-vs-post-norm">Layer Normalization Placement: Pre-Norm vs Post-Norm</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does normalization actually need to subtract the mean, or is rescaling alone enough?&quot; LayerNorm does both: subtract the mean (re-centering), then divide by the standard deviation (rescaling). RMSNorm drops the first step — no mean subtraction — and divides only by the root-mean-square. Many modern transformers (the LLaMA family among them) use RMSNorm specifically, trading away the centering step for a simpler, cheaper computation that empirically works just as well in practice.</p>
+<h2 id="intuition">Intuition</h2>
+<p>LayerNorm treats a vector&#39;s values as a little distribution: find its average, shift everything so that average becomes zero, then rescale so the spread is standard. RMSNorm skips straight to the rescaling: measure the vector&#39;s overall size (its root-mean-square), and divide by that — no shifting involved. Because RMSNorm never subtracts anything, its output is always a plain positive-scalar multiple of the input; the vector&#39;s <em>direction</em> (which component is biggest, which is negative) is completely preserved. LayerNorm&#39;s mean-centering step can change that direction.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">LayerNorm(x) = (x − mean(x)) / √(var(x) + ε)
+RMSNorm(x)   = x / √(mean(x²) + ε)
+</code></pre>
+<p><code>mean(x²)</code> is a vector&#39;s mean squared value — its root-mean-square, squared. RMSNorm needs only this one statistic; LayerNorm needs both the mean and the variance.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The same vector <code>x = [2, 4, −1, 3]</code> normalized both ways:</p>
+<pre><code class="language-text">mean(x) = 2,  variance(x) = 3.5
+LayerNorm(x) = [0.000, 1.069, −1.604, 0.535]
+
+mean(x²) = 7.5
+RMSNorm(x) = [0.730, 1.461, −0.365, 1.095]
+</code></pre>
+<p>Notice RMSNorm&#39;s output is <em>exactly</em> <code>x</code> scaled by one constant (<code>1/√7.5 ≈ 0.365</code>): <code>2 × 0.365 = 0.730</code>, <code>4 × 0.365 = 1.461</code>, and so on for every entry — a pure rescaling, preserving the input&#39;s exact proportions and sign pattern. LayerNorm&#39;s output is not a scalar multiple of <code>x</code> at all — the first entry became exactly <code>0</code> (since <code>x₀</code> happened to equal the mean), something no scalar multiplication of a nonzero input could ever produce.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rmsnorm-vs-layernorm" data-title="Centering and rescaling, or rescaling alone"><p class="bench-fallback"><strong>Interactive bench: Centering and rescaling, or rescaling alone.</strong> Normalize a chosen vector with both LayerNorm and RMSNorm, and compare whether each output stays proportional to the original input.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Try a vector whose mean is zero already, and see LayerNorm and RMSNorm produce very similar (though not necessarily identical) results.</li>
+<li>Try a vector with a large mean offset, and watch LayerNorm&#39;s output diverge sharply from a simple rescaling of the input.</li>
+<li>Check whether RMSNorm&#39;s output stays exactly proportional to the input for every vector you try.</li>
+</ol>
+<p><strong>What you should notice:</strong> RMSNorm&#39;s output is always exactly proportional to its input — confirm this by checking that every output component divided by the matching input component gives the same constant.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>RMSNorm is the normalization function in several widely-used modern transformer families</strong> — a real production choice valued for being cheaper to compute (no mean to track) and, empirically, not costing accuracy.</li>
+<li><strong>It fits into the exact same slot <a class="wikilink" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/" data-topic="transformers/layer-normalization-placement-pre-norm-vs-post-norm">pre-norm or post-norm placement</a> describes</strong> — the placement question and the &quot;which normalization function&quot; question are independent choices that can be mixed and matched.</li>
+<li><strong><a class="wikilink" href="/transformers/the-feed-forward-sublayer/" data-topic="transformers/the-feed-forward-sublayer">the next topic</a> sits right where this normalization is applied</strong>, inside each transformer block, whichever normalization function is used.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming RMSNorm is a special case of LayerNorm.</strong> They compute genuinely different statistics (mean-square vs. variance around the mean), not the same formula with a step skipped and nothing else different.</li>
+<li><strong>Expecting RMSNorm to center outputs around zero.</strong> It makes no such guarantee — it only controls overall scale, not the distribution of signs or values.</li>
+<li><strong>Treating the choice as purely about speed.</strong> It is cheaper to compute, but the main reason it&#39;s used in practice is that it performs comparably to LayerNorm while being simpler — not that speed alone justifies the switch.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What statistic does RMSNorm skip computing that LayerNorm needs?</summary>
+The mean — RMSNorm only needs the mean squared value (root-mean-square), while LayerNorm needs both the mean and the variance around it.
+</details>
+
+<details><summary>2. In the worked example, why is RMSNorm's output exactly proportional to the input, but LayerNorm's is not?</summary>
+RMSNorm divides by a single scalar with no subtraction, so every output component is the matching input component times that same constant; LayerNorm first subtracts the mean, which is not a uniform scalar operation and can change the vector's relative proportions (or even zero out a nonzero entry).
+</details>
+
+<details><summary>3. Which transformer families are known to use RMSNorm specifically?</summary>
+The LLaMA family of models is a well-known example of a widely-used transformer family built with RMSNorm instead of LayerNorm.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>RMSNorm:</strong> normalization that rescales a vector by its root-mean-square, without subtracting the mean.</li>
+<li><strong>Root-mean-square:</strong> the square root of a vector&#39;s mean squared value, <code>√(mean(x²))</code>.</li>
+<li><strong>Direction-preserving:</strong> a transformation that outputs a positive scalar multiple of its input, leaving relative proportions and signs unchanged.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/" data-topic="transformers/layer-normalization-placement-pre-norm-vs-post-norm">Layer Normalization Placement: Pre-Norm vs Post-Norm</a> · <a class="wikilink" href="/transformers/the-feed-forward-sublayer/" data-topic="transformers/the-feed-forward-sublayer">The Feed-Forward Sublayer</a> · <a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">Assembling One Transformer Block</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/rmsnorm-vs-layernorm">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/the-feed-forward-sublayer/"><small>Read next</small><b>The Feed-Forward Sublayer</b><p>Attention lets every position look at every other position — but it never actually transforms a position&#39;s own content on its own.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/"><b>Layer Normalization Placement: Pre-Norm vs Post-Norm</b><p>The residual connection guarantees a direct path for the input to reach the output.</p></a><a class="rc-card" href="/transformers/the-feed-forward-sublayer/"><b>The Feed-Forward Sublayer</b><p>Attention lets every position look at every other position — but it never actually transforms a position&#39;s own content on its own.</p></a><a class="rc-card" href="/transformers/assembling-one-transformer-block/"><b>Assembling One Transformer Block</b><p>Every piece needed is now on the table: attention itself, residual connections, normalization placement, and the feed-forward sublayer.</p></a><a class="rc-card" href="/transformers/the-transformer-block/"><b>The Transformer Block</b><p>Attention on its own is only half of a transformer layer.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/">← Previous: Layer Normalization Placement: Pre-Norm vs Post-Norm</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

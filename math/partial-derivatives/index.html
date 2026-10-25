@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Partial Derivatives — AI Base</title>
+<meta name="description" content="A partial derivative measures how a function of several variables changes when you nudge one variable and hold the others fixed.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/partial-derivatives/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Partial Derivatives — AI Base">
+<meta property="og:description" content="A partial derivative measures how a function of several variables changes when you nudge one variable and hold the others fixed.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/partial-derivatives/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Partial Derivatives","item":"https://ai.saranmahadev.in/math/partial-derivatives/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Partial Derivatives","description":"A partial derivative measures how a function of several variables changes when you nudge one variable and hold the others fixed.","url":"https://ai.saranmahadev.in/math/partial-derivatives/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"For f = x²y, what is ∂f/∂x?","acceptedAnswer":{"@type":"Answer","text":"2xy."}},{"@type":"Question","name":"For f = 5x + 2y², what is ∂f/∂y?","acceptedAnswer":{"@type":"Answer","text":"4y."}},{"@type":"Question","name":"What does ∂f/∂x mean in words?","acceptedAnswer":{"@type":"Answer","text":"The rate of change of f as x changes, with the other variables held fixed."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Calculus</p>
+        <h1 class="doc-title">Partial Derivatives</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1i8l34bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1i8l34pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1i8l34bg)"/>
+  <circle cx="776" cy="43" r="105" fill="#68599a" opacity="0.41"/><circle cx="1078" cy="263" r="119" fill="#68599a" opacity="0.35"/><circle cx="322" cy="271" r="123" fill="#ddbecb" opacity="0.41"/><circle cx="318" cy="62" r="63" fill="#68599a" opacity="0.36"/><circle cx="375" cy="1" r="69" fill="#eee9fd" opacity="0.51"/>
+  <path d="M0,420 L0,323 L30,318 L60,314 L90,310 L120,307 L150,306 L180,306 L210,307 L240,309 L270,312 L300,316 L330,320 L360,325 L390,331 L420,336 L450,340 L480,344 L510,347 L540,349 L570,350 L600,349 L630,347 L660,345 L690,341 L720,336 L750,331 L780,326 L810,321 L840,316 L870,312 L900,309 L930,307 L960,306 L990,306 L1020,307 L1050,310 L1080,313 L1110,317 L1140,322 L1170,327 L1200,332 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,390 L60,386 L90,381 L120,376 L150,371 L180,367 L210,364 L240,362 L270,362 L300,363 L330,366 L360,370 L390,375 L420,380 L450,385 L480,389 L510,392 L540,394 L570,394 L600,393 L630,390 L660,386 L690,381 L720,376 L750,371 L780,367 L810,364 L840,362 L870,362 L900,363 L930,366 L960,370 L990,375 L1020,380 L1050,385 L1080,389 L1110,392 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="674" cy="191" rx="198" ry="55" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(3.0 674 191)"/><ellipse cx="674" cy="191" rx="273" ry="77" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(9.0 674 191)"/>
+  <circle cx="674" cy="191" r="78" fill="url(#c1i8l34pl)"/>
+  <circle cx="685" cy="71" r="19" fill="#ffffff" opacity="0.72"/><circle cx="614" cy="86" r="18" fill="#ffffff" opacity="0.74"/><circle cx="458" cy="179" r="9" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>partial derivative</strong> measures how a function of several variables changes when you nudge <strong>one</strong> variable and hold the others fixed. Models have millions of parameters, and each one gets its own partial derivative telling it which way to move.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/derivatives/" data-topic="math/derivatives">Derivatives</a> and <a class="wikilink" href="/math/derivative-rules/" data-topic="math/derivative-rules">Derivative Rules</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If I change just this one input, how does the output respond?&quot; A house price depends on size and age together; the partial derivative with respect to size isolates the effect of size alone.</p>
+<h2 id="intuition-slice-the-surface">Intuition: slice the surface</h2>
+<p>A function of two variables <code>f(x, y)</code> is a surface, like terrain. Walk along the <code>x</code> direction while keeping <code>y</code> fixed: you trace a curve, a slice of the surface. Its slope is the partial derivative with respect to <code>x</code>. Do the same in the <code>y</code> direction for the other one.</p>
+<pre><code class="language-text">∂f/∂x   treat y as a constant, differentiate with respect to x
+∂f/∂y   treat x as a constant, differentiate with respect to y
+</code></pre>
+<p>The curly <code>∂</code> (say &quot;partial&quot;) signals that other variables are being held still.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Let <code>f(x, y) = x² + 3xy</code>.</p>
+<pre><code class="language-text">∂f/∂x: treat y as a constant   →   2x + 3y
+∂f/∂y: treat x as a constant   →   3x
+</code></pre>
+<p>At the point <code>(x, y) = (1, 2)</code>:</p>
+<pre><code class="language-text">∂f/∂x = 2·1 + 3·2 = 8        ∂f/∂y = 3·1 = 3
+</code></pre>
+<p>Meaning: at that point, increasing <code>x</code> by a small <code>ε</code> raises <code>f</code> by about <code>8ε</code>, and increasing <code>y</code> by <code>ε</code> raises it by about <code>3ε</code>. Check numerically: <code>f(1, 2) = 1 + 6 = 7</code>; <code>f(1.01, 2) = 1.0201 + 6.06 = 7.0801</code>, a rise of <code>0.0801 ≈ 8 × 0.01</code> ✓.</p>
+<p>For a model with loss <code>L(w₁, w₂)</code>, the pair <code>(∂L/∂w₁, ∂L/∂w₂)</code> says how the loss responds to each weight separately.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="surface-slicer" data-title="Slice a surface"><p class="bench-fallback"><strong>Interactive bench: Slice a surface.</strong> A shaded map of a two-variable function with a chosen point; a control picks whether to slice along x or y, and a side plot shows the slice curve and its slope, which is the partial derivative.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move the point and read both partial derivatives.</li>
+<li>Switch the slice direction and see how the curve changes.</li>
+<li>Find a point where one partial derivative is zero and the other is not.</li>
+<li>Find where both are zero.</li>
+</ol>
+<p><strong>What you should notice:</strong> each partial derivative is the ordinary slope of a one-variable slice of the surface.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Training</strong> computes the partial derivative of the loss for every parameter.</li>
+<li><strong>Feature sensitivity:</strong> how a prediction responds to one input.</li>
+<li><strong>The gradient</strong> stacks all partial derivatives into one vector (see <a class="wikilink" href="/math/gradients/" data-topic="math/gradients">Gradients</a>).</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting to hold the others constant.</strong></li>
+<li><strong>Differentiating <code>y</code> too</strong> while taking <code>∂/∂x</code>.</li>
+<li><strong>Assuming variables act separately</strong> when they interact (the <code>3xy</code> term couples them).</li>
+<li><strong>Mixing up <code>∂</code> and <code>d</code>.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. For f = x²y, what is ∂f/∂x?</summary>
+2xy.
+</details>
+
+<details><summary>2. For f = 5x + 2y², what is ∂f/∂y?</summary>
+4y.
+</details>
+
+<details><summary>3. What does ∂f/∂x mean in words?</summary>
+The rate of change of f as x changes, with the other variables held fixed.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Partial derivative:</strong> the derivative in one variable, others held fixed.</li>
+<li><strong>Slice:</strong> a one-variable cross-section of a surface.</li>
+<li><strong>Surface:</strong> the graph of a two-variable function.</li>
+<li><strong>Holding fixed:</strong> treating other variables as constants.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/derivatives/" data-topic="math/derivatives">Derivatives</a> · <a class="wikilink" href="/math/gradients/" data-topic="math/gradients">Gradients</a> · <a class="wikilink" href="/math/jacobian/" data-topic="math/jacobian">Jacobian</a> · <a class="wikilink" href="/math/hessian/" data-topic="math/hessian">Hessian</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/partial-derivatives">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/gradients/"><small>Read next</small><b>Gradients</b><p>The gradient collects all the partial derivatives of a function into one vector, ∇f = (∂f/∂x, ∂f/∂y, …).</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/derivatives/"><b>Derivatives</b><p>The derivative tells you how fast a function&#39;s output is changing at one particular input: the slope of the curve at a point.</p></a><a class="rc-card" href="/math/derivative-rules/"><b>Derivative Rules</b><p>You do not compute a derivative from the limit every time.</p></a><a class="rc-card" href="/math/gradients/"><b>Gradients</b><p>The gradient collects all the partial derivatives of a function into one vector, ∇f = (∂f/∂x, ∂f/∂y, …).</p></a><a class="rc-card" href="/math/jacobian/"><b>Jacobian</b><p>The Jacobian is the matrix of all first partial derivatives of a function that takes several inputs and gives several outputs.</p></a><a class="rc-card" href="/math/hessian/"><b>Hessian</b><p>The Hessian is the matrix of all second partial derivatives of a function.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/higher-derivatives-and-curvature/">← Previous: Higher Derivatives and Curvature</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Augmentation — AI Base</title>
+<meta name="description" content="Data augmentation manufactures new, harmless variations of existing training examples — a flipped image, a rotated one, a sentence with a synonym swapped in — so the network sees more of the input…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/data-augmentation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Data Augmentation — AI Base">
+<meta property="og:description" content="Data augmentation manufactures new, harmless variations of existing training examples — a flipped image, a rotated one, a sentence with a synonym swapped in — so the network sees more of the input…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/data-augmentation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Data Augmentation","item":"https://ai.saranmahadev.in/deep-learning/data-augmentation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Data Augmentation","description":"Data augmentation manufactures new, harmless variations of existing training examples — a flipped image, a rotated one, a sentence with a synonym swapped in — so the network sees more of the input…","url":"https://ai.saranmahadev.in/deep-learning/data-augmentation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes a transformation suitable for data augmentation?","acceptedAnswer":{"@type":"Answer","text":"It must be label-preserving: the transformed input should still clearly belong to the same class (or have the same target) as the original."}},{"@type":"Question","name":"Why is flipping a photo of a cat usually fine, but flipping a handwritten digit image often isn't?","acceptedAnswer":{"@type":"Answer","text":"A cat's identity doesn't depend on left-right orientation, but some digits (like 6 and 9) can turn into each other under a flip, changing the correct label."}},{"@type":"Question","name":"In the worked example, what stayed the same across all three images, and what changed?","acceptedAnswer":{"@type":"Answer","text":"The number of lit pixels (8) stayed the same; their positions in the grid changed completely between the original, the flip, and the rotation."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Regularization and Generalization</p>
+        <h1 class="doc-title">Data Augmentation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c10gw9gfbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c10gw9gfpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c10gw9gfbg)"/>
+  <circle cx="920" cy="377" r="205" fill="#8a546c" opacity="0.33"/><circle cx="319" cy="354" r="114" fill="#ffb6b6" opacity="0.26"/><circle cx="907" cy="282" r="107" fill="#ffb6b6" opacity="0.26"/><circle cx="395" cy="199" r="175" fill="#ffb6b6" opacity="0.41"/><circle cx="551" cy="409" r="112" fill="#8a546c" opacity="0.59"/>
+  <path d="M0,420 L0,349 L30,349 L60,348 L90,346 L120,343 L150,339 L180,334 L210,329 L240,324 L270,319 L300,314 L330,311 L360,308 L390,306 L420,306 L450,306 L480,308 L510,311 L540,315 L570,320 L600,325 L630,330 L660,335 L690,339 L720,343 L750,347 L780,349 L810,350 L840,349 L870,348 L900,345 L930,342 L960,337 L990,332 L1020,327 L1050,322 L1080,317 L1110,313 L1140,310 L1170,307 L1200,306 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,363 L60,364 L90,365 L120,367 L150,369 L180,371 L210,374 L240,376 L270,379 L300,381 L330,383 L360,386 L390,388 L420,390 L450,391 L480,392 L510,393 L540,394 L570,394 L600,394 L630,393 L660,392 L690,391 L720,389 L750,387 L780,385 L810,382 L840,380 L870,377 L900,375 L930,373 L960,370 L990,368 L1020,366 L1050,365 L1080,364 L1110,363 L1140,362 L1170,362 L1200,362 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="953" cy="201" rx="261" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.9 953 201)"/><ellipse cx="953" cy="201" rx="360" ry="101" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.9 953 201)"/>
+  <circle cx="953" cy="201" r="102" fill="url(#c10gw9gfpl)"/>
+  <circle cx="783" cy="61" r="10" fill="#ffffff" opacity="0.90"/><circle cx="1005" cy="91" r="13" fill="#ffffff" opacity="0.86"/><circle cx="1224" cy="210" r="12" fill="#ffffff" opacity="0.63"/><circle cx="1326" cy="223" r="12" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Data augmentation</strong> manufactures new, harmless variations of existing training examples — a flipped image, a rotated one, a sentence with a synonym swapped in — so the network sees more of the input space without collecting a single new label. Done well, every augmented example is still clearly the same class to a human, but is a pixel-for-pixel (or word-for-word) different example to the network.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a> and <a class="wikilink" href="/machine-learning/data-and-features/" data-topic="machine-learning/data-and-features">Data and Features</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;I only have a limited amount of labelled data — can I make a network behave as if it had seen more?&quot; Yes, for any transformation that changes the input without changing what the correct answer is, you can apply it on the fly and train on the result as if it were a fresh example.</p>
+<h2 id="intuition-the-same-cat-from-a-different-angle">Intuition: the same cat, from a different angle</h2>
+<p>A photo of a cat flipped left-to-right is still unmistakably a photo of a cat — nothing about &quot;catness&quot; depends on which way the photo faces. By training on both the original and the flipped version (and crops, rotations, brightness changes, and so on), the network is pushed to recognise what is actually invariant about the class, rather than quietly memorising incidental details — like exactly where the cat&#39;s ear happened to be in pixel coordinates — that have nothing to do with the label.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">label-preserving transformation T:   T(x) has the same label as x, for the transformations you choose
+
+training uses (x, y) and (T(x), y) — same label, different input
+</code></pre>
+<p>What counts as &quot;label-preserving&quot; depends entirely on the task: flipping a photo of a handwritten &quot;6&quot; would turn it into something closer to a &quot;9&quot; — not label-preserving at all — even though flipping a photo of a cat usually is.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A tiny 4×4 toy image, a vertical edge, and two augmentations:</p>
+<pre><code class="language-text">original          horizontal flip      90° rotation
+0 0 1 1           1 1 0 0              0 0 0 0
+0 0 1 1           1 1 0 0              0 0 0 0
+0 0 1 1           1 1 0 0              1 1 1 1
+0 0 1 1           1 1 0 0              1 1 1 1
+</code></pre>
+<p>All three grids have exactly 8 lit pixels, but every one of the twelve positions that are lit is different between them. Trained as three separate examples with the same label (&quot;has an edge&quot;), the network sees three genuinely different pixel patterns, all pointing to the same answer — exactly the effect augmentation is for.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="augment-view" data-title="One image, several augmentations"><p class="bench-fallback"><strong>Interactive bench: One image, several augmentations.</strong> A small toy image with flip, rotation and noise augmentations applied live. Toggle each on or off and see the resulting grid, with a count confirming how many pixels changed position.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Turn on the horizontal flip and compare which pixels moved.</li>
+<li>Turn on rotation instead, and compare the pattern of change to the flip.</li>
+<li>Add a little random noise on top and see the image stop being an exact geometric transform of the original.</li>
+</ol>
+<p><strong>What you should notice:</strong> every augmentation here keeps the same number of &quot;on&quot; pixels (the same amount of signal) while moving them to different positions — the network has to learn the shape, not the exact pixel coordinates.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Computer vision</strong> (see <a class="wikilink" href="/deep-learning/convolutional-neural-networks/" data-topic="deep-learning/convolutional-neural-networks">Convolutional Neural Networks</a>) leans on augmentation heavily: flips, crops, rotations, colour jitter and more are close to standard practice.</li>
+<li><strong>Text:</strong> synonym replacement, back-translation, and random word dropout serve the same purpose for language models.</li>
+<li><strong>Audio:</strong> time-shifting, pitch-shifting and adding background noise are common augmentations for speech models.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Applying a transformation that is not actually label-preserving for the task.</strong> Flipping digit images, or mirroring text, can silently corrupt labels rather than enrich them.</li>
+<li><strong>Over-augmenting until examples barely resemble real data.</strong> Too aggressive a transform can teach the network patterns that will never occur in genuine inputs.</li>
+<li><strong>Treating augmentation as a substitute for more or better data</strong>, rather than a way to squeeze more value out of what you already have.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What makes a transformation suitable for data augmentation?</summary>
+It must be label-preserving: the transformed input should still clearly belong to the same class (or have the same target) as the original.
+</details>
+
+<details><summary>2. Why is flipping a photo of a cat usually fine, but flipping a handwritten digit image often isn't?</summary>
+A cat's identity doesn't depend on left-right orientation, but some digits (like 6 and 9) can turn into each other under a flip, changing the correct label.
+</details>
+
+<details><summary>3. In the worked example, what stayed the same across all three images, and what changed?</summary>
+The number of lit pixels (8) stayed the same; their positions in the grid changed completely between the original, the flip, and the rotation.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Data augmentation:</strong> generating new training examples by applying label-preserving transformations to existing ones.</li>
+<li><strong>Label-preserving transformation:</strong> a change to the input that does not change the correct output.</li>
+<li><strong>Invariance:</strong> a property of the task (like orientation not mattering for &quot;is this a cat&quot;) that augmentation teaches the network to respect.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a> · <a class="wikilink" href="/machine-learning/data-and-features/" data-topic="machine-learning/data-and-features">Data and Features</a> · <a class="wikilink" href="/deep-learning/convolutional-neural-networks/" data-topic="deep-learning/convolutional-neural-networks">Convolutional Neural Networks</a> · <a class="wikilink" href="/deep-learning/dropout/" data-topic="deep-learning/dropout">Dropout</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/data-augmentation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/early-stopping-and-ensembling-deep-nets/"><small>Read next</small><b>Early Stopping and Ensembling Deep Nets</b><p>Training loss can keep falling long after a network has stopped getting better on data it hasn&#39;t seen.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/overfitting-and-double-descent/"><b>Overfitting and Double Descent</b><p>The classical picture of overfitting says test error falls as a model grows, then rises once it has enough capacity to memorise noise — a U-shape.</p></a><a class="rc-card" href="/machine-learning/data-and-features/"><b>Data and Features</b><p>Models see numbers, not the world, so how data is cleaned and represented decides most of what a model can learn.</p></a><a class="rc-card" href="/deep-learning/convolutional-neural-networks/"><b>Convolutional Neural Networks</b><p>A photograph has structure a plain feedforward network ignores: a cat&#39;s ear looks the same whether it is in the top-left or bottom-right corner.</p></a><a class="rc-card" href="/deep-learning/dropout/"><b>Dropout</b><p>Dropout trains a network while randomly switching off a fraction of its units on every single step — a different random subset each time — so no unit can become so important that the network…</p></a><a class="rc-card" href="/deep-learning/regularization-and-generalization/"><b>Regularization and Generalization</b><p>A deep network has enough parameters to memorise its training set outright.</p></a><a class="rc-card" href="/deep-learning/contrastive-learning/"><b>Contrastive Learning</b><p>Self-Supervised Learning can invent a pretext task besides &quot;fill in the missing piece.&quot; Contrastive learning instead asks: given an anchor and several candidates, which one is really just another…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/layer-normalization/">← Previous: Layer Normalization</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

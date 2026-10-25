@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gradient Descent — AI Base</title>
+<meta name="description" content="Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/gradient-descent/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Gradient Descent — AI Base">
+<meta property="og:description" content="Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/gradient-descent/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Gradient Descent","item":"https://ai.saranmahadev.in/math/gradient-descent/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Gradient Descent","description":"Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.","url":"https://ai.saranmahadev.in/math/gradient-descent/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is one step from w = 5 with gradient 2 and η = 0.5?","acceptedAnswer":{"@type":"Answer","text":"5 − 0.5·2 = 4."}},{"@type":"Question","name":"Which direction does gradient descent move?","acceptedAnswer":{"@type":"Answer","text":"Opposite the gradient (downhill)."}},{"@type":"Question","name":"What does η control?","acceptedAnswer":{"@type":"Answer","text":"The step size."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Optimization</p>
+        <h1 class="doc-title">Gradient Descent</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1kqtyufbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1kqtyufpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1kqtyufbg)"/>
+  <circle cx="435" cy="160" r="226" fill="#68599a" opacity="0.49"/><circle cx="197" cy="350" r="147" fill="#68599a" opacity="0.30"/><circle cx="357" cy="35" r="148" fill="#ddbecb" opacity="0.38"/><circle cx="449" cy="55" r="110" fill="#68599a" opacity="0.41"/><circle cx="465" cy="276" r="77" fill="#68599a" opacity="0.35"/><circle cx="1093" cy="269" r="140" fill="#68599a" opacity="0.44"/><circle cx="887" cy="243" r="92" fill="#cebff9" opacity="0.39"/>
+  <path d="M0,420 L0,312 L30,315 L60,318 L90,321 L120,324 L150,328 L180,331 L210,335 L240,338 L270,341 L300,343 L330,345 L360,347 L390,349 L420,349 L450,350 L480,349 L510,348 L540,347 L570,345 L600,343 L630,340 L660,337 L690,334 L720,331 L750,327 L780,324 L810,321 L840,318 L870,315 L900,312 L930,310 L960,308 L990,307 L1020,306 L1050,306 L1080,306 L1110,307 L1140,308 L1170,310 L1200,312 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,366 L60,370 L90,375 L120,380 L150,384 L180,389 L210,392 L240,394 L270,394 L300,393 L330,390 L360,386 L390,381 L420,376 L450,372 L480,367 L510,364 L540,362 L570,362 L600,363 L630,366 L660,370 L690,375 L720,380 L750,384 L780,389 L810,392 L840,394 L870,394 L900,393 L930,390 L960,386 L990,381 L1020,376 L1050,372 L1080,367 L1110,364 L1140,362 L1170,362 L1200,363 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="910" cy="226" rx="251" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(9.1 910 226)"/><ellipse cx="910" cy="226" rx="348" ry="97" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(15.1 910 226)"/>
+  <circle cx="910" cy="226" r="99" fill="url(#c1kqtyufpl)"/>
+  <circle cx="696" cy="312" r="13" fill="#ffffff" opacity="0.72"/><circle cx="585" cy="320" r="14" fill="#ffffff" opacity="0.64"/><circle cx="1219" cy="123" r="14" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Gradient descent</strong> finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat. It is the engine that trains almost every model in machine learning.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/gradients/" data-topic="math/gradients">Gradients</a>, <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a> and <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I find good parameter values when I cannot solve for them directly?&quot; You cannot see the whole loss landscape, but you can always feel the slope under your feet.</p>
+<h2 id="intuition-walking-down-a-foggy-hill">Intuition: walking down a foggy hill</h2>
+<p>Stand on a hill in thick fog. You cannot see the valley, but you can feel which way the ground slopes. Take a small step downhill, feel again, step again. Eventually you reach flat ground.</p>
+<h2 id="the-algorithm">The algorithm</h2>
+<pre><code class="language-text">repeat:
+    g = gradient of the loss at the current parameters w
+    w = w − η · g                       η (eta) is the learning rate: the step size
+</code></pre>
+<p>Stop when the gradient is tiny, the loss stops improving, or a step limit is reached. The step <code>−η g</code> points opposite the gradient and gets shorter as the ground flattens.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Minimise <code>f(w) = w²</code> (gradient <code>2w</code>), starting at <code>w = 4</code> with <code>η = 0.1</code>:</p>
+<pre><code class="language-text">step 0:  w = 4          f = 16        gradient 8
+step 1:  w = 4 − 0.8    = 3.2         f = 10.24
+step 2:  w = 3.2 − 0.64 = 2.56        f = 6.5536
+step 3:  w = 2.56 − 0.512 = 2.048     f = 4.194
+</code></pre>
+<p>Each step multiplies <code>w</code> by <code>1 − 2η = 0.8</code>, so <code>w</code> shrinks toward the minimum at 0.</p>
+<p>In two variables, <code>f(x, y) = x² + y²</code> from <code>(3, 4)</code> with <code>η = 0.1</code> gives <code>(3, 4) − 0.1·(6, 8) = (2.4, 3.2)</code>, and the loss drops from 25 to 16 (see <a class="wikilink" href="/math/gradients/" data-topic="math/gradients">Gradients</a>).</p>
+<p>For a model, the parameters <code>w</code> are a vector with millions of entries and <code>f</code> is the average loss over the data, but the update is exactly the same line.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="descent-path" data-title="Roll downhill"><p class="bench-fallback"><strong>Interactive bench: Roll downhill.</strong> A contour map of a bowl with a starting point; a stepper takes gradient-descent steps with an adjustable learning rate, drawing the path and showing the loss at each step.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Press Step repeatedly and watch the path curve toward the minimum.</li>
+<li>Change the start point and compare paths.</li>
+<li>Make the bowl elongated and see the path zig-zag.</li>
+<li>Raise the learning rate until steps overshoot.</li>
+</ol>
+<p><strong>What you should notice:</strong> steps shrink as the slope flattens, the path crosses contour lines at right angles, and a stretched bowl makes the walk zig-zag.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Training every neural network</strong> uses a form of gradient descent.</li>
+<li><strong>Linear and logistic regression</strong> can be trained by it.</li>
+<li><strong>Variants</strong> such as SGD, momentum and Adam build on this loop (see <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a>, <a class="wikilink" href="/math/momentum-and-adam/" data-topic="math/momentum-and-adam">Momentum and Adam</a>).</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Stepping uphill</strong> by using <code>+g</code>.</li>
+<li><strong>A learning rate too large</strong> overshoots or diverges (see <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a>).</li>
+<li><strong>Stopping too early</strong> on a flat plateau.</li>
+<li><strong>Assuming it finds the global minimum.</strong> It finds a nearby low point.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is one step from w = 5 with gradient 2 and η = 0.5?</summary>
+5 − 0.5·2 = 4.
+</details>
+
+<details><summary>2. Which direction does gradient descent move?</summary>
+Opposite the gradient (downhill).
+</details>
+
+<details><summary>3. What does η control?</summary>
+The step size.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Gradient descent:</strong> repeatedly stepping against the gradient.</li>
+<li><strong>Learning rate (η):</strong> the step-size multiplier.</li>
+<li><strong>Iteration / step:</strong> one update of the parameters.</li>
+<li><strong>Convergence:</strong> settling near a minimum.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/gradients/" data-topic="math/gradients">Gradients</a> · <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a> · <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a> · <a class="wikilink" href="/math/momentum-and-adam/" data-topic="math/momentum-and-adam">Momentum and Adam</a> · <a class="wikilink" href="/math/linear-regression-end-to-end/" data-topic="math/linear-regression-end-to-end">Linear Regression End to End</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/gradient-descent">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/learning-rate/"><small>Read next</small><b>Learning Rate</b><p>The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/gradients/"><b>Gradients</b><p>The gradient collects all the partial derivatives of a function into one vector, ∇f = (∂f/∂x, ∂f/∂y, …).</p></a><a class="rc-card" href="/math/vector-operations/"><b>Vector Operations</b><p>Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.</p></a><a class="rc-card" href="/math/loss-functions/"><b>Loss Functions</b><p>A loss function turns &quot;how wrong is the model?&quot; into a single number: small when predictions are good, large when they are bad.</p></a><a class="rc-card" href="/math/stochastic-gradient-descent/"><b>Stochastic Gradient Descent</b><p>Stochastic gradient descent (SGD) takes each step using the gradient from a small random mini-batch of examples instead of the whole data set.</p></a><a class="rc-card" href="/math/momentum-and-adam/"><b>Momentum and Adam</b><p>Momentum lets a walker keep some of its previous velocity, so it speeds up along steady slopes and smooths out zig-zags.</p></a><a class="rc-card" href="/math/learning-rate/"><b>Learning Rate</b><p>The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/minima-maxima-and-saddle-points/">← Previous: Minima, Maxima and Saddle Points</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

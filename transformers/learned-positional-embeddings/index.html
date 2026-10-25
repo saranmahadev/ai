@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learned Positional Embeddings — AI Base</title>
+<meta name="description" content="The sinusoidal encoding from Deep Learning computes a position&#39;s vector from a fixed formula — nothing about it is trained.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/learned-positional-embeddings/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Learned Positional Embeddings — AI Base">
+<meta property="og:description" content="The sinusoidal encoding from Deep Learning computes a position&#39;s vector from a fixed formula — nothing about it is trained.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/learned-positional-embeddings/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Learned Positional Embeddings","item":"https://ai.saranmahadev.in/transformers/learned-positional-embeddings/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Learned Positional Embeddings","description":"The sinusoidal encoding from Deep Learning computes a position's vector from a fixed formula — nothing about it is trained.","url":"https://ai.saranmahadev.in/transformers/learned-positional-embeddings/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does a learned positional embedding table get its positional vectors, as opposed to the sinusoidal encoding?","acceptedAnswer":{"@type":"Answer","text":"By training, exactly like a token embedding table — there is no formula; the values are learned parameters, indexed by position instead of token id."}},{"@type":"Question","name":"In the worked example, what caused the same token's final vector to differ at position 0 versus position 3?","acceptedAnswer":{"@type":"Answer","text":"The two different rows of the positional table, `P[0]` and `P[3]`, added to the identical token embedding."}},{"@type":"Question","name":"What is a learned positional table's main limitation compared to a formula-based encoding?","acceptedAnswer":{"@type":"Answer","text":"It has a fixed maximum length — there is no table entry at all for a position beyond however many rows it was trained with."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Positional Information Beyond Sinusoids</p>
+        <h1 class="doc-title">Learned Positional Embeddings</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1ytft48bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1ytft48pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1ytft48bg)"/>
+  <circle cx="1000" cy="33" r="209" fill="#abd0ff" opacity="0.22"/><circle cx="939" cy="385" r="116" fill="#c5cacf" opacity="0.42"/><circle cx="478" cy="323" r="224" fill="#4f669f" opacity="0.45"/><circle cx="878" cy="136" r="214" fill="#e2efff" opacity="0.26"/><circle cx="456" cy="116" r="124" fill="#4f669f" opacity="0.55"/><circle cx="1140" cy="120" r="106" fill="#e2efff" opacity="0.40"/><circle cx="993" cy="400" r="111" fill="#4f669f" opacity="0.32"/>
+  <path d="M0,420 L0,341 L30,335 L60,328 L90,321 L120,315 L150,310 L180,307 L210,306 L240,306 L270,309 L300,314 L330,320 L360,327 L390,334 L420,340 L450,345 L480,348 L510,350 L540,349 L570,346 L600,341 L630,335 L660,328 L690,321 L720,315 L750,310 L780,307 L810,306 L840,306 L870,309 L900,314 L930,320 L960,327 L990,334 L1020,340 L1050,345 L1080,348 L1110,350 L1140,349 L1170,346 L1200,341 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,371 L30,374 L60,378 L90,382 L120,385 L150,388 L180,391 L210,393 L240,394 L270,394 L300,393 L330,392 L360,389 L390,386 L420,383 L450,379 L480,376 L510,372 L540,369 L570,366 L600,364 L630,362 L660,362 L690,362 L720,364 L750,366 L780,368 L810,372 L840,375 L870,379 L900,383 L930,386 L960,389 L990,392 L1020,393 L1050,394 L1080,394 L1110,393 L1140,391 L1170,388 L1200,385 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="861" cy="227" rx="168" ry="47" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(9.4 861 227)"/><ellipse cx="861" cy="227" rx="232" ry="65" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(15.4 861 227)"/>
+  <circle cx="861" cy="227" r="66" fill="url(#c1ytft48pl)"/>
+  <circle cx="593" cy="261" r="10" fill="#ffffff" opacity="0.70"/><circle cx="1013" cy="276" r="14" fill="#ffffff" opacity="0.89"/><circle cx="643" cy="168" r="15" fill="#ffffff" opacity="0.81"/><circle cx="663" cy="162" r="17" fill="#ffffff" opacity="0.80"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The sinusoidal encoding from <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a> computes a position&#39;s vector from a fixed formula — nothing about it is trained. The simplest alternative skips the formula entirely: treat position exactly like a token, and learn a vector for each one.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/token-embeddings-and-embedding-scaling/" data-topic="transformers/token-embeddings-and-embedding-scaling">Token Embeddings and Embedding Scaling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Must positional information come from a fixed mathematical formula, or can the model simply learn what each position&#39;s vector should be?&quot; It can simply learn it: build a second embedding table, indexed by position instead of by token id, and add the result to the token embedding at that position — the exact same lookup-and-add mechanism as token embeddings, just keyed by a different index.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A token embedding table answers &quot;what vector represents <em>this word</em>?&quot; A learned positional embedding table answers the parallel question &quot;what vector represents <em>this position</em>?&quot; Both are ordinary trainable lookup tables; adding the two together gives the model a vector that encodes both what the token is and where it sits in the sequence. Because the table is trained like any other parameter, the model is free to learn whatever positional pattern turns out to be useful — not constrained to the particular sinusoidal shape derived in <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">positional table P: shape max_length × d_model, trained like any other parameter
+
+input to the transformer at position i:
+  token_embedding(token_id) + P[i]
+</code></pre>
+<p>Unlike the sinusoidal formula, which can in principle be evaluated at any position, a learned table has a fixed <code>max_length</code> — it has no entry at all for a position beyond however many rows it was built with.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 5-row, 4-dimensional positional table, applied to the <em>same</em> token embedding <code>[0.5, -0.2, 0.1, 0.4]</code> at two different positions:</p>
+<pre><code class="language-text">P[0] = [ 0.106, -0.184,  0.019, -0.201]
+P[3] = [-0.158, -0.181,  0.078,  0.143]
+
+token at position 0:  [0.5,-0.2,0.1,0.4] + P[0] = [0.606, -0.384, 0.119, 0.199]
+token at position 3:  [0.5,-0.2,0.1,0.4] + P[3] = [0.342, -0.381, 0.178, 0.543]
+</code></pre>
+<p>The exact same word produces two visibly different vectors purely because of where it sits in the sequence — exactly the disambiguation positional information is supposed to provide, here coming entirely from two learned rows of a table rather than a formula. This table costs <code>5 × 4 = 20</code> parameters at this toy size; a real model&#39;s table scales with its actual maximum sequence length and width.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="learned-pos-embed" data-title="A trained row instead of a formula"><p class="bench-fallback"><strong>Interactive bench: A trained row instead of a formula.</strong> Add a learned positional vector to the same token embedding at different positions, and see how the resulting vector changes with position.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the same token&#39;s final vector across several different positions.</li>
+<li>Try a position beyond the table&#39;s size and see that there&#39;s simply no row to look up.</li>
+<li>Compare the parameter cost of the table at a few different maximum lengths.</li>
+</ol>
+<p><strong>What you should notice:</strong> nothing in this mechanism explains or constrains <em>what</em> each positional row should contain — unlike the sinusoidal formula&#39;s built-in structure, a learned table&#39;s positional vectors are whatever training happens to settle on.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It was the positional scheme used by several early, influential transformer models</strong>, valued for its simplicity — one more embedding table, trained the same way as every other.</li>
+<li><strong>Its fixed-length limitation is exactly the problem <a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">relative position schemes</a> and <a class="wikilink" href="/transformers/alibi-and-length-extrapolation/" data-topic="transformers/alibi-and-length-extrapolation">ALiBi and Length Extrapolation</a> solve directly</strong> — both of the next two topics specifically target handling sequences longer than anything seen during training.</li>
+<li><strong>It contrasts directly with the sinusoidal encoding on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a></strong>: same role, same place in the computation, but one is fixed and formula-based while the other is trained and data-driven.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a learned table generalizes past its trained maximum length.</strong> There is no row to look up past <code>max_length</code> — the model simply cannot represent a position it never saw a table entry for.</li>
+<li><strong>Expecting the learned positions to form any particular pattern.</strong> Unlike the sinusoidal encoding&#39;s deliberate frequency structure, a learned table&#39;s values are whatever training found useful, with no guaranteed interpretable shape.</li>
+<li><strong>Forgetting the parameter cost scales with maximum sequence length.</strong> A model built for very long sequences pays for a correspondingly large positional table.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. How does a learned positional embedding table get its positional vectors, as opposed to the sinusoidal encoding?</summary>
+By training, exactly like a token embedding table — there is no formula; the values are learned parameters, indexed by position instead of token id.
+</details>
+
+<details><summary>2. In the worked example, what caused the same token's final vector to differ at position 0 versus position 3?</summary>
+The two different rows of the positional table, `P[0]` and `P[3]`, added to the identical token embedding.
+</details>
+
+<details><summary>3. What is a learned positional table's main limitation compared to a formula-based encoding?</summary>
+It has a fixed maximum length — there is no table entry at all for a position beyond however many rows it was trained with.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Positional table:</strong> a trained embedding table indexed by sequence position instead of token id.</li>
+<li><strong>max_length:</strong> the largest sequence position a learned positional table has an entry for.</li>
+<li><strong>Absolute position:</strong> a token&#39;s fixed index within the sequence (0, 1, 2, …), as opposed to its position relative to another token.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/token-embeddings-and-embedding-scaling/" data-topic="transformers/token-embeddings-and-embedding-scaling">Token Embeddings and Embedding Scaling</a> · <a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">Relative Position and RoPE</a> · <a class="wikilink" href="/transformers/alibi-and-length-extrapolation/" data-topic="transformers/alibi-and-length-extrapolation">ALiBi and Length Extrapolation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/learned-positional-embeddings">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/relative-position-and-rope/"><small>Read next</small><b>Relative Position and RoPE</b><p>Both the sinusoidal encoding and learned positional embeddings tell a token its absolute position — &quot;you are token number 7.&quot; Rotary position embedding (RoPE) asks a different question: instead of…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/transformers/token-embeddings-and-embedding-scaling/"><b>Token Embeddings and Embedding Scaling</b><p>A tokenizer hands back a sequence of integer ids — vocabulary indices, not vectors.</p></a><a class="rc-card" href="/transformers/relative-position-and-rope/"><b>Relative Position and RoPE</b><p>Both the sinusoidal encoding and learned positional embeddings tell a token its absolute position — &quot;you are token number 7.&quot; Rotary position embedding (RoPE) asks a different question: instead of…</p></a><a class="rc-card" href="/transformers/alibi-and-length-extrapolation/"><b>ALiBi and Length Extrapolation</b><p>RoPE builds relative position into attention through rotation.</p></a><a class="rc-card" href="/transformers/positional-information-beyond-sinusoids/"><b>Positional Information Beyond Sinusoids</b><p>The fixed sinusoidal encoding from Deep Learning was the original transformer&#39;s answer to &quot;where is this token in the sequence?&quot; — but it was never the only answer, and modern models mostly use…</p></a><a class="rc-card" href="/transformers/vision-transformers/"><b>Vision Transformers</b><p>Patches became a token sequence several districts ago.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/positional-information-beyond-sinusoids/">← Previous: Positional Information Beyond Sinusoids</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

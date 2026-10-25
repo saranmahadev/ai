@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear Combinations and Span — AI Base</title>
+<meta name="description" content="A linear combination of vectors is a sum of scaled copies: c₁v₁ + c₂v₂ + …. The span of some vectors is the set of every point you can reach that way.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/linear-combinations-and-span/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Linear Combinations and Span — AI Base">
+<meta property="og:description" content="A linear combination of vectors is a sum of scaled copies: c₁v₁ + c₂v₂ + …. The span of some vectors is the set of every point you can reach that way.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/linear-combinations-and-span/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Linear Combinations and Span","item":"https://ai.saranmahadev.in/math/linear-combinations-and-span/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Linear Combinations and Span","description":"A linear combination of vectors is a sum of scaled copies: c₁v₁ + c₂v₂ + …. The span of some vectors is the set of every point you can reach that way.","url":"https://ai.saranmahadev.in/math/linear-combinations-and-span/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does span{(1, 0), (0, 1)} equal?","acceptedAnswer":{"@type":"Answer","text":"The entire plane."}},{"@type":"Question","name":"What is the span of (2, 6) and (1, 3)?","acceptedAnswer":{"@type":"Answer","text":"The line through (1, 3), since (2, 6) = 2·(1, 3)."}},{"@type":"Question","name":"Write (4, 7) as a combination of (1, 0) and (0, 1).","acceptedAnswer":{"@type":"Answer","text":"4·(1, 0) + 7·(0, 1)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Linear Algebra</p>
+        <h1 class="doc-title">Linear Combinations and Span</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1p4ydwrbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1p4ydwrpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1p4ydwrbg)"/>
+  <circle cx="678" cy="96" r="214" fill="#ddbecb" opacity="0.52"/><circle cx="462" cy="70" r="169" fill="#ddbecb" opacity="0.54"/><circle cx="487" cy="352" r="198" fill="#ddbecb" opacity="0.55"/><circle cx="288" cy="387" r="226" fill="#68599a" opacity="0.33"/><circle cx="680" cy="333" r="80" fill="#eee9fd" opacity="0.50"/><circle cx="893" cy="310" r="139" fill="#eee9fd" opacity="0.60"/>
+  <path d="M0,420 L0,308 L30,306 L60,306 L90,308 L120,313 L150,318 L180,325 L210,332 L240,338 L270,344 L300,348 L330,349 L360,349 L390,347 L420,343 L450,337 L480,330 L510,323 L540,317 L570,311 L600,308 L630,306 L660,306 L690,308 L720,313 L750,318 L780,325 L810,332 L840,338 L870,344 L900,348 L930,349 L960,349 L990,347 L1020,343 L1050,337 L1080,330 L1110,323 L1140,317 L1170,311 L1200,308 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,363 L60,364 L90,366 L120,368 L150,370 L180,372 L210,374 L240,377 L270,379 L300,382 L330,384 L360,386 L390,388 L420,390 L450,392 L480,393 L510,394 L540,394 L570,394 L600,394 L630,393 L660,392 L690,390 L720,388 L750,386 L780,384 L810,382 L840,379 L870,377 L900,374 L930,372 L960,370 L990,368 L1020,366 L1050,364 L1080,363 L1110,362 L1140,362 L1170,362 L1200,362 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="815" cy="196" rx="182" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(8.1 815 196)"/><ellipse cx="815" cy="196" rx="252" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(14.1 815 196)"/>
+  <circle cx="815" cy="196" r="71" fill="url(#c1p4ydwrpl)"/>
+  <circle cx="954" cy="254" r="10" fill="#ffffff" opacity="0.89"/><circle cx="561" cy="199" r="16" fill="#ffffff" opacity="0.72"/><circle cx="672" cy="109" r="15" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>linear combination</strong> of vectors is a sum of scaled copies: <code>c₁v₁ + c₂v₂ + …</code>. The <strong>span</strong> of some vectors is the set of every point you can reach that way. How far a set of vectors can reach decides what a model can represent.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Starting from a few building-block vectors, what can I make?&quot; Two arrows might reach the whole plane, or only a single line, depending on how they point.</p>
+<h2 id="intuition-mixing-recipes">Intuition: mixing recipes</h2>
+<p>Take two ingredients, the vectors <code>v₁</code> and <code>v₂</code>. Choose how much of each (<code>c₁</code>, <code>c₂</code>, any real numbers, including negative) and add. Every mix is a linear combination, and all possible mixes form the span.</p>
+<pre><code class="language-text">c₁ v₁ + c₂ v₂
+</code></pre>
+<ul>
+<li>Two vectors pointing in different directions can reach <strong>every point in the plane</strong>.</li>
+<li>Two vectors pointing along the same line reach <strong>only that line</strong>; the second adds nothing.</li>
+<li>One non-zero vector reaches a line; the zero vector reaches just the origin.</li>
+</ul>
+<h2 id="definition">Definition</h2>
+<pre><code class="language-text">span{v₁, …, vₖ} = { c₁v₁ + … + cₖvₖ : all real numbers c₁, …, cₖ }
+</code></pre>
+<p>In 3D, two independent vectors span a plane and three span all of space.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Can <code>v₁ = (1, 0)</code> and <code>v₂ = (1, 1)</code> reach the target <code>t = (5, 4)</code>? Solve <code>a(1, 0) + b(1, 1) = (5, 4)</code>:</p>
+<pre><code class="language-text">(a + b, b) = (5, 4)   →   b = 4,  a = 1
+</code></pre>
+<p>Yes: <code>t = 1·(1, 0) + 4·(1, 1)</code>. Since any target <code>(x, y)</code> gives <code>b = y</code>, <code>a = x − y</code>, this pair spans the whole plane.</p>
+<p>Now try <code>u₁ = (1, 2)</code> and <code>u₂ = (2, 4)</code>. Notice <code>u₂ = 2 u₁</code>, so every combination <code>a u₁ + b u₂ = (a + 2b) u₁</code> is just a multiple of <code>u₁</code>. The span is the single line through <code>(1, 2)</code>, and the target <code>(5, 4)</code> is unreachable.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="span-shader" data-title="What can these vectors reach?"><p class="bench-fallback"><strong>Interactive bench: What can these vectors reach?.</strong> Two vectors set by sliders and a mix of two coefficients draw the reachable region; the bench says whether the pair spans the plane or only a line.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set v₁ = (1, 0), v₂ = (0, 1) and vary the coefficients.</li>
+<li>Make v₂ a multiple of v₁. What happens to the reachable region?</li>
+<li>Try to reach a target point and read the coefficients.</li>
+<li>Find two different-looking vectors that still span only a line.</li>
+</ol>
+<p><strong>What you should notice:</strong> the reachable region is a plane unless the vectors line up, in which case it collapses to a line.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>A neuron&#39;s output</strong> is a linear combination of its inputs.</li>
+<li><strong>Embedding spaces:</strong> every embedding is a combination of directions.</li>
+<li><strong>Model capacity:</strong> features that lie in a smaller span cannot express everything.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming more vectors always mean a bigger span.</strong> Redundant ones add nothing.</li>
+<li><strong>Restricting coefficients to positives.</strong> Span allows any real number.</li>
+<li><strong>Confusing span with a set of two points.</strong> It is all mixes.</li>
+<li><strong>Forgetting the origin is always in the span</strong> (all coefficients zero).</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does span{(1, 0), (0, 1)} equal?</summary>
+The entire plane.
+</details>
+
+<details><summary>2. What is the span of (2, 6) and (1, 3)?</summary>
+The line through (1, 3), since (2, 6) = 2·(1, 3).
+</details>
+
+<details><summary>3. Write (4, 7) as a combination of (1, 0) and (0, 1).</summary>
+4·(1, 0) + 7·(0, 1).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Linear combination:</strong> a sum of scaled vectors.</li>
+<li><strong>Span:</strong> all linear combinations of a set of vectors.</li>
+<li><strong>Coefficient:</strong> the scalar multiplying a vector.</li>
+<li><strong>Plane / line:</strong> the possible shapes of a span in 2D.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a> · <a class="wikilink" href="/math/linear-independence-and-basis/" data-topic="math/linear-independence-and-basis">Linear Independence and Basis</a> · <a class="wikilink" href="/math/rank-and-null-space/" data-topic="math/rank-and-null-space">Rank and Null Space</a> · <a class="wikilink" href="/math/solving-linear-systems/" data-topic="math/solving-linear-systems">Solving Linear Systems</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/linear-combinations-and-span">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/linear-independence-and-basis/"><small>Read next</small><b>Linear Independence and Basis</b><p>Vectors are linearly independent if none of them can be built from the others, and a basis is a smallest set of independent vectors that spans a space.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/vector-operations/"><b>Vector Operations</b><p>Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.</p></a><a class="rc-card" href="/math/linear-independence-and-basis/"><b>Linear Independence and Basis</b><p>Vectors are linearly independent if none of them can be built from the others, and a basis is a smallest set of independent vectors that spans a space.</p></a><a class="rc-card" href="/math/rank-and-null-space/"><b>Rank and Null Space</b><p>The rank of a matrix is the number of independent directions it keeps, and its null space is the set of inputs it sends to zero.</p></a><a class="rc-card" href="/math/solving-linear-systems/"><b>Solving Linear Systems</b><p>A linear system is several linear equations that must all hold at once, such as x + y = 5 and x − y = 1.</p></a><a class="rc-card" href="/math/linear-algebra/"><b>Linear Algebra</b><p>Linear algebra is the maths of lists of numbers (vectors) and grids of numbers (matrices), and of the simple operations that combine them.</p></a><a class="rc-card" href="/math/matrices-as-transformations/"><b>Matrices as Transformations</b><p>A matrix is a grid of numbers, and multiplying a vector by a matrix transforms it: stretching, rotating, flipping or shearing space.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/vector-operations/">← Previous: Vector Operations</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

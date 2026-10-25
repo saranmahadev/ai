@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Perceptron — AI Base</title>
+<meta name="description" content="The perceptron is the oldest learning machine: compute a weighted sum of the inputs, answer &quot;yes&quot; if it is positive and &quot;no&quot; otherwise, and after every mistake nudge the weights so that mistake is…">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/the-perceptron/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="The Perceptron — AI Base">
+<meta property="og:description" content="The perceptron is the oldest learning machine: compute a weighted sum of the inputs, answer &quot;yes&quot; if it is positive and &quot;no&quot; otherwise, and after every mistake nudge the weights so that mistake is…">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/the-perceptron/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"The Perceptron","item":"https://ai.saranmahadev.in/machine-learning/the-perceptron/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Perceptron","description":"The perceptron is the oldest learning machine: compute a weighted sum of the inputs, answer \"yes\" if it is positive and \"no\" otherwise, and after every mistake nudge the weights so that mistake is…","url":"https://ai.saranmahadev.in/machine-learning/the-perceptron/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the update after a mistake on a point with label −1?","acceptedAnswer":{"@type":"Answer","text":"Subtract the point from the weights and subtract 1 from the bias."}},{"@type":"Question","name":"When does the perceptron stop?","acceptedAnswer":{"@type":"Answer","text":"When no point is misclassified, which is guaranteed only for linearly separable data."}},{"@type":"Question","name":"Why can't a single perceptron learn XOR?","acceptedAnswer":{"@type":"Answer","text":"XOR cannot be separated by one straight line."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Linear Models</p>
+        <h1 class="doc-title">The Perceptron</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cro4m66bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="cro4m66pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cro4m66bg)"/>
+  <circle cx="787" cy="242" r="117" fill="#fff2de" opacity="0.53"/><circle cx="1154" cy="157" r="169" fill="#ffd99f" opacity="0.55"/><circle cx="798" cy="158" r="139" fill="#ffd99f" opacity="0.44"/><circle cx="940" cy="248" r="175" fill="#8a6b5c" opacity="0.35"/><circle cx="741" cy="257" r="174" fill="#fff2de" opacity="0.29"/>
+  <path d="M0,420 L0,307 L30,308 L60,310 L90,312 L120,315 L150,318 L180,321 L210,325 L240,328 L270,332 L300,335 L330,338 L360,341 L390,344 L420,346 L450,347 L480,349 L510,349 L540,350 L570,349 L600,348 L630,347 L660,345 L690,343 L720,340 L750,337 L780,334 L810,331 L840,327 L870,324 L900,320 L930,317 L960,314 L990,312 L1020,310 L1050,308 L1080,307 L1110,306 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,394 L90,393 L120,392 L150,391 L180,389 L210,387 L240,385 L270,383 L300,380 L330,378 L360,375 L390,373 L420,370 L450,368 L480,366 L510,365 L540,364 L570,363 L600,362 L630,362 L660,362 L690,363 L720,364 L750,365 L780,367 L810,369 L840,371 L870,373 L900,376 L930,378 L960,381 L990,383 L1020,386 L1050,388 L1080,390 L1110,391 L1140,392 L1170,393 L1200,394 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="965" cy="178" rx="156" ry="44" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-20.3 965 178)"/><ellipse cx="965" cy="178" rx="215" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-14.3 965 178)"/>
+  <circle cx="965" cy="178" r="61" fill="url(#cro4m66pl)"/>
+  <circle cx="1046" cy="238" r="8" fill="#ffffff" opacity="0.63"/><circle cx="981" cy="236" r="11" fill="#ffffff" opacity="0.60"/><circle cx="1131" cy="137" r="10" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>perceptron</strong> is the oldest learning machine: compute a weighted sum of the inputs, answer &quot;yes&quot; if it is positive and &quot;no&quot; otherwise, and after every mistake nudge the weights so that mistake is a little less likely. It always finds a separating line if one exists, and never settles if none does.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a> and <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can a machine learn a rule just by being corrected when it is wrong?&quot; Yes, for problems where a straight line can separate the classes, and the way it does so is the seed of every neural network.</p>
+<h2 id="intuition-correct-the-mistake-nothing-else">Intuition: correct the mistake, nothing else</h2>
+<p>Each point has a label, +1 or −1. Look at points one at a time. If the current line puts a point on the right side, do nothing. If it puts a point on the wrong side, move the line toward that point&#39;s correct side: add the point to the weights for a +1 mistake, subtract it for a −1 mistake. Repeat until no mistakes remain.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">score       s = b + w · x
+predict     +1 if s &gt; 0, else −1
+update on a mistake with label y ∈ {+1, −1}:
+            w ← w + y·x          b ← b + y
+</code></pre>
+<p><strong>Convergence theorem:</strong> if the classes are linearly separable, the perceptron makes a finite number of mistakes and stops. If they are not, it cycles forever. A single perceptron can only draw straight lines, so it cannot learn XOR; stacking them into layers removes that limit (see <a class="wikilink" href="/neural-networks/neural-networks/" data-topic="neural-networks/neural-networks">Neural Networks</a>).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two points: <code>A = (1, 3)</code> labelled +1 and <code>B = (3, 1)</code> labelled −1. Start with <code>b = 0, w = (0, 0)</code>; a score of 0 counts as a mistake.</p>
+<pre><code class="language-text">A:  s = 0 → mistake.  y = +1:  w = (1, 3),  b = 1
+B:  s = 1 + 1·3 + 3·1 = 7 &gt; 0 → predicts +1 but label is −1 → mistake.
+    y = −1:  w = (1−3, 3−1) = (−2, 2),  b = 1 − 1 = 0
+check A: 0 + (−2)(1) + 2(3) =  4 &gt; 0  ✓        check B: (−2)(3) + 2(1) = −4 &lt; 0  ✓
+</code></pre>
+<p>Two updates, and the line <code>−2x + 2y = 0</code> (that is, <code>y = x</code>) separates the points. On the bench&#39;s 24 easy points the same rule needs 6 updates.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="perceptron-steps" data-title="The perceptron, one mistake at a time"><p class="bench-fallback"><strong>Interactive bench: The perceptron, one mistake at a time.</strong> Twenty-four points of two classes; step through the perceptron rule one mistake at a time, watching the line move and the misclassified count fall, then make the classes overlap to see it never settle.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Press <strong>Fix one mistake</strong> repeatedly and watch the line.</li>
+<li>Reset and press <strong>Play</strong>.</li>
+<li>Turn on <strong>Make the data overlap</strong> and play again.</li>
+<li>Count how many updates it takes on each dataset.</li>
+</ol>
+<p><strong>What you should notice:</strong> on separable data it stops with zero mistakes; on overlapping data it keeps fixing one mistake by creating another, and gives up.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Historic:</strong> the 1958 perceptron launched neural-network research.</li>
+<li><strong>Modern:</strong> each neuron in a network computes a score much like this; training replaces the mistake rule with gradients.</li>
+<li><strong>Online learning:</strong> update-on-error rules still appear in streaming systems.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting convergence on non-separable data.</strong></li>
+<li><strong>Treating the final line as special:</strong> many lines separate the data, and the perceptron stops at the first it finds (compare <a class="wikilink" href="/machine-learning/support-vector-machines/" data-topic="machine-learning/support-vector-machines">Support Vector Machines</a>).</li>
+<li><strong>Forgetting the bias term.</strong></li>
+<li><strong>Order dependence:</strong> a different point order gives a different line.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the update after a mistake on a point with label −1?</summary>
+Subtract the point from the weights and subtract 1 from the bias.
+</details>
+
+<details><summary>2. When does the perceptron stop?</summary>
+When no point is misclassified, which is guaranteed only for linearly separable data.
+</details>
+
+<details><summary>3. Why can't a single perceptron learn XOR?</summary>
+XOR cannot be separated by one straight line.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Perceptron:</strong> a linear threshold unit trained by mistake-driven updates.</li>
+<li><strong>Linearly separable:</strong> classes that a straight line can divide.</li>
+<li><strong>Bias:</strong> the constant term shifting the boundary.</li>
+<li><strong>Convergence theorem:</strong> the guarantee of finitely many mistakes when data is separable.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a> · <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a> · <a class="wikilink" href="/machine-learning/support-vector-machines/" data-topic="machine-learning/support-vector-machines">Support Vector Machines</a> · <a class="wikilink" href="/neural-networks/neural-networks/" data-topic="neural-networks/neural-networks">Neural Networks</a> · <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/the-perceptron">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/support-vector-machines/"><small>Read next</small><b>Support Vector Machines</b><p>Many lines separate two classes, so which is best? A support vector machine picks the one with the widest empty street between the classes: the maximum margin.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/logistic-regression-as-a-classifier/"><b>Logistic Regression as a Classifier</b><p>Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.</p></a><a class="rc-card" href="/math/dot-product/"><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p></a><a class="rc-card" href="/neural-networks/neural-networks/"><b>Neural Networks</b><p>Not every neural network learns by backpropagation, and not every useful idea about neurons came from deep learning.</p></a><a class="rc-card" href="/machine-learning/support-vector-machines/"><b>Support Vector Machines</b><p>Many lines separate two classes, so which is best? A support vector machine picks the one with the widest empty street between the classes: the maximum margin.</p></a><a class="rc-card" href="/math/backpropagation-by-hand/"><b>Backpropagation by Hand</b><p>Backpropagation computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs.</p></a><a class="rc-card" href="/machine-learning/linear-models/"><b>Linear Models</b><p>Linear models compute a weighted sum of the features and either use it directly (regression) or squash it into a probability (classification).</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/ridge-and-lasso/">← Previous: Ridge and Lasso</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

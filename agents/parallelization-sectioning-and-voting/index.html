@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parallelization: Sectioning and Voting — AI Base</title>
+<meta name="description" content="Running three independent pieces of a task one after another wastes time that didn&#39;t need to be spent sequentially at all — none of the three pieces needed the others to finish first.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/parallelization-sectioning-and-voting/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Parallelization: Sectioning and Voting — AI Base">
+<meta property="og:description" content="Running three independent pieces of a task one after another wastes time that didn&#39;t need to be spent sequentially at all — none of the three pieces needed the others to finish first.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/parallelization-sectioning-and-voting/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Parallelization: Sectioning and Voting","item":"https://ai.saranmahadev.in/agents/parallelization-sectioning-and-voting/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Parallelization: Sectioning and Voting","description":"Running three independent pieces of a task one after another wastes time that didn't need to be spent sequentially at all — none of the three pieces needed the others to finish first.","url":"https://ai.saranmahadev.in/agents/parallelization-sectioning-and-voting/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does sectioning finish in 1500ms rather than 3600ms in the worked example?","acceptedAnswer":{"@type":"Answer","text":"The three report sections don't depend on each other, so they can run at the same time; the total wait is only as long as the slowest individual section, not the sum of all three."}},{"@type":"Question","name":"In the worked example, why does voting's accuracy gain from N=5 to N=9 look smaller than the gain from N=1 to N=3?","acceptedAnswer":{"@type":"Answer","text":"Majority-vote accuracy has diminishing returns as sample count grows — each additional sample contributes less to shifting the majority once the vote is already reasonably likely to be correct."}},{"@type":"Question","name":"What assumption does voting's accuracy improvement depend on?","acceptedAnswer":{"@type":"Answer","text":"That wrong answers are inconsistent with each other rather than all converging on the same mistake — if every incorrect sample happened to agree, the majority vote would confidently select that shared wrong answer instead of being corrected by it."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Workflow Patterns Before Autonomy</p>
+        <h1 class="doc-title">Parallelization: Sectioning and Voting</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1aeu9d7bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1aeu9d7pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1aeu9d7bg)"/>
+  <circle cx="258" cy="90" r="91" fill="#e7bdc8" opacity="0.41"/><circle cx="527" cy="2" r="89" fill="#f3e9fc" opacity="0.49"/><circle cx="119" cy="61" r="61" fill="#e7bdc8" opacity="0.29"/><circle cx="444" cy="183" r="106" fill="#e7bdc8" opacity="0.46"/><circle cx="488" cy="362" r="127" fill="#f3e9fc" opacity="0.40"/><circle cx="1083" cy="93" r="65" fill="#e7bdc8" opacity="0.57"/>
+  <path d="M0,420 L0,306 L30,306 L60,309 L90,313 L120,319 L150,325 L180,332 L210,339 L240,344 L270,348 L300,349 L330,349 L360,347 L390,342 L420,337 L450,330 L480,323 L510,317 L540,311 L570,308 L600,306 L630,306 L660,309 L690,313 L720,319 L750,325 L780,332 L810,339 L840,344 L870,348 L900,349 L930,349 L960,347 L990,342 L1020,337 L1050,330 L1080,323 L1110,317 L1140,311 L1170,308 L1200,306 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,362 L60,362 L90,362 L120,362 L150,363 L180,364 L210,366 L240,368 L270,370 L300,372 L330,374 L360,377 L390,379 L420,382 L450,384 L480,386 L510,388 L540,390 L570,392 L600,393 L630,394 L660,394 L690,394 L720,394 L750,393 L780,392 L810,390 L840,388 L870,386 L900,384 L930,382 L960,379 L990,377 L1020,374 L1050,372 L1080,370 L1110,368 L1140,366 L1170,364 L1200,363 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="797" cy="284" rx="163" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(6.6 797 284)"/><ellipse cx="797" cy="284" rx="225" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(12.6 797 284)"/>
+  <circle cx="797" cy="284" r="64" fill="url(#c1aeu9d7pl)"/>
+  <circle cx="924" cy="352" r="18" fill="#ffffff" opacity="0.65"/><circle cx="566" cy="309" r="11" fill="#ffffff" opacity="0.80"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Running three independent pieces of a task one after another wastes time that didn&#39;t need to be spent sequentially at all — none of the three pieces needed the others to finish first. Running the same question several times and taking the most common answer is a different use of the same basic idea: parallel calls, combined afterward.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/prompt-chaining/" data-topic="agents/prompt-chaining">Prompt Chaining</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What are the two different reasons to run several LLM calls at once instead of one?&quot; <strong>Sectioning</strong> splits one task into genuinely independent subtasks and runs them in parallel, finishing in however long the <em>slowest</em> piece takes rather than the <em>sum</em> of all of them. <strong>Voting</strong> runs the identical prompt several times on the same question and takes the most common answer — a form of the self-consistency sampling already covered on the LLMs planet — trading extra compute for a meaningfully more reliable answer.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Three friends cooking three unrelated dishes for the same dinner finish whenever the slowest dish is done, not by adding up all three cooking times — that&#39;s sectioning. Asking the same trivia question to five different people and going with whatever most of them say, rather than trusting the first answer alone, is voting — useful specifically because any one person&#39;s mistake is unlikely to be the exact same mistake five people happen to share.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">sectioning:  total time = max(subtask times), not the sum
+voting:      majority_vote_accuracy(N, p) = P(more than N/2 of N independent samples, each correct with probability p, agree)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three independent report sections, timed, and a toy voting scenario at 60% per-sample accuracy:</p>
+<pre><code class="language-text">sectioning:
+  sequential (one after another): 1200 + 1500 + 900 = 3600ms
+  sectioned (run in parallel):    max(1200, 1500, 900) = 1500ms
+  speedup: 2.4×
+
+voting (per-sample accuracy 60%):
+  N=1: 60.0%     N=3: 64.8%     N=5: 68.3%     N=9: 73.3%
+</code></pre>
+<p>Sectioning cuts the total time to whichever single piece takes longest — a 2.4× speedup here, simply by not waiting on pieces that never depended on each other. Voting&#39;s accuracy climbs steadily with more samples, though with real diminishing returns: tripling the samples from 3 to 9 buys less than 9 percentage points of accuracy.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="sectioning-and-voting" data-title="Splitting work up, or asking several times"><p class="bench-fallback"><strong>Interactive bench: Splitting work up, or asking several times.</strong> Compare sequential vs. sectioned (parallel) latency, and watch majority-vote accuracy climb with more samples.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare sequential and sectioned latency for the three report sections.</li>
+<li>Switch to voting and slide N up, watching accuracy climb with diminishing returns.</li>
+<li>Imagine a per-sample accuracy of 90% instead of 60% — would voting still be worth the extra compute?</li>
+</ol>
+<p><strong>What you should notice:</strong> sectioning&#39;s benefit depends on genuine independence between subtasks (nothing to wait on), while voting&#39;s benefit depends on wrong answers being inconsistent with each other — if the same mistake keeps recurring, more votes wouldn&#39;t out-vote it.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Voting is exactly <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">self-consistency sampling</a>, already covered on the Generative AI planet</strong> — this topic is about using it as a parallelization pattern alongside sectioning, not re-deriving the sampling mechanism.</li>
+<li><strong><a class="wikilink" href="/agents/orchestrator-workers/" data-topic="agents/orchestrator-workers">Orchestrator-Workers</a> is the natural extension of sectioning</strong> when the subtasks themselves need to be identified dynamically rather than being fixed in advance.</li>
+<li><strong>Sectioning&#39;s speedup assumes genuinely independent subtasks</strong> — a task whose pieces depend on each other&#39;s results can&#39;t be sectioned this way at all, which is exactly why <a class="wikilink" href="/agents/plan-and-execute-agents/" data-topic="agents/plan-and-execute-agents">Plan-and-Execute Agents</a> exists for tasks that need ordered steps instead.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Sectioning a task whose pieces aren&#39;t actually independent.</strong> If one section&#39;s result is needed by another, running them in parallel either produces a wrong result or requires one to wait on the other anyway, erasing the speedup.</li>
+<li><strong>Assuming more voting samples always help proportionally.</strong> The worked example shows accuracy gains shrinking as N grows — tripling samples from 3 to 9 buys a much smaller gain than the first jump from 1 to 3.</li>
+<li><strong>Using voting when wrong answers consistently agree with each other.</strong> Voting&#39;s benefit specifically relies on errors being spread across different wrong answers — if every wrong sample converges on the same mistake, the majority vote would confidently pick that mistake too.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does sectioning finish in 1500ms rather than 3600ms in the worked example?</summary>
+The three report sections don't depend on each other, so they can run at the same time; the total wait is only as long as the slowest individual section, not the sum of all three.
+</details>
+
+<details><summary>2. In the worked example, why does voting's accuracy gain from N=5 to N=9 look smaller than the gain from N=1 to N=3?</summary>
+Majority-vote accuracy has diminishing returns as sample count grows — each additional sample contributes less to shifting the majority once the vote is already reasonably likely to be correct.
+</details>
+
+<details><summary>3. What assumption does voting's accuracy improvement depend on?</summary>
+That wrong answers are inconsistent with each other rather than all converging on the same mistake — if every incorrect sample happened to agree, the majority vote would confidently select that shared wrong answer instead of being corrected by it.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Sectioning:</strong> splitting a task into independent subtasks run in parallel, finishing in the time of the slowest piece.</li>
+<li><strong>Voting:</strong> running the same prompt multiple times and taking the most common answer.</li>
+<li><strong>Diminishing returns (in voting):</strong> each additional sample improving accuracy by a progressively smaller amount.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a> · <a class="wikilink" href="/agents/orchestrator-workers/" data-topic="agents/orchestrator-workers">Orchestrator-Workers</a> · <a class="wikilink" href="/agents/plan-and-execute-agents/" data-topic="agents/plan-and-execute-agents">Plan-and-Execute Agents</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/parallelization-sectioning-and-voting">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/orchestrator-workers/"><small>Read next</small><b>Orchestrator-Workers</b><p>A single call asked to analyze a market, project financials, and assess risk, all in one response, often trails off after the first section or two — there was only so much the model would produce…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/prompt-chaining/"><b>Prompt Chaining</b><p>Splitting a task into a fixed sequence of calls — outline, then draft, then polish — lets each step check the previous one&#39;s work before building on it.</p></a><a class="rc-card" href="/generative-ai/self-consistency-and-best-of-n-sampling/"><b>Self-Consistency and Best-of-N Sampling</b><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.</p></a><a class="rc-card" href="/agents/orchestrator-workers/"><b>Orchestrator-Workers</b><p>A single call asked to analyze a market, project financials, and assess risk, all in one response, often trails off after the first section or two — there was only so much the model would produce…</p></a><a class="rc-card" href="/agents/plan-and-execute-agents/"><b>Plan-and-Execute Agents</b><p>Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop.</p></a><a class="rc-card" href="/agents/workflow-patterns-before-autonomy/"><b>Workflow Patterns Before Autonomy</b><p>Not every multi-step task needs a fully autonomous agent deciding what to do next.</p></a><a class="rc-card" href="/agents/parallel-vs-sequential-tool-calls/"><b>Parallel vs. Sequential Tool Calls</b><p>Checking flight prices, the weather at the destination, and today&#39;s exchange rate are three tool calls that have nothing to do with each other — running them one after another wastes however long…</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/routing-between-specialized-prompts/">← Previous: Routing Between Specialized Prompts</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

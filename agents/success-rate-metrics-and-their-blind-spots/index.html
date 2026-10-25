@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Success-Rate Metrics and Their Blind Spots — AI Base</title>
+<meta name="description" content="Two agents can share the exact same success rate and still be nowhere near equally good.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/success-rate-metrics-and-their-blind-spots/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Success-Rate Metrics and Their Blind Spots — AI Base">
+<meta property="og:description" content="Two agents can share the exact same success rate and still be nowhere near equally good.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/success-rate-metrics-and-their-blind-spots/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Success-Rate Metrics and Their Blind Spots","item":"https://ai.saranmahadev.in/agents/success-rate-metrics-and-their-blind-spots/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Success-Rate Metrics and Their Blind Spots","description":"Two agents can share the exact same success rate and still be nowhere near equally good.","url":"https://ai.saranmahadev.in/agents/success-rate-metrics-and-their-blind-spots/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do Agent A and Agent B report the identical success rate in the worked example?","acceptedAnswer":{"@type":"Answer","text":"Both pass exactly 2 of their 5 runs — success rate only counts runs that cross the pass/fail threshold, so it can't distinguish a near-miss failure from a far miss."}},{"@type":"Question","name":"What does average partial credit capture that success rate alone doesn't?","acceptedAnswer":{"@type":"Answer","text":"How close each failing run actually got to succeeding — a run that reached 90% of the way there contributes very differently to average credit than one that reached only 10%, even though both count as the same single failure under success rate."}},{"@type":"Question","name":"Why might two agents tied on success rate still differ a lot in practical readiness?","acceptedAnswer":{"@type":"Answer","text":"One agent's failures might be near-misses that a small fix could resolve, while the other's failures are far from the goal — information the success rate alone cannot reveal, which is exactly what average partial credit is for."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Evaluating Agents</p>
+        <h1 class="doc-title">Success-Rate Metrics and Their Blind Spots</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1o0xozrbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1o0xozrpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1o0xozrbg)"/>
+  <circle cx="1091" cy="31" r="128" fill="#dcbef5" opacity="0.58"/><circle cx="1027" cy="293" r="142" fill="#725998" opacity="0.58"/><circle cx="71" cy="386" r="192" fill="#e7bdc8" opacity="0.28"/><circle cx="418" cy="270" r="88" fill="#dcbef5" opacity="0.61"/><circle cx="705" cy="30" r="170" fill="#e7bdc8" opacity="0.61"/><circle cx="667" cy="124" r="142" fill="#dcbef5" opacity="0.42"/>
+  <path d="M0,420 L0,345 L30,347 L60,348 L90,349 L120,350 L150,349 L180,349 L210,348 L240,346 L270,344 L300,341 L330,339 L360,335 L390,332 L420,329 L450,325 L480,322 L510,319 L540,316 L570,313 L600,310 L630,308 L660,307 L690,306 L720,306 L750,306 L780,306 L810,308 L840,309 L870,311 L900,314 L930,317 L960,320 L990,323 L1020,327 L1050,330 L1080,333 L1110,337 L1140,340 L1170,342 L1200,345 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,372 L30,368 L60,365 L90,363 L120,362 L150,363 L180,365 L210,369 L240,374 L270,379 L300,384 L330,388 L360,391 L390,393 L420,394 L450,393 L480,391 L510,387 L540,382 L570,377 L600,372 L630,368 L660,365 L690,363 L720,362 L750,363 L780,365 L810,369 L840,374 L870,379 L900,384 L930,388 L960,391 L990,393 L1020,394 L1050,393 L1080,391 L1110,387 L1140,382 L1170,377 L1200,372 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="719" cy="175" rx="260" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.2 719 175)"/><ellipse cx="719" cy="175" rx="360" ry="101" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.8 719 175)"/>
+  <circle cx="719" cy="175" r="102" fill="url(#c1o0xozrpl)"/>
+  <circle cx="525" cy="289" r="13" fill="#ffffff" opacity="0.80"/><circle cx="952" cy="268" r="9" fill="#ffffff" opacity="0.65"/><circle cx="941" cy="252" r="13" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Two agents can share the exact same success rate and still be nowhere near equally good. A binary pass/fail outcome per run throws away <em>how close</em> each failing run actually got — and an agent whose failures land at 90% of the way there is a very different agent from one whose failures land at 10%, even when both fail the same number of times.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/agent-benchmarks-and-task-suites/" data-topic="agents/agent-benchmarks-and-task-suites">Agent Benchmarks and Task Suites</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does a single success-rate number tell you everything you need to know about an agent?&quot; No — a success rate only records whether each run crossed the pass/fail line, not by how much it missed when it didn&#39;t. Two agents with an identical success rate can have very different <strong>average partial credit</strong> on their failing runs, which matters enormously for deciding which one is actually closer to being deployable.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Two students who each fail 3 of 5 exam questions could be in very different positions: one got those 3 questions almost entirely right with one small slip each, the other left them nearly blank. A grade book that only records pass/fail per question treats both students identically, even though one of them is clearly closer to mastering the material.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">success rate    = (runs with credit ≥ 1) / (total runs)
+average credit  = mean(credit across all runs), where credit ∈ [0, 1] is partial progress
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two agents, each passing 2 of 5 runs and failing the other 3, but with very different credit on those failures:</p>
+<pre><code class="language-text">Agent A: credits = [1.0, 1.0, 0.1, 0.1, 0.1]
+  success rate: 2/5 = 40%        average credit: 46%
+
+Agent B: credits = [1.0, 1.0, 0.9, 0.9, 0.9]
+  success rate: 2/5 = 40%        average credit: 94%
+</code></pre>
+<p>Both agents report an identical 40% success rate. But Agent A&#39;s failures are almost complete misses (10% progress each), while Agent B&#39;s failures land at 90% progress — one small gap away from passing. Looking only at the success rate, these two agents are indistinguishable; looking at average credit, they&#39;re clearly in very different states of readiness.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="partial-credit-blind-spot" data-title="Same success rate, very different near-misses"><p class="bench-fallback"><strong>Interactive bench: Same success rate, very different near-misses.</strong> Compare two agents with the identical 40% success rate but very different average partial credit on their failing runs.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Check Agent A&#39;s success rate and average credit.</li>
+<li>Switch to Agent B and compare — notice the success rate hasn&#39;t moved.</li>
+<li>Imagine you could only improve one agent with a small fix — which one&#39;s failures look more fixable from this chart alone?</li>
+</ol>
+<p><strong>What you should notice:</strong> the success-rate stat alone can&#39;t tell these two agents apart at all — it&#39;s identical for both — while the average-credit stat immediately shows which agent&#39;s failures are close calls and which are far misses.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong><a class="wikilink" href="/agents/trajectory-level-evaluation/" data-topic="agents/trajectory-level-evaluation">Trajectory-Level Evaluation</a>, the next topic, is a different way of recovering information a bare success rate throws away</strong>: instead of partial credit on the final state, it looks at which specific steps in the run were sound.</li>
+<li><strong>Partial-credit scoring connects back to the reward-shaping and subgoal ideas in <a class="wikilink" href="/agents/goal-decomposition-into-subtasks/" data-topic="agents/goal-decomposition-into-subtasks">Goal Decomposition into Subtasks</a></strong> — a task broken into checkable subgoals naturally produces a partial-credit signal instead of one binary verdict.</li>
+<li><strong>Benchmark leaderboards that report only a single aggregate success rate hide exactly this distinction</strong> — two agents tied on the leaderboard can be in very different states of practical readiness.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Reporting success rate as if it were the whole evaluation.</strong> The worked example shows two agents that are identical by that one number and completely different by any measure of how close their failures came.</li>
+<li><strong>Assuming a lower success rate always means a worse agent.</strong> An agent with a 35% success rate but consistently high partial credit on its failures might be one small fix away from a much higher score than an agent stuck at 50% with near-zero credit on its misses.</li>
+<li><strong>Averaging partial credit without also reporting the success rate.</strong> The two numbers answer different questions — credit alone hides whether a run actually crossed the finish line, exactly the blind spot in the other direction.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why do Agent A and Agent B report the identical success rate in the worked example?</summary>
+Both pass exactly 2 of their 5 runs — success rate only counts runs that cross the pass/fail threshold, so it can't distinguish a near-miss failure from a far miss.
+</details>
+
+<details><summary>2. What does average partial credit capture that success rate alone doesn't?</summary>
+How close each failing run actually got to succeeding — a run that reached 90% of the way there contributes very differently to average credit than one that reached only 10%, even though both count as the same single failure under success rate.
+</details>
+
+<details><summary>3. Why might two agents tied on success rate still differ a lot in practical readiness?</summary>
+One agent's failures might be near-misses that a small fix could resolve, while the other's failures are far from the goal — information the success rate alone cannot reveal, which is exactly what average partial credit is for.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Success rate:</strong> the fraction of runs that cross the pass/fail threshold, with no information about how close the rest came.</li>
+<li><strong>Partial credit:</strong> a continuous measure, between 0 and 1, of how much progress a run made toward the goal.</li>
+<li><strong>Blind spot (in evaluation):</strong> information a single summary metric discards, here the distance between a failing run and success.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/agent-benchmarks-and-task-suites/" data-topic="agents/agent-benchmarks-and-task-suites">Agent Benchmarks and Task Suites</a> · <a class="wikilink" href="/agents/trajectory-level-evaluation/" data-topic="agents/trajectory-level-evaluation">Trajectory-Level Evaluation</a> · <a class="wikilink" href="/agents/goal-decomposition-into-subtasks/" data-topic="agents/goal-decomposition-into-subtasks">Goal Decomposition into Subtasks</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/success-rate-metrics-and-their-blind-spots">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/trajectory-level-evaluation/"><small>Read next</small><b>Trajectory-Level Evaluation</b><p>An agent that takes a forbidden or dangerous action partway through its run, then happens to land on the correct final answer anyway, passes any grader that only checks the final answer.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/agent-benchmarks-and-task-suites/"><b>Agent Benchmarks and Task Suites</b><p>A question-answering benchmark checks one generated string against one reference string, and either matches or doesn&#39;t.</p></a><a class="rc-card" href="/agents/trajectory-level-evaluation/"><b>Trajectory-Level Evaluation</b><p>An agent that takes a forbidden or dangerous action partway through its run, then happens to land on the correct final answer anyway, passes any grader that only checks the final answer.</p></a><a class="rc-card" href="/agents/goal-decomposition-into-subtasks/"><b>Goal Decomposition into Subtasks</b><p>Told to &quot;launch the product,&quot; an agent that lists tasks in whatever order they occur to it can end up trying to launch before the thing it&#39;s launching has been tested — the launch step depends on…</p></a><a class="rc-card" href="/agents/evaluating-agents/"><b>Evaluating Agents</b><p>Scoring a single generated answer is one problem; scoring a hundred-step trajectory of actions, any one of which could be the reason the whole task failed, is a different and harder one.</p></a><a class="rc-card" href="/agents/cost-and-reliability-as-joint-metrics/"><b>Cost and Reliability as Joint Metrics</b><p>A 95%-success-rate agent sounds better than an 85%-success-rate one, full stop — until the first one costs ten times as much per attempt.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/agent-benchmarks-and-task-suites/">← Previous: Agent Benchmarks and Task Suites</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

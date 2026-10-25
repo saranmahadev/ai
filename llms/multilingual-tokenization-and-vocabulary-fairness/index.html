@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multilingual Tokenization and Vocabulary Fairness — AI Base</title>
+<meta name="description" content="a BPE vocabulary is trained on a specific corpus, and whatever that corpus happens to contain determines which character sequences are common enough to earn their own token.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/multilingual-tokenization-and-vocabulary-fairness/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Multilingual Tokenization and Vocabulary Fairness — AI Base">
+<meta property="og:description" content="a BPE vocabulary is trained on a specific corpus, and whatever that corpus happens to contain determines which character sequences are common enough to earn their own token.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/multilingual-tokenization-and-vocabulary-fairness/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Multilingual Tokenization and Vocabulary Fairness","item":"https://ai.saranmahadev.in/llms/multilingual-tokenization-and-vocabulary-fairness/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Multilingual Tokenization and Vocabulary Fairness","description":"a BPE vocabulary is trained on a specific corpus, and whatever that corpus happens to contain determines which character sequences are common enough to earn their own token.","url":"https://ai.saranmahadev.in/llms/multilingual-tokenization-and-vocabulary-fairness/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a fertility of 1.00 indicate, and what does a fertility of 12 indicate?","acceptedAnswer":{"@type":"Answer","text":"A fertility near 1.00 means the tokenizer produces roughly one token per word (efficient representation); a fertility of 12 means each word costs roughly twelve tokens on average, indicating the tokenizer has no efficient representation for that text."}},{"@type":"Question","name":"In the worked example, why did the underrepresented script's text shatter into so many tokens?","acceptedAnswer":{"@type":"Answer","text":"None of its character sequences appeared often enough in the tokenizer's training corpus to earn a BPE merge, so the tokenizer had no choice but to fall back to the smallest available units, close to individual characters."}},{"@type":"Question","name":"Is high fertility for a given language a property of that language itself?","acceptedAnswer":{"@type":"Answer","text":"No — it reflects how well-represented that language was in the data the tokenizer was trained on; the same language tokenized by a vocabulary trained specifically on it would show much lower fertility."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Pretraining Data and Objectives</p>
+        <h1 class="doc-title">Multilingual Tokenization and Vocabulary Fairness</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1jo394vbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1jo394vpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1jo394vbg)"/>
+  <circle cx="879" cy="306" r="120" fill="#8a5f5e" opacity="0.33"/><circle cx="1122" cy="107" r="130" fill="#8a5f5e" opacity="0.54"/><circle cx="584" cy="239" r="99" fill="#ffc7a2" opacity="0.62"/><circle cx="875" cy="376" r="176" fill="#ffece0" opacity="0.52"/><circle cx="644" cy="140" r="142" fill="#8a5f5e" opacity="0.37"/><circle cx="544" cy="141" r="227" fill="#ffc38f" opacity="0.25"/><circle cx="914" cy="247" r="165" fill="#ffece0" opacity="0.56"/>
+  <path d="M0,420 L0,315 L30,313 L60,310 L90,308 L120,307 L150,306 L180,306 L210,306 L240,306 L270,308 L300,309 L330,312 L360,314 L390,317 L420,320 L450,323 L480,327 L510,330 L540,334 L570,337 L600,340 L630,343 L660,345 L690,347 L720,348 L750,349 L780,350 L810,349 L840,349 L870,348 L900,346 L930,344 L960,341 L990,338 L1020,335 L1050,332 L1080,328 L1110,325 L1140,322 L1170,318 L1200,315 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,378 L30,374 L60,370 L90,367 L120,365 L150,363 L180,362 L210,362 L240,363 L270,365 L300,367 L330,370 L360,373 L390,377 L420,381 L450,385 L480,388 L510,390 L540,392 L570,394 L600,394 L630,393 L660,392 L690,390 L720,387 L750,384 L780,380 L810,376 L840,373 L870,369 L900,366 L930,364 L960,363 L990,362 L1020,362 L1050,363 L1080,365 L1110,368 L1140,371 L1170,375 L1200,378 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="888" cy="208" rx="176" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-17.1 888 208)"/><ellipse cx="888" cy="208" rx="244" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-11.1 888 208)"/>
+  <circle cx="888" cy="208" r="69" fill="url(#c1jo394vpl)"/>
+  <circle cx="704" cy="189" r="15" fill="#ffffff" opacity="0.72"/><circle cx="1084" cy="258" r="17" fill="#ffffff" opacity="0.70"/><circle cx="679" cy="238" r="18" fill="#ffffff" opacity="0.62"/><circle cx="704" cy="167" r="9" fill="#ffffff" opacity="0.79"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/byte-pair-encoding/" data-topic="transformers/byte-pair-encoding">a BPE vocabulary</a> is trained on a specific corpus, and whatever that corpus happens to contain determines which character sequences are common enough to earn their own token. Train mostly on one language, and text in a very different language or script pays a real, measurable price for every single piece of it.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/byte-pair-encoding/" data-topic="transformers/byte-pair-encoding">Byte Pair Encoding</a>, <a class="wikilink" href="/llms/data-mixture-and-domain-weighting/" data-topic="llms/data-mixture-and-domain-weighting">Data Mixture and Domain Weighting</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does the same tokenizer treat every language equally?&quot; No — a tokenizer&#39;s vocabulary is only efficient for text that resembles what it was trained on. <strong>Fertility</strong> (tokens produced per word) measures this directly: text in a well-represented language gets split into few, large tokens; text in an underrepresented language or script gets shattered into many tiny ones, often down to individual characters, because none of its character combinations earned a merge during vocabulary training.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A simple substitution cipher applied to English still looks like gibberish to an English-trained reader, letter by letter, with nothing to recognize — reading it is exhausting and slow, word by word, letter by letter, compared to reading ordinary English fluently. A BPE tokenizer trained overwhelmingly on one language experiences something structurally similar on any very different language: instead of recognizing whole words or common sub-words the way it does in its &quot;native&quot; language, it has to fall back to the smallest possible pieces, one character at a time.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">fertility = (number of tokens produced) / (number of words)
+  fertility ≈ 1: most words become a single token (efficient)
+  fertility ≫ 1: words are shattered into many small tokens (inefficient)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A BPE vocabulary trained on an English-heavy toy corpus (<code>the</code>, <code>quick</code>, <code>brown</code>, <code>fox</code>, <code>jumps</code>, <code>over</code>, <code>lazy</code>, <code>dog</code>, ...), applied to two very different texts:</p>
+<pre><code class="language-text">well-represented (English): &quot;the quick brown fox&quot;
+  4 words → 4 tokens → fertility 1.00
+  (every word was common enough during training to merge into one token)
+
+underrepresented script:    &quot;zxqvkplmwjhf qzxvbnmklpo wertyuiopas&quot;
+  3 words → 37 tokens → fertility 12.33
+  (none of these character sequences were ever seen often enough to merge;
+   the tokenizer falls back to splitting almost down to single characters)
+</code></pre>
+<p>The English text&#39;s fertility of 1.00 means the tokenizer is working exactly as intended — nearly one token per word. The underrepresented text&#39;s fertility of over 12 means each word costs more than twelve times as many tokens to represent, for text that (to a human) is no more complex than the English sentence.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="multilingual-fertility" data-title="The same vocabulary, two very different fertilities"><p class="bench-fallback"><strong>Interactive bench: The same vocabulary, two very different fertilities.</strong> Compare how many tokens the same BPE vocabulary produces for text it was trained on versus text in an unfamiliar script.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the well-represented text&#39;s token breakdown.</li>
+<li>Switch to the underrepresented text and watch it shatter into single characters.</li>
+<li>Compare the two fertility numbers directly.</li>
+</ol>
+<p><strong>What you should notice:</strong> the tokenizer isn&#39;t &quot;worse&quot; at recognizing the underrepresented text&#39;s meaning — it simply never learned any efficient way to represent it, because its training corpus barely (or never) contained anything like it.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Higher fertility directly costs more</strong>: every token costs compute to process and (on most APIs) costs money, so text in a high-fertility language is systematically more expensive to send through the same model, for equivalent content.</li>
+<li><strong>It also costs effective context</strong>: a model with a fixed context window of N tokens can fit far less <em>content</em> in a high-fertility language than in a low-fertility one, since each piece of content costs more tokens to represent.</li>
+<li><strong>This is a genuine, measured fairness concern in multilingual NLP</strong>, directly traceable to <a class="wikilink" href="/llms/data-mixture-and-domain-weighting/" data-topic="llms/data-mixture-and-domain-weighting">how much of each language was represented in the tokenizer&#39;s own training corpus</a> — not an inherent property of any language itself.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming fertility reflects a language&#39;s intrinsic complexity.</strong> It reflects how well-represented that language was in the <em>tokenizer&#39;s</em> training data, not anything about the language itself — the same text in the same language would tokenize efficiently under a tokenizer trained on it.</li>
+<li><strong>Treating this as solely a cost problem.</strong> It&#39;s also a capability problem: a model effectively has less &quot;room&quot; to reason about high-fertility-language content within the same context window.</li>
+<li><strong>Forgetting the fix lives upstream of the model.</strong> Addressing tokenizer fairness means changing what the tokenizer itself was trained on — it can&#39;t be patched by changing the model&#39;s weights alone.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does a fertility of 1.00 indicate, and what does a fertility of 12 indicate?</summary>
+A fertility near 1.00 means the tokenizer produces roughly one token per word (efficient representation); a fertility of 12 means each word costs roughly twelve tokens on average, indicating the tokenizer has no efficient representation for that text.
+</details>
+
+<details><summary>2. In the worked example, why did the underrepresented script's text shatter into so many tokens?</summary>
+None of its character sequences appeared often enough in the tokenizer's training corpus to earn a BPE merge, so the tokenizer had no choice but to fall back to the smallest available units, close to individual characters.
+</details>
+
+<details><summary>3. Is high fertility for a given language a property of that language itself?</summary>
+No — it reflects how well-represented that language was in the data the tokenizer was trained on; the same language tokenized by a vocabulary trained specifically on it would show much lower fertility.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Fertility:</strong> the number of tokens a tokenizer produces per word, used to measure tokenization efficiency.</li>
+<li><strong>Underrepresented language:</strong> a language with little presence in a tokenizer&#39;s training corpus, leading to high fertility and inefficient tokenization.</li>
+<li><strong>Tokenizer fairness:</strong> the concern that a shared tokenizer can impose systematically unequal costs across languages.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/byte-pair-encoding/" data-topic="transformers/byte-pair-encoding">Byte Pair Encoding</a> · <a class="wikilink" href="/llms/data-mixture-and-domain-weighting/" data-topic="llms/data-mixture-and-domain-weighting">Data Mixture and Domain Weighting</a> · <a class="wikilink" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/" data-topic="transformers/vocabulary-size-and-out-of-vocabulary-trade-offs">Vocabulary Size and Out-of-Vocabulary Trade-offs</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/multilingual-tokenization-and-vocabulary-fairness">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/continued-pretraining-and-domain-adaptation/"><small>Read next</small><b>Continued Pretraining and Domain Adaptation</b><p>A model pretrained on a broad, general corpus is a generalist — reasonably competent everywhere, expert nowhere in particular.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/byte-pair-encoding/"><b>Byte Pair Encoding</b><p>A transformer needs a fixed, finite vocabulary of symbols to look up — but raw text has effectively unlimited distinct words.</p></a><a class="rc-card" href="/llms/data-mixture-and-domain-weighting/"><b>Data Mixture and Domain Weighting</b><p>Even after filtering, the raw amount of available text differs wildly by domain — there&#39;s vastly more web text than there is code or curated books.</p></a><a class="rc-card" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/"><b>Vocabulary Size and Out-of-Vocabulary Trade-offs</b><p>The number of merges BPE training runs for sets a single number — vocabulary size — that quietly controls three different costs at once: how many parameters the embedding table needs, how long a…</p></a><a class="rc-card" href="/llms/pretraining-data-and-objectives/"><b>Pretraining Data and Objectives</b><p>Before any alignment, reasoning, or instruction-following, an LLM starts as a plain next-token predictor, trained on a specific objective over a specific (and heavily engineered) pile of text.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/data-mixture-and-domain-weighting/">← Previous: Data Mixture and Domain Weighting</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

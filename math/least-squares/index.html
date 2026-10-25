@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Least Squares — AI Base</title>
+<meta name="description" content="When a system of equations has more equations than unknowns, it usually has no exact solution. Least squares finds the values that come closest, by minimising the total squared error.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/least-squares/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Least Squares — AI Base">
+<meta property="og:description" content="When a system of equations has more equations than unknowns, it usually has no exact solution. Least squares finds the values that come closest, by minimising the total squared error.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/least-squares/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Least Squares","item":"https://ai.saranmahadev.in/math/least-squares/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Least Squares","description":"When a system of equations has more equations than unknowns, it usually has no exact solution. Least squares finds the values that come closest, by minimising the total squared error.","url":"https://ai.saranmahadev.in/math/least-squares/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does least squares minimise?","acceptedAnswer":{"@type":"Answer","text":"The sum of the squared differences between predictions and targets."}},{"@type":"Question","name":"Why are the residuals orthogonal to the columns of A?","acceptedAnswer":{"@type":"Answer","text":"The best fit is the projection of b onto the columns' span."}},{"@type":"Question","name":"Why does one outlier pull the line so much?","acceptedAnswer":{"@type":"Answer","text":"Squaring makes a large error count disproportionately."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Linear Algebra</p>
+        <h1 class="doc-title">Least Squares</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cu972hybg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cu972hypl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cu972hybg)"/>
+  <circle cx="286" cy="176" r="81" fill="#eee9fd" opacity="0.38"/><circle cx="674" cy="186" r="131" fill="#cebff9" opacity="0.57"/><circle cx="201" cy="81" r="80" fill="#eee9fd" opacity="0.29"/><circle cx="760" cy="207" r="191" fill="#ddbecb" opacity="0.25"/><circle cx="714" cy="220" r="173" fill="#ddbecb" opacity="0.50"/>
+  <path d="M0,420 L0,346 L30,348 L60,349 L90,350 L120,348 L150,346 L180,343 L210,339 L240,334 L270,329 L300,324 L330,319 L360,314 L390,311 L420,308 L450,306 L480,306 L510,306 L540,308 L570,311 L600,315 L630,319 L660,324 L690,330 L720,335 L750,339 L780,343 L810,346 L840,349 L870,350 L900,349 L930,348 L960,345 L990,342 L1020,337 L1050,333 L1080,327 L1110,322 L1140,317 L1170,313 L1200,310 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,393 L120,391 L150,388 L180,385 L210,381 L240,377 L270,374 L300,370 L330,367 L360,365 L390,363 L420,362 L450,362 L480,363 L510,365 L540,367 L570,370 L600,374 L630,377 L660,381 L690,385 L720,388 L750,391 L780,393 L810,394 L840,394 L870,393 L900,392 L930,390 L960,387 L990,383 L1020,380 L1050,376 L1080,372 L1110,369 L1140,366 L1170,364 L1200,363 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="855" cy="264" rx="246" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-20.0 855 264)"/><ellipse cx="855" cy="264" rx="340" ry="95" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-14.0 855 264)"/>
+  <circle cx="855" cy="264" r="96" fill="url(#cu972hypl)"/>
+  <circle cx="688" cy="183" r="7" fill="#ffffff" opacity="0.70"/><circle cx="1193" cy="274" r="17" fill="#ffffff" opacity="0.78"/><circle cx="1122" cy="239" r="17" fill="#ffffff" opacity="0.65"/><circle cx="1136" cy="179" r="7" fill="#ffffff" opacity="0.78"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>When a system of equations has more equations than unknowns, it usually has no exact solution. <strong>Least squares</strong> finds the values that come <em>closest</em>, by minimising the total squared error. It is the foundation of linear regression.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/solving-linear-systems/" data-topic="math/solving-linear-systems">Solving Linear Systems</a>, <a class="wikilink" href="/math/transpose-identity-and-inverse/" data-topic="math/transpose-identity-and-inverse">Transpose, Identity and Inverse</a> and <a class="wikilink" href="/math/orthogonality-and-projection/" data-topic="math/orthogonality-and-projection">Orthogonality and Projection</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If I cannot hit every point exactly, what is the best compromise?&quot; Real data is noisy, so no straight line passes through every point, but one line has the smallest overall error.</p>
+<h2 id="intuition-the-closest-reachable-point">Intuition: the closest reachable point</h2>
+<p>The equation <code>A x = b</code> asks whether <code>b</code> lies in the span of the columns of <code>A</code>. With noisy data it does not. Least squares picks <code>x</code> so that <code>A x</code> is the point in that span <strong>closest</strong> to <code>b</code>, which is the projection of <code>b</code> onto the span. The leftover error, <code>b − A x</code>, is perpendicular to the span.</p>
+<p>That perpendicularity gives the <strong>normal equations</strong>:</p>
+<pre><code class="language-text">Aᵀ A x = Aᵀ b        →      x = (Aᵀ A)⁻¹ Aᵀ b
+</code></pre>
+<p>The quantity minimised is the sum of squared residuals: <code>‖A x − b‖² = Σ (predictionᵢ − targetᵢ)²</code>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Fit a line <code>y = c + m x</code> to the points <code>(1, 1)</code>, <code>(2, 2)</code>, <code>(3, 2)</code>. Each row of <code>A</code> is <code>(1, x)</code> and <code>b</code> holds the <code>y</code> values:</p>
+<pre><code class="language-text">A = [1 1]      b = [1]
+    [1 2]          [2]
+    [1 3]          [2]
+
+AᵀA = [3  6]      Aᵀb = [ 5]
+      [6 14]            [11]
+
+det(AᵀA) = 3·14 − 6·6 = 6
+x = (1/6) [14 −6] [ 5]  = (1/6) (70 − 66, −30 + 33)  = (0.667, 0.5)
+          [−6  3] [11]
+</code></pre>
+<p>The best line is <code>y = 0.667 + 0.5 x</code>. Predictions: <code>1.167, 1.667, 2.167</code>. Residuals: <code>−0.167, +0.333, −0.167</code> (they add to 0, as the perpendicularity requires). Sum of squared errors: <code>0.028 + 0.111 + 0.028 = 0.167</code>, and no other line does better.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="least-squares-fit" data-title="The line with the smallest squared error"><p class="bench-fallback"><strong>Interactive bench: The line with the smallest squared error.</strong> Drag points on a plot; the bench draws the least-squares line, shows each squared error as a square, and lets you tilt the line away from the best one to watch the total error grow.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Drag a point far from the line. How does the best line respond?</li>
+<li>Use the tilt slider to move away from the best slope. How does the total error change?</li>
+<li>Add an outlier and watch its pull.</li>
+<li>Check that the residuals add to about zero.</li>
+</ol>
+<p><strong>What you should notice:</strong> the best line minimises the total area of the error squares, and a single far-away point can pull it noticeably.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Linear regression</strong> is least squares (see <a class="wikilink" href="/math/linear-regression-end-to-end/" data-topic="math/linear-regression-end-to-end">Linear Regression End to End</a>).</li>
+<li><strong>Mean squared error</strong> is the same quantity divided by the count.</li>
+<li><strong>Ridge regression</strong> adds a penalty to the normal equations (see <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a>).</li>
+<li><strong>Numerical methods</strong> solve least squares with decompositions rather than the normal equations, for stability (see <a class="wikilink" href="/math/conditioning/" data-topic="math/conditioning">Conditioning</a>).</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting outliers have large influence</strong> because errors are squared.</li>
+<li><strong>Inverting <code>AᵀA</code> when it is nearly singular.</strong> Use a stable solver.</li>
+<li><strong>Confusing vertical and perpendicular error.</strong> Ordinary least squares measures vertical gaps.</li>
+<li><strong>Extrapolating far outside the data.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does least squares minimise?</summary>
+The sum of the squared differences between predictions and targets.
+</details>
+
+<details><summary>2. Why are the residuals orthogonal to the columns of A?</summary>
+The best fit is the projection of b onto the columns' span.
+</details>
+
+<details><summary>3. Why does one outlier pull the line so much?</summary>
+Squaring makes a large error count disproportionately.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Least squares:</strong> choosing parameters that minimise the sum of squared errors.</li>
+<li><strong>Residual:</strong> the difference between a target and its prediction.</li>
+<li><strong>Normal equations:</strong> <code>AᵀA x = Aᵀb</code>.</li>
+<li><strong>Outlier:</strong> a point far from the pattern.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/orthogonality-and-projection/" data-topic="math/orthogonality-and-projection">Orthogonality and Projection</a> · <a class="wikilink" href="/math/solving-linear-systems/" data-topic="math/solving-linear-systems">Solving Linear Systems</a> · <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a> · <a class="wikilink" href="/math/linear-regression-end-to-end/" data-topic="math/linear-regression-end-to-end">Linear Regression End to End</a> · <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/least-squares">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/eigenvalues-and-eigenvectors/"><small>Read next</small><b>Eigenvalues and Eigenvectors</b><p>An eigenvector of a matrix is a direction that the matrix only stretches, without turning: A v = λ v. The stretch factor λ is its eigenvalue.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/solving-linear-systems/"><b>Solving Linear Systems</b><p>A linear system is several linear equations that must all hold at once, such as x + y = 5 and x − y = 1.</p></a><a class="rc-card" href="/math/transpose-identity-and-inverse/"><b>Transpose, Identity and Inverse</b><p>Three special matrix ideas come up constantly: the transpose (flip rows and columns), the identity (the matrix that does nothing) and the inverse (the matrix that undoes another).</p></a><a class="rc-card" href="/math/orthogonality-and-projection/"><b>Orthogonality and Projection</b><p>Two vectors are orthogonal when their dot product is zero (they meet at a right angle), and the projection of one vector onto another is its shadow: the closest point to it along the other&#39;s…</p></a><a class="rc-card" href="/math/linear-regression-end-to-end/"><b>Linear Regression End to End</b><p>Linear regression fits a straight line ŷ = m·x + b to data by choosing the slope and intercept that minimise the mean squared error.</p></a><a class="rc-card" href="/math/regularization-as-a-constraint/"><b>Regularization as a Constraint</b><p>Regularization keeps a model from fitting noise by discouraging large weights: add a penalty such as λ‖w‖² to the loss.</p></a><a class="rc-card" href="/math/conditioning/"><b>Conditioning</b><p>A problem is ill-conditioned when tiny changes in its input cause huge changes in its answer, no matter how carefully you compute. The condition number measures that sensitivity.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/orthogonality-and-projection/">← Previous: Orthogonality and Projection</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

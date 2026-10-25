@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weight Tying — AI Base</title>
+<meta name="description" content="A transformer needs an embedding table to turn token ids into vectors at the input, and a separate projection at the output to turn a final hidden vector back into a score for every vocabulary entry.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/weight-tying/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Weight Tying — AI Base">
+<meta property="og:description" content="A transformer needs an embedding table to turn token ids into vectors at the input, and a separate projection at the output to turn a final hidden vector back into a score for every vocabulary entry.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/weight-tying/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Weight Tying","item":"https://ai.saranmahadev.in/transformers/weight-tying/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Weight Tying","description":"A transformer needs an embedding table to turn token ids into vectors at the input, and a separate projection at the output to turn a final hidden vector back into a score for every vocabulary entry.","url":"https://ai.saranmahadev.in/transformers/weight-tying/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the two roles a tied embedding matrix plays?","acceptedAnswer":{"@type":"Answer","text":"Looking up a token's embedding at the input, and projecting a final hidden state into per-token scores (logits) at the output."}},{"@type":"Question","name":"In the worked example, how was the logit for a given token computed?","acceptedAnswer":{"@type":"Answer","text":"As the dot product of that token's embedding row with the hidden state vector — the same operation as a row of a matrix-vector multiplication, `E · h`."}},{"@type":"Question","name":"Roughly how much does weight tying save, relative to using two separate vocabulary-sized matrices?","acceptedAnswer":{"@type":"Answer","text":"Exactly one full vocabulary-sized matrix's worth of parameters — a 50% reduction in the combined size of the input and output matrices specifically."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Embeddings and Masking</p>
+        <h1 class="doc-title">Weight Tying</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c4h5ur0bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c4h5ur0pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c4h5ur0bg)"/>
+  <circle cx="271" cy="408" r="184" fill="#c5cacf" opacity="0.38"/><circle cx="884" cy="269" r="80" fill="#e2efff" opacity="0.55"/><circle cx="58" cy="123" r="195" fill="#c5cacf" opacity="0.29"/><circle cx="957" cy="82" r="212" fill="#4f669f" opacity="0.50"/><circle cx="1092" cy="409" r="167" fill="#abd0ff" opacity="0.29"/>
+  <path d="M0,420 L0,345 L30,347 L60,348 L90,349 L120,350 L150,349 L180,349 L210,348 L240,346 L270,344 L300,341 L330,338 L360,335 L390,332 L420,329 L450,325 L480,322 L510,318 L540,315 L570,313 L600,310 L630,308 L660,307 L690,306 L720,306 L750,306 L780,306 L810,308 L840,309 L870,311 L900,314 L930,317 L960,320 L990,323 L1020,327 L1050,330 L1080,334 L1110,337 L1140,340 L1170,342 L1200,345 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,392 L60,389 L90,385 L120,381 L150,376 L180,371 L210,367 L240,364 L270,362 L300,362 L330,364 L360,367 L390,371 L420,375 L450,380 L480,385 L510,389 L540,392 L570,394 L600,394 L630,392 L660,389 L690,385 L720,381 L750,376 L780,371 L810,367 L840,364 L870,362 L900,362 L930,364 L960,367 L990,371 L1020,375 L1050,380 L1080,385 L1110,389 L1140,392 L1170,394 L1200,394 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="731" cy="282" rx="240" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.1 731 282)"/><ellipse cx="731" cy="282" rx="332" ry="93" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.1 731 282)"/>
+  <circle cx="731" cy="282" r="94" fill="url(#c4h5ur0pl)"/>
+  <circle cx="960" cy="348" r="18" fill="#ffffff" opacity="0.83"/><circle cx="987" cy="206" r="17" fill="#ffffff" opacity="0.85"/><circle cx="491" cy="241" r="19" fill="#ffffff" opacity="0.83"/><circle cx="517" cy="220" r="9" fill="#ffffff" opacity="0.66"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A transformer needs an embedding table to turn token ids into vectors at the input, and a separate projection at the output to turn a final hidden vector back into a score for every vocabulary entry. Both matrices have exactly the same shape. Weight tying notices this and uses the literal same matrix for both jobs.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/token-embeddings-and-embedding-scaling/" data-topic="transformers/token-embeddings-and-embedding-scaling">Token Embeddings and Embedding Scaling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why train two separate matrices when the input embedding and the output projection have identical shapes and arguably similar jobs?&quot; Because they don&#39;t have to be separate: the output projection can reuse the input embedding table directly (transposed), roughly halving the parameters spent on vocabulary-sized matrices, with no change to how the rest of the model computes.</p>
+<h2 id="intuition">Intuition</h2>
+<p>The input embedding table answers &quot;given this token, what vector represents it?&quot; The output projection answers something close to the reverse: &quot;given this vector, how well does it match each token?&quot; Those are naturally related questions — a token whose embedding points in a certain direction should also score highly when the final hidden state points that same way. Weight tying takes that relationship literally: instead of learning two separate <code>vocabulary_size × d_model</code> matrices that have to learn to agree with each other, it uses one matrix for both, computed as <code>output = E · h</code> where <code>E</code> is the very same embedding table used at the input.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">untied:  input embedding E (vocab × d_model),  output projection W_out (vocab × d_model)  — two matrices
+tied:    input embedding E (vocab × d_model),  output projection = E                        — one matrix, reused
+
+logits = E · h     (h is the final hidden state, a d_model-length vector)
+</code></pre>
+<p>Tying removes one full <code>vocabulary_size × d_model</code> matrix&#39;s worth of parameters from the model.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A tiny 4-token, 3-dimensional embedding table, used directly as the tied output projection, applied to a hidden state <code>h = [0.5, -1.0, 0.2]</code>:</p>
+<pre><code class="language-text">E = [[0.1, -0.2, 0.3],
+     [0.4,  0.1, -0.1],
+     [-0.3, 0.5,  0.2],
+     [0.2,  0.2,  0.2]]
+
+logits = E · h = [0.310, 0.080, -0.610, -0.060]
+</code></pre>
+<p>No separate output matrix was ever introduced — the same four embedding rows used to represent the tokens at the input are reused, via a matrix-vector product, to score every token at the output.</p>
+<p>At real scale, tying removes exactly one embedding-sized matrix: for BERT-base&#39;s vocabulary (30,522) at <code>d_model = 768</code>, an untied model spends <code>2 × 30,522 × 768 = 46,881,792</code> parameters on its two vocabulary-sized matrices; tying cuts that to <code>30,522 × 768 = 23,440,896</code> — a 50% reduction in exactly those two matrices.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="weight-tying" data-title="One matrix, two jobs"><p class="bench-fallback"><strong>Interactive bench: One matrix, two jobs.</strong> Compute output logits for a hidden state using a tied embedding matrix, and compare the parameter cost of tied against untied input/output matrices at a chosen vocabulary size.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compute logits from the same embedding table used for input lookup, and check which token scores highest.</li>
+<li>Change the hidden state and see the logits shift to favour a different token.</li>
+<li>Compare tied vs. untied parameter counts at a few different vocabulary sizes.</li>
+</ol>
+<p><strong>What you should notice:</strong> the parameter saving from tying is always exactly one <code>vocabulary_size × d_model</code> matrix — a 50% reduction in the two vocabulary-sized matrices specifically, regardless of how large or small the model is otherwise.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is a standard, widely-used design choice</strong> in many transformer language models, not a rare optimization.</li>
+<li><strong>It directly reduces the embedding-related parameter cost</strong> counted in <a class="wikilink" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/" data-topic="transformers/vocabulary-size-and-out-of-vocabulary-trade-offs">Vocabulary Size and Out-of-Vocabulary Trade-offs</a> and tallied in full in <a class="wikilink" href="/transformers/counting-a-transformer-s-parameters-and-flops/" data-topic="transformers/counting-a-transformer-s-parameters-and-flops">Counting a Transformer&#39;s Parameters and FLOPs</a>.</li>
+<li><strong>It is one instance of a broader pattern — parameter sharing</strong> — that also shows up when the same transformer block&#39;s weights are reused across layers in some efficient model designs, though that is a separate choice from tying input and output.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming tying is free.</strong> It removes real degrees of freedom — the input and output &quot;views&quot; of each token are now forced to be literally the same, which is not always the best fit for every architecture or task.</li>
+<li><strong>Confusing weight tying with weight sharing across layers.</strong> Tying here specifically means sharing between input embedding and output projection; sharing a block&#39;s weights across depth is a different design decision entirely.</li>
+<li><strong>Forgetting the matrix needs transposing.</strong> The input embedding is used as <code>vocabulary_size × d_model</code>; computing output logits from a <code>d_model</code>-length hidden state uses that same matrix in the transposed orientation.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are the two roles a tied embedding matrix plays?</summary>
+Looking up a token's embedding at the input, and projecting a final hidden state into per-token scores (logits) at the output.
+</details>
+
+<details><summary>2. In the worked example, how was the logit for a given token computed?</summary>
+As the dot product of that token's embedding row with the hidden state vector — the same operation as a row of a matrix-vector multiplication, `E · h`.
+</details>
+
+<details><summary>3. Roughly how much does weight tying save, relative to using two separate vocabulary-sized matrices?</summary>
+Exactly one full vocabulary-sized matrix's worth of parameters — a 50% reduction in the combined size of the input and output matrices specifically.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Output projection:</strong> the matrix mapping a final hidden state to a score (logit) for every vocabulary entry.</li>
+<li><strong>Weight tying:</strong> reusing the input embedding table as the output projection instead of training a separate matrix.</li>
+<li><strong>Logit:</strong> an unnormalized score for one vocabulary entry, before any softmax turns it into a probability.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/token-embeddings-and-embedding-scaling/" data-topic="transformers/token-embeddings-and-embedding-scaling">Token Embeddings and Embedding Scaling</a> · <a class="wikilink" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/" data-topic="transformers/vocabulary-size-and-out-of-vocabulary-trade-offs">Vocabulary Size and Out-of-Vocabulary Trade-offs</a> · <a class="wikilink" href="/transformers/counting-a-transformer-s-parameters-and-flops/" data-topic="transformers/counting-a-transformer-s-parameters-and-flops">Counting a Transformer&#39;s Parameters and FLOPs</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/weight-tying">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/attention-masks-padding-and-causal-masking/"><small>Read next</small><b>Attention Masks: Padding and Causal Masking</b><p>Plain attention lets every position look at every other position.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/token-embeddings-and-embedding-scaling/"><b>Token Embeddings and Embedding Scaling</b><p>A tokenizer hands back a sequence of integer ids — vocabulary indices, not vectors.</p></a><a class="rc-card" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/"><b>Vocabulary Size and Out-of-Vocabulary Trade-offs</b><p>The number of merges BPE training runs for sets a single number — vocabulary size — that quietly controls three different costs at once: how many parameters the embedding table needs, how long a…</p></a><a class="rc-card" href="/transformers/counting-a-transformer-s-parameters-and-flops/"><b>Counting a Transformer&#39;s Parameters and FLOPs</b><p>Every number quoted for a transformer&#39;s size — &quot;110 million parameters,&quot; &quot;175 billion parameters&quot; — comes from literally adding up the matrices covered earlier on this planet.</p></a><a class="rc-card" href="/transformers/embeddings-and-masking/"><b>Embeddings and Masking</b><p>A token id is just an index.</p></a><a class="rc-card" href="/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/"><b>Capstone: Assembling a Tiny Transformer from the Ground Up</b><p>This capstone traces one phrase through every stage this planet built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer block,…</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/token-embeddings-and-embedding-scaling/">← Previous: Token Embeddings and Embedding Scaling</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

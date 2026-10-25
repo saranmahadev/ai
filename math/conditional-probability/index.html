@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conditional Probability — AI Base</title>
+<meta name="description" content="Conditional probability is the probability of an event given that another has happened: P(A | B), read &quot;the probability of A given B&quot;.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/conditional-probability/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Conditional Probability — AI Base">
+<meta property="og:description" content="Conditional probability is the probability of an event given that another has happened: P(A | B), read &quot;the probability of A given B&quot;.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/conditional-probability/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Conditional Probability","item":"https://ai.saranmahadev.in/math/conditional-probability/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Conditional Probability","description":"Conditional probability is the probability of an event given that another has happened: P(A | B), read \"the probability of A given B\".","url":"https://ai.saranmahadev.in/math/conditional-probability/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"P(A and B) = 0.1 and P(B) = 0.4. What is P(A | B)?","acceptedAnswer":{"@type":"Answer","text":"0.25."}},{"@type":"Question","name":"P(king | face card)?","acceptedAnswer":{"@type":"Answer","text":"1/3."}},{"@type":"Question","name":"Are P(A | B) and P(B | A) always equal?","acceptedAnswer":{"@type":"Answer","text":"No."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Probability</p>
+        <h1 class="doc-title">Conditional Probability</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1n58l5sbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1n58l5spl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1n58l5sbg)"/>
+  <circle cx="553" cy="310" r="60" fill="#ddbecb" opacity="0.57"/><circle cx="106" cy="341" r="99" fill="#ddbecb" opacity="0.46"/><circle cx="689" cy="84" r="191" fill="#68599a" opacity="0.25"/><circle cx="405" cy="404" r="64" fill="#68599a" opacity="0.23"/><circle cx="772" cy="353" r="95" fill="#ddbecb" opacity="0.38"/>
+  <path d="M0,420 L0,342 L30,338 L60,333 L90,328 L120,323 L150,318 L180,313 L210,310 L240,307 L270,306 L300,306 L330,307 L360,309 L390,312 L420,316 L450,321 L480,326 L510,331 L540,336 L570,340 L600,344 L630,347 L660,349 L690,350 L720,349 L750,347 L780,344 L810,341 L840,336 L870,331 L900,326 L930,321 L960,316 L990,312 L1020,309 L1050,307 L1080,306 L1110,306 L1140,307 L1170,310 L1200,313 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,373 L30,369 L60,366 L90,364 L120,363 L150,362 L180,362 L210,363 L240,365 L270,368 L300,371 L330,375 L360,378 L390,382 L420,386 L450,389 L480,391 L510,393 L540,394 L570,394 L600,393 L630,391 L660,389 L690,386 L720,383 L750,379 L780,375 L810,372 L840,368 L870,366 L900,364 L930,362 L960,362 L990,363 L1020,364 L1050,366 L1080,369 L1110,372 L1140,376 L1170,380 L1200,383 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="814" cy="186" rx="195" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-18.7 814 186)"/><ellipse cx="814" cy="186" rx="269" ry="75" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-12.7 814 186)"/>
+  <circle cx="814" cy="186" r="76" fill="url(#c1n58l5spl)"/>
+  <circle cx="970" cy="249" r="16" fill="#ffffff" opacity="0.76"/><circle cx="1030" cy="187" r="12" fill="#ffffff" opacity="0.67"/><circle cx="977" cy="264" r="14" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Conditional probability</strong> is the probability of an event <em>given that another has happened</em>: <code>P(A | B)</code>, read &quot;the probability of A given B&quot;. Learning that <code>B</code> happened shrinks the world of possibilities to <code>B</code>, and <code>P(A | B)</code> asks how much of that smaller world is also <code>A</code>.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/probability-rules/" data-topic="math/probability-rules">Probability Rules</a> and <a class="wikilink" href="/math/events-and-sample-spaces/" data-topic="math/events-and-sample-spaces">Events and Sample Spaces</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does new information change how likely something is?&quot; The chance a card is a king is 1 in 13, but if you are told it is a face card, the chance rises to 1 in 3.</p>
+<h2 id="intuition-shrink-the-sample-space">Intuition: shrink the sample space</h2>
+<p>Once you know <code>B</code> happened, outcomes outside <code>B</code> are ruled out. The new sample space is just <code>B</code>. Among the outcomes left, count those that are also in <code>A</code>:</p>
+<pre><code class="language-text">P(A | B) = P(A and B) / P(B)          (needs P(B) &gt; 0)
+</code></pre>
+<p>Rearranged, this gives the <strong>multiplication rule</strong>: <code>P(A and B) = P(A | B) · P(B)</code>.</p>
+<p>Watch the order: <code>P(A | B)</code> and <code>P(B | A)</code> are usually different. The chance of being wet given rain is high; the chance of rain given that you are wet (you might have used a sprinkler) is lower.</p>
+<h2 id="a-worked-example-two-dice">A worked example: two dice</h2>
+<p>Roll two dice. <code>B</code> = &quot;first die is 6&quot; (6 outcomes out of 36). <code>A</code> = &quot;sum ≥ 10&quot;.</p>
+<pre><code class="language-text">A and B: (6,4) (6,5) (6,6)  →  3 outcomes  →  P(A and B) = 3/36
+P(B) = 6/36
+P(A | B) = (3/36) / (6/36) = 1/2
+</code></pre>
+<p>Unconditionally <code>P(A) = 6/36 = 1/6</code>, so knowing the first die is a 6 tripled the chance. Cards: <code>P(king | face card) = (4/52) / (12/52) = 1/3</code>, since a face card is a jack, queen or king.</p>
+<p>A medical one: if 2% of emails are phishing and 90% of phishing emails contain a link, then <code>P(phishing and link) = 0.9 × 0.02 = 0.018</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="restricted-grid" data-title="Shrink the world to what you know"><p class="bench-fallback"><strong>Interactive bench: Shrink the world to what you know.</strong> The 36 outcomes of two dice are drawn as a grid; choose a condition B and an event A; the grid dims outside B and shows P(A), P(B), P(A and B) and P(A given B).</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set B to &quot;first die is 6&quot; and A to &quot;sum ≥ 10&quot;. Read the conditional probability.</li>
+<li>Change B to &quot;sum is even&quot; and compare P(A | B) with P(A).</li>
+<li>Find a B for which P(A | B) is 1.</li>
+<li>Find a B for which P(A | B) equals P(A).</li>
+</ol>
+<p><strong>What you should notice:</strong> conditioning simply restricts the grid to B, and the answer is the share of that smaller grid that is also A.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Classifiers estimate <code>P(label | features)</code>.</strong></li>
+<li><strong>Language models</strong> give <code>P(next word | previous words)</code>.</li>
+<li><strong>Bayes&#39; rule</strong> turns <code>P(evidence | cause)</code> into <code>P(cause | evidence)</code> (see <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a>).</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing <code>P(A | B)</code> with <code>P(B | A)</code>.</strong></li>
+<li><strong>Dividing by the wrong denominator.</strong> The bottom is <code>P(B)</code>, not 1.</li>
+<li><strong>Conditioning on an impossible event.</strong></li>
+<li><strong>Treating &quot;given&quot; as &quot;and&quot;.</strong> <code>P(A and B)</code> is smaller than <code>P(A | B)</code> in general.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. P(A and B) = 0.1 and P(B) = 0.4. What is P(A | B)?</summary>
+0.25.
+</details>
+
+<details><summary>2. P(king | face card)?</summary>
+1/3.
+</details>
+
+<details><summary>3. Are P(A | B) and P(B | A) always equal?</summary>
+No.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Conditional probability:</strong> <code>P(A | B)</code>, the probability of A given B.</li>
+<li><strong>Multiplication rule:</strong> <code>P(A and B) = P(A | B) P(B)</code>.</li>
+<li><strong>Condition / given:</strong> what is assumed to have happened.</li>
+<li><strong>Restricted sample space:</strong> the outcomes consistent with B.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/probability-rules/" data-topic="math/probability-rules">Probability Rules</a> · <a class="wikilink" href="/math/independence/" data-topic="math/independence">Independence</a> · <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/math/joint-and-marginal-distributions/" data-topic="math/joint-and-marginal-distributions">Joint and Marginal Distributions</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/conditional-probability">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/independence/"><small>Read next</small><b>Independence</b><p>Two events are independent when knowing one happened tells you nothing about the other: P(A | B) = P(A). Equivalently, the probability of both is the product: P(A and B) = P(A) · P(B).</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/probability-rules/"><b>Probability Rules</b><p>Every probability, however it is produced, obeys a short list of rules: it lies between 0 and 1, the whole sample space has probability 1, the probability of &quot;not A&quot; is 1 − P(A), and for &quot;A or B&quot;…</p></a><a class="rc-card" href="/math/events-and-sample-spaces/"><b>Events and Sample Spaces</b><p>A sample space is the set of all outcomes that could happen, and an event is any collection of those outcomes.</p></a><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/math/independence/"><b>Independence</b><p>Two events are independent when knowing one happened tells you nothing about the other: P(A | B) = P(A). Equivalently, the probability of both is the product: P(A and B) = P(A) · P(B).</p></a><a class="rc-card" href="/math/joint-and-marginal-distributions/"><b>Joint and Marginal Distributions</b><p>A joint distribution gives the probability of every combination of two or more random variables at once.</p></a><a class="rc-card" href="/math/probability/"><b>Probability</b><p>Probability is the maths of uncertainty. It gives numbers to &quot;how likely?&quot;, and rules for combining those numbers.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/probability-rules/">← Previous: Probability Rules</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

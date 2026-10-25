@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matrices as Transformations — AI Base</title>
+<meta name="description" content="A matrix is a grid of numbers, and multiplying a vector by a matrix transforms it: stretching, rotating, flipping or shearing space.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/matrices-as-transformations/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Matrices as Transformations — AI Base">
+<meta property="og:description" content="A matrix is a grid of numbers, and multiplying a vector by a matrix transforms it: stretching, rotating, flipping or shearing space.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/matrices-as-transformations/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Matrices as Transformations","item":"https://ai.saranmahadev.in/math/matrices-as-transformations/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Matrices as Transformations","description":"A matrix is a grid of numbers, and multiplying a vector by a matrix transforms it: stretching, rotating, flipping or shearing space.","url":"https://ai.saranmahadev.in/math/matrices-as-transformations/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does [[1, 0], [0, 1]] do to a vector?","acceptedAnswer":{"@type":"Answer","text":"Nothing: it is the identity."}},{"@type":"Question","name":"Apply [[2, 0], [0, 3]] to (1, 1).","acceptedAnswer":{"@type":"Answer","text":"(2, 3)."}},{"@type":"Question","name":"Where does (1, 0) go under [[a, b], [c, d]]?","acceptedAnswer":{"@type":"Answer","text":"To (a, c), the first column."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Linear Algebra</p>
+        <h1 class="doc-title">Matrices as Transformations</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cs0bu75bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cs0bu75pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cs0bu75bg)"/>
+  <circle cx="757" cy="274" r="92" fill="#68599a" opacity="0.34"/><circle cx="914" cy="134" r="64" fill="#ddbecb" opacity="0.60"/><circle cx="1160" cy="87" r="160" fill="#cebff9" opacity="0.37"/><circle cx="667" cy="213" r="100" fill="#ddbecb" opacity="0.46"/><circle cx="637" cy="152" r="217" fill="#eee9fd" opacity="0.46"/><circle cx="631" cy="256" r="141" fill="#cebff9" opacity="0.23"/><circle cx="840" cy="14" r="182" fill="#68599a" opacity="0.49"/>
+  <path d="M0,420 L0,318 L30,315 L60,312 L90,310 L120,308 L150,307 L180,306 L210,306 L240,306 L270,307 L300,308 L330,310 L360,312 L390,315 L420,318 L450,321 L480,324 L510,328 L540,331 L570,334 L600,338 L630,340 L660,343 L690,345 L720,347 L750,348 L780,349 L810,350 L840,349 L870,349 L900,347 L930,345 L960,343 L990,341 L1020,338 L1050,334 L1080,331 L1110,328 L1140,324 L1170,321 L1200,318 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,371 L60,375 L90,379 L120,382 L150,386 L180,389 L210,391 L240,393 L270,394 L300,394 L330,393 L360,391 L390,389 L420,386 L450,382 L480,378 L510,375 L540,371 L570,368 L600,365 L630,363 L660,362 L690,362 L720,363 L750,364 L780,366 L810,369 L840,373 L870,376 L900,380 L930,384 L960,387 L990,390 L1020,392 L1050,393 L1080,394 L1110,394 L1140,392 L1170,390 L1200,388 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="859" cy="206" rx="260" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-20.9 859 206)"/><ellipse cx="859" cy="206" rx="360" ry="101" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-14.9 859 206)"/>
+  <circle cx="859" cy="206" r="102" fill="url(#cs0bu75pl)"/>
+  <circle cx="995" cy="347" r="16" fill="#ffffff" opacity="0.78"/><circle cx="1056" cy="109" r="14" fill="#ffffff" opacity="0.84"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>matrix</strong> is a grid of numbers, and multiplying a vector by a matrix <strong>transforms</strong> it: stretching, rotating, flipping or shearing space. Each column of the matrix says where one basis arrow lands, which is enough to describe the whole transformation.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a>, <a class="wikilink" href="/math/linear-combinations-and-span/" data-topic="math/linear-combinations-and-span">Linear Combinations and Span</a> and <a class="wikilink" href="/math/linear-independence-and-basis/" data-topic="math/linear-independence-and-basis">Linear Independence and Basis</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What does a grid of numbers <em>do</em>?&quot; A neural-network layer is a matrix: it takes an input vector and produces a new vector, and the matrix decides how the space is reshaped.</p>
+<h2 id="intuition-a-machine-that-warps-a-grid">Intuition: a machine that warps a grid</h2>
+<p>Imagine the plane drawn as a square grid. A matrix warps that grid, keeping lines straight and the origin fixed. To know the warp, follow just two arrows: where <code>(1, 0)</code> lands and where <code>(0, 1)</code> lands. Those two landing points are the two <strong>columns</strong> of the matrix.</p>
+<pre><code class="language-text">A = [ a  b ]        A · (1, 0) = (a, c)   first column
+    [ c  d ]        A · (0, 1) = (b, d)   second column
+</code></pre>
+<h2 id="the-rule">The rule</h2>
+<p>To transform <code>(x, y)</code>, take a combination of the columns:</p>
+<pre><code class="language-text">A (x, y) = x · (a, c) + y · (b, d) = (a x + b y,  c x + d y)
+</code></pre>
+<p>Each output component is a dot product of a <strong>row</strong> with the input vector.</p>
+<h2 id="common-transformations">Common transformations</h2>
+<pre><code class="language-text">stretch x by 2:     [ 2 0 ]         reflect in the x-axis:   [ 1  0 ]
+                    [ 0 1 ]                                  [ 0 −1 ]
+
+rotate by θ:        [ cos θ  −sin θ ]      shear:            [ 1 1 ]
+                    [ sin θ   cos θ ]                        [ 0 1 ]
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Rotate <code>(1, 0)</code> by 90° (θ = π/2, so <code>cos θ = 0</code>, <code>sin θ = 1</code>):</p>
+<pre><code class="language-text">[ 0 −1 ] [1]   [ 0·1 + (−1)·0 ]   [0]
+[ 1  0 ] [0] = [ 1·1 +   0·0  ] = [1]
+</code></pre>
+<p>The point <code>(1, 0)</code> moves to <code>(0, 1)</code>, a quarter turn. The second column <code>(−1, 0)</code> says <code>(0, 1)</code> moves to <code>(−1, 0)</code>, also a quarter turn.</p>
+<p>Try the stretch <code>[[2, 0], [0, 1]]</code> on <code>(3, 4)</code>: <code>(2·3 + 0, 0 + 1·4) = (6, 4)</code>. Only the x-part doubled.</p>
+<p>The transformation is <strong>linear</strong>: <code>A(u + v) = Au + Av</code> and <code>A(c v) = c Av</code>. Grids stay grids, and lines stay lines.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="grid-warper" data-title="Warp the grid with a matrix"><p class="bench-fallback"><strong>Interactive bench: Warp the grid with a matrix.</strong> Sliders for the four numbers of a 2 by 2 matrix draw the original grid and the transformed one, along with the two column vectors and the unit square's new shape; presets give stretch, rotation, shear and flip.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Press &quot;Rotate&quot; and see the grid turn without stretching.</li>
+<li>Change only the first column and watch where (1, 0) lands.</li>
+<li>Make the two columns point along the same line. What happens to the grid?</li>
+<li>Try a flip and see the orientation reverse.</li>
+</ol>
+<p><strong>What you should notice:</strong> the columns are where the basis arrows land, and the whole grid follows them.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Dense layers</strong> apply a weight matrix to their input vector.</li>
+<li><strong>Embedding lookups</strong> are matrix operations.</li>
+<li><strong>Data augmentation</strong> rotates and scales images with transformation matrices.</li>
+<li><strong>PCA</strong> rotates data to new axes (see <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a>).</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing rows and columns.</strong> Columns show where the basis arrows land.</li>
+<li><strong>Assuming a matrix can shift the origin.</strong> Adding a bias vector does that.</li>
+<li><strong>Forgetting that order matters</strong> when combining matrices.</li>
+<li><strong>Treating any grid as a transformation</strong> without checking its shape matches the vector.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does [[1, 0], [0, 1]] do to a vector?</summary>
+Nothing: it is the identity.
+</details>
+
+<details><summary>2. Apply [[2, 0], [0, 3]] to (1, 1).</summary>
+(2, 3).
+</details>
+
+<details><summary>3. Where does (1, 0) go under [[a, b], [c, d]]?</summary>
+To (a, c), the first column.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Matrix:</strong> a rectangular grid of numbers.</li>
+<li><strong>Linear transformation:</strong> a warp that keeps lines straight and fixes the origin.</li>
+<li><strong>Column:</strong> where a basis vector lands.</li>
+<li><strong>Rotation / shear / stretch:</strong> common transformations.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/linear-independence-and-basis/" data-topic="math/linear-independence-and-basis">Linear Independence and Basis</a> · <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a> · <a class="wikilink" href="/math/determinant/" data-topic="math/determinant">Determinant</a> · <a class="wikilink" href="/math/eigenvalues-and-eigenvectors/" data-topic="math/eigenvalues-and-eigenvectors">Eigenvalues and Eigenvectors</a> · <a class="wikilink" href="/math/a-forward-pass-by-hand/" data-topic="math/a-forward-pass-by-hand">A Forward Pass by Hand</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/matrices-as-transformations">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/matrix-multiplication/"><small>Read next</small><b>Matrix Multiplication</b><p>Matrix multiplication combines two matrices into one that does both transformations in a row. Each entry of the result is a dot product of a row of the first matrix with a column of the second.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/vector-operations/"><b>Vector Operations</b><p>Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.</p></a><a class="rc-card" href="/math/linear-combinations-and-span/"><b>Linear Combinations and Span</b><p>A linear combination of vectors is a sum of scaled copies: c₁v₁ + c₂v₂ + …. The span of some vectors is the set of every point you can reach that way.</p></a><a class="rc-card" href="/math/linear-independence-and-basis/"><b>Linear Independence and Basis</b><p>Vectors are linearly independent if none of them can be built from the others, and a basis is a smallest set of independent vectors that spans a space.</p></a><a class="rc-card" href="/math/svd-and-pca/"><b>SVD and PCA</b><p>The singular value decomposition (SVD) breaks any matrix into a rotation, a stretch along perpendicular axes, and another rotation: A = U Σ Vᵀ.</p></a><a class="rc-card" href="/math/matrix-multiplication/"><b>Matrix Multiplication</b><p>Matrix multiplication combines two matrices into one that does both transformations in a row. Each entry of the result is a dot product of a row of the first matrix with a column of the second.</p></a><a class="rc-card" href="/math/determinant/"><b>Determinant</b><p>The determinant of a square matrix is a single number telling you how the transformation scales area (or volume): a determinant of 3 makes shapes three times larger, 0.5 halves them, 0 flattens…</p></a></div></section>
+        <p class="doc-prev"><a href="/math/cosine-similarity/">← Previous: Cosine Similarity</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

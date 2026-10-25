@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Embeddings and Embedding Scaling — AI Base</title>
+<meta name="description" content="A tokenizer hands back a sequence of integer ids — vocabulary indices, not vectors.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/token-embeddings-and-embedding-scaling/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Token Embeddings and Embedding Scaling — AI Base">
+<meta property="og:description" content="A tokenizer hands back a sequence of integer ids — vocabulary indices, not vectors.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/token-embeddings-and-embedding-scaling/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Token Embeddings and Embedding Scaling","item":"https://ai.saranmahadev.in/transformers/token-embeddings-and-embedding-scaling/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Token Embeddings and Embedding Scaling","description":"A tokenizer hands back a sequence of integer ids — vocabulary indices, not vectors.","url":"https://ai.saranmahadev.in/transformers/token-embeddings-and-embedding-scaling/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What operation turns a token id into a vector?","acceptedAnswer":{"@type":"Answer","text":"A direct row lookup in the embedding table — the token id selects which row to read."}},{"@type":"Question","name":"Why is the embedding scaled by √d_model?","acceptedAnswer":{"@type":"Answer","text":"To bring it onto a comparable scale with the positional encoding it gets added to next, so neither one dominates the sum."}},{"@type":"Question","name":"In the worked example, by what factor did the embedding's vector norm grow after scaling?","acceptedAnswer":{"@type":"Answer","text":"By exactly 2 — the same factor as √d_model with d_model = 4, since scaling multiplies every component (and so the whole vector's length) uniformly."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Embeddings and Masking</p>
+        <h1 class="doc-title">Token Embeddings and Embedding Scaling</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1vyep1bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1vyep1pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1vyep1bg)"/>
+  <circle cx="675" cy="88" r="183" fill="#c5cacf" opacity="0.52"/><circle cx="501" cy="236" r="143" fill="#4f669f" opacity="0.59"/><circle cx="1032" cy="70" r="107" fill="#e2efff" opacity="0.49"/><circle cx="1022" cy="386" r="201" fill="#c5cacf" opacity="0.47"/><circle cx="124" cy="405" r="140" fill="#4f669f" opacity="0.47"/><circle cx="68" cy="148" r="150" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,346 L30,343 L60,341 L90,338 L120,335 L150,332 L180,328 L210,325 L240,321 L270,318 L300,315 L330,312 L360,310 L390,308 L420,307 L450,306 L480,306 L510,306 L540,307 L570,308 L600,310 L630,312 L660,314 L690,317 L720,320 L750,324 L780,327 L810,331 L840,334 L870,337 L900,340 L930,343 L960,345 L990,347 L1020,348 L1050,349 L1080,350 L1110,349 L1140,349 L1170,347 L1200,346 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,380 L30,376 L60,372 L90,369 L120,366 L150,364 L180,363 L210,362 L240,362 L270,363 L300,365 L330,368 L360,371 L390,375 L420,379 L450,382 L480,386 L510,389 L540,391 L570,393 L600,394 L630,394 L660,393 L690,391 L720,389 L750,386 L780,382 L810,379 L840,375 L870,371 L900,368 L930,365 L960,363 L990,362 L1020,362 L1050,363 L1080,364 L1110,366 L1140,369 L1170,372 L1200,376 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="812" cy="154" rx="182" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-24.2 812 154)"/><ellipse cx="812" cy="154" rx="252" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-18.2 812 154)"/>
+  <circle cx="812" cy="154" r="71" fill="url(#c1vyep1pl)"/>
+  <circle cx="985" cy="112" r="8" fill="#ffffff" opacity="0.73"/><circle cx="590" cy="217" r="16" fill="#ffffff" opacity="0.75"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A tokenizer hands back a sequence of integer ids — <a class="wikilink" href="/transformers/byte-pair-encoding/" data-topic="transformers/byte-pair-encoding">vocabulary indices</a>, not vectors. The embedding table is the lookup that turns each id into the actual vector the rest of the transformer operates on, and the original transformer paper adds one small, easy-to-miss twist: it scales that vector up before using it.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/byte-pair-encoding/" data-topic="transformers/byte-pair-encoding">Byte Pair Encoding</a>, <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does a token id — a bare integer — become a vector a neural network can compute with?&quot; By a direct lookup: the embedding table is a matrix with one row per vocabulary entry, and looking up a token&#39;s id simply reads off that row. The twist — multiplying the result by <code>√d_model</code> — exists to balance the scale of the token embedding against the positional encoding it gets added to next.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Think of the embedding table as a dictionary where every vocabulary entry has a fixed, trainable &quot;meaning vector&quot; stored as a row. Looking up a token is nothing more than reading that row off the table — the same operation, however large the table gets. The scaling factor is a smaller, more specific fix: positional encodings (see <a class="wikilink" href="/transformers/positional-information-beyond-sinusoids/" data-topic="transformers/positional-information-beyond-sinusoids">Positional Information Beyond Sinusoids</a>) are added directly to the token embedding, and a trained embedding&#39;s values tend to be small by comparison, so without scaling, the position signal could end up dominating the actual token&#39;s identity. Multiplying by <code>√d_model</code> brings the two onto a comparable scale before they&#39;re added.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">embedding lookup:  e = E[token_id]            — one row of the embedding table E
+embedding scaling: e_scaled = e × √d_model
+</code></pre>
+<p><code>d_model</code> is the width of every vector flowing through the transformer. The table <code>E</code> has shape <code>vocabulary_size × d_model</code> — the same embedding table whose parameter cost was counted in <a class="wikilink" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/" data-topic="transformers/vocabulary-size-and-out-of-vocabulary-trade-offs">Vocabulary Size and Out-of-Vocabulary Trade-offs</a>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A tiny 5-token, 4-dimensional embedding table, looking up token id <code>2</code>, with <code>d_model = 4</code> so <code>√d_model = 2</code>:</p>
+<pre><code class="language-text">raw embedding for token 2:    [-0.3, 0.5, 0.2, -0.4]
+scale = √4 = 2
+scaled embedding:             [-0.6, 1.0, 0.4, -0.8]
+
+raw vector norm:    0.7348
+scaled vector norm: 1.4697
+</code></pre>
+<p>Scaling by <code>√d_model</code> doubled the vector&#39;s length exactly as expected — every component simply multiplied by 2, and the overall magnitude grew by the same factor of 2, matching <code>√4</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="embed-scale" data-title="From token id to scaled vector"><p class="bench-fallback"><strong>Interactive bench: From token id to scaled vector.</strong> Look up a token id's row in a small embedding table, then watch the vector scale as d_model (and so √d_model) changes.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look up a few different token ids and compare their raw embedding rows.</li>
+<li>Change <code>d_model</code> and watch the scaling factor, and the scaled vector&#39;s length, change together.</li>
+<li>Compare the scaled embedding&#39;s magnitude against a typical positional encoding value (from <a class="wikilink" href="/transformers/positional-information-beyond-sinusoids/" data-topic="transformers/positional-information-beyond-sinusoids">Positional Information Beyond Sinusoids</a>) to see why the two need to be on a similar scale.</li>
+</ol>
+<p><strong>What you should notice:</strong> the scaling factor depends only on <code>d_model</code>, never on the token itself — every token&#39;s embedding gets stretched by exactly the same amount.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the very first numeric operation inside a transformer</strong>, immediately after <a class="wikilink" href="/transformers/byte-pair-encoding/" data-topic="transformers/byte-pair-encoding">tokenization</a> and before a single attention computation runs.</li>
+<li><strong>The embedding table is also, usually, the output projection</strong> — see <a class="wikilink" href="/transformers/weight-tying/" data-topic="transformers/weight-tying">Weight Tying</a> next for why sharing that one matrix both ways is a common choice.</li>
+<li><strong>Scaling choices like this recur throughout <a class="wikilink" href="/transformers/the-transformer-block/" data-topic="transformers/the-transformer-block">The Transformer Block</a></strong>: normalization placement and residual connections are both, at heart, about keeping values at a consistent, trainable scale as they flow through many layers.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting the scaling factor when reasoning about embedding magnitudes.</strong> A raw embedding row understates the actual value flowing into the rest of the network by a factor of <code>√d_model</code>.</li>
+<li><strong>Assuming scaling changes the embedding&#39;s direction.</strong> It&#39;s a uniform multiplication — every component scales by the same factor, so the vector&#39;s direction is unchanged, only its length.</li>
+<li><strong>Treating the embedding table as fixed.</strong> It is trained along with the rest of the model — the rows aren&#39;t hand-assigned, they&#39;re learned.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What operation turns a token id into a vector?</summary>
+A direct row lookup in the embedding table — the token id selects which row to read.
+</details>
+
+<details><summary>2. Why is the embedding scaled by √d_model?</summary>
+To bring it onto a comparable scale with the positional encoding it gets added to next, so neither one dominates the sum.
+</details>
+
+<details><summary>3. In the worked example, by what factor did the embedding's vector norm grow after scaling?</summary>
+By exactly 2 — the same factor as √d_model with d_model = 4, since scaling multiplies every component (and so the whole vector's length) uniformly.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Embedding table:</strong> a <code>vocabulary_size × d_model</code> matrix, one row per token, learned during training.</li>
+<li><strong>d_model:</strong> the width of every vector flowing through a transformer&#39;s layers.</li>
+<li><strong>Embedding scaling:</strong> multiplying a looked-up embedding by <code>√d_model</code> before it is combined with positional information.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/byte-pair-encoding/" data-topic="transformers/byte-pair-encoding">Byte Pair Encoding</a> · <a class="wikilink" href="/transformers/weight-tying/" data-topic="transformers/weight-tying">Weight Tying</a> · <a class="wikilink" href="/transformers/positional-information-beyond-sinusoids/" data-topic="transformers/positional-information-beyond-sinusoids">Positional Information Beyond Sinusoids</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/token-embeddings-and-embedding-scaling">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/weight-tying/"><small>Read next</small><b>Weight Tying</b><p>A transformer needs an embedding table to turn token ids into vectors at the input, and a separate projection at the output to turn a final hidden vector back into a score for every vocabulary entry.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/byte-pair-encoding/"><b>Byte Pair Encoding</b><p>A transformer needs a fixed, finite vocabulary of symbols to look up — but raw text has effectively unlimited distinct words.</p></a><a class="rc-card" href="/math/vector-operations/"><b>Vector Operations</b><p>Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.</p></a><a class="rc-card" href="/transformers/positional-information-beyond-sinusoids/"><b>Positional Information Beyond Sinusoids</b><p>The fixed sinusoidal encoding from Deep Learning was the original transformer&#39;s answer to &quot;where is this token in the sequence?&quot; — but it was never the only answer, and modern models mostly use…</p></a><a class="rc-card" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/"><b>Vocabulary Size and Out-of-Vocabulary Trade-offs</b><p>The number of merges BPE training runs for sets a single number — vocabulary size — that quietly controls three different costs at once: how many parameters the embedding table needs, how long a…</p></a><a class="rc-card" href="/transformers/weight-tying/"><b>Weight Tying</b><p>A transformer needs an embedding table to turn token ids into vectors at the input, and a separate projection at the output to turn a final hidden vector back into a score for every vocabulary entry.</p></a><a class="rc-card" href="/transformers/the-transformer-block/"><b>The Transformer Block</b><p>Attention on its own is only half of a transformer layer.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/embeddings-and-masking/">← Previous: Embeddings and Masking</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROC and AUC — AI Base</title>
+<meta name="description" content="The ROC curve shows what a classifier achieves at every possible threshold at once: how many real positives it catches (true positive rate) against how many false alarms it raises (false positive…">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/roc-and-auc/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="ROC and AUC — AI Base">
+<meta property="og:description" content="The ROC curve shows what a classifier achieves at every possible threshold at once: how many real positives it catches (true positive rate) against how many false alarms it raises (false positive…">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/roc-and-auc/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"ROC and AUC","item":"https://ai.saranmahadev.in/machine-learning/roc-and-auc/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"ROC and AUC","description":"The ROC curve shows what a classifier achieves at every possible threshold at once: how many real positives it catches (true positive rate) against how many false alarms it raises (false positive…","url":"https://ai.saranmahadev.in/machine-learning/roc-and-auc/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What AUC does a random-guessing model get?","acceptedAnswer":{"@type":"Answer","text":"About 0.5."}},{"@type":"Question","name":"What does AUC = 0.9 mean in words?","acceptedAnswer":{"@type":"Answer","text":"A random positive gets a higher score than a random negative 90% of the time."}},{"@type":"Question","name":"Does moving the threshold change the ROC curve?","acceptedAnswer":{"@type":"Answer","text":"No, it only moves the operating point along the curve."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Evaluation</p>
+        <h1 class="doc-title">ROC and AUC</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cmdfspxbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="cmdfspxpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cmdfspxbg)"/>
+  <circle cx="802" cy="285" r="164" fill="#ffd08d" opacity="0.34"/><circle cx="542" cy="398" r="142" fill="#ffd08d" opacity="0.49"/><circle cx="128" cy="296" r="176" fill="#8a6b5c" opacity="0.37"/><circle cx="462" cy="115" r="129" fill="#ffd08d" opacity="0.30"/><circle cx="471" cy="231" r="200" fill="#8a6b5c" opacity="0.51"/>
+  <path d="M0,420 L0,336 L30,331 L60,326 L90,321 L120,316 L150,312 L180,309 L210,307 L240,306 L270,306 L300,307 L330,310 L360,313 L390,317 L420,322 L450,327 L480,333 L510,337 L540,342 L570,345 L600,348 L630,349 L660,350 L690,349 L720,346 L750,343 L780,339 L810,335 L840,330 L870,324 L900,319 L930,315 L960,311 L990,308 L1020,306 L1050,306 L1080,306 L1110,308 L1140,311 L1170,314 L1200,319 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,391 L90,388 L120,385 L150,381 L180,378 L210,374 L240,371 L270,367 L300,365 L330,363 L360,362 L390,362 L420,363 L450,364 L480,367 L510,370 L540,373 L570,377 L600,381 L630,384 L660,388 L690,390 L720,392 L750,394 L780,394 L810,393 L840,392 L870,390 L900,387 L930,384 L960,380 L990,376 L1020,373 L1050,369 L1080,367 L1110,364 L1140,363 L1170,362 L1200,362 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="806" cy="170" rx="181" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-10.2 806 170)"/><ellipse cx="806" cy="170" rx="250" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-4.2 806 170)"/>
+  <circle cx="806" cy="170" r="71" fill="url(#cmdfspxpl)"/>
+  <circle cx="759" cy="73" r="11" fill="#ffffff" opacity="0.87"/><circle cx="1084" cy="197" r="15" fill="#ffffff" opacity="0.73"/><circle cx="619" cy="224" r="11" fill="#ffffff" opacity="0.80"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>ROC curve</strong> shows what a classifier achieves at every possible threshold at once: how many real positives it catches (true positive rate) against how many false alarms it raises (false positive rate). The <strong>AUC</strong>, the area under that curve, compresses it into one number: the chance that the model scores a random positive above a random negative.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/precision-recall-and-f1/" data-topic="machine-learning/precision-recall-and-f1">Precision, Recall and F1</a> and <a class="wikilink" href="/math/random-variables/" data-topic="math/random-variables">Random Variables</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How good is the model, regardless of threshold?&quot; Precision and recall depend on where you cut. ROC and AUC measure how well the model <em>ranks</em> positives above negatives, before any cut is chosen.</p>
+<h2 id="intuition-trace-the-threshold">Intuition: trace the threshold</h2>
+<p>Start with the threshold so high that nothing is flagged: no true positives, no false alarms, the bottom-left corner. Lower it gradually: true positives and false alarms both grow, tracing a curve to the top-right corner, where everything is flagged. A model with no skill climbs along the diagonal (each extra true positive comes with a matching false alarm). A better model bows toward the top-left corner: many true positives before many false alarms.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">true positive rate (TPR)   = TP / (TP + FN)  = recall
+false positive rate (FPR)  = FP / (FP + TN)  = 1 − specificity
+ROC curve    (FPR, TPR) traced as the threshold sweeps from high to low
+AUC          area under the curve: 0.5 = coin flip, 1.0 = perfect ranking
+             AUC = P(score of a random positive &gt; score of a random negative)
+</code></pre>
+<p>ROC is insensitive to how common the positive class is, which is both a strength (comparable across datasets) and a weakness: with very rare positives a model can have a high AUC yet poor precision, so pair it with precision-recall analysis.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Positive scores are bell-shaped around a centre <code>d</code> above the negatives&#39; centre (both with spread 1). The AUC depends only on the separation <code>d</code>:</p>
+<pre><code class="language-text">separation d    0      1      1.5    2      3
+AUC           0.500  0.760  0.856  0.921  0.983
+</code></pre>
+<p>With <code>d = 0</code> the score is pure noise (0.5). At <code>d = 1.5</code> a random positive outranks a random negative 85.6% of the time. At threshold 0.75 with <code>d = 1.5</code>, the model sits at the point <code>TPR = 77.3%</code>, <code>FPR = 22.7%</code> on its ROC curve; sliding the threshold moves along that same curve and never changes the AUC.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="roc-curve" data-title="The ROC curve"><p class="bench-fallback"><strong>Interactive bench: The ROC curve.</strong> A slider sets how far apart the score distributions of positives and negatives are, and the bench draws the ROC curve with its area; a second slider moves a threshold marker along the curve, with the true and false positive rates.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the separation to 0 and read the AUC.</li>
+<li>Raise it to 1.5, then 3.</li>
+<li>Move the threshold along the curve and watch the two rates.</li>
+<li>Find the threshold that gives about 90% recall and note the false positive rate.</li>
+</ol>
+<p><strong>What you should notice:</strong> the curve bows further from the diagonal as separation grows, the threshold moves the point but not the curve, and high recall costs a rising false positive rate.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Comparing classifiers</strong> independent of a chosen threshold.</li>
+<li><strong>Medical tests and risk scores:</strong> ROC is the standard summary.</li>
+<li><strong>Ranking systems:</strong> AUC is the chance of ranking a relevant item above an irrelevant one.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Reading a high AUC as high precision</strong> on very rare positives.</li>
+<li><strong>Comparing AUCs</strong> of models with overlapping curves that cross.</li>
+<li><strong>Ignoring the operating point:</strong> you still must choose a threshold.</li>
+<li><strong>Using AUC on data with a different score meaning</strong> after calibration or drift.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What AUC does a random-guessing model get?</summary>
+About 0.5.
+</details>
+
+<details><summary>2. What does AUC = 0.9 mean in words?</summary>
+A random positive gets a higher score than a random negative 90% of the time.
+</details>
+
+<details><summary>3. Does moving the threshold change the ROC curve?</summary>
+No, it only moves the operating point along the curve.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>ROC curve:</strong> true positive rate against false positive rate across all thresholds.</li>
+<li><strong>AUC:</strong> the area under the ROC curve.</li>
+<li><strong>False positive rate:</strong> the share of real negatives that are flagged.</li>
+<li><strong>Operating point:</strong> the chosen threshold&#39;s position on the curve.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/precision-recall-and-f1/" data-topic="machine-learning/precision-recall-and-f1">Precision, Recall and F1</a> · <a class="wikilink" href="/machine-learning/accuracy-and-the-confusion-matrix/" data-topic="machine-learning/accuracy-and-the-confusion-matrix">Accuracy and the Confusion Matrix</a> · <a class="wikilink" href="/math/random-variables/" data-topic="math/random-variables">Random Variables</a> · <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a> · <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/roc-and-auc">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/regression-metrics/"><small>Read next</small><b>Regression Metrics</b><p>For predicting numbers there is no confusion matrix; instead we summarise the size of the errors.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/precision-recall-and-f1/"><b>Precision, Recall and F1</b><p>Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision).</p></a><a class="rc-card" href="/math/random-variables/"><b>Random Variables</b><p>A random variable is a number whose value depends on chance: the total of two dice, the number of heads in ten flips, a model&#39;s error on the next example.</p></a><a class="rc-card" href="/machine-learning/accuracy-and-the-confusion-matrix/"><b>Accuracy and the Confusion Matrix</b><p>Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it.</p></a><a class="rc-card" href="/machine-learning/logistic-regression-as-a-classifier/"><b>Logistic Regression as a Classifier</b><p>Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.</p></a><a class="rc-card" href="/fundamentals/measuring-performance/"><b>Measuring Performance</b><p>To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.</p></a><a class="rc-card" href="/machine-learning/evaluation/"><b>Evaluation</b><p>A model is only as good as the evidence for it.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/precision-recall-and-f1/">← Previous: Precision, Recall and F1</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

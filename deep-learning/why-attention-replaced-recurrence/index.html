@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why Attention Replaced Recurrence — AI Base</title>
+<meta name="description" content="Attention started as an addition to RNN-based encoder-decoders.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/why-attention-replaced-recurrence/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Why Attention Replaced Recurrence — AI Base">
+<meta property="og:description" content="Attention started as an addition to RNN-based encoder-decoders.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/why-attention-replaced-recurrence/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Why Attention Replaced Recurrence","item":"https://ai.saranmahadev.in/deep-learning/why-attention-replaced-recurrence/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Why Attention Replaced Recurrence","description":"Attention started as an addition to RNN-based encoder-decoders.","url":"https://ai.saranmahadev.in/deep-learning/why-attention-replaced-recurrence/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the path length between the first and last position in a self-attention layer, no matter how long the sequence?","acceptedAnswer":{"@type":"Answer","text":"1 — any two positions are connected by a single, direct computation."}},{"@type":"Question","name":"What does self-attention trade away to achieve that constant path length?","acceptedAnswer":{"@type":"Answer","text":"A higher compute cost: scoring every pair of positions costs O(T²), compared to an RNN's O(T) sequential steps."}},{"@type":"Question","name":"Why does a long RNN path length make vanishing gradients worse?","acceptedAnswer":{"@type":"Answer","text":"Each additional step in the path compounds another shrinking (or growing) multiplicative factor, exactly as described in Vanishing and Exploding Gradients and Backpropagation Through Time."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Attention and the Road to Transformers</p>
+        <h1 class="doc-title">Why Attention Replaced Recurrence</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c133dzflbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c133dzflpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c133dzflbg)"/>
+  <circle cx="899" cy="100" r="119" fill="#ffb89d" opacity="0.22"/><circle cx="1072" cy="172" r="79" fill="#8a546c" opacity="0.38"/><circle cx="126" cy="210" r="190" fill="#8a546c" opacity="0.33"/><circle cx="881" cy="391" r="114" fill="#8a546c" opacity="0.47"/><circle cx="1195" cy="417" r="183" fill="#ffb6b6" opacity="0.39"/><circle cx="13" cy="3" r="166" fill="#ffb6b6" opacity="0.31"/><circle cx="319" cy="101" r="204" fill="#ffb89d" opacity="0.45"/>
+  <path d="M0,420 L0,349 L30,347 L60,345 L90,343 L120,340 L150,338 L180,334 L210,331 L240,328 L270,324 L300,321 L330,318 L360,315 L390,312 L420,310 L450,308 L480,307 L510,306 L540,306 L570,306 L600,307 L630,308 L660,310 L690,312 L720,315 L750,318 L780,321 L810,324 L840,328 L870,331 L900,334 L930,338 L960,341 L990,343 L1020,345 L1050,347 L1080,349 L1110,349 L1140,350 L1170,349 L1200,349 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,392 L60,390 L90,388 L120,386 L150,384 L180,382 L210,379 L240,377 L270,374 L300,372 L330,370 L360,368 L390,366 L420,364 L450,363 L480,362 L510,362 L540,362 L570,362 L600,363 L630,364 L660,366 L690,368 L720,370 L750,372 L780,374 L810,377 L840,379 L870,382 L900,384 L930,386 L960,388 L990,390 L1020,392 L1050,393 L1080,394 L1110,394 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="783" cy="279" rx="237" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.3 783 279)"/><ellipse cx="783" cy="279" rx="328" ry="92" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.3 783 279)"/>
+  <circle cx="783" cy="279" r="93" fill="url(#c133dzflpl)"/>
+  <circle cx="557" cy="202" r="9" fill="#ffffff" opacity="0.77"/><circle cx="573" cy="353" r="16" fill="#ffffff" opacity="0.84"/><circle cx="582" cy="389" r="14" fill="#ffffff" opacity="0.73"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Attention</a> started as an addition to RNN-based encoder-decoders. The transformer architecture&#39;s real leap was realising attention could <em>replace</em> recurrence entirely — a sequence attending to itself, with no RNN at all — fixing two of recurrence&#39;s deepest weaknesses at once: how far a signal has to travel, and how little of the computation can run in parallel.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Encoder-Decoder Architectures with Attention</a> and <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If attention already helps an RNN look back at its own input, why not skip the RNN altogether?&quot; Because once you do, two of recurrence&#39;s structural costs disappear at the same time: the number of steps information must travel between distant positions, and the requirement that steps happen one after another.</p>
+<h2 id="intuition-a-relay-race-versus-a-conference-call">Intuition: a relay race versus a conference call</h2>
+<p>A recurrent network passing information from the first token to the last is like a relay race: the baton (hidden state) must physically pass through every runner (time step) in between, in strict order, one at a time — and if any runner drops it a little (a shrinking gradient factor), that loss compounds over the whole race. Self-attention is more like a conference call: every position can &quot;speak&quot; directly to every other position in one round, regardless of how far apart they are, and nothing has to wait its turn.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">RNN:           path length between positions 1 and T  =  T − 1   (must pass through every step between them)
+self-attention: path length between any two positions  =  1       (direct dot product, any distance)
+
+RNN:           T sequential steps required, none can start early
+self-attention: all pairwise scores computed in one parallel operation (at the cost of T² of them)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A sequence of length <code>T = 100</code>, comparing how a gradient (or signal) travels between the first and last positions, with each RNN step shrinking it by a factor of 0.9:</p>
+<pre><code class="language-text">RNN:            path length = 99 steps      surviving signal ≈ 0.9⁹⁹ ≈ 0.0000295   (vanished)
+self-attention: path length = 1 step        no compounding at all — a single direct connection
+</code></pre>
+<p>But this isn&#39;t a free upgrade: computing <em>every</em> pair of positions&#39; attention scores costs <code>T² = 10,000</code> score computations for this sequence, against the RNN&#39;s <code>T = 100</code> sequential steps — self-attention trades a sequential bottleneck for a quadratic one, which becomes its own practical limit for very long sequences.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="path-length" data-title="How far does information have to travel?"><p class="bench-fallback"><strong>Interactive bench: How far does information have to travel?.</strong> A sequence length slider. Compare the path length (and resulting signal strength) between the first and last position under recurrence versus self-attention, alongside the compute cost each architecture pays.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Increase the sequence length and watch the RNN&#39;s path length (and surviving signal) collapse, while attention&#39;s path length stays at 1.</li>
+<li>Watch the compute-cost comparison flip the other way: attention&#39;s cost grows quadratically while the RNN&#39;s stays linear.</li>
+<li>Find roughly where, for this toy shrink factor, the RNN&#39;s surviving signal becomes negligible.</li>
+</ol>
+<p><strong>What you should notice:</strong> attention&#39;s constant path length is what makes long-range dependencies tractable at all; its quadratic compute cost is the real price paid for that, not a detail to ignore.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every modern large language model</strong> is built from self-attention for exactly this reason — the ability to relate any two tokens directly, however far apart, without a chain of recurrent steps between them.</li>
+<li><strong>The quadratic cost of full self-attention is a genuine, active engineering problem</strong>, driving research into more efficient attention variants for very long sequences — a topic for later planets, not covered in depth here.</li>
+<li><strong>Parallel training (not just parallel attention computation)</strong> is a major practical win too: an entire sequence&#39;s self-attention layer can be computed in one batched matrix operation, unlike an RNN&#39;s inherently step-by-step forward pass.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Concluding attention is simply &quot;better&quot; with no downside.</strong> Its quadratic compute and memory cost in sequence length is a real, serious limitation recurrence does not share.</li>
+<li><strong>Forgetting positional encoding is required precisely because recurrence&#39;s implicit ordering is gone.</strong> Removing the RNN also removes the one thing that used to track position for free.</li>
+<li><strong>Assuming this means RNNs are obsolete everywhere.</strong> For short sequences, or settings where compute is tightly constrained, RNNs (or GRUs/LSTMs) remain a reasonable, cheaper choice.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the path length between the first and last position in a self-attention layer, no matter how long the sequence?</summary>
+1 — any two positions are connected by a single, direct computation.
+</details>
+
+<details><summary>2. What does self-attention trade away to achieve that constant path length?</summary>
+A higher compute cost: scoring every pair of positions costs O(T²), compared to an RNN's O(T) sequential steps.
+</details>
+
+<details><summary>3. Why does a long RNN path length make vanishing gradients worse?</summary>
+Each additional step in the path compounds another shrinking (or growing) multiplicative factor, exactly as described in <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> and <a class="wikilink" href="/deep-learning/backpropagation-through-time/" data-topic="deep-learning/backpropagation-through-time">Backpropagation Through Time</a>.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Path length:</strong> the number of sequential computation steps separating two positions in a sequence.</li>
+<li><strong>Quadratic cost:</strong> compute or memory that grows with the square of the sequence length, as full self-attention&#39;s scoring does.</li>
+<li><strong>Parallelizable:</strong> able to be computed all at once rather than step by step.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Encoder-Decoder Architectures with Attention</a> · <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> · <a class="wikilink" href="/deep-learning/backpropagation-through-time/" data-topic="deep-learning/backpropagation-through-time">Backpropagation Through Time</a> · <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/why-attention-replaced-recurrence">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/representation-learning/"><small>Read next</small><b>Representation Learning</b><p>A trained network&#39;s real product is not just its predictions but the representations its hidden layers learned along the way.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/encoder-decoder-architectures-with-attention/"><b>Encoder-Decoder Architectures with Attention</b><p>The plain seq2seq decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts.</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/backpropagation-through-time/"><b>Backpropagation Through Time</b><p>Training an RNN means unrolling it across every time step into one long chain — h₀ → h₁ → h₂ → … → h_T — and running ordinary backpropagation over that whole chain.</p></a><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/deep-learning/sequence-to-sequence-models/"><b>Sequence-to-Sequence Models</b><p>A sequence-to-sequence (seq2seq) model turns one sequence into another, possibly of a different length — a sentence in one language into a sentence in another, say.</p></a><a class="rc-card" href="/deep-learning/attention-and-the-road-to-transformers/"><b>Attention and the Road to Transformers</b><p>Attention as Dot Products on the Math planet already covers the core mechanism: compare a query with every key, weight by the result, and average the values.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/encoder-decoder-architectures-with-attention/">← Previous: Encoder-Decoder Architectures with Attention</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

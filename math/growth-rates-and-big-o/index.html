@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Growth Rates and Big-O — AI Base</title>
+<meta name="description" content="Big-O notation describes how the cost of an algorithm (time or memory) grows as the input size n grows, ignoring constant factors.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/growth-rates-and-big-o/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Growth Rates and Big-O — AI Base">
+<meta property="og:description" content="Big-O notation describes how the cost of an algorithm (time or memory) grows as the input size n grows, ignoring constant factors.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/growth-rates-and-big-o/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Growth Rates and Big-O","item":"https://ai.saranmahadev.in/math/growth-rates-and-big-o/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Growth Rates and Big-O","description":"Big-O notation describes how the cost of an algorithm (time or memory) grows as the input size n grows, ignoring constant factors.","url":"https://ai.saranmahadev.in/math/growth-rates-and-big-o/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the Big-O of 5n + 100?","acceptedAnswer":{"@type":"Answer","text":"O(n)."}},{"@type":"Question","name":"If a method is O(n²) and n triples, the cost multiplies by?","acceptedAnswer":{"@type":"Answer","text":"9."}},{"@type":"Question","name":"Which grows faster, n² or 2ⁿ?","acceptedAnswer":{"@type":"Answer","text":"2ⁿ, eventually far faster."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Sets, Logic and Counting</p>
+        <h1 class="doc-title">Growth Rates and Big-O</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1d4xj92bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1d4xj92pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1d4xj92bg)"/>
+  <circle cx="168" cy="284" r="139" fill="#cebff9" opacity="0.49"/><circle cx="829" cy="271" r="88" fill="#eee9fd" opacity="0.28"/><circle cx="518" cy="169" r="134" fill="#cebff9" opacity="0.61"/><circle cx="417" cy="373" r="144" fill="#eee9fd" opacity="0.49"/><circle cx="203" cy="355" r="176" fill="#eee9fd" opacity="0.44"/><circle cx="1044" cy="217" r="92" fill="#eee9fd" opacity="0.41"/>
+  <path d="M0,420 L0,306 L30,306 L60,307 L90,311 L120,316 L150,322 L180,329 L210,336 L240,342 L270,346 L300,349 L330,350 L360,348 L390,344 L420,339 L450,333 L480,326 L510,319 L540,313 L570,309 L600,306 L630,306 L660,307 L690,311 L720,316 L750,322 L780,329 L810,336 L840,342 L870,346 L900,349 L930,350 L960,348 L990,344 L1020,339 L1050,333 L1080,326 L1110,319 L1140,313 L1170,309 L1200,306 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,390 L30,387 L60,384 L90,380 L120,377 L150,373 L180,370 L210,367 L240,364 L270,363 L300,362 L330,362 L360,363 L390,365 L420,368 L450,371 L480,374 L510,378 L540,382 L570,385 L600,388 L630,391 L660,393 L690,394 L720,394 L750,393 L780,392 L810,389 L840,386 L870,383 L900,379 L930,375 L960,372 L990,369 L1020,366 L1050,364 L1080,362 L1110,362 L1140,362 L1170,364 L1200,366 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="756" cy="206" rx="224" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(1.7 756 206)"/><ellipse cx="756" cy="206" rx="310" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(7.7 756 206)"/>
+  <circle cx="756" cy="206" r="88" fill="url(#c1d4xj92pl)"/>
+  <circle cx="586" cy="100" r="11" fill="#ffffff" opacity="0.61"/><circle cx="876" cy="279" r="14" fill="#ffffff" opacity="0.80"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Big-O</strong> notation describes how the cost of an algorithm (time or memory) grows as the input size <code>n</code> grows, ignoring constant factors. The difference between <code>n</code>, <code>n²</code> and <code>2ⁿ</code> decides whether a method scales to a million items or gives up at fifty.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/logarithms/" data-topic="math/logarithms">Logarithms</a>, <a class="wikilink" href="/math/exponents-and-roots/" data-topic="math/exponents-and-roots">Exponents and Roots</a> and <a class="wikilink" href="/math/areas-volumes-and-scaling/" data-topic="math/areas-volumes-and-scaling">Areas, Volumes and Scaling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If I double the data, how much longer will this take?&quot; It is the question behind every claim that a method is &quot;efficient&quot; or &quot;does not scale&quot;.</p>
+<h2 id="intuition-the-shape-of-the-growth-curve">Intuition: the shape of the growth curve</h2>
+<p>We care about the <em>shape</em> of growth for large <code>n</code>, not the exact time. Suppose a step costs 1 unit:</p>
+<ul>
+<li><strong>O(1)</strong>, constant: looking up an entry in an array by index. Cost does not depend on <code>n</code>.</li>
+<li><strong>O(log n)</strong>: binary search. Doubling <code>n</code> adds one step.</li>
+<li><strong>O(n)</strong>, linear: reading every item once. Doubling <code>n</code> doubles the cost.</li>
+<li><strong>O(n log n)</strong>: sorting well. Slightly worse than linear.</li>
+<li><strong>O(n²)</strong>, quadratic: comparing every pair. Doubling <code>n</code> quadruples the cost.</li>
+<li><strong>O(2ⁿ)</strong>, exponential: trying every subset. Each extra item doubles the cost.</li>
+</ul>
+<p>Big-O keeps only the fastest-growing term: <code>3n² + 50n + 7</code> is O(n²), because for large <code>n</code> the <code>n²</code> term dominates.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Count the steps for <code>n = 1,000</code>:</p>
+<pre><code class="language-text">log₂ n      ≈ 10
+n           = 1,000
+n log₂ n    ≈ 9,966
+n²          = 1,000,000
+2ⁿ          ≈ 1.07 × 10³⁰¹     (a number with 302 digits)
+</code></pre>
+<p>At a billion steps per second, the <code>n²</code> method finishes in a millisecond; the <code>2ⁿ</code> method would outlast the universe many times over. This is why exhaustive search (see <a class="wikilink" href="/math/counting-rules/" data-topic="math/counting-rules">Counting Rules</a>) is hopeless for large problems, and why heuristics matter (see <a class="wikilink" href="/fundamentals/heuristics-and-a-star-search/" data-topic="fundamentals/heuristics-and-a-star-search">Heuristics and A-star Search</a>).</p>
+<p>Self-attention in a Transformer compares every token with every other, so its cost is O(n²) in the sequence length: doubling the context quadruples that cost.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="big-o-race" data-title="Growth-rate race"><p class="bench-fallback"><strong>Interactive bench: Growth-rate race.</strong> A slider for the input size n draws the curves for log n, n, n log n, n squared and 2 to the n, with a table of their values and an optional logarithmic vertical axis.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with n = 10, and read the values in the table.</li>
+<li>Increase n and watch which curve escapes first.</li>
+<li>Turn on the log axis. What do the polynomial curves become?</li>
+<li>Find the n where n² overtakes 20n.</li>
+</ol>
+<p><strong>What you should notice:</strong> for small <code>n</code> the curves are close and constants matter, but for large <code>n</code> the order of growth decides everything.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Attention cost</strong> grows quadratically with sequence length.</li>
+<li><strong>Nearest-neighbour search</strong> over <code>n</code> points naively costs O(n) per query.</li>
+<li><strong>Training cost</strong> scales with data size times model size.</li>
+<li><strong>Search over combinations</strong> (features, hyperparameters, plans) is exponential.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Ignoring constants</strong> for small inputs; O(n²) with a tiny constant can beat O(n) with a huge one at small <code>n</code>.</li>
+<li><strong>Confusing worst case with average case.</strong></li>
+<li><strong>Treating O(n log n) as much worse than O(n).</strong> It is close.</li>
+<li><strong>Forgetting memory.</strong> Big-O applies to space as well as time.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the Big-O of 5n + 100?</summary>
+O(n).
+</details>
+
+<details><summary>2. If a method is O(n²) and n triples, the cost multiplies by?</summary>
+9.
+</details>
+
+<details><summary>3. Which grows faster, n² or 2ⁿ?</summary>
+2ⁿ, eventually far faster.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Big-O:</strong> an upper bound on how cost grows with n.</li>
+<li><strong>Linear / quadratic / exponential:</strong> growth like n, n² and 2ⁿ.</li>
+<li><strong>Time and space complexity:</strong> cost in steps and in memory.</li>
+<li><strong>Combinatorial explosion:</strong> exponential growth in the number of options.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/logarithms/" data-topic="math/logarithms">Logarithms</a> · <a class="wikilink" href="/math/areas-volumes-and-scaling/" data-topic="math/areas-volumes-and-scaling">Areas, Volumes and Scaling</a> · <a class="wikilink" href="/math/counting-rules/" data-topic="math/counting-rules">Counting Rules</a> · <a class="wikilink" href="/math/trees-and-hierarchies/" data-topic="math/trees-and-hierarchies">Trees and Hierarchies</a> · <a class="wikilink" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products">Attention as Dot Products</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/growth-rates-and-big-o">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/linear-algebra/"><small>Read next</small><b>Linear Algebra</b><p>Linear algebra is the maths of lists of numbers (vectors) and grids of numbers (matrices), and of the simple operations that combine them.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/logarithms/"><b>Logarithms</b><p>A logarithm answers &quot;what power do I raise this base to, to get that number?&quot; log₂ 8 = 3 because 2³ = 8.</p></a><a class="rc-card" href="/math/exponents-and-roots/"><b>Exponents and Roots</b><p>An exponent says how many times to multiply a number by itself, and a root undoes it.</p></a><a class="rc-card" href="/math/areas-volumes-and-scaling/"><b>Areas, Volumes and Scaling</b><p>Area measures a flat region and volume measures a solid. When you scale a shape by a factor k, lengths grow by k, areas by k² and volumes by k³.</p></a><a class="rc-card" href="/math/counting-rules/"><b>Counting Rules</b><p>Counting answers &quot;how many ways can this happen?&quot; without listing them all.</p></a><a class="rc-card" href="/fundamentals/heuristics-and-a-star-search/"><b>Heuristics and A-star Search</b><p>A heuristic is an informed guess about how far you still are from the goal.</p></a><a class="rc-card" href="/math/trees-and-hierarchies/"><b>Trees and Hierarchies</b><p>A tree is a connected graph with no cycles: one root, branches, and leaves at the ends.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/trees-and-hierarchies/">← Previous: Trees and Hierarchies</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web-Browsing Agents — AI Base</title>
+<meta name="description" content="A web page an agent is clicking through doesn&#39;t hold still: an ad can load, a banner can appear, a list can re-sort, all between the moment the agent decides what to click and the moment the click…">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/web-browsing-agents/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Web-Browsing Agents — AI Base">
+<meta property="og:description" content="A web page an agent is clicking through doesn&#39;t hold still: an ad can load, a banner can appear, a list can re-sort, all between the moment the agent decides what to click and the moment the click…">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/web-browsing-agents/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Web-Browsing Agents","item":"https://ai.saranmahadev.in/agents/web-browsing-agents/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Web-Browsing Agents","description":"A web page an agent is clicking through doesn't hold still: an ad can load, a banner can appear, a list can re-sort, all between the moment the agent decides what to click and the moment the click…","url":"https://ai.saranmahadev.in/agents/web-browsing-agents/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the index-based agent succeed on the first two actions but fail afterward?","acceptedAnswer":{"@type":"Answer","text":"The banner ad hasn't been inserted yet during the first two actions, so the element at a given position is still the one the agent intended; once the ad shifts every later position, \"the element at position 2\" points at something else."}},{"@type":"Question","name":"What makes selector-based targeting immune to the page shift in this example?","acceptedAnswer":{"@type":"Answer","text":"It refers to a stable identity (a role, id or visible text) rather than a position in a list, so inserting a new element elsewhere on the page doesn't change what the selector resolves to."}},{"@type":"Question","name":"Which property from Kinds of Environments does a web page's unpredictable content changes correspond to?","acceptedAnswer":{"@type":"Answer","text":"Dynamic — the world can change while the agent is deciding, independent of anything the agent itself does."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Agent Environments and Action Spaces</p>
+        <h1 class="doc-title">Web-Browsing Agents</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c101kaahbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c101kaahpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c101kaahbg)"/>
+  <circle cx="783" cy="215" r="163" fill="#f3e9fc" opacity="0.23"/><circle cx="1103" cy="43" r="200" fill="#dcbef5" opacity="0.33"/><circle cx="1136" cy="348" r="169" fill="#e7bdc8" opacity="0.53"/><circle cx="673" cy="8" r="222" fill="#e7bdc8" opacity="0.25"/><circle cx="1167" cy="289" r="230" fill="#725998" opacity="0.30"/>
+  <path d="M0,420 L0,306 L30,306 L60,306 L90,308 L120,310 L150,314 L180,319 L210,323 L240,329 L270,334 L300,338 L330,343 L360,346 L390,348 L420,349 L450,349 L480,348 L510,346 L540,342 L570,338 L600,333 L630,328 L660,323 L690,318 L720,314 L750,310 L780,308 L810,306 L840,306 L870,306 L900,308 L930,312 L960,316 L990,320 L1020,325 L1050,330 L1080,335 L1110,340 L1140,344 L1170,347 L1200,349 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,366 L30,369 L60,372 L90,376 L120,380 L150,384 L180,387 L210,390 L240,392 L270,393 L300,394 L330,394 L360,393 L390,391 L420,388 L450,385 L480,381 L510,377 L540,374 L570,370 L600,367 L630,365 L660,363 L690,362 L720,362 L750,363 L780,365 L810,367 L840,370 L870,374 L900,377 L930,381 L960,385 L990,388 L1020,391 L1050,393 L1080,394 L1110,394 L1140,393 L1170,392 L1200,390 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="836" cy="288" rx="208" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-10.2 836 288)"/><ellipse cx="836" cy="288" rx="288" ry="81" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-4.2 836 288)"/>
+  <circle cx="836" cy="288" r="82" fill="url(#c101kaahpl)"/>
+  <circle cx="696" cy="226" r="15" fill="#ffffff" opacity="0.76"/><circle cx="905" cy="165" r="10" fill="#ffffff" opacity="0.76"/><circle cx="1168" cy="251" r="16" fill="#ffffff" opacity="0.72"/><circle cx="677" cy="199" r="16" fill="#ffffff" opacity="0.81"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A web page an agent is clicking through doesn&#39;t hold still: an ad can load, a banner can appear, a list can re-sort, all between the moment the agent decides what to click and the moment the click lands. An agent that targets elements by their position in a list breaks the instant the page shifts; one that targets them by a stable identity — a role, an id, visible text — doesn&#39;t.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a>, <a class="wikilink" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments">Kinds of Environments</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What makes a web page a harder action space than it looks?&quot; A browsing agent&#39;s actions are clicking, typing, navigating and scrolling, and its observation is some representation of the page — a screenshot, the DOM, or a cleaned-up accessibility tree. The page is <strong>dynamic</strong> in exactly the sense <a class="wikilink" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments">Kinds of Environments</a> describes: it can change on its own, independent of the agent&#39;s own actions, so a plan made from one observation can be stale by the time it executes.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Telling someone &quot;click the third button from the left&quot; works until a new button gets added — now &quot;third from the left&quot; points at the wrong thing entirely. Telling them &quot;click the button labeled Submit&quot; keeps working no matter how many buttons get added around it, because the instruction refers to the button&#39;s identity, not its position.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">index-based targeting:    action refers to an element&#39;s position in a list snapshot
+selector-based targeting: action refers to a stable identity (role, id, visible text)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Five sequential actions on a page, with a banner ad inserted before the third action — shifting every element&#39;s position from that point on:</p>
+<pre><code class="language-text">action:            1    2    3    4    5
+index-based:        ✓    ✓    ✗    ✗    ✗    → 2 of 5 correct (40%)
+selector-based:      ✓    ✓    ✓    ✓    ✓    → 5 of 5 correct (100%)
+</code></pre>
+<p>The index-based agent&#39;s first two clicks land correctly, because nothing has shifted yet. The moment the banner ad is inserted, &quot;the element at position 2&quot; stops meaning the same thing it meant a step ago — the index-based agent keeps clicking the position, landing on whatever happens to be there now. The selector-based agent, which never cared about position in the first place, is unaffected.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="web-action-targeting" data-title="Clicking by position, or by identity"><p class="bench-fallback"><strong>Interactive bench: Clicking by position, or by identity.</strong> Step through five actions on a page that shifts partway through, and compare index-based clicks against selector-based clicks.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through all five actions and watch when the index-based count stops climbing.</li>
+<li>Notice the selector-based count never misses, regardless of when the page shifts.</li>
+<li>Imagine the page shifted on every single action instead of just once — what would index-based accuracy drop to?</li>
+</ol>
+<p><strong>What you should notice:</strong> the failure isn&#39;t about the agent&#39;s decision being wrong — both agents &quot;decided&quot; to click the same logical target. It&#39;s that one of the two representations of &quot;which element&quot; survives a page change and the other doesn&#39;t.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is <a class="wikilink" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments">dynamic</a> environments made concrete</strong>: the world changing while the agent is mid-decision is exactly the property that chess (static) doesn&#39;t have and web browsing does.</li>
+<li><strong><a class="wikilink" href="/agents/computer-use-agents-and-gui-grounding/" data-topic="agents/computer-use-agents-and-gui-grounding">Computer-Use Agents and GUI Grounding</a>, the next topic, faces a harder version of the same problem</strong>: without a DOM at all, there&#39;s no selector to target by identity — only pixel coordinates on a screenshot.</li>
+<li><strong><a class="wikilink" href="/agents/action-space-design-and-its-failure-modes/" data-topic="agents/action-space-design-and-its-failure-modes">Action-Space Design and Its Failure Modes</a> generalizes this lesson</strong>: how an action is represented shapes which failures become possible, independent of how smart the policy choosing the action is.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Targeting elements by index or raw coordinates when a stable identity is available.</strong> The worked example&#39;s 60-percentage-point gap isn&#39;t a tuning problem — it&#39;s a representation choice, and the more stable representation is usually available for free in a page&#39;s own DOM or accessibility tree.</li>
+<li><strong>Assuming a page is static between observing it and acting on it.</strong> Any asynchronous content — ads, live data, lazy-loaded sections — can change the page in that gap, and plans that assume otherwise will occasionally act on stale information.</li>
+<li><strong>Treating &quot;the agent clicked the wrong thing&quot; as a reasoning failure.</strong> Sometimes the decision was correct and the representation of &quot;which element&quot; was the part that broke.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does the index-based agent succeed on the first two actions but fail afterward?</summary>
+The banner ad hasn't been inserted yet during the first two actions, so the element at a given position is still the one the agent intended; once the ad shifts every later position, "the element at position 2" points at something else.
+</details>
+
+<details><summary>2. What makes selector-based targeting immune to the page shift in this example?</summary>
+It refers to a stable identity (a role, id or visible text) rather than a position in a list, so inserting a new element elsewhere on the page doesn't change what the selector resolves to.
+</details>
+
+<details><summary>3. Which property from Kinds of Environments does a web page's unpredictable content changes correspond to?</summary>
+Dynamic — the world can change while the agent is deciding, independent of anything the agent itself does.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Index-based targeting:</strong> referring to an element by its position in an observed list or DOM order.</li>
+<li><strong>Selector-based targeting:</strong> referring to an element by a stable identity — a role, id, or visible text — that survives changes elsewhere on the page.</li>
+<li><strong>Staleness:</strong> a plan or observation no longer matching the actual state of the world by the time an action executes.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments">Kinds of Environments</a> · <a class="wikilink" href="/agents/computer-use-agents-and-gui-grounding/" data-topic="agents/computer-use-agents-and-gui-grounding">Computer-Use Agents and GUI Grounding</a> · <a class="wikilink" href="/agents/action-space-design-and-its-failure-modes/" data-topic="agents/action-space-design-and-its-failure-modes">Action-Space Design and Its Failure Modes</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/web-browsing-agents">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/computer-use-agents-and-gui-grounding/"><small>Read next</small><b>Computer-Use Agents and GUI Grounding</b><p>A web agent that can read a page&#39;s DOM knows exactly where the Submit button is, by name.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/agents-and-environments/"><b>Agents and Environments</b><p>An agent is anything that perceives its surroundings through sensors and acts on them through actuators to pursue a goal. The surroundings it lives in are its environment.</p></a><a class="rc-card" href="/fundamentals/kinds-of-environments/"><b>Kinds of Environments</b><p>Some AI problems are easy and others are brutal, and much of the difference lies in the environment.</p></a><a class="rc-card" href="/agents/computer-use-agents-and-gui-grounding/"><b>Computer-Use Agents and GUI Grounding</b><p>A web agent that can read a page&#39;s DOM knows exactly where the Submit button is, by name.</p></a><a class="rc-card" href="/agents/action-space-design-and-its-failure-modes/"><b>Action-Space Design and Its Failure Modes</b><p>Giving an agent one distinct action per object it might ever need to pick seems safe — until the number of objects grows and a correct first guess becomes a lottery ticket.</p></a><a class="rc-card" href="/agents/agent-environments-and-action-spaces/"><b>Agent Environments and Action Spaces</b><p>What an agent can actually do depends entirely on what it&#39;s acting inside — clicking around a web page needs a different action space than running shell commands in a terminal.</p></a><a class="rc-card" href="/agents/agent-benchmarks-and-task-suites/"><b>Agent Benchmarks and Task Suites</b><p>A question-answering benchmark checks one generated string against one reference string, and either matches or doesn&#39;t.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/agent-environments-and-action-spaces/">← Previous: Agent Environments and Action Spaces</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

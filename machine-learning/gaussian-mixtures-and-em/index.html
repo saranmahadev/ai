@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gaussian Mixtures and EM — AI Base</title>
+<meta name="description" content="k-means gives each point to exactly one cluster. A Gaussian mixture is softer: it says the data came from several bell-curve groups and gives each point a probability of belonging to each.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/gaussian-mixtures-and-em/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Gaussian Mixtures and EM — AI Base">
+<meta property="og:description" content="k-means gives each point to exactly one cluster. A Gaussian mixture is softer: it says the data came from several bell-curve groups and gives each point a probability of belonging to each.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/gaussian-mixtures-and-em/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Gaussian Mixtures and EM","item":"https://ai.saranmahadev.in/machine-learning/gaussian-mixtures-and-em/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Gaussian Mixtures and EM","description":"k-means gives each point to exactly one cluster. A Gaussian mixture is softer: it says the data came from several bell-curve groups and gives each point a probability of belonging to each.","url":"https://ai.saranmahadev.in/machine-learning/gaussian-mixtures-and-em/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the E step compute?","acceptedAnswer":{"@type":"Answer","text":"For each point, the probability that each bell produced it (its responsibilities)."}},{"@type":"Question","name":"How does a mixture differ from k-means?","acceptedAnswer":{"@type":"Answer","text":"It gives soft probabilities of membership and learns each group's spread and weight."}},{"@type":"Question","name":"Can EM's log-likelihood decrease?","acceptedAnswer":{"@type":"Answer","text":"No, each step raises it or leaves it unchanged."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Unsupervised Learning</p>
+        <h1 class="doc-title">Gaussian Mixtures and EM</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1f1g1qwbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1f1g1qwpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1f1g1qwbg)"/>
+  <circle cx="112" cy="10" r="176" fill="#ffd08d" opacity="0.29"/><circle cx="1002" cy="283" r="76" fill="#ffd99f" opacity="0.28"/><circle cx="1128" cy="347" r="105" fill="#fff2de" opacity="0.55"/><circle cx="361" cy="360" r="91" fill="#ffd99f" opacity="0.43"/><circle cx="1188" cy="41" r="221" fill="#ffd99f" opacity="0.52"/><circle cx="801" cy="300" r="162" fill="#ffd99f" opacity="0.39"/>
+  <path d="M0,420 L0,312 L30,318 L60,325 L90,331 L120,338 L150,343 L180,347 L210,349 L240,349 L270,347 L300,343 L330,337 L360,331 L390,324 L420,317 L450,312 L480,308 L510,306 L540,306 L570,308 L600,312 L630,318 L660,325 L690,331 L720,338 L750,343 L780,347 L810,349 L840,349 L870,347 L900,343 L930,337 L960,331 L990,324 L1020,317 L1050,312 L1080,308 L1110,306 L1140,306 L1170,308 L1200,312 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,369 L30,374 L60,379 L90,383 L120,388 L150,391 L180,393 L210,394 L240,393 L270,391 L300,387 L330,382 L360,377 L390,373 L420,368 L450,365 L480,363 L510,362 L540,363 L570,365 L600,369 L630,374 L660,379 L690,383 L720,388 L750,391 L780,393 L810,394 L840,393 L870,391 L900,387 L930,382 L960,377 L990,373 L1020,368 L1050,365 L1080,363 L1110,362 L1140,363 L1170,365 L1200,369 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="724" cy="162" rx="154" ry="43" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-24.8 724 162)"/><ellipse cx="724" cy="162" rx="213" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-18.8 724 162)"/>
+  <circle cx="724" cy="162" r="60" fill="url(#c1f1g1qwpl)"/>
+  <circle cx="574" cy="94" r="16" fill="#ffffff" opacity="0.80"/><circle cx="551" cy="116" r="7" fill="#ffffff" opacity="0.73"/><circle cx="917" cy="147" r="15" fill="#ffffff" opacity="0.69"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>k-means gives each point to exactly one cluster. A <strong>Gaussian mixture</strong> is softer: it says the data came from several bell-curve groups and gives each point a <em>probability</em> of belonging to each. The <strong>EM algorithm</strong> fits it by alternating a soft assignment step (E) with a re-estimation step (M), and each round can only raise the likelihood of the data.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/k-means-clustering/" data-topic="machine-learning/k-means-clustering">k-Means Clustering</a>, <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> and <a class="wikilink" href="/math/maximum-likelihood/" data-topic="math/maximum-likelihood">Maximum Likelihood</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What if a point is between two groups?&quot; k-means forces a choice; a mixture model admits uncertainty and also learns each group&#39;s spread and share, not just its centre.</p>
+<h2 id="intuition-soft-k-means">Intuition: soft k-means</h2>
+<p>Take the k-means loop but replace &quot;nearest centre wins&quot; with &quot;each centre takes a share of every point in proportion to how well its bell curve explains it&quot;. Then move each centre to the <em>weighted</em> average of the points it owns, and update its spread and its weight. Points far from every bell share themselves out; points between two bells belong half to each.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">model        p(x) = Σₖ wₖ · Normal(x; μₖ, σₖ)         weights wₖ add up to 1
+E step       responsibility  rᵢₖ = wₖ·N(xᵢ; μₖ, σₖ) / Σⱼ wⱼ·N(xᵢ; μⱼ, σⱼ)
+M step       nₖ = Σᵢ rᵢₖ ;   wₖ = nₖ / n ;   μₖ = Σᵢ rᵢₖ xᵢ / nₖ ;   σₖ² = Σᵢ rᵢₖ (xᵢ − μₖ)² / nₖ
+log-likelihood  Σᵢ log p(xᵢ)   never decreases from step to step
+</code></pre>
+<p>With one spread shared by all clusters and hard assignments, EM reduces to k-means. Like k-means, EM finds a <em>local</em> optimum and depends on its start. Because the model is a probability distribution it can also score new points (how likely is this?), which is useful for anomaly detection.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Eighty points: half from a bell centred at 1.5 (spread 0.7), half from one at 5 (spread 0.9). Start deliberately badly with both bells near the middle (means 2.5 and 3.5, spread 1.5 each, equal weights):</p>
+<pre><code class="language-text">step   log-likelihood    bell 1 (w, mean, spread)     bell 2 (w, mean, spread)
+  0       −175.4         0.47   2.46   1.77            0.53   4.07   1.88
+  2       −168.3         0.47   2.30   1.65            0.53   4.21   1.84
+  5       −166.0         0.46   1.84   1.28            0.54   4.56   1.61
+ 10       −143.0         0.48   1.40   0.59            0.52   5.09   0.92
+ 24       −142.9         0.49   1.41   0.61            0.51   5.11   0.89
+</code></pre>
+<p>For the first few steps almost nothing happens, then the two bells suddenly pull apart and lock onto their groups, and the log-likelihood jumps by about 23. The final fit recovers the shares (0.49 / 0.51), the centres (1.41 and 5.11 against the true 1.5 and 5), and the spreads (0.61 and 0.89 against 0.7 and 0.9).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="gaussian-mixture-em" data-title="Two bells by EM"><p class="bench-fallback"><strong>Interactive bench: Two bells by EM.</strong> Eighty points from two hidden bell curves start with two poorly placed bells; step or play the EM algorithm and watch the bells separate while the log-likelihood rises and the weights, means and spreads update.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Press <strong>One EM step</strong> ten times and watch the numbers.</li>
+<li>Play from the start and note when the sudden jump happens.</li>
+<li>Compare the final means with the two group centres.</li>
+<li>Reset and repeat.</li>
+</ol>
+<p><strong>What you should notice:</strong> the likelihood only rises, progress can be slow before it is fast, and the points are shaded by how strongly they belong to each bell.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Soft clustering and density estimation.</strong></li>
+<li><strong>Speech and image models</strong> before deep learning (mixtures over features).</li>
+<li><strong>EM more generally:</strong> hidden Markov models, missing-data problems and topic models.</li>
+<li><strong>Anomaly detection:</strong> points with low mixture probability are unusual.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Choosing too many components,</strong> which fits noise (compare with BIC).</li>
+<li><strong>Collapsing components:</strong> a bell shrinking onto a single point, giving an infinite likelihood; use a minimum spread.</li>
+<li><strong>Bad starts</strong> giving poor local optima.</li>
+<li><strong>Assuming clusters really are Gaussian.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does the E step compute?</summary>
+For each point, the probability that each bell produced it (its responsibilities).
+</details>
+
+<details><summary>2. How does a mixture differ from k-means?</summary>
+It gives soft probabilities of membership and learns each group's spread and weight.
+</details>
+
+<details><summary>3. Can EM's log-likelihood decrease?</summary>
+No, each step raises it or leaves it unchanged.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Mixture model:</strong> a distribution formed as a weighted sum of simpler ones.</li>
+<li><strong>Responsibility:</strong> the probability that a component produced a point.</li>
+<li><strong>EM algorithm:</strong> alternating expectation and maximisation steps.</li>
+<li><strong>Log-likelihood:</strong> the log of the probability the model gives the data.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/k-means-clustering/" data-topic="machine-learning/k-means-clustering">k-Means Clustering</a> · <a class="wikilink" href="/math/maximum-likelihood/" data-topic="math/maximum-likelihood">Maximum Likelihood</a> · <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> · <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/machine-learning/anomaly-detection/" data-topic="machine-learning/anomaly-detection">Anomaly Detection</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/gaussian-mixtures-and-em">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/dimensionality-reduction-in-practice/"><small>Read next</small><b>Dimensionality Reduction in Practice</b><p>Real data often has many columns that mostly move together, so its true variety is far smaller than its width suggests.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/k-means-clustering/"><b>k-Means Clustering</b><p>k-means groups unlabelled points into k clusters by repeating two steps: assign every point to its nearest centre, then move each centre to the average of its points.</p></a><a class="rc-card" href="/math/continuous-distributions/"><b>Continuous Distributions</b><p>A continuous random variable can take any value in a range, so no single value has positive probability.</p></a><a class="rc-card" href="/math/maximum-likelihood/"><b>Maximum Likelihood</b><p>Maximum likelihood estimation picks the parameter value that makes the observed data as probable as possible.</p></a><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/machine-learning/anomaly-detection/"><b>Anomaly Detection</b><p>Anomaly detection looks for the rare points that do not fit: a fraudulent payment, a failing machine, a corrupt record.</p></a><a class="rc-card" href="/machine-learning/unsupervised-learning/"><b>Unsupervised Learning</b><p>When no answers are given, a model can still find structure: groups of similar points, the true number of dimensions in the data, or the odd ones out.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/hierarchical-clustering/">← Previous: Hierarchical Clustering</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

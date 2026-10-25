@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Describing Data — AI Base</title>
+<meta name="description" content="A few numbers can summarise a whole data set: where its centre is (mean, median, mode) and how spread out it is (range, variance, standard deviation, quartiles).">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/describing-data/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Describing Data — AI Base">
+<meta property="og:description" content="A few numbers can summarise a whole data set: where its centre is (mean, median, mode) and how spread out it is (range, variance, standard deviation, quartiles).">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/describing-data/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Describing Data","item":"https://ai.saranmahadev.in/math/describing-data/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Describing Data","description":"A few numbers can summarise a whole data set: where its centre is (mean, median, mode) and how spread out it is (range, variance, standard deviation, quartiles).","url":"https://ai.saranmahadev.in/math/describing-data/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the median of 3, 9, 1, 7, 5?","acceptedAnswer":{"@type":"Answer","text":"5 (sorted: 1, 3, 5, 7, 9)."}},{"@type":"Question","name":"Which is more affected by an outlier, the mean or the median?","acceptedAnswer":{"@type":"Answer","text":"The mean."}},{"@type":"Question","name":"Sample variance of 1, 3, 5?","acceptedAnswer":{"@type":"Answer","text":"Deviations from 3: 4 + 0 + 4 = 8; 8 / 2 = 4."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Statistics</p>
+        <h1 class="doc-title">Describing Data</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cyj2q6hbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cyj2q6hpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cyj2q6hbg)"/>
+  <circle cx="953" cy="389" r="186" fill="#eee9fd" opacity="0.42"/><circle cx="462" cy="278" r="160" fill="#68599a" opacity="0.32"/><circle cx="974" cy="345" r="164" fill="#ddbecb" opacity="0.47"/><circle cx="566" cy="388" r="229" fill="#eee9fd" opacity="0.23"/><circle cx="82" cy="349" r="66" fill="#eee9fd" opacity="0.30"/>
+  <path d="M0,420 L0,338 L30,331 L60,325 L90,318 L120,312 L150,308 L180,306 L210,306 L240,308 L270,312 L300,317 L330,324 L360,331 L390,337 L420,343 L450,347 L480,349 L510,349 L540,347 L570,343 L600,338 L630,331 L660,325 L690,318 L720,312 L750,308 L780,306 L810,306 L840,308 L870,312 L900,317 L930,324 L960,331 L990,337 L1020,343 L1050,347 L1080,349 L1110,349 L1140,347 L1170,343 L1200,338 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,378 L30,375 L60,373 L90,370 L120,368 L150,366 L180,365 L210,364 L240,363 L270,362 L300,362 L330,362 L360,363 L390,364 L420,365 L450,367 L480,369 L510,371 L540,373 L570,376 L600,378 L630,381 L660,383 L690,386 L720,388 L750,390 L780,391 L810,392 L840,393 L870,394 L900,394 L930,394 L960,393 L990,392 L1020,391 L1050,389 L1080,387 L1110,385 L1140,383 L1170,380 L1200,378 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="818" cy="239" rx="260" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.2 818 239)"/><ellipse cx="818" cy="239" rx="360" ry="101" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.8 818 239)"/>
+  <circle cx="818" cy="239" r="102" fill="url(#cyj2q6hpl)"/>
+  <circle cx="840" cy="103" r="7" fill="#ffffff" opacity="0.88"/><circle cx="918" cy="347" r="15" fill="#ffffff" opacity="0.64"/><circle cx="1169" cy="316" r="9" fill="#ffffff" opacity="0.72"/><circle cx="867" cy="348" r="11" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A few numbers can summarise a whole data set: where its <strong>centre</strong> is (mean, median, mode) and how <strong>spread out</strong> it is (range, variance, standard deviation, quartiles). Choosing the right summary depends on the data&#39;s shape and on whether it has extreme values.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/sums-and-products/" data-topic="math/sums-and-products">Sums and Products</a>, <a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a> and <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What is a typical value, and how much do values differ?&quot; Reporting a model&#39;s typical error, or the typical size of your inputs, needs summaries that are not thrown off by a few odd points.</p>
+<h2 id="measures-of-centre">Measures of centre</h2>
+<ul>
+<li><strong>Mean:</strong> add everything and divide by the count. It uses every value, so it is pulled by extremes.</li>
+<li><strong>Median:</strong> the middle value when sorted (or the average of the middle two). It ignores how extreme the ends are.</li>
+<li><strong>Mode:</strong> the most frequent value.</li>
+</ul>
+<h2 id="measures-of-spread">Measures of spread</h2>
+<pre><code class="language-text">range               = max − min
+sample variance     s² = Σ (xᵢ − x̄)² / (n − 1)
+standard deviation  s  = √s²
+quartiles           Q1 (25% below), Q2 = median, Q3 (75% below)
+interquartile range IQR = Q3 − Q1
+</code></pre>
+<p>The sample variance divides by <code>n − 1</code> rather than <code>n</code>, which corrects for having estimated the mean from the same data (see <a class="wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a>).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Data: <code>2, 4, 4, 4, 5, 5, 7, 9</code> (eight values).</p>
+<pre><code class="language-text">mean      = 40 / 8 = 5
+median    = (4 + 5) / 2 = 4.5
+mode      = 4
+sum of squared deviations = 9 + 1 + 1 + 1 + 0 + 0 + 4 + 16 = 32
+sample variance = 32 / 7 = 4.571     sample standard deviation = 2.138
+(dividing by n = 8 instead gives variance 4 and standard deviation 2)
+</code></pre>
+<p>Now add one extreme value, 100. The mean jumps to <code>140 / 9 = 15.6</code> (more than tripled), while the median only moves from 4.5 to 5. <strong>For skewed data or data with outliers, the median and IQR describe the typical case better than the mean and standard deviation.</strong></p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="drag-summary" data-title="Move a point, watch the summary"><p class="bench-fallback"><strong>Interactive bench: Move a point, watch the summary.</strong> Eight points on a number line can be dragged or set with sliders; the bench shows the mean, median, range, standard deviation and interquartile range and how each responds when you move one point far away.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Drag one point far to the right. Which summaries move a lot?</li>
+<li>Which one barely moves?</li>
+<li>Cluster all points together and watch the spread shrink.</li>
+<li>Make the mean and the median differ as much as you can.</li>
+</ol>
+<p><strong>What you should notice:</strong> the mean, range and standard deviation react strongly to one extreme value, while the median and IQR stay put.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Feature scaling</strong> uses the mean and standard deviation.</li>
+<li><strong>Robust metrics</strong> report median error when errors have heavy tails.</li>
+<li><strong>Data checks:</strong> ranges and quartiles reveal impossible values quickly.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Reporting the mean for skewed data</strong> (incomes, waiting times).</li>
+<li><strong>Dividing by <code>n</code> when estimating from a sample.</strong></li>
+<li><strong>Ignoring the shape</strong> behind the summary numbers.</li>
+<li><strong>Assuming mean, median and mode agree.</strong> They only do for symmetric, single-peaked data.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the median of 3, 9, 1, 7, 5?</summary>
+5 (sorted: 1, 3, 5, 7, 9).
+</details>
+
+<details><summary>2. Which is more affected by an outlier, the mean or the median?</summary>
+The mean.
+</details>
+
+<details><summary>3. Sample variance of 1, 3, 5?</summary>
+Deviations from 3: 4 + 0 + 4 = 8; 8 / 2 = 4.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Mean / median / mode:</strong> average, middle value, most frequent value.</li>
+<li><strong>Variance / standard deviation:</strong> measures of spread.</li>
+<li><strong>Quartile:</strong> a value marking 25%, 50% or 75% of the sorted data.</li>
+<li><strong>IQR:</strong> the range of the middle half of the data.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a> · <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> · <a class="wikilink" href="/math/data-distributions-and-outliers/" data-topic="math/data-distributions-and-outliers">Data Distributions and Outliers</a> · <a class="wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/describing-data">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/data-distributions-and-outliers/"><small>Read next</small><b>Data Distributions and Outliers</b><p>The shape of a data set, its distribution, tells you which summaries make sense and which models will work.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/sums-and-products/"><b>Sums and Products</b><p>Summation (Σ) and product (Π) notation write a long repeated addition or multiplication in one short line. They are literally a loop: &quot;for each i from a to b, add (or multiply) this in&quot;.</p></a><a class="rc-card" href="/math/expectation/"><b>Expectation</b><p>The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/math/estimation-and-bias/"><b>Estimation and Bias</b><p>An estimator is a recipe for guessing an unknown quantity from data, such as using the sample mean to estimate the population mean.</p></a><a class="rc-card" href="/math/data-distributions-and-outliers/"><b>Data Distributions and Outliers</b><p>The shape of a data set, its distribution, tells you which summaries make sense and which models will work.</p></a><a class="rc-card" href="/math/statistics/"><b>Statistics</b><p>Probability reasons from a known chance process to what data it will produce. Statistics runs the other way: it starts from data and reasons back to what produced it.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/statistics/">← Previous: Statistics</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

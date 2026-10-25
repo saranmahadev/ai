@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context Rot and Lost-in-the-Middle Effects — AI Base</title>
+<meta name="description" content="Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem:…">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/context-rot-and-lost-in-the-middle-effects/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Context Rot and Lost-in-the-Middle Effects — AI Base">
+<meta property="og:description" content="Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem:…">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/context-rot-and-lost-in-the-middle-effects/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Context Rot and Lost-in-the-Middle Effects","item":"https://ai.saranmahadev.in/llms/context-rot-and-lost-in-the-middle-effects/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Context Rot and Lost-in-the-Middle Effects","description":"Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there's still a separate, surprising problem:…","url":"https://ai.saranmahadev.in/llms/context-rot-and-lost-in-the-middle-effects/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What shape does retrieval accuracy typically follow across positions in a long context?","acceptedAnswer":{"@type":"Answer","text":"A U-shape — high accuracy near the start and end of the context, and a noticeable dip for information placed near the middle."}},{"@type":"Question","name":"In the worked example, roughly how much lower was accuracy at the middle compared to the edges?","acceptedAnswer":{"@type":"Answer","text":"About 40 percentage points lower — 55% in the middle versus 95% at either edge."}},{"@type":"Question","name":"How is this effect measured in practice?","acceptedAnswer":{"@type":"Answer","text":"\"Needle in a haystack\" tests: placing a specific, checkable fact at a controlled position within a long context and measuring how reliably the model retrieves it, repeated across many different positions."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Context, Memory and Long-Range Behavior</p>
+        <h1 class="doc-title">Context Rot and Lost-in-the-Middle Effects</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1w32ya8bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1w32ya8pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1w32ya8bg)"/>
+  <circle cx="738" cy="206" r="82" fill="#8a5f5e" opacity="0.28"/><circle cx="134" cy="243" r="111" fill="#ffc38f" opacity="0.48"/><circle cx="795" cy="396" r="173" fill="#ffc38f" opacity="0.54"/><circle cx="246" cy="125" r="201" fill="#ffc38f" opacity="0.37"/><circle cx="1080" cy="315" r="194" fill="#ffc38f" opacity="0.45"/><circle cx="513" cy="88" r="143" fill="#ffece0" opacity="0.35"/>
+  <path d="M0,420 L0,349 L30,348 L60,345 L90,341 L120,337 L150,332 L180,327 L210,322 L240,317 L270,313 L300,309 L330,307 L360,306 L390,306 L420,307 L450,309 L480,312 L510,317 L540,321 L570,326 L600,332 L630,337 L660,341 L690,345 L720,347 L750,349 L780,350 L810,349 L840,347 L870,344 L900,340 L930,335 L960,330 L990,325 L1020,320 L1050,316 L1080,312 L1110,309 L1140,306 L1170,306 L1200,306 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,386 L30,389 L60,392 L90,393 L120,394 L150,394 L180,393 L210,391 L240,388 L270,385 L300,382 L330,378 L360,374 L390,371 L420,368 L450,365 L480,363 L510,362 L540,362 L570,363 L600,364 L630,367 L660,370 L690,373 L720,377 L750,380 L780,384 L810,387 L840,390 L870,392 L900,394 L930,394 L960,394 L990,392 L1020,390 L1050,387 L1080,384 L1110,381 L1140,377 L1170,373 L1200,370 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="883" cy="230" rx="202" ry="57" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.1 883 230)"/><ellipse cx="883" cy="230" rx="279" ry="78" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.1 883 230)"/>
+  <circle cx="883" cy="230" r="79" fill="url(#c1w32ya8pl)"/>
+  <circle cx="847" cy="136" r="12" fill="#ffffff" opacity="0.72"/><circle cx="754" cy="318" r="13" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem: it doesn&#39;t use every part of that context equally well.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/context-window-extension-techniques/" data-topic="llms/context-window-extension-techniques">Context Window Extension Techniques</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does a model actually use every part of a long context equally reliably?&quot; No. A well-documented effect, often called <strong>lost-in-the-middle</strong>, shows that retrieval accuracy for information placed in a long context tends to be highest near the very <strong>start</strong> and very <strong>end</strong> of the context, and lowest for information buried in the <strong>middle</strong> — a U-shaped accuracy curve across position, not a flat one.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Reading a long document once and then being quizzed on a specific fact somewhere inside it, most people recall details from the opening (which set the stage, got full attention while everything was still novel) and the closing (freshest in memory) better than details buried in an undifferentiated middle stretch that all started to blur together. Models trained on real text show a strikingly similar pattern — not because they&#39;re bored, but because of how attention patterns and training data distributions happen to shape what gets reliably &quot;noticed&quot; at each position.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">accuracy(position) as a function of relative position in context (0 = start, 1 = end):
+  high near position 0 and position 1
+  low near position 0.5
+
+→ a U-shaped curve, not a flat or monotonic one
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy retrieval-accuracy curve across relative positions in a long context:</p>
+<pre><code class="language-text">position   0%:  95.0% accuracy
+position  25%:  69.1% accuracy
+position  40%:  58.6% accuracy
+position  50%:  55.0% accuracy    ← the low point
+position  60%:  58.6% accuracy
+position  75%:  69.1% accuracy
+position 100%:  95.0% accuracy
+</code></pre>
+<p>Information placed exactly at the start or end of the context is retrieved correctly 95% of the time; information placed right in the middle drops to 55% — barely better than a coin flip, for information that&#39;s objectively no harder to retrieve in principle than information near either edge.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="lost-in-middle" data-title="Easiest to recall at the edges"><p class="bench-fallback"><strong>Interactive bench: Easiest to recall at the edges.</strong> Slide through positions in a long context and watch retrieval accuracy dip toward the middle.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Check accuracy right at the start of the context.</li>
+<li>Slide toward the middle and watch accuracy drop.</li>
+<li>Slide past the middle toward the end and watch it recover.</li>
+</ol>
+<p><strong>What you should notice:</strong> the curve&#39;s shape — high, dropping, then recovering — is the real signature of this effect; a model doing uniformly well (or uniformly worse) across every position would look completely different.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This effect was directly measured using &quot;needle in a haystack&quot; tests</strong>: placing a specific, easily-checkable fact at a controlled position within a long context and measuring whether the model retrieves it correctly, repeated across many positions.</li>
+<li><strong>It has real practical implications for how prompts should be structured</strong>: critical information is often better placed near the start or end of a long context than buried in the middle, where retrieval is least reliable.</li>
+<li><strong>It&#39;s a genuinely different failure mode from <a class="wikilink" href="/llms/context-window-extension-techniques/" data-topic="llms/context-window-extension-techniques">running out of positional range</a> or <a class="wikilink" href="/llms/long-context-transformers/" data-topic="llms/long-context-transformers">hitting the compute wall</a></strong> — this effect shows up even well within a model&#39;s supported context length, on information it&#39;s technically fully capable of processing.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming longer context always means proportionally better use of all of it.</strong> A longer context window doesn&#39;t guarantee uniform retrieval reliability across its full length — this U-shape effect can persist (or worsen) even within a supported context length.</li>
+<li><strong>Treating this as an engineering bug to patch away entirely.</strong> It&#39;s a measured, documented behavioral tendency across many models, not a simple implementation error with a one-line fix.</li>
+<li><strong>Forgetting this is about retrieval reliability, not raw capacity.</strong> The model can technically process the middle content just fine — the effect is specifically about how reliably it surfaces and uses that information when answering.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What shape does retrieval accuracy typically follow across positions in a long context?</summary>
+A U-shape — high accuracy near the start and end of the context, and a noticeable dip for information placed near the middle.
+</details>
+
+<details><summary>2. In the worked example, roughly how much lower was accuracy at the middle compared to the edges?</summary>
+About 40 percentage points lower — 55% in the middle versus 95% at either edge.
+</details>
+
+<details><summary>3. How is this effect measured in practice?</summary>
+"Needle in a haystack" tests: placing a specific, checkable fact at a controlled position within a long context and measuring how reliably the model retrieves it, repeated across many different positions.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Lost-in-the-middle:</strong> the tendency for retrieval accuracy to be lower for information near the middle of a long context than near its edges.</li>
+<li><strong>Needle in a haystack test:</strong> a method for measuring position-dependent retrieval accuracy by placing a specific fact at a controlled position.</li>
+<li><strong>U-shaped accuracy curve:</strong> the characteristic high-low-high pattern of accuracy across context position.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/context-window-extension-techniques/" data-topic="llms/context-window-extension-techniques">Context Window Extension Techniques</a> · <a class="wikilink" href="/llms/multi-turn-conversation-state-and-memory/" data-topic="llms/multi-turn-conversation-state-and-memory">Multi-Turn Conversation State and Memory</a> · <a class="wikilink" href="/llms/benchmark-suites-mmlu-helm-big-bench/" data-topic="llms/benchmark-suites-mmlu-helm-big-bench">Benchmark Suites (MMLU, HELM, BIG-bench)</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/context-rot-and-lost-in-the-middle-effects">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/multi-turn-conversation-state-and-memory/"><small>Read next</small><b>Multi-Turn Conversation State and Memory</b><p>A conversation isn&#39;t one request — it&#39;s many, each one needing the context of everything said before.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/context-window-extension-techniques/"><b>Context Window Extension Techniques</b><p>solving the raw compute cost of attention is only half the problem.</p></a><a class="rc-card" href="/llms/long-context-transformers/"><b>Long-Context Transformers</b><p>Every mechanism this road has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more…</p></a><a class="rc-card" href="/llms/multi-turn-conversation-state-and-memory/"><b>Multi-Turn Conversation State and Memory</b><p>A conversation isn&#39;t one request — it&#39;s many, each one needing the context of everything said before.</p></a><a class="rc-card" href="/llms/benchmark-suites-mmlu-helm-big-bench/"><b>Benchmark Suites (MMLU, HELM, BIG-bench)</b><p>Comparing two LLMs fairly requires testing them on the same questions, under the same conditions, at a scale no individual could check by hand.</p></a><a class="rc-card" href="/llms/context-memory-and-long-range-behavior/"><b>Context, Memory and Long-Range Behavior</b><p>A single forward pass has a fixed context window, but real use involves far more text than fits in one, conversations that span many turns, and sessions that return days later expecting to be…</p></a><a class="rc-card" href="/rag/context-assembly-and-ordering/"><b>Context Assembly and Ordering</b><p>Retrieval can rank the single most relevant passage first — and assembly can still bury it in the middle of the prompt, right where a model is statistically least likely to actually use it.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/context-window-extension-techniques/">← Previous: Context Window Extension Techniques</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counting a Transformer&#39;s Parameters and FLOPs — AI Base</title>
+<meta name="description" content="Every number quoted for a transformer&#39;s size — &quot;110 million parameters,&quot; &quot;175 billion parameters&quot; — comes from literally adding up the matrices covered earlier on this planet.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/counting-a-transformer-s-parameters-and-flops/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Counting a Transformer&#39;s Parameters and FLOPs — AI Base">
+<meta property="og:description" content="Every number quoted for a transformer&#39;s size — &quot;110 million parameters,&quot; &quot;175 billion parameters&quot; — comes from literally adding up the matrices covered earlier on this planet.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/counting-a-transformer-s-parameters-and-flops/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Counting a Transformer's Parameters and FLOPs","item":"https://ai.saranmahadev.in/transformers/counting-a-transformer-s-parameters-and-flops/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Counting a Transformer's Parameters and FLOPs","description":"Every number quoted for a transformer's size — \"110 million parameters,\" \"175 billion parameters\" — comes from literally adding up the matrices covered earlier on this planet.","url":"https://ai.saranmahadev.in/transformers/counting-a-transformer-s-parameters-and-flops/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What two matrix groups, repeated at every layer, account for almost all of a transformer's parameters?","acceptedAnswer":{"@type":"Answer","text":"The four attention projection matrices (query, key, value, output) and the two feed-forward matrices."}},{"@type":"Question","name":"In the worked example, why did 12 × d_model² exactly match the sum of the attention and feed-forward terms?","acceptedAnswer":{"@type":"Answer","text":"Because d_ff was exactly 4 × d_model (3072 = 4 × 768), the common convention under which 4·d_model² (attention) + 8·d_model² (feed-forward, since 2 × d_model × 4·d_model = 8·d_model²) simplifies to 12·d_model²."}},{"@type":"Question","name":"What accounts for the small gap between the worked example's 108.4 million and BERT-base's commonly cited ~110 million?","acceptedAnswer":{"@type":"Answer","text":"Normalization scale/shift parameters and biases, which this worked example's formula omits since they are small compared to the matrices it counts."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Scaling the Block</p>
+        <h1 class="doc-title">Counting a Transformer&#39;s Parameters and FLOPs</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1rzp7idbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1rzp7idpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1rzp7idbg)"/>
+  <circle cx="571" cy="380" r="188" fill="#4f669f" opacity="0.50"/><circle cx="428" cy="69" r="84" fill="#4f669f" opacity="0.55"/><circle cx="29" cy="76" r="91" fill="#abd0ff" opacity="0.58"/><circle cx="1171" cy="212" r="135" fill="#4f669f" opacity="0.60"/><circle cx="1106" cy="204" r="130" fill="#e2efff" opacity="0.55"/><circle cx="769" cy="353" r="169" fill="#e2efff" opacity="0.50"/>
+  <path d="M0,420 L0,349 L30,347 L60,345 L90,343 L120,341 L150,338 L180,334 L210,331 L240,328 L270,324 L300,321 L330,318 L360,315 L390,312 L420,310 L450,308 L480,307 L510,306 L540,306 L570,306 L600,307 L630,308 L660,310 L690,312 L720,315 L750,318 L780,321 L810,324 L840,328 L870,331 L900,334 L930,338 L960,341 L990,343 L1020,345 L1050,347 L1080,349 L1110,349 L1140,350 L1170,349 L1200,349 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,391 L30,387 L60,383 L90,378 L120,373 L150,369 L180,365 L210,363 L240,362 L270,363 L300,365 L330,369 L360,373 L390,378 L420,383 L450,387 L480,391 L510,393 L540,394 L570,393 L600,391 L630,387 L660,383 L690,378 L720,373 L750,369 L780,365 L810,363 L840,362 L870,363 L900,365 L930,369 L960,373 L990,378 L1020,383 L1050,387 L1080,391 L1110,393 L1140,394 L1170,393 L1200,391 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="932" cy="150" rx="192" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(4.1 932 150)"/><ellipse cx="932" cy="150" rx="265" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(10.1 932 150)"/>
+  <circle cx="932" cy="150" r="75" fill="url(#c1rzp7idpl)"/>
+  <circle cx="725" cy="170" r="9" fill="#ffffff" opacity="0.82"/><circle cx="845" cy="261" r="8" fill="#ffffff" opacity="0.73"/><circle cx="775" cy="209" r="18" fill="#ffffff" opacity="0.69"/><circle cx="994" cy="51" r="15" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every number quoted for a transformer&#39;s size — &quot;110 million parameters,&quot; &quot;175 billion parameters&quot; — comes from literally adding up the matrices covered earlier on this planet. This topic does that addition explicitly, and checks the result against a real, published model.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">Assembling One Transformer Block</a>, <a class="wikilink" href="/transformers/weight-tying/" data-topic="transformers/weight-tying">Weight Tying</a>, <a class="wikilink" href="/transformers/the-feed-forward-sublayer/" data-topic="transformers/the-feed-forward-sublayer">The Feed-Forward Sublayer</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Where does a transformer&#39;s parameter count actually come from, and can it be computed by hand from first principles?&quot; Yes — almost entirely from two things repeated at every layer: the four attention projection matrices (query, key, value, output) and the two feed-forward matrices, plus one embedding table shared (if tied) between input and output. Everything else — normalization scale and shift parameters, biases — is small enough to be a rounding error at any realistic model size.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A transformer&#39;s size is mostly just &quot;how many of these matrices, how big.&quot; Each layer repeats the identical structure: four <code>d_model × d_model</code> attention matrices, two feed-forward matrices sized by <code>d_model</code> and <code>d_ff</code>. Multiply by the number of layers, add one embedding table, and that single sum accounts for the overwhelming majority of a transformer&#39;s parameters — there&#39;s no hidden complexity, just arithmetic applied consistently at every layer.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">per-layer attention parameters: 4 × d_model²                     (Wq, Wk, Wv, Wo)
+per-layer feed-forward parameters: 2 × d_model × d_ff
+per-layer total: 4·d_model² + 2·d_model·d_ff
+
+with the common convention d_ff = 4·d_model:
+  per-layer total = 4·d_model² + 8·d_model² = 12·d_model²
+
+total (non-embedding) parameters ≈ 12 × num_layers × d_model²
+plus one embedding table (tied): vocabulary_size × d_model
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>BERT-base&#39;s published configuration: <code>d_model = 768</code>, <code>num_layers = 12</code>, <code>d_ff = 3072</code> (exactly <code>4 × 768</code>), vocabulary <code>30,522</code>:</p>
+<pre><code class="language-text">attention params per layer:  4 × 768² = 2,359,296
+feed-forward params per layer: 2 × 768 × 3072 = 4,718,592
+total per layer: 7,077,888  — exactly matching 12 × 768² = 7,077,888
+
+total across 12 layers: 7,077,888 × 12 = 84,934,656
+embedding table (tied, from Weight Tying): 30,522 × 768 = 23,440,896
+
+grand total: 84,934,656 + 23,440,896 = 108,375,552 ≈ 108.4 million
+</code></pre>
+<p>This lands within a few percent of BERT-base&#39;s commonly cited <strong>~110 million parameters</strong> — the small remaining gap is normalization scale/shift parameters and biases, each tiny compared to the matrices counted here.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="param-counter" data-title="Add up the matrices, layer by layer"><p class="bench-fallback"><strong>Interactive bench: Add up the matrices, layer by layer.</strong> Set a model's width, depth, feed-forward size and vocabulary, and see its total parameter count build up from the attention and feed-forward matrices at each layer.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Match the worked example&#39;s configuration and confirm the total lands near 108 million.</li>
+<li>Change <code>d_ff</code> away from <code>4 × d_model</code> and watch the convenient <code>12·d_model²</code> shortcut stop applying.</li>
+<li>Scale up <code>d_model</code> and <code>num_layers</code> together and watch the total grow much faster than either alone.</li>
+</ol>
+<p><strong>What you should notice:</strong> the total is overwhelmingly dominated by the <code>num_layers × d_model²</code> term — doubling the width roughly quadruples the per-layer cost, while doubling the depth only doubles it, a genuinely different kind of scaling.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the basis for every &quot;model size&quot; number quoted about a transformer</strong> — not a separate measurement, but this exact arithmetic applied to that model&#39;s specific configuration.</li>
+<li><strong><a class="wikilink" href="/transformers/mixture-of-experts-transformer-blocks/" data-topic="transformers/mixture-of-experts-transformer-blocks">MoE blocks</a> break the simple relationship between total and active parameters</strong> covered here — the formula above still applies to counting <em>total</em> capacity, but a separate, smaller count is needed for compute actually spent per token.</li>
+<li><strong>A rough FLOPs-per-token estimate follows directly from the parameter count</strong>: roughly <code>2 × parameters</code> floating-point operations per token for a forward pass, a widely-used approximation in scaling-law analysis.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting the <code>12·d_model²</code> shortcut only holds when <code>d_ff = 4·d_model</code>.</strong> It&#39;s an extremely common convention, but not a law — a different <code>d_ff</code> ratio needs the full <code>4·d_model² + 2·d_model·d_ff</code> formula.</li>
+<li><strong>Double-counting the embedding table.</strong> With weight tying (see <a class="wikilink" href="/transformers/weight-tying/" data-topic="transformers/weight-tying">Weight Tying</a>), it&#39;s one matrix, not two — counting it twice overstates the total noticeably at smaller model sizes.</li>
+<li><strong>Assuming parameter count alone determines compute cost.</strong> It&#39;s closely related but not identical — see <a class="wikilink" href="/transformers/mixture-of-experts-transformer-blocks/" data-topic="transformers/mixture-of-experts-transformer-blocks">Mixture-of-Experts Transformer Blocks</a> for a case where they genuinely diverge.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What two matrix groups, repeated at every layer, account for almost all of a transformer's parameters?</summary>
+The four attention projection matrices (query, key, value, output) and the two feed-forward matrices.
+</details>
+
+<details><summary>2. In the worked example, why did 12 × d_model² exactly match the sum of the attention and feed-forward terms?</summary>
+Because d_ff was exactly 4 × d_model (3072 = 4 × 768), the common convention under which 4·d_model² (attention) + 8·d_model² (feed-forward, since 2 × d_model × 4·d_model = 8·d_model²) simplifies to 12·d_model².
+</details>
+
+<details><summary>3. What accounts for the small gap between the worked example's 108.4 million and BERT-base's commonly cited ~110 million?</summary>
+Normalization scale/shift parameters and biases, which this worked example's formula omits since they are small compared to the matrices it counts.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>d_ff:</strong> the feed-forward sublayer&#39;s hidden width, conventionally 4 times d_model.</li>
+<li><strong>Non-embedding parameters:</strong> a model&#39;s parameters excluding the embedding table, often reported separately in scaling-law analysis.</li>
+<li><strong>FLOPs (floating-point operations):</strong> a measure of computational work, roughly proportional to parameter count for one forward pass through a token.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">Assembling One Transformer Block</a> · <a class="wikilink" href="/transformers/weight-tying/" data-topic="transformers/weight-tying">Weight Tying</a> · <a class="wikilink" href="/transformers/mixture-of-experts-transformer-blocks/" data-topic="transformers/mixture-of-experts-transformer-blocks">Mixture-of-Experts Transformer Blocks</a> · <a class="wikilink" href="/transformers/splitting-a-transformer-across-devices/" data-topic="transformers/splitting-a-transformer-across-devices">Splitting a Transformer Across Devices</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/counting-a-transformer-s-parameters-and-flops">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/splitting-a-transformer-across-devices/"><small>Read next</small><b>Splitting a Transformer Across Devices</b><p>A large transformer&#39;s matrices can be far too big to fit on one device at all.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/assembling-one-transformer-block/"><b>Assembling One Transformer Block</b><p>Every piece needed is now on the table: attention itself, residual connections, normalization placement, and the feed-forward sublayer.</p></a><a class="rc-card" href="/transformers/weight-tying/"><b>Weight Tying</b><p>A transformer needs an embedding table to turn token ids into vectors at the input, and a separate projection at the output to turn a final hidden vector back into a score for every vocabulary entry.</p></a><a class="rc-card" href="/transformers/the-feed-forward-sublayer/"><b>The Feed-Forward Sublayer</b><p>Attention lets every position look at every other position — but it never actually transforms a position&#39;s own content on its own.</p></a><a class="rc-card" href="/transformers/mixture-of-experts-transformer-blocks/"><b>Mixture-of-Experts Transformer Blocks</b><p>The feed-forward sublayer runs the same, single network on every position.</p></a><a class="rc-card" href="/transformers/splitting-a-transformer-across-devices/"><b>Splitting a Transformer Across Devices</b><p>A large transformer&#39;s matrices can be far too big to fit on one device at all.</p></a><a class="rc-card" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/"><b>Vocabulary Size and Out-of-Vocabulary Trade-offs</b><p>The number of merges BPE training runs for sets a single number — vocabulary size — that quietly controls three different costs at once: how many parameters the embedding table needs, how long a…</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/mixture-of-experts-transformer-blocks/">← Previous: Mixture-of-Experts Transformer Blocks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

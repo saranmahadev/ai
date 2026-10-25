@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Any-to-Any Generative Models — AI Base</title>
+<meta name="description" content="a unified vocabulary lets text and image tokens share one generation mechanism.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/any-to-any-generative-models/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Any-to-Any Generative Models — AI Base">
+<meta property="og:description" content="a unified vocabulary lets text and image tokens share one generation mechanism.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/any-to-any-generative-models/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Any-to-Any Generative Models","item":"https://ai.saranmahadev.in/generative-ai/any-to-any-generative-models/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Any-to-Any Generative Models","description":"a unified vocabulary lets text and image tokens share one generation mechanism.","url":"https://ai.saranmahadev.in/generative-ai/any-to-any-generative-models/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the shared embedding space in an any-to-any model actually shared across?","acceptedAnswer":{"@type":"Answer","text":"Every supported modality's encoder maps into the same embedding space, so representations of the same concept from different modalities (e.g., an image of a cat and the word \"cat\") land near each other regardless of modality."}},{"@type":"Question","name":"In the worked example, why was \"image: cat\" much closer to \"audio: meow\" than to \"text: dog\"?","acceptedAnswer":{"@type":"Answer","text":"Because closeness in the shared space tracks concept, not modality or input type — \"image: cat\" and \"audio: meow\" represent the same underlying concept, while \"text: dog\" represents a different one even though it's in the same modality as another embedding."}},{"@type":"Question","name":"What does adding support for a new modality require in an any-to-any system?","acceptedAnswer":{"@type":"Answer","text":"Training a new encoder (to map that modality into the shared space) and a new decoder (to generate output in that modality from a point in the shared space) — not redesigning the whole system from scratch."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Multimodal Generation</p>
+        <h1 class="doc-title">Any-to-Any Generative Models</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c165j1mbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c165j1mpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c165j1mbg)"/>
+  <circle cx="639" cy="119" r="97" fill="#ffbeba" opacity="0.56"/><circle cx="1010" cy="112" r="152" fill="#ffbeba" opacity="0.58"/><circle cx="800" cy="278" r="127" fill="#ffbeba" opacity="0.23"/><circle cx="428" cy="347" r="214" fill="#ffbeba" opacity="0.39"/><circle cx="487" cy="160" r="64" fill="#ffbeba" opacity="0.28"/><circle cx="631" cy="94" r="136" fill="#ffe9f4" opacity="0.27"/><circle cx="808" cy="174" r="199" fill="#ffbfe0" opacity="0.53"/>
+  <path d="M0,420 L0,312 L30,309 L60,307 L90,306 L120,306 L150,307 L180,310 L210,313 L240,317 L270,322 L300,327 L330,332 L360,337 L390,342 L420,345 L450,348 L480,349 L510,350 L540,349 L570,347 L600,343 L630,339 L660,335 L690,330 L720,325 L750,320 L780,315 L810,311 L840,308 L870,306 L900,306 L930,306 L960,308 L990,311 L1020,314 L1050,319 L1080,324 L1110,329 L1140,334 L1170,339 L1200,343 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,366 L30,364 L60,363 L90,362 L120,362 L150,362 L180,362 L210,363 L240,364 L270,366 L300,368 L330,370 L360,372 L390,374 L420,377 L450,379 L480,382 L510,384 L540,386 L570,388 L600,390 L630,392 L660,393 L690,394 L720,394 L750,394 L780,394 L810,393 L840,392 L870,390 L900,388 L930,386 L960,384 L990,382 L1020,379 L1050,377 L1080,374 L1110,372 L1140,370 L1170,368 L1200,366 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="792" cy="212" rx="162" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(0.9 792 212)"/><ellipse cx="792" cy="212" rx="225" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(6.9 792 212)"/>
+  <circle cx="792" cy="212" r="64" fill="url(#c165j1mpl)"/>
+  <circle cx="827" cy="308" r="16" fill="#ffffff" opacity="0.61"/><circle cx="540" cy="251" r="17" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/generative-ai/unified-multimodal-generation/" data-topic="generative-ai/unified-multimodal-generation">a unified vocabulary</a> lets text and image tokens share one generation mechanism. This note covers a more general version of the same idea: encoding <em>every</em> supported modality into one shared embedding space, so that generating &quot;any modality out&quot; from &quot;any modality in&quot; is just a matter of which encoder and decoder you plug into the ends.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/unified-multimodal-generation/" data-topic="generative-ai/unified-multimodal-generation">Unified Multimodal Generation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can one system take in any of several modalities and generate any other, through a single interface?&quot; An <strong>any-to-any model</strong> trains a separate encoder for each supported modality (text, image, audio, ...), all projecting into the <em>same</em> shared embedding space — so that &quot;cat&quot; the word, a photo of a cat, and the sound of a cat meowing all land near each other in that space, regardless of which modality they came from. Generation is then: encode whatever input you have into that shared space, then decode the resulting point using whichever modality-specific decoder you want the output in.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine a translator fluent in many languages who doesn&#39;t translate directly between any two of them, but instead converts everything into one private internal &quot;meaning,&quot; and converts that meaning back out into whichever language is needed. Adding a new output language only means building one new decoder from that shared meaning-space — not a new translation rule for every existing language it might need to connect to. An any-to-any generative model does the same thing with modalities instead of languages: encode into one shared space, decode out to any target.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">one shared embedding space, dimension d
+encoder_text(x), encoder_image(x), encoder_audio(x), ...  →  all map into that same d-dim space
+
+similarity(a, b) = cosine(a, b) = (a · b) / (‖a‖ ‖b‖)
+
+decoding to modality M: find (or generate from) the point in M&#39;s own
+  representation whose encoding is closest to the shared-space query
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four small embeddings in a shared 3-dimensional space, representing the same concept (&quot;cat&quot;) and one different concept (&quot;dog&quot;) across three different modalities:</p>
+<pre><code class="language-text">image: cat    (0.90, 0.30, 0.10)
+text: cat     (0.85, 0.35, 0.05)
+audio: meow   (0.88, 0.28, 0.15)
+text: dog     (0.10, 0.90, 0.20)
+</code></pre>
+<p>Measuring cosine similarity from &quot;image: cat&quot; to each of the others:</p>
+<pre><code class="language-text">cos(image:cat, text:cat)    = 0.9964   ← very close
+cos(image:cat, audio:meow)  = 0.9983   ← very close
+cos(image:cat, text:dog)    = 0.4295   ← far less similar
+</code></pre>
+<p>Despite coming from three completely different modalities, &quot;image: cat,&quot; &quot;text: cat,&quot; and &quot;audio: meow&quot; all sit nearly on top of each other in the shared space — while &quot;text: dog,&quot; a different concept even in the same modality as one of the matches, sits much further away. An any-to-any system exploits exactly this: given &quot;image: cat&quot; as input, decoding to text finds &quot;cat&quot; (not &quot;dog&quot;) as the closest match, and decoding to audio finds &quot;meow,&quot; purely because of where each one sits in the shared space.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="any-to-any-shared-space" data-title="One shared space, any modality in, any modality out"><p class="bench-fallback"><strong>Interactive bench: One shared space, any modality in, any modality out.</strong> Pick an input concept and see which other modality's embeddings sit closest to it in a shared embedding space.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start from &quot;image: cat&quot; and check which other-modality concept is closest.</li>
+<li>Switch to &quot;text: dog&quot; and see how little it resembles any of the cat-related embeddings.</li>
+<li>Notice modality doesn&#39;t determine closeness — concept does.</li>
+</ol>
+<p><strong>What you should notice:</strong> closeness in the shared space tracks <em>meaning</em>, not modality — two embeddings of the same concept in different modalities sit closer together than two embeddings of different concepts in the same modality.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Models like CLIP build exactly this kind of shared image-text space</strong> (though only for two modalities and for <em>matching</em>, not generation) — any-to-any generative systems extend the same idea to more modalities and add decoders that can actually produce content in each one.</li>
+<li><strong>Adding a new modality to an any-to-any system mainly means training one new encoder and one new decoder</strong> into and out of the existing shared space, rather than redesigning the whole system.</li>
+<li><strong><a class="wikilink" href="/generative-ai/unified-multimodal-generation/" data-topic="generative-ai/unified-multimodal-generation">the discrete codebook approach</a> and this shared-embedding approach are two different solutions to a similar problem</strong> — one makes every modality speak through a shared discrete vocabulary, the other through a shared continuous space.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a shared embedding space is automatically well-aligned across all modalities.</strong> It only becomes well-aligned through training on data that links modalities together (a captioned image, for instance) — nothing about having &quot;one space&quot; guarantees meaningful alignment by itself.</li>
+<li><strong>Confusing cross-modal similarity with cross-modal translation quality.</strong> Being close in the shared space is necessary for finding the right output, but a decoder still has to turn that point into a genuinely good output in the target modality.</li>
+<li><strong>Forgetting new modalities need a trained encoder and decoder, not just a label.</strong> The shared space doesn&#39;t automatically know how to represent a modality it&#39;s never seen trained examples of.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the shared embedding space in an any-to-any model actually shared across?</summary>
+Every supported modality's encoder maps into the same embedding space, so representations of the same concept from different modalities (e.g., an image of a cat and the word "cat") land near each other regardless of modality.
+</details>
+
+<details><summary>2. In the worked example, why was "image: cat" much closer to "audio: meow" than to "text: dog"?</summary>
+Because closeness in the shared space tracks concept, not modality or input type — "image: cat" and "audio: meow" represent the same underlying concept, while "text: dog" represents a different one even though it's in the same modality as another embedding.
+</details>
+
+<details><summary>3. What does adding support for a new modality require in an any-to-any system?</summary>
+Training a new encoder (to map that modality into the shared space) and a new decoder (to generate output in that modality from a point in the shared space) — not redesigning the whole system from scratch.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Any-to-any model:</strong> a system that can take input from any supported modality and generate output in any other, through one shared representation.</li>
+<li><strong>Shared embedding space:</strong> a common representation that different modalities&#39; encoders all map into, so semantically related content lands close together regardless of modality.</li>
+<li><strong>Cosine similarity:</strong> a measure of how closely two vectors point in the same direction, used to compare embeddings across modalities.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/unified-multimodal-generation/" data-topic="generative-ai/unified-multimodal-generation">Unified Multimodal Generation</a> · <a class="wikilink" href="/transformers/multimodal-transformers-as-an-architecture-pattern/" data-topic="transformers/multimodal-transformers-as-an-architecture-pattern">Multimodal Transformers as an Architecture Pattern</a> · <a class="wikilink" href="/generative-ai/latent-space-interpolation-and-manipulation/" data-topic="generative-ai/latent-space-interpolation-and-manipulation">Latent Space Interpolation and Manipulation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/any-to-any-generative-models">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/evaluating-generative-models/"><small>Read next</small><b>Evaluating Generative Models</b><p>A classifier has a right answer to check against; a generated poem or image usually doesn&#39;t.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/unified-multimodal-generation/"><b>Unified Multimodal Generation</b><p>a multimodal transformer can take text and image patches as input together.</p></a><a class="rc-card" href="/transformers/multimodal-transformers-as-an-architecture-pattern/"><b>Multimodal Transformers as an Architecture Pattern</b><p>Image patches and text tokens both end up as the exact same thing by the time attention sees them: a vector of width d_model.</p></a><a class="rc-card" href="/generative-ai/latent-space-interpolation-and-manipulation/"><b>Latent Space Interpolation and Manipulation</b><p>Every conditioning technique so far steers generation toward something.</p></a><a class="rc-card" href="/generative-ai/3d-asset-and-scene-generation/"><b>3D Asset and Scene Generation</b><p>Every generation method so far on this planet produces a flat grid of values — pixels, a spectrogram, a sequence of frames.</p></a><a class="rc-card" href="/generative-ai/multimodal-generation/"><b>Multimodal Generation</b><p>Every district so far generates one modality at a time.</p></a><a class="rc-card" href="/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/"><b>Distributional Metrics (FID, Inception Score and CLIP Score)</b><p>BLEU and ROUGE work by comparing a generation directly against one specific reference.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/unified-multimodal-generation/">← Previous: Unified Multimodal Generation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

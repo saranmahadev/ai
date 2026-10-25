@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retrieval over Structured Data — AI Base</title>
+<meta name="description" content="&quot;How many orders were placed in 2024?&quot; has an exact answer sitting in a table of order records — but no chunk of retrieved text, however well-chosen, can ever compute that count.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/retrieval-over-structured-data/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Retrieval over Structured Data — AI Base">
+<meta property="og:description" content="&quot;How many orders were placed in 2024?&quot; has an exact answer sitting in a table of order records — but no chunk of retrieved text, however well-chosen, can ever compute that count.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/retrieval-over-structured-data/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Retrieval over Structured Data","item":"https://ai.saranmahadev.in/rag/retrieval-over-structured-data/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Retrieval over Structured Data","description":"\"How many orders were placed in 2024?\" has an exact answer sitting in a table of order records — but no chunk of retrieved text, however well-chosen, can ever compute that count.","url":"https://ai.saranmahadev.in/rag/retrieval-over-structured-data/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can't chunk retrieval answer \"how many orders were placed in 2024,\" even if every row is preserved as its own chunk?","acceptedAnswer":{"@type":"Answer","text":"Retrieval returns a set of passages; it doesn't perform a computation across them — counting how many returned rows satisfy a condition is a separate step that retrieval itself never does."}},{"@type":"Question","name":"What has to happen before a natural-language question can be answered as a structured query?","acceptedAnswer":{"@type":"Answer","text":"The question needs to be translated into a structured form — identifying the filter condition (year = 2024) and the operation (count) — before it can be run directly against the table."}},{"@type":"Question","name":"Does every question over a table need to become a structured query?","acceptedAnswer":{"@type":"Answer","text":"No — a question asking about one specific row can be answered by retrieving that row as a chunk; structured queries matter specifically for questions requiring computation across many rows."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Advanced RAG Patterns</p>
+        <h1 class="doc-title">Retrieval over Structured Data</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c24mg7ibg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c24mg7ipl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c24mg7ibg)"/>
+  <circle cx="744" cy="387" r="137" fill="#dcf5f7" opacity="0.27"/><circle cx="163" cy="70" r="164" fill="#97e1e6" opacity="0.44"/><circle cx="928" cy="152" r="62" fill="#42718e" opacity="0.55"/><circle cx="214" cy="378" r="210" fill="#dcf5f7" opacity="0.36"/><circle cx="323" cy="291" r="143" fill="#dcf5f7" opacity="0.52"/>
+  <path d="M0,420 L0,321 L30,316 L60,312 L90,309 L120,307 L150,306 L180,306 L210,307 L240,310 L270,313 L300,317 L330,322 L360,327 L390,332 L420,337 L450,342 L480,345 L510,348 L540,349 L570,350 L600,349 L630,347 L660,343 L690,339 L720,335 L750,330 L780,324 L810,319 L840,315 L870,311 L900,308 L930,306 L960,306 L990,306 L1020,308 L1050,311 L1080,314 L1110,319 L1140,324 L1170,329 L1200,334 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,362 L60,363 L90,366 L120,369 L150,374 L180,379 L210,384 L240,388 L270,391 L300,393 L330,394 L360,393 L390,390 L420,387 L450,382 L480,377 L510,372 L540,368 L570,365 L600,363 L630,362 L660,363 L690,366 L720,369 L750,374 L780,379 L810,384 L840,388 L870,391 L900,393 L930,394 L960,393 L990,390 L1020,387 L1050,382 L1080,377 L1110,372 L1140,368 L1170,365 L1200,363 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="765" cy="123" rx="255" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-12.0 765 123)"/><ellipse cx="765" cy="123" rx="353" ry="99" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-6.0 765 123)"/>
+  <circle cx="765" cy="123" r="100" fill="url(#c24mg7ipl)"/>
+  <circle cx="1144" cy="84" r="17" fill="#ffffff" opacity="0.86"/><circle cx="1053" cy="163" r="14" fill="#ffffff" opacity="0.64"/><circle cx="459" cy="75" r="10" fill="#ffffff" opacity="0.60"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>&quot;How many orders were placed in 2024?&quot; has an exact answer sitting in a table of order records — but no chunk of retrieved text, however well-chosen, can ever compute that count. Retrieval returns passages; counting, summing and filtering across many rows is what a structured query actually does.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/handling-tables-code-and-structured-content/" data-topic="rag/handling-tables-code-and-structured-content">Handling Tables, Code and Structured Content</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What happens when a question needs a computed answer over structured data, not a retrieved passage?&quot; Chunk-based retrieval, even with structure preserved (<a class="wikilink" href="/rag/handling-tables-code-and-structured-content/" data-topic="rag/handling-tables-code-and-structured-content">Handling Tables, Code and Structured Content</a>), still returns <em>passages</em> — individual rows or table fragments. A question asking for an aggregate (a count, a sum, an average) across many rows needs a structured query translated from the question, run directly against the table or database, producing an exact computed answer no retrieved chunk could contain on its own.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Asking a librarian &quot;how many books in this library were published after 2020&quot; isn&#39;t answered by handing over the single most relevant book — it&#39;s answered by actually counting, which requires checking every book&#39;s publication year, not retrieving one representative example of one.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">nl_to_query(question) = {filter, operation}      -- translate the question into a structured query
+run(data, query)      = execute filter/aggregate directly against the full table
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A small orders table, queried for &quot;how many orders were placed in 2024&quot;:</p>
+<pre><code class="language-text">orders:
+  id 1, year 2023, $50
+  id 2, year 2024, $80
+  id 3, year 2024, $120
+  id 4, year 2024, $60
+  id 5, year 2023, $90
+
+structured query: filter year = 2024, count rows
+→ result: 3 orders
+
+chunk retrieval over a flattened table: could at best return the whole table&#39;s text as one chunk —
+  no retrieved passage computes &quot;3&quot; directly; counting still has to happen separately
+</code></pre>
+<p>The structured query runs a filter across all five rows and returns an exact count — 3. Retrieval, even if it returned the entire table as a single chunk, would only hand back raw rows; counting how many satisfy the condition is a computation retrieval itself never performs.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="structured-query-vs-chunks" data-title="Counting rows is a query, not a passage"><p class="bench-fallback"><strong>Interactive bench: Counting rows is a query, not a passage.</strong> Run an aggregate question as a structured query over a table and compare against what chunk retrieval alone could ever return.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the year filter and watch the count update exactly.</li>
+<li>Consider what a chunk-retrieval system would have returned instead for the same question.</li>
+<li>Think of another question over this table (total revenue in a year, the largest single order) that would need the same kind of structured computation.</li>
+</ol>
+<p><strong>What you should notice:</strong> the count isn&#39;t being <em>found</em> anywhere in the data — it&#39;s being <em>computed</em> by checking every row against the filter, which is exactly what a structured query engine does and retrieval alone cannot.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the sharper version of the problem <a class="wikilink" href="/rag/handling-tables-code-and-structured-content/" data-topic="rag/handling-tables-code-and-structured-content">Handling Tables, Code and Structured Content</a> introduced</strong>: even perfectly preserved row-level chunks can&#39;t answer an aggregate question across many rows.</li>
+<li><strong>The &quot;translate the question into a query&quot; step is itself a generation task</strong>, related to <a class="wikilink" href="/llms/structured-output-and-tool-calling-apis/" data-topic="llms/structured-output-and-tool-calling-apis">Structured Output and Tool-Calling APIs</a> on the LLMs planet — producing a correctly structured query is a constrained-generation problem.</li>
+<li><strong>A production RAG system often routes a question to either retrieval or a structured query engine</strong> depending on what kind of question it is — part of the decision <a class="wikilink" href="/rag/production-rag-pipeline-architecture/" data-topic="rag/production-rag-pipeline-architecture">Production RAG Pipeline Architecture</a> has to make.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Trying to answer an aggregate question through retrieval alone, however the table is chunked.</strong> No chunking strategy fixes this — the problem isn&#39;t how the data is split, it&#39;s that computing an aggregate requires checking every row, which retrieving a handful of chunks never does.</li>
+<li><strong>Assuming every question over structured data needs a structured query.</strong> A question asking about one specific row (&quot;what&#39;s in the Pro plan&quot;) is answered fine by retrieving that row as a chunk — structured queries matter specifically for aggregates and multi-row computations.</li>
+<li><strong>Trusting an automatically generated structured query without validating it.</strong> A mistranslated filter (the wrong year, an off-by-one condition) produces a confidently wrong exact number, which can look more trustworthy than a vague retrieved passage precisely because it&#39;s a precise-looking number.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why can't chunk retrieval answer "how many orders were placed in 2024," even if every row is preserved as its own chunk?</summary>
+Retrieval returns a set of passages; it doesn't perform a computation across them — counting how many returned rows satisfy a condition is a separate step that retrieval itself never does.
+</details>
+
+<details><summary>2. What has to happen before a natural-language question can be answered as a structured query?</summary>
+The question needs to be translated into a structured form — identifying the filter condition (year = 2024) and the operation (count) — before it can be run directly against the table.
+</details>
+
+<details><summary>3. Does every question over a table need to become a structured query?</summary>
+No — a question asking about one specific row can be answered by retrieving that row as a chunk; structured queries matter specifically for questions requiring computation across many rows.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Structured query:</strong> a precise, executable filter or aggregate operation run directly against structured data.</li>
+<li><strong>Aggregate:</strong> a computed value (count, sum, average) across multiple rows, as opposed to a single retrieved record.</li>
+<li><strong>NL-to-query translation:</strong> converting a natural-language question into a structured query&#39;s filter and operation.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/handling-tables-code-and-structured-content/" data-topic="rag/handling-tables-code-and-structured-content">Handling Tables, Code and Structured Content</a> · <a class="wikilink" href="/rag/graph-based-rag/" data-topic="rag/graph-based-rag">Graph-Based RAG</a> · <a class="wikilink" href="/rag/production-rag-pipeline-architecture/" data-topic="rag/production-rag-pipeline-architecture">Production RAG Pipeline Architecture</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/retrieval-over-structured-data">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/multimodal-rag/"><small>Read next</small><b>Multimodal RAG</b><p>A text query can retrieve an image directly — no caption, no text description needed as an intermediary — as long as the text and the image were embedded into the same shared space in the first place.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/handling-tables-code-and-structured-content/"><b>Handling Tables, Code and Structured Content</b><p>Flattening a pricing table into one run-on paragraph destroys the one thing that made it useful — knowing which number went with which row.</p></a><a class="rc-card" href="/llms/structured-output-and-tool-calling-apis/"><b>Structured Output and Tool-Calling APIs</b><p>Code that calls an LLM usually needs the response in a specific shape — valid JSON with particular fields, or a specific function call with typed arguments — not free-flowing prose.</p></a><a class="rc-card" href="/rag/production-rag-pipeline-architecture/"><b>Production RAG Pipeline Architecture</b><p>Every topic on this road so far has zoomed into one stage of a RAG system.</p></a><a class="rc-card" href="/rag/graph-based-rag/"><b>Graph-Based RAG</b><p>&quot;What did the studio behind Movie X&#39;s director also produce?&quot; isn&#39;t answered by any single document — it&#39;s answered by chaining three separate facts together: who directed Movie X, who they work…</p></a><a class="rc-card" href="/rag/advanced-rag-patterns/"><b>Advanced RAG Patterns</b><p>The basic retrieve-then-generate loop has limits: it trusts whatever came back from a single search, treats every document the same whether it&#39;s prose or a spreadsheet, and has no way to notice…</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/graph-based-rag/">← Previous: Graph-Based RAG</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

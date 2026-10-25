@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bayesian vs Frequentist — AI Base</title>
+<meta name="description" content="Statisticians have two philosophies. Frequentists treat probability as a long-run frequency and parameters as fixed but unknown numbers, so they ask how data would behave over repeated experiments.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/bayesian-vs-frequentist/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Bayesian vs Frequentist — AI Base">
+<meta property="og:description" content="Statisticians have two philosophies. Frequentists treat probability as a long-run frequency and parameters as fixed but unknown numbers, so they ask how data would behave over repeated experiments.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/bayesian-vs-frequentist/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Bayesian vs Frequentist","item":"https://ai.saranmahadev.in/math/bayesian-vs-frequentist/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bayesian vs Frequentist","description":"Statisticians have two philosophies. Frequentists treat probability as a long-run frequency and parameters as fixed but unknown numbers, so they ask how data would behave over repeated experiments.","url":"https://ai.saranmahadev.in/math/bayesian-vs-frequentist/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is posterior ∝ ?","acceptedAnswer":{"@type":"Answer","text":"Likelihood times prior."}},{"@type":"Question","name":"A Beta(1, 1) prior and 3 heads, 1 tail: which Beta is the posterior?","acceptedAnswer":{"@type":"Answer","text":"Beta(4, 2)."}},{"@type":"Question","name":"How does more data affect the influence of the prior?","acceptedAnswer":{"@type":"Answer","text":"It shrinks."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Statistics</p>
+        <h1 class="doc-title">Bayesian vs Frequentist</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1dp8z1ibg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1dp8z1ipl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1dp8z1ibg)"/>
+  <circle cx="893" cy="168" r="216" fill="#cebff9" opacity="0.39"/><circle cx="460" cy="44" r="144" fill="#eee9fd" opacity="0.28"/><circle cx="787" cy="129" r="192" fill="#eee9fd" opacity="0.28"/><circle cx="486" cy="60" r="220" fill="#cebff9" opacity="0.29"/><circle cx="291" cy="177" r="151" fill="#eee9fd" opacity="0.28"/><circle cx="446" cy="146" r="121" fill="#cebff9" opacity="0.61"/><circle cx="467" cy="391" r="104" fill="#eee9fd" opacity="0.43"/>
+  <path d="M0,420 L0,346 L30,348 L60,349 L90,349 L120,348 L150,346 L180,343 L210,339 L240,334 L270,329 L300,324 L330,319 L360,314 L390,311 L420,308 L450,306 L480,306 L510,306 L540,308 L570,311 L600,315 L630,320 L660,325 L690,330 L720,335 L750,339 L780,343 L810,347 L840,349 L870,350 L900,349 L930,348 L960,345 L990,342 L1020,337 L1050,332 L1080,327 L1110,322 L1140,317 L1170,313 L1200,310 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,367 L30,364 L60,363 L90,362 L120,362 L150,363 L180,365 L210,367 L240,371 L270,374 L300,378 L330,381 L360,385 L390,388 L420,391 L450,393 L480,394 L510,394 L540,393 L570,392 L600,389 L630,387 L660,383 L690,380 L720,376 L750,372 L780,369 L810,366 L840,364 L870,363 L900,362 L930,362 L960,364 L990,366 L1020,368 L1050,372 L1080,375 L1110,379 L1140,383 L1170,386 L1200,389 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="986" cy="150" rx="226" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(3.3 986 150)"/><ellipse cx="986" cy="150" rx="312" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(9.3 986 150)"/>
+  <circle cx="986" cy="150" r="88" fill="url(#c1dp8z1ipl)"/>
+  <circle cx="667" cy="175" r="17" fill="#ffffff" opacity="0.89"/><circle cx="661" cy="147" r="7" fill="#ffffff" opacity="0.62"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Statisticians have two philosophies. <strong>Frequentists</strong> treat probability as a long-run frequency and parameters as fixed but unknown numbers, so they ask how data would behave over repeated experiments. <strong>Bayesians</strong> treat probability as a degree of belief and parameters as uncertain quantities, so they combine a <strong>prior</strong> belief with data to get a <strong>posterior</strong> belief.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a>, <a class="wikilink" href="/math/maximum-likelihood/" data-topic="math/maximum-likelihood">Maximum Likelihood</a> and <a class="wikilink" href="/math/confidence-intervals/" data-topic="math/confidence-intervals">Confidence Intervals</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What does it mean to be uncertain about a parameter, and how do I update?&quot; The two views give different-looking answers to the same problem, and modern machine learning uses ideas from both.</p>
+<h2 id="intuition-repeated-experiments-versus-updated-beliefs">Intuition: repeated experiments versus updated beliefs</h2>
+<p><strong>Frequentist:</strong> the coin&#39;s heads-chance <code>p</code> is a fixed number. We estimate it (say by maximum likelihood) and quote a confidence interval, whose meaning is about repeating the experiment many times. We do not assign probabilities to <code>p</code> itself.</p>
+<p><strong>Bayesian:</strong> we describe our uncertainty about <code>p</code> with a distribution, the <strong>prior</strong>. Data arrives, and Bayes&#39; rule updates it into the <strong>posterior</strong>:</p>
+<pre><code class="language-text">posterior  ∝  likelihood × prior            P(θ | data) ∝ P(data | θ) · P(θ)
+</code></pre>
+<p>The posterior can then be the prior for the next batch of data.</p>
+<h2 id="a-worked-example-a-coin">A worked example: a coin</h2>
+<p>Flip 10 times, see 7 heads. Frequentist maximum likelihood: <code>p̂ = 0.7</code>.</p>
+<p>Bayesian, with a <strong>Beta</strong> prior (a flexible distribution over <code>[0, 1]</code>): a <code>Beta(α, β)</code> prior updated with <code>h</code> heads and <code>t</code> tails becomes <code>Beta(α + h, β + t)</code>, whose mean is <code>(α + h)/(α + β + h + t)</code>.</p>
+<pre><code class="language-text">flat prior Beta(1, 1):    posterior Beta(8, 4)     mean 8/12 = 0.667
+sceptical prior Beta(5, 5) (a fair-ish coin):   posterior Beta(12, 8)    mean 12/20 = 0.600
+</code></pre>
+<p>With a flat prior the posterior sits close to the data (0.667 versus 0.7). A strong prior belief in fairness pulls the estimate toward 0.5 (0.6). With more data the prior matters less: at 700 heads in 1,000 flips both priors give a posterior mean of about 0.70.</p>
+<p>The prior acts like <strong>imaginary earlier flips</strong>, a natural way to add caution when data is scarce. It is also how <strong>regularisation</strong> can be read: an L2 penalty is a normal prior on the weights (see <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="prior-posterior" data-title="Beliefs before and after the data"><p class="bench-fallback"><strong>Interactive bench: Beliefs before and after the data.</strong> Sliders set how strongly you believe the coin is fair, and the heads and flips observed; curves show the prior, the likelihood and the posterior, with the posterior mean and the maximum-likelihood estimate compared.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with a flat prior (strength 1) and 7 heads in 10.</li>
+<li>Strengthen the prior toward fairness and watch the posterior shift.</li>
+<li>Keep the same fraction of heads and increase the flips.</li>
+<li>Compare the posterior mean with the frequentist estimate.</li>
+</ol>
+<p><strong>What you should notice:</strong> the posterior is a compromise between prior and data, and more data pulls it toward what the data says.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Bayesian machine learning</strong> keeps distributions over model parameters.</li>
+<li><strong>Regularisation</strong> has a Bayesian reading as a prior.</li>
+<li><strong>Naive Bayes, Bayesian optimisation and Gaussian processes</strong> use these ideas directly.</li>
+<li><strong>Frequentist tools</strong> still dominate evaluation: p-values and confidence intervals.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating the prior as arbitrary.</strong> It should encode real knowledge and be reported.</li>
+<li><strong>Ignoring the prior</strong> when data is scarce.</li>
+<li><strong>Confusing credible and confidence intervals.</strong></li>
+<li><strong>Thinking one philosophy is always right.</strong> Each suits different questions.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is posterior ∝ ?</summary>
+Likelihood times prior.
+</details>
+
+<details><summary>2. A Beta(1, 1) prior and 3 heads, 1 tail: which Beta is the posterior?</summary>
+Beta(4, 2).
+</details>
+
+<details><summary>3. How does more data affect the influence of the prior?</summary>
+It shrinks.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Frequentist:</strong> probability as long-run frequency.</li>
+<li><strong>Bayesian:</strong> probability as a degree of belief.</li>
+<li><strong>Prior / posterior:</strong> belief before / after seeing data.</li>
+<li><strong>Conjugate prior:</strong> a prior that keeps the posterior in the same family (Beta for coins).</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/math/maximum-likelihood/" data-topic="math/maximum-likelihood">Maximum Likelihood</a> · <a class="wikilink" href="/math/confidence-intervals/" data-topic="math/confidence-intervals">Confidence Intervals</a> · <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a> · <a class="wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/bayesian-vs-frequentist">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/overfitting-in-statistics/"><small>Read next</small><b>Overfitting in Statistics</b><p>Overfitting happens when a model fits the quirks and noise of its training data instead of the underlying pattern, so it does well on the data it saw and badly on new data.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/math/maximum-likelihood/"><b>Maximum Likelihood</b><p>Maximum likelihood estimation picks the parameter value that makes the observed data as probable as possible.</p></a><a class="rc-card" href="/math/confidence-intervals/"><b>Confidence Intervals</b><p>A confidence interval is a range built from a sample that expresses how uncertain an estimate is: &quot;the average is 52, give or take about 2&quot;.</p></a><a class="rc-card" href="/math/regularization-as-a-constraint/"><b>Regularization as a Constraint</b><p>Regularization keeps a model from fitting noise by discouraging large weights: add a penalty such as λ‖w‖² to the loss.</p></a><a class="rc-card" href="/math/estimation-and-bias/"><b>Estimation and Bias</b><p>An estimator is a recipe for guessing an unknown quantity from data, such as using the sample mean to estimate the population mean.</p></a><a class="rc-card" href="/math/statistics/"><b>Statistics</b><p>Probability reasons from a known chance process to what data it will produce. Statistics runs the other way: it starts from data and reasons back to what produced it.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/common-test-mistakes/">← Previous: Common Test Mistakes</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

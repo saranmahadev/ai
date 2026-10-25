@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decision Trees — AI Base</title>
+<meta name="description" content="A decision tree predicts by asking a chain of yes/no questions about the features, like a flowchart: &quot;is income above 50k? is age over 30?&quot;.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/decision-trees/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Decision Trees — AI Base">
+<meta property="og:description" content="A decision tree predicts by asking a chain of yes/no questions about the features, like a flowchart: &quot;is income above 50k? is age over 30?&quot;.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/decision-trees/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Decision Trees","item":"https://ai.saranmahadev.in/machine-learning/decision-trees/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Decision Trees","description":"A decision tree predicts by asking a chain of yes/no questions about the features, like a flowchart: \"is income above 50k? is age over 30?\".","url":"https://ai.saranmahadev.in/machine-learning/decision-trees/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a leaf contain?","acceptedAnswer":{"@type":"Answer","text":"The prediction: the majority class, or the average value for regression."}},{"@type":"Question","name":"Why can a tree have 100% training accuracy yet do badly on new data?","acceptedAnswer":{"@type":"Answer","text":"It can build a leaf for every noisy training point, memorising instead of generalising."}},{"@type":"Question","name":"Do trees need scaled features?","acceptedAnswer":{"@type":"Answer","text":"No: they only compare each feature with thresholds."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Trees and Ensembles</p>
+        <h1 class="doc-title">Decision Trees</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1km3vs6bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1km3vs6pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1km3vs6bg)"/>
+  <circle cx="742" cy="223" r="82" fill="#ffd08d" opacity="0.42"/><circle cx="882" cy="60" r="206" fill="#fff2de" opacity="0.25"/><circle cx="727" cy="192" r="173" fill="#ffd99f" opacity="0.50"/><circle cx="809" cy="322" r="200" fill="#fff2de" opacity="0.39"/><circle cx="718" cy="76" r="116" fill="#8a6b5c" opacity="0.49"/><circle cx="397" cy="179" r="173" fill="#8a6b5c" opacity="0.27"/><circle cx="19" cy="417" r="151" fill="#8a6b5c" opacity="0.40"/>
+  <path d="M0,420 L0,349 L30,347 L60,344 L90,340 L120,335 L150,330 L180,325 L210,320 L240,315 L270,311 L300,308 L330,306 L360,306 L390,306 L420,308 L450,310 L480,314 L510,318 L540,323 L570,328 L600,334 L630,338 L660,342 L690,346 L720,348 L750,349 L780,349 L810,348 L840,346 L870,343 L900,338 L930,334 L960,329 L990,323 L1020,318 L1050,314 L1080,310 L1110,308 L1140,306 L1170,306 L1200,306 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,387 L30,384 L60,380 L90,377 L120,373 L150,369 L180,367 L210,364 L240,363 L270,362 L300,362 L330,363 L360,365 L390,368 L420,371 L450,374 L480,378 L510,382 L540,385 L570,389 L600,391 L630,393 L660,394 L690,394 L720,393 L750,392 L780,389 L810,386 L840,383 L870,379 L900,375 L930,372 L960,368 L990,366 L1020,364 L1050,362 L1080,362 L1110,362 L1140,364 L1170,366 L1200,369 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="870" cy="178" rx="238" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-9.4 870 178)"/><ellipse cx="870" cy="178" rx="330" ry="92" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-3.4 870 178)"/>
+  <circle cx="870" cy="178" r="94" fill="url(#c1km3vs6pl)"/>
+  <circle cx="587" cy="151" r="19" fill="#ffffff" opacity="0.74"/><circle cx="559" cy="167" r="11" fill="#ffffff" opacity="0.73"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>decision tree</strong> predicts by asking a chain of yes/no questions about the features, like a flowchart: &quot;is income above 50k? is age over 30?&quot;. Each question splits the data in two, and each path ends in a leaf that gives the answer. Trees are easy to read, need no scaling, and draw boundaries made of rectangles.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/trees-and-hierarchies/" data-topic="math/trees-and-hierarchies">Trees and Hierarchies</a>, <a class="wikilink" href="/machine-learning/datasets-features-and-labels/" data-topic="machine-learning/datasets-features-and-labels">Datasets, Features and Labels</a> and <a class="wikilink" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets">Train, Validation and Test Sets</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can I explain the prediction as a short list of rules?&quot; A tree is a set of if-then rules learned from data, so a person can follow exactly why a case landed where it did.</p>
+<h2 id="intuition-twenty-questions">Intuition: twenty questions</h2>
+<p>Imagine guessing an animal by asking questions. A good first question splits the possibilities roughly in half (&quot;does it fly?&quot;); a poor one leaves everything mixed. A tree learns its questions the same way: at each step, among all features and all cut-points, it picks the one question that leaves the two sides as pure (one-class) as possible, then repeats inside each side. It stops when a side is pure or a limit such as maximum depth is reached.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">node          a question: &quot;feature ≤ threshold?&quot;
+branch        yes or no
+leaf          a final answer: the majority class (or the average, for regression)
+depth         the longest chain of questions from root to leaf
+greedy        each split is chosen alone, best right now, with no look-ahead
+</code></pre>
+<p>A prediction walks from the root down to a leaf. The regions are axis-aligned rectangles, which makes trees poor at diagonal boundaries unless they use many splits.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A tiny loan tree: &quot;income &gt; 50? if no → decline; if yes → age &gt; 30? yes → approve, no → decline&quot;. For an applicant with income 60 and age 25: income &gt; 50 is yes, then age &gt; 30 is no, so the answer is decline. Three leaves, two questions: the whole model fits on a card.</p>
+<p>On 120 noisy half-moon training points, with 280 unseen points to test on (bench data), allowing more depth gives:</p>
+<pre><code class="language-text">max depth    leaves    training accuracy    unseen accuracy
+    1           2            89%                 80%
+    2           4            95%                 85%
+    3           6            95%                 85%
+    4           9            97%                 80%
+    6          12           100%                 81%
+</code></pre>
+<p>Depth 2 already captures most of the structure. Beyond depth 3 the tree carves tiny boxes around individual noisy points: training accuracy climbs to 100% while unseen accuracy falls. The next topics explain how to score splits and how to stop the tree growing too far.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="decision-tree-regions" data-title="Grow the tree"><p class="bench-fallback"><strong>Interactive bench: Grow the tree.</strong> A slider sets the maximum depth of a decision tree on noisy half-moon data; the bench draws the rectangles it carves and shows the leaf count and the training and unseen accuracy.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at depth 1 and look at the single cut.</li>
+<li>Raise the depth one step at a time.</li>
+<li>Watch the small isolated boxes appear at large depth.</li>
+<li>Compare training and unseen accuracy at depth 2 and depth 8.</li>
+</ol>
+<p><strong>What you should notice:</strong> each extra level adds more rectangles, training accuracy only rises, and unseen accuracy stops improving and then falls once boxes chase single points.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Tabular data:</strong> trees and forests are the default strong baseline for spreadsheets of features.</li>
+<li><strong>Explainable decisions:</strong> credit, triage and eligibility rules.</li>
+<li><strong>Ensembles:</strong> random forests and gradient boosting are built from many trees.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Growing until every leaf is pure,</strong> which memorises noise.</li>
+<li><strong>Reading feature importance as causation.</strong></li>
+<li><strong>Expecting smooth predictions:</strong> a tree&#39;s output jumps at each threshold.</li>
+<li><strong>Instability:</strong> small changes in the data can change the top questions completely.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does a leaf contain?</summary>
+The prediction: the majority class, or the average value for regression.
+</details>
+
+<details><summary>2. Why can a tree have 100% training accuracy yet do badly on new data?</summary>
+It can build a leaf for every noisy training point, memorising instead of generalising.
+</details>
+
+<details><summary>3. Do trees need scaled features?</summary>
+No: they only compare each feature with thresholds.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Node / leaf:</strong> a question / a final answer.</li>
+<li><strong>Depth:</strong> the longest chain of questions.</li>
+<li><strong>Greedy splitting:</strong> choosing each split for the best immediate gain.</li>
+<li><strong>Decision boundary:</strong> the edges between regions of different predictions.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/trees-and-hierarchies/" data-topic="math/trees-and-hierarchies">Trees and Hierarchies</a> · <a class="wikilink" href="/machine-learning/impurity-and-splits/" data-topic="machine-learning/impurity-and-splits">Impurity and Splits</a> · <a class="wikilink" href="/machine-learning/pruning-and-overfitting/" data-topic="machine-learning/pruning-and-overfitting">Pruning and Overfitting</a> · <a class="wikilink" href="/machine-learning/random-forests/" data-topic="machine-learning/random-forests">Random Forests</a> · <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/decision-trees">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/impurity-and-splits/"><small>Read next</small><b>Impurity and Splits</b><p>How does a tree decide which question to ask? It scores every candidate split by how much impurity it removes. A group is pure if all its members share a class and impure if the classes are mixed.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/trees-and-hierarchies/"><b>Trees and Hierarchies</b><p>A tree is a connected graph with no cycles: one root, branches, and leaves at the ends.</p></a><a class="rc-card" href="/machine-learning/datasets-features-and-labels/"><b>Datasets, Features and Labels</b><p>A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).</p></a><a class="rc-card" href="/machine-learning/train-validation-and-test-sets/"><b>Train, Validation and Test Sets</b><p>To know whether a model works you must measure it on data it has not learned from.</p></a><a class="rc-card" href="/machine-learning/impurity-and-splits/"><b>Impurity and Splits</b><p>How does a tree decide which question to ask? It scores every candidate split by how much impurity it removes. A group is pure if all its members share a class and impure if the classes are mixed.</p></a><a class="rc-card" href="/machine-learning/pruning-and-overfitting/"><b>Pruning and Overfitting</b><p>Left alone, a tree keeps splitting until every leaf is pure, which means it memorises noise.</p></a><a class="rc-card" href="/machine-learning/random-forests/"><b>Random Forests</b><p>A single tree is unstable: change a few training points and its questions change. A random forest trains many trees on slightly different versions of the data and lets them vote.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/trees-and-ensembles/">← Previous: Trees and Ensembles</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

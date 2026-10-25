@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From a Single Call to a Loop — AI Base</title>
+<meta name="description" content="A single call to a model follows exactly one link in a chain of facts, no matter how the chain continues from there.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/from-a-single-call-to-a-loop/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="From a Single Call to a Loop — AI Base">
+<meta property="og:description" content="A single call to a model follows exactly one link in a chain of facts, no matter how the chain continues from there.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/from-a-single-call-to-a-loop/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"From a Single Call to a Loop","item":"https://ai.saranmahadev.in/agents/from-a-single-call-to-a-loop/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"From a Single Call to a Loop","description":"A single call to a model follows exactly one link in a chain of facts, no matter how the chain continues from there.","url":"https://ai.saranmahadev.in/agents/from-a-single-call-to-a-loop/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why isn't the single call's answer (\"Bob\") simply wrong?","acceptedAnswer":{"@type":"Answer","text":"It correctly answers \"who is Alice's manager\" — it's a true fact, just not an answer to the actual two-hop question that was asked; the call itself didn't fail, it just never continued past the first hop."}},{"@type":"Question","name":"What has to happen after each step of the loop for it to know whether to continue?","acceptedAnswer":{"@type":"Answer","text":"A check against the goal — in the worked example, whether the current result is a department yet — determines whether the loop stops or feeds the result back in for another step."}},{"@type":"Question","name":"What would happen if the loop had no step budget and the organization chart had a cycle (A reports to B, B reports to A)?","acceptedAnswer":{"@type":"Answer","text":"The loop would run forever, alternating between A and B and never reaching a department — exactly why a real loop needs a stopping condition beyond just \"goal not yet met.\""}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Foundations of Agentic Systems</p>
+        <h1 class="doc-title">From a Single Call to a Loop</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c733ye2bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c733ye2pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c733ye2bg)"/>
+  <circle cx="708" cy="356" r="91" fill="#f3e9fc" opacity="0.37"/><circle cx="228" cy="161" r="150" fill="#725998" opacity="0.58"/><circle cx="1044" cy="126" r="111" fill="#dcbef5" opacity="0.27"/><circle cx="591" cy="266" r="142" fill="#e7bdc8" opacity="0.25"/><circle cx="496" cy="313" r="89" fill="#f3e9fc" opacity="0.51"/><circle cx="692" cy="54" r="217" fill="#f3e9fc" opacity="0.52"/><circle cx="1104" cy="364" r="229" fill="#f3e9fc" opacity="0.24"/>
+  <path d="M0,420 L0,307 L30,309 L60,312 L90,317 L120,321 L150,327 L180,332 L210,337 L240,341 L270,345 L300,347 L330,349 L360,350 L390,349 L420,347 L450,344 L480,340 L510,335 L540,330 L570,325 L600,320 L630,316 L660,312 L690,309 L720,306 L750,306 L780,306 L810,308 L840,310 L870,314 L900,318 L930,323 L960,328 L990,333 L1020,338 L1050,342 L1080,346 L1110,348 L1140,349 L1170,349 L1200,348 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,372 L60,377 L90,382 L120,386 L150,390 L180,393 L210,394 L240,394 L270,392 L300,388 L330,384 L360,379 L390,374 L420,370 L450,366 L480,363 L510,362 L540,362 L570,364 L600,368 L630,372 L660,377 L690,382 L720,386 L750,390 L780,393 L810,394 L840,394 L870,392 L900,388 L930,384 L960,379 L990,374 L1020,370 L1050,366 L1080,363 L1110,362 L1140,362 L1170,364 L1200,368 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="792" cy="259" rx="211" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(9.9 792 259)"/><ellipse cx="792" cy="259" rx="292" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(15.9 792 259)"/>
+  <circle cx="792" cy="259" r="83" fill="url(#c733ye2pl)"/>
+  <circle cx="990" cy="307" r="10" fill="#ffffff" opacity="0.62"/><circle cx="1055" cy="213" r="16" fill="#ffffff" opacity="0.68"/><circle cx="691" cy="179" r="13" fill="#ffffff" opacity="0.72"/><circle cx="987" cy="322" r="18" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A single call to a model follows exactly one link in a chain of facts, no matter how the chain continues from there. Asking &quot;what department is Alice&#39;s manager&#39;s manager in?&quot; in one call gets back Alice&#39;s manager — the model answered the first thing it could, not the actual question, because nothing told it to keep going once that first answer wasn&#39;t the department.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a>, <a class="wikilink" href="/fundamentals/pda-loop/" data-topic="fundamentals/pda-loop">PDA Loop</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What&#39;s the one structural change that turns a single model call into an agent?&quot; A loop: after producing a result, check whether the goal is actually satisfied, and if it isn&#39;t, feed that result back in and call the model again. A single call stops after one step regardless of whether the goal was reached; a loop keeps going — following manager after manager, in this example — until it actually lands on the department, or runs out of steps trying.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Asking someone &quot;who manages Alice?&quot; gets an immediate, complete answer — Bob. Asking &quot;what department does Alice&#39;s manager&#39;s manager work in?&quot; and only getting as far as &quot;Bob&quot; back is a half-finished answer to a question that needed two more hops. A loop is the difference between stopping after the first hop and continuing until the actual question is answered.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">single call:  result = step(state)
+loop:         result = step(state); while (goal_not_met(result)): result = step(result)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A tiny organization chart, and the question &quot;what department is Alice&#39;s manager&#39;s manager in?&quot;:</p>
+<pre><code class="language-text">Alice → manager: Bob
+Bob   → manager: Carol
+Carol → department: Engineering
+
+single call: step(Alice) = &quot;Bob&quot;              (Alice&#39;s manager — not the department)
+loop:        step(Alice) = &quot;Bob&quot;   (not done, &quot;Bob&quot; has no department)
+             step(Bob)   = &quot;Carol&quot; (not done, &quot;Carol&quot; has no department either — wait, it does)
+             step(Carol) = &quot;Engineering&quot;  (done — this is a department)
+             → 3 steps to reach &quot;Engineering&quot;
+</code></pre>
+<p>The single call&#39;s answer (&quot;Bob&quot;) isn&#39;t wrong in isolation — it correctly reports Alice&#39;s manager — it&#39;s just not an answer to the question that was actually asked. The loop keeps applying the same one-hop lookup, checking after each hop whether it&#39;s reached a department yet, until it has.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="single-call-vs-loop" data-title="One lookup answers the wrong question"><p class="bench-fallback"><strong>Interactive bench: One lookup answers the wrong question.</strong> Step a multi-hop lookup and compare a single call's answer against a looped agent's.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the single-call answer against the full lookup chain.</li>
+<li>Step through the loop and watch it stop exactly when it reaches a department.</li>
+<li>Imagine a four-level-deep organization — would a single call still only get through one hop?</li>
+</ol>
+<p><strong>What you should notice:</strong> the single call and the first step of the loop produce the exact same result — the loop isn&#39;t a different kind of lookup, it&#39;s the same lookup, repeated and checked.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is exactly the <a class="wikilink" href="/fundamentals/pda-loop/" data-topic="fundamentals/pda-loop">perceive-decide-act loop</a> already covered on the Fundamentals planet</strong>, now specifically framed around <em>when</em> that loop needs more than one iteration to reach a goal.</li>
+<li><strong><a class="wikilink" href="/agents/goal-decomposition-into-subtasks/" data-topic="agents/goal-decomposition-into-subtasks">Goal Decomposition into Subtasks</a> is the planning-side version of the same idea</strong> — recognizing in advance that a question needs multiple hops, rather than discovering it only after the first hop falls short.</li>
+<li><strong><a class="wikilink" href="/agents/anatomy-of-an-agent-architecture/" data-topic="agents/anatomy-of-an-agent-architecture">Anatomy of an Agent Architecture</a> names the specific component (the controller) responsible for deciding whether to loop again</strong> — this topic is about why that component exists at all.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a bigger or better model fixes a problem that&#39;s actually about looping.</strong> No amount of model quality changes the fact that a single call only performs one step — the fix is architectural, not a better model.</li>
+<li><strong>Looping forever when a goal genuinely can&#39;t be reached.</strong> A loop needs a step budget or another stopping condition — without one, an agent that can&#39;t find a department would keep looking indefinitely.</li>
+<li><strong>Assuming every task needs a loop.</strong> A question answerable in one real step doesn&#39;t benefit from looping — it&#39;s specifically multi-hop goals where the difference matters.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why isn't the single call's answer ("Bob") simply wrong?</summary>
+It correctly answers "who is Alice's manager" — it's a true fact, just not an answer to the actual two-hop question that was asked; the call itself didn't fail, it just never continued past the first hop.
+</details>
+
+<details><summary>2. What has to happen after each step of the loop for it to know whether to continue?</summary>
+A check against the goal — in the worked example, whether the current result is a department yet — determines whether the loop stops or feeds the result back in for another step.
+</details>
+
+<details><summary>3. What would happen if the loop had no step budget and the organization chart had a cycle (A reports to B, B reports to A)?</summary>
+The loop would run forever, alternating between A and B and never reaching a department — exactly why a real loop needs a stopping condition beyond just "goal not yet met."
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Single call:</strong> one request to a model, producing one result, with no further iteration.</li>
+<li><strong>Loop:</strong> repeatedly feeding a result back in and calling again until a goal is met or a budget runs out.</li>
+<li><strong>Multi-hop goal:</strong> a goal that can&#39;t be reached in one step because each step&#39;s result is needed to determine the next step.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/pda-loop/" data-topic="fundamentals/pda-loop">PDA Loop</a> · <a class="wikilink" href="/agents/anatomy-of-an-agent-architecture/" data-topic="agents/anatomy-of-an-agent-architecture">Anatomy of an Agent Architecture</a> · <a class="wikilink" href="/agents/goal-decomposition-into-subtasks/" data-topic="agents/goal-decomposition-into-subtasks">Goal Decomposition into Subtasks</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/from-a-single-call-to-a-loop">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/agents-vs-assistants-vs-workflows/"><small>Read next</small><b>Agents vs. Assistants vs. Workflows</b><p>&quot;Agent&quot; gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/agents-and-environments/"><b>Agents and Environments</b><p>An agent is anything that perceives its surroundings through sensors and acts on them through actuators to pursue a goal. The surroundings it lives in are its environment.</p></a><a class="rc-card" href="/fundamentals/pda-loop/"><b>PDA Loop</b><p>The Perception → Decision → Action loop is the heartbeat of every intelligent system.</p></a><a class="rc-card" href="/agents/goal-decomposition-into-subtasks/"><b>Goal Decomposition into Subtasks</b><p>Told to &quot;launch the product,&quot; an agent that lists tasks in whatever order they occur to it can end up trying to launch before the thing it&#39;s launching has been tested — the launch step depends on…</p></a><a class="rc-card" href="/agents/anatomy-of-an-agent-architecture/"><b>Anatomy of an Agent Architecture</b><p>Every agent architecture this road covers, however different the application, is built from the same five named pieces: something that perceives the current request, something that remembers…</p></a><a class="rc-card" href="/agents/foundations-of-agentic-systems/"><b>Foundations of Agentic Systems</b><p>A single call to a language model, however good, still just returns one response to one prompt.</p></a><a class="rc-card" href="/agents/agents-vs-assistants-vs-workflows/"><b>Agents vs. Assistants vs. Workflows</b><p>&quot;Agent&quot; gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/foundations-of-agentic-systems/">← Previous: Foundations of Agentic Systems</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

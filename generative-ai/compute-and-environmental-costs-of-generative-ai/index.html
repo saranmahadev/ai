@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compute and Environmental Costs of Generative AI — AI Base</title>
+<meta name="description" content="Every stage on this planet, from a single denoising step to a whole product pipeline, costs real computation — and computation costs real energy, drawn from a real power grid.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/compute-and-environmental-costs-of-generative-ai/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Compute and Environmental Costs of Generative AI — AI Base">
+<meta property="og:description" content="Every stage on this planet, from a single denoising step to a whole product pipeline, costs real computation — and computation costs real energy, drawn from a real power grid.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/compute-and-environmental-costs-of-generative-ai/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Compute and Environmental Costs of Generative AI","item":"https://ai.saranmahadev.in/generative-ai/compute-and-environmental-costs-of-generative-ai/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Compute and Environmental Costs of Generative AI","description":"Every stage on this planet, from a single denoising step to a whole product pipeline, costs real computation — and computation costs real energy, drawn from a real power grid.","url":"https://ai.saranmahadev.in/generative-ai/compute-and-environmental-costs-of-generative-ai/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the rough difference in FLOPs between training and inference, per token, and why?","acceptedAnswer":{"@type":"Answer","text":"Training costs roughly 3× the FLOPs of inference per token (about 6·P versus 2·P for P parameters), because training requires a backward pass (computing gradients) in addition to the forward pass inference alone needs."}},{"@type":"Question","name":"In the worked example, by roughly what factor did the training run exceed the single inference request in total compute?","acceptedAnswer":{"@type":"Answer","text":"About 3 billion times — not because each token costs vastly more to train on, but because training involves a vastly larger number of tokens processed overall."}},{"@type":"Question","name":"Why might someone easily get the wrong impression comparing \"cost of one request\" to \"cost of training\"?","acceptedAnswer":{"@type":"Answer","text":"Because the two numbers operate on wildly different scales (one request versus an entire training run across trillions of tokens) — direct comparison without accounting for that scale difference can make either cost seem misleadingly large or small relative to the other."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Generative AI in Practice</p>
+        <h1 class="doc-title">Compute and Environmental Costs of Generative AI</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1ij05a6bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c1ij05a6pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1ij05a6bg)"/>
+  <circle cx="989" cy="57" r="103" fill="#8a5989" opacity="0.46"/><circle cx="1055" cy="206" r="80" fill="#ffbfe0" opacity="0.57"/><circle cx="1198" cy="59" r="212" fill="#8a5989" opacity="0.31"/><circle cx="358" cy="193" r="77" fill="#8a5989" opacity="0.27"/><circle cx="468" cy="229" r="86" fill="#ffe9f4" opacity="0.30"/><circle cx="452" cy="294" r="162" fill="#ffbfe0" opacity="0.25"/>
+  <path d="M0,420 L0,337 L30,332 L60,327 L90,322 L120,317 L150,313 L180,309 L210,307 L240,306 L270,306 L300,307 L330,309 L360,313 L390,317 L420,322 L450,327 L480,332 L510,337 L540,341 L570,345 L600,348 L630,349 L660,350 L690,349 L720,347 L750,344 L780,340 L810,335 L840,330 L870,325 L900,320 L930,315 L960,311 L990,308 L1020,306 L1050,306 L1080,306 L1110,308 L1140,310 L1170,314 L1200,319 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,371 L30,368 L60,365 L90,363 L120,362 L150,362 L180,363 L210,364 L240,366 L270,369 L300,372 L330,376 L360,380 L390,384 L420,387 L450,390 L480,392 L510,393 L540,394 L570,394 L600,393 L630,391 L660,388 L690,385 L720,381 L750,377 L780,374 L810,370 L840,367 L870,365 L900,363 L930,362 L960,362 L990,363 L1020,365 L1050,367 L1080,370 L1110,374 L1140,377 L1170,381 L1200,385 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="721" cy="233" rx="259" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-20.1 721 233)"/><ellipse cx="721" cy="233" rx="358" ry="100" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-14.1 721 233)"/>
+  <circle cx="721" cy="233" r="102" fill="url(#c1ij05a6pl)"/>
+  <circle cx="1096" cy="173" r="11" fill="#ffffff" opacity="0.73"/><circle cx="925" cy="146" r="9" fill="#ffffff" opacity="0.88"/><circle cx="479" cy="290" r="12" fill="#ffffff" opacity="0.81"/><circle cx="411" cy="150" r="8" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every stage on this planet, from a single denoising step to a whole product pipeline, costs real computation — and computation costs real energy, drawn from a real power grid. This note puts rough numbers on exactly how much, and on one of generative AI&#39;s most consistently misunderstood comparisons.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/building-a-generative-product/" data-topic="generative-ai/building-a-generative-product">Building a Generative Product</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How much energy and carbon does generating text actually cost, and how does that compare to training the model in the first place?&quot; A rough chain of estimates gets there: a given number of <strong>FLOPs</strong> (floating-point operations), run at a GPU&#39;s achievable <strong>throughput</strong>, takes a certain amount of <strong>time</strong>; that time, multiplied by the GPU&#39;s <strong>power draw</strong>, gives <strong>energy</strong>; energy multiplied by the grid&#39;s <strong>carbon intensity</strong> gives an estimated <strong>carbon footprint</strong>. Running the same chain for one inference request versus for an entire training run reveals just how differently sized these two costs really are.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Baking one loaf of bread in an already-hot oven costs a small amount of additional energy; building and running the industrial bakery that makes that oven possible in the first place is a vastly larger, one-time undertaking. Every inference request is like baking one more loaf in an oven that already exists; training a model from scratch is like building the bakery — a cost that happens once, is vastly larger, and then is amortized across every loaf (every request) that oven will ever bake afterward.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">FLOPs for one forward pass over T tokens, model with P parameters:
+  inference FLOPs ≈ 2 · P · T
+  training FLOPs ≈ 6 · P · T     (roughly 3× more, for the backward pass)
+
+time = FLOPs / (GPU&#39;s achievable FLOPs per second)
+energy (kWh) = GPU power draw (kW) × time (hours)
+carbon (kg CO₂) = energy (kWh) × grid carbon intensity (kg CO₂ / kWh)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy 7-billion-parameter model, on a GPU achieving roughly 300 TFLOPs/s at 400W, with a grid carbon intensity of 0.4 kg CO₂/kWh:</p>
+<pre><code class="language-text">one inference request (1,000 tokens):
+  1.4 × 10¹³ FLOPs → 0.047 s → 0.0052 Wh → 0.0021 g CO₂
+
+training run (1 trillion tokens, on one such GPU, illustratively):
+  4.2 × 10²² FLOPs → 1,620 days → 15,556 kWh → 6,222 kg CO₂
+
+training is about 3 billion times more FLOPs than this one inference request
+</code></pre>
+<p>Training this toy model, even on just one GPU for illustration, costs roughly 3 billion times the compute of a single 1,000-token inference request — a staggering ratio that puts &quot;how much does one request cost&quot; and &quot;how much did training cost&quot; on genuinely different scales, even though both numbers are routinely discussed in the same conversations about generative AI&#39;s environmental impact.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="compute-carbon-cost" data-title="One request vs. the whole training run"><p class="bench-fallback"><strong>Interactive bench: One request vs. the whole training run.</strong> Adjust how many tokens a request generates and compare its energy cost against the energy cost of the model's full training run.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Raise the token count and watch the per-request energy grow, but stay tiny in absolute terms.</li>
+<li>Compare that number against the training run&#39;s energy figure.</li>
+<li>Consider how many inference requests it would take to match the training run&#39;s total cost.</li>
+</ol>
+<p><strong>What you should notice:</strong> the per-request number barely moves the overall comparison — training dominates by so many orders of magnitude that reasonable changes in request size don&#39;t meaningfully close the gap.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Training cost is a one-time (or periodic, for retraining) expense, while inference cost scales with usage</strong> — a model served to millions of users accumulates inference cost that can eventually rival or exceed its training cost in total, even though any single request is minuscule.</li>
+<li><strong>Real energy estimates for production models are far more involved</strong> than this toy chain — they account for actual measured GPU utilization, cooling overhead, and data-center efficiency (PUE), among other factors this worked example simplifies away.</li>
+<li><strong><a class="wikilink" href="/deep-learning/model-pruning/" data-topic="deep-learning/model-pruning">efficiency techniques elsewhere on these planets</a> (quantization, pruning, distillation) directly reduce the FLOPs term in this chain</strong>, lowering both cost and environmental impact at the inference stage specifically.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Conflating per-request cost with total deployment cost.</strong> A single request&#39;s energy cost is genuinely tiny; the environmental conversation that matters is usually about aggregate cost across millions or billions of requests, or about training specifically.</li>
+<li><strong>Assuming training cost is irrelevant because it&#39;s &quot;one-time.&quot;</strong> A one-time cost that large still matters — especially as models are retrained or fine-tuned repeatedly over their lifecycle.</li>
+<li><strong>Treating these estimates as precise.</strong> This worked example&#39;s chain uses rough, illustrative figures (achievable FLOPs/s, grid carbon intensity) that vary enormously by hardware, location, and time — the value here is in the <em>relative</em> comparison, not exact absolute numbers.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the rough difference in FLOPs between training and inference, per token, and why?</summary>
+Training costs roughly 3× the FLOPs of inference per token (about 6·P versus 2·P for P parameters), because training requires a backward pass (computing gradients) in addition to the forward pass inference alone needs.
+</details>
+
+<details><summary>2. In the worked example, by roughly what factor did the training run exceed the single inference request in total compute?</summary>
+About 3 billion times — not because each token costs vastly more to train on, but because training involves a vastly larger number of tokens processed overall.
+</details>
+
+<details><summary>3. Why might someone easily get the wrong impression comparing "cost of one request" to "cost of training"?</summary>
+Because the two numbers operate on wildly different scales (one request versus an entire training run across trillions of tokens) — direct comparison without accounting for that scale difference can make either cost seem misleadingly large or small relative to the other.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>FLOPs:</strong> floating-point operations, the basic unit of computational cost used to estimate energy use.</li>
+<li><strong>Carbon intensity:</strong> how much CO₂ is emitted per unit of energy drawn from a given power grid.</li>
+<li><strong>Amortization:</strong> spreading a large one-time cost (like training) across all the future uses (like inference requests) that benefit from it.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/building-a-generative-product/" data-topic="generative-ai/building-a-generative-product">Building a Generative Product</a> · <a class="wikilink" href="/deep-learning/model-pruning/" data-topic="deep-learning/model-pruning">Model Pruning</a> · <a class="wikilink" href="/generative-ai/capstone-a-tiny-multimodal-generator-with-decoding-and-guidance/" data-topic="generative-ai/capstone-a-tiny-multimodal-generator-with-decoding-and-guidance">Capstone: A Tiny Multimodal Generator with Decoding and Guidance</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/compute-and-environmental-costs-of-generative-ai">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/capstone-a-tiny-multimodal-generator-with-decoding-and-guidance/"><small>Read next</small><b>Capstone: A Tiny Multimodal Generator with Decoding and Guidance</b><p>This capstone traces one prompt through the two mechanisms this planet opened with — conditioning and guidance — and closes the loop by decoding the result back into a named concept, checking that…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/building-a-generative-product/"><b>Building a Generative Product</b><p>Everything on this planet so far has been about a single request: decode it well, condition it correctly, evaluate it fairly.</p></a><a class="rc-card" href="/deep-learning/model-pruning/"><b>Model Pruning</b><p>A trained network rarely needs every single weight it ended up with.</p></a><a class="rc-card" href="/generative-ai/capstone-a-tiny-multimodal-generator-with-decoding-and-guidance/"><b>Capstone: A Tiny Multimodal Generator with Decoding and Guidance</b><p>This capstone traces one prompt through the two mechanisms this planet opened with — conditioning and guidance — and closes the loop by decoding the result back into a named concept, checking that…</p></a><a class="rc-card" href="/generative-ai/generative-ai-in-practice/"><b>Generative AI in Practice</b><p>The last stretch of this planet&#39;s road: adapting a generative model to a specific use case, serving it as a real product, counting the resources that costs, and a capstone that reassembles…</p></a><a class="rc-card" href="/generative-ai/parameter-efficient-adaptation-for-generation/"><b>Parameter-Efficient Adaptation for Generation</b><p>Adapting a huge generative model to a specific style, domain, or speaker (as in Voice Cloning and Speaker Adaptation) by retraining all of its weights would mean storing and updating a full new…</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/building-a-generative-product/">← Previous: Building a Generative Product</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

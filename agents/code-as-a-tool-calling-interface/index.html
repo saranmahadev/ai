@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code as a Tool-Calling Interface — AI Base</title>
+<meta name="description" content="Applying a discount to 200 items one tool call at a time costs 200 separate round trips, each one a full request and response.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/code-as-a-tool-calling-interface/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Code as a Tool-Calling Interface — AI Base">
+<meta property="og:description" content="Applying a discount to 200 items one tool call at a time costs 200 separate round trips, each one a full request and response.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/code-as-a-tool-calling-interface/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Code as a Tool-Calling Interface","item":"https://ai.saranmahadev.in/agents/code-as-a-tool-calling-interface/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Code as a Tool-Calling Interface","description":"Applying a discount to 200 items one tool call at a time costs 200 separate round trips, each one a full request and response.","url":"https://ai.saranmahadev.in/agents/code-as-a-tool-calling-interface/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the structured interface's call count scale directly with the number of items while code-as-tool's doesn't?","acceptedAnswer":{"@type":"Answer","text":"Structured calling requires a separate round trip for every action, so repeating an action n times costs n calls. Code-as-tool expresses the repetition as a loop inside one generated snippet, so the loop itself runs inside a single call regardless of how many times it iterates."}},{"@type":"Question","name":"What does code-as-tool give up in exchange for its lower call count?","acceptedAnswer":{"@type":"Answer","text":"Per-item granularity and schema validation — a structured call can be checked and logged individually before it runs, while a code snippet's internal loop iterations aren't individually inspected the same way before the whole thing executes."}},{"@type":"Question","name":"When would code-as-tool not actually save any calls compared to structured calling?","acceptedAnswer":{"@type":"Answer","text":"When each item's handling genuinely depends on an earlier item's result in a way that needs to be checked or decided by the model between iterations — at that point the task isn't a simple repetitive loop, and collapsing it into one call loses exactly the oversight that made per-item calls useful."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Tool Use and Function Calling</p>
+        <h1 class="doc-title">Code as a Tool-Calling Interface</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cu8oxy1bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="cu8oxy1pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cu8oxy1bg)"/>
+  <circle cx="830" cy="105" r="186" fill="#f3e9fc" opacity="0.44"/><circle cx="197" cy="131" r="226" fill="#725998" opacity="0.34"/><circle cx="206" cy="290" r="210" fill="#dcbef5" opacity="0.43"/><circle cx="928" cy="122" r="66" fill="#e7bdc8" opacity="0.28"/><circle cx="743" cy="278" r="204" fill="#725998" opacity="0.29"/>
+  <path d="M0,420 L0,336 L30,342 L60,346 L90,349 L120,350 L150,348 L180,345 L210,339 L240,333 L270,326 L300,320 L330,314 L360,309 L390,306 L420,306 L450,307 L480,311 L510,316 L540,322 L570,329 L600,336 L630,342 L660,346 L690,349 L720,350 L750,348 L780,345 L810,339 L840,333 L870,326 L900,320 L930,314 L960,309 L990,306 L1020,306 L1050,307 L1080,311 L1110,316 L1140,322 L1170,329 L1200,336 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,388 L60,384 L90,379 L120,374 L150,369 L180,366 L210,363 L240,362 L270,362 L300,364 L330,368 L360,372 L390,377 L420,382 L450,387 L480,390 L510,393 L540,394 L570,394 L600,392 L630,388 L660,384 L690,379 L720,374 L750,369 L780,366 L810,363 L840,362 L870,362 L900,364 L930,368 L960,372 L990,377 L1020,382 L1050,387 L1080,390 L1110,393 L1140,394 L1170,394 L1200,392 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="735" cy="142" rx="184" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-2.8 735 142)"/><ellipse cx="735" cy="142" rx="255" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(3.2 735 142)"/>
+  <circle cx="735" cy="142" r="72" fill="url(#cu8oxy1pl)"/>
+  <circle cx="996" cy="158" r="14" fill="#ffffff" opacity="0.62"/><circle cx="851" cy="221" r="14" fill="#ffffff" opacity="0.64"/><circle cx="1012" cy="137" r="12" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Applying a discount to 200 items one tool call at a time costs 200 separate round trips, each one a full request and response. Writing a short piece of code that loops over all 200 items and calls the same underlying function internally costs one round trip — the model produces the loop once, and a sandbox runs it however many times is needed.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability">Designing Tools for Agent Reliability</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does every action an agent takes need to be its own separate tool call?&quot; Structured function calling gives the model one discrete, schema-checked call per action — reliable and easy to validate, but a loop over many items costs one call per item. Letting the model instead write a short piece of <strong>code</strong> that calls already-defined functions, with real loops and conditionals, lets a single generated call express arbitrarily much control flow, executed all at once in a sandbox rather than round-tripped back to the model at every step.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Asking an assistant to update 200 spreadsheet rows one instruction at a time (&quot;update row 1,&quot; wait for confirmation, &quot;update row 2,&quot; wait again...) takes 200 back-and-forth exchanges. Handing the assistant a short script that says &quot;for each row, do this update&quot; and letting them run it once accomplishes exactly the same 200 updates in a single instruction.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">structured tool calls(n items) = n            (one call per item)
+code-as-tool calls              = 1            (one call, however many items the code loops over)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Applying one operation to a growing number of items, under both interfaces:</p>
+<pre><code class="language-text">n = 10 items:   structured calls = 10    code-as-tool calls = 1
+n = 50 items:   structured calls = 50    code-as-tool calls = 1
+n = 200 items:  structured calls = 200   code-as-tool calls = 1
+</code></pre>
+<p>The structured interface&#39;s call count scales directly with the number of items — ten times the items, ten times the calls. The code interface&#39;s call count never moves, because the looping itself happens inside the one call&#39;s generated code, not across repeated round trips to the model.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="code-as-tool-interface" data-title="One call per item, or one loop"><p class="bench-fallback"><strong>Interactive bench: One call per item, or one loop.</strong> Compare total tool calls needed to process a growing number of items under structured calling versus code as the interface.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the item count up and watch the structured-calls bar grow while the code-as-tool bar stays flat.</li>
+<li>Imagine each structured call also costs a fixed network round-trip delay — how would that change the total time, not just the call count, as items grow?</li>
+<li>Think of an operation where each item&#39;s handling genuinely depends on the result of handling the previous one — would code-as-tool still save calls the same way?</li>
+</ol>
+<p><strong>What you should notice:</strong> the saving comes specifically from moving a loop that&#39;s genuinely repetitive into the generated code itself — it isn&#39;t a universal replacement for structured calls, just a better fit whenever the actual task is &quot;do this same thing many times.&quot;</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the same call-count logic behind <a class="wikilink" href="/agents/orchestrator-workers/" data-topic="agents/orchestrator-workers">Orchestrator-Workers</a> and sectioning, in reverse</strong>: those patterns split one task into many separate calls when the pieces genuinely need independent handling; code-as-tool collapses many repetitive pieces back into one call when they don&#39;t.</li>
+<li><strong><a class="wikilink" href="/agents/code-execution-agents/" data-topic="agents/code-execution-agents">Code-Execution Agents</a>, covered in the next district, is the full environment built around this idea</strong> — an execution sandbox, state carried between code snippets, and the broader question of what an agent can do once code itself is its action space. This topic is specifically about the <em>interface</em> choice; that one is about the environment it runs in.</li>
+<li><strong>Structured function calling still has real advantages this topic doesn&#39;t erase</strong>: its schema makes every individual action easy to validate and log, which a freeform code blob makes harder to inspect before it runs.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Using code-as-tool for operations that genuinely need per-item oversight.</strong> Collapsing 200 individually risky actions (each needing a human or verification check before proceeding) into one uninterrupted loop removes the checkpoints a structured per-item call would have given.</li>
+<li><strong>Assuming the call-count saving means code-as-tool is strictly better.</strong> It trades call count for a loss of per-action granularity and schema validation — a real cost, not a free win, for tasks where that granularity mattered.</li>
+<li><strong>Writing code that calls undefined or unsafe operations.</strong> The safety of this pattern depends entirely on the sandbox only exposing the same already-vetted functions a structured interface would have exposed directly — it isn&#39;t a license for the model to call anything it can imagine.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does the structured interface's call count scale directly with the number of items while code-as-tool's doesn't?</summary>
+Structured calling requires a separate round trip for every action, so repeating an action n times costs n calls. Code-as-tool expresses the repetition as a loop inside one generated snippet, so the loop itself runs inside a single call regardless of how many times it iterates.
+</details>
+
+<details><summary>2. What does code-as-tool give up in exchange for its lower call count?</summary>
+Per-item granularity and schema validation — a structured call can be checked and logged individually before it runs, while a code snippet's internal loop iterations aren't individually inspected the same way before the whole thing executes.
+</details>
+
+<details><summary>3. When would code-as-tool not actually save any calls compared to structured calling?</summary>
+When each item's handling genuinely depends on an earlier item's result in a way that needs to be checked or decided by the model between iterations — at that point the task isn't a simple repetitive loop, and collapsing it into one call loses exactly the oversight that made per-item calls useful.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Code as a tool-calling interface:</strong> letting a model express an action (including loops and conditionals) as generated code executed in a sandbox, rather than as one discrete structured call per action.</li>
+<li><strong>Structured function calling:</strong> a schema-checked tool call representing exactly one discrete action.</li>
+<li><strong>Call count:</strong> the number of model-to-tool round trips a given approach requires for a task.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability">Designing Tools for Agent Reliability</a> · <a class="wikilink" href="/agents/orchestrator-workers/" data-topic="agents/orchestrator-workers">Orchestrator-Workers</a> · <a class="wikilink" href="/agents/code-execution-agents/" data-topic="agents/code-execution-agents">Code-Execution Agents</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/code-as-a-tool-calling-interface">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/memory-and-state-management/"><small>Read next</small><b>Memory and State Management</b><p>An agent running for hundreds of steps can&#39;t keep everything it&#39;s ever seen in its context window — and some of what it learns along the way needs to survive past the current run entirely.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/designing-tools-for-agent-reliability/"><b>Designing Tools for Agent Reliability</b><p>A tool with a free-text date field lets an agent write &quot;03/14/2025,&quot; &quot;March 14, 2025,&quot; or &quot;14/03/2025&quot; — three formats, at least two of them genuinely ambiguous about which number is the month.</p></a><a class="rc-card" href="/agents/orchestrator-workers/"><b>Orchestrator-Workers</b><p>A single call asked to analyze a market, project financials, and assess risk, all in one response, often trails off after the first section or two — there was only so much the model would produce…</p></a><a class="rc-card" href="/agents/code-execution-agents/"><b>Code-Execution Agents</b><p>Running code one snippet at a time from a clean slate means every new snippet has to re-establish everything the previous ones already set up — reload the data, redefine the variables — before it…</p></a><a class="rc-card" href="/agents/tool-use-and-function-calling/"><b>Tool Use and Function Calling</b><p>Calling one tool correctly is a solved problem, already covered on the LLMs planet.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/designing-tools-for-agent-reliability/">← Previous: Designing Tools for Agent Reliability</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Multilayer Feedforward Network — AI Base</title>
+<meta name="description" content="A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/the-multilayer-feedforward-network/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="The Multilayer Feedforward Network — AI Base">
+<meta property="og:description" content="A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/the-multilayer-feedforward-network/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"The Multilayer Feedforward Network","item":"https://ai.saranmahadev.in/deep-learning/the-multilayer-feedforward-network/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Multilayer Feedforward Network","description":"A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.","url":"https://ai.saranmahadev.in/deep-learning/the-multilayer-feedforward-network/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why is the first hidden unit's activation exactly 0?","acceptedAnswer":{"@type":"Answer","text":"Its pre-activation sum is −0.4, which is negative, and ReLU clips every negative input to 0."}},{"@type":"Question","name":"What is `a⁽⁰⁾` in the layer notation?","acceptedAnswer":{"@type":"Answer","text":"The network's raw input `x`, before any layer has processed it."}},{"@type":"Question","name":"What changes between a regression network and a classification network with the same hidden layers?","acceptedAnswer":{"@type":"Answer","text":"Only the output layer's activation function: identity for regression, sigmoid or softmax for classification."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Neural Network Foundations</p>
+        <h1 class="doc-title">The Multilayer Feedforward Network</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ci81nchbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="ci81nchpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ci81nchbg)"/>
+  <circle cx="267" cy="142" r="218" fill="#ffe6e6" opacity="0.61"/><circle cx="183" cy="382" r="101" fill="#8a546c" opacity="0.59"/><circle cx="74" cy="158" r="142" fill="#8a546c" opacity="0.39"/><circle cx="1051" cy="13" r="181" fill="#ffb6b6" opacity="0.27"/><circle cx="93" cy="96" r="224" fill="#ffb89d" opacity="0.25"/><circle cx="1029" cy="30" r="226" fill="#ffb89d" opacity="0.22"/><circle cx="506" cy="78" r="188" fill="#8a546c" opacity="0.48"/>
+  <path d="M0,420 L0,308 L30,306 L60,306 L90,308 L120,312 L150,318 L180,324 L210,331 L240,338 L270,343 L300,347 L330,349 L360,349 L390,347 L420,343 L450,337 L480,331 L510,324 L540,317 L570,312 L600,308 L630,306 L660,306 L690,308 L720,312 L750,318 L780,324 L810,331 L840,338 L870,343 L900,347 L930,349 L960,349 L990,347 L1020,343 L1050,337 L1080,331 L1110,324 L1140,317 L1170,312 L1200,308 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,390 L30,393 L60,394 L90,394 L120,392 L150,389 L180,384 L210,380 L240,375 L270,370 L300,366 L330,363 L360,362 L390,362 L420,364 L450,367 L480,372 L510,376 L540,381 L570,386 L600,390 L630,393 L660,394 L690,394 L720,392 L750,389 L780,384 L810,380 L840,375 L870,370 L900,366 L930,363 L960,362 L990,362 L1020,364 L1050,367 L1080,372 L1110,376 L1140,381 L1170,386 L1200,390 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="638" cy="260" rx="170" ry="48" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.9 638 260)"/><ellipse cx="638" cy="260" rx="235" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.9 638 260)"/>
+  <circle cx="638" cy="260" r="67" fill="url(#ci81nchpl)"/>
+  <circle cx="544" cy="200" r="19" fill="#ffffff" opacity="0.64"/><circle cx="601" cy="330" r="17" fill="#ffffff" opacity="0.65"/><circle cx="355" cy="254" r="12" fill="#ffffff" opacity="0.63"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>multilayer feedforward network</strong> wires several <a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">artificial neurons</a> into layers and runs them in one direction only, input to output, with no loops. Each layer&#39;s output is the next layer&#39;s input — nothing more mysterious than applying <code>dense → activation</code> repeatedly.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">The Artificial Neuron and Activation Functions</a> and <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Given one neuron&#39;s equation <code>a = f(w · x + b)</code>, how exactly do many of them combine into a network?&quot; By collecting a whole layer&#39;s weights into a matrix and running the same operation layer after layer: this is the <strong>forward pass</strong>.</p>
+<h2 id="intuition-a-pipeline-of-layers">Intuition: a pipeline of layers</h2>
+<p>Picture an assembly line. Raw input enters, each station (layer) transforms it a little, and the final station&#39;s output is the network&#39;s prediction. &quot;Deep&quot; simply means more stations; &quot;wide&quot; means more units per station. A layer&#39;s matrix <code>W</code> has one row per unit in that layer and one column per input it receives, so <code>Wx</code> computes every unit&#39;s weighted sum in one matrix–vector multiply.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">layer l:   z⁽ˡ⁾ = W⁽ˡ⁾ a⁽ˡ⁻¹⁾ + b⁽ˡ⁾        a⁽ˡ⁾ = f⁽ˡ⁾(z⁽ˡ⁾)
+a⁽⁰⁾ = x (the input)
+a⁽ᴸ⁾ = ŷ (the network&#39;s output, after L layers)
+</code></pre>
+<p>The output layer&#39;s activation <code>f⁽ᴸ⁾</code> depends on the task: linear (identity) for regression, sigmoid for yes/no classification, <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">softmax</a> for many classes.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A network with 2 inputs, one hidden layer of 3 ReLU units, and one sigmoid output:</p>
+<pre><code class="language-text">W1 = [[ 0.5, -0.5],         b1 = [ 0.1, -0.2, 0.05]
+      [ 0.3,  0.8],
+      [-0.6,  0.2]]
+
+W2 = [[0.4, -0.3, 0.6]]     b2 = [0.1]
+</code></pre>
+<p>For input <code>x = (1, 2)</code>:</p>
+<pre><code class="language-text">z1 = 0.5(1) − 0.5(2) + 0.1  = −0.4  →  ReLU → 0
+z2 = 0.3(1) + 0.8(2) − 0.2  =  1.7  →  ReLU → 1.7
+z3 = −0.6(1) + 0.2(2) + 0.05 = −0.15 → ReLU → 0
+
+hidden = (0, 1.7, 0)
+
+output pre-activation = 0.4(0) − 0.3(1.7) + 0.6(0) + 0.1 = −0.41
+output = sigmoid(−0.41) ≈ 0.3989
+</code></pre>
+<p>Two of the three hidden units turned off (ReLU clipped their negative sums to zero); only the middle unit, with activation 1.7, drove the output.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="mlp-forward" data-title="Watch a forward pass flow through the layers"><p class="bench-fallback"><strong>Interactive bench: Watch a forward pass flow through the layers.</strong> A 2-input, 3-hidden-unit, 1-output network. Move the two input sliders and watch every unit's value update, with brighter nodes meaning a larger activation.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at <code>x = (1, 2)</code> and check the hidden and output values against the worked example.</li>
+<li>Push <code>x1</code> very negative. Which hidden units turn off (go to exactly zero)?</li>
+<li>Find an input where all three hidden units are zero. What is the output then?</li>
+</ol>
+<p><strong>What you should notice:</strong> a hidden unit&#39;s brightness snaps to zero the moment its pre-activation sum crosses below zero (ReLU&#39;s kink), and the output only depends on whichever hidden units stayed on.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>The baseline architecture</strong> underneath specialised ones: a CNN is a feedforward network with weight-sharing (see <a class="wikilink" href="/deep-learning/convolutional-neural-networks/" data-topic="deep-learning/convolutional-neural-networks">Convolutional Neural Networks</a>); a transformer&#39;s feedforward block is literally this.</li>
+<li><strong>Every framework&#39;s &quot;model.forward()&quot;</strong> is this computation, done with matrices sized for the real data.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing depth and width.</strong> Depth is the number of layers; width is units per layer. They trade off differently (see <a class="wikilink" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps">Why Depth Helps</a>).</li>
+<li><strong>Forgetting the output activation depends on the task.</strong> Using a sigmoid output for a regression target, or a linear output for a probability, silently breaks training.</li>
+<li><strong>Assuming a bigger network is always better.</strong> A wider or deeper network that is not needed just overfits faster (see <a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a>) and trains slower.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why is the first hidden unit's activation exactly 0?</summary>
+Its pre-activation sum is −0.4, which is negative, and ReLU clips every negative input to 0.
+</details>
+
+<details><summary>2. What is `a⁽⁰⁾` in the layer notation?</summary>
+The network's raw input `x`, before any layer has processed it.
+</details>
+
+<details><summary>3. What changes between a regression network and a classification network with the same hidden layers?</summary>
+Only the output layer's activation function: identity for regression, sigmoid or softmax for classification.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Forward pass:</strong> computing a network&#39;s output from its input, layer by layer.</li>
+<li><strong>Weight matrix:</strong> a layer&#39;s weights, one row per unit, one column per input.</li>
+<li><strong>Depth:</strong> the number of layers in a network.</li>
+<li><strong>Width:</strong> the number of units in a given layer.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">The Artificial Neuron and Activation Functions</a> · <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a> · <a class="wikilink" href="/math/a-forward-pass-by-hand/" data-topic="math/a-forward-pass-by-hand">A Forward Pass by Hand</a> · <a class="wikilink" href="/deep-learning/universal-approximation/" data-topic="deep-learning/universal-approximation">Universal Approximation</a> · <a class="wikilink" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps">Why Depth Helps</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/the-multilayer-feedforward-network">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/universal-approximation/"><small>Read next</small><b>Universal Approximation</b><p>The universal approximation theorem says a feedforward network with just one hidden layer of sigmoid (or similarly-shaped) units can approximate any continuous function on a bounded input, as…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/the-artificial-neuron-and-activation-functions/"><b>The Artificial Neuron and Activation Functions</b><p>An artificial neuron is a dot product plus a bias, passed through a non-linear activation function: a = f(w · x + b).</p></a><a class="rc-card" href="/math/matrix-multiplication/"><b>Matrix Multiplication</b><p>Matrix multiplication combines two matrices into one that does both transformations in a row. Each entry of the result is a dot product of a row of the first matrix with a column of the second.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/deep-learning/convolutional-neural-networks/"><b>Convolutional Neural Networks</b><p>A photograph has structure a plain feedforward network ignores: a cat&#39;s ear looks the same whether it is in the top-left or bottom-right corner.</p></a><a class="rc-card" href="/deep-learning/why-depth-helps/"><b>Why Depth Helps</b><p>Universal Approximation showed one wide hidden layer can represent almost anything.</p></a><a class="rc-card" href="/deep-learning/overfitting-and-double-descent/"><b>Overfitting and Double Descent</b><p>The classical picture of overfitting says test error falls as a model grows, then rises once it has enough capacity to memorise noise — a U-shape.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/the-artificial-neuron-and-activation-functions/">← Previous: The Artificial Neuron and Activation Functions</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

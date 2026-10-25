@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why GPUs and Accelerators — AI Base</title>
+<meta name="description" content="A matrix multiplication — the core operation behind every dense layer, convolution and attention computation — is really an enormous number of small, independent multiply-and-add operations.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/why-gpus-and-accelerators/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Why GPUs and Accelerators — AI Base">
+<meta property="og:description" content="A matrix multiplication — the core operation behind every dense layer, convolution and attention computation — is really an enormous number of small, independent multiply-and-add operations.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/why-gpus-and-accelerators/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Why GPUs and Accelerators","item":"https://ai.saranmahadev.in/deep-learning/why-gpus-and-accelerators/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Why GPUs and Accelerators","description":"A matrix multiplication — the core operation behind every dense layer, convolution and attention computation — is really an enormous number of small, independent multiply-and-add operations.","url":"https://ai.saranmahadev.in/deep-learning/why-gpus-and-accelerators/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does matrix multiplication parallelise so well across many simple processors?","acceptedAnswer":{"@type":"Answer","text":"It consists of an enormous number of small, independent multiply-and-add operations that don't depend on each other's results, so many of them can run simultaneously."}},{"@type":"Question","name":"In the worked example, where does the roughly 625× speedup come from?","acceptedAnswer":{"@type":"Answer","text":"From having roughly 625 times as many parallel processors (5,000 versus 8), each doing the same kind of work, cutting the number of sequential rounds needed by that same factor."}},{"@type":"Question","name":"Does increasing matrix size always make the GPU's advantage grow without limit?","acceptedAnswer":{"@type":"Answer","text":"The total work grows with the cube of the matrix size, so a fixed processor count eventually faces far more rounds regardless — parallelism helps a constant factor, not an unlimited one."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Training at Scale</p>
+        <h1 class="doc-title">Why GPUs and Accelerators</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c3bp34rbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c3bp34rpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c3bp34rbg)"/>
+  <circle cx="217" cy="108" r="206" fill="#ffe6e6" opacity="0.48"/><circle cx="13" cy="7" r="113" fill="#ffb89d" opacity="0.29"/><circle cx="775" cy="65" r="206" fill="#ffe6e6" opacity="0.34"/><circle cx="1081" cy="223" r="95" fill="#ffe6e6" opacity="0.60"/><circle cx="302" cy="364" r="104" fill="#ffe6e6" opacity="0.30"/><circle cx="115" cy="361" r="111" fill="#ffe6e6" opacity="0.59"/><circle cx="1089" cy="220" r="222" fill="#8a546c" opacity="0.33"/>
+  <path d="M0,420 L0,334 L30,337 L60,340 L90,343 L120,345 L150,347 L180,348 L210,349 L240,350 L270,349 L300,349 L330,347 L360,346 L390,344 L420,341 L450,338 L480,335 L510,332 L540,328 L570,325 L600,321 L630,318 L660,315 L690,313 L720,310 L750,308 L780,307 L810,306 L840,306 L870,306 L900,306 L930,308 L960,309 L990,312 L1020,314 L1050,317 L1080,320 L1110,324 L1140,327 L1170,330 L1200,334 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,362 L60,362 L90,362 L120,364 L150,366 L180,369 L210,372 L240,376 L270,379 L300,383 L330,386 L360,389 L390,392 L420,393 L450,394 L480,394 L510,393 L540,391 L570,388 L600,385 L630,382 L660,378 L690,374 L720,371 L750,368 L780,365 L810,363 L840,362 L870,362 L900,363 L930,364 L960,367 L990,370 L1020,373 L1050,377 L1080,381 L1110,384 L1140,387 L1170,390 L1200,392 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="990" cy="219" rx="244" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-3.0 990 219)"/><ellipse cx="990" cy="219" rx="338" ry="95" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(3.0 990 219)"/>
+  <circle cx="990" cy="219" r="96" fill="url(#c3bp34rpl)"/>
+  <circle cx="797" cy="292" r="10" fill="#ffffff" opacity="0.62"/><circle cx="911" cy="112" r="17" fill="#ffffff" opacity="0.84"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">matrix multiplication</a> — the core operation behind every <a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">dense layer</a>, convolution and attention computation — is really an enormous number of small, independent multiply-and-add operations. A <strong>GPU</strong> has thousands of simple cores built specifically to do the same operation on many pieces of data at once, which matches that structure far better than a CPU&#39;s handful of powerful, general-purpose cores.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> and <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why is specialised hardware, not just a faster CPU, the default for training deep networks?&quot; Because the dominant cost — matrix multiplication — is made of enormous numbers of independent small operations, and a chip with thousands of simple cores running them in parallel finishes the job in a small fraction of the time a handful of sequential cores would take.</p>
+<h2 id="intuition-one-team-of-eight-experts-or-five-thousand-people-filling-in-a-spreadsheet">Intuition: one team of eight experts, or five thousand people filling in a spreadsheet</h2>
+<p>A CPU is like a small team of highly skilled, versatile experts — each can do many different kinds of complex work, one task at a time, very capably. A GPU is like a huge crowd of people, each only able to do one simple thing (a multiply-and-add), but five thousand of them can do five thousand such operations <em>at the same time</em>. Multiplying two large matrices needs an astronomical number of these simple, identical, independent operations — exactly the job a crowd beats a small team of specialists at.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">multiplying two n×n matrices requires n³ multiply-add operations
+
+with P processors working in parallel, that many operations take roughly  n³ / P  &quot;rounds&quot;
+
+fewer, more powerful processors (CPU):   small P, many rounds
+many, simpler processors (GPU):          large P, few rounds
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Multiplying two 1000×1000 matrices requires <code>1000³ = 10⁹</code> multiply-add operations. Comparing a CPU-like 8 parallel cores against a GPU-like 5,000 parallel cores (assuming, for this comparison, similar speed per core):</p>
+<pre><code class="language-text">CPU (8 cores):     10⁹ / 8     = 1.25 × 10⁸ rounds
+GPU (5,000 cores):  10⁹ / 5000 = 2.00 × 10⁵ rounds
+
+speedup ≈ 1.25×10⁸ / 2.00×10⁵ = 625×
+</code></pre>
+<p>Even with no assumption that each GPU core is individually faster than a CPU core, having roughly 625 times as many of them working in parallel gives roughly a 625× reduction in the number of sequential rounds needed for this one matrix multiplication.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="parallel-rounds" data-title="Rounds needed for a big matrix multiply"><p class="bench-fallback"><strong>Interactive bench: Rounds needed for a big matrix multiply.</strong> A matrix-size slider and a processor-count slider. See how many sequential rounds a given number of parallel processors needs to finish all the required multiply-add operations.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Increase matrix size and watch the total operation count (and rounds needed) grow sharply — it scales with the cube of the size.</li>
+<li>Increase processor count and watch the rounds needed shrink proportionally.</li>
+<li>Compare a &quot;CPU-like&quot; and &quot;GPU-like&quot; processor count side by side at a large matrix size.</li>
+</ol>
+<p><strong>What you should notice:</strong> operations grow with the <em>cube</em> of matrix size, so even a huge processor count eventually faces a huge number of rounds for big enough matrices — parallelism helps enormously, but doesn&#39;t make the underlying cost disappear.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Training and running every modern deep network</strong> relies on GPUs (or similar accelerators like TPUs) for close to all of the actual arithmetic.</li>
+<li><strong>Tensor cores and other specialised units</strong>, not covered in depth here, go even further than general GPU parallelism, with hardware specifically built for the matrix-multiply-and-accumulate pattern at the heart of deep learning.</li>
+<li><strong><a class="wikilink" href="/deep-learning/mixed-precision-training/" data-topic="deep-learning/mixed-precision-training">Mixed Precision Training</a> and <a class="wikilink" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training">Distributed and Data-Parallel Training</a></strong> both build further on this same hardware reality — using the parallelism available even more efficiently, or spreading work across many accelerators at once.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a GPU is always faster, for any workload.</strong> For tasks with few independent operations, or a lot of sequential, branching logic, a CPU&#39;s more powerful individual cores can win; GPUs excel specifically when there&#39;s enormous, uniform, independent work to parallelise.</li>
+<li><strong>Forgetting data movement has its own cost.</strong> Even perfectly parallel computation can be bottlenecked by how fast data can be moved to and from the processors doing the work.</li>
+<li><strong>Treating &quot;more cores&quot; as a free, unlimited speedup.</strong> Communication and coordination overhead between cores (and later, between whole machines — see <a class="wikilink" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training">Distributed and Data-Parallel Training</a>) eventually limits how much parallelism actually helps.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does matrix multiplication parallelise so well across many simple processors?</summary>
+It consists of an enormous number of small, independent multiply-and-add operations that don't depend on each other's results, so many of them can run simultaneously.
+</details>
+
+<details><summary>2. In the worked example, where does the roughly 625× speedup come from?</summary>
+From having roughly 625 times as many parallel processors (5,000 versus 8), each doing the same kind of work, cutting the number of sequential rounds needed by that same factor.
+</details>
+
+<details><summary>3. Does increasing matrix size always make the GPU's advantage grow without limit?</summary>
+The total work grows with the cube of the matrix size, so a fixed processor count eventually faces far more rounds regardless — parallelism helps a constant factor, not an unlimited one.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Parallel processing:</strong> performing many independent operations at the same time rather than one after another.</li>
+<li><strong>GPU (graphics processing unit):</strong> hardware with many simple cores, well-suited to the kind of massive, uniform parallelism matrix multiplication needs.</li>
+<li><strong>Accelerator:</strong> specialised hardware (GPUs, TPUs and others) built for the arithmetic patterns deep learning relies on.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> · <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a> · <a class="wikilink" href="/deep-learning/mixed-precision-training/" data-topic="deep-learning/mixed-precision-training">Mixed Precision Training</a> · <a class="wikilink" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training">Distributed and Data-Parallel Training</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/why-gpus-and-accelerators">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/mixed-precision-training/"><small>Read next</small><b>Mixed Precision Training</b><p>32-bit floats are the usual default, but most of a network&#39;s computation doesn&#39;t need that much precision.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/matrix-multiplication/"><b>Matrix Multiplication</b><p>Matrix multiplication combines two matrices into one that does both transformations in a row. Each entry of the result is a dot product of a row of the first matrix with a column of the second.</p></a><a class="rc-card" href="/deep-learning/the-multilayer-feedforward-network/"><b>The Multilayer Feedforward Network</b><p>A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.</p></a><a class="rc-card" href="/deep-learning/mixed-precision-training/"><b>Mixed Precision Training</b><p>32-bit floats are the usual default, but most of a network&#39;s computation doesn&#39;t need that much precision.</p></a><a class="rc-card" href="/deep-learning/distributed-and-data-parallel-training/"><b>Distributed and Data-Parallel Training</b><p>One accelerator has a limit to how much data it can process at once.</p></a><a class="rc-card" href="/deep-learning/training-at-scale/"><b>Training at Scale</b><p>Training a large network is an engineering problem as much as a mathematical one: it runs on specific hardware, for hours or weeks, and can silently fail in ways a small model never would.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/training-at-scale/">← Previous: Training at Scale</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

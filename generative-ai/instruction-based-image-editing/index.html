@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instruction-Based Image Editing — AI Base</title>
+<meta name="description" content="Masks and locked structural coordinates both require drawing an exact region by hand.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/instruction-based-image-editing/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Instruction-Based Image Editing — AI Base">
+<meta property="og:description" content="Masks and locked structural coordinates both require drawing an exact region by hand.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/instruction-based-image-editing/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Instruction-Based Image Editing","item":"https://ai.saranmahadev.in/generative-ai/instruction-based-image-editing/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Instruction-Based Image Editing","description":"Masks and locked structural coordinates both require drawing an exact region by hand.","url":"https://ai.saranmahadev.in/generative-ai/instruction-based-image-editing/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What determines how strongly a given image patch is edited by an instruction?","acceptedAnswer":{"@type":"Answer","text":"The cross-attention weight between the instruction's query embedding and that patch's key embedding — a higher similarity means a higher attention weight, and so a stronger edit."}},{"@type":"Question","name":"In the worked example, why did the cat-face and cat-body patches receive the strongest edit for \"make the cat red\"?","acceptedAnswer":{"@type":"Answer","text":"Their feature embeddings were built to be similar to the instruction's embedding, giving them higher attention weights (0.317 and 0.303) than the unrelated background and sky patches (0.190 each)."}},{"@type":"Question","name":"Is there a sharp boundary between \"edited\" and \"unedited\" regions in this mechanism?","acceptedAnswer":{"@type":"Answer","text":"No — every patch is shifted by some amount proportional to its attention weight; low-attention patches shift only a little rather than not at all."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Image Generation and Editing</p>
+        <h1 class="doc-title">Instruction-Based Image Editing</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cyzp51kbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="cyzp51kpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cyzp51kbg)"/>
+  <circle cx="1129" cy="334" r="196" fill="#8a5989" opacity="0.51"/><circle cx="556" cy="356" r="116" fill="#8a5989" opacity="0.58"/><circle cx="169" cy="208" r="100" fill="#ffe9f4" opacity="0.50"/><circle cx="208" cy="348" r="203" fill="#ffbfe0" opacity="0.55"/><circle cx="1169" cy="345" r="150" fill="#8a5989" opacity="0.29"/>
+  <path d="M0,420 L0,347 L30,349 L60,349 L90,348 L120,344 L150,339 L180,332 L210,325 L240,319 L270,313 L300,309 L330,306 L360,306 L390,308 L420,311 L450,317 L480,323 L510,330 L540,337 L570,342 L600,347 L630,349 L660,349 L690,348 L720,344 L750,339 L780,332 L810,325 L840,319 L870,313 L900,309 L930,306 L960,306 L990,308 L1020,311 L1050,317 L1080,323 L1110,330 L1140,337 L1170,342 L1200,347 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,391 L30,392 L60,393 L90,394 L120,394 L150,394 L180,393 L210,392 L240,391 L270,389 L300,388 L330,385 L360,383 L390,381 L420,378 L450,376 L480,373 L510,371 L540,369 L570,367 L600,365 L630,364 L660,363 L690,362 L720,362 L750,362 L780,363 L810,364 L840,365 L870,367 L900,368 L930,371 L960,373 L990,375 L1020,378 L1050,380 L1080,383 L1110,385 L1140,387 L1170,389 L1200,391 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="942" cy="199" rx="173" ry="48" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.2 942 199)"/><ellipse cx="942" cy="199" rx="239" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.2 942 199)"/>
+  <circle cx="942" cy="199" r="68" fill="url(#cyzp51kpl)"/>
+  <circle cx="1016" cy="270" r="14" fill="#ffffff" opacity="0.64"/><circle cx="777" cy="118" r="18" fill="#ffffff" opacity="0.88"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Masks and locked structural coordinates both require drawing an exact region by hand. This note covers editing an image by just describing the change in words instead — and the mechanism that makes &quot;edit the cat, leave the background alone&quot; work without anyone drawing a mask.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/cross-attention-conditioning-for-generation/" data-topic="generative-ai/cross-attention-conditioning-for-generation">Cross-Attention Conditioning for Generation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can an edit instruction know <em>where</em> in an image to apply itself, with no mask at all?&quot; The instruction&#39;s embedding attends over the image&#39;s patches via <a class="wikilink" href="/generative-ai/cross-attention-conditioning-for-generation/" data-topic="generative-ai/cross-attention-conditioning-for-generation">the same cross-attention mechanism used for text-to-image conditioning</a>, and the resulting attention weight for each patch becomes how strongly that patch is nudged toward the edit. Patches the instruction has nothing to do with get low attention and barely change; patches it&#39;s clearly about get high attention and change a lot — a <em>soft</em>, learned localization, rather than a hard, hand-drawn boundary.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Tell someone &quot;make the cat red&quot; while they&#39;re looking at a photo, and they intuitively know to leave the sky and background alone — not because you drew a box around the cat, but because the instruction itself only makes sense applied to the cat. Cross-attention gives a model the same kind of implicit targeting: the instruction &quot;attends&quot; most strongly to whichever parts of the image it&#39;s actually about, and the edit is applied in proportion to that attention, with no explicit mask required.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">instruction embedding → query
+image patches         → keys and values
+
+attention weight(patch) = how strongly the instruction&#39;s query matches that patch&#39;s key
+edit strength(patch)    = attention weight(patch)
+edited patch = original patch + edit_strength · (target feature − original patch)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four image patches — background, cat-face, cat-body, sky — with the instruction &quot;make the cat red&quot; as the query:</p>
+<pre><code class="language-text">attention to background: 0.190
+attention to cat-face:    0.317   ← highest
+attention to cat-body:    0.303
+attention to sky:         0.190
+</code></pre>
+<p>Shifting each patch toward a &quot;red&quot; target feature in proportion to its attention weight:</p>
+<pre><code class="language-text">background edited with strength 0.190 (barely shifted)
+cat-face   edited with strength 0.317 (shifted the most)
+cat-body   edited with strength 0.303 (shifted almost as much)
+sky        edited with strength 0.190 (barely shifted, same as background)
+</code></pre>
+<p>Nobody told the model which pixels belong to &quot;the cat&quot; — the two cat-related patches simply had embeddings more similar to the instruction&#39;s, earning them higher attention weight and a stronger edit, exactly mirroring how <a class="wikilink" href="/generative-ai/cross-attention-conditioning-for-generation/" data-topic="generative-ai/cross-attention-conditioning-for-generation">text-to-image conditioning</a> already worked, just applied to an edit instruction instead of a generation prompt.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="instruction-edit" data-title="An instruction edits what it attends to"><p class="bench-fallback"><strong>Interactive bench: An instruction edits what it attends to.</strong> Choose an edit instruction and see which image patch it attends to most strongly, and how much each patch is edited as a result.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Try &quot;make the cat red&quot; and confirm the cat patches get the strongest edit.</li>
+<li>Try &quot;make the sky red&quot; and compare which patches shift most this time.</li>
+<li>Notice the background patch&#39;s edit strength barely changes between the two instructions.</li>
+</ol>
+<p><strong>What you should notice:</strong> which patches get edited strongly is entirely determined by how similar each patch&#39;s embedding is to the instruction&#39;s — there&#39;s no separate step that decides &quot;this is the region the instruction applies to.&quot;</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Instruction-based image editing models (prompted with &quot;make X do Y&quot; rather than a text-to-image description) rely on exactly this soft localization</strong>, letting one short instruction edit the right region of a photo with no mask drawn by the user.</li>
+<li><strong>It&#39;s a weaker, &quot;soft&quot; version of <a class="wikilink" href="/generative-ai/controlnet-style-structural-conditioning/" data-topic="generative-ai/controlnet-style-structural-conditioning">structural conditioning</a>&#39;s hard locking</strong>: nothing is ever fully exempt from the edit (even the lowest-attention patch still shifts a little), it just shifts far less.</li>
+<li><strong>Attention maps from this exact mechanism can be visualized directly</strong>, showing which regions of an image an edit instruction actually targeted — a genuine window into why an edit landed where it did.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting a hard, mask-like boundary.</strong> Every patch gets edited at least a little, proportional to its attention weight — there&#39;s no sharp cutoff between &quot;edited&quot; and &quot;untouched&quot; regions unless the attention weights happen to be extreme.</li>
+<li><strong>Assuming the instruction&#39;s wording alone determines the edit location.</strong> It&#39;s the <em>similarity</em> between the instruction&#39;s embedding and each patch&#39;s embedding that determines attention — an ambiguous instruction, or patches with similar embeddings to unrelated content, can misdirect the edit.</li>
+<li><strong>Confusing this with <a class="wikilink" href="/generative-ai/image-to-image-translation-and-style-transfer/" data-topic="generative-ai/image-to-image-translation-and-style-transfer">style transfer</a>.</strong> Style transfer changes statistics across the <em>whole</em> image; instruction-based editing specifically concentrates its effect on the patches the instruction&#39;s embedding is most similar to.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What determines how strongly a given image patch is edited by an instruction?</summary>
+The cross-attention weight between the instruction's query embedding and that patch's key embedding — a higher similarity means a higher attention weight, and so a stronger edit.
+</details>
+
+<details><summary>2. In the worked example, why did the cat-face and cat-body patches receive the strongest edit for "make the cat red"?</summary>
+Their feature embeddings were built to be similar to the instruction's embedding, giving them higher attention weights (0.317 and 0.303) than the unrelated background and sky patches (0.190 each).
+</details>
+
+<details><summary>3. Is there a sharp boundary between "edited" and "unedited" regions in this mechanism?</summary>
+No — every patch is shifted by some amount proportional to its attention weight; low-attention patches shift only a little rather than not at all.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Instruction-based editing:</strong> editing an image by describing the desired change in natural language, with the edit&#39;s location determined implicitly by attention rather than a drawn mask.</li>
+<li><strong>Soft localization:</strong> concentrating an effect on the most relevant regions by degree (via attention weight), rather than with a hard included/excluded boundary.</li>
+<li><strong>Edit strength:</strong> how much a given patch is shifted toward the target of an edit, proportional to its attention weight.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/cross-attention-conditioning-for-generation/" data-topic="generative-ai/cross-attention-conditioning-for-generation">Cross-Attention Conditioning for Generation</a> · <a class="wikilink" href="/generative-ai/controlnet-style-structural-conditioning/" data-topic="generative-ai/controlnet-style-structural-conditioning">ControlNet-Style Structural Conditioning</a> · <a class="wikilink" href="/generative-ai/image-to-image-translation-and-style-transfer/" data-topic="generative-ai/image-to-image-translation-and-style-transfer">Image-to-Image Translation and Style Transfer</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/instruction-based-image-editing">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/audio-and-speech-generation/"><small>Read next</small><b>Audio and Speech Generation</b><p>The same generation machinery — learned distributions, conditioning, iterative refinement — applies just as well to sound.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/cross-attention-conditioning-for-generation/"><b>Cross-Attention Conditioning for Generation</b><p>Guidance (as in Classifier-Free Guidance) steers generation toward a condition through the score itself; this note covers a completely different way a condition enters a generative model —…</p></a><a class="rc-card" href="/generative-ai/controlnet-style-structural-conditioning/"><b>ControlNet-Style Structural Conditioning</b><p>Guidance and cross-attention both steer generation toward a concept — a class, a prompt — expressed as a direction or an attended-to embedding. Neither one forces an exact structure.</p></a><a class="rc-card" href="/generative-ai/image-to-image-translation-and-style-transfer/"><b>Image-to-Image Translation and Style Transfer</b><p>Structural conditioning keeps a generated output faithful to an exact structure; this note covers a different kind of faithfulness — matching an image&#39;s statistics rather than its exact values,…</p></a><a class="rc-card" href="/generative-ai/image-generation-and-editing/"><b>Image Generation and Editing</b><p>With decoding and conditioning covered as general mechanisms, this district applies them to the modality generative AI is best known for: pictures — generating them from text, and then editing…</p></a><a class="rc-card" href="/generative-ai/super-resolution-and-upscaling/"><b>Super-Resolution and Upscaling</b><p>A low-resolution image has fewer pixels than you want — every upscaling method has to invent the missing ones somehow.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/image-to-image-translation-and-style-transfer/">← Previous: Image-to-Image Translation and Style Transfer</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

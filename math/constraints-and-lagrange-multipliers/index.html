@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Constraints and Lagrange Multipliers — AI Base</title>
+<meta name="description" content="Often you want the best value subject to a condition: the cheapest plan that still meets a target, or the largest area for a fixed perimeter.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/constraints-and-lagrange-multipliers/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Constraints and Lagrange Multipliers — AI Base">
+<meta property="og:description" content="Often you want the best value subject to a condition: the cheapest plan that still meets a target, or the largest area for a fixed perimeter.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/constraints-and-lagrange-multipliers/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Constraints and Lagrange Multipliers","item":"https://ai.saranmahadev.in/math/constraints-and-lagrange-multipliers/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Constraints and Lagrange Multipliers","description":"Often you want the best value subject to a condition: the cheapest plan that still meets a target, or the largest area for a fixed perimeter.","url":"https://ai.saranmahadev.in/math/constraints-and-lagrange-multipliers/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Minimise x² + y² subject to x + y = 4. What are x and y?","acceptedAnswer":{"@type":"Answer","text":"x = y = 2 (f = 8)."}},{"@type":"Question","name":"At a constrained optimum, how are ∇f and ∇g related?","acceptedAnswer":{"@type":"Answer","text":"They are parallel: ∇f = λ ∇g."}},{"@type":"Question","name":"What does λ measure?","acceptedAnswer":{"@type":"Answer","text":"How much the optimum changes if the constraint is loosened."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Optimization</p>
+        <h1 class="doc-title">Constraints and Lagrange Multipliers</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ck179wbbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="ck179wbpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ck179wbbg)"/>
+  <circle cx="921" cy="93" r="214" fill="#cebff9" opacity="0.49"/><circle cx="162" cy="399" r="172" fill="#cebff9" opacity="0.40"/><circle cx="346" cy="159" r="98" fill="#68599a" opacity="0.36"/><circle cx="1161" cy="162" r="209" fill="#68599a" opacity="0.56"/><circle cx="899" cy="359" r="107" fill="#eee9fd" opacity="0.57"/>
+  <path d="M0,420 L0,334 L30,337 L60,340 L90,343 L120,345 L150,347 L180,348 L210,349 L240,350 L270,349 L300,349 L330,348 L360,346 L390,344 L420,341 L450,338 L480,335 L510,332 L540,328 L570,325 L600,322 L630,318 L660,315 L690,313 L720,310 L750,308 L780,307 L810,306 L840,306 L870,306 L900,306 L930,308 L960,309 L990,312 L1020,314 L1050,317 L1080,320 L1110,323 L1140,327 L1170,330 L1200,334 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,384 L30,381 L60,379 L90,376 L120,374 L150,371 L180,369 L210,367 L240,366 L270,364 L300,363 L330,362 L360,362 L390,362 L420,363 L450,363 L480,365 L510,366 L540,368 L570,370 L600,372 L630,375 L660,377 L690,380 L720,382 L750,385 L780,387 L810,389 L840,390 L870,392 L900,393 L930,394 L960,394 L990,394 L1020,393 L1050,393 L1080,391 L1110,390 L1140,388 L1170,386 L1200,384 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="786" cy="180" rx="256" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-2.4 786 180)"/><ellipse cx="786" cy="180" rx="354" ry="99" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(3.6 786 180)"/>
+  <circle cx="786" cy="180" r="100" fill="url(#ck179wbpl)"/>
+  <circle cx="864" cy="286" r="10" fill="#ffffff" opacity="0.82"/><circle cx="762" cy="50" r="11" fill="#ffffff" opacity="0.79"/><circle cx="826" cy="302" r="17" fill="#ffffff" opacity="0.79"/><circle cx="419" cy="197" r="15" fill="#ffffff" opacity="0.71"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Often you want the best value <strong>subject to a condition</strong>: the cheapest plan that still meets a target, or the largest area for a fixed perimeter. At the best allowed point, the direction you would like to move is blocked by the constraint, so the gradient of the objective points exactly along the gradient of the constraint. The multiplier <code>λ</code> measures how strongly.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/gradients/" data-topic="math/gradients">Gradients</a>, <a class="wikilink" href="/math/lines-planes-and-circles/" data-topic="math/lines-planes-and-circles">Lines, Planes and Circles</a> and <a class="wikilink" href="/math/equations-and-solving/" data-topic="math/equations-and-solving">Equations and Solving</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What is the best I can do while respecting a rule?&quot; The unconstrained minimum may be forbidden, so the answer lies on the boundary of what is allowed.</p>
+<h2 id="intuition-a-bead-on-a-wire">Intuition: a bead on a wire</h2>
+<p>Picture a bead sliding on a wire (the constraint) over a landscape (the objective). It settles where moving along the wire no longer changes the height. At that point the wire&#39;s direction is a contour line of the landscape, so the objective&#39;s gradient is <strong>perpendicular to the wire</strong>, which means it is <strong>parallel to the constraint&#39;s gradient</strong>.</p>
+<pre><code class="language-text">minimise f(x, y)  subject to  g(x, y) = 0
+at the optimum:    ∇f = λ ∇g          (parallel gradients)
+together with:     g(x, y) = 0
+</code></pre>
+<p>The number <code>λ</code> (the <strong>Lagrange multiplier</strong>) tells you how much the best value would change if the constraint were loosened slightly.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Minimise <code>f = x² + y²</code> subject to <code>x + y = 2</code>. Here <code>g = x + y − 2</code>.</p>
+<pre><code class="language-text">∇f = (2x, 2y)      ∇g = (1, 1)
+2x = λ,  2y = λ    →   x = y
+x + y = 2          →   x = y = 1,   λ = 2,   f = 2
+</code></pre>
+<p>Check: the unconstrained minimum is the origin, but it violates <code>x + y = 2</code>. On the line, the point closest to the origin is <code>(1, 1)</code>, at distance <code>√2</code> (and <code>f = 2</code>).</p>
+<p>Another: maximise <code>x·y</code> with <code>x + y = 10</code>. <code>∇f = (y, x) = λ(1, 1)</code>, so <code>x = y = 5</code>, <code>xy = 25</code>, <code>λ = 5</code>. Among rectangles with perimeter 20, the square has the largest area.</p>
+<p><strong>Inequality constraints</strong> (<code>g ≤ 0</code>) are handled the same way: either the constraint is inactive (the ordinary minimum satisfies it) or the solution sits on the boundary.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="constrained-contour" data-title="The best point on a line"><p class="bench-fallback"><strong>Interactive bench: The best point on a line.</strong> Contours of x squared plus y squared with a constraint line x + y = c; a slider slides a point along the line, showing the objective's value, the two gradient arrows and the angle between them, which vanishes at the best point.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the point along the line and watch the objective fall then rise.</li>
+<li>Find the lowest value and check the gradient arrows line up.</li>
+<li>Change c and see how the best value moves.</li>
+<li>Read the multiplier at the best point.</li>
+</ol>
+<p><strong>What you should notice:</strong> the best point on the line is where a contour just touches it, and there the two gradients are parallel.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Support vector machines</strong> maximise a margin subject to classification constraints.</li>
+<li><strong>Regularisation</strong> can be read as a constraint on the size of the weights (see <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a>).</li>
+<li><strong>Probability</strong> distributions must sum to 1, a constraint handled with a multiplier (as in deriving softmax-style solutions).</li>
+<li><strong>Fairness or safety limits</strong> in constrained training.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting the constraint equation</strong> itself.</li>
+<li><strong>Treating λ as free.</strong> It is solved together with the other unknowns.</li>
+<li><strong>Missing that the optimum may be on a boundary.</strong></li>
+<li><strong>Assuming parallel gradients guarantee a minimum.</strong> It could be a maximum or saddle.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Minimise x² + y² subject to x + y = 4. What are x and y?</summary>
+x = y = 2 (f = 8).
+</details>
+
+<details><summary>2. At a constrained optimum, how are ∇f and ∇g related?</summary>
+They are parallel: ∇f = λ ∇g.
+</details>
+
+<details><summary>3. What does λ measure?</summary>
+How much the optimum changes if the constraint is loosened.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Constraint:</strong> a condition the solution must satisfy.</li>
+<li><strong>Lagrange multiplier (λ):</strong> the scaling between the two gradients.</li>
+<li><strong>Feasible set:</strong> the points that satisfy the constraints.</li>
+<li><strong>Active constraint:</strong> one that holds with equality at the solution.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/gradients/" data-topic="math/gradients">Gradients</a> · <a class="wikilink" href="/math/lines-planes-and-circles/" data-topic="math/lines-planes-and-circles">Lines, Planes and Circles</a> · <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a> · <a class="wikilink" href="/math/minima-maxima-and-saddle-points/" data-topic="math/minima-maxima-and-saddle-points">Minima, Maxima and Saddle Points</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/constraints-and-lagrange-multipliers">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/regularization-as-a-constraint/"><small>Read next</small><b>Regularization as a Constraint</b><p>Regularization keeps a model from fitting noise by discouraging large weights: add a penalty such as λ‖w‖² to the loss.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/gradients/"><b>Gradients</b><p>The gradient collects all the partial derivatives of a function into one vector, ∇f = (∂f/∂x, ∂f/∂y, …).</p></a><a class="rc-card" href="/math/lines-planes-and-circles/"><b>Lines, Planes and Circles</b><p>A line, a circle and a plane are the basic shapes, and each has a short equation.</p></a><a class="rc-card" href="/math/equations-and-solving/"><b>Equations and Solving</b><p>An equation says two expressions are equal, and solving it means finding the value of the unknown that makes the statement true.</p></a><a class="rc-card" href="/math/regularization-as-a-constraint/"><b>Regularization as a Constraint</b><p>Regularization keeps a model from fitting noise by discouraging large weights: add a penalty such as λ‖w‖² to the loss.</p></a><a class="rc-card" href="/math/minima-maxima-and-saddle-points/"><b>Minima, Maxima and Saddle Points</b><p>A minimum is a low point of a function, a maximum a high point, and a saddle point is flat but rises in some directions and falls in others.</p></a><a class="rc-card" href="/math/inequalities/"><b>Inequalities</b><p>An inequality compares two expressions with &lt;, &gt;, ≤ or ≥, and its answer is usually a whole range of numbers rather than one.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/momentum-and-adam/">← Previous: Momentum and Adam</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

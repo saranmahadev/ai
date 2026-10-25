@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kinds of Environments — AI Base</title>
+<meta name="description" content="Some AI problems are easy and others are brutal, and much of the difference lies in the environment.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/kinds-of-environments/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Kinds of Environments — AI Base">
+<meta property="og:description" content="Some AI problems are easy and others are brutal, and much of the difference lies in the environment.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/kinds-of-environments/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Kinds of Environments","item":"https://ai.saranmahadev.in/fundamentals/kinds-of-environments/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Kinds of Environments","description":"Some AI problems are easy and others are brutal, and much of the difference lies in the environment.","url":"https://ai.saranmahadev.in/fundamentals/kinds-of-environments/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why is poker partly observable?","acceptedAnswer":{"@type":"Answer","text":"The other players' cards are hidden, so the agent cannot see the whole state."}},{"@type":"Question","name":"Which property means today's choice affects tomorrow's options?","acceptedAnswer":{"@type":"Answer","text":"Sequential (as opposed to episodic)."}},{"@type":"Question","name":"Why is taxi driving harder than chess on these measures?","acceptedAnswer":{"@type":"Answer","text":"It has all five hard properties: it is partly observable, stochastic, sequential, dynamic and multi-agent, while chess is fully observable, deterministic and static."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · The Agent</p>
+        <h1 class="doc-title">Kinds of Environments</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c142optpbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="c142optppl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c142optpbg)"/>
+  <circle cx="1121" cy="397" r="218" fill="#a8e2d7" opacity="0.41"/><circle cx="395" cy="148" r="92" fill="#c3d6b3" opacity="0.23"/><circle cx="262" cy="310" r="71" fill="#4e7283" opacity="0.43"/><circle cx="1009" cy="393" r="149" fill="#a8e2d7" opacity="0.55"/><circle cx="1036" cy="306" r="221" fill="#c3d6b3" opacity="0.56"/><circle cx="508" cy="271" r="136" fill="#e2f5f1" opacity="0.52"/>
+  <path d="M0,420 L0,335 L30,330 L60,325 L90,320 L120,316 L150,312 L180,308 L210,306 L240,306 L270,306 L300,308 L330,310 L360,314 L390,318 L420,323 L450,328 L480,333 L510,338 L540,342 L570,346 L600,348 L630,349 L660,349 L690,348 L720,346 L750,343 L780,338 L810,334 L840,329 L870,323 L900,319 L930,314 L960,310 L990,308 L1020,306 L1050,306 L1080,306 L1110,308 L1140,311 L1170,315 L1200,320 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,393 L90,392 L120,391 L150,390 L180,388 L210,386 L240,383 L270,381 L300,378 L330,376 L360,373 L390,371 L420,369 L450,367 L480,365 L510,364 L540,363 L570,362 L600,362 L630,362 L660,363 L690,364 L720,365 L750,366 L780,368 L810,370 L840,373 L870,375 L900,378 L930,380 L960,383 L990,385 L1020,387 L1050,389 L1080,391 L1110,392 L1140,393 L1170,394 L1200,394 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="756" cy="211" rx="170" ry="48" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-17.2 756 211)"/><ellipse cx="756" cy="211" rx="235" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-11.2 756 211)"/>
+  <circle cx="756" cy="211" r="67" fill="url(#c142optppl)"/>
+  <circle cx="901" cy="164" r="16" fill="#ffffff" opacity="0.83"/><circle cx="608" cy="139" r="14" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Some AI problems are easy and others are brutal, and much of the difference lies in the <strong>environment</strong>. Five yes-or-no questions about an environment, such as whether the agent can see everything and whether other agents act in it, predict how hard the problem is and which techniques it needs.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a>, <a class="wikilink" href="/fundamentals/pda-loop/" data-topic="fundamentals/pda-loop">PDA Loop</a> and <a class="wikilink" href="/fundamentals/state-and-representation/" data-topic="fundamentals/state-and-representation">State and Representation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>Why can a program beat every human at chess yet struggle to drive down a street? The rules of the task are not the whole story. The <em>kind of world</em> the agent lives in changes everything.</p>
+<h2 id="the-five-questions">The five questions</h2>
+<p>The following properties come from Russell and Norvig&#39;s textbook <em>Artificial Intelligence: A Modern Approach</em>, which lists more; these five are enough to see the pattern.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Easier</th>
+<th>Harder</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Can the agent see everything relevant?</td>
+<td><strong>Fully observable</strong>: the state is visible</td>
+<td><strong>Partly observable</strong>: parts are hidden or sensors are noisy</td>
+</tr>
+<tr>
+<td>Is the next state fully determined by the current state and the action?</td>
+<td><strong>Deterministic</strong></td>
+<td><strong>Stochastic</strong>: chance is involved</td>
+</tr>
+<tr>
+<td>Do decisions affect later ones?</td>
+<td><strong>Episodic</strong>: each decision stands alone</td>
+<td><strong>Sequential</strong>: today&#39;s choice shapes tomorrow&#39;s options</td>
+</tr>
+<tr>
+<td>Does the world change while the agent thinks?</td>
+<td><strong>Static</strong></td>
+<td><strong>Dynamic</strong></td>
+</tr>
+<tr>
+<td>How many agents act in it?</td>
+<td><strong>Single agent</strong></td>
+<td><strong>Multi-agent</strong>: others cooperate or compete</td>
+</tr>
+</tbody></table>
+<p>A rough rule: each &quot;harder&quot; answer adds a demand on the agent. Partly observable means it needs <strong>memory and guesswork</strong>. Stochastic means it needs <strong>probabilities</strong>. Sequential means it must <strong>plan ahead</strong>. Dynamic means it must be <strong>fast</strong>. Multi-agent means it must <strong>anticipate others</strong>.</p>
+<h2 id="a-worked-example-chess-versus-taxi-driving">A worked example: chess versus taxi driving</h2>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Chess (untimed)</th>
+<th>Taxi driving</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Observable?</td>
+<td>fully</td>
+<td>partly (you cannot see round the corner)</td>
+</tr>
+<tr>
+<td>Deterministic?</td>
+<td>yes</td>
+<td>no (other drivers, weather, pedestrians)</td>
+</tr>
+<tr>
+<td>Episodic or sequential?</td>
+<td>sequential</td>
+<td>sequential</td>
+</tr>
+<tr>
+<td>Static or dynamic?</td>
+<td>static</td>
+<td>dynamic</td>
+</tr>
+<tr>
+<td>Agents</td>
+<td>multi (an opponent)</td>
+<td>multi (all other road users)</td>
+</tr>
+</tbody></table>
+<p>Chess has two &quot;hard&quot; properties (it is sequential and has an opponent), while driving has all five. The taxi problem is harder because <em>the world is harder</em>, even though a chess program is deeply impressive.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="environment-classifier" data-title="How hard is this environment?"><p class="bench-fallback"><strong>Interactive bench: How hard is this environment?.</strong> Eight environments, from crosswords to taxi driving. For each you answer five questions about it, then check against the textbook classification and see how many of the five hard properties it has.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Classify the <strong>Crossword puzzle</strong> and <strong>Poker</strong>, then check. What do the extra hard properties in poker force a player to do?</li>
+<li>Do <strong>Backgammon</strong> next. Which single property separates it from chess?</li>
+<li>Find the environment with all five hard properties. What kind of agent would it need?</li>
+<li>The <strong>Classifying a single photo</strong> environment is the easiest here. Is that why image recognition is easier to solve than driving?</li>
+</ol>
+<p><strong>What you should notice:</strong> difficulty is not one number. Different properties call for different tools, which is why so many AI methods exist.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<p>These properties explain why some planets exist. Hidden state and chance lead to <a class="wikilink" href="/math/probability/" data-topic="math/probability">Probability</a>. Sequential decisions with feedback lead to planning and reinforcement learning. Multi-agent settings lead to game-playing methods. The <a class="wikilink" href="/agents/agents/" data-topic="agents/agents">Agents</a> planet returns to dynamic, partly observable, multi-agent worlds.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Labels can depend on how you frame it.</strong> Chess with a clock is more dynamic than untimed chess. State your assumptions.</li>
+<li><strong>Stochastic is not the same as unpredictable to you.</strong> It means the outcome involves chance, even if the odds are known.</li>
+<li><strong>Hard for humans is not hard for machines.</strong> Chess is hard for people and easy on these five measures. Walking is easy for people and hard for robots.</li>
+<li><strong>Real environments rarely tick every &quot;easy&quot; box.</strong> Most interesting ones are partly observable, stochastic, sequential and dynamic.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why is poker partly observable?</summary>
+The other players' cards are hidden, so the agent cannot see the whole state.
+</details>
+
+<details><summary>2. Which property means today's choice affects tomorrow's options?</summary>
+Sequential (as opposed to episodic).
+</details>
+
+<details><summary>3. Why is taxi driving harder than chess on these measures?</summary>
+It has all five hard properties: it is partly observable, stochastic, sequential, dynamic and multi-agent, while chess is fully observable, deterministic and static.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Fully or partly observable:</strong> whether the agent can see everything relevant.</li>
+<li><strong>Deterministic or stochastic:</strong> whether outcomes are fixed by the state and action, or involve chance.</li>
+<li><strong>Episodic or sequential:</strong> whether decisions stand alone or shape later options.</li>
+<li><strong>Static or dynamic:</strong> whether the world waits for the agent or keeps changing.</li>
+<li><strong>Multi-agent:</strong> an environment in which other agents also act, cooperating or competing.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a> · <a class="wikilink" href="/fundamentals/state-and-representation/" data-topic="fundamentals/state-and-representation">State and Representation</a> · <a class="wikilink" href="/fundamentals/pda-loop/" data-topic="fundamentals/pda-loop">PDA Loop</a> · <a class="wikilink" href="/math/probability/" data-topic="math/probability">Probability</a> · <a class="wikilink" href="/agents/agents/" data-topic="agents/agents">Agents</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/kinds-of-environments">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/data-and-models/"><small>Read next</small><b>Data and Models</b><p>Before an AI system can decide anything, it has to perceive, and for most modern systems perceiving means turning the world into data.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/agents-and-environments/"><b>Agents and Environments</b><p>An agent is anything that perceives its surroundings through sensors and acts on them through actuators to pursue a goal. The surroundings it lives in are its environment.</p></a><a class="rc-card" href="/fundamentals/pda-loop/"><b>PDA Loop</b><p>The Perception → Decision → Action loop is the heartbeat of every intelligent system.</p></a><a class="rc-card" href="/fundamentals/state-and-representation/"><b>State and Representation</b><p>The state is the agent&#39;s summary of the situation: everything it needs to know to choose a good action, and nothing more.</p></a><a class="rc-card" href="/math/probability/"><b>Probability</b><p>Probability is the maths of uncertainty. It gives numbers to &quot;how likely?&quot;, and rules for combining those numbers.</p></a><a class="rc-card" href="/agents/agents/"><b>Agents</b><p>Every planet before this one covered a model answering one request at a time: a prompt goes in, an answer comes out.</p></a><a class="rc-card" href="/fundamentals/the-agent/"><b>The Agent</b><p>Almost every AI system, however different it looks, has the same shape: it is an agent inside an environment. It senses what is happening, decides what to do to reach a goal, and acts, over and over.</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/state-and-representation/">← Previous: State and Representation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

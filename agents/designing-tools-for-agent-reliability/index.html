@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Designing Tools for Agent Reliability — AI Base</title>
+<meta name="description" content="A tool with a free-text date field lets an agent write &quot;03/14/2025,&quot; &quot;March 14, 2025,&quot; or &quot;14/03/2025&quot; — three formats, at least two of them genuinely ambiguous about which number is the month.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/designing-tools-for-agent-reliability/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Designing Tools for Agent Reliability — AI Base">
+<meta property="og:description" content="A tool with a free-text date field lets an agent write &quot;03/14/2025,&quot; &quot;March 14, 2025,&quot; or &quot;14/03/2025&quot; — three formats, at least two of them genuinely ambiguous about which number is the month.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/designing-tools-for-agent-reliability/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Designing Tools for Agent Reliability","item":"https://ai.saranmahadev.in/agents/designing-tools-for-agent-reliability/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Designing Tools for Agent Reliability","description":"A tool with a free-text date field lets an agent write \"03/14/2025,\" \"March 14, 2025,\" or \"14/03/2025\" — three formats, at least two of them genuinely ambiguous about which number is the month.","url":"https://ai.saranmahadev.in/agents/designing-tools-for-agent-reliability/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does \"14/03/2025\" fail to parse under the free-text design but not necessarily under a schema?","acceptedAnswer":{"@type":"Answer","text":"As free text, it's genuinely ambiguous whether 14 is meant as the day or an invalid month depending on the reader's assumed format; a strict schema sidesteps the ambiguity entirely by only accepting one defined format (ISO-8601), so a value like this is simply rejected before any ambiguous interpretation is attempted."}},{"@type":"Question","name":"What's the key difference between fixing this with a stricter schema versus fixing it by retrying failed calls?","acceptedAnswer":{"@type":"Answer","text":"A stricter schema prevents the ambiguous or malformed value from being accepted in the first place, reducing how often the failure happens at all; retrying (from the previous topic) only helps with failures that have some chance of not recurring, and a parsing failure caused by a genuinely ambiguous format will recur identically on every retry."}},{"@type":"Question","name":"What's the trade-off of making a tool's schema stricter?","acceptedAnswer":{"@type":"Answer","text":"A stricter schema reduces ambiguity-driven failures but risks rejecting inputs that are actually valid if the schema is narrower than the real range of acceptable values — reliability gained on one side can cost false rejections on the other if the schema is miscalibrated."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Tool Use and Function Calling</p>
+        <h1 class="doc-title">Designing Tools for Agent Reliability</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cfzihusbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="cfzihuspl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cfzihusbg)"/>
+  <circle cx="149" cy="210" r="78" fill="#dcbef5" opacity="0.27"/><circle cx="1166" cy="68" r="145" fill="#dcbef5" opacity="0.41"/><circle cx="1029" cy="165" r="164" fill="#f3e9fc" opacity="0.56"/><circle cx="327" cy="364" r="170" fill="#725998" opacity="0.42"/><circle cx="730" cy="46" r="216" fill="#e7bdc8" opacity="0.38"/><circle cx="504" cy="137" r="81" fill="#dcbef5" opacity="0.36"/>
+  <path d="M0,420 L0,336 L30,341 L60,345 L90,347 L120,349 L150,350 L180,349 L210,347 L240,344 L270,340 L300,336 L330,331 L360,326 L390,320 L420,316 L450,312 L480,309 L510,307 L540,306 L570,306 L600,307 L630,310 L660,314 L690,318 L720,323 L750,328 L780,333 L810,338 L840,342 L870,346 L900,348 L930,349 L960,350 L990,348 L1020,346 L1050,343 L1080,339 L1110,334 L1140,329 L1170,324 L1200,319 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,373 L30,368 L60,365 L90,363 L120,362 L150,363 L180,365 L210,369 L240,373 L270,378 L300,383 L330,388 L360,391 L390,393 L420,394 L450,393 L480,391 L510,387 L540,383 L570,378 L600,373 L630,368 L660,365 L690,363 L720,362 L750,363 L780,365 L810,369 L840,373 L870,378 L900,383 L930,388 L960,391 L990,393 L1020,394 L1050,393 L1080,391 L1110,387 L1140,383 L1170,378 L1200,373 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="897" cy="151" rx="246" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-15.5 897 151)"/><ellipse cx="897" cy="151" rx="340" ry="95" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-9.5 897 151)"/>
+  <circle cx="897" cy="151" r="97" fill="url(#cfzihuspl)"/>
+  <circle cx="627" cy="85" r="8" fill="#ffffff" opacity="0.68"/><circle cx="691" cy="78" r="12" fill="#ffffff" opacity="0.82"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A tool with a free-text date field lets an agent write &quot;03/14/2025,&quot; &quot;March 14, 2025,&quot; or &quot;14/03/2025&quot; — three formats, at least two of them genuinely ambiguous about which number is the month. Three of five realistic attempts fail to parse. The same tool with a schema that only accepts ISO-8601 (<code>2025-03-14</code>) and rejects anything else before it ever reaches the tool&#39;s logic has nowhere for that ambiguity to enter at all — all five attempts parse.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/tool-result-verification/" data-topic="agents/tool-result-verification">Tool Result Verification</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How much of an agent&#39;s unreliability comes from the agent, and how much comes from how its tools are built?&quot; A tool&#39;s interface — its parameter types, how strictly it validates input, what it does when something&#39;s wrong — directly shapes how often an agent calling it succeeds. A loosely specified tool (free-text fields, silent failures, no schema) leaves room for an agent to produce something technically valid-looking but wrong; a tightly specified one (strict types, enums instead of free text, validation that rejects malformed input immediately) removes much of that room before the agent&#39;s own reasoning is even a factor.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A form that asks &quot;when?&quot; with a blank text box invites a dozen different answers for the same date. A form with separate year, month, and day dropdowns makes an ambiguous answer structurally impossible — not because whoever&#39;s filling it out got smarter, but because the form itself no longer accepts anything else.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">free-text field:    accepts any string; parsing ambiguity is discovered only when the tool tries to use it
+strict schema:      accepts only a defined format; anything else is rejected before the tool&#39;s logic runs
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The same &quot;book an event&quot; tool&#39;s date parameter, given five realistic values under each design:</p>
+<pre><code class="language-text">free-text field:
+  &quot;03/14/2025&quot;      → ✗ fails to parse (month or day? ambiguous)
+  &quot;2025-03-14&quot;      → ✓ parses
+  &quot;March 14, 2025&quot;  → ✗ fails to parse (not the expected format)
+  &quot;14/03/2025&quot;      → ✗ fails to parse (day-first, misread as month-first)
+  &quot;2025-03-14&quot;      → ✓ parses
+  → 3 of 5 calls fail to parse
+
+strict ISO-8601 schema (anything else rejected before this point):
+  &quot;2025-03-14&quot; × 5  → ✓ all 5 parse
+  → 0 of 5 calls fail to parse
+</code></pre>
+<p>Nothing about the agent changed between the two columns — the same reasoning produced every attempt. What changed is whether the tool&#39;s own interface left room for an ambiguous or malformed value to reach it in the first place.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="tool-schema-reliability" data-title="A field that accepts anything, or a schema that doesn't"><p class="bench-fallback"><strong>Interactive bench: A field that accepts anything, or a schema that doesn't.</strong> Compare a free-text date field's parse failures against a strict ISO-8601 schema's.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the free-text attempts and identify which ones are genuinely ambiguous rather than simply wrong.</li>
+<li>Switch to the strict schema and see every attempt already forced into the one accepted format.</li>
+<li>Imagine a strict schema with an unreasonably narrow format real inputs rarely match — what new failure mode would that introduce?</li>
+</ol>
+<p><strong>What you should notice:</strong> a strict schema doesn&#39;t make the agent reason better — it narrows what the agent is even allowed to produce, so the ambiguity that caused 3 of 5 free-text failures simply has nowhere left to occur.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This directly reduces the permanent-error rate from <a class="wikilink" href="/agents/handling-tool-errors-and-retries/" data-topic="agents/handling-tool-errors-and-retries">Handling Tool Errors and Retries</a></strong> — a malformed-argument failure caused by an ambiguous field design is exactly the kind of permanent error no amount of retrying fixes; a stricter schema prevents it from happening at all.</li>
+<li><strong><a class="wikilink" href="/agents/tool-result-verification/" data-topic="agents/tool-result-verification">Tool Result Verification</a> is the safety net for whatever reliability problems a tool&#39;s design doesn&#39;t prevent</strong> — the two are complementary, not alternatives: design reduces how often bad calls happen, verification catches the ones that still get through.</li>
+<li><strong><a class="wikilink" href="/agents/code-as-a-tool-calling-interface/" data-topic="agents/code-as-a-tool-calling-interface">Code as a Tool-Calling Interface</a>, next in this district, is itself a tool-interface design choice</strong> at a larger scale — the same reliability questions (how much room is left for ambiguity or error) apply there too.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Blaming the agent for failures that are actually the tool&#39;s design.</strong> The worked example&#39;s free-text failures happen with identical reasoning to the strict-schema successes — the difference is entirely in what the tool accepts.</li>
+<li><strong>Making a schema so strict it rejects legitimate variation.</strong> A schema that&#39;s too narrow for the task&#39;s actual range of valid inputs trades one reliability problem (ambiguity) for another (false rejections of correct input).</li>
+<li><strong>Assuming better prompting alone fixes an unreliable tool.</strong> Asking the agent more clearly to &quot;use ISO-8601 format&quot; can reduce but not eliminate the ambiguity that a schema which simply doesn&#39;t accept anything else removes by construction.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does "14/03/2025" fail to parse under the free-text design but not necessarily under a schema?</summary>
+As free text, it's genuinely ambiguous whether 14 is meant as the day or an invalid month depending on the reader's assumed format; a strict schema sidesteps the ambiguity entirely by only accepting one defined format (ISO-8601), so a value like this is simply rejected before any ambiguous interpretation is attempted.
+</details>
+
+<details><summary>2. What's the key difference between fixing this with a stricter schema versus fixing it by retrying failed calls?</summary>
+A stricter schema prevents the ambiguous or malformed value from being accepted in the first place, reducing how often the failure happens at all; retrying (from the previous topic) only helps with failures that have some chance of not recurring, and a parsing failure caused by a genuinely ambiguous format will recur identically on every retry.
+</details>
+
+<details><summary>3. What's the trade-off of making a tool's schema stricter?</summary>
+A stricter schema reduces ambiguity-driven failures but risks rejecting inputs that are actually valid if the schema is narrower than the real range of acceptable values — reliability gained on one side can cost false rejections on the other if the schema is miscalibrated.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Tool interface design:</strong> the choices (parameter types, validation strictness, error behavior) that shape how a tool can be called.</li>
+<li><strong>Free-text field:</strong> a parameter that accepts any string, leaving format ambiguity undetected until the tool tries to use the value.</li>
+<li><strong>Strict schema:</strong> a parameter definition that only accepts a defined format, rejecting anything else before the tool&#39;s own logic runs.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/tool-result-verification/" data-topic="agents/tool-result-verification">Tool Result Verification</a> · <a class="wikilink" href="/agents/handling-tool-errors-and-retries/" data-topic="agents/handling-tool-errors-and-retries">Handling Tool Errors and Retries</a> · <a class="wikilink" href="/agents/code-as-a-tool-calling-interface/" data-topic="agents/code-as-a-tool-calling-interface">Code as a Tool-Calling Interface</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/designing-tools-for-agent-reliability">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/code-as-a-tool-calling-interface/"><small>Read next</small><b>Code as a Tool-Calling Interface</b><p>Applying a discount to 200 items one tool call at a time costs 200 separate round trips, each one a full request and response.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/tool-result-verification/"><b>Tool Result Verification</b><p>A weather tool call that returns no exception isn&#39;t the same as a weather tool call that actually returned a usable result.</p></a><a class="rc-card" href="/agents/handling-tool-errors-and-retries/"><b>Handling Tool Errors and Retries</b><p>A flaky network call that succeeds 70% of the time individually succeeds 99.19% of the time within four tries — failures that are transient are exactly the kind retrying is good for.</p></a><a class="rc-card" href="/agents/code-as-a-tool-calling-interface/"><b>Code as a Tool-Calling Interface</b><p>Applying a discount to 200 items one tool call at a time costs 200 separate round trips, each one a full request and response.</p></a><a class="rc-card" href="/agents/tool-use-and-function-calling/"><b>Tool Use and Function Calling</b><p>Calling one tool correctly is a solved problem, already covered on the LLMs planet.</p></a><a class="rc-card" href="/agents/tool-selection-among-many-candidates/"><b>Tool Selection Among Many Candidates</b><p>An agent with 40 tools available for one task has exactly one that&#39;s actually correct. Shown all 40 at once with no other signal to go on, picking it by chance alone succeeds 2.5% of the time.</p></a><a class="rc-card" href="/agents/excessive-agency-and-scope-limits/"><b>Excessive Agency and Scope Limits</b><p>An agent built to summarize an inbox only needs to read email.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/tool-result-verification/">← Previous: Tool Result Verification</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthetic Test-Set Generation for RAG — AI Base</title>
+<meta name="description" content="Hand-writing one evaluation question per chunk doesn&#39;t scale — a person can write maybe a few dozen good questions in a day, but a real document collection can hold thousands or millions of chunks.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/synthetic-test-set-generation-for-rag/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Synthetic Test-Set Generation for RAG — AI Base">
+<meta property="og:description" content="Hand-writing one evaluation question per chunk doesn&#39;t scale — a person can write maybe a few dozen good questions in a day, but a real document collection can hold thousands or millions of chunks.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/synthetic-test-set-generation-for-rag/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Synthetic Test-Set Generation for RAG","item":"https://ai.saranmahadev.in/rag/synthetic-test-set-generation-for-rag/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Synthetic Test-Set Generation for RAG","description":"Hand-writing one evaluation question per chunk doesn't scale — a person can write maybe a few dozen good questions in a day, but a real document collection can hold thousands or millions of chunks.","url":"https://ai.saranmahadev.in/rag/synthetic-test-set-generation-for-rag/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does hand-written coverage stay at 80 questions regardless of corpus size past a few hundred chunks?","acceptedAnswer":{"@type":"Answer","text":"80 questions is the fixed cap of what one person can write in a single workday at 10 questions per hour — that absolute number doesn't grow just because the corpus does, so its *percentage* of the corpus shrinks as the corpus grows."}},{"@type":"Question","name":"Does synthetic test-set generation solve the problem of verifying that generated questions and answers are actually correct?","acceptedAnswer":{"@type":"Answer","text":"No — it solves the coverage problem (having an evaluation question for every chunk), not the correctness problem; generated questions and their expected answers can still be subtly wrong and need their own validation."}},{"@type":"Question","name":"What kind of evaluation question does naive synthetic generation tend to miss?","acceptedAnswer":{"@type":"Answer","text":"Harder questions requiring reasoning across multiple chunks or handling conflicting information — a model prompted to generate a question from a single chunk tends to produce questions directly answerable from that one chunk alone."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Evaluating RAG Systems</p>
+        <h1 class="doc-title">Synthetic Test-Set Generation for RAG</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1wjywp8bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1wjywp8pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1wjywp8bg)"/>
+  <circle cx="596" cy="222" r="206" fill="#dcf5f7" opacity="0.53"/><circle cx="315" cy="4" r="105" fill="#dcf5f7" opacity="0.41"/><circle cx="1073" cy="166" r="73" fill="#42718e" opacity="0.26"/><circle cx="973" cy="242" r="107" fill="#42718e" opacity="0.51"/><circle cx="704" cy="268" r="104" fill="#42718e" opacity="0.36"/><circle cx="870" cy="114" r="172" fill="#42718e" opacity="0.40"/><circle cx="806" cy="408" r="142" fill="#dcf5f7" opacity="0.24"/>
+  <path d="M0,420 L0,336 L30,342 L60,346 L90,349 L120,350 L150,348 L180,344 L210,339 L240,333 L270,326 L300,319 L330,313 L360,309 L390,306 L420,306 L450,307 L480,311 L510,316 L540,323 L570,329 L600,336 L630,342 L660,346 L690,349 L720,350 L750,348 L780,344 L810,339 L840,333 L870,326 L900,319 L930,313 L960,309 L990,306 L1020,306 L1050,307 L1080,311 L1110,316 L1140,323 L1170,329 L1200,336 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,393 L90,391 L120,387 L150,383 L180,378 L210,373 L240,368 L270,365 L300,363 L330,362 L360,363 L390,365 L420,369 L450,373 L480,378 L510,383 L540,388 L570,391 L600,393 L630,394 L660,393 L690,391 L720,387 L750,383 L780,378 L810,373 L840,368 L870,365 L900,363 L930,362 L960,363 L990,365 L1020,369 L1050,373 L1080,378 L1110,383 L1140,388 L1170,391 L1200,393 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="966" cy="171" rx="180" ry="50" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-14.2 966 171)"/><ellipse cx="966" cy="171" rx="249" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-8.2 966 171)"/>
+  <circle cx="966" cy="171" r="71" fill="url(#c1wjywp8pl)"/>
+  <circle cx="1074" cy="243" r="16" fill="#ffffff" opacity="0.89"/><circle cx="1190" cy="129" r="16" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Hand-writing one evaluation question per chunk doesn&#39;t scale — a person can write maybe a few dozen good questions in a day, but a real document collection can hold thousands or millions of chunks. Generating test questions automatically, one per chunk, using a model, scales to the whole collection at once.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/end-to-end-rag-evaluation-frameworks/" data-topic="rag/end-to-end-rag-evaluation-frameworks">End-to-End RAG Evaluation Frameworks</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you build an evaluation set large enough to actually represent a real document collection?&quot; <strong>Synthetic test-set generation</strong> prompts a model to produce a plausible question (and its expected answer) directly from each chunk — automatically creating (question, answer, source chunk) triples at the same rate chunks exist, rather than at the rate a human can write by hand. Coverage scales with the corpus automatically; hand-written coverage is capped by how much human time is available.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Spot-checking a textbook&#39;s quality by hand-writing one review question per chapter works fine for a 10-chapter book, but completely fails to scale to a 10,000-page reference library — automating &quot;generate one question per section&quot; is the only way to get evaluation coverage across something that large.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">hand-written coverage  = min(corpus size, writing rate × hours available)
+synthetic coverage     = corpus size   (one generated question per chunk, automatically)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Coverage at three corpus sizes, comparing one workday of hand-writing (at 10 questions/hour) against synthetic generation:</p>
+<pre><code class="language-text">corpus    50 chunks:  hand-written covers 50  (100%)   synthetic covers 50  (100%)
+corpus   500 chunks:  hand-written covers 80  (16%)    synthetic covers 500 (100%)
+corpus 5,000 chunks:  hand-written covers 80  (2%)     synthetic covers 5,000 (100%)
+</code></pre>
+<p>At a small corpus size, hand-writing keeps up easily. Past a few hundred chunks, a single workday&#39;s hand-written coverage stays flat at 80 questions (the most one person can write in that time) while the corpus keeps growing — coverage collapses to single-digit percentages. Synthetic generation&#39;s coverage scales with the corpus by construction, staying at 100% regardless of size.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="synthetic-testset-coverage" data-title="One workday of writing questions by hand"><p class="bench-fallback"><strong>Interactive bench: One workday of writing questions by hand.</strong> Slide corpus size and compare how much of it a human could hand-write test questions for against automatic synthetic generation.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at a small corpus size and note hand-written coverage is still near 100%.</li>
+<li>Slide toward 5,000 and watch hand-written coverage collapse toward single digits.</li>
+<li>Imagine a real production collection with a million chunks — what would hand-written coverage be?</li>
+</ol>
+<p><strong>What you should notice:</strong> hand-written coverage isn&#39;t gradually declining — it&#39;s capped at a fixed number of questions (however many a workday allows), so its <em>percentage</em> coverage drops sharply as the corpus simply grows past that fixed cap.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>A synthetic test set is exactly what <a class="wikilink" href="/rag/end-to-end-rag-evaluation-frameworks/" data-topic="rag/end-to-end-rag-evaluation-frameworks">End-to-End RAG Evaluation Frameworks</a>&#39;s scorecard needs to run against</strong> — the scorecard&#39;s metrics are only as representative as the test set they&#39;re computed over.</li>
+<li><strong>The question-generation step is itself a generation task</strong>, subject to the same risk of producing plausible-but-wrong content covered broadly on the Generative AI planet — a generated question&#39;s &quot;expected answer&quot; still needs some form of validation.</li>
+<li><strong><a class="wikilink" href="/rag/a-b-and-online-evaluation-of-rag/" data-topic="rag/a-b-and-online-evaluation-of-rag">A-B and Online Evaluation of RAG</a> is a complementary approach</strong>: instead of a synthetic (or hand-written) fixed test set, it measures quality against real user interactions directly.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Trusting generated questions and answers without any validation.</strong> A model generating a question from a chunk can also generate a subtly wrong expected answer — synthetic generation solves the coverage problem, not the correctness problem.</li>
+<li><strong>Generating only easy, directly-stated questions.</strong> A model prompted naively tends to generate questions that restate a chunk&#39;s content almost verbatim, missing the harder multi-hop or inference-based questions a real evaluation should also cover.</li>
+<li><strong>Assuming 100% chunk coverage means 100% meaningful evaluation.</strong> Covering every chunk with one question each doesn&#39;t test multi-chunk reasoning, conflicting-context handling, or any of the failure modes <a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a> catalogs that only show up with harder, multi-part questions.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does hand-written coverage stay at 80 questions regardless of corpus size past a few hundred chunks?</summary>
+80 questions is the fixed cap of what one person can write in a single workday at 10 questions per hour — that absolute number doesn't grow just because the corpus does, so its *percentage* of the corpus shrinks as the corpus grows.
+</details>
+
+<details><summary>2. Does synthetic test-set generation solve the problem of verifying that generated questions and answers are actually correct?</summary>
+No — it solves the coverage problem (having an evaluation question for every chunk), not the correctness problem; generated questions and their expected answers can still be subtly wrong and need their own validation.
+</details>
+
+<details><summary>3. What kind of evaluation question does naive synthetic generation tend to miss?</summary>
+Harder questions requiring reasoning across multiple chunks or handling conflicting information — a model prompted to generate a question from a single chunk tends to produce questions directly answerable from that one chunk alone.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Synthetic test-set generation:</strong> automatically producing (question, answer, source) evaluation triples from a document collection.</li>
+<li><strong>Coverage:</strong> the fraction of a corpus that has at least one associated evaluation question.</li>
+<li><strong>Question-answer triple:</strong> a generated question paired with its expected answer and the source chunk it was derived from.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/end-to-end-rag-evaluation-frameworks/" data-topic="rag/end-to-end-rag-evaluation-frameworks">End-to-End RAG Evaluation Frameworks</a> · <a class="wikilink" href="/rag/a-b-and-online-evaluation-of-rag/" data-topic="rag/a-b-and-online-evaluation-of-rag">A-B and Online Evaluation of RAG</a> · <a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/synthetic-test-set-generation-for-rag">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/a-b-and-online-evaluation-of-rag/"><small>Read next</small><b>A-B and Online Evaluation of RAG</b><p>A test set, synthetic or hand-written, measures a RAG system against questions someone anticipated.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/end-to-end-rag-evaluation-frameworks/"><b>End-to-End RAG Evaluation Frameworks</b><p>Two RAG systems can score identically on an overall end-to-end quality check and still be broken in completely different places — one failing at retrieval, the other at generation.</p></a><a class="rc-card" href="/rag/a-b-and-online-evaluation-of-rag/"><b>A-B and Online Evaluation of RAG</b><p>A test set, synthetic or hand-written, measures a RAG system against questions someone anticipated.</p></a><a class="rc-card" href="/rag/common-rag-failure-modes/"><b>Common RAG Failure Modes</b><p>Across this planet&#39;s road, the same handful of failure symptoms keep recurring — a stale fact, a result count that&#39;s mysteriously short, an answer that confidently cites the wrong thing.</p></a><a class="rc-card" href="/rag/evaluating-rag-systems/"><b>Evaluating RAG Systems</b><p>A RAG system can fail in two independent places — retrieval can find the wrong passages, or generation can answer badly even from the right ones — and a single end-to-end score can&#39;t tell you which.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/common-rag-failure-modes/">← Previous: Common RAG Failure Modes</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

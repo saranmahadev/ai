@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logistic Regression as a Classifier — AI Base</title>
+<meta name="description" content="Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/logistic-regression-as-a-classifier/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Logistic Regression as a Classifier — AI Base">
+<meta property="og:description" content="Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/logistic-regression-as-a-classifier/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Logistic Regression as a Classifier","item":"https://ai.saranmahadev.in/machine-learning/logistic-regression-as-a-classifier/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Logistic Regression as a Classifier","description":"Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.","url":"https://ai.saranmahadev.in/machine-learning/logistic-regression-as-a-classifier/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"At what score is the probability exactly 0.5?","acceptedAnswer":{"@type":"Answer","text":"z = 0."}},{"@type":"Question","name":"What happens to recall as the threshold rises?","acceptedAnswer":{"@type":"Answer","text":"It falls, because fewer cases are flagged."}},{"@type":"Question","name":"What shape is a logistic regression's decision boundary?","acceptedAnswer":{"@type":"Answer","text":"A straight line (a hyperplane in more dimensions)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Linear Models</p>
+        <h1 class="doc-title">Logistic Regression as a Classifier</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1ny11vobg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1ny11vopl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1ny11vobg)"/>
+  <circle cx="1092" cy="282" r="115" fill="#ffd99f" opacity="0.54"/><circle cx="572" cy="305" r="218" fill="#ffd99f" opacity="0.45"/><circle cx="594" cy="311" r="76" fill="#fff2de" opacity="0.50"/><circle cx="949" cy="15" r="139" fill="#ffd08d" opacity="0.46"/><circle cx="735" cy="164" r="136" fill="#8a6b5c" opacity="0.28"/><circle cx="624" cy="18" r="63" fill="#ffd99f" opacity="0.51"/>
+  <path d="M0,420 L0,336 L30,331 L60,325 L90,320 L120,316 L150,312 L180,309 L210,307 L240,306 L270,306 L300,307 L330,310 L360,314 L390,318 L420,323 L450,328 L480,333 L510,338 L540,342 L570,346 L600,348 L630,349 L660,349 L690,348 L720,346 L750,343 L780,339 L810,334 L840,329 L870,324 L900,319 L930,314 L960,311 L990,308 L1020,306 L1050,306 L1080,306 L1110,308 L1140,311 L1170,315 L1200,320 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,390 L90,386 L120,382 L150,377 L180,372 L210,368 L240,364 L270,362 L300,362 L330,363 L360,366 L390,370 L420,374 L450,379 L480,384 L510,388 L540,392 L570,394 L600,394 L630,393 L660,390 L690,386 L720,382 L750,377 L780,372 L810,368 L840,364 L870,362 L900,362 L930,363 L960,366 L990,370 L1020,374 L1050,379 L1080,384 L1110,388 L1140,392 L1170,394 L1200,394 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="780" cy="154" rx="184" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(4.3 780 154)"/><ellipse cx="780" cy="154" rx="255" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(10.3 780 154)"/>
+  <circle cx="780" cy="154" r="72" fill="url(#c1ny11vopl)"/>
+  <circle cx="659" cy="75" r="10" fill="#ffffff" opacity="0.68"/><circle cx="553" cy="84" r="9" fill="#ffffff" opacity="0.79"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Logistic regression</strong> turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier. Its outputs are probabilities, and moving the threshold trades false alarms against misses.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/linear-regression-in-practice/" data-topic="machine-learning/linear-regression-in-practice">Linear Regression in Practice</a>, <a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">Logistic Regression and the Sigmoid</a> and <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How likely is it that this example is in class 1, and what should I do about it?&quot; A yes-or-no answer hides uncertainty; a probability lets you decide how cautious to be.</p>
+<h2 id="intuition-a-linear-score-squeezed-into-0-1">Intuition: a linear score squeezed into 0–1</h2>
+<p>Compute a score <code>z = b + w · x</code>. A large positive score means &quot;very likely class 1&quot;, a large negative means &quot;very likely class 0&quot;, and zero means &quot;unsure&quot;. The sigmoid squeezes the score into a probability between 0 and 1. The set of points where the probability equals the threshold is a straight line (a flat plane in higher dimensions): the <strong>decision boundary</strong>.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">score          z = b + w · x
+probability    p = 1 / (1 + e^(−z))                    p = 0.5 exactly where z = 0
+prediction     class 1 if p ≥ t   (t = 0.5 by default)
+loss           cross-entropy: −[y log p + (1−y) log(1−p)] averaged over the data
+precision      TP / (TP + FP)      how many alarms were right
+recall         TP / (TP + FN)      how many real cases were caught
+</code></pre>
+<p>Raising the threshold demands more confidence, so fewer alarms (higher precision) but more misses (lower recall).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Eighty points in two overlapping classes (forty each) fitted by logistic regression. Counting outcomes at three thresholds, from the bench:</p>
+<pre><code class="language-text">threshold   caught   false alarms   missed   correct negatives   precision   recall
+   0.2        37          14           3            26              72.5%     92.5%
+   0.5        34           6           6            34              85.0%     85.0%
+   0.8        23           0          17            40             100.0%     57.5%
+</code></pre>
+<p>At 0.2 almost every real case is caught, at the price of 14 false alarms. At 0.8 there are no false alarms but 17 of 40 real cases slip through. The right threshold depends on costs: a cancer screen wants high recall, a system that freezes bank accounts wants high precision.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="logistic-threshold" data-title="Probability, threshold, errors"><p class="bench-fallback"><strong>Interactive bench: Probability, threshold, errors.</strong> Two overlapping classes with a fitted logistic regression shown as probability shading; a slider sets the decision threshold and the bench counts caught cases, false alarms, misses and correct negatives with precision and recall.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at threshold 0.5 and read the counts.</li>
+<li>Slide the threshold down to 0.2, then up to 0.8.</li>
+<li>Find a threshold that gives zero false alarms.</li>
+<li>Find one that misses nobody.</li>
+</ol>
+<p><strong>What you should notice:</strong> the boundary line slides across the data as the threshold moves, and every gain in recall costs precision.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Spam, fraud, medical screening:</strong> probabilities with a threshold chosen for the cost of errors.</li>
+<li><strong>Neural networks:</strong> a final layer with a sigmoid is logistic regression on learned features.</li>
+<li><strong>Calibration:</strong> whether &quot;70%&quot; really means right 70% of the time.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Always using 0.5</strong> without asking what errors cost.</li>
+<li><strong>Reading accuracy alone</strong> when classes are imbalanced (see <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a>).</li>
+<li><strong>Unscaled features,</strong> which slow training and distort regularisation.</li>
+<li><strong>Separable data,</strong> where weights grow without bound unless regularised.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. At what score is the probability exactly 0.5?</summary>
+z = 0.
+</details>
+
+<details><summary>2. What happens to recall as the threshold rises?</summary>
+It falls, because fewer cases are flagged.
+</details>
+
+<details><summary>3. What shape is a logistic regression's decision boundary?</summary>
+A straight line (a hyperplane in more dimensions).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Sigmoid:</strong> the function 1 / (1 + e^(−z)) that maps scores to probabilities.</li>
+<li><strong>Decision boundary:</strong> where the predicted probability equals the threshold.</li>
+<li><strong>Precision:</strong> the share of flagged cases that are real.</li>
+<li><strong>Recall:</strong> the share of real cases that are flagged.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">Logistic Regression and the Sigmoid</a> · <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a> · <a class="wikilink" href="/machine-learning/linear-regression-in-practice/" data-topic="machine-learning/linear-regression-in-practice">Linear Regression in Practice</a> · <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a> · <a class="wikilink" href="/machine-learning/ridge-and-lasso/" data-topic="machine-learning/ridge-and-lasso">Ridge and Lasso</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/logistic-regression-as-a-classifier">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/ridge-and-lasso/"><small>Read next</small><b>Ridge and Lasso</b><p>When there are many features and little data, a linear model can fit noise with huge, contradictory weights. Regularisation adds a penalty on the weights so the model prefers small ones.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/linear-regression-in-practice/"><b>Linear Regression in Practice</b><p>Linear regression predicts a number as a weighted sum of features plus a constant, with the weights chosen to minimise squared error.</p></a><a class="rc-card" href="/math/logistic-regression-and-the-sigmoid/"><b>Logistic Regression and the Sigmoid</b><p>Logistic regression answers yes/no questions with a probability.</p></a><a class="rc-card" href="/math/cross-entropy/"><b>Cross-Entropy</b><p>Cross-entropy is the average surprise you feel when the world follows distribution p but you predicted with distribution q: H(p, q) = −Σ p log q.</p></a><a class="rc-card" href="/fundamentals/measuring-performance/"><b>Measuring Performance</b><p>To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.</p></a><a class="rc-card" href="/machine-learning/ridge-and-lasso/"><b>Ridge and Lasso</b><p>When there are many features and little data, a linear model can fit noise with huge, contradictory weights. Regularisation adds a penalty on the weights so the model prefers small ones.</p></a><a class="rc-card" href="/machine-learning/feature-engineering/"><b>Feature Engineering</b><p>Feature engineering means creating better inputs from the raw columns: ratios, squares, counts, differences, dates unpacked into weekday and month.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/linear-regression-in-practice/">← Previous: Linear Regression in Practice</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

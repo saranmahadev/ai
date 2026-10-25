@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM-as-Judge for Agent Trajectories — AI Base</title>
+<meta name="description" content="Checking an agent&#39;s full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there&#39;s no reference string for &quot;was this a reasonable approach.&quot; Using an…">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/llm-as-judge-for-agent-trajectories/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="LLM-as-Judge for Agent Trajectories — AI Base">
+<meta property="og:description" content="Checking an agent&#39;s full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there&#39;s no reference string for &quot;was this a reasonable approach.&quot; Using an…">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/llm-as-judge-for-agent-trajectories/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"LLM-as-Judge for Agent Trajectories","item":"https://ai.saranmahadev.in/agents/llm-as-judge-for-agent-trajectories/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"LLM-as-Judge for Agent Trajectories","description":"Checking an agent's full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there's no reference string for \"was this a reasonable approach.\" Using an…","url":"https://ai.saranmahadev.in/agents/llm-as-judge-for-agent-trajectories/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's different about applying LLM-as-judge to a trajectory instead of a single output?","acceptedAnswer":{"@type":"Answer","text":"Mainly the size of what's being judged — a full trajectory transcript can run many times longer than a single response — while the underlying judging mechanism and its biases (like position bias) are exactly the same."}},{"@type":"Question","name":"Why does the judge's verdict flip between the two orderings in the worked example?","acceptedAnswer":{"@type":"Answer","text":"The position-bias term adds a fixed bonus to whichever trajectory is shown first, and that bonus is large enough to overcome the real (smaller) quality gap between the two trajectories — exactly the same effect already shown for single-output judging."}},{"@type":"Question","name":"When would a rule-based trajectory checker be preferable to an LLM judge?","acceptedAnswer":{"@type":"Answer","text":"Whenever the property being checked has a fixed, checkable definition — rule-based trajectory-level evaluation (like checking each step against a validity rule) is cheaper and more reliable than an LLM judge for anything that doesn't require subjective judgment."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Evaluating Agents</p>
+        <h1 class="doc-title">LLM-as-Judge for Agent Trajectories</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1smaqq0bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1smaqq0pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1smaqq0bg)"/>
+  <circle cx="230" cy="357" r="156" fill="#e7bdc8" opacity="0.40"/><circle cx="992" cy="144" r="190" fill="#725998" opacity="0.53"/><circle cx="1065" cy="54" r="183" fill="#f3e9fc" opacity="0.22"/><circle cx="435" cy="157" r="108" fill="#e7bdc8" opacity="0.39"/><circle cx="627" cy="395" r="165" fill="#dcbef5" opacity="0.59"/><circle cx="739" cy="47" r="137" fill="#dcbef5" opacity="0.34"/><circle cx="1007" cy="397" r="202" fill="#e7bdc8" opacity="0.47"/>
+  <path d="M0,420 L0,325 L30,321 L60,318 L90,315 L120,312 L150,310 L180,308 L210,307 L240,306 L270,306 L300,306 L330,307 L360,308 L390,310 L420,312 L450,314 L480,317 L510,320 L540,324 L570,327 L600,331 L630,334 L660,337 L690,340 L720,343 L750,345 L780,347 L810,348 L840,349 L870,350 L900,349 L930,349 L960,347 L990,346 L1020,343 L1050,341 L1080,338 L1110,335 L1140,331 L1170,328 L1200,325 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,362 L60,362 L90,363 L120,365 L150,368 L180,371 L210,375 L240,378 L270,382 L300,386 L330,389 L360,391 L390,393 L420,394 L450,394 L480,393 L510,391 L540,389 L570,386 L600,383 L630,379 L660,375 L690,372 L720,368 L750,366 L780,364 L810,362 L840,362 L870,363 L900,364 L930,366 L960,369 L990,372 L1020,376 L1050,380 L1080,383 L1110,387 L1140,390 L1170,392 L1200,393 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="891" cy="213" rx="211" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(8.8 891 213)"/><ellipse cx="891" cy="213" rx="292" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(14.8 891 213)"/>
+  <circle cx="891" cy="213" r="83" fill="url(#c1smaqq0pl)"/>
+  <circle cx="683" cy="137" r="7" fill="#ffffff" opacity="0.70"/><circle cx="1188" cy="245" r="12" fill="#ffffff" opacity="0.61"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Checking an agent&#39;s full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there&#39;s no reference string for &quot;was this a reasonable approach.&quot; Using an LLM as the judge, already covered on the LLMs planet for single outputs, extends naturally to reading an entire transcript and rendering a verdict on the whole run — and it inherits that judge&#39;s exact same biases while doing it.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/trajectory-level-evaluation/" data-topic="agents/trajectory-level-evaluation">Trajectory-Level Evaluation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you grade a property of an agent&#39;s run that no fixed rule can check?&quot; Rule-based trajectory checkers (like the step-validity check in the previous topic) only work when &quot;valid&quot; has a checkable definition. For judgments like &quot;was this a sound approach&quot; or &quot;did the agent waste effort,&quot; there&#39;s often no reference answer to check against — so the same <strong>LLM-as-judge</strong> mechanism already covered for single outputs gets applied to the entire trajectory transcript instead, with the identical position-bias risk the LLMs planet already demonstrated.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Grading a single essay for quality is already subjective enough to need a human-like judge rather than a fixed answer key. Grading an entire research process — which sources a student consulted, in what order, and why — is the same kind of judgment call, just applied to a much longer document. Whatever biases crept into the single-essay judge don&#39;t disappear just because the document got longer.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">judge_score(trajectory, position) = quality(trajectory) + bias_term(position)
+                                     (the exact mechanism from the LLMs planet,
+                                      &quot;trajectory&quot; standing in for &quot;response&quot;)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two full agent trajectories, A (quality 0.60) and B (quality 0.65) — B is genuinely the better trajectory — judged under the identical toy position bias of +0.15 for whichever is shown first:</p>
+<pre><code class="language-text">A shown first, B second:
+  A score: 0.60 + 0.15 = 0.75     B score: 0.65 + 0 = 0.65
+  judge prefers: A   ← wrong; B was actually the better trajectory
+
+B shown first, A second:
+  A score: 0.60 + 0 = 0.60        B score: 0.65 + 0.15 = 0.80
+  judge prefers: B   ← correct
+
+for comparison, a single-turn response is maybe 50 tokens;
+a full trajectory transcript here runs roughly 2000 tokens — about 40× longer
+</code></pre>
+<p>The verdict flips purely from presentation order, exactly as it did for single-turn responses — nothing about applying this to a full trajectory changes the underlying bias. What <em>is</em> new is the input size: judging a trajectory means feeding the judge a transcript many times longer than a single response, which is a real cost consideration of its own.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="trajectory-judge-position-bias" data-title="Which trajectory the judge reads first"><p class="bench-fallback"><strong>Interactive bench: Which trajectory the judge reads first.</strong> Swap which full agent trajectory is shown first and watch the judge's preferred winner flip.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Put Trajectory A first and see which one the judge prefers.</li>
+<li>Swap the order and compare the verdict.</li>
+<li>Consider how a production pipeline might cancel out this effect, the same way it would for single-response judging.</li>
+</ol>
+<p><strong>What you should notice:</strong> this is the identical position-bias mechanism already verified on the LLMs planet — nothing about judging trajectories instead of single responses changes how the bias behaves, only what&#39;s being read has gotten much longer.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This directly reuses the <a class="wikilink" href="/llms/llm-as-judge-evaluation/" data-topic="llms/llm-as-judge-evaluation">LLM-as-judge mechanism</a> already covered on the LLMs planet</strong> — the bias term, the mitigation (order randomization), and the underlying risk are unchanged; only the object being judged (a full trajectory instead of a single output) is new.</li>
+<li><strong>The 40× longer input in the worked example is exactly why <a class="wikilink" href="/agents/cost-and-reliability-as-joint-metrics/" data-topic="agents/cost-and-reliability-as-joint-metrics">Cost and Reliability as Joint Metrics</a>, covered next, matters for trajectory judging</strong> — reading and scoring full transcripts costs meaningfully more than judging single outputs.</li>
+<li><strong><a class="wikilink" href="/agents/debate-and-adversarial-multi-agent-setups/" data-topic="agents/debate-and-adversarial-multi-agent-setups">Debate and Adversarial Multi-Agent Setups</a> often uses a judge of exactly this kind</strong> to decide between two agents&#39; competing trajectories, once a challenge has been raised.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming trajectory judging is immune to biases found in single-output judging.</strong> The worked example shows the identical position-bias mechanism carries over unchanged — it was never specific to short responses.</li>
+<li><strong>Ignoring the token-cost difference between judging an output and judging a trajectory.</strong> A full transcript can run tens of times longer than a single response, which multiplies the judge&#39;s own compute cost accordingly.</li>
+<li><strong>Using an LLM judge for trajectory properties a rule-based checker could verify instead.</strong> If &quot;was this step valid&quot; has a fixed, checkable definition (like the previous topic&#39;s step-validity check), a cheaper rule-based checker is more reliable than an LLM judge for exactly that part.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's different about applying LLM-as-judge to a trajectory instead of a single output?</summary>
+Mainly the size of what's being judged — a full trajectory transcript can run many times longer than a single response — while the underlying judging mechanism and its biases (like position bias) are exactly the same.
+</details>
+
+<details><summary>2. Why does the judge's verdict flip between the two orderings in the worked example?</summary>
+The position-bias term adds a fixed bonus to whichever trajectory is shown first, and that bonus is large enough to overcome the real (smaller) quality gap between the two trajectories — exactly the same effect already shown for single-output judging.
+</details>
+
+<details><summary>3. When would a rule-based trajectory checker be preferable to an LLM judge?</summary>
+Whenever the property being checked has a fixed, checkable definition — rule-based trajectory-level evaluation (like checking each step against a validity rule) is cheaper and more reliable than an LLM judge for anything that doesn't require subjective judgment.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>LLM-as-judge (for trajectories):</strong> using a model to read and score an agent&#39;s full run, applying the same judging mechanism used for single outputs.</li>
+<li><strong>Position bias:</strong> a judge&#39;s tendency to favor whichever item is shown first, independent of actual quality — unchanged when judging trajectories instead of single outputs.</li>
+<li><strong>Trajectory transcript:</strong> the full record of an agent&#39;s steps, typically far longer than a single generated response.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/llm-as-judge-evaluation/" data-topic="llms/llm-as-judge-evaluation">LLM-as-Judge Evaluation</a> · <a class="wikilink" href="/agents/cost-and-reliability-as-joint-metrics/" data-topic="agents/cost-and-reliability-as-joint-metrics">Cost and Reliability as Joint Metrics</a> · <a class="wikilink" href="/agents/debate-and-adversarial-multi-agent-setups/" data-topic="agents/debate-and-adversarial-multi-agent-setups">Debate and Adversarial Multi-Agent Setups</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/llm-as-judge-for-agent-trajectories">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/cost-and-reliability-as-joint-metrics/"><small>Read next</small><b>Cost and Reliability as Joint Metrics</b><p>A 95%-success-rate agent sounds better than an 85%-success-rate one, full stop — until the first one costs ten times as much per attempt.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/trajectory-level-evaluation/"><b>Trajectory-Level Evaluation</b><p>An agent that takes a forbidden or dangerous action partway through its run, then happens to land on the correct final answer anyway, passes any grader that only checks the final answer.</p></a><a class="rc-card" href="/llms/llm-as-judge-evaluation/"><b>LLM-as-Judge Evaluation</b><p>Benchmark suites work well for questions with a single checkable right answer. Most interesting LLM output — a summary, a piece of writing, a conversational response — doesn&#39;t have one.</p></a><a class="rc-card" href="/agents/cost-and-reliability-as-joint-metrics/"><b>Cost and Reliability as Joint Metrics</b><p>A 95%-success-rate agent sounds better than an 85%-success-rate one, full stop — until the first one costs ten times as much per attempt.</p></a><a class="rc-card" href="/agents/debate-and-adversarial-multi-agent-setups/"><b>Debate and Adversarial Multi-Agent Setups</b><p>A single agent that states a claim has no one checking its arithmetic.</p></a><a class="rc-card" href="/agents/self-critique-loops-in-agents/"><b>Self-Critique Loops in Agents</b><p>An arithmetic mistake made at step two of a four-step calculation doesn&#39;t stay contained to step two — every later step builds on the wrong number, and the final answer comes out wrong even though…</p></a><a class="rc-card" href="/agents/evaluating-agents/"><b>Evaluating Agents</b><p>Scoring a single generated answer is one problem; scoring a hundred-step trajectory of actions, any one of which could be the reason the whole task failed, is a different and harder one.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/trajectory-level-evaluation/">← Previous: Trajectory-Level Evaluation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

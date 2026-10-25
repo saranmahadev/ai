@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capstone: Designing a Deep Learning System End to End — AI Base</title>
+<meta name="description" content="This capstone walks one project through every stage this planet covered: choosing an architecture, initializing and training it soundly, regularising it, checking it honestly, and shrinking it for…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/capstone-designing-a-deep-learning-system-end-to-end/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Capstone: Designing a Deep Learning System End to End — AI Base">
+<meta property="og:description" content="This capstone walks one project through every stage this planet covered: choosing an architecture, initializing and training it soundly, regularising it, checking it honestly, and shrinking it for…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/capstone-designing-a-deep-learning-system-end-to-end/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Capstone: Designing a Deep Learning System End to End","item":"https://ai.saranmahadev.in/deep-learning/capstone-designing-a-deep-learning-system-end-to-end/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Capstone: Designing a Deep Learning System End to End","description":"This capstone walks one project through every stage this planet covered: choosing an architecture, initializing and training it soundly, regularising it, checking it honestly, and shrinking it for…","url":"https://ai.saranmahadev.in/deep-learning/capstone-designing-a-deep-learning-system-end-to-end/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does stage 2 (initialization) matter before any training has even happened?","acceptedAnswer":{"@type":"Answer","text":"A poorly scaled initialization can cause activations (and later, gradients) to explode or vanish within the first few layers, regardless of how good the training procedure afterward is."}},{"@type":"Question","name":"How does stage 7 (the robustness check) differ from simply measuring ordinary test accuracy?","acceptedAnswer":{"@type":"Answer","text":"It specifically measures how much a small, deliberately constructed perturbation can damage the prediction — a property ordinary accuracy on natural data says nothing about."}},{"@type":"Question","name":"Why does stage 9 (the safety review) come after stage 3 (regularization) in this walkthrough, not independently of it?","acceptedAnswer":{"@type":"Answer","text":"The same overfitting that regularization addresses for accuracy is also the root cause of the membership-inference privacy risk checked in stage 9 — the two are connected, not separate concerns."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Deep Learning in Practice</p>
+        <h1 class="doc-title">Capstone: Designing a Deep Learning System End to End</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c2ppdpfbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c2ppdpfpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c2ppdpfbg)"/>
+  <circle cx="188" cy="211" r="169" fill="#ffb6b6" opacity="0.61"/><circle cx="586" cy="44" r="132" fill="#ffb89d" opacity="0.61"/><circle cx="1168" cy="218" r="203" fill="#ffb6b6" opacity="0.35"/><circle cx="14" cy="158" r="78" fill="#ffb6b6" opacity="0.61"/><circle cx="1076" cy="237" r="115" fill="#ffe6e6" opacity="0.54"/>
+  <path d="M0,420 L0,307 L30,309 L60,311 L90,313 L120,316 L150,319 L180,322 L210,326 L240,329 L270,333 L300,336 L330,339 L360,342 L390,344 L420,346 L450,348 L480,349 L510,350 L540,350 L570,349 L600,348 L630,346 L660,344 L690,342 L720,339 L750,336 L780,333 L810,330 L840,326 L870,323 L900,319 L930,316 L960,313 L990,311 L1020,309 L1050,307 L1080,306 L1110,306 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,391 L60,390 L90,388 L120,386 L150,384 L180,381 L210,379 L240,376 L270,374 L300,371 L330,369 L360,367 L390,366 L420,364 L450,363 L480,362 L510,362 L540,362 L570,363 L600,363 L630,365 L660,366 L690,368 L720,370 L750,372 L780,375 L810,377 L840,380 L870,382 L900,385 L930,387 L960,389 L990,390 L1020,392 L1050,393 L1080,394 L1110,394 L1140,394 L1170,393 L1200,393 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="888" cy="285" rx="161" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(15.8 888 285)"/><ellipse cx="888" cy="285" rx="223" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(21.8 888 285)"/>
+  <circle cx="888" cy="285" r="63" fill="url(#c2ppdpfpl)"/>
+  <circle cx="893" cy="352" r="8" fill="#ffffff" opacity="0.68"/><circle cx="1063" cy="259" r="15" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>This capstone walks one project through every stage this planet covered: choosing an architecture, initializing and training it soundly, regularising it, checking it honestly, and shrinking it for deployment — citing the actual, verified numbers this planet&#39;s own benches produced along the way, not fresh claims.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/choosing-an-architecture-for-a-problem/" data-topic="deep-learning/choosing-an-architecture-for-a-problem">Choosing an Architecture for a Problem</a>, <a class="wikilink" href="/deep-learning/weight-initialization/" data-topic="deep-learning/weight-initialization">Weight Initialization</a>, <a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a>, <a class="wikilink" href="/deep-learning/debugging-a-training-run/" data-topic="deep-learning/debugging-a-training-run">Debugging a Training Run</a> and <a class="wikilink" href="/deep-learning/edge-and-on-device-deep-learning/" data-topic="deep-learning/edge-and-on-device-deep-learning">Edge and On-Device Deep Learning</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Do all these separate topics — initialization, regularization, attention, pruning — actually fit together into one coherent process?&quot; Yes: a real project visits most of them, in roughly this order, each decision informed by evidence this planet already produced.</p>
+<h2 id="the-project">The project</h2>
+<p>A small image classifier, trained on a modest labelled dataset, destined to run on a phone. Each stage below is a real decision point, backed by a number this planet&#39;s own benches already computed.</p>
+<h2 id="the-design-walkthrough">The design walkthrough</h2>
+<pre><code class="language-text">1. Architecture        Image input → grid-structured data → a CNN
+                        (see Choosing an Architecture for a Problem)
+
+2. Initialization       Signal scale after 10 layers:
+                        scale=1 (too big):      3.3 billion   (exploded)
+                        scale=1/√n (just right): 0.334        (stable)
+                        → initialize at roughly 1/√(fan-in)
+
+3. Regularization       At the model&#39;s interpolation threshold (parameters ≈ training
+                        examples), test error spiked to 160+ in the double-descent
+                        bench; dropout and data augmentation push well clear of that
+                        danger zone, not just &quot;add some regularization vaguely&quot;
+
+4. Training             Per-block gradient factor 0.25 (sigmoid-like) over 10 layers
+                        shrinks a gradient to ~0.0000009 of its start; warmup + cosine
+                        decay and gradient clipping (cap size, don&#39;t change direction)
+                        keep training stable through the early, least-reliable steps
+
+5. Debugging            Gradient norm jumping from 1.8 to 15.3 in one step (worked
+                        example in Debugging a Training Run) is caught and clipped
+                        before it reaches the NaN the next step would otherwise produce
+
+6. Interpretation       A saliency map (Feature Visualization) shows the model
+                        attending to the third column of a toy input — exactly where
+                        its convolution kernel was weighted +1 — confirming it is
+                        reading the signal it was meant to, not something spurious
+
+7. Robustness check     A 0.1-magnitude adversarial nudge to every pixel dropped a
+                        0.7311 prediction to 0.4800 (Adversarial Examples and
+                        Robustness) — a reminder that high ordinary accuracy alone
+                        says nothing about robustness to deliberate attacks
+
+8. Compression          Structured pruning (2× smaller) combined with 8-bit
+                        quantization (4× smaller) gives an 8× smaller model overall
+                        (Edge and On-Device Deep Learning) — the actual size the
+                        phone app needs to ship
+
+9. Safety review        A large gap between training loss and held-out loss is a
+                        membership-inference risk, not just an accuracy one (Ethics
+                        and Safety of Deep Systems) — checked before shipping,
+                        especially if the training data is at all sensitive
+</code></pre>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="dl-capstone" data-title="One project, every stage"><p class="bench-fallback"><strong>Interactive bench: One project, every stage.</strong> Step through all nine stages of a real deep learning project, from choosing an architecture to a pre-deployment safety check, with the evidence number behind each decision.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through every stage in order and note which earlier topic each decision traces back to.</li>
+<li>Pick any one stage and go reread that topic&#39;s own worked example for the full derivation.</li>
+<li>Think about what would change if the deployment target were a data-centre server instead of a phone — which stages would still apply, and which would change?</li>
+</ol>
+<p><strong>What you should notice:</strong> none of these nine decisions are independent — initialization affects how training behaves, regularization affects both accuracy and the privacy risk in stage 9, and the stages earlier in training determine how much work compression in stage 8 has to do.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is, in miniature, what a real applied deep learning project actually looks like</strong> — fewer surprises and more checklist than the architecture diagrams alone might suggest.</li>
+<li><strong>Different projects weight these stages differently</strong>: a research project might spend most of its effort on stage 1 (architecture) and little on stage 8 (compression); a production mobile app is often the reverse.</li>
+<li><strong>The road ahead</strong> — Neural Networks, Transformers, Generative AI, LLMs, RAG and Agents — builds on every one of these same foundations, applied to ever larger and more specialised models.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating any one stage as optional.</strong> Skipping initialization care, skipping a robustness check, or skipping the safety review each individually risks a failure that is easy to avoid by the time you&#39;ve reached this capstone.</li>
+<li><strong>Doing the stages in isolation, with no feedback between them.</strong> A regularization change can require revisiting the training schedule; a compression step can require re-checking robustness and accuracy, not just size.</li>
+<li><strong>Assuming a model that passes every stage once is finished forever.</strong> New data, a new deployment target, or a newly discovered attack can all require revisiting stages already thought complete.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does stage 2 (initialization) matter before any training has even happened?</summary>
+A poorly scaled initialization can cause activations (and later, gradients) to explode or vanish within the first few layers, regardless of how good the training procedure afterward is.
+</details>
+
+<details><summary>2. How does stage 7 (the robustness check) differ from simply measuring ordinary test accuracy?</summary>
+It specifically measures how much a small, deliberately constructed perturbation can damage the prediction — a property ordinary accuracy on natural data says nothing about.
+</details>
+
+<details><summary>3. Why does stage 9 (the safety review) come after stage 3 (regularization) in this walkthrough, not independently of it?</summary>
+The same overfitting that regularization addresses for accuracy is also the root cause of the membership-inference privacy risk checked in stage 9 — the two are connected, not separate concerns.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Design walkthrough:</strong> working through a project&#39;s decisions in the order they naturally arise, each backed by evidence.</li>
+<li><strong>End-to-end:</strong> covering a project from initial architecture choice through to a deployable, checked result.</li>
+<li><strong>Pre-deployment safety review:</strong> checking a model&#39;s privacy, robustness and fairness properties before it ships, not only its accuracy.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/choosing-an-architecture-for-a-problem/" data-topic="deep-learning/choosing-an-architecture-for-a-problem">Choosing an Architecture for a Problem</a> · <a class="wikilink" href="/deep-learning/weight-initialization/" data-topic="deep-learning/weight-initialization">Weight Initialization</a> · <a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a> · <a class="wikilink" href="/deep-learning/debugging-a-training-run/" data-topic="deep-learning/debugging-a-training-run">Debugging a Training Run</a> · <a class="wikilink" href="/deep-learning/edge-and-on-device-deep-learning/" data-topic="deep-learning/edge-and-on-device-deep-learning">Edge and On-Device Deep Learning</a> · <a class="wikilink" href="/deep-learning/ethics-and-safety-of-deep-systems/" data-topic="deep-learning/ethics-and-safety-of-deep-systems">Ethics and Safety of Deep Systems</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/capstone-designing-a-deep-learning-system-end-to-end">Open in the interactive site →</a></p>
+        
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/choosing-an-architecture-for-a-problem/"><b>Choosing an Architecture for a Problem</b><p>Every architecture in this planet was built to exploit some specific structure in its data: convolution exploits a grid, recurrence and attention exploit a sequence, graph networks exploit…</p></a><a class="rc-card" href="/deep-learning/weight-initialization/"><b>Weight Initialization</b><p>Before a single training step runs, a deep network&#39;s starting weights already decide whether signal can flow through it at all.</p></a><a class="rc-card" href="/deep-learning/overfitting-and-double-descent/"><b>Overfitting and Double Descent</b><p>The classical picture of overfitting says test error falls as a model grows, then rises once it has enough capacity to memorise noise — a U-shape.</p></a><a class="rc-card" href="/deep-learning/debugging-a-training-run/"><b>Debugging a Training Run</b><p>A training run that looks &quot;broken&quot; is usually not a mystery — most failures leave a recognisable signature in the loss curve or the gradient statistics, and reading that signature correctly points…</p></a><a class="rc-card" href="/deep-learning/edge-and-on-device-deep-learning/"><b>Edge and On-Device Deep Learning</b><p>Running a model on a phone, a smartwatch, or a tiny embedded chip is a different problem from running it on a server: memory, compute, power and network connectivity are all far more constrained,…</p></a><a class="rc-card" href="/deep-learning/ethics-and-safety-of-deep-systems/"><b>Ethics and Safety of Deep Systems</b><p>Where AI Goes Wrong and Fairness Metrics cover risks shared across machine learning generally.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/ethics-and-safety-of-deep-systems/">← Previous: Ethics and Safety of Deep Systems</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

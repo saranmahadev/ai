@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hierarchical Clustering — AI Base</title>
+<meta name="description" content="Hierarchical clustering does not fix the number of clusters in advance. It starts with every point alone and repeatedly merges the two closest groups, recording each merge and its distance.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/hierarchical-clustering/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Hierarchical Clustering — AI Base">
+<meta property="og:description" content="Hierarchical clustering does not fix the number of clusters in advance. It starts with every point alone and repeatedly merges the two closest groups, recording each merge and its distance.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/hierarchical-clustering/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Hierarchical Clustering","item":"https://ai.saranmahadev.in/machine-learning/hierarchical-clustering/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hierarchical Clustering","description":"Hierarchical clustering does not fix the number of clusters in advance. It starts with every point alone and repeatedly merges the two closest groups, recording each merge and its distance.","url":"https://ai.saranmahadev.in/machine-learning/hierarchical-clustering/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the algorithm do at each step?","acceptedAnswer":{"@type":"Answer","text":"Merge the two closest groups."}},{"@type":"Question","name":"How do you get 4 clusters from the merge tree?","acceptedAnswer":{"@type":"Answer","text":"Undo the last three merges (cut so that four groups remain)."}},{"@type":"Question","name":"What signals a natural number of clusters?","acceptedAnswer":{"@type":"Answer","text":"A large jump in successive merge distances."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Unsupervised Learning</p>
+        <h1 class="doc-title">Hierarchical Clustering</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1do0qnebg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1do0qnepl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1do0qnebg)"/>
+  <circle cx="872" cy="195" r="166" fill="#ffd08d" opacity="0.43"/><circle cx="798" cy="65" r="119" fill="#8a6b5c" opacity="0.32"/><circle cx="107" cy="261" r="188" fill="#ffd99f" opacity="0.34"/><circle cx="456" cy="223" r="145" fill="#fff2de" opacity="0.57"/><circle cx="219" cy="264" r="87" fill="#ffd99f" opacity="0.57"/><circle cx="659" cy="390" r="124" fill="#8a6b5c" opacity="0.40"/><circle cx="78" cy="54" r="108" fill="#ffd08d" opacity="0.46"/>
+  <path d="M0,420 L0,314 L30,311 L60,309 L90,307 L120,306 L150,306 L180,306 L210,306 L240,307 L270,309 L300,311 L330,313 L360,316 L390,319 L420,322 L450,326 L480,329 L510,332 L540,336 L570,339 L600,342 L630,344 L660,346 L690,348 L720,349 L750,350 L780,350 L810,349 L840,348 L870,347 L900,345 L930,342 L960,339 L990,336 L1020,333 L1050,330 L1080,326 L1110,323 L1140,320 L1170,316 L1200,314 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,367 L60,371 L90,376 L120,381 L150,385 L180,389 L210,392 L240,394 L270,394 L300,392 L330,389 L360,385 L390,380 L420,375 L450,371 L480,367 L510,364 L540,362 L570,362 L600,364 L630,367 L660,371 L690,376 L720,381 L750,385 L780,389 L810,392 L840,394 L870,394 L900,392 L930,389 L960,385 L990,380 L1020,375 L1050,371 L1080,367 L1110,364 L1140,362 L1170,362 L1200,364 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="987" cy="241" rx="159" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.1 987 241)"/><ellipse cx="987" cy="241" rx="220" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.1 987 241)"/>
+  <circle cx="987" cy="241" r="62" fill="url(#c1do0qnepl)"/>
+  <circle cx="794" cy="287" r="9" fill="#ffffff" opacity="0.78"/><circle cx="1117" cy="188" r="11" fill="#ffffff" opacity="0.90"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Hierarchical clustering does not fix the number of clusters in advance. It starts with every point alone and repeatedly merges the two closest groups, recording each merge and its distance. The result is a <strong>merge tree</strong> (a dendrogram); cutting it at any height gives a clustering, so one run offers every <code>k</code>.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/k-means-clustering/" data-topic="machine-learning/k-means-clustering">k-Means Clustering</a> and <a class="wikilink" href="/math/trees-and-hierarchies/" data-topic="math/trees-and-hierarchies">Trees and Hierarchies</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How are the points related at every scale?&quot; Small tight groups merge first, looser groups later, and the tree shows the whole structure, not just one flat partition.</p>
+<h2 id="intuition-build-a-family-tree-from-the-bottom">Intuition: build a family tree from the bottom</h2>
+<p>Begin with each point as its own group. Find the two groups that are closest and join them. Repeat until one group holds everything. Merges among close neighbours happen at small distances; merging genuinely separate clusters needs a big jump. To choose clusters, look for a large gap between successive merge distances and cut there.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">linkage   how to measure the distance between two groups
+  single    the closest pair of points across the groups      (can chain into long strings)
+  complete  the farthest pair                                  (compact groups)
+  average   the mean of all cross-group distances              (a common compromise)
+  ward      the merge that least increases total variance
+cutting   remove the last k−1 merges to leave k clusters
+</code></pre>
+<p>Cost grows quickly with the number of points (at least quadratic), so hierarchical clustering suits thousands of points, not millions.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Fifteen points from three tight clouds (five each; bench data), average linkage. The 14 merge distances, earliest first:</p>
+<pre><code class="language-text">0.09  0.13  0.19  0.20  0.31  0.34  0.38  0.48  0.51  0.52  0.60  0.75   1.88   2.65
+└──────────── twelve merges inside the three clouds ────────────┘   └ two merges joining clouds
+</code></pre>
+<p>The first twelve merges build the three clouds, all below 0.75. Then come two big jumps: 1.88 (joining two clouds) and 2.65 (joining the last). To get <strong>3 clusters</strong> you undo the last two merges (a jump of 2.5× over the previous merge, 1.88 / 0.75); to get 2 you undo only the final one (2.65). Cutting at 4 clusters would undo a merge of 0.75, hardly bigger than its predecessor (0.60), so there is no reason to prefer four. The gap says three.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="hierarchical-clustering" data-title="Cut the merge tree"><p class="bench-fallback"><strong>Interactive bench: Cut the merge tree.</strong> Fifteen points from three clouds are clustered by average-linkage hierarchical clustering; a slider sets how many clusters remain after cutting the tree, and a bar chart shows the size of every merge with the undone ones highlighted.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the cut to 3 clusters and look at the bar chart.</li>
+<li>Change to 2, then 4, and note which merge is undone.</li>
+<li>Find the big jumps in the merge distances.</li>
+<li>Try cutting into 8 clusters.</li>
+</ol>
+<p><strong>What you should notice:</strong> the natural cut is where merge distances jump, and asking for more clusters than the data has means undoing merges that were nearly free.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Biology:</strong> gene-expression and species trees.</li>
+<li><strong>Document and image collections</strong> organised by topic at several levels.</li>
+<li><strong>Exploring embeddings</strong> before choosing a flat clustering.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Single linkage chaining</strong> unrelated groups through a bridge of points.</li>
+<li><strong>Unscaled features,</strong> as with any distance method.</li>
+<li><strong>Large datasets,</strong> where the method is too slow.</li>
+<li><strong>Reading the tree&#39;s left-right order as meaningful:</strong> only merge heights are.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does the algorithm do at each step?</summary>
+Merge the two closest groups.
+</details>
+
+<details><summary>2. How do you get 4 clusters from the merge tree?</summary>
+Undo the last three merges (cut so that four groups remain).
+</details>
+
+<details><summary>3. What signals a natural number of clusters?</summary>
+A large jump in successive merge distances.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Dendrogram:</strong> the tree of merges.</li>
+<li><strong>Linkage:</strong> the rule for the distance between groups.</li>
+<li><strong>Agglomerative:</strong> building up by merging.</li>
+<li><strong>Cut:</strong> choosing a height on the tree to define the clusters.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/k-means-clustering/" data-topic="machine-learning/k-means-clustering">k-Means Clustering</a> · <a class="wikilink" href="/machine-learning/choosing-the-number-of-clusters/" data-topic="machine-learning/choosing-the-number-of-clusters">Choosing the Number of Clusters</a> · <a class="wikilink" href="/math/trees-and-hierarchies/" data-topic="math/trees-and-hierarchies">Trees and Hierarchies</a> · <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a> · <a class="wikilink" href="/math/graphs-and-networks/" data-topic="math/graphs-and-networks">Graphs and Networks</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/hierarchical-clustering">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/gaussian-mixtures-and-em/"><small>Read next</small><b>Gaussian Mixtures and EM</b><p>k-means gives each point to exactly one cluster. A Gaussian mixture is softer: it says the data came from several bell-curve groups and gives each point a probability of belonging to each.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/k-means-clustering/"><b>k-Means Clustering</b><p>k-means groups unlabelled points into k clusters by repeating two steps: assign every point to its nearest centre, then move each centre to the average of its points.</p></a><a class="rc-card" href="/math/trees-and-hierarchies/"><b>Trees and Hierarchies</b><p>A tree is a connected graph with no cycles: one root, branches, and leaves at the ends.</p></a><a class="rc-card" href="/machine-learning/choosing-the-number-of-clusters/"><b>Choosing the Number of Clusters</b><p>Clustering algorithms need you to say how many clusters there are, but the data rarely says.</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a><a class="rc-card" href="/math/graphs-and-networks/"><b>Graphs and Networks</b><p>A graph is a set of nodes joined by edges. It is the natural way to describe anything connected: friends, roads, web pages, atoms, and the computation inside a neural network.</p></a><a class="rc-card" href="/machine-learning/unsupervised-learning/"><b>Unsupervised Learning</b><p>When no answers are given, a model can still find structure: groups of similar points, the true number of dimensions in the data, or the odd ones out.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/choosing-the-number-of-clusters/">← Previous: Choosing the Number of Clusters</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

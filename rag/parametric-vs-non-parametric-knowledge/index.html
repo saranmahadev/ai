@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parametric vs. Non-Parametric Knowledge — AI Base</title>
+<meta name="description" content="A language model&#39;s &quot;knowledge&quot; isn&#39;t stored the way a database stores facts.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/parametric-vs-non-parametric-knowledge/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Parametric vs. Non-Parametric Knowledge — AI Base">
+<meta property="og:description" content="A language model&#39;s &quot;knowledge&quot; isn&#39;t stored the way a database stores facts.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/parametric-vs-non-parametric-knowledge/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Parametric vs. Non-Parametric Knowledge","item":"https://ai.saranmahadev.in/rag/parametric-vs-non-parametric-knowledge/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Parametric vs. Non-Parametric Knowledge","description":"A language model's \"knowledge\" isn't stored the way a database stores facts.","url":"https://ai.saranmahadev.in/rag/parametric-vs-non-parametric-knowledge/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the parametric model's answer stay \"unknown\" even after the document is added to the store?","acceptedAnswer":{"@type":"Answer","text":"Adding a document to the store doesn't touch the model's weights at all — the parametric model's answer only changes if the model is retrained on data that includes the new fact."}},{"@type":"Question","name":"Is non-parametric knowledge \"better\" than parametric knowledge in general?","acceptedAnswer":{"@type":"Answer","text":"Not universally — it's better for facts that need to stay current or be added instantly, but parametric knowledge captures patterns, language ability and reasoning that aren't naturally expressed as retrievable documents."}},{"@type":"Question","name":"What has to happen for a parametric model's knowledge about a given fact to change?","acceptedAnswer":{"@type":"Answer","text":"Retraining (or fine-tuning) on data that includes that fact — there's no equivalent of \"adding a document\" for weights that have already been trained."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Why Retrieval and Grounding</p>
+        <h1 class="doc-title">Parametric vs. Non-Parametric Knowledge</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="csapw2cbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="csapw2cpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#csapw2cbg)"/>
+  <circle cx="436" cy="231" r="136" fill="#b7d5be" opacity="0.45"/><circle cx="989" cy="162" r="205" fill="#97e1e6" opacity="0.27"/><circle cx="207" cy="217" r="119" fill="#42718e" opacity="0.25"/><circle cx="779" cy="292" r="140" fill="#b7d5be" opacity="0.23"/><circle cx="609" cy="7" r="152" fill="#b7d5be" opacity="0.46"/><circle cx="1111" cy="366" r="173" fill="#97e1e6" opacity="0.37"/><circle cx="461" cy="94" r="161" fill="#dcf5f7" opacity="0.34"/>
+  <path d="M0,420 L0,308 L30,311 L60,315 L90,319 L120,324 L150,329 L180,335 L210,339 L240,343 L270,346 L300,349 L330,350 L360,349 L390,348 L420,345 L450,342 L480,337 L510,333 L540,327 L570,322 L600,317 L630,313 L660,310 L690,307 L720,306 L750,306 L780,307 L810,309 L840,312 L870,316 L900,321 L930,326 L960,331 L990,336 L1020,341 L1050,344 L1080,347 L1110,349 L1140,350 L1170,349 L1200,347 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,381 L60,379 L90,376 L120,374 L150,371 L180,369 L210,367 L240,365 L270,364 L300,363 L330,362 L360,362 L390,362 L420,363 L450,363 L480,365 L510,366 L540,368 L570,370 L600,373 L630,375 L660,377 L690,380 L720,382 L750,385 L780,387 L810,389 L840,391 L870,392 L900,393 L930,394 L960,394 L990,394 L1020,393 L1050,393 L1080,391 L1110,390 L1140,388 L1170,386 L1200,383 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="900" cy="208" rx="152" ry="43" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-12.7 900 208)"/><ellipse cx="900" cy="208" rx="211" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-6.7 900 208)"/>
+  <circle cx="900" cy="208" r="60" fill="url(#csapw2cpl)"/>
+  <circle cx="731" cy="261" r="17" fill="#ffffff" opacity="0.70"/><circle cx="1005" cy="271" r="13" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A language model&#39;s &quot;knowledge&quot; isn&#39;t stored the way a database stores facts. It&#39;s baked into millions of weight values during training, which means updating it means retraining — there&#39;s no row to edit. Retrieval gives a model a second, very different kind of knowledge: a document store it can search at answer-time, which can be edited the instant a new document arrives.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Where does a model&#39;s knowledge actually live, and why does that matter?&quot; <strong>Parametric knowledge</strong> is whatever got compressed into a model&#39;s weights during training — implicit, diffuse across millions of parameters, and frozen until the next training run. <strong>Non-parametric knowledge</strong> is an external store (documents, a database) the model consults at answer-time — explicit, inspectable, and editable immediately, with no retraining at all.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Parametric knowledge is like a fact a person memorized years ago from a textbook: it&#39;s genuinely theirs, but updating it means re-studying. Non-parametric knowledge is like handing that same person a current reference book before they answer: anyone can add a page to the book the moment new information exists, with no need for the person to &quot;relearn&quot; anything.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">parametric answer(fact)      = lookup in trained weights         (frozen until retrained)
+non-parametric answer(fact)  = lookup in an external document store (editable anytime)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A fact that didn&#39;t exist when the model was trained, checked before and after a new document is added to the store:</p>
+<pre><code class="language-text">before the document is added:
+  parametric model:       &quot;unknown — not in this source&quot;
+  retrieval-augmented:    &quot;unknown — not in this source&quot;
+
+after the document is added to the store (no retraining):
+  parametric model:       &quot;unknown — not in this source&quot;   (unchanged — its weights never moved)
+  retrieval-augmented:    &quot;effective March 2026&quot;            (found the new document instantly)
+</code></pre>
+<p>The retrieval-augmented answer changed the moment a document was added. The parametric model&#39;s answer didn&#39;t move at all — and won&#39;t, until it&#39;s retrained on data that includes this fact.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="parametric-vs-retrieved" data-title="One of these can be updated without retraining"><p class="bench-fallback"><strong>Interactive bench: One of these can be updated without retraining.</strong> Add a new document to a store and compare how a parametric and a retrieval-augmented answer respond.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Note both answers are &quot;unknown&quot; before anything is added.</li>
+<li>Click to add the new document and see only one answer change.</li>
+<li>Imagine this fact changing again next month — which approach handles that without any extra training work?</li>
+</ol>
+<p><strong>What you should notice:</strong> adding a document changes what the retrieval-augmented system can answer immediately; it changes nothing about the parametric model, which stays wrong (or honestly &quot;unknown&quot;) until someone retrains it.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the entire reason retrieval-augmented generation exists</strong>: every topic on this planet is, in one way or another, about building and using the non-parametric half of this picture well.</li>
+<li><strong><a class="wikilink" href="/rag/hallucination-and-knowledge-cutoff/" data-topic="rag/hallucination-and-knowledge-cutoff">Hallucination and Knowledge Cutoff</a> is what happens when a model is forced to answer from parametric knowledge alone, past the point where that knowledge is current or complete.</strong></li>
+<li><strong><a class="wikilink" href="/rag/rag-vs-fine-tuning-vs-long-context/" data-topic="rag/rag-vs-fine-tuning-vs-long-context">RAG vs. Fine-Tuning vs. Long-Context</a> compares this topic&#39;s two knowledge stores against a third option — stuffing non-parametric information directly into the prompt instead of a searchable store.</strong></li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming fine-tuning and retrieval solve the same problem.</strong> Fine-tuning changes parametric knowledge (slowly, in bulk, requiring retraining); retrieval adds non-parametric knowledge (instantly, per-document, requiring no retraining) — they&#39;re genuinely different mechanisms with different trade-offs.</li>
+<li><strong>Expecting a parametric model to &quot;know&quot; something just because it&#39;s true and recent.</strong> If it wasn&#39;t in the training data, it isn&#39;t in the weights — there&#39;s no partial credit for information existing on the internet somewhere.</li>
+<li><strong>Forgetting that non-parametric knowledge is only as good as what&#39;s actually in the store.</strong> A retrieval-augmented system can&#39;t retrieve a fact that was never added to its document collection either.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the parametric model's answer stay "unknown" even after the document is added to the store?</summary>
+Adding a document to the store doesn't touch the model's weights at all — the parametric model's answer only changes if the model is retrained on data that includes the new fact.
+</details>
+
+<details><summary>2. Is non-parametric knowledge "better" than parametric knowledge in general?</summary>
+Not universally — it's better for facts that need to stay current or be added instantly, but parametric knowledge captures patterns, language ability and reasoning that aren't naturally expressed as retrievable documents.
+</details>
+
+<details><summary>3. What has to happen for a parametric model's knowledge about a given fact to change?</summary>
+Retraining (or fine-tuning) on data that includes that fact — there's no equivalent of "adding a document" for weights that have already been trained.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Parametric knowledge:</strong> information implicitly stored in a model&#39;s trained weights, updatable only by retraining.</li>
+<li><strong>Non-parametric knowledge:</strong> information kept in an external, searchable store, updatable immediately without touching the model.</li>
+<li><strong>Retrieval-augmented generation (RAG):</strong> combining a model&#39;s parametric knowledge with non-parametric knowledge fetched from a document store at answer-time.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/hallucination-and-knowledge-cutoff/" data-topic="rag/hallucination-and-knowledge-cutoff">Hallucination and Knowledge Cutoff</a> · <a class="wikilink" href="/rag/rag-vs-fine-tuning-vs-long-context/" data-topic="rag/rag-vs-fine-tuning-vs-long-context">RAG vs. Fine-Tuning vs. Long-Context</a> · <a class="wikilink" href="/rag/anatomy-of-a-rag-pipeline/" data-topic="rag/anatomy-of-a-rag-pipeline">Anatomy of a RAG Pipeline</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/parametric-vs-non-parametric-knowledge">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/hallucination-and-knowledge-cutoff/"><small>Read next</small><b>Hallucination and Knowledge Cutoff</b><p>Every model has a training cutoff — a date after which nothing happened in its training data. Ask it about something before that date, and it usually answers confidently and correctly.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/rag/hallucination-and-knowledge-cutoff/"><b>Hallucination and Knowledge Cutoff</b><p>Every model has a training cutoff — a date after which nothing happened in its training data. Ask it about something before that date, and it usually answers confidently and correctly.</p></a><a class="rc-card" href="/rag/rag-vs-fine-tuning-vs-long-context/"><b>RAG vs. Fine-Tuning vs. Long-Context</b><p>A model that doesn&#39;t know something, or doesn&#39;t behave the way you want, has more than one fix available.</p></a><a class="rc-card" href="/rag/anatomy-of-a-rag-pipeline/"><b>Anatomy of a RAG Pipeline</b><p>Every retrieval-augmented system, however elaborate, is built from the same handful of stages in the same order: a question comes in, it becomes a vector, that vector finds relevant passages,…</p></a><a class="rc-card" href="/rag/why-retrieval-and-grounding/"><b>Why Retrieval and Grounding</b><p>A model&#39;s weights are a fixed snapshot of what it learned during training — they can&#39;t be updated with this morning&#39;s news or a document it&#39;s never seen.</p></a><a class="rc-card" href="/agents/the-augmented-llm/"><b>The Augmented LLM</b><p>A bare model call can only ever draw on what was baked into its weights during training.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/why-retrieval-and-grounding/">← Previous: Why Retrieval and Grounding</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

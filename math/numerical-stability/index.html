@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Numerical Stability — AI Base</title>
+<meta name="description" content="A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/numerical-stability/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Numerical Stability — AI Base">
+<meta property="og:description" content="A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/numerical-stability/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Numerical Stability","item":"https://ai.saranmahadev.in/math/numerical-stability/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Numerical Stability","description":"A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified.","url":"https://ai.saranmahadev.in/math/numerical-stability/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does softmax change if you add 100 to every score?","acceptedAnswer":{"@type":"Answer","text":"No."}},{"@type":"Question","name":"What do you subtract before exponentiating in a stable softmax?","acceptedAnswer":{"@type":"Answer","text":"The largest score."}},{"@type":"Question","name":"Why is E[x²] − mean² risky?","acceptedAnswer":{"@type":"Answer","text":"It subtracts two nearly equal large numbers, losing precision."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Numerical Computing</p>
+        <h1 class="doc-title">Numerical Stability</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cjdojxybg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cjdojxypl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cjdojxybg)"/>
+  <circle cx="821" cy="294" r="163" fill="#eee9fd" opacity="0.32"/><circle cx="93" cy="118" r="78" fill="#68599a" opacity="0.62"/><circle cx="984" cy="146" r="183" fill="#cebff9" opacity="0.27"/><circle cx="773" cy="85" r="62" fill="#eee9fd" opacity="0.60"/><circle cx="1100" cy="184" r="100" fill="#eee9fd" opacity="0.34"/><circle cx="317" cy="410" r="158" fill="#eee9fd" opacity="0.45"/><circle cx="273" cy="282" r="162" fill="#eee9fd" opacity="0.57"/>
+  <path d="M0,420 L0,346 L30,349 L60,350 L90,348 L120,345 L150,340 L180,334 L210,327 L240,321 L270,314 L300,310 L330,307 L360,306 L390,307 L420,310 L450,315 L480,321 L510,328 L540,335 L570,341 L600,346 L630,349 L660,350 L690,348 L720,345 L750,340 L780,334 L810,327 L840,321 L870,314 L900,310 L930,307 L960,306 L990,307 L1020,310 L1050,315 L1080,321 L1110,328 L1140,335 L1170,341 L1200,346 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,373 L30,370 L60,367 L90,365 L120,363 L150,362 L180,362 L210,363 L240,365 L270,367 L300,370 L330,374 L360,378 L390,381 L420,385 L450,388 L480,391 L510,393 L540,394 L570,394 L600,393 L630,392 L660,390 L690,387 L720,383 L750,380 L780,376 L810,372 L840,369 L870,366 L900,364 L930,363 L960,362 L990,362 L1020,364 L1050,366 L1080,368 L1110,371 L1140,375 L1170,379 L1200,383 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="680" cy="218" rx="212" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-7.7 680 218)"/><ellipse cx="680" cy="218" rx="293" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-1.7 680 218)"/>
+  <circle cx="680" cy="218" r="83" fill="url(#cjdojxypl)"/>
+  <circle cx="900" cy="233" r="17" fill="#ffffff" opacity="0.87"/><circle cx="748" cy="124" r="14" fill="#ffffff" opacity="0.61"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified. <strong>Numerical stability</strong> means rewriting a calculation, without changing its value, so that those errors stay small. Two rewrites do most of the work in machine learning: subtract the maximum before exponentiating (stable softmax and log-sum-exp) and avoid subtracting nearly equal numbers.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a>, <a class="wikilink" href="/math/overflow-and-underflow/" data-topic="math/overflow-and-underflow">Overflow and Underflow</a> and <a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;The maths is right, so why is the answer <code>NaN</code> or garbage?&quot; Because the order and form of the arithmetic matter when numbers have finite precision.</p>
+<h2 id="stable-softmax-and-log-sum-exp">Stable softmax and log-sum-exp</h2>
+<p>The softmax turns scores <code>zᵢ</code> into probabilities: <code>pᵢ = e^zᵢ / Σ e^zⱼ</code>. With scores near 1,000, every <code>e^z</code> overflows and the result is <code>inf / inf = NaN</code>.</p>
+<p>The fix uses the fact that dividing top and bottom by the same number changes nothing. Subtract the largest score <code>m</code> from every score first:</p>
+<pre><code class="language-text">pᵢ = e^(zᵢ − m) / Σ e^(zⱼ − m)          the largest exponent is now e⁰ = 1: no overflow
+log Σ e^zⱼ  =  m + log Σ e^(zⱼ − m)      log-sum-exp
+</code></pre>
+<p>Result: exactly the same probabilities, computed safely.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Scores <code>z = (1000, 1001, 1002)</code>:</p>
+<pre><code class="language-text">naive:  e^1000 = inf, so every ratio is inf / inf = NaN
+stable: m = 1002, shifted scores (−2, −1, 0)
+        e^ = (0.1353, 0.3679, 1.0000),  sum = 1.5032
+        softmax = (0.0900, 0.2447, 0.6652)
+        log-sum-exp = 1002 + ln 1.5032 = 1002.408
+</code></pre>
+<p>Note the softmax of <code>(1000, 1001, 1002)</code> equals that of <code>(−2, −1, 0)</code>: softmax ignores a constant shift.</p>
+<h2 id="catastrophic-cancellation">Catastrophic cancellation</h2>
+<p>Subtracting two nearly equal numbers wipes out the leading digits they share, leaving mostly rounding error. Computing a variance as <code>E[x²] − (E[x])²</code> for data like <code>100,000,001, 100,000,002, 100,000,003</code> subtracts two enormous, nearly equal numbers and can give a wrong or even negative variance. The two-pass form, <code>Σ (x − mean)²</code>, subtracts first and squares the small differences, and is stable.</p>
+<p>Other standard tricks: use <code>log1p(x)</code> instead of <code>log(1 + x)</code> for tiny <code>x</code>, compute log-probabilities directly (a fused log-softmax) rather than <code>log(softmax(z))</code>, and clip probabilities away from exactly 0 and 1 before taking logs.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="softmax-stability" data-title="Naive versus stable softmax"><p class="bench-fallback"><strong>Interactive bench: Naive versus stable softmax.</strong> Sliders set three scores and an offset added to all of them; the bench computes the softmax the naive way and the stable way, in float32 or float64, and shows where the naive version turns to NaN while the stable one is unchanged.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With a zero offset, compare the two answers.</li>
+<li>Raise the offset toward 1,000 and watch the naive version break.</li>
+<li>Switch to float32 and find where it breaks sooner.</li>
+<li>Confirm the stable answer does not depend on the offset.</li>
+</ol>
+<p><strong>What you should notice:</strong> softmax is unchanged by adding a constant to all scores, yet the naive formula fails when the scores are large, and the shifted formula never does.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every softmax, cross-entropy and attention layer</strong> uses the shifted form.</li>
+<li><strong>Log-sum-exp</strong> appears in probabilistic models and normalising constants.</li>
+<li><strong>Batch statistics</strong> use stable running means and variances.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong><code>log(softmax(z))</code></strong> computed in two steps instead of a fused log-softmax.</li>
+<li><strong>Variance by <code>E[x²] − mean²</code></strong> on data with a large mean.</li>
+<li><strong><code>log(0)</code></strong> from probabilities that underflowed.</li>
+<li><strong>Assuming a mathematically equal formula is numerically equal.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Does softmax change if you add 100 to every score?</summary>
+No.
+</details>
+
+<details><summary>2. What do you subtract before exponentiating in a stable softmax?</summary>
+The largest score.
+</details>
+
+<details><summary>3. Why is E[x²] − mean² risky?</summary>
+It subtracts two nearly equal large numbers, losing precision.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Numerical stability:</strong> small input or rounding errors stay small.</li>
+<li><strong>Log-sum-exp:</strong> <code>log Σ e^z</code>, computed as <code>m + log Σ e^(z − m)</code>.</li>
+<li><strong>Catastrophic cancellation:</strong> losing digits by subtracting nearly equal numbers.</li>
+<li><strong>log1p:</strong> an accurate <code>log(1 + x)</code> for small <code>x</code>.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/overflow-and-underflow/" data-topic="math/overflow-and-underflow">Overflow and Underflow</a> · <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a> · <a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a> · <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/numerical-stability">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/conditioning/"><small>Read next</small><b>Conditioning</b><p>A problem is ill-conditioned when tiny changes in its input cause huge changes in its answer, no matter how carefully you compute. The condition number measures that sensitivity.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/floating-point/"><b>Floating Point</b><p>Computers store real numbers in floating point: a fixed number of significant binary digits and an exponent.</p></a><a class="rc-card" href="/math/overflow-and-underflow/"><b>Overflow and Underflow</b><p>Overflow happens when a result is too large to store and becomes infinity; underflow happens when it is too small and becomes zero.</p></a><a class="rc-card" href="/math/exponential-and-logarithmic-functions/"><b>Exponential and Logarithmic Functions</b><p>An exponential function f(t) = a·bᵗ multiplies by the same factor every step, so it grows (or decays) faster and faster. Its inverse, the logarithmic function, grows slower and slower.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/math/scientific-notation-and-scale/"><b>Scientific Notation and Scale</b><p>Scientific notation writes a number as a digit-and-decimal part times a power of ten, so 6,000,000 becomes 6 × 10⁶ and 0.00042 becomes 4.2 × 10⁻⁴.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/overflow-and-underflow/">← Previous: Overflow and Underflow</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

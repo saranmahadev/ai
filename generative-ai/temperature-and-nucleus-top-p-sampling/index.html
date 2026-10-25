@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Temperature and Nucleus (Top-p) Sampling — AI Base</title>
+<meta name="description" content="Greedy and beam search both chase the highest-probability sequence, which makes open-ended text feel flat and repetitive — real writing isn&#39;t always the most predictable continuation.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/temperature-and-nucleus-top-p-sampling/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Temperature and Nucleus (Top-p) Sampling — AI Base">
+<meta property="og:description" content="Greedy and beam search both chase the highest-probability sequence, which makes open-ended text feel flat and repetitive — real writing isn&#39;t always the most predictable continuation.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/temperature-and-nucleus-top-p-sampling/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Temperature and Nucleus (Top-p) Sampling","item":"https://ai.saranmahadev.in/generative-ai/temperature-and-nucleus-top-p-sampling/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Temperature and Nucleus (Top-p) Sampling","description":"Greedy and beam search both chase the highest-probability sequence, which makes open-ended text feel flat and repetitive — real writing isn't always the most predictable continuation.","url":"https://ai.saranmahadev.in/generative-ai/temperature-and-nucleus-top-p-sampling/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What happens to a probability distribution as temperature approaches 0?","acceptedAnswer":{"@type":"Answer","text":"It sharpens toward the single highest-probability token, approaching greedy decoding in the limit."}},{"@type":"Question","name":"In the worked example, why does top-p = 0.5 exclude token C while top-p = 0.9 includes it?","acceptedAnswer":{"@type":"Answer","text":"Because C's probability (0.1474) isn't needed to reach a cumulative probability of 0.5 once B and A are included (0.4893 + 0.3625 already exceeds 0.5), but it is needed to reach 0.9."}},{"@type":"Question","name":"How do temperature and top-p differ in what they do to a distribution?","acceptedAnswer":{"@type":"Answer","text":"Temperature rescales every token's probability, changing how sharp or flat the whole distribution is; top-p removes the lowest-probability tail entirely, without changing the relative probabilities of the tokens it keeps."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Decoding and Prompting</p>
+        <h1 class="doc-title">Temperature and Nucleus (Top-p) Sampling</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1freu1dbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c1freu1dpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1freu1dbg)"/>
+  <circle cx="1078" cy="191" r="69" fill="#ffbeba" opacity="0.60"/><circle cx="896" cy="334" r="212" fill="#ffbeba" opacity="0.32"/><circle cx="880" cy="70" r="182" fill="#ffbfe0" opacity="0.37"/><circle cx="401" cy="361" r="124" fill="#ffbfe0" opacity="0.53"/><circle cx="272" cy="227" r="132" fill="#ffe9f4" opacity="0.39"/>
+  <path d="M0,420 L0,346 L30,348 L60,349 L90,349 L120,348 L150,346 L180,343 L210,339 L240,334 L270,329 L300,324 L330,319 L360,314 L390,311 L420,308 L450,306 L480,306 L510,306 L540,308 L570,311 L600,315 L630,320 L660,325 L690,330 L720,335 L750,340 L780,344 L810,347 L840,349 L870,350 L900,349 L930,348 L960,345 L990,341 L1020,337 L1050,332 L1080,327 L1110,322 L1140,317 L1170,313 L1200,310 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,393 L90,391 L120,389 L150,386 L180,382 L210,378 L240,375 L270,371 L300,368 L330,365 L360,363 L390,362 L420,362 L450,363 L480,364 L510,366 L540,369 L570,373 L600,376 L630,380 L660,384 L690,387 L720,390 L750,392 L780,393 L810,394 L840,394 L870,392 L900,390 L930,388 L960,384 L990,381 L1020,377 L1050,373 L1080,370 L1110,367 L1140,365 L1170,363 L1200,362 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="874" cy="198" rx="159" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-1.7 874 198)"/><ellipse cx="874" cy="198" rx="220" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(4.3 874 198)"/>
+  <circle cx="874" cy="198" r="62" fill="url(#c1freu1dpl)"/>
+  <circle cx="830" cy="276" r="17" fill="#ffffff" opacity="0.68"/><circle cx="886" cy="127" r="11" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Greedy and beam search both chase the highest-probability sequence, which makes open-ended text feel flat and repetitive — real writing isn&#39;t always the most predictable continuation. This note covers the two controls used to inject (and limit) randomness into generation instead.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/greedy-and-beam-search-decoding/" data-topic="generative-ai/greedy-and-beam-search-decoding">Greedy and Beam Search Decoding</a>, <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you make a model&#39;s output vary, without letting it wander into nonsense?&quot; <strong>Sampling</strong> draws the next token randomly according to the model&#39;s probability distribution instead of always taking the most likely one. Two controls shape that distribution before sampling: <strong>temperature</strong> rescales how sharp or flat it is, and <strong>nucleus (top-p) sampling</strong> truncates it to only the most probable tokens that together make up a probability mass of <code>p</code>, so a long tail of implausible tokens never gets a chance to be picked at all.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Think of the model&#39;s probabilities as a bag of weighted lottery balls — one ball per possible next token. Temperature is how hard you shake the bag before drawing: shake it hard (high temperature) and the odds flatten, so unlikely balls get a real chance; barely shake it (low temperature) and the heaviest ball is drawn almost every time. Nucleus sampling, separately, is removing every ball past a certain combined weight from the bag entirely before you draw — so even with a hard shake, you can never draw one of the longshot balls that individually barely register.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">temperature scaling:  P&#39;(i) = softmax(logits / T)
+  T &lt; 1: sharper distribution (more like greedy as T → 0)
+  T &gt; 1: flatter distribution (more uniform as T grows)
+  T = 1: the model&#39;s own distribution, unchanged
+
+nucleus (top-p): sort tokens by probability, descending; keep the
+  smallest prefix whose cumulative probability ≥ p; renormalize
+  the kept probabilities to sum to 1; sample only from those
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The toy logits <code>[A: 1.0, B: 1.3, C: 0.1, &lt;eos&gt;: −5]</code> from <a class="wikilink" href="/generative-ai/greedy-and-beam-search-decoding/" data-topic="generative-ai/greedy-and-beam-search-decoding">Greedy and Beam Search Decoding</a>, at temperature 1.0:</p>
+<pre><code class="language-text">T = 1.0:  P(A)=0.3625  P(B)=0.4893  P(C)=0.1474  P(eos)=0.0009
+</code></pre>
+<p>Lowering the temperature sharpens the distribution toward B, the already-favored token; raising it flattens the gap between A, B and C:</p>
+<pre><code class="language-text">T = 0.5:  P(A)=0.3347  P(B)=0.6099  P(C)=0.0553  P(eos)≈0.0000
+T = 2.0:  P(A)=0.3510  P(B)=0.4078  P(C)=0.2238  P(eos)=0.0175
+</code></pre>
+<p>At T = 1.0, nucleus sampling with different thresholds keeps different numbers of tokens:</p>
+<pre><code class="language-text">top-p = 0.9:  keeps {B: 0.4897, A: 0.3628, C: 0.1475}  — 3 of 4 tokens (excludes &lt;eos&gt;)
+top-p = 0.5:  keeps {B: 0.5744, A: 0.4256}             — just 2 of 4 tokens
+</code></pre>
+<p>Dropping <code>p</code> from 0.9 to 0.5 removes C from consideration entirely — not because its probability changed, but because the cumulative-probability cutoff got stricter.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="temp-topp-sampling" data-title="Temperature and top-p shape a distribution"><p class="bench-fallback"><strong>Interactive bench: Temperature and top-p shape a distribution.</strong> Adjust temperature and top-p and watch which tokens remain eligible to be sampled, then draw a sample.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Lower the temperature toward 0.2 and watch the distribution collapse toward the single most likely token.</li>
+<li>Raise it toward 2.0 and watch the bars flatten out.</li>
+<li>At temperature 1.0, lower top-p until only one or two tokens remain eligible.</li>
+<li>Sample repeatedly at a few different settings and see how often each token comes up.</li>
+</ol>
+<p><strong>What you should notice:</strong> temperature reshapes every bar&#39;s height, while top-p simply removes bars past a cutoff without changing the relative heights of the ones that remain — they&#39;re independent, composable controls.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Chat and creative-writing models sample by default</strong>, almost always with both a temperature and a top-p (or top-k) setting exposed as API parameters — &quot;temperature 0.7, top-p 0.9&quot; is a common default pairing.</li>
+<li><strong>Temperature near 0 approximates greedy decoding</strong>, which is why some APIs let you set temperature to 0 directly for deterministic output instead of true sampling.</li>
+<li><strong><a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">sampling multiple candidates and combining them</a> depends on this randomness existing in the first place</strong> — greedy decoding would produce the same candidate every time.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Setting temperature very high expecting &quot;more creative&quot; output.</strong> Past a point it just produces incoherent text, because even implausible tokens start getting picked regularly.</li>
+<li><strong>Confusing top-p with top-k.</strong> Top-p&#39;s cutoff adapts to the shape of the distribution (keeping more tokens when probability is spread out, fewer when it&#39;s concentrated); top-k always keeps a fixed number of tokens regardless of how the probability is distributed.</li>
+<li><strong>Forgetting top-p renormalizes.</strong> The kept tokens&#39; probabilities are rescaled to sum to 1 before sampling — they aren&#39;t sampled using their original (smaller) probabilities.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What happens to a probability distribution as temperature approaches 0?</summary>
+It sharpens toward the single highest-probability token, approaching greedy decoding in the limit.
+</details>
+
+<details><summary>2. In the worked example, why does top-p = 0.5 exclude token C while top-p = 0.9 includes it?</summary>
+Because C's probability (0.1474) isn't needed to reach a cumulative probability of 0.5 once B and A are included (0.4893 + 0.3625 already exceeds 0.5), but it is needed to reach 0.9.
+</details>
+
+<details><summary>3. How do temperature and top-p differ in what they do to a distribution?</summary>
+Temperature rescales every token's probability, changing how sharp or flat the whole distribution is; top-p removes the lowest-probability tail entirely, without changing the relative probabilities of the tokens it keeps.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Sampling:</strong> drawing the next token randomly according to its probability, rather than always taking the most likely one.</li>
+<li><strong>Temperature:</strong> a scaling factor applied to logits before softmax that sharpens (T&lt;1) or flattens (T&gt;1) the resulting distribution.</li>
+<li><strong>Nucleus (top-p) sampling:</strong> restricting sampling to the smallest set of highest-probability tokens whose combined probability reaches a threshold <code>p</code>.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/greedy-and-beam-search-decoding/" data-topic="generative-ai/greedy-and-beam-search-decoding">Greedy and Beam Search Decoding</a> · <a class="wikilink" href="/generative-ai/repetition-and-length-control/" data-topic="generative-ai/repetition-and-length-control">Repetition and Length Control</a> · <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/temperature-and-nucleus-top-p-sampling">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/repetition-and-length-control/"><small>Read next</small><b>Repetition and Length Control</b><p>Left alone, a decoding loop can get stuck: once a model starts favoring a short cycle of tokens, each repetition can make that same cycle even more likely next time.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/greedy-and-beam-search-decoding/"><b>Greedy and Beam Search Decoding</b><p>A trained language model hands back a probability distribution over the next token at every step, not a finished sentence — something has to decide, step after step, which token actually gets…</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/generative-ai/self-consistency-and-best-of-n-sampling/"><b>Self-Consistency and Best-of-N Sampling</b><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.</p></a><a class="rc-card" href="/generative-ai/repetition-and-length-control/"><b>Repetition and Length Control</b><p>Left alone, a decoding loop can get stuck: once a model starts favoring a short cycle of tokens, each repetition can make that same cycle even more likely next time.</p></a><a class="rc-card" href="/generative-ai/decoding-and-prompting/"><b>Decoding and Prompting</b><p>A trained language model outputs a probability distribution over the next token, not a finished sentence.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/greedy-and-beam-search-decoding/">← Previous: Greedy and Beam Search Decoding</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

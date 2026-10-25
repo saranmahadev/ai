@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Independence — AI Base</title>
+<meta name="description" content="Two events are independent when knowing one happened tells you nothing about the other: P(A | B) = P(A). Equivalently, the probability of both is the product: P(A and B) = P(A) · P(B).">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/independence/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Independence — AI Base">
+<meta property="og:description" content="Two events are independent when knowing one happened tells you nothing about the other: P(A | B) = P(A). Equivalently, the probability of both is the product: P(A and B) = P(A) · P(B).">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/independence/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Independence","item":"https://ai.saranmahadev.in/math/independence/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Independence","description":"Two events are independent when knowing one happened tells you nothing about the other: P(A | B) = P(A). Equivalently, the probability of both is the product: P(A and B) = P(A) · P(B).","url":"https://ai.saranmahadev.in/math/independence/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"P(A) = 0.5, P(B) = 0.2, independent. What is P(A and B)?","acceptedAnswer":{"@type":"Answer","text":"0.1."}},{"@type":"Question","name":"Chance of three sixes in a row on a fair die?","acceptedAnswer":{"@type":"Answer","text":"(1/6)³ = 1/216."}},{"@type":"Question","name":"Can mutually exclusive events with positive probability be independent?","acceptedAnswer":{"@type":"Answer","text":"No: P(A and B) = 0 but P(A)P(B) > 0."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Probability</p>
+        <h1 class="doc-title">Independence</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="caqnxenbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="caqnxenpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#caqnxenbg)"/>
+  <circle cx="418" cy="11" r="178" fill="#ddbecb" opacity="0.50"/><circle cx="277" cy="418" r="67" fill="#cebff9" opacity="0.54"/><circle cx="1104" cy="263" r="142" fill="#68599a" opacity="0.39"/><circle cx="1089" cy="362" r="211" fill="#eee9fd" opacity="0.45"/><circle cx="340" cy="124" r="141" fill="#68599a" opacity="0.56"/>
+  <path d="M0,420 L0,316 L30,313 L60,311 L90,309 L120,307 L150,306 L180,306 L210,306 L240,306 L270,307 L300,309 L330,311 L360,313 L390,316 L420,319 L450,322 L480,326 L510,329 L540,333 L570,336 L600,339 L630,342 L660,344 L690,346 L720,348 L750,349 L780,350 L810,350 L840,349 L870,348 L900,346 L930,344 L960,342 L990,339 L1020,336 L1050,333 L1080,329 L1110,326 L1140,323 L1170,319 L1200,316 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,389 L30,391 L60,392 L90,393 L120,394 L150,394 L180,394 L210,393 L240,393 L270,391 L300,390 L330,388 L360,386 L390,384 L420,381 L450,379 L480,376 L510,374 L540,371 L570,369 L600,367 L630,365 L660,364 L690,363 L720,362 L750,362 L780,362 L810,363 L840,363 L870,365 L900,366 L930,368 L960,370 L990,372 L1020,375 L1050,377 L1080,380 L1110,382 L1140,385 L1170,387 L1200,389 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="647" cy="267" rx="234" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(22.7 647 267)"/><ellipse cx="647" cy="267" rx="324" ry="91" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(28.7 647 267)"/>
+  <circle cx="647" cy="267" r="92" fill="url(#caqnxenpl)"/>
+  <circle cx="916" cy="236" r="15" fill="#ffffff" opacity="0.64"/><circle cx="775" cy="369" r="10" fill="#ffffff" opacity="0.61"/><circle cx="545" cy="381" r="15" fill="#ffffff" opacity="0.83"/><circle cx="397" cy="255" r="17" fill="#ffffff" opacity="0.90"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Two events are <strong>independent</strong> when knowing one happened tells you nothing about the other: <code>P(A | B) = P(A)</code>. Equivalently, the probability of both is the product: <code>P(A and B) = P(A) · P(B)</code>. Independence is the assumption that lets us multiply probabilities, and it is often an approximation.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a> and <a class="wikilink" href="/math/probability-rules/" data-topic="math/probability-rules">Probability Rules</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does one thing affect the chance of another?&quot; Two coin flips do not influence each other. But whether you carry an umbrella and whether it is raining certainly do.</p>
+<h2 id="intuition-no-information-passes-between-them">Intuition: no information passes between them</h2>
+<p>If learning <code>B</code> leaves the chance of <code>A</code> unchanged, <code>A</code> and <code>B</code> are independent. In area terms, <code>B</code> covers the same fraction of <code>A</code> as it does of the whole sample space.</p>
+<pre><code class="language-text">independent:   P(A and B) = P(A) · P(B)
+               (equivalently P(A | B) = P(A))
+</code></pre>
+<p>Do not confuse <em>independent</em> with <em>mutually exclusive</em>. Mutually exclusive events (both cannot happen) are actually strongly dependent: if <code>A</code> happened, <code>B</code> cannot.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Roll two dice. <code>A</code> = &quot;first die is even&quot; (<code>P = 1/2</code>), <code>B</code> = &quot;second die is above 4&quot; (<code>P = 2/6 = 1/3</code>).</p>
+<pre><code class="language-text">P(A and B) = 3 × 2 = 6 outcomes out of 36 = 1/6
+P(A) · P(B) = 1/2 × 1/3 = 1/6      equal → independent
+</code></pre>
+<p>A surprising one: <code>A</code> = &quot;sum is 7&quot; (<code>P = 1/6</code>), <code>B</code> = &quot;first die is 1&quot; (<code>P = 1/6</code>). Only <code>(1, 6)</code> satisfies both: <code>P(A and B) = 1/36 = 1/6 × 1/6</code>, so these are independent too. But <code>A</code> = &quot;sum is 8&quot; and <code>B</code> = &quot;first die is 1&quot;: no outcome satisfies both, so <code>P(A and B) = 0 ≠ 1/36</code>, and they are dependent.</p>
+<p>For <code>n</code> independent events, multiply all their probabilities: the chance of five heads in a row is <code>(1/2)⁵ = 1/32 ≈ 0.031</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="linked-spinners" data-title="Independent or linked?"><p class="bench-fallback"><strong>Interactive bench: Independent or linked?.</strong> Sliders set P(A), P(B) and how strongly they are linked; the bench shows the four cells of the joint table, compares P(A and B) with P(A) times P(B), and says whether the events are independent.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the link to &quot;independent&quot; and check the product rule.</li>
+<li>Make A and B positively linked and watch P(A and B) rise above the product.</li>
+<li>Make them negatively linked.</li>
+<li>Compare P(A | B) with P(A) in each case.</li>
+</ol>
+<p><strong>What you should notice:</strong> independence is the special setting where the joint probability equals the product, and any link pushes it above or below.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Naive Bayes</strong> assumes features are independent given the class.</li>
+<li><strong>Sampling</strong> assumes independent draws.</li>
+<li><strong>Dependent data</strong> (time series, neighbouring pixels) breaks that assumption, which affects how errors are estimated.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming independence</strong> when events are related (a common source of overconfident models).</li>
+<li><strong>Confusing independent with mutually exclusive.</strong></li>
+<li><strong>Multiplying probabilities of dependent events.</strong></li>
+<li><strong>Believing in the gambler&#39;s fallacy:</strong> past coin flips do not change the next one.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. P(A) = 0.5, P(B) = 0.2, independent. What is P(A and B)?</summary>
+0.1.
+</details>
+
+<details><summary>2. Chance of three sixes in a row on a fair die?</summary>
+(1/6)³ = 1/216.
+</details>
+
+<details><summary>3. Can mutually exclusive events with positive probability be independent?</summary>
+No: P(A and B) = 0 but P(A)P(B) > 0.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Independent events:</strong> one gives no information about the other.</li>
+<li><strong>Product rule:</strong> <code>P(A and B) = P(A) P(B)</code> for independent events.</li>
+<li><strong>Dependent:</strong> not independent.</li>
+<li><strong>Gambler&#39;s fallacy:</strong> believing past independent trials affect the next.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a> · <a class="wikilink" href="/math/probability-rules/" data-topic="math/probability-rules">Probability Rules</a> · <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/math/joint-and-marginal-distributions/" data-topic="math/joint-and-marginal-distributions">Joint and Marginal Distributions</a> · <a class="wikilink" href="/math/correlation-vs-causation/" data-topic="math/correlation-vs-causation">Correlation vs Causation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/independence">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/bayes-theorem/"><small>Read next</small><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/conditional-probability/"><b>Conditional Probability</b><p>Conditional probability is the probability of an event given that another has happened: P(A | B), read &quot;the probability of A given B&quot;.</p></a><a class="rc-card" href="/math/probability-rules/"><b>Probability Rules</b><p>Every probability, however it is produced, obeys a short list of rules: it lies between 0 and 1, the whole sample space has probability 1, the probability of &quot;not A&quot; is 1 − P(A), and for &quot;A or B&quot;…</p></a><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/math/joint-and-marginal-distributions/"><b>Joint and Marginal Distributions</b><p>A joint distribution gives the probability of every combination of two or more random variables at once.</p></a><a class="rc-card" href="/math/correlation-vs-causation/"><b>Correlation vs Causation</b><p>Two quantities are correlated when they tend to move together, but that alone does not mean one causes the other.</p></a><a class="rc-card" href="/math/probability/"><b>Probability</b><p>Probability is the maths of uncertainty. It gives numbers to &quot;how likely?&quot;, and rules for combining those numbers.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/conditional-probability/">← Previous: Conditional Probability</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

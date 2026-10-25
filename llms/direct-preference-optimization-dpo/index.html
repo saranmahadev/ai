@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direct Preference Optimization (DPO) — AI Base</title>
+<meta name="description" content="RLHF&#39;s reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/direct-preference-optimization-dpo/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Direct Preference Optimization (DPO) — AI Base">
+<meta property="og:description" content="RLHF&#39;s reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/direct-preference-optimization-dpo/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Direct Preference Optimization (DPO)","item":"https://ai.saranmahadev.in/llms/direct-preference-optimization-dpo/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Direct Preference Optimization (DPO)","description":"RLHF's reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones.","url":"https://ai.saranmahadev.in/llms/direct-preference-optimization-dpo/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does DPO optimize directly, that RLHF instead optimizes indirectly through a reward model?","acceptedAnswer":{"@type":"Answer","text":"The policy's own log-probability ratio (relative to a frozen reference) between a preferred and dispreferred response — DPO adjusts this ratio directly via gradient descent, with no separate reward model in between."}},{"@type":"Question","name":"In the worked example, why did the loss start at exactly ln 2 (≈0.693)?","acceptedAnswer":{"@type":"Answer","text":"Because the policy started identical to the reference, making the two log-ratio terms equal and so z = 0 — and −log(sigmoid(0)) = −log(0.5) = ln 2."}},{"@type":"Question","name":"What role does the frozen reference policy play in the DPO loss?","acceptedAnswer":{"@type":"Answer","text":"It anchors the comparison, so the loss only rewards genuine relative shifts in preference — without it, the policy could trivially inflate every response's probability without actually separating preferred from dispreferred."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Instruction Tuning and Alignment</p>
+        <h1 class="doc-title">Direct Preference Optimization (DPO)</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c16vy74ubg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c16vy74upl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c16vy74ubg)"/>
+  <circle cx="285" cy="352" r="75" fill="#ffc38f" opacity="0.38"/><circle cx="62" cy="102" r="192" fill="#ffc38f" opacity="0.57"/><circle cx="140" cy="114" r="201" fill="#8a5f5e" opacity="0.39"/><circle cx="518" cy="236" r="149" fill="#ffc7a2" opacity="0.42"/><circle cx="186" cy="59" r="69" fill="#ffc7a2" opacity="0.38"/><circle cx="304" cy="226" r="162" fill="#ffc38f" opacity="0.59"/>
+  <path d="M0,420 L0,316 L30,314 L60,311 L90,309 L120,307 L150,306 L180,306 L210,306 L240,306 L270,307 L300,309 L330,311 L360,313 L390,316 L420,319 L450,322 L480,325 L510,329 L540,332 L570,336 L600,339 L630,342 L660,344 L690,346 L720,348 L750,349 L780,349 L810,350 L840,349 L870,348 L900,347 L930,345 L960,342 L990,339 L1020,336 L1050,333 L1080,330 L1110,326 L1140,323 L1170,320 L1200,316 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,377 L30,374 L60,372 L90,370 L120,368 L150,366 L180,364 L210,363 L240,362 L270,362 L300,362 L330,362 L360,363 L390,364 L420,366 L450,367 L480,369 L510,372 L540,374 L570,377 L600,379 L630,382 L660,384 L690,386 L720,388 L750,390 L780,392 L810,393 L840,394 L870,394 L900,394 L930,394 L960,393 L990,392 L1020,390 L1050,389 L1080,387 L1110,384 L1140,382 L1170,379 L1200,377 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="889" cy="190" rx="200" ry="56" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.8 889 190)"/><ellipse cx="889" cy="190" rx="277" ry="78" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.8 889 190)"/>
+  <circle cx="889" cy="190" r="79" fill="url(#c16vy74upl)"/>
+  <circle cx="1119" cy="133" r="12" fill="#ffffff" opacity="0.65"/><circle cx="654" cy="201" r="11" fill="#ffffff" opacity="0.77"/><circle cx="973" cy="296" r="16" fill="#ffffff" opacity="0.66"/><circle cx="669" cy="150" r="15" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>RLHF&#39;s reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones. DPO gets there with a single loss function, no separate reward model, and no reinforcement learning at all.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/reinforcement-learning-from-human-feedback-rlhf/" data-topic="llms/reinforcement-learning-from-human-feedback-rlhf">Reinforcement Learning from Human Feedback (RLHF)</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can you get RLHF&#39;s effect without RLHF&#39;s machinery?&quot; Yes — <strong>Direct Preference Optimization</strong> shows that the same preference data RLHF would use to train a reward model can instead be plugged directly into a loss on the <em>policy itself</em>. The loss compares how much more (in log-probability, relative to a frozen reference policy) the current policy prefers the preferred response over the dispreferred one, and pushes that gap wider through ordinary gradient descent — no reward model, no sampling-based policy gradient, no RL stability tricks.</p>
+<h2 id="intuition">Intuition</h2>
+<p>RLHF&#39;s approach is like training a judge (the reward model) to score performances, then separately coaching the performer to chase whatever the judge scores highly — two separate systems, with all the complexity of keeping them working together. DPO skips the judge entirely: given a specific pair where one performance was preferred over another, directly adjust the performer to make the preferred one relatively more likely next time, compared to how likely it already was under their original style (the reference policy) — one system, one direct adjustment, no separate scoring step at all.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">for a (preferred, dispreferred) pair, under policy π and frozen reference π_ref:
+  z = β · [ log(π(preferred)/π_ref(preferred)) − log(π(dispreferred)/π_ref(dispreferred)) ]
+
+  loss = −log(sigmoid(z))
+
+  minimizing this loss directly increases π(preferred) relative to
+  π_ref(preferred), and decreases π(dispreferred) relative to π_ref(dispreferred)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Starting a policy exactly equal to its reference, with one preferred response (B) and one dispreferred response (D) in a 4-option set, taking repeated gradient steps on the DPO loss:</p>
+<pre><code class="language-text">step 0:  P(preferred)=0.310  P(dispreferred)=0.253  loss=0.6931   (ln 2 — no separation yet)
+step 1:  P(preferred)=0.354  P(dispreferred)=0.215  loss=0.5544
+step 3:  P(preferred)=0.428  P(dispreferred)=0.162  loss=0.3792
+step 5:  P(preferred)=0.484  P(dispreferred)=0.128  loss=0.2801
+</code></pre>
+<p>At step 0, with the policy identical to the reference, the loss starts at exactly <code>ln 2 ≈ 0.693</code> — the loss when the two log-ratios are equal, which is exactly what should happen before any training has pulled them apart. By step 5, the preferred response&#39;s probability has grown from 0.310 to 0.484 while the dispreferred one&#39;s has shrunk from 0.253 to 0.128 — the same qualitative separation RLHF produces, achieved by gradient descent on one direct loss.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="dpo-preference-step" data-title="No reward model, no RL loop"><p class="bench-fallback"><strong>Interactive bench: No reward model, no RL loop.</strong> Step through DPO gradient updates and watch the preferred response's probability rise while the dispreferred one's falls.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Note the starting loss value and why it equals ln 2.</li>
+<li>Step through updates and track both probabilities moving apart.</li>
+<li>Compare this separation to RLHF&#39;s policy-gradient result on a similar setup.</li>
+</ol>
+<p><strong>What you should notice:</strong> there&#39;s no reward model anywhere in this computation — only the policy&#39;s own probabilities, the frozen reference&#39;s probabilities, and the preference pair itself.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>DPO (Rafailov et al., 2023) has become a popular alternative to full RLHF</strong> for exactly this reason: it needs one fewer trained model and a much simpler, more stable training loop, while targeting the same underlying objective.</li>
+<li><strong>The frozen reference policy plays a crucial role</strong>: it anchors the loss so the update can&#39;t simply inflate every response&#39;s probability uniformly — only changes <em>relative</em> to the reference are rewarded.</li>
+<li><strong>DPO and RLHF are both downstream of <a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">the same underlying idea</a> — a Bradley-Terry-style model of preference</strong> — DPO just substitutes the policy&#39;s own log-probability ratio for what would otherwise be a separately learned reward model&#39;s score.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming DPO has no notion of &quot;reward&quot; at all.</strong> It implicitly defines an equivalent reward via the policy&#39;s log-probability ratio to the reference — it just never materializes that reward as a separate trained model.</li>
+<li><strong>Forgetting the reference policy must stay frozen.</strong> If the reference moved along with the policy, the log-ratio term would lose its anchor, and the loss would no longer have the same meaning.</li>
+<li><strong>Expecting DPO to need no preference data at all.</strong> It still requires exactly the same (preferred, dispreferred) comparison pairs RLHF&#39;s reward model would be trained on — the data requirement doesn&#39;t go away, only the separate reward-model-training step does.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does DPO optimize directly, that RLHF instead optimizes indirectly through a reward model?</summary>
+The policy's own log-probability ratio (relative to a frozen reference) between a preferred and dispreferred response — DPO adjusts this ratio directly via gradient descent, with no separate reward model in between.
+</details>
+
+<details><summary>2. In the worked example, why did the loss start at exactly ln 2 (≈0.693)?</summary>
+Because the policy started identical to the reference, making the two log-ratio terms equal and so z = 0 — and −log(sigmoid(0)) = −log(0.5) = ln 2.
+</details>
+
+<details><summary>3. What role does the frozen reference policy play in the DPO loss?</summary>
+It anchors the comparison, so the loss only rewards genuine relative shifts in preference — without it, the policy could trivially inflate every response's probability without actually separating preferred from dispreferred.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Direct Preference Optimization (DPO):</strong> a method for aligning a policy directly from preference pairs, without a separate reward model or RL loop.</li>
+<li><strong>Reference policy:</strong> a frozen copy of the policy (typically right after SFT) that anchors the DPO loss&#39;s comparison.</li>
+<li><strong>Log-probability ratio:</strong> the policy&#39;s log-probability for a response divided by the reference&#39;s, used as DPO&#39;s implicit reward signal.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/reinforcement-learning-from-human-feedback-rlhf/" data-topic="llms/reinforcement-learning-from-human-feedback-rlhf">Reinforcement Learning from Human Feedback (RLHF)</a> · <a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a> · <a class="wikilink" href="/llms/constitutional-ai-and-rlaif/" data-topic="llms/constitutional-ai-and-rlaif">Constitutional AI and RLAIF</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/direct-preference-optimization-dpo">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/constitutional-ai-and-rlaif/"><small>Read next</small><b>Constitutional AI and RLAIF</b><p>Every method so far in this district needs human preference judgments — and those are slow and expensive to collect at the scale alignment training wants.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/reinforcement-learning-from-human-feedback-rlhf/"><b>Reinforcement Learning from Human Feedback (RLHF)</b><p>A reward model can score any response — but scoring responses isn&#39;t the same as producing better ones.</p></a><a class="rc-card" href="/llms/reward-modeling/"><b>Reward Modeling</b><p>Judging &quot;which of these two responses is better&quot; is a question most people can answer confidently; assigning an absolute numerical quality score to a single response, consistently, is much harder…</p></a><a class="rc-card" href="/llms/constitutional-ai-and-rlaif/"><b>Constitutional AI and RLAIF</b><p>Every method so far in this district needs human preference judgments — and those are slow and expensive to collect at the scale alignment training wants.</p></a><a class="rc-card" href="/llms/instruction-tuning-and-alignment/"><b>Instruction Tuning and Alignment</b><p>A model pretrained purely to predict the next token has no particular reason to follow an instruction, refuse a harmful request, or prefer a helpful answer over a merely plausible one.</p></a><a class="rc-card" href="/llms/supervised-fine-tuning-sft/"><b>Supervised Fine-Tuning (SFT)</b><p>A pretrained model is extremely good at continuing text in whatever style it appears in — but &quot;the internet&quot; doesn&#39;t naturally produce the specific pattern of a helpful assistant replying to a…</p></a><a class="rc-card" href="/llms/rejection-sampling-and-best-of-n-fine-tuning/"><b>Rejection Sampling and Best-of-N Fine-Tuning</b><p>best-of-N sampling picks the best of several candidates at answer time. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/reinforcement-learning-from-human-feedback-rlhf/">← Previous: Reinforcement Learning from Human Feedback (RLHF)</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

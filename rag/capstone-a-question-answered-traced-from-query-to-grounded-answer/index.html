@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capstone: A Question Answered, Traced from Query to Grounded Answer — AI Base</title>
+<meta name="description" content="Every stage this planet covered separately — retrieving by similarity, re-ranking for accuracy, assembling context sensibly, generating with citations — is usually described one at a time, with…">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/capstone-a-question-answered-traced-from-query-to-grounded-answer/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Capstone: A Question Answered, Traced from Query to Grounded Answer — AI Base">
+<meta property="og:description" content="Every stage this planet covered separately — retrieving by similarity, re-ranking for accuracy, assembling context sensibly, generating with citations — is usually described one at a time, with…">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/capstone-a-question-answered-traced-from-query-to-grounded-answer/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Capstone: A Question Answered, Traced from Query to Grounded Answer","item":"https://ai.saranmahadev.in/rag/capstone-a-question-answered-traced-from-query-to-grounded-answer/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Capstone: A Question Answered, Traced from Query to Grounded Answer","description":"Every stage this planet covered separately — retrieving by similarity, re-ranking for accuracy, assembling context sensibly, generating with citations — is usually described one at a time, with…","url":"https://ai.saranmahadev.in/rag/capstone-a-question-answered-traced-from-query-to-grounded-answer/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does stage 2's re-ranking matter here if stage 1 already retrieved the same two documents?","acceptedAnswer":{"@type":"Answer","text":"Retrieval's cosine similarity scores for the two documents are nearly identical (0.998 vs. 0.998), barely distinguishing them; re-ranking's joint score reveals a much clearer gap (0.97 vs. 0.80), correctly identifying which of the two is actually the stronger source."}},{"@type":"Question","name":"Why does context assembly (stage 3) matter less in this specific worked example than it generally would?","acceptedAnswer":{"@type":"Answer","text":"With only two passages to place, both necessarily sit at the edges of the context rather than in a lost-in-the-middle position — assembly order would matter more with a longer list of passages, as Context Assembly and Ordering's own worked example shows."}},{"@type":"Question","name":"What would it mean if stage 4's citation check had found no supporting passage for the generated claim?","acceptedAnswer":{"@type":"Answer","text":"It would mean the generated answer drew on something other than what was actually retrieved — exactly the ungrounded-claim problem Grounded Generation and Faithfulness measures, and a signal that the answer shouldn't be trusted as retrieval-backed."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · RAG in Practice</p>
+        <h1 class="doc-title">Capstone: A Question Answered, Traced from Query to Grounded Answer</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1mml7vkbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1mml7vkpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1mml7vkbg)"/>
+  <circle cx="1058" cy="130" r="61" fill="#42718e" opacity="0.23"/><circle cx="1158" cy="82" r="218" fill="#42718e" opacity="0.33"/><circle cx="1117" cy="289" r="164" fill="#42718e" opacity="0.38"/><circle cx="655" cy="418" r="156" fill="#97e1e6" opacity="0.59"/><circle cx="378" cy="11" r="60" fill="#b7d5be" opacity="0.37"/>
+  <path d="M0,420 L0,312 L30,317 L60,324 L90,331 L120,337 L150,343 L180,347 L210,349 L240,349 L270,347 L300,343 L330,338 L360,331 L390,324 L420,318 L450,312 L480,308 L510,306 L540,306 L570,308 L600,312 L630,317 L660,324 L690,331 L720,337 L750,343 L780,347 L810,349 L840,349 L870,347 L900,343 L930,338 L960,331 L990,324 L1020,318 L1050,312 L1080,308 L1110,306 L1140,306 L1170,308 L1200,312 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,384 L30,381 L60,377 L90,373 L120,370 L150,367 L180,365 L210,363 L240,362 L270,362 L300,363 L330,365 L360,367 L390,370 L420,374 L450,378 L480,381 L510,385 L540,388 L570,391 L600,393 L630,394 L660,394 L690,393 L720,392 L750,390 L780,387 L810,383 L840,380 L870,376 L900,372 L930,369 L960,366 L990,364 L1020,363 L1050,362 L1080,362 L1110,364 L1140,366 L1170,368 L1200,372 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="994" cy="184" rx="164" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(15.5 994 184)"/><ellipse cx="994" cy="184" rx="226" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(21.5 994 184)"/>
+  <circle cx="994" cy="184" r="64" fill="url(#c1mml7vkpl)"/>
+  <circle cx="832" cy="259" r="16" fill="#ffffff" opacity="0.83"/><circle cx="849" cy="129" r="11" fill="#ffffff" opacity="0.85"/><circle cx="732" cy="164" r="10" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every stage this planet covered separately — retrieving by similarity, re-ranking for accuracy, assembling context sensibly, generating with citations — is usually described one at a time, with its own worked example. This capstone follows one real question through all four stages in order, reusing the exact same functions each earlier topic already verified, so the whole pipeline&#39;s numbers connect end to end.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a>, <a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a>, <a class="wikilink" href="/rag/context-assembly-and-ordering/" data-topic="rag/context-assembly-and-ordering">Context Assembly and Ordering</a>, <a class="wikilink" href="/rag/grounded-generation-and-faithfulness/" data-topic="rag/grounded-generation-and-faithfulness">Grounded Generation and Faithfulness</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What does a question actually go through, in order, from arriving as text to becoming a grounded, cited answer?&quot; Four stages, each one this road already covered in depth: embedding the query and retrieving the closest documents by similarity; re-ranking that shortlist with a more careful, joint relevance score; assembling the kept passages into context, aware of where each one lands; and generating an answer whose claims are checked against — and cited to — what was actually retrieved.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A research assistant handling one question does roughly these same four things in order: skims the shelf for the books that look most relevant, reads the few that seem promising more carefully to judge which is actually best, lays out notes from the best ones in a sensible order, and then writes an answer that cites exactly which note supports each claim — rather than writing from memory and hoping it happens to line up with what was actually read.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">stage 1: embed + retrieve   — cosine similarity against the whole collection, keep the top few
+stage 2: re-rank            — a more careful joint score over just the kept shortlist
+stage 3: assemble           — place the kept passages into context, aware of position effects
+stage 4: generate + cite    — answer, then check each claim against what was retrieved
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The question &quot;how long do refunds take,&quot; traced through all four stages using the exact numbers already verified earlier on this planet:</p>
+<pre><code class="language-text">stage 1 (embed + retrieve): query vs. 4 documents by cosine similarity
+  top 2: &quot;refund timeline&quot; (0.998), &quot;returns policy&quot; (0.998)
+
+stage 2 (re-rank): a joint relevance score re-orders the shortlist
+  &quot;refund timeline&quot; (0.97) now clearly ahead of &quot;returns policy&quot; (0.80)
+
+stage 3 (assemble): with only 2 passages to place, both sit at context edges —
+  neither falls into a lost-in-the-middle position
+
+stage 4 (generate + cite): &quot;Refunds take 5 business days.&quot;
+  cited to &quot;refund timeline&quot; (similarity 0.9997) — fully grounded
+</code></pre>
+<p>Retrieval alone couldn&#39;t have told you &quot;refund timeline&quot; was more reliable than &quot;returns policy&quot; — that&#39;s what re-ranking&#39;s joint score adds. Assembly mattered less here only because there were just two passages to place; with more, their positions would have mattered the way <a class="wikilink" href="/rag/context-assembly-and-ordering/" data-topic="rag/context-assembly-and-ordering">Context Assembly and Ordering</a> already showed. The final claim&#39;s citation confirms the answer didn&#39;t drift from what was actually retrieved.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rag-capstone" data-title="One question, every stage of this road"><p class="bench-fallback"><strong>Interactive bench: One question, every stage of this road.</strong> Step one question through retrieval, re-ranking, assembly and grounded generation, reusing this planet's own verified functions at each stage.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through all four stages and read each one&#39;s own number.</li>
+<li>Compare the retrieval ranking (stage 1) against the re-ranked order (stage 2) — notice the shortlist&#39;s membership didn&#39;t change, only its order.</li>
+<li>Reset and imagine skipping stage 4&#39;s citation check — would you be able to tell, just from reading the answer, whether it was actually grounded?</li>
+</ol>
+<p><strong>What you should notice:</strong> each stage&#39;s number was independently verified earlier on this planet&#39;s own road — this capstone doesn&#39;t introduce new mechanics, it chains the same four mechanisms together in the order they actually happen.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Stage 1 reuses <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a> exactly</strong>, stage 2 reuses <a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a>&#39;s own worked example, stage 3 reuses <a class="wikilink" href="/rag/context-assembly-and-ordering/" data-topic="rag/context-assembly-and-ordering">Context Assembly and Ordering</a>&#39;s reasoning, and stage 4 reuses <a class="wikilink" href="/rag/grounded-generation-and-faithfulness/" data-topic="rag/grounded-generation-and-faithfulness">Grounded Generation and Faithfulness</a>&#39;s citation mechanism — nothing here is new mechanics, only the ordering.</li>
+<li><strong><a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a> names a specific failure for each of these stages</strong> — this capstone is what the pipeline looks like when every stage works as intended, the reference case those failure modes deviate from.</li>
+<li><strong><a class="wikilink" href="/rag/production-rag-pipeline-architecture/" data-topic="rag/production-rag-pipeline-architecture">Production RAG Pipeline Architecture</a> is this same four-stage shape, with the operational concerns (latency, cost, caching) layered on top.</strong></li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating these four stages as interchangeable or reorderable.</strong> Each stage assumes the previous one already happened — re-ranking assumes a shortlist retrieval already produced; generation assumes context assembly already placed the passages it&#39;s meant to cite.</li>
+<li><strong>Expecting retrieval&#39;s similarity scores to directly predict re-ranking&#39;s verdict.</strong> The worked example&#39;s stage 1 and stage 2 scores aren&#39;t on the same scale and aren&#39;t meant to be compared directly — re-ranking&#39;s whole purpose is to look more carefully than retrieval&#39;s cheap first pass could.</li>
+<li><strong>Assuming a fully grounded final answer means the pipeline is working perfectly everywhere.</strong> This worked example traces a case where every stage succeeds — a real system also needs the failure-mode handling (<a class="wikilink" href="/rag/corrective-rag/" data-topic="rag/corrective-rag">Corrective RAG</a>, permission filtering, conflict resolution) covered elsewhere on this road for when a stage doesn&#39;t go this cleanly.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does stage 2's re-ranking matter here if stage 1 already retrieved the same two documents?</summary>
+Retrieval's cosine similarity scores for the two documents are nearly identical (0.998 vs. 0.998), barely distinguishing them; re-ranking's joint score reveals a much clearer gap (0.97 vs. 0.80), correctly identifying which of the two is actually the stronger source.
+</details>
+
+<details><summary>2. Why does context assembly (stage 3) matter less in this specific worked example than it generally would?</summary>
+With only two passages to place, both necessarily sit at the edges of the context rather than in a lost-in-the-middle position — assembly order would matter more with a longer list of passages, as <a class="wikilink" href="/rag/context-assembly-and-ordering/" data-topic="rag/context-assembly-and-ordering">Context Assembly and Ordering</a>'s own worked example shows.
+</details>
+
+<details><summary>3. What would it mean if stage 4's citation check had found no supporting passage for the generated claim?</summary>
+It would mean the generated answer drew on something other than what was actually retrieved — exactly the ungrounded-claim problem <a class="wikilink" href="/rag/grounded-generation-and-faithfulness/" data-topic="rag/grounded-generation-and-faithfulness">Grounded Generation and Faithfulness</a> measures, and a signal that the answer shouldn't be trusted as retrieval-backed.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>End-to-end trace:</strong> following one request through every stage of a pipeline in order, rather than examining each stage in isolation.</li>
+<li><strong>Shortlist:</strong> the reduced set of candidates retrieval passes on to re-ranking.</li>
+<li><strong>Grounded answer:</strong> a generated answer whose claims are verifiably supported by retrieved context.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a> · <a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a> · <a class="wikilink" href="/rag/grounded-generation-and-faithfulness/" data-topic="rag/grounded-generation-and-faithfulness">Grounded Generation and Faithfulness</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/capstone-a-question-answered-traced-from-query-to-grounded-answer">Open in the interactive site →</a></p>
+        
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/dense-retrieval/"><b>Dense Retrieval</b><p>&quot;Automobile repair&quot; and &quot;car maintenance&quot; share not a single word, yet mean almost the same thing.</p></a><a class="rc-card" href="/rag/re-ranking-retrieved-results/"><b>Re-Ranking Retrieved Results</b><p>Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet&#39;s own illustrative units — far too much for a live request.</p></a><a class="rc-card" href="/rag/context-assembly-and-ordering/"><b>Context Assembly and Ordering</b><p>Retrieval can rank the single most relevant passage first — and assembly can still bury it in the middle of the prompt, right where a model is statistically least likely to actually use it.</p></a><a class="rc-card" href="/rag/grounded-generation-and-faithfulness/"><b>Grounded Generation and Faithfulness</b><p>Retrieving the right passages doesn&#39;t guarantee the generated answer actually uses them.</p></a><a class="rc-card" href="/rag/common-rag-failure-modes/"><b>Common RAG Failure Modes</b><p>Across this planet&#39;s road, the same handful of failure symptoms keep recurring — a stale fact, a result count that&#39;s mysteriously short, an answer that confidently cites the wrong thing.</p></a><a class="rc-card" href="/rag/production-rag-pipeline-architecture/"><b>Production RAG Pipeline Architecture</b><p>Every topic on this road so far has zoomed into one stage of a RAG system.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/security-and-data-leakage-in-rag/">← Previous: Security and Data Leakage in RAG</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

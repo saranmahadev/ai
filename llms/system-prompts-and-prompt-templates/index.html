@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>System Prompts and Prompt Templates — AI Base</title>
+<meta name="description" content="Every request to a deployed LLM usually carries more than the user&#39;s own words: a system prompt sets the assistant&#39;s persona and rules, and a template arranges the system prompt, conversation…">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/system-prompts-and-prompt-templates/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="System Prompts and Prompt Templates — AI Base">
+<meta property="og:description" content="Every request to a deployed LLM usually carries more than the user&#39;s own words: a system prompt sets the assistant&#39;s persona and rules, and a template arranges the system prompt, conversation…">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/system-prompts-and-prompt-templates/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"System Prompts and Prompt Templates","item":"https://ai.saranmahadev.in/llms/system-prompts-and-prompt-templates/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"System Prompts and Prompt Templates","description":"Every request to a deployed LLM usually carries more than the user's own words: a system prompt sets the assistant's persona and rules, and a template arranges the system prompt, conversation…","url":"https://ai.saranmahadev.in/llms/system-prompts-and-prompt-templates/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the system prompt's share jump from 18.2% to 76.9% when its length only grows 15×?","acceptedAnswer":{"@type":"Answer","text":"The user and assistant turns stay fixed (90 tokens total), so as the system prompt grows, it comes to dominate an ever-larger fraction of a total that's growing almost entirely because of it."}},{"@type":"Question","name":"Does increasing the number of requests change the system prompt's *share* of total tokens?","acceptedAnswer":{"@type":"Answer","text":"No — the share only depends on the ratio between system-prompt length and conversation length; increasing request volume scales the absolute totals but not that ratio."}},{"@type":"Question","name":"Why might an unexpected prompt template cause a model to follow instructions worse, even if the instructions' content is unchanged?","acceptedAnswer":{"@type":"Answer","text":"Because the model was instruction-tuned on a specific template format; presenting the same content in a different arrangement of roles and special tokens can fall outside what the model reliably learned to follow."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · LLMs in Practice</p>
+        <h1 class="doc-title">System Prompts and Prompt Templates</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cza1c5jbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="cza1c5jpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cza1c5jbg)"/>
+  <circle cx="39" cy="357" r="160" fill="#ffece0" opacity="0.37"/><circle cx="554" cy="13" r="137" fill="#ffece0" opacity="0.28"/><circle cx="1073" cy="109" r="71" fill="#ffc7a2" opacity="0.37"/><circle cx="755" cy="156" r="100" fill="#ffece0" opacity="0.54"/><circle cx="253" cy="12" r="99" fill="#ffece0" opacity="0.48"/>
+  <path d="M0,420 L0,317 L30,312 L60,308 L90,306 L120,306 L150,308 L180,313 L210,318 L240,325 L270,332 L300,338 L330,344 L360,348 L390,349 L420,349 L450,347 L480,343 L510,337 L540,330 L570,323 L600,317 L630,312 L660,308 L690,306 L720,306 L750,308 L780,313 L810,318 L840,325 L870,332 L900,338 L930,344 L960,348 L990,349 L1020,349 L1050,347 L1080,343 L1110,337 L1140,330 L1170,323 L1200,317 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,377 L60,374 L90,370 L120,367 L150,365 L180,363 L210,362 L240,362 L270,363 L300,365 L330,367 L360,370 L390,374 L420,377 L450,381 L480,385 L510,388 L540,391 L570,393 L600,394 L630,394 L660,393 L690,392 L720,390 L750,387 L780,383 L810,380 L840,376 L870,372 L900,369 L930,366 L960,364 L990,363 L1020,362 L1050,362 L1080,364 L1110,366 L1140,368 L1170,371 L1200,375 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="911" cy="140" rx="258" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-6.8 911 140)"/><ellipse cx="911" cy="140" rx="356" ry="100" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-0.8 911 140)"/>
+  <circle cx="911" cy="140" r="101" fill="url(#cza1c5jpl)"/>
+  <circle cx="680" cy="86" r="18" fill="#ffffff" opacity="0.61"/><circle cx="1221" cy="75" r="10" fill="#ffffff" opacity="0.68"/><circle cx="1079" cy="8" r="8" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every request to a deployed LLM usually carries more than the user&#39;s own words: a system prompt sets the assistant&#39;s persona and rules, and a template arranges the system prompt, conversation history and user turn into the exact format the model was trained to expect. None of this is visible to the user, but all of it is sent — and paid for — on every single request.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/instruction-dataset-construction/" data-topic="llms/instruction-dataset-construction">Instruction Dataset Construction</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What actually gets sent to the model besides the user&#39;s own message?&quot; A system prompt is a block of instructions (persona, rules, output format) prepended to every conversation. A prompt template is the specific arrangement — special tokens, role labels, ordering — that turns a system prompt plus a conversation into the single sequence of tokens the model actually sees, matching the format it was trained (specifically, instruction-tuned, see <a class="wikilink" href="/llms/instruction-dataset-construction/" data-topic="llms/instruction-dataset-construction">Instruction Dataset Construction</a>) on.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A customer-service phone line plays the same recorded greeting and menu before every single call, no matter how short the caller&#39;s actual question is. That recording costs the same few seconds whether the call lasts thirty seconds or thirty minutes — and if the company lengthens the recording, every call gets longer and more expensive, even though the caller&#39;s own words didn&#39;t change at all.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">per-request tokens = system_tokens + user_tokens + assistant_tokens
+system&#39;s share      = (system_tokens × n_requests) / (per-request tokens × n_requests)
+                     = system_tokens / per-request tokens
+</code></pre>
+<p>The system prompt&#39;s token count is fixed per request; it&#39;s paid for on every request regardless of how short the conversation is.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>With a 30-token user turn and a 60-token assistant reply, across 1,000 requests:</p>
+<pre><code class="language-text">short system prompt (20 tokens):
+  per request = 20 + 30 + 60 = 110 tokens
+  total tokens = 110,000;  system prompt&#39;s share = 18.2%
+
+long system prompt (300 tokens):
+  per request = 300 + 30 + 60 = 390 tokens
+  total tokens = 390,000;  system prompt&#39;s share = 76.9%
+</code></pre>
+<p>Growing the system prompt 15× (20 → 300 tokens) didn&#39;t just add a fixed cost — it took the system prompt from a minor fraction of every request&#39;s tokens to the large majority of them, even though the user&#39;s and assistant&#39;s own turns never changed.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="system-prompt-overhead" data-title="A fixed instruction, paid for on every request"><p class="bench-fallback"><strong>Interactive bench: A fixed instruction, paid for on every request.</strong> Slide the system prompt's length and the number of requests and watch its share of total tokens change.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at a short system prompt and slide it up toward 300+ tokens; watch its share of total tokens climb past 50%.</li>
+<li>Hold the system prompt fixed and slide the number of requests up; notice the share doesn&#39;t change — only the absolute total does.</li>
+<li>Imagine two products with identical system prompts but very different average conversation lengths; which one is hit harder by a longer system prompt?</li>
+</ol>
+<p><strong>What you should notice:</strong> the system prompt&#39;s <em>share</em> of tokens depends only on its length relative to the conversation, not on how many requests are sent — but the <em>absolute</em> extra cost from a longer system prompt scales directly with request volume.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>A model only follows a prompt template reliably if it was instruction-tuned on data formatted the same way (<a class="wikilink" href="/llms/instruction-dataset-construction/" data-topic="llms/instruction-dataset-construction">Instruction Dataset Construction</a>)</strong> — an unexpected template at inference time is a common, silent cause of poor instruction-following.</li>
+<li><strong>A long, elaborate system prompt directly inflates per-request cost and latency (<a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a>)</strong>, since every token in it is priced and processed like any other input token.</li>
+<li><strong><a class="wikilink" href="/llms/structured-output-and-tool-calling-apis/" data-topic="llms/structured-output-and-tool-calling-apis">Structured Output and Tool-Calling APIs</a> often relies on instructions placed in the system prompt</strong> (schema definitions, tool descriptions) — another reason system prompts tend to grow over a product&#39;s lifetime.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating the system prompt as &quot;free&quot; because the user never sees it.</strong> It&#39;s invisible to the user, but it&#39;s still tokenized, transmitted, and billed exactly like visible text.</li>
+<li><strong>Growing the system prompt indefinitely as a product accumulates more rules and edge cases.</strong> The worked example shows this isn&#39;t a one-time cost — it&#39;s multiplied by every request, forever, until the prompt is trimmed or restructured.</li>
+<li><strong>Assuming the template&#39;s exact formatting (special tokens, role order) doesn&#39;t matter as long as the content is right.</strong> A model instruction-tuned on one template format can behave unpredictably when served a differently formatted prompt at inference time.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the system prompt's share jump from 18.2% to 76.9% when its length only grows 15×?</summary>
+The user and assistant turns stay fixed (90 tokens total), so as the system prompt grows, it comes to dominate an ever-larger fraction of a total that's growing almost entirely because of it.
+</details>
+
+<details><summary>2. Does increasing the number of requests change the system prompt's *share* of total tokens?</summary>
+No — the share only depends on the ratio between system-prompt length and conversation length; increasing request volume scales the absolute totals but not that ratio.
+</details>
+
+<details><summary>3. Why might an unexpected prompt template cause a model to follow instructions worse, even if the instructions' content is unchanged?</summary>
+Because the model was instruction-tuned on a specific template format; presenting the same content in a different arrangement of roles and special tokens can fall outside what the model reliably learned to follow.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>System prompt:</strong> instructions prepended to every conversation, setting the assistant&#39;s persona, rules or output format.</li>
+<li><strong>Prompt template:</strong> the specific arrangement of roles, turns and special tokens that converts a conversation into the token sequence the model expects.</li>
+<li><strong>Per-request overhead:</strong> the token cost incurred repeatedly on every single request, regardless of how short the user&#39;s own message is.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/instruction-dataset-construction/" data-topic="llms/instruction-dataset-construction">Instruction Dataset Construction</a> · <a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a> · <a class="wikilink" href="/llms/structured-output-and-tool-calling-apis/" data-topic="llms/structured-output-and-tool-calling-apis">Structured Output and Tool-Calling APIs</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/system-prompts-and-prompt-templates">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/structured-output-and-tool-calling-apis/"><small>Read next</small><b>Structured Output and Tool-Calling APIs</b><p>Code that calls an LLM usually needs the response in a specific shape — valid JSON with particular fields, or a specific function call with typed arguments — not free-flowing prose.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/instruction-dataset-construction/"><b>Instruction Dataset Construction</b><p>SFT can only be as good as the examples it&#39;s trained on — which raises an immediate, practical problem: writing enough high-quality (instruction, response) pairs by hand, across every kind of…</p></a><a class="rc-card" href="/llms/cost-and-latency-of-llm-apis/"><b>Cost and Latency of LLM APIs</b><p>A request to an LLM API has two separate costs that don&#39;t move together: how much it costs in money, and how long it takes to come back.</p></a><a class="rc-card" href="/llms/structured-output-and-tool-calling-apis/"><b>Structured Output and Tool-Calling APIs</b><p>Code that calls an LLM usually needs the response in a specific shape — valid JSON with particular fields, or a specific function call with typed arguments — not free-flowing prose.</p></a><a class="rc-card" href="/llms/llms-in-practice/"><b>LLMs in Practice</b><p>The last stretch of this planet&#39;s road: adapting a model to a specific task, prompting and serving it as part of a real product, the practical failure modes of each, and a capstone that traces the…</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/catastrophic-forgetting-in-fine-tuning/">← Previous: Catastrophic Forgetting in Fine-Tuning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

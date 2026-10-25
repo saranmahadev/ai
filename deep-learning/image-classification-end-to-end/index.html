@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image Classification End to End — AI Base</title>
+<meta name="description" content="Every idea in this district — convolution, channels, padding and pooling, depth, residual connections, receptive fields — exists to serve one standard pipeline: convolve, pool, repeat, flatten,…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/image-classification-end-to-end/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Image Classification End to End — AI Base">
+<meta property="og:description" content="Every idea in this district — convolution, channels, padding and pooling, depth, residual connections, receptive fields — exists to serve one standard pipeline: convolve, pool, repeat, flatten,…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/image-classification-end-to-end/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Image Classification End to End","item":"https://ai.saranmahadev.in/deep-learning/image-classification-end-to-end/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Image Classification End to End","description":"Every idea in this district — convolution, channels, padding and pooling, depth, residual connections, receptive fields — exists to serve one standard pipeline: convolve, pool, repeat, flatten,…","url":"https://ai.saranmahadev.in/deep-learning/image-classification-end-to-end/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does \"flattening\" actually compute?","acceptedAnswer":{"@type":"Answer","text":"Nothing — it is pure reshaping, turning a multi-dimensional feature map into a single vector with no arithmetic involved."}},{"@type":"Question","name":"In the worked example, what shape is the data right before the dense layer?","acceptedAnswer":{"@type":"Answer","text":"A length-4 vector (1, 1, 2, 2), flattened from the 2×2 feature map that followed the convolution and ReLU."}},{"@type":"Question","name":"Why might a classifier use softmax at the end rather than stopping at the raw logits?","acceptedAnswer":{"@type":"Answer","text":"Softmax turns arbitrary real-valued logits into a probability distribution — positive numbers that sum to 1 — which is both easier to interpret and what cross-entropy loss expects during training."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Convolutional Neural Networks</p>
+        <h1 class="doc-title">Image Classification End to End</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cjvblf1bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cjvblf1pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cjvblf1bg)"/>
+  <circle cx="792" cy="307" r="206" fill="#ffb89d" opacity="0.34"/><circle cx="1034" cy="111" r="130" fill="#ffb6b6" opacity="0.28"/><circle cx="50" cy="3" r="182" fill="#ffb89d" opacity="0.52"/><circle cx="324" cy="51" r="128" fill="#8a546c" opacity="0.36"/><circle cx="494" cy="202" r="125" fill="#ffb89d" opacity="0.29"/>
+  <path d="M0,420 L0,348 L30,345 L60,340 L90,334 L120,327 L150,321 L180,314 L210,310 L240,307 L270,306 L300,307 L330,310 L360,315 L390,321 L420,328 L450,335 L480,341 L510,346 L540,349 L570,350 L600,348 L630,345 L660,340 L690,334 L720,327 L750,321 L780,314 L810,310 L840,307 L870,306 L900,307 L930,310 L960,315 L990,321 L1020,328 L1050,335 L1080,341 L1110,346 L1140,349 L1170,350 L1200,348 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,391 L30,388 L60,385 L90,382 L120,378 L150,374 L180,371 L210,368 L240,365 L270,363 L300,362 L330,362 L360,363 L390,364 L420,367 L450,370 L480,373 L510,377 L540,380 L570,384 L600,387 L630,390 L660,392 L690,394 L720,394 L750,394 L780,392 L810,390 L840,388 L870,384 L900,381 L930,377 L960,373 L990,370 L1020,367 L1050,364 L1080,363 L1110,362 L1140,362 L1170,363 L1200,365 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="864" cy="129" rx="206" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(13.6 864 129)"/><ellipse cx="864" cy="129" rx="284" ry="80" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(19.6 864 129)"/>
+  <circle cx="864" cy="129" r="81" fill="url(#cjvblf1pl)"/>
+  <circle cx="763" cy="53" r="16" fill="#ffffff" opacity="0.85"/><circle cx="723" cy="52" r="18" fill="#ffffff" opacity="0.80"/><circle cx="983" cy="63" r="12" fill="#ffffff" opacity="0.82"/><circle cx="730" cy="59" r="9" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every idea in this district — convolution, channels, padding and pooling, depth, residual connections, receptive fields — exists to serve one standard pipeline: <strong>convolve, pool, repeat, flatten, classify.</strong> This topic runs that whole pipeline by hand on one tiny image.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> and <a class="wikilink" href="/deep-learning/padding-stride-and-pooling/" data-topic="deep-learning/padding-stride-and-pooling">Padding, Stride and Pooling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;I understand each piece — convolution, pooling, depth — separately. How do they actually combine into one working classifier?&quot; By chaining them in a fixed order, then flattening whatever feature map is left into a vector a plain <a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">dense layer</a> can classify.</p>
+<h2 id="intuition-from-a-grid-of-pixels-to-a-grid-of-probabilities">Intuition: from a grid of pixels to a grid of probabilities</h2>
+<p>A classification CNN is a funnel: it starts wide and flat (a 2D image) and gradually turns into a short list of numbers (one score per class). Convolutional and pooling layers do the &quot;seeing&quot; — finding and summarising patterns while the data is still shaped like an image. Once the spatial structure has done its job, <strong>flattening</strong> reshapes whatever is left into a plain vector, and an ordinary dense layer turns that vector into class scores.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">pipeline:   image → conv → activation → pool → (repeat) → flatten → dense → softmax
+
+flatten:    reshape a feature map (height × width × channels) into one long vector,
+            with no computation — purely bookkeeping
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 4×4 toy &quot;corner&quot; image, through one convolution, a ReLU, flattening, and a 2-class output layer:</p>
+<pre><code class="language-text">image                     kernel [-1, 0, 1]     conv (valid, 2×2)
+0 0 0 0                   (per row)              1  1
+0 0 0 0                                          2  2
+0 0 1 1
+0 0 1 1
+</code></pre>
+<p>ReLU leaves this unchanged (already all positive): flattened to <code>(1, 1, 2, 2)</code>.</p>
+<pre><code class="language-text">dense layer:  W = [[0.5, −0.3, 0.2, 0.1], [−0.4, 0.6, 0.1, −0.2]]    b = (0.1, −0.1)
+
+logits = (0.5·1 − 0.3·1 + 0.2·2 + 0.1·2 + 0.1,  −0.4·1 + 0.6·1 + 0.1·2 − 0.2·2 − 0.1)
+       = (0.9, −0.1)
+
+softmax(0.9, −0.1) ≈ (0.731, 0.269)
+</code></pre>
+<p>The network ends up about 73% confident in the first class — a single convolution, a ReLU, and a dense layer were all it took to turn a grid of pixels into a probability for each class.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="cnn-pipeline" data-title="One tiny image, all the way to a prediction"><p class="bench-fallback"><strong>Interactive bench: One tiny image, all the way to a prediction.</strong> Step through convolution, ReLU, flattening and the final dense-plus-softmax layer on a toy image, watching the data's shape and values change at every stage.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through all four stages in order and watch the shape change: 4×4 grid → 2×2 grid → length-4 vector → 2 class probabilities.</li>
+<li>Switch to a different toy image and see how the final probabilities change while the pipeline&#39;s shape stays identical.</li>
+<li>Edit the dense layer&#39;s weights and see how much they can shift the final prediction, even with the same convolution output.</li>
+</ol>
+<p><strong>What you should notice:</strong> every stage either extracts features from spatial structure (convolution) or discards structure on purpose (flattening) — nothing in between does both at once.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Real image classifiers</strong> are this exact pipeline, just with many more convolutional layers, larger images, far more classes, and architectures from <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> handling the &quot;convolve, pool, repeat&quot; part.</li>
+<li><strong>Transfer learning</strong> (see <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a>) usually reuses everything up to flattening from a pretrained network, retraining only the final dense layer for a new task.</li>
+<li><strong>The same funnel shape</strong> — spatial processing, then flatten, then dense — appears in object detection and segmentation too, just with different output layers in place of plain classification.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting flattening discards spatial information.</strong> Once flattened, the dense layer has no notion of &quot;this value was top-left&quot; versus &quot;this value was bottom-right&quot; — only its position in the vector.</li>
+<li><strong>Mismatched shapes between the last convolutional layer and the dense layer.</strong> The flattened vector&#39;s length must exactly match the dense layer&#39;s expected input size — a frequent source of implementation errors.</li>
+<li><strong>Assuming the pipeline must end in softmax.</strong> Binary classification often uses a single sigmoid output instead; the &quot;convolve, pool, flatten&quot; part is unaffected either way.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does "flattening" actually compute?</summary>
+Nothing — it is pure reshaping, turning a multi-dimensional feature map into a single vector with no arithmetic involved.
+</details>
+
+<details><summary>2. In the worked example, what shape is the data right before the dense layer?</summary>
+A length-4 vector (1, 1, 2, 2), flattened from the 2×2 feature map that followed the convolution and ReLU.
+</details>
+
+<details><summary>3. Why might a classifier use softmax at the end rather than stopping at the raw logits?</summary>
+Softmax turns arbitrary real-valued logits into a probability distribution — positive numbers that sum to 1 — which is both easier to interpret and what cross-entropy loss expects during training.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Flatten:</strong> reshaping a feature map into a single vector, with no computation.</li>
+<li><strong>Pipeline (convolve, pool, repeat, flatten, classify):</strong> the standard structure of a CNN image classifier.</li>
+<li><strong>Logits:</strong> the raw, pre-softmax scores produced by the final dense layer.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> · <a class="wikilink" href="/deep-learning/padding-stride-and-pooling/" data-topic="deep-learning/padding-stride-and-pooling">Padding, Stride and Pooling</a> · <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/image-classification-end-to-end">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/sequence-models/"><small>Read next</small><b>Sequence Models</b><p>Text, audio and time series are sequences: order matters, and length varies. This district covers the networks built to read one step at a time while keeping a memory of what came before.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/"><b>CNN Architectures: From LeNet to ResNet</b><p>Convolutional architectures did not arrive all at once.</p></a><a class="rc-card" href="/deep-learning/padding-stride-and-pooling/"><b>Padding, Stride and Pooling</b><p>Three simple knobs control how a convolution&#39;s output is sized and how fast a network shrinks an image down: padding adds a border so the filter can reach the edges, stride sets how far the filter…</p></a><a class="rc-card" href="/deep-learning/the-multilayer-feedforward-network/"><b>The Multilayer Feedforward Network</b><p>A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.</p></a><a class="rc-card" href="/deep-learning/transfer-learning-and-fine-tuning/"><b>Transfer Learning and Fine-Tuning</b><p>A network trained on one large task has already learned a great deal of generally useful structure — edges and textures for vision, grammar and common phrasing for language.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/deep-learning/convolutional-neural-networks/"><b>Convolutional Neural Networks</b><p>A photograph has structure a plain feedforward network ignores: a cat&#39;s ear looks the same whether it is in the top-left or bottom-right corner.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/object-detection-and-segmentation/">← Previous: Object Detection and Segmentation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

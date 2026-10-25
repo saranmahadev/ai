@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Re-Ranking Retrieved Results — AI Base</title>
+<meta name="description" content="Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet&#39;s own illustrative units — far too much for a live request.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/re-ranking-retrieved-results/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Re-Ranking Retrieved Results — AI Base">
+<meta property="og:description" content="Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet&#39;s own illustrative units — far too much for a live request.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/re-ranking-retrieved-results/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Re-Ranking Retrieved Results","item":"https://ai.saranmahadev.in/rag/re-ranking-retrieved-results/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Re-Ranking Retrieved Results","description":"Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet's own illustrative units — far too much for a live request.","url":"https://ai.saranmahadev.in/rag/re-ranking-retrieved-results/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the funnel's total cost stay low even as the shortlist size grows?","acceptedAnswer":{"@type":"Answer","text":"The bi-encoder pass over the full 10,000-document collection (10,000 cost units) dominates the total; the cross-encoder's cost over the shortlist only adds 100 units per document kept, which stays small relative to the bi-encoder term for any reasonable shortlist size."}},{"@type":"Question","name":"What's the risk of making the shortlist too small?","acceptedAnswer":{"@type":"Answer","text":"If the true most relevant document scores just outside the shortlist cutoff under the cheap first-stage method, it never reaches the cross-encoder at all — no amount of accurate re-ranking can recover a document that was never passed through."}},{"@type":"Question","name":"Why is re-ranking not simply \"run a cross-encoder on everything, but faster\"?","acceptedAnswer":{"@type":"Answer","text":"It's a structurally different approach — a cheap method handles the full collection first, and only the resulting shortlist gets the expensive treatment; the cross-encoder itself isn't optimized to be cheaper, it's just applied to far fewer documents."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Advanced RAG Patterns</p>
+        <h1 class="doc-title">Re-Ranking Retrieved Results</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c11qjyx5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c11qjyx5pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c11qjyx5bg)"/>
+  <circle cx="1065" cy="174" r="208" fill="#97e1e6" opacity="0.50"/><circle cx="1151" cy="4" r="186" fill="#dcf5f7" opacity="0.52"/><circle cx="107" cy="224" r="147" fill="#42718e" opacity="0.31"/><circle cx="650" cy="411" r="152" fill="#97e1e6" opacity="0.23"/><circle cx="937" cy="307" r="141" fill="#b7d5be" opacity="0.33"/>
+  <path d="M0,420 L0,327 L30,323 L60,320 L90,317 L120,314 L150,311 L180,309 L210,308 L240,306 L270,306 L300,306 L330,306 L360,307 L390,308 L420,310 L450,313 L480,315 L510,318 L540,322 L570,325 L600,329 L630,332 L660,335 L690,338 L720,341 L750,344 L780,346 L810,348 L840,349 L870,349 L900,350 L930,349 L960,348 L990,347 L1020,345 L1050,342 L1080,340 L1110,337 L1140,333 L1170,330 L1200,327 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,373 L30,375 L60,378 L90,380 L120,382 L150,385 L180,387 L210,389 L240,391 L270,392 L300,393 L330,394 L360,394 L390,394 L420,393 L450,392 L480,391 L510,390 L540,388 L570,386 L600,383 L630,381 L660,378 L690,376 L720,374 L750,371 L780,369 L810,367 L840,365 L870,364 L900,363 L930,362 L960,362 L990,362 L1020,363 L1050,364 L1080,365 L1110,366 L1140,368 L1170,370 L1200,373 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="891" cy="237" rx="158" ry="44" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(5.4 891 237)"/><ellipse cx="891" cy="237" rx="218" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(11.4 891 237)"/>
+  <circle cx="891" cy="237" r="62" fill="url(#c11qjyx5pl)"/>
+  <circle cx="790" cy="183" r="10" fill="#ffffff" opacity="0.71"/><circle cx="1048" cy="302" r="17" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet&#39;s own illustrative units — far too much for a live request. Running it only over the 50 documents a cheap bi-encoder already found promising costs a tiny fraction of that, for most of the accuracy benefit.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/cross-encoders-and-re-rankers/" data-topic="rag/cross-encoders-and-re-rankers">Cross-Encoders and Re-Rankers</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you get a cross-encoder&#39;s accuracy without paying its cost over an entire collection?&quot; Re-ranking is the two-stage pipeline this trade-off implies: a cheap bi-encoder (or sparse method) retrieves a shortlist — the top 50, say — from the full collection, and only <em>that</em> shortlist gets passed to a cross-encoder for a more careful, accurate re-score. The expensive stage never sees the documents the cheap stage already ruled out.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A hiring pipeline doesn&#39;t have a senior interviewer review every single résumé submitted — a fast initial screen narrows thousands of applicants down to a shortlist, and only that shortlist gets the time-intensive, careful attention a senior interviewer can actually afford to give.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">cross-encode everything:      N documents × cross-encoder cost per document
+funnel (retrieve + re-rank):  N documents × bi-encoder cost  +  shortlist × cross-encoder cost
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 10,000-document collection, re-ranking a shortlist of 50:</p>
+<pre><code class="language-text">cross-encoding the entire collection:         10,000 × 100 = 1,000,000 cost units
+bi-encoder retrieval + cross-encoder re-rank:  10,000 × 1  +  50 × 100  =  15,000 cost units
+
+speedup: 1,000,000 / 15,000 ≈ 66.7×
+</code></pre>
+<p>The funnel costs roughly 1.5% of what cross-encoding the entire collection would — a two-orders-of-magnitude saving, for an accuracy improvement that only matters within the shortlist the cheap first stage already narrowed things down to.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rerank-funnel-cost" data-title="Expensive scoring, saved for a short list"><p class="bench-fallback"><strong>Interactive bench: Expensive scoring, saved for a short list.</strong> Compare the cost of cross-encoding an entire collection against a bi-encoder-then-re-rank funnel.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the shortlist size up and watch the funnel&#39;s total cost grow, but stay far below cross-encoding everything.</li>
+<li>Slide it down toward 10 and watch the speedup increase further.</li>
+<li>Imagine a shortlist so large it approaches the full collection size — what happens to the speedup?</li>
+</ol>
+<p><strong>What you should notice:</strong> the funnel&#39;s cost is dominated by the cheap bi-encoder pass over the <em>whole</em> collection, plus a comparatively small cross-encoder cost over just the shortlist — shrinking the shortlist barely changes the total, since the bi-encoder term already dominates.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the practical justification for keeping <a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a> and <a class="wikilink" href="/rag/cross-encoders-and-re-rankers/" data-topic="rag/cross-encoders-and-re-rankers">Cross-Encoders and Re-Rankers</a> as separate stages</strong>, rather than ever using a cross-encoder as the primary retrieval mechanism.</li>
+<li><strong><a class="wikilink" href="/rag/hybrid-retrieval-fusion/" data-topic="rag/hybrid-retrieval-fusion">Hybrid Retrieval Fusion</a> is often the shortlist-producing first stage</strong> that feeds a re-ranker, combining sparse and dense signals before the expensive re-ranking step ever runs.</li>
+<li><strong>A re-ranked shortlist is exactly what <a class="wikilink" href="/rag/context-assembly-and-ordering/" data-topic="rag/context-assembly-and-ordering">Context Assembly and Ordering</a> has to decide how to arrange</strong> — re-ranking determines which passages make it into the final context, and roughly in what order of confidence.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a bigger shortlist is always safer.</strong> A larger shortlist does slightly reduce the risk of the cheap first stage missing a truly relevant document, but the worked example shows the funnel&#39;s total cost barely changes — the real risk to manage is the first stage&#39;s recall, not the re-ranking cost.</li>
+<li><strong>Skipping the first stage and cross-encoding everything &quot;to be thorough.&quot;</strong> The worked example&#39;s two-orders-of-magnitude cost gap is exactly why this doesn&#39;t scale past small collections.</li>
+<li><strong>Forgetting that the funnel&#39;s final ranking is only as good as the first stage&#39;s recall.</strong> If the true best document never makes it into the shortlist, no amount of careful re-ranking can recover it.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the funnel's total cost stay low even as the shortlist size grows?</summary>
+The bi-encoder pass over the full 10,000-document collection (10,000 cost units) dominates the total; the cross-encoder's cost over the shortlist only adds 100 units per document kept, which stays small relative to the bi-encoder term for any reasonable shortlist size.
+</details>
+
+<details><summary>2. What's the risk of making the shortlist too small?</summary>
+If the true most relevant document scores just outside the shortlist cutoff under the cheap first-stage method, it never reaches the cross-encoder at all — no amount of accurate re-ranking can recover a document that was never passed through.
+</details>
+
+<details><summary>3. Why is re-ranking not simply "run a cross-encoder on everything, but faster"?</summary>
+It's a structurally different approach — a cheap method handles the full collection first, and only the resulting shortlist gets the expensive treatment; the cross-encoder itself isn't optimized to be cheaper, it's just applied to far fewer documents.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Re-ranking:</strong> applying a more accurate (and more expensive) scoring method to a shortlist a cheaper method already produced.</li>
+<li><strong>Shortlist:</strong> the reduced set of candidates passed from a cheap retrieval stage to an expensive re-ranking stage.</li>
+<li><strong>Two-stage retrieval:</strong> a pipeline combining a fast, broad first pass with a slow, narrow second pass.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/cross-encoders-and-re-rankers/" data-topic="rag/cross-encoders-and-re-rankers">Cross-Encoders and Re-Rankers</a> · <a class="wikilink" href="/rag/hybrid-retrieval-fusion/" data-topic="rag/hybrid-retrieval-fusion">Hybrid Retrieval Fusion</a> · <a class="wikilink" href="/rag/context-assembly-and-ordering/" data-topic="rag/context-assembly-and-ordering">Context Assembly and Ordering</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/re-ranking-retrieved-results">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/self-rag-and-reflective-retrieval/"><small>Read next</small><b>Self-RAG and Reflective Retrieval</b><p>Every query in a basic RAG pipeline gets retrieved for, whether it needs it or not — &quot;what is 2 + 2&quot; triggers the exact same search-then-generate routine as a question about a company&#39;s…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/cross-encoders-and-re-rankers/"><b>Cross-Encoders and Re-Rankers</b><p>A bi-encoder&#39;s speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented.</p></a><a class="rc-card" href="/rag/bi-encoders-and-dense-embeddings/"><b>Bi-Encoders and Dense Embeddings</b><p>Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered on the Math planet.</p></a><a class="rc-card" href="/rag/hybrid-retrieval-fusion/"><b>Hybrid Retrieval Fusion</b><p>Sparse retrieval and dense retrieval fail in different, complementary ways — one misses semantic matches with no shared vocabulary, the other can blur exact matches it should have caught outright.</p></a><a class="rc-card" href="/rag/context-assembly-and-ordering/"><b>Context Assembly and Ordering</b><p>Retrieval can rank the single most relevant passage first — and assembly can still bury it in the middle of the prompt, right where a model is statistically least likely to actually use it.</p></a><a class="rc-card" href="/rag/advanced-rag-patterns/"><b>Advanced RAG Patterns</b><p>The basic retrieve-then-generate loop has limits: it trusts whatever came back from a single search, treats every document the same whether it&#39;s prose or a spreadsheet, and has no way to notice…</p></a><a class="rc-card" href="/rag/context-window-budgeting-for-rag/"><b>Context-Window Budgeting for RAG</b><p>Retrieved chunks don&#39;t get the entire context window to themselves — a running conversation&#39;s own history is sitting in there too, and the two are competing for the exact same limited space.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/advanced-rag-patterns/">← Previous: Advanced RAG Patterns</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

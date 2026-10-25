@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advanced RAG Patterns — AI Base</title>
+<meta name="description" content="The basic retrieve-then-generate loop has limits: it trusts whatever came back from a single search, treats every document the same whether it&#39;s prose or a spreadsheet, and has no way to notice…">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/advanced-rag-patterns/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Advanced RAG Patterns — AI Base">
+<meta property="og:description" content="The basic retrieve-then-generate loop has limits: it trusts whatever came back from a single search, treats every document the same whether it&#39;s prose or a spreadsheet, and has no way to notice…">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/advanced-rag-patterns/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Advanced RAG Patterns","item":"https://ai.saranmahadev.in/rag/advanced-rag-patterns/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Advanced RAG Patterns","description":"The basic retrieve-then-generate loop has limits: it trusts whatever came back from a single search, treats every document the same whether it's prose or a spreadsheet, and has no way to notice…","url":"https://ai.saranmahadev.in/rag/advanced-rag-patterns/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Advanced RAG Patterns</p>
+        <h1 class="doc-title">Advanced RAG Patterns</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>1 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ckbr9pobg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="ckbr9popl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ckbr9pobg)"/>
+  <circle cx="943" cy="180" r="169" fill="#42718e" opacity="0.57"/><circle cx="500" cy="276" r="129" fill="#dcf5f7" opacity="0.58"/><circle cx="279" cy="244" r="68" fill="#42718e" opacity="0.57"/><circle cx="193" cy="361" r="222" fill="#42718e" opacity="0.48"/><circle cx="1075" cy="393" r="85" fill="#dcf5f7" opacity="0.44"/>
+  <path d="M0,420 L0,306 L30,306 L60,306 L90,307 L120,308 L150,310 L180,312 L210,315 L240,318 L270,321 L300,324 L330,328 L360,331 L390,335 L420,338 L450,341 L480,343 L510,346 L540,347 L570,349 L600,349 L630,350 L660,349 L690,348 L720,347 L750,345 L780,343 L810,340 L840,337 L870,334 L900,331 L930,327 L960,324 L990,320 L1020,317 L1050,314 L1080,312 L1110,310 L1140,308 L1170,307 L1200,306 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,393 L90,390 L120,387 L150,382 L180,377 L210,372 L240,368 L270,365 L300,363 L330,362 L360,363 L390,366 L420,369 L450,374 L480,379 L510,384 L540,388 L570,391 L600,393 L630,394 L660,393 L690,390 L720,387 L750,382 L780,377 L810,372 L840,368 L870,365 L900,363 L930,362 L960,363 L990,366 L1020,369 L1050,374 L1080,379 L1110,384 L1140,388 L1170,391 L1200,393 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="840" cy="195" rx="246" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-21.2 840 195)"/><ellipse cx="840" cy="195" rx="340" ry="95" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-15.2 840 195)"/>
+  <circle cx="840" cy="195" r="96" fill="url(#ckbr9popl)"/>
+  <circle cx="776" cy="332" r="13" fill="#ffffff" opacity="0.71"/><circle cx="714" cy="104" r="15" fill="#ffffff" opacity="0.87"/><circle cx="894" cy="102" r="10" fill="#ffffff" opacity="0.66"/><circle cx="642" cy="301" r="17" fill="#ffffff" opacity="0.71"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The basic retrieve-then-generate loop has limits: it trusts whatever came back from a single search, treats every document the same whether it&#39;s prose or a spreadsheet, and has no way to notice when retrieval itself failed. This district covers the patterns that address each of those gaps.</p>
+<p>Topics on this stretch of the road:</p>
+<ul>
+<li><a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a>: a second, more careful pass over what a fast search already found.</li>
+<li><a class="wikilink" href="/rag/self-rag-and-reflective-retrieval/" data-topic="rag/self-rag-and-reflective-retrieval">Self-RAG and Reflective Retrieval</a>: a model that decides for itself whether it needs to retrieve, and whether what it retrieved was good enough.</li>
+<li><a class="wikilink" href="/rag/corrective-rag/" data-topic="rag/corrective-rag">Corrective RAG</a>: catching and recovering from a bad retrieval before it reaches generation.</li>
+<li><a class="wikilink" href="/rag/graph-based-rag/" data-topic="rag/graph-based-rag">Graph-Based RAG</a>: retrieving from a knowledge graph instead of, or alongside, a flat document collection.</li>
+<li><a class="wikilink" href="/rag/retrieval-over-structured-data/" data-topic="rag/retrieval-over-structured-data">Retrieval over Structured Data</a>: answering questions against tables and databases instead of prose.</li>
+<li><a class="wikilink" href="/rag/multimodal-rag/" data-topic="rag/multimodal-rag">Multimodal RAG</a>: retrieving images, audio or other non-text content alongside, or instead of, text.</li>
+</ul>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/advanced-rag-patterns">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/re-ranking-retrieved-results/"><small>Read next</small><b>Re-Ranking Retrieved Results</b><p>Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet&#39;s own illustrative units — far too much for a live request.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/re-ranking-retrieved-results/"><b>Re-Ranking Retrieved Results</b><p>Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet&#39;s own illustrative units — far too much for a live request.</p></a><a class="rc-card" href="/rag/self-rag-and-reflective-retrieval/"><b>Self-RAG and Reflective Retrieval</b><p>Every query in a basic RAG pipeline gets retrieved for, whether it needs it or not — &quot;what is 2 + 2&quot; triggers the exact same search-then-generate routine as a question about a company&#39;s…</p></a><a class="rc-card" href="/rag/corrective-rag/"><b>Corrective RAG</b><p>Self-RAG discards an individual irrelevant passage; Corrective RAG asks a broader question about the whole retrieval — is this collection of results even worth generating from, or should the…</p></a><a class="rc-card" href="/rag/graph-based-rag/"><b>Graph-Based RAG</b><p>&quot;What did the studio behind Movie X&#39;s director also produce?&quot; isn&#39;t answered by any single document — it&#39;s answered by chaining three separate facts together: who directed Movie X, who they work…</p></a><a class="rc-card" href="/rag/retrieval-over-structured-data/"><b>Retrieval over Structured Data</b><p>&quot;How many orders were placed in 2024?&quot; has an exact answer sitting in a table of order records — but no chunk of retrieved text, however well-chosen, can ever compute that count.</p></a><a class="rc-card" href="/rag/multimodal-rag/"><b>Multimodal RAG</b><p>A text query can retrieve an image directly — no caption, no text description needed as an intermediary — as long as the text and the image were embedded into the same shared space in the first place.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/multi-hop-and-iterative-retrieval/">← Previous: Multi-Hop and Iterative Retrieval</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

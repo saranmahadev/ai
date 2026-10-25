@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Excessive Agency and Scope Limits — AI Base</title>
+<meta name="description" content="An agent built to summarize an inbox only needs to read email.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/excessive-agency-and-scope-limits/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Excessive Agency and Scope Limits — AI Base">
+<meta property="og:description" content="An agent built to summarize an inbox only needs to read email.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/excessive-agency-and-scope-limits/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Excessive Agency and Scope Limits","item":"https://ai.saranmahadev.in/agents/excessive-agency-and-scope-limits/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Excessive Agency and Scope Limits","description":"An agent built to summarize an inbox only needs to read email.","url":"https://ai.saranmahadev.in/agents/excessive-agency-and-scope-limits/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do 3 of the 4 attempted actions fail under least-privilege scope in the worked example?","acceptedAnswer":{"@type":"Answer","text":"The agent was only granted a read tool, so forward, delete, and pay have no matching tool at all — those three actions are impossible to execute, not merely discouraged."}},{"@type":"Question","name":"What's the difference between excessive agency and a judgment mistake?","acceptedAnswer":{"@type":"Answer","text":"A judgment mistake is the agent choosing a bad action among the ones it's capable of; excessive agency is granting capabilities beyond what the task needs in the first place, which widens what any mistake (or manipulated instruction) could achieve."}},{"@type":"Question","name":"Does narrowing scope to read-only eliminate every risk from the read tool itself?","acceptedAnswer":{"@type":"Answer","text":"No — scope limits remove risk from capabilities the agent was never granted; a tool that is granted can still be misused within what it allows (for example, a read tool returning sensitive data), which is why scope limits are paired with guardrails on the calls that remain possible."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Agent Safety and Governance</p>
+        <h1 class="doc-title">Excessive Agency and Scope Limits</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cybjd8ubg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="cybjd8upl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cybjd8ubg)"/>
+  <circle cx="1" cy="320" r="213" fill="#dcbef5" opacity="0.54"/><circle cx="48" cy="308" r="211" fill="#dcbef5" opacity="0.48"/><circle cx="218" cy="330" r="136" fill="#dcbef5" opacity="0.30"/><circle cx="1163" cy="260" r="201" fill="#dcbef5" opacity="0.53"/><circle cx="700" cy="14" r="101" fill="#e7bdc8" opacity="0.54"/>
+  <path d="M0,420 L0,349 L30,346 L60,341 L90,335 L120,329 L150,322 L180,315 L210,310 L240,307 L270,306 L300,306 L330,309 L360,314 L390,320 L420,327 L450,333 L480,340 L510,345 L540,348 L570,350 L600,349 L630,346 L660,341 L690,335 L720,329 L750,322 L780,315 L810,310 L840,307 L870,306 L900,306 L930,309 L960,314 L990,320 L1020,327 L1050,333 L1080,340 L1110,345 L1140,348 L1170,350 L1200,349 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,392 L90,389 L120,385 L150,381 L180,376 L210,371 L240,367 L270,364 L300,362 L330,362 L360,364 L390,367 L420,371 L450,375 L480,380 L510,385 L540,389 L570,392 L600,394 L630,394 L660,392 L690,389 L720,385 L750,381 L780,376 L810,371 L840,367 L870,364 L900,362 L930,362 L960,364 L990,367 L1020,371 L1050,375 L1080,380 L1110,385 L1140,389 L1170,392 L1200,394 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="795" cy="261" rx="184" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(14.3 795 261)"/><ellipse cx="795" cy="261" rx="254" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(20.3 795 261)"/>
+  <circle cx="795" cy="261" r="72" fill="url(#cybjd8upl)"/>
+  <circle cx="716" cy="337" r="11" fill="#ffffff" opacity="0.70"/><circle cx="538" cy="265" r="11" fill="#ffffff" opacity="0.70"/><circle cx="971" cy="217" r="15" fill="#ffffff" opacity="0.75"/><circle cx="543" cy="230" r="18" fill="#ffffff" opacity="0.82"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An agent built to summarize an inbox only needs to read email. Give it a mail tool that can also send, delete, and forward, and every one of those extra abilities sits there unused — right up until a mistake or a manipulated instruction tries to use one of them, at which point it turns out they were never blocked at all.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability">Designing Tools for Agent Reliability</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What&#39;s the actual cost of granting an agent more tool access than its task requires?&quot; <strong>Excessive agency</strong> — a named risk in the OWASP Top 10 for LLM applications — is granting an agent permissions, tools, or autonomy beyond what its task genuinely needs. The cost isn&#39;t visible while everything goes to plan: an agent with four tools and one task behaves identically to an agent with just the one tool it needed, until something — a bug, a misunderstanding, or a manipulated instruction — tries to use one of the other three.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A guest given a key to every room in a house, when they only ever needed the guest bedroom, is no more likely to misbehave on an ordinary visit than a guest given just that one key. The difference only shows up the day something goes wrong — a child wanders off, a visitor with bad intentions shows up — and the house either has interior doors to stop them, or it doesn&#39;t.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">granted tools ⊇ required tools  →  excessive agency = granted tools − required tools
+attacker-achievable actions = attempted actions ∩ granted tools
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A task that genuinely requires only reading email, compared against four tools an attacker (via a manipulated instruction) attempts to use:</p>
+<pre><code class="language-text">attempted actions:  read, forward, delete, pay
+
+broad scope (all 4 tools granted):            4 of 4 actions succeed
+least-privilege scope (read only, matches task): 1 of 4 actions succeeds
+</code></pre>
+<p>Under broad scope, every attempted action has a matching tool and simply runs. Under least-privilege scope, three of the four attempts have no tool to use at all — they aren&#39;t blocked by a judgment call that could go either way, they&#39;re mechanically impossible, because the capability to forward, delete, or pay was never granted in the first place.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="excessive-agency-scope" data-title="Only the tools the task actually needs"><p class="bench-fallback"><strong>Interactive bench: Only the tools the task actually needs.</strong> Compare how many of an attacker's desired actions succeed under broad vs. least-privilege tool grants.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Check the broad-scope list and note all four actions succeed.</li>
+<li>Switch to least-privilege and see three actions fail for having no matching tool.</li>
+<li>Imagine the read tool itself returned sensitive data — would narrowing the scope to read-only fully eliminate risk, or only the risk from the other three tools?</li>
+</ol>
+<p><strong>What you should notice:</strong> least-privilege scope doesn&#39;t make the agent smarter about which actions are appropriate — it removes the <em>capability</em> for the inappropriate ones entirely, which holds regardless of what instruction (legitimate or injected) asks for them.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the same reachability idea as <a class="wikilink" href="/agents/sandboxing-and-isolation/" data-topic="agents/sandboxing-and-isolation">Sandboxing and Isolation</a>, applied to tool grants instead of filesystem access</strong> — both work by removing what&#39;s reachable, not by trusting judgment about what should be reachable.</li>
+<li><strong><a class="wikilink" href="/agents/guardrails-for-agent-actions/" data-topic="agents/guardrails-for-agent-actions">Guardrails for Agent Actions</a>, next in this district, is the layer that still matters even within a granted tool</strong> — scope limits decide which tools exist at all; a guardrail decides which specific calls to an allowed tool are still too risky to run.</li>
+<li><strong><a class="wikilink" href="/agents/prompt-injection-in-agent-contexts/" data-topic="agents/prompt-injection-in-agent-contexts">Prompt Injection in Agent Contexts</a> is exactly the failure mode excessive agency makes dangerous</strong>: an injected instruction can only succeed at actions the agent was actually granted the tools to perform.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Granting broad tool access &quot;to be safe&quot; in case the task changes later.</strong> The worked example shows this reasoning backwards — broader access doesn&#39;t protect against task changes, it expands exactly what a mistake or manipulated instruction can achieve right now.</li>
+<li><strong>Reviewing an agent&#39;s prompt for safety while ignoring its tool grants.</strong> A perfectly careful prompt paired with an overly broad set of tools still leaves every one of those tools available to anything that can influence the agent&#39;s next action, prompt quality aside.</li>
+<li><strong>Treating least-privilege as a one-time setup step.</strong> As a task&#39;s requirements genuinely expand, its granted tools should expand to match — but that&#39;s a deliberate, reviewed change, not a default of granting broad access upfront and narrowing only if something goes wrong.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why do 3 of the 4 attempted actions fail under least-privilege scope in the worked example?</summary>
+The agent was only granted a read tool, so forward, delete, and pay have no matching tool at all — those three actions are impossible to execute, not merely discouraged.
+</details>
+
+<details><summary>2. What's the difference between excessive agency and a judgment mistake?</summary>
+A judgment mistake is the agent choosing a bad action among the ones it's capable of; excessive agency is granting capabilities beyond what the task needs in the first place, which widens what any mistake (or manipulated instruction) could achieve.
+</details>
+
+<details><summary>3. Does narrowing scope to read-only eliminate every risk from the read tool itself?</summary>
+No — scope limits remove risk from capabilities the agent was never granted; a tool that is granted can still be misused within what it allows (for example, a read tool returning sensitive data), which is why scope limits are paired with guardrails on the calls that remain possible.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Excessive agency:</strong> granting an agent tools, permissions, or autonomy beyond what its task requires.</li>
+<li><strong>Least-privilege scope:</strong> granting only the tools a task genuinely needs, nothing more.</li>
+<li><strong>Attacker-achievable actions:</strong> the actions an attempted manipulation can actually carry out, limited by which tools were granted.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability">Designing Tools for Agent Reliability</a> · <a class="wikilink" href="/agents/sandboxing-and-isolation/" data-topic="agents/sandboxing-and-isolation">Sandboxing and Isolation</a> · <a class="wikilink" href="/agents/guardrails-for-agent-actions/" data-topic="agents/guardrails-for-agent-actions">Guardrails for Agent Actions</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/excessive-agency-and-scope-limits">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/guardrails-for-agent-actions/"><small>Read next</small><b>Guardrails for Agent Actions</b><p>A text guardrail scores free-form output for risk and has to guess at intent from wording alone.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/designing-tools-for-agent-reliability/"><b>Designing Tools for Agent Reliability</b><p>A tool with a free-text date field lets an agent write &quot;03/14/2025,&quot; &quot;March 14, 2025,&quot; or &quot;14/03/2025&quot; — three formats, at least two of them genuinely ambiguous about which number is the month.</p></a><a class="rc-card" href="/agents/sandboxing-and-isolation/"><b>Sandboxing and Isolation</b><p>A code-execution agent running generated code with full access to the host machine can reach every file on it — including ones that have nothing to do with its task.</p></a><a class="rc-card" href="/agents/guardrails-for-agent-actions/"><b>Guardrails for Agent Actions</b><p>A text guardrail scores free-form output for risk and has to guess at intent from wording alone.</p></a><a class="rc-card" href="/agents/prompt-injection-in-agent-contexts/"><b>Prompt Injection in Agent Contexts</b><p>A chatbot tricked by hidden text into saying something it shouldn&#39;t is embarrassing.</p></a><a class="rc-card" href="/agents/agent-safety-and-governance/"><b>Agent Safety and Governance</b><p>An agent that can act on the real world — sending money, deleting files, emailing someone — needs more than good intentions to be safe to run unsupervised.</p></a><a class="rc-card" href="/agents/autonomy-levels-and-human-oversight-tiers/"><b>Autonomy Levels and Human Oversight Tiers</b><p>An agent that must stop and ask before every single action is safe but slow; an agent that never asks is fast but unwatched.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/sandboxing-and-isolation/">← Previous: Sandboxing and Isolation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

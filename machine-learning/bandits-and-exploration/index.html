@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bandits and Exploration — AI Base</title>
+<meta name="description" content="The simplest reinforcement problem has no states: several slot machines (&quot;arms&quot;) with unknown average payouts, and you choose one each time.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/bandits-and-exploration/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Bandits and Exploration — AI Base">
+<meta property="og:description" content="The simplest reinforcement problem has no states: several slot machines (&quot;arms&quot;) with unknown average payouts, and you choose one each time.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/bandits-and-exploration/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Bandits and Exploration","item":"https://ai.saranmahadev.in/machine-learning/bandits-and-exploration/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bandits and Exploration","description":"The simplest reinforcement problem has no states: several slot machines (\"arms\") with unknown average payouts, and you choose one each time.","url":"https://ai.saranmahadev.in/machine-learning/bandits-and-exploration/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does ε-greedy do with probability ε?","acceptedAnswer":{"@type":"Answer","text":"Pulls a random arm (explores)."}},{"@type":"Question","name":"Why can a purely greedy agent get stuck?","acceptedAnswer":{"@type":"Answer","text":"An arm that was unlucky early may never be tried again, so its true value is never learned."}},{"@type":"Question","name":"What is regret?","acceptedAnswer":{"@type":"Answer","text":"The reward lost compared with always choosing the best arm."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Reinforcement Learning Basics</p>
+        <h1 class="doc-title">Bandits and Exploration</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ccxw22cbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="ccxw22cpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ccxw22cbg)"/>
+  <circle cx="1033" cy="45" r="205" fill="#fff2de" opacity="0.38"/><circle cx="1033" cy="334" r="140" fill="#ffd99f" opacity="0.29"/><circle cx="1078" cy="138" r="226" fill="#8a6b5c" opacity="0.38"/><circle cx="558" cy="88" r="134" fill="#fff2de" opacity="0.48"/><circle cx="736" cy="274" r="152" fill="#ffd08d" opacity="0.40"/><circle cx="524" cy="120" r="228" fill="#8a6b5c" opacity="0.27"/>
+  <path d="M0,420 L0,344 L30,346 L60,348 L90,349 L120,349 L150,350 L180,349 L210,348 L240,347 L270,345 L300,343 L330,340 L360,337 L390,334 L420,330 L450,327 L480,323 L510,320 L540,317 L570,314 L600,312 L630,309 L660,308 L690,306 L720,306 L750,306 L780,306 L810,307 L840,308 L870,310 L900,313 L930,315 L960,318 L990,322 L1020,325 L1050,328 L1080,332 L1110,335 L1140,338 L1170,341 L1200,344 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,391 L30,388 L60,385 L90,381 L120,377 L150,374 L180,370 L210,367 L240,365 L270,363 L300,362 L330,362 L360,363 L390,365 L420,367 L450,370 L480,374 L510,377 L540,381 L570,385 L600,388 L630,391 L660,393 L690,394 L720,394 L750,393 L780,392 L810,390 L840,387 L870,383 L900,380 L930,376 L960,372 L990,369 L1020,366 L1050,364 L1080,363 L1110,362 L1140,362 L1170,364 L1200,365 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="744" cy="159" rx="228" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(23.0 744 159)"/><ellipse cx="744" cy="159" rx="316" ry="88" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(29.0 744 159)"/>
+  <circle cx="744" cy="159" r="90" fill="url(#ccxw22cpl)"/>
+  <circle cx="494" cy="157" r="18" fill="#ffffff" opacity="0.69"/><circle cx="886" cy="78" r="8" fill="#ffffff" opacity="0.63"/><circle cx="501" cy="192" r="16" fill="#ffffff" opacity="0.66"/><circle cx="825" cy="241" r="8" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The simplest reinforcement problem has no states: several slot machines (&quot;arms&quot;) with unknown average payouts, and you choose one each time. To earn the most you must both <strong>exploit</strong> what looks best and <strong>explore</strong> the others in case you are wrong. Too little exploration locks you into a mediocre arm; too much wastes pulls.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/rewards-states-and-policies/" data-topic="machine-learning/rewards-states-and-policies">Rewards, States and Policies</a>, <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a> and <a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Do I keep doing what has worked, or try something new?&quot; Every learning system that acts (recommenders, ads, experiments, drug trials) faces this trade-off.</p>
+<h2 id="intuition-the-restaurant-problem">Intuition: the restaurant problem</h2>
+<p>You have eaten at one restaurant four times and it was fine. Do you go again, or try a new place that might be better or worse? Only by trying it can you find out, but each try costs a good meal if it is bad. Early on, exploring is cheap relative to what you might learn; later, when you are fairly sure, it is expensive.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">arm a          an action with unknown average reward μₐ
+estimate Qₐ    the average reward seen so far from arm a:  Qₐ ← Qₐ + (reward − Qₐ) / n
+ε-greedy       with probability 1 − ε pull the arm with the highest Qₐ (exploit)
+               with probability ε pull a random arm (explore)
+regret         the reward lost compared with always pulling the best arm
+other rules    optimistic starts, upper confidence bounds (UCB), Thompson sampling
+</code></pre>
+<p>By the law of large numbers, estimates approach the true averages only for arms you keep pulling. A pure greedy agent (ε = 0) may never revisit an arm that was unlucky early.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A five-armed bandit; each arm&#39;s true average is drawn at random from a standard normal, and each pull pays that average plus noise of spread 1. The best arm averages about 1.16 across random draws of the arms. Average reward over 200 runs of 500 pulls:</p>
+<pre><code class="language-text">ε        first 50 pulls    last 100 pulls
+0            0.830              0.937
+0.01         0.835              1.028
+0.1          0.803              1.042
+0.3          0.664              0.827
+</code></pre>
+<p>Greedy (ε = 0) does as well as any in the first 50 pulls (it has little to lose yet), but it stalls at 0.94 because it often locks onto the wrong arm. A little exploration (0.01 to 0.1) wins by the end: about 1.03–1.04. Too much (0.3) keeps wasting a third of its pulls on random arms and finishes lowest at 0.83. None reaches the ideal 1.16, which needs knowing the best arm in advance.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="bandit-explore" data-title="Explore or exploit?"><p class="bench-fallback"><strong>Interactive bench: Explore or exploit?.</strong> Average reward over time on a five-armed bandit for four exploration rates, averaged over 200 runs; a slider highlights one rate and the bench shows its early and late average reward next to the best possible.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Highlight ε = 0 and read the first-50 and last-100 averages.</li>
+<li>Move through ε = 0.01, 0.1 and 0.3.</li>
+<li>Find which rate is best early and which is best late.</li>
+<li>Compare each with the best possible.</li>
+</ol>
+<p><strong>What you should notice:</strong> the greedy agent starts as well as any but stops improving, moderate exploration wins over a long run, and heavy exploration is a constant tax.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>A/B and multi-armed tests</strong> in products.</li>
+<li><strong>Recommenders and ad placement,</strong> which must keep trying new items.</li>
+<li><strong>Reinforcement learning:</strong> exploration strategies in every agent (see <a class="wikilink" href="/machine-learning/q-learning/" data-topic="machine-learning/q-learning">Q-Learning</a>).</li>
+<li><strong>Language model training tricks</strong> that sample rather than always taking the top choice.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Never exploring,</strong> so early luck decides everything.</li>
+<li><strong>Exploring at a fixed rate forever,</strong> when exploration should shrink as knowledge grows.</li>
+<li><strong>Judging arms from very few pulls.</strong></li>
+<li><strong>Non-stationary worlds,</strong> where old averages mislead and estimates must keep updating.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does ε-greedy do with probability ε?</summary>
+Pulls a random arm (explores).
+</details>
+
+<details><summary>2. Why can a purely greedy agent get stuck?</summary>
+An arm that was unlucky early may never be tried again, so its true value is never learned.
+</details>
+
+<details><summary>3. What is regret?</summary>
+The reward lost compared with always choosing the best arm.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Exploration:</strong> trying options to learn about them.</li>
+<li><strong>Exploitation:</strong> choosing what currently looks best.</li>
+<li><strong>ε-greedy:</strong> exploring at random with probability ε.</li>
+<li><strong>Regret:</strong> the cumulative reward lost against the best fixed choice.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a> · <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a> · <a class="wikilink" href="/machine-learning/rewards-states-and-policies/" data-topic="machine-learning/rewards-states-and-policies">Rewards, States and Policies</a> · <a class="wikilink" href="/machine-learning/q-learning/" data-topic="machine-learning/q-learning">Q-Learning</a> · <a class="wikilink" href="/math/hypothesis-testing-and-p-values/" data-topic="math/hypothesis-testing-and-p-values">Hypothesis Testing and P-values</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/bandits-and-exploration">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/q-learning/"><small>Read next</small><b>Q-Learning</b><p>Value iteration needs to know how the world works.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/rewards-states-and-policies/"><b>Rewards, States and Policies</b><p>In reinforcement learning an agent is never told the right action. It acts, the world changes, and a reward arrives, often late. The agent&#39;s behaviour is a policy: a rule from state to action.</p></a><a class="rc-card" href="/math/law-of-large-numbers/"><b>Law of Large Numbers</b><p>The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.</p></a><a class="rc-card" href="/math/expectation/"><b>Expectation</b><p>The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.</p></a><a class="rc-card" href="/machine-learning/q-learning/"><b>Q-Learning</b><p>Value iteration needs to know how the world works.</p></a><a class="rc-card" href="/math/hypothesis-testing-and-p-values/"><b>Hypothesis Testing and P-values</b><p>A hypothesis test asks whether a result could plausibly be due to chance alone.</p></a><a class="rc-card" href="/machine-learning/reinforcement-learning-basics/"><b>Reinforcement Learning Basics</b><p>Some problems come with no answer key, only a score after the fact. Reinforcement learning is about agents that learn to act from rewards.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/value-functions/">← Previous: Value Functions</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

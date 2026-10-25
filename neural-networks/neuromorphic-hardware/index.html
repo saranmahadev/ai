@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neuromorphic Hardware — AI Base</title>
+<meta name="description" content="A GPU evaluates every unit in a layer on every clock cycle, whether or not that unit has anything new to say.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/neuromorphic-hardware/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Neuromorphic Hardware — AI Base">
+<meta property="og:description" content="A GPU evaluates every unit in a layer on every clock cycle, whether or not that unit has anything new to say.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/neuromorphic-hardware/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Neuromorphic Hardware","item":"https://ai.saranmahadev.in/neural-networks/neuromorphic-hardware/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Neuromorphic Hardware","description":"A GPU evaluates every unit in a layer on every clock cycle, whether or not that unit has anything new to say.","url":"https://ai.saranmahadev.in/neural-networks/neuromorphic-hardware/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does \"event-driven computation\" mean for a neuromorphic chip?","acceptedAnswer":{"@type":"Answer","text":"A neuron's circuitry only performs work, and only communicates, at the moment it actually spikes — a silent neuron costs essentially nothing in between."}},{"@type":"Question","name":"In the worked example, where did the factor of 4 sparsity advantage come from?","acceptedAnswer":{"@type":"Answer","text":"Directly from the neuron's firing rate of 0.25 — the advantage is the reciprocal of the firing rate, `1 / 0.25 = 4`."}},{"@type":"Question","name":"What happens to the sparsity advantage if every neuron fires on every single time step?","acceptedAnswer":{"@type":"Answer","text":"It disappears — with a firing rate of 1, the event-driven cost equals the synchronous cost, since there is now an event on every step for every neuron."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Spiking and Neuromorphic Computing</p>
+        <h1 class="doc-title">Neuromorphic Hardware</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1qri0rybg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="c1qri0rypl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1qri0rybg)"/>
+  <circle cx="1161" cy="294" r="123" fill="#50736a" opacity="0.45"/><circle cx="376" cy="173" r="226" fill="#50736a" opacity="0.53"/><circle cx="987" cy="208" r="111" fill="#ace3b3" opacity="0.41"/><circle cx="369" cy="61" r="225" fill="#c5d79b" opacity="0.38"/><circle cx="1079" cy="389" r="206" fill="#50736a" opacity="0.39"/><circle cx="674" cy="28" r="67" fill="#e3f6e5" opacity="0.39"/>
+  <path d="M0,420 L0,312 L30,317 L60,321 L90,326 L120,332 L150,336 L180,341 L210,345 L240,347 L270,349 L300,350 L330,349 L360,347 L390,344 L420,340 L450,336 L480,331 L510,325 L540,320 L570,316 L600,312 L630,309 L660,307 L690,306 L720,306 L750,307 L780,310 L810,314 L840,318 L870,323 L900,328 L930,333 L960,338 L990,342 L1020,346 L1050,348 L1080,349 L1110,349 L1140,348 L1170,346 L1200,343 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,384 L30,386 L60,388 L90,390 L120,392 L150,393 L180,394 L210,394 L240,394 L270,394 L300,393 L330,392 L360,390 L390,388 L420,386 L450,384 L480,382 L510,379 L540,377 L570,374 L600,372 L630,370 L660,368 L690,366 L720,364 L750,363 L780,362 L810,362 L840,362 L870,362 L900,363 L930,364 L960,366 L990,368 L1020,370 L1050,372 L1080,374 L1110,377 L1140,379 L1170,382 L1200,384 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="787" cy="199" rx="152" ry="42" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.1 787 199)"/><ellipse cx="787" cy="199" rx="210" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.1 787 199)"/>
+  <circle cx="787" cy="199" r="59" fill="url(#c1qri0rypl)"/>
+  <circle cx="770" cy="285" r="14" fill="#ffffff" opacity="0.88"/><circle cx="949" cy="222" r="15" fill="#ffffff" opacity="0.60"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A GPU evaluates every unit in a layer on every clock cycle, whether or not that unit has anything new to say. A spiking neuron, by construction, has almost nothing to say most of the time — it is silent except for the rare instant it crosses threshold. Neuromorphic hardware is built around that fact: compute and communicate only when a spike actually happens, not on every tick of a global clock.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/spiking-neural-networks/" data-topic="neural-networks/spiking-neural-networks">Spiking Neural Networks</a>, <a class="wikilink" href="/neural-networks/rate-and-temporal-coding/" data-topic="neural-networks/rate-and-temporal-coding">Rate and Temporal Coding</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If most of a spiking network&#39;s neurons are silent at any given moment, why build hardware that still checks in on every neuron, every cycle?&quot; Neuromorphic chips (IBM&#39;s TrueNorth, Intel&#39;s Loihi, SpiNNaker, and others) answer this with <strong>event-driven computation</strong>: a neuron&#39;s circuitry only does work, and only sends a message elsewhere, when it actually spikes. A neuron that never spikes costs essentially nothing, for as long as it stays silent.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Compare two ways of running a large meeting. In a synchronous design, everyone is asked to speak, in turn, every minute, whether or not they have anything to add — most minutes are spent on people saying &quot;nothing new.&quot; In an event-driven design, people only speak when they actually have something to say, and everyone else just waits, doing no work in between. For a group where only a few people have anything to say at any moment — exactly the situation <a class="wikilink" href="/neural-networks/rate-and-temporal-coding/" data-topic="neural-networks/rate-and-temporal-coding">a spiking neuron&#39;s firing rate</a> describes — the event-driven meeting gets through far less wasted effort.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>For a population of <code>N</code> neurons simulated for <code>T</code> time steps, with each neuron firing at some average rate <code>r</code> (spikes per step, as in <a class="wikilink" href="/neural-networks/rate-and-temporal-coding/" data-topic="neural-networks/rate-and-temporal-coding">Rate and Temporal Coding</a>):</p>
+<pre><code class="language-text">synchronous (clocked) cost:  N · T          (every neuron checked every step, regardless of activity)
+event-driven cost:           N · r · T      (work done only on actual spikes)
+
+sparsity advantage = (N · T) / (N · r · T) = 1 / r
+</code></pre>
+<p>The advantage depends only on how sparse the firing is — a lower rate <code>r</code> means a bigger gap between the two costs, with no change to what the network is actually computing.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Using the firing rate from <a class="wikilink" href="/neural-networks/spiking-neural-networks/" data-topic="neural-networks/spiking-neural-networks">the worked example</a> two topics back — a LIF neuron with input <code>0.3</code>, firing once every 4 steps, <code>r = 0.25</code> — for a population of <code>N = 1000</code> such neurons run for <code>T = 1000</code> steps:</p>
+<pre><code class="language-text">synchronous cost:   N · T = 1,000,000 neuron-checks
+event-driven cost:  N · r · T = 1000 × 0.25 × 1000 = 250,000 spike events
+sparsity advantage: 1 / 0.25 = 4×
+</code></pre>
+<p>A fourfold reduction in work falls directly out of this one neuron&#39;s own firing rate — before accounting for any neurons that fire even less often, or not at all, which would widen the gap further still.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="event-driven-cost" data-title="Clocked checks vs. spike events"><p class="bench-fallback"><strong>Interactive bench: Clocked checks vs. spike events.</strong> Set a population size, simulation length and firing rate, and compare the cost of checking every neuron on every clock tick against only processing actual spike events.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Lower the firing rate and watch the sparsity advantage grow.</li>
+<li>Set the firing rate to 1 (every neuron spikes every step) and see the advantage disappear entirely.</li>
+<li>Compare a small, dense population against a large, sparse one with the same total number of spikes.</li>
+</ol>
+<p><strong>What you should notice:</strong> the advantage of event-driven hardware is not a fixed constant — it scales directly with how sparse the spiking actually is, which is why neuromorphic hardware is most compelling for workloads where most neurons are silent most of the time.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the hardware motivation behind the whole premise of <a class="wikilink" href="/neural-networks/spiking-neural-networks/" data-topic="neural-networks/spiking-neural-networks">Spiking Neural Networks</a></strong>: the appeal of spikes is not just biological realism, but that sparse, event-driven signals map onto genuinely cheaper hardware.</li>
+<li><strong><a class="wikilink" href="/neural-networks/spike-timing-dependent-plasticity/" data-topic="neural-networks/spike-timing-dependent-plasticity">Spike-Timing-Dependent Plasticity</a> fits naturally onto this hardware</strong>: the learning rule only needs the timing of the two spikes at a single synapse, which is exactly the information already present at the moment a spike event occurs — no separate, globally synchronized training pass is needed.</li>
+<li><strong>The energy argument connects directly to <a class="wikilink" href="/deep-learning/efficiency-and-deployment/" data-topic="deep-learning/efficiency-and-deployment">efficient deployment</a> on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a></strong>: both are about doing less work for the same result, though pruning and quantization there target dense weight matrices, while neuromorphic hardware targets the sparsity of spikes themselves.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming neuromorphic hardware always wins.</strong> The advantage shrinks to nothing as the firing rate approaches 1 — dense, constantly-active networks get little or no benefit from an event-driven design.</li>
+<li><strong>Treating &quot;neuromorphic&quot; as a software technique.</strong> It specifically refers to hardware built around spike-driven computation and communication, not a training algorithm that could run equally well on a GPU.</li>
+<li><strong>Expecting software simulation of spikes to get these savings for free.</strong> Simulating a spiking network on ordinary synchronous hardware still pays the full <code>N · T</code> clocked cost — the savings above are specific to hardware designed for event-driven execution.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does "event-driven computation" mean for a neuromorphic chip?</summary>
+A neuron's circuitry only performs work, and only communicates, at the moment it actually spikes — a silent neuron costs essentially nothing in between.
+</details>
+
+<details><summary>2. In the worked example, where did the factor of 4 sparsity advantage come from?</summary>
+Directly from the neuron's firing rate of 0.25 — the advantage is the reciprocal of the firing rate, `1 / 0.25 = 4`.
+</details>
+
+<details><summary>3. What happens to the sparsity advantage if every neuron fires on every single time step?</summary>
+It disappears — with a firing rate of 1, the event-driven cost equals the synchronous cost, since there is now an event on every step for every neuron.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Event-driven computation:</strong> performing work only in response to an actual event (here, a spike), rather than on every tick of a global clock.</li>
+<li><strong>Sparsity advantage:</strong> the ratio of synchronous to event-driven computational cost, equal to the reciprocal of the firing rate.</li>
+<li><strong>Neuromorphic chip:</strong> hardware built to run spiking neurons&#39; event-driven dynamics directly, rather than simulating them step by step on a conventional processor.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/spiking-neural-networks/" data-topic="neural-networks/spiking-neural-networks">Spiking Neural Networks</a> · <a class="wikilink" href="/neural-networks/rate-and-temporal-coding/" data-topic="neural-networks/rate-and-temporal-coding">Rate and Temporal Coding</a> · <a class="wikilink" href="/neural-networks/spike-timing-dependent-plasticity/" data-topic="neural-networks/spike-timing-dependent-plasticity">Spike-Timing-Dependent Plasticity</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/neuromorphic-hardware">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/alternative-architectures/"><small>Read next</small><b>Alternative Architectures</b><p>Not every network needs every weight trained by gradient descent.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/spiking-neural-networks/"><b>Spiking Neural Networks</b><p>Every network so far on this planet, and every one on Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.</p></a><a class="rc-card" href="/neural-networks/rate-and-temporal-coding/"><b>Rate and Temporal Coding</b><p>A spike itself carries almost no information — it is the same all-or-nothing event every time.</p></a><a class="rc-card" href="/neural-networks/spike-timing-dependent-plasticity/"><b>Spike-Timing-Dependent Plasticity</b><p>Hebb&#39;s rule says neurons that fire together wire together, but says nothing about order.</p></a><a class="rc-card" href="/deep-learning/efficiency-and-deployment/"><b>Efficiency and Deployment</b><p>A network that trains well is not automatically one you can afford to run.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/neural-networks/spiking-and-neuromorphic-computing/"><b>Spiking and Neuromorphic Computing</b><p>A real neuron doesn&#39;t output a continuous number — it stays silent, then fires a brief, discrete spike.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/spike-timing-dependent-plasticity/">← Previous: Spike-Timing-Dependent Plasticity</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

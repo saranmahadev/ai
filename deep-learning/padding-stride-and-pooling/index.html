@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Padding, Stride and Pooling — AI Base</title>
+<meta name="description" content="Three simple knobs control how a convolution&#39;s output is sized and how fast a network shrinks an image down: padding adds a border so the filter can reach the edges, stride sets how far the filter…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/padding-stride-and-pooling/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Padding, Stride and Pooling — AI Base">
+<meta property="og:description" content="Three simple knobs control how a convolution&#39;s output is sized and how fast a network shrinks an image down: padding adds a border so the filter can reach the edges, stride sets how far the filter…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/padding-stride-and-pooling/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Padding, Stride and Pooling","item":"https://ai.saranmahadev.in/deep-learning/padding-stride-and-pooling/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Padding, Stride and Pooling","description":"Three simple knobs control how a convolution's output is sized and how fast a network shrinks an image down: padding adds a border so the filter can reach the edges, stride sets how far the filter…","url":"https://ai.saranmahadev.in/deep-learning/padding-stride-and-pooling/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What padding keeps a convolution's output the same size as its input, for a 3×3 kernel and stride 1?","acceptedAnswer":{"@type":"Answer","text":"Padding of 1 on each side (\"same\" padding)."}},{"@type":"Question","name":"How does stride 2 change a convolution's output size compared to stride 1?","acceptedAnswer":{"@type":"Answer","text":"It roughly halves the number of output positions in that dimension, since the filter now jumps two positions at a time instead of one."}},{"@type":"Question","name":"Does max pooling have any learned weights?","acceptedAnswer":{"@type":"Answer","text":"No — it simply takes the maximum value in each patch; there is nothing to train in a pooling layer itself."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Convolutional Neural Networks</p>
+        <h1 class="doc-title">Padding, Stride and Pooling</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1bm07kobg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1bm07kopl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1bm07kobg)"/>
+  <circle cx="498" cy="289" r="67" fill="#8a546c" opacity="0.35"/><circle cx="537" cy="415" r="155" fill="#8a546c" opacity="0.38"/><circle cx="1154" cy="261" r="75" fill="#ffe6e6" opacity="0.41"/><circle cx="693" cy="74" r="165" fill="#ffe6e6" opacity="0.28"/><circle cx="834" cy="39" r="163" fill="#8a546c" opacity="0.41"/>
+  <path d="M0,420 L0,310 L30,312 L60,315 L90,318 L120,321 L150,324 L180,327 L210,331 L240,334 L270,337 L300,340 L330,343 L360,345 L390,347 L420,348 L450,349 L480,350 L510,349 L540,349 L570,347 L600,345 L630,343 L660,341 L690,338 L720,335 L750,331 L780,328 L810,324 L840,321 L870,318 L900,315 L930,312 L960,310 L990,308 L1020,307 L1050,306 L1080,306 L1110,306 L1140,307 L1170,308 L1200,310 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,371 L30,367 L60,364 L90,362 L120,362 L150,364 L180,367 L210,371 L240,376 L270,381 L300,385 L330,389 L360,392 L390,394 L420,394 L450,392 L480,389 L510,385 L540,380 L570,375 L600,371 L630,367 L660,364 L690,362 L720,362 L750,364 L780,367 L810,371 L840,376 L870,381 L900,385 L930,389 L960,392 L990,394 L1020,394 L1050,392 L1080,389 L1110,385 L1140,380 L1170,375 L1200,371 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="718" cy="173" rx="162" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-14.5 718 173)"/><ellipse cx="718" cy="173" rx="224" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-8.5 718 173)"/>
+  <circle cx="718" cy="173" r="63" fill="url(#c1bm07kopl)"/>
+  <circle cx="954" cy="168" r="8" fill="#ffffff" opacity="0.69"/><circle cx="760" cy="247" r="10" fill="#ffffff" opacity="0.71"/><circle cx="518" cy="228" r="10" fill="#ffffff" opacity="0.77"/><circle cx="694" cy="100" r="13" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Three simple knobs control how a convolution&#39;s output is sized and how fast a network shrinks an image down: <strong>padding</strong> adds a border so the filter can reach the edges, <strong>stride</strong> sets how far the filter jumps between positions, and <strong>pooling</strong> deliberately shrinks a feature map by summarising small patches of it.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/the-convolution-operation/" data-topic="deep-learning/the-convolution-operation">The Convolution Operation</a> and <a class="wikilink" href="/deep-learning/filters-feature-maps-and-channels/" data-topic="deep-learning/filters-feature-maps-and-channels">Filters, Feature Maps and Channels</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;A plain convolution shrinks the image a little every layer, and only ever looks at one position at a time — how do I control that shrinkage, or speed it up on purpose?&quot; Padding stops the shrinkage; stride and pooling make it happen faster, deliberately.</p>
+<h2 id="intuition-a-border-a-bigger-step-and-a-summary">Intuition: a border, a bigger step, and a summary</h2>
+<p><strong>Padding</strong> adds a ring of zeros around the image so the filter can be centred even on what used to be an edge pixel — like adding a blank margin around a page so nothing gets cut off near the border. <strong>Stride</strong> changes how far the filter moves between computations: stride 1 checks every position, stride 2 skips every other one, producing roughly half as many outputs. <strong>Pooling</strong> is a different operation entirely — no learned weights at all — that summarises each small patch of a feature map with one number, usually the patch&#39;s maximum (<strong>max pooling</strong>) or average.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">output size (one dimension) = ⌊(n + 2·pad − kernel) / stride⌋ + 1
+
+n = 6, kernel = 3, pad = 0, stride = 1  →  output 4   (&quot;valid&quot;: shrinks)
+n = 6, kernel = 3, pad = 1, stride = 1  →  output 6   (&quot;same&quot;: unchanged)
+n = 6, kernel = 3, pad = 0, stride = 2  →  output 2   (stride downsamples)
+
+max pooling (window size s, stride s): output[i][j] = max over the s×s block
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Max-pooling a 4×4 toy edge image with a 2×2 window (and matching stride 2):</p>
+<pre><code class="language-text">image               max-pooled (2×2 blocks)
+0 0 1 1                  0  1
+0 0 1 1       →           
+0 0 1 1                  0  1
+0 0 1 1
+</code></pre>
+<p>Each 2×2 block becomes one number: the top-left block (all 0s) becomes 0; the top-right block (all 1s) becomes 1. The pooled image is a quarter the size but keeps the same overall pattern — &quot;there&#39;s an edge between the left and right halves&quot; survives the downsampling.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="pad-stride-pool" data-title="Padding, stride and pooling, side by side"><p class="bench-fallback"><strong>Interactive bench: Padding, stride and pooling, side by side.</strong> An image with adjustable padding and stride on a convolution, plus a separate max-pooling view. Watch the output size change as each setting changes.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set padding to 0 and compare the output size to padding 1 (&quot;same&quot;) on a 3×3 filter.</li>
+<li>Increase stride from 1 to 2 and watch the output shrink by roughly half.</li>
+<li>Switch to the pooling view and compare the result to a convolution with the same window size.</li>
+</ol>
+<p><strong>What you should notice:</strong> padding and stride are settings <em>within</em> a convolution; pooling is a separate, weight-free operation that shrinks a feature map afterward — both can downsample, but only pooling has no learned parameters at all.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>&quot;Same&quot; padding</strong> is the default in many modern architectures, so stacking many convolutional layers doesn&#39;t shrink the image away to nothing before the network is deep enough to need it.</li>
+<li><strong>Strided convolutions</strong> are often used instead of pooling in modern designs, letting the downsampling itself be learned rather than fixed.</li>
+<li><strong>Max pooling</strong> historically appeared throughout early CNN designs (see <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a>) to shrink feature maps between convolutional blocks.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting padding changes the output size, not the filter&#39;s behaviour.</strong> The filter still only sees real pixels (plus zeros) under it; padding just lets it reach positions it otherwise couldn&#39;t.</li>
+<li><strong>Assuming pooling always uses the maximum.</strong> Average pooling is common too, and behaves differently — maxima pick out the strongest activation in a region, averages smooth it.</li>
+<li><strong>Losing track of how much a stack of strided or pooled layers has shrunk the image overall</strong>, which affects both the final feature map size and the <a class="wikilink" href="/deep-learning/receptive-fields-and-depth/" data-topic="deep-learning/receptive-fields-and-depth">receptive field</a> of later layers.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What padding keeps a convolution's output the same size as its input, for a 3×3 kernel and stride 1?</summary>
+Padding of 1 on each side ("same" padding).
+</details>
+
+<details><summary>2. How does stride 2 change a convolution's output size compared to stride 1?</summary>
+It roughly halves the number of output positions in that dimension, since the filter now jumps two positions at a time instead of one.
+</details>
+
+<details><summary>3. Does max pooling have any learned weights?</summary>
+No — it simply takes the maximum value in each patch; there is nothing to train in a pooling layer itself.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Padding:</strong> adding a border (usually zeros) around an input so a filter can reach its edges.</li>
+<li><strong>Stride:</strong> the step size a filter moves between positions.</li>
+<li><strong>Pooling:</strong> summarising each small patch of a feature map with one number (commonly the maximum or average), with no learned weights.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/the-convolution-operation/" data-topic="deep-learning/the-convolution-operation">The Convolution Operation</a> · <a class="wikilink" href="/deep-learning/filters-feature-maps-and-channels/" data-topic="deep-learning/filters-feature-maps-and-channels">Filters, Feature Maps and Channels</a> · <a class="wikilink" href="/deep-learning/receptive-fields-and-depth/" data-topic="deep-learning/receptive-fields-and-depth">Receptive Fields and Depth</a> · <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/padding-stride-and-pooling">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/"><small>Read next</small><b>CNN Architectures: From LeNet to ResNet</b><p>Convolutional architectures did not arrive all at once.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/the-convolution-operation/"><b>The Convolution Operation</b><p>A convolution slides a small grid of numbers — a filter or kernel — across an image, computing one weighted sum per position.</p></a><a class="rc-card" href="/deep-learning/filters-feature-maps-and-channels/"><b>Filters, Feature Maps and Channels</b><p>A convolutional layer rarely uses just one filter.</p></a><a class="rc-card" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/"><b>CNN Architectures: From LeNet to ResNet</b><p>Convolutional architectures did not arrive all at once.</p></a><a class="rc-card" href="/deep-learning/receptive-fields-and-depth/"><b>Receptive Fields and Depth</b><p>A single output unit in a convolutional network does not &quot;see&quot; the whole input image — it only depends on some region of it, called its receptive field.</p></a><a class="rc-card" href="/deep-learning/convolutional-neural-networks/"><b>Convolutional Neural Networks</b><p>A photograph has structure a plain feedforward network ignores: a cat&#39;s ear looks the same whether it is in the top-left or bottom-right corner.</p></a><a class="rc-card" href="/deep-learning/image-classification-end-to-end/"><b>Image Classification End to End</b><p>Every idea in this district — convolution, channels, padding and pooling, depth, residual connections, receptive fields — exists to serve one standard pipeline: convolve, pool, repeat, flatten,…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/filters-feature-maps-and-channels/">← Previous: Filters, Feature Maps and Channels</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text Classification with Naive Bayes — AI Base</title>
+<meta name="description" content="Text is the classic home of naive Bayes.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/text-classification-with-naive-bayes/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Text Classification with Naive Bayes — AI Base">
+<meta property="og:description" content="Text is the classic home of naive Bayes.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/text-classification-with-naive-bayes/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Text Classification with Naive Bayes","item":"https://ai.saranmahadev.in/machine-learning/text-classification-with-naive-bayes/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Text Classification with Naive Bayes","description":"Text is the classic home of naive Bayes.","url":"https://ai.saranmahadev.in/machine-learning/text-classification-with-naive-bayes/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why add α to every count?","acceptedAnswer":{"@type":"Answer","text":"So a word unseen in a class does not force that class's probability to zero."}},{"@type":"Question","name":"Why sum logs of ratios rather than multiply probabilities?","acceptedAnswer":{"@type":"Answer","text":"Products of many small numbers underflow; sums of logs are stable."}},{"@type":"Question","name":"A word appears equally often in both classes. What is its evidence?","acceptedAnswer":{"@type":"Answer","text":"None: the ratio is 1 and its log is 0."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Instance and Probability Methods</p>
+        <h1 class="doc-title">Text Classification with Naive Bayes</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1lk6tyjbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1lk6tyjpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1lk6tyjbg)"/>
+  <circle cx="740" cy="44" r="156" fill="#8a6b5c" opacity="0.28"/><circle cx="494" cy="379" r="61" fill="#ffd08d" opacity="0.44"/><circle cx="119" cy="276" r="147" fill="#fff2de" opacity="0.60"/><circle cx="5" cy="153" r="203" fill="#fff2de" opacity="0.59"/><circle cx="265" cy="122" r="169" fill="#8a6b5c" opacity="0.41"/>
+  <path d="M0,420 L0,350 L30,349 L60,348 L90,347 L120,345 L150,342 L180,340 L210,337 L240,334 L270,330 L300,327 L330,323 L360,320 L390,317 L420,314 L450,311 L480,309 L510,308 L540,306 L570,306 L600,306 L630,306 L660,307 L690,308 L720,310 L750,313 L780,315 L810,318 L840,322 L870,325 L900,329 L930,332 L960,335 L990,338 L1020,341 L1050,344 L1080,346 L1110,348 L1140,349 L1170,349 L1200,350 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,394 L90,393 L120,392 L150,391 L180,390 L210,388 L240,386 L270,383 L300,381 L330,378 L360,376 L390,373 L420,371 L450,369 L480,367 L510,365 L540,364 L570,363 L600,362 L630,362 L660,362 L690,363 L720,364 L750,365 L780,366 L810,368 L840,370 L870,373 L900,375 L930,378 L960,380 L990,383 L1020,385 L1050,387 L1080,389 L1110,391 L1140,392 L1170,393 L1200,394 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="871" cy="182" rx="151" ry="42" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(25.0 871 182)"/><ellipse cx="871" cy="182" rx="209" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(31.0 871 182)"/>
+  <circle cx="871" cy="182" r="59" fill="url(#c1lk6tyjpl)"/>
+  <circle cx="897" cy="254" r="18" fill="#ffffff" opacity="0.69"/><circle cx="1112" cy="200" r="13" fill="#ffffff" opacity="0.85"/><circle cx="1065" cy="185" r="13" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Text is the classic home of naive Bayes. Represent a message as the words it contains, count how often each word appears in spam and in ordinary mail, and classify a new message by multiplying those word frequencies. The one trick that makes it work is <strong>smoothing</strong>: giving every word a small pseudo-count so that an unseen word cannot zero out the answer.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/naive-bayes/" data-topic="machine-learning/naive-bayes">Naive Bayes</a> and <a class="wikilink" href="/machine-learning/datasets-features-and-labels/" data-topic="machine-learning/datasets-features-and-labels">Datasets, Features and Labels</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I turn words into a decision?&quot; Counting words per class gives each word a weight of evidence, and a message&#39;s verdict is the sum of its words&#39; evidence.</p>
+<h2 id="intuition-a-bag-of-words">Intuition: a bag of words</h2>
+<p>Ignore word order and grammar: a message is just a bag of words. From the training messages, count how often each word occurs in each class. A word like &quot;prize&quot; that appears mostly in spam is strong evidence for spam; &quot;meeting&quot; is evidence for ham; &quot;now&quot; appearing equally in both tells you nothing. To classify, add up the evidence of the words present. In practice one adds <strong>logarithms</strong> of likelihood ratios instead of multiplying tiny probabilities, which avoids numerical underflow (see <a class="wikilink" href="/math/overflow-and-underflow/" data-topic="math/overflow-and-underflow">Overflow and Underflow</a>).</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">P(word | class) = (count of word in class + α) / (total words in class + α · vocabulary size)
+score           = log prior odds + Σ over words  log [ P(word | spam) / P(word | ham) ]
+α               smoothing: α = 1 is &quot;Laplace smoothing&quot;; α = 0 is raw frequencies
+</code></pre>
+<p>Without smoothing, a word seen only in ham has <code>P(word | spam) = 0</code>, so any message containing it is declared impossible for spam no matter what else it says.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A tiny training set: spam messages &quot;free prize now&quot; and &quot;free money&quot;; ham messages &quot;meeting now&quot; and &quot;lunch meeting tomorrow&quot;. The vocabulary has 7 words; spam has 5 word occurrences (free ×2, prize, now, money) and ham has 5 (meeting ×2, now, lunch, tomorrow). Priors are equal.</p>
+<p>Classify <strong>&quot;free now&quot;</strong> with <code>α = 1</code>:</p>
+<pre><code class="language-text">P(free | spam) = (2 + 1) / (5 + 7) = 0.250       P(free | ham) = (0 + 1) / 12 = 0.083     ratio 3
+P(now  | spam) = (1 + 1) / 12      = 0.167       P(now  | ham) = (1 + 1) / 12 = 0.167     ratio 1
+posterior odds = 1 × 3 × 1 = 3      →  P(spam) = 3 / 4 = 75%
+</code></pre>
+<p>Now classify <strong>&quot;free meeting&quot;</strong> without smoothing (<code>α = 0</code>): <code>P(free | ham) = 0</code> and <code>P(meeting | spam) = 0</code>, so both classes score <code>0</code>: the model cannot decide. With <code>α = 1</code>: spam is <code>(3/12) × (1/12)</code> and ham is <code>(1/12) × (3/12)</code>: identical, so <code>P(spam) = 50%</code>, an honest &quot;no idea&quot;.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="word-counts" data-title="Classify a message from word counts"><p class="bench-fallback"><strong>Interactive bench: Classify a message from word counts.</strong> Type a message and see per-word counts from eight spam and eight ordinary training messages, the evidence each word contributes, and the verdict; a slider turns Laplace smoothing on and off.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Classify &quot;free prize now&quot; and &quot;meeting tomorrow&quot;.</li>
+<li>Try &quot;free lunch tomorrow&quot;, which mixes both.</li>
+<li>Type a word the corpus never saw with smoothing at 0, then at 1.</li>
+<li>Watch how the evidence column changes as smoothing rises.</li>
+</ol>
+<p><strong>What you should notice:</strong> each word adds its own evidence, mixed messages land near 50%, and without smoothing a single unseen word breaks the calculation.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Spam filtering:</strong> the original big success of naive Bayes.</li>
+<li><strong>Topic and sentiment labelling,</strong> and any quick text baseline.</li>
+<li><strong>Modern relatives:</strong> bag-of-words features feed logistic regression and SVMs too; language models replace counting with learned representations.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>No smoothing,</strong> so one novel word ruins a prediction.</li>
+<li><strong>Rare words dominating</strong> a small vocabulary.</li>
+<li><strong>Word order ignored:</strong> &quot;not good&quot; looks like &quot;good&quot;.</li>
+<li><strong>Assuming the probabilities are calibrated,</strong> when they are typically overconfident.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why add α to every count?</summary>
+So a word unseen in a class does not force that class's probability to zero.
+</details>
+
+<details><summary>2. Why sum logs of ratios rather than multiply probabilities?</summary>
+Products of many small numbers underflow; sums of logs are stable.
+</details>
+
+<details><summary>3. A word appears equally often in both classes. What is its evidence?</summary>
+None: the ratio is 1 and its log is 0.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Bag of words:</strong> representing text by word counts, ignoring order.</li>
+<li><strong>Laplace smoothing:</strong> adding a pseudo-count α to every word count.</li>
+<li><strong>Vocabulary:</strong> the set of distinct words.</li>
+<li><strong>Log-odds:</strong> the log of the odds; evidence adds in this scale.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/naive-bayes/" data-topic="machine-learning/naive-bayes">Naive Bayes</a> · <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/math/overflow-and-underflow/" data-topic="math/overflow-and-underflow">Overflow and Underflow</a> · <a class="wikilink" href="/machine-learning/generative-vs-discriminative-models/" data-topic="machine-learning/generative-vs-discriminative-models">Generative vs Discriminative Models</a> · <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/text-classification-with-naive-bayes">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/generative-vs-discriminative-models/"><small>Read next</small><b>Generative vs Discriminative Models</b><p>There are two ways to build a classifier. A generative model learns what each class looks like (how its examples are distributed) and uses Bayes&#39; rule to decide.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/naive-bayes/"><b>Naive Bayes</b><p>Naive Bayes classifies by asking, for each class, how well the observed features fit it, then combining the answers with Bayes&#39; rule.</p></a><a class="rc-card" href="/machine-learning/datasets-features-and-labels/"><b>Datasets, Features and Labels</b><p>A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).</p></a><a class="rc-card" href="/math/overflow-and-underflow/"><b>Overflow and Underflow</b><p>Overflow happens when a result is too large to store and becomes infinity; underflow happens when it is too small and becomes zero.</p></a><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/machine-learning/generative-vs-discriminative-models/"><b>Generative vs Discriminative Models</b><p>There are two ways to build a classifier. A generative model learns what each class looks like (how its examples are distributed) and uses Bayes&#39; rule to decide.</p></a><a class="rc-card" href="/machine-learning/logistic-regression-as-a-classifier/"><b>Logistic Regression as a Classifier</b><p>Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/naive-bayes/">← Previous: Naive Bayes</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

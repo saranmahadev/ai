@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Softmax and Cross-Entropy in Practice — AI Base</title>
+<meta name="description" content="For questions with many possible answers, a network outputs one raw score (a logit) per class.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/softmax-and-cross-entropy-in-practice/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Softmax and Cross-Entropy in Practice — AI Base">
+<meta property="og:description" content="For questions with many possible answers, a network outputs one raw score (a logit) per class.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/softmax-and-cross-entropy-in-practice/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Softmax and Cross-Entropy in Practice","item":"https://ai.saranmahadev.in/math/softmax-and-cross-entropy-in-practice/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Softmax and Cross-Entropy in Practice","description":"For questions with many possible answers, a network outputs one raw score (a logit) per class.","url":"https://ai.saranmahadev.in/math/softmax-and-cross-entropy-in-practice/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Softmax of (0, 0, 0)?","acceptedAnswer":{"@type":"Answer","text":"(1/3, 1/3, 1/3)."}},{"@type":"Question","name":"Does softmax change if you add 5 to every score?","acceptedAnswer":{"@type":"Answer","text":"No."}},{"@type":"Question","name":"Gradient with respect to a wrong class's score when it has probability 0.2?","acceptedAnswer":{"@type":"Answer","text":"0.2."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Math in AI</p>
+        <h1 class="doc-title">Softmax and Cross-Entropy in Practice</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c11u2ujkbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c11u2ujkpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c11u2ujkbg)"/>
+  <circle cx="1145" cy="81" r="225" fill="#eee9fd" opacity="0.43"/><circle cx="1023" cy="344" r="151" fill="#cebff9" opacity="0.41"/><circle cx="1197" cy="230" r="113" fill="#ddbecb" opacity="0.57"/><circle cx="353" cy="396" r="181" fill="#ddbecb" opacity="0.60"/><circle cx="391" cy="150" r="110" fill="#ddbecb" opacity="0.35"/>
+  <path d="M0,420 L0,316 L30,319 L60,323 L90,326 L120,329 L150,333 L180,336 L210,339 L240,342 L270,344 L300,346 L330,348 L360,349 L390,350 L420,350 L450,349 L480,348 L510,346 L540,344 L570,342 L600,339 L630,336 L660,333 L690,329 L720,326 L750,322 L780,319 L810,316 L840,313 L870,311 L900,309 L930,307 L960,306 L990,306 L1020,306 L1050,306 L1080,307 L1110,309 L1140,311 L1170,313 L1200,316 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,366 L30,369 L60,372 L90,376 L120,380 L150,383 L180,387 L210,389 L240,392 L270,393 L300,394 L330,394 L360,393 L390,391 L420,388 L450,385 L480,381 L510,378 L540,374 L570,371 L600,367 L630,365 L660,363 L690,362 L720,362 L750,363 L780,364 L810,367 L840,370 L870,373 L900,377 L930,381 L960,384 L990,388 L1020,390 L1050,392 L1080,394 L1110,394 L1140,393 L1170,392 L1200,390 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="901" cy="262" rx="209" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.3 901 262)"/><ellipse cx="901" cy="262" rx="289" ry="81" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.3 901 262)"/>
+  <circle cx="901" cy="262" r="82" fill="url(#c11u2ujkpl)"/>
+  <circle cx="729" cy="172" r="15" fill="#ffffff" opacity="0.90"/><circle cx="1210" cy="276" r="17" fill="#ffffff" opacity="0.82"/><circle cx="627" cy="340" r="18" fill="#ffffff" opacity="0.84"/><circle cx="1185" cy="330" r="11" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>For questions with many possible answers, a network outputs one raw score (a <strong>logit</strong>) per class. The <strong>softmax</strong> turns those scores into probabilities that are positive and add to 1, and <strong>cross-entropy</strong> scores them against the truth. The pair is the standard output layer and loss for classification and for language models.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a>, <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a>, <a class="wikilink" href="/math/probability-rules/" data-topic="math/probability-rules">Probability Rules</a> and <a class="wikilink" href="/math/numerical-stability/" data-topic="math/numerical-stability">Numerical Stability</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I turn a list of scores into a probability distribution, and train it?&quot; Scores can be any real numbers, including negative ones; probabilities must be positive and sum to 1.</p>
+<h2 id="softmax">Softmax</h2>
+<pre><code class="language-text">pᵢ = e^(zᵢ) / Σⱼ e^(zⱼ)
+</code></pre>
+<p>Exponentiating makes everything positive and exaggerates differences; dividing by the total makes it sum to 1. Adding the same constant to every score changes nothing (the basis of the stable version; see <a class="wikilink" href="/math/numerical-stability/" data-topic="math/numerical-stability">Numerical Stability</a>).</p>
+<p>A <strong>temperature</strong> <code>T</code> reshapes the distribution: use <code>z / T</code>. Low <code>T</code> (below 1) sharpens it toward the top class; high <code>T</code> flattens it toward uniform. Language models sample with a temperature to control how adventurous the text is.</p>
+<h2 id="cross-entropy-and-its-gradient">Cross-entropy and its gradient</h2>
+<p>With the true class <code>c</code> (a one-hot target), the loss is the surprise of the true class:</p>
+<pre><code class="language-text">L = −ln p_c
+∂L/∂zᵢ = pᵢ − yᵢ           (probability minus one-hot target)
+</code></pre>
+<p>That gradient is the same tidy &quot;prediction minus truth&quot; as logistic regression: it is negative for the true class (push its score up) and positive for the others (push them down), with each push proportional to how wrong the model was.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Scores <code>z = (2, 1, 0.1)</code> for three classes.</p>
+<pre><code class="language-text">e^z = (7.389, 2.718, 1.105)          sum = 11.213
+p   = (0.659, 0.242, 0.099)          adds to 1 ✓
+</code></pre>
+<p>If the true class is the first: <code>L = −ln 0.659 = 0.417</code>, and the gradient <code>p − y = (0.659 − 1, 0.242, 0.099) = (−0.341, 0.242, 0.099)</code>. If the true class were the third, the model would be badly wrong: <code>L = −ln 0.099 = 2.31</code>, gradient <code>(0.659, 0.242, −0.901)</code>.</p>
+<p>With temperature <code>T = 0.5</code> the scores become <code>(4, 2, 0.2)</code> and the probabilities <code>(0.86, 0.12, 0.02)</code>: sharper. With <code>T = 4</code>: <code>(0.5, 0.25, 0.025)</code> gives <code>(0.40, 0.31, 0.29)</code>: nearly flat.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="logits-to-loss" data-title="From scores to probabilities to loss"><p class="bench-fallback"><strong>Interactive bench: From scores to probabilities to loss.</strong> Sliders set three scores and a temperature and a choice sets the true class; bars show the softmax probabilities, and the bench reports the cross-entropy loss and the gradient for each score.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Raise one score and watch the probabilities shift.</li>
+<li>Change the true class and see the loss and gradient.</li>
+<li>Lower the temperature to sharpen the distribution.</li>
+<li>Make the model confidently wrong and read the loss.</li>
+</ol>
+<p><strong>What you should notice:</strong> the gradient is probability minus target, confident mistakes have large loss, and temperature scales how decisive the distribution is.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Classifiers and language models</strong> end in softmax with cross-entropy loss.</li>
+<li><strong>Attention weights</strong> are a softmax over scores (see <a class="wikilink" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products">Attention as Dot Products</a>).</li>
+<li><strong>Sampling temperature</strong> in text generation.</li>
+<li><strong>Knowledge distillation</strong> uses softened distributions.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Exponentiating large scores directly</strong> (use the stable form).</li>
+<li><strong>Applying softmax twice.</strong></li>
+<li><strong>Taking <code>log(softmax)</code> in two steps</strong> rather than a fused log-softmax.</li>
+<li><strong>Confusing temperature direction:</strong> low is sharper.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Softmax of (0, 0, 0)?</summary>
+(1/3, 1/3, 1/3).
+</details>
+
+<details><summary>2. Does softmax change if you add 5 to every score?</summary>
+No.
+</details>
+
+<details><summary>3. Gradient with respect to a wrong class's score when it has probability 0.2?</summary>
+0.2.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Logit:</strong> a raw class score.</li>
+<li><strong>Softmax:</strong> exponentiate and normalise scores into probabilities.</li>
+<li><strong>Temperature:</strong> a divisor on the scores that sharpens or flattens the result.</li>
+<li><strong>Cross-entropy loss:</strong> the negative log of the true class&#39;s probability.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a> · <a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a> · <a class="wikilink" href="/math/numerical-stability/" data-topic="math/numerical-stability">Numerical Stability</a> · <a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">Logistic Regression and the Sigmoid</a> · <a class="wikilink" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products">Attention as Dot Products</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/softmax-and-cross-entropy-in-practice">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/embeddings-and-similarity-search/"><small>Read next</small><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/exponential-and-logarithmic-functions/"><b>Exponential and Logarithmic Functions</b><p>An exponential function f(t) = a·bᵗ multiplies by the same factor every step, so it grows (or decays) faster and faster. Its inverse, the logarithmic function, grows slower and slower.</p></a><a class="rc-card" href="/math/cross-entropy/"><b>Cross-Entropy</b><p>Cross-entropy is the average surprise you feel when the world follows distribution p but you predicted with distribution q: H(p, q) = −Σ p log q.</p></a><a class="rc-card" href="/math/probability-rules/"><b>Probability Rules</b><p>Every probability, however it is produced, obeys a short list of rules: it lies between 0 and 1, the whole sample space has probability 1, the probability of &quot;not A&quot; is 1 − P(A), and for &quot;A or B&quot;…</p></a><a class="rc-card" href="/math/numerical-stability/"><b>Numerical Stability</b><p>A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified.</p></a><a class="rc-card" href="/math/attention-as-dot-products/"><b>Attention as Dot Products</b><p>Attention lets a model decide, for each item, which other items to focus on.</p></a><a class="rc-card" href="/math/logistic-regression-and-the-sigmoid/"><b>Logistic Regression and the Sigmoid</b><p>Logistic regression answers yes/no questions with a probability.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/backpropagation-by-hand/">← Previous: Backpropagation by Hand</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distributed and Data-Parallel Training — AI Base</title>
+<meta name="description" content="One accelerator has a limit to how much data it can process at once.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/distributed-and-data-parallel-training/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Distributed and Data-Parallel Training — AI Base">
+<meta property="og:description" content="One accelerator has a limit to how much data it can process at once.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/distributed-and-data-parallel-training/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Distributed and Data-Parallel Training","item":"https://ai.saranmahadev.in/deep-learning/distributed-and-data-parallel-training/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Distributed and Data-Parallel Training","description":"One accelerator has a limit to how much data it can process at once.","url":"https://ai.saranmahadev.in/deep-learning/distributed-and-data-parallel-training/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does each worker compute in data-parallel training?","acceptedAnswer":{"@type":"Answer","text":"The average gradient over its own shard (fraction) of the full batch."}},{"@type":"Question","name":"Why does averaging the workers' local averages give the same result as averaging the whole batch directly?","acceptedAnswer":{"@type":"Answer","text":"As long as every shard is the same size, the average of equal-sized group averages is mathematically identical to the average over the combined group."}},{"@type":"Question","name":"Why might doubling the number of workers give less than double the speedup?","acceptedAnswer":{"@type":"Answer","text":"Communication overhead (the all-reduce step synchronising gradients across workers) doesn't shrink proportionally, and eats into the ideal speedup more as worker count grows."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Training at Scale</p>
+        <h1 class="doc-title">Distributed and Data-Parallel Training</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1k0msrbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1k0msrpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1k0msrbg)"/>
+  <circle cx="975" cy="236" r="99" fill="#ffb89d" opacity="0.39"/><circle cx="959" cy="292" r="99" fill="#ffb89d" opacity="0.45"/><circle cx="320" cy="97" r="185" fill="#ffb89d" opacity="0.39"/><circle cx="463" cy="125" r="126" fill="#ffe6e6" opacity="0.39"/><circle cx="538" cy="325" r="126" fill="#8a546c" opacity="0.31"/>
+  <path d="M0,420 L0,350 L30,349 L60,348 L90,346 L120,344 L150,342 L180,339 L210,336 L240,333 L270,329 L300,326 L330,322 L360,319 L390,316 L420,313 L450,311 L480,309 L510,307 L540,306 L570,306 L600,306 L630,306 L660,307 L690,309 L720,311 L750,313 L780,316 L810,319 L840,323 L870,326 L900,329 L930,333 L960,336 L990,339 L1020,342 L1050,344 L1080,346 L1110,348 L1140,349 L1170,350 L1200,350 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,393 L90,392 L120,390 L150,387 L180,383 L210,380 L240,376 L270,372 L300,369 L330,366 L360,364 L390,363 L420,362 L450,362 L480,363 L510,365 L540,368 L570,371 L600,375 L630,379 L660,382 L690,386 L720,389 L750,391 L780,393 L810,394 L840,394 L870,393 L900,391 L930,389 L960,386 L990,382 L1020,379 L1050,375 L1080,371 L1110,368 L1140,365 L1170,363 L1200,362 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="702" cy="165" rx="235" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(11.6 702 165)"/><ellipse cx="702" cy="165" rx="325" ry="91" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(17.6 702 165)"/>
+  <circle cx="702" cy="165" r="92" fill="url(#c1k0msrpl)"/>
+  <circle cx="735" cy="62" r="9" fill="#ffffff" opacity="0.70"/><circle cx="496" cy="93" r="7" fill="#ffffff" opacity="0.77"/><circle cx="536" cy="36" r="14" fill="#ffffff" opacity="0.85"/><circle cx="417" cy="259" r="12" fill="#ffffff" opacity="0.87"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/deep-learning/why-gpus-and-accelerators/" data-topic="deep-learning/why-gpus-and-accelerators">One accelerator</a> has a limit to how much data it can process at once. <strong>Data-parallel training</strong> splits one large batch across several accelerators (or whole machines) — each computes gradients on its own smaller shard, and those gradients are averaged together before anyone updates their weights, producing the same result as one big batch would have, just computed in parallel.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/why-gpus-and-accelerators/" data-topic="deep-learning/why-gpus-and-accelerators">Why GPUs and Accelerators</a> and <a class="wikilink" href="/deep-learning/batch-size-and-training-dynamics/" data-topic="deep-learning/batch-size-and-training-dynamics">Batch Size and Training Dynamics</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;A batch too large for one GPU&#39;s memory still needs to be processed together for a stable gradient estimate — how do multiple GPUs cooperate on that?&quot; Split the batch into equal shards, one per worker; each worker computes its own shard&#39;s average gradient; average those averages together (an operation called <strong>all-reduce</strong>) to recover exactly the gradient the full, undivided batch would have given.</p>
+<h2 id="intuition-several-people-counting-a-sample-then-comparing-notes">Intuition: several people counting a sample, then comparing notes</h2>
+<p>Imagine four people each surveying a different quarter of a large sample, each reporting their own quarter&#39;s average. Average those four reports together, and (as long as each quarter is the same size) you get exactly the same answer as if one person had surveyed the whole sample and averaged it themselves — the work was split, but the final number is identical.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">K workers, each processing an equal shard of the batch
+
+worker k&#39;s local gradient:  g_k = average gradient over its own shard
+
+all-reduce step:  g_global = (1/K) · Σ g_k         — mathematically equal to averaging the whole batch at once
+
+every worker then applies the same g_global to its own copy of the weights, keeping them in sync
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Eight per-example gradients <code>(1, 2, 3, 4, 5, 6, 7, 8)</code>, split across 4 workers, 2 examples each:</p>
+<pre><code class="language-text">worker 1 (examples 1,2):  mean = 1.5
+worker 2 (examples 3,4):  mean = 3.5
+worker 3 (examples 5,6):  mean = 5.5
+worker 4 (examples 7,8):  mean = 7.5
+
+average of the four worker means = (1.5+3.5+5.5+7.5)/4 = 4.5
+global mean of all eight gradients directly  = (1+2+⋯+8)/8 = 4.5
+</code></pre>
+<p>Both routes land on exactly the same number, 4.5 — splitting the batch and averaging the averages gives the identical result to averaging the whole batch at once, which is exactly why data parallelism doesn&#39;t change what&#39;s being computed, only how the work is spread out.</p>
+<p>The speedup actually achieved, though, is a separate question from the math above. With 4 workers and a communication overhead equal to 10% of one worker&#39;s compute time:</p>
+<pre><code class="language-text">ideal speedup (if communication were free):   4×
+actual time per step ≈ (1/4) compute + 0.1 overhead = 0.35   (normalized to 1.0 for a single worker)
+actual speedup = 1 / 0.35 ≈ 2.857×
+</code></pre>
+<p>Even a modest communication overhead keeps the real speedup well under the ideal, which is why scaling to very large worker counts needs the all-reduce communication itself to be fast and efficient, not just the per-worker compute to be fast.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="data-parallel-avg" data-title="Splitting a batch across workers"><p class="bench-fallback"><strong>Interactive bench: Splitting a batch across workers.</strong> A batch of per-example gradients and a worker-count slider. See each worker's local average, confirm the average of those averages matches the single global average, and see the ideal versus actual speedup given some communication overhead.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Change the worker count and confirm the averaged result always matches the global average exactly.</li>
+<li>Increase the communication overhead and watch the actual speedup fall further below the ideal (worker-count) speedup.</li>
+<li>Push worker count very high with a fixed overhead and see diminishing returns set in.</li>
+</ol>
+<p><strong>What you should notice:</strong> splitting the batch never changes the math (the averaged gradient is identical either way) — only the speedup actually achieved, which communication overhead always eats into.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Training today&#39;s largest models</strong> is impossible on a single accelerator at all; data parallelism (often combined with other parallelism strategies) is the default way to use many accelerators together.</li>
+<li><strong>All-reduce implementations</strong> are a major area of systems engineering in their own right, since efficient communication between many workers is often the actual bottleneck, not the compute itself.</li>
+<li><strong><a class="wikilink" href="/deep-learning/checkpointing-and-reproducibility/" data-topic="deep-learning/checkpointing-and-reproducibility">Checkpointing</a> matters even more at this scale</strong> — a long run across many machines has far more chances for a single failure to interrupt the whole job.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting a perfect, linear speedup from adding more workers.</strong> Communication overhead, as shown above, always eats into the ideal speedup, and that overhead can grow as worker count increases.</li>
+<li><strong>Forgetting that unequal shard sizes break the exact equivalence.</strong> The averaging-of-averages trick only matches the single global average when every worker&#39;s shard is the same size.</li>
+<li><strong>Confusing data parallelism with model parallelism.</strong> Data parallelism splits the <em>batch</em>; a different strategy, not covered in full depth here, splits the <em>model itself</em> across devices when a single model is too large to fit on one accelerator at all.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does each worker compute in data-parallel training?</summary>
+The average gradient over its own shard (fraction) of the full batch.
+</details>
+
+<details><summary>2. Why does averaging the workers' local averages give the same result as averaging the whole batch directly?</summary>
+As long as every shard is the same size, the average of equal-sized group averages is mathematically identical to the average over the combined group.
+</details>
+
+<details><summary>3. Why might doubling the number of workers give less than double the speedup?</summary>
+Communication overhead (the all-reduce step synchronising gradients across workers) doesn't shrink proportionally, and eats into the ideal speedup more as worker count grows.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Data parallelism:</strong> splitting a batch across multiple workers, each computing gradients on its own shard.</li>
+<li><strong>All-reduce:</strong> the communication step that averages gradients across all workers.</li>
+<li><strong>Communication overhead:</strong> the time cost of synchronising workers, which limits real-world speedup.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/why-gpus-and-accelerators/" data-topic="deep-learning/why-gpus-and-accelerators">Why GPUs and Accelerators</a> · <a class="wikilink" href="/deep-learning/batch-size-and-training-dynamics/" data-topic="deep-learning/batch-size-and-training-dynamics">Batch Size and Training Dynamics</a> · <a class="wikilink" href="/deep-learning/mixed-precision-training/" data-topic="deep-learning/mixed-precision-training">Mixed Precision Training</a> · <a class="wikilink" href="/deep-learning/checkpointing-and-reproducibility/" data-topic="deep-learning/checkpointing-and-reproducibility">Checkpointing and Reproducibility</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/distributed-and-data-parallel-training">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/hyperparameter-tuning-for-deep-networks/"><small>Read next</small><b>Hyperparameter Tuning for Deep Networks</b><p>Hyperparameter Tuning already covered searching over settings like regularization strength for classic models.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/why-gpus-and-accelerators/"><b>Why GPUs and Accelerators</b><p>A matrix multiplication — the core operation behind every dense layer, convolution and attention computation — is really an enormous number of small, independent multiply-and-add operations.</p></a><a class="rc-card" href="/deep-learning/batch-size-and-training-dynamics/"><b>Batch Size and Training Dynamics</b><p>Stochastic Gradient Descent estimates the true gradient (averaged over the whole dataset) using only a batch of examples at a time.</p></a><a class="rc-card" href="/deep-learning/checkpointing-and-reproducibility/"><b>Checkpointing and Reproducibility</b><p>A training run that takes days can fail for all kinds of reasons that have nothing to do with the model — a machine reboots, a job gets pre-empted, a bug crashes the process.</p></a><a class="rc-card" href="/deep-learning/mixed-precision-training/"><b>Mixed Precision Training</b><p>32-bit floats are the usual default, but most of a network&#39;s computation doesn&#39;t need that much precision.</p></a><a class="rc-card" href="/deep-learning/training-at-scale/"><b>Training at Scale</b><p>Training a large network is an engineering problem as much as a mathematical one: it runs on specific hardware, for hours or weeks, and can silently fail in ways a small model never would.</p></a><a class="rc-card" href="/transformers/splitting-a-transformer-across-devices/"><b>Splitting a Transformer Across Devices</b><p>A large transformer&#39;s matrices can be far too big to fit on one device at all.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/mixed-precision-training/">← Previous: Mixed Precision Training</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

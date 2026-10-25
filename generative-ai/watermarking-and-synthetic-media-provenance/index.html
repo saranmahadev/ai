@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watermarking and Synthetic Media Provenance — AI Base</title>
+<meta name="description" content="Detecting memorized training content means comparing a model&#39;s behavior against something it saw before.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/watermarking-and-synthetic-media-provenance/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Watermarking and Synthetic Media Provenance — AI Base">
+<meta property="og:description" content="Detecting memorized training content means comparing a model&#39;s behavior against something it saw before.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/watermarking-and-synthetic-media-provenance/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Watermarking and Synthetic Media Provenance","item":"https://ai.saranmahadev.in/generative-ai/watermarking-and-synthetic-media-provenance/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Watermarking and Synthetic Media Provenance","description":"Detecting memorized training content means comparing a model's behavior against something it saw before.","url":"https://ai.saranmahadev.in/generative-ai/watermarking-and-synthetic-media-provenance/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What determines whether a given token counts as \"green\" at a particular position?","acceptedAnswer":{"@type":"Answer","text":"The token immediately before it — that previous token deterministically seeds a pseudorandom split of the vocabulary into a green set and a red set."}},{"@type":"Question","name":"In the worked example, why was 49.2% (unwatermarked) not considered suspicious, while 100.0% (watermarked) clearly was?","acceptedAnswer":{"@type":"Answer","text":"49.2% sits right at the chance level expected when half the vocabulary is green and no bias is applied; 100.0% is so far beyond what chance alone would produce that it's essentially impossible without a deliberate bias toward green tokens."}},{"@type":"Question","name":"How does watermark detection differ from overlap-based provenance detection?","acceptedAnswer":{"@type":"Answer","text":"Watermark detection recomputes a known rule over the text and checks for a statistical excess of green tokens, requiring no access to any training data; overlap detection instead compares the text directly against a specific reference corpus to find verbatim matches."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Risks and Responsible Generation</p>
+        <h1 class="doc-title">Watermarking and Synthetic Media Provenance</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c8yvl34bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c8yvl34pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c8yvl34bg)"/>
+  <circle cx="1115" cy="176" r="92" fill="#ffbfe0" opacity="0.50"/><circle cx="680" cy="290" r="103" fill="#ffe9f4" opacity="0.50"/><circle cx="436" cy="171" r="227" fill="#ffbeba" opacity="0.23"/><circle cx="650" cy="163" r="190" fill="#ffbfe0" opacity="0.26"/><circle cx="1025" cy="185" r="165" fill="#ffe9f4" opacity="0.28"/><circle cx="1195" cy="349" r="184" fill="#ffe9f4" opacity="0.28"/><circle cx="577" cy="387" r="214" fill="#ffbeba" opacity="0.48"/>
+  <path d="M0,420 L0,308 L30,306 L60,306 L90,308 L120,312 L150,318 L180,325 L210,332 L240,338 L270,344 L300,347 L330,349 L360,349 L390,347 L420,343 L450,337 L480,330 L510,324 L540,317 L570,312 L600,308 L630,306 L660,306 L690,308 L720,312 L750,318 L780,325 L810,332 L840,338 L870,344 L900,347 L930,349 L960,349 L990,347 L1020,343 L1050,337 L1080,330 L1110,324 L1140,317 L1170,312 L1200,308 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,390 L30,392 L60,394 L90,394 L120,392 L150,389 L180,385 L210,380 L240,375 L270,370 L300,366 L330,364 L360,362 L390,362 L420,364 L450,367 L480,371 L510,376 L540,381 L570,386 L600,390 L630,392 L660,394 L690,394 L720,392 L750,389 L780,385 L810,380 L840,375 L870,370 L900,366 L930,364 L960,362 L990,362 L1020,364 L1050,367 L1080,371 L1110,376 L1140,381 L1170,386 L1200,390 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="954" cy="251" rx="152" ry="43" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(22.0 954 251)"/><ellipse cx="954" cy="251" rx="210" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(28.0 954 251)"/>
+  <circle cx="954" cy="251" r="60" fill="url(#c8yvl34pl)"/>
+  <circle cx="951" cy="166" r="9" fill="#ffffff" opacity="0.63"/><circle cx="1107" cy="309" r="13" fill="#ffffff" opacity="0.65"/><circle cx="906" cy="327" r="12" fill="#ffffff" opacity="0.70"/><circle cx="756" cy="270" r="13" fill="#ffffff" opacity="0.89"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Detecting memorized training content means comparing a model&#39;s behavior against something it saw before. Telling generated content apart from real content is a related but different problem, and one a model&#39;s creator can actually engineer a solution for: deliberately biasing generation in a way invisible to a reader but detectable by anyone who knows the rule.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/memorization-and-training-data-leakage/" data-topic="generative-ai/memorization-and-training-data-leakage">Memorization and Training Data Leakage</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can generated text be marked as machine-generated without visibly changing how it reads?&quot; A <strong>green-list watermark</strong> biases which tokens a model is likely to choose, using a rule invisible to a casual reader: the <em>previous</em> token deterministically seeds a pseudorandom split of the vocabulary into a &quot;green&quot; list (some fraction, γ) and the rest. Nudging the model to prefer green-list tokens, even slightly, produces text with a green-token fraction well above what random chance would produce — detectable by anyone who knows the seeding rule, without needing to see how the text was generated.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine a secret rule: &quot;whichever word was just said determines a specific, unpredictable-looking half of the dictionary that&#39;s temporarily &#39;preferred.&#39;&quot; Write normally while slightly favoring that preferred half whenever you have a free choice, and the result still reads completely naturally — nothing about any individual sentence looks unusual. But someone who knows the rule can walk through your text afterward, recompute which half was &quot;preferred&quot; at every point, and check: did you use far more preferred-list words than pure chance would predict? If yes, that&#39;s the watermark, detected with no need to have watched you write it.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">green-list rule: previous token&#39;s id seeds a pseudorandom split of the
+  vocabulary into a green set (fraction γ) and a red set (fraction 1−γ)
+
+generation: bias every green-list token&#39;s logit upward by δ before choosing
+detection: recompute the green list at every position; measure the
+  fraction of generated tokens that landed in their own green list
+  → near γ under no watermark; well above γ if the bias was applied
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>200 toy tokens generated two ways — with and without the green-list bias (δ=4, γ=0.5, so about half the vocabulary is &quot;green&quot; at any position) — then checked against the exact same green-list rule used during generation:</p>
+<pre><code class="language-text">unwatermarked generation:  49.2% of tokens land in their own green list
+  (matches the ~50% expected by pure chance, with no bias applied)
+
+watermarked generation:    100.0% of tokens land in their own green list
+  (far beyond chance — unmistakable evidence of the bias)
+</code></pre>
+<p>With no bias, the green-token fraction sits right where random chance predicts (about 50%, since half the vocabulary is green at any step). With the bias applied, every single token in this run happened to land in the green list — a result pure chance would essentially never produce, making the watermark trivially detectable by anyone running the same green-list rule over the text.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="watermark-detect" data-title="A hidden bias that's easy to detect, if you know the rule"><p class="bench-fallback"><strong>Interactive bench: A hidden bias that's easy to detect, if you know the rule.</strong> Toggle a watermark bias on and off and watch how much the green-token fraction departs from the chance level.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Turn the watermark off and check the green-token fraction sits near 50%.</li>
+<li>Turn it on and watch the fraction shoot up.</li>
+<li>Lower the bias strength (δ) and see how weak the watermark can get before the fraction drops back toward chance.</li>
+</ol>
+<p><strong>What you should notice:</strong> detection doesn&#39;t require seeing the generation process at all — it only requires recomputing the same green-list rule over the finished text and checking whether the green fraction is implausibly high to have occurred by chance.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is a real, deployed technique (closely following Kirchenbauer et al., 2023)</strong>, used by some LLM providers specifically to let anyone with the detection rule check whether a piece of text came from their model.</li>
+<li><strong>Robustness is the open challenge</strong>: paraphrasing, translation, or heavy editing of watermarked text can wash out the green-list signal, since those operations change which tokens actually appear.</li>
+<li><strong>It&#39;s a fundamentally different approach from <a class="wikilink" href="/generative-ai/copyright-and-training-data-provenance/" data-topic="generative-ai/copyright-and-training-data-provenance">overlap detection</a></strong>: overlap detection looks for evidence a specific training example was reproduced; watermarking is a deliberate signal engineered in at generation time, present whether or not any training data is involved at all.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a watermark is visible or changes the text&#39;s readability.</strong> The entire point is that it doesn&#39;t — the bias operates purely at the level of which plausible-but-arbitrary token choice gets made, not on content or style.</li>
+<li><strong>Expecting watermark detection to work without the exact seeding rule.</strong> Detection requires recomputing the same green-list function used during generation; without knowing that rule, the bias is statistically invisible.</li>
+<li><strong>Treating watermarking as unbreakable.</strong> A sufficiently aggressive rewrite can degrade or destroy the signal, since the watermark lives in specific token choices that a rewrite can simply replace.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What determines whether a given token counts as "green" at a particular position?</summary>
+The token immediately before it — that previous token deterministically seeds a pseudorandom split of the vocabulary into a green set and a red set.
+</details>
+
+<details><summary>2. In the worked example, why was 49.2% (unwatermarked) not considered suspicious, while 100.0% (watermarked) clearly was?</summary>
+49.2% sits right at the chance level expected when half the vocabulary is green and no bias is applied; 100.0% is so far beyond what chance alone would produce that it's essentially impossible without a deliberate bias toward green tokens.
+</details>
+
+<details><summary>3. How does watermark detection differ from overlap-based provenance detection?</summary>
+Watermark detection recomputes a known rule over the text and checks for a statistical excess of green tokens, requiring no access to any training data; overlap detection instead compares the text directly against a specific reference corpus to find verbatim matches.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Watermark (green-list):</strong> a deliberate, invisible bias toward a pseudorandomly chosen subset of tokens, detectable by recomputing the same rule.</li>
+<li><strong>Green list:</strong> the pseudorandomly selected subset of the vocabulary favored at a given generation step.</li>
+<li><strong>Detection:</strong> checking a piece of text for an implausibly high fraction of green-list tokens under the known seeding rule.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/memorization-and-training-data-leakage/" data-topic="generative-ai/memorization-and-training-data-leakage">Memorization and Training Data Leakage</a> · <a class="wikilink" href="/generative-ai/copyright-and-training-data-provenance/" data-topic="generative-ai/copyright-and-training-data-provenance">Copyright and Training Data Provenance</a> · <a class="wikilink" href="/generative-ai/content-safety-and-red-teaming/" data-topic="generative-ai/content-safety-and-red-teaming">Content Safety and Red-Teaming</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/watermarking-and-synthetic-media-provenance">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/content-safety-and-red-teaming/"><small>Read next</small><b>Content Safety and Red-Teaming</b><p>A watermark is a signal engineered to survive detection.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/memorization-and-training-data-leakage/"><b>Memorization and Training Data Leakage</b><p>overlap detection checks whether generated output matches training data verbatim.</p></a><a class="rc-card" href="/generative-ai/copyright-and-training-data-provenance/"><b>Copyright and Training Data Provenance</b><p>A generative model&#39;s training data came from somewhere — and the question of whether that content was licensed, consented to, or even known about by the people who created it is one that…</p></a><a class="rc-card" href="/generative-ai/content-safety-and-red-teaming/"><b>Content Safety and Red-Teaming</b><p>A watermark is a signal engineered to survive detection.</p></a><a class="rc-card" href="/generative-ai/risks-and-responsible-generation/"><b>Risks and Responsible Generation</b><p>Generative models fail in ways discriminative models mostly don&#39;t: confidently wrong output, reproduced training data, content nobody consented to be trained on, and output that&#39;s hard to tell…</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/memorization-and-training-data-leakage/">← Previous: Memorization and Training Data Leakage</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

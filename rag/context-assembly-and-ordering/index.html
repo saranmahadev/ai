@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context Assembly and Ordering — AI Base</title>
+<meta name="description" content="Retrieval can rank the single most relevant passage first — and assembly can still bury it in the middle of the prompt, right where a model is statistically least likely to actually use it.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/context-assembly-and-ordering/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Context Assembly and Ordering — AI Base">
+<meta property="og:description" content="Retrieval can rank the single most relevant passage first — and assembly can still bury it in the middle of the prompt, right where a model is statistically least likely to actually use it.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/context-assembly-and-ordering/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Context Assembly and Ordering","item":"https://ai.saranmahadev.in/rag/context-assembly-and-ordering/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Context Assembly and Ordering","description":"Retrieval can rank the single most relevant passage first — and assembly can still bury it in the middle of the prompt, right where a model is statistically least likely to actually use it.","url":"https://ai.saranmahadev.in/rag/context-assembly-and-ordering/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does moving the most relevant passage to the middle hurt its odds of being used, when nothing about the passage's content changed?","acceptedAnswer":{"@type":"Answer","text":"The lost-in-the-middle effect is about *position* within the context, not content — a model is statistically less likely to attend to and use information placed in the middle of a long context, regardless of how relevant that information actually is."}},{"@type":"Question","name":"Is the start of the context always a better position than the end?","acceptedAnswer":{"@type":"Answer","text":"No — the worked example's curve is symmetric, with both the start and the end scoring equally well (95%); the problem is specifically the middle, not either edge in particular."}},{"@type":"Question","name":"What does assembly order control that retrieval ranking alone doesn't?","acceptedAnswer":{"@type":"Answer","text":"Retrieval ranking determines which passages are the most relevant; assembly order determines where those passages physically sit in the prompt, which independently affects how likely the model is to actually use each one."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Generation with Retrieved Context</p>
+        <h1 class="doc-title">Context Assembly and Ordering</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="crz8d8jbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="crz8d8jpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#crz8d8jbg)"/>
+  <circle cx="188" cy="110" r="205" fill="#dcf5f7" opacity="0.50"/><circle cx="627" cy="252" r="140" fill="#42718e" opacity="0.52"/><circle cx="872" cy="353" r="162" fill="#dcf5f7" opacity="0.51"/><circle cx="889" cy="218" r="103" fill="#b7d5be" opacity="0.30"/><circle cx="581" cy="182" r="143" fill="#dcf5f7" opacity="0.25"/><circle cx="516" cy="167" r="171" fill="#97e1e6" opacity="0.49"/><circle cx="85" cy="96" r="87" fill="#b7d5be" opacity="0.26"/>
+  <path d="M0,420 L0,329 L30,324 L60,319 L90,314 L120,311 L150,308 L180,306 L210,306 L240,306 L270,308 L300,311 L330,315 L360,319 L390,324 L420,330 L450,335 L480,339 L510,343 L540,347 L570,349 L600,350 L630,349 L660,348 L690,345 L720,342 L750,337 L780,332 L810,327 L840,322 L870,317 L900,313 L930,310 L960,307 L990,306 L1020,306 L1050,307 L1080,309 L1110,312 L1140,316 L1170,321 L1200,326 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,390 L30,386 L60,382 L90,377 L120,372 L150,367 L180,364 L210,362 L240,362 L270,363 L300,366 L330,370 L360,374 L390,379 L420,384 L450,389 L480,392 L510,394 L540,394 L570,393 L600,390 L630,386 L660,382 L690,377 L720,372 L750,367 L780,364 L810,362 L840,362 L870,363 L900,366 L930,370 L960,374 L990,379 L1020,384 L1050,389 L1080,392 L1110,394 L1140,394 L1170,393 L1200,390 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="718" cy="124" rx="206" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.4 718 124)"/><ellipse cx="718" cy="124" rx="284" ry="80" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.6 718 124)"/>
+  <circle cx="718" cy="124" r="81" fill="url(#crz8d8jpl)"/>
+  <circle cx="876" cy="64" r="11" fill="#ffffff" opacity="0.77"/><circle cx="925" cy="180" r="14" fill="#ffffff" opacity="0.89"/><circle cx="478" cy="34" r="17" fill="#ffffff" opacity="0.78"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Retrieval can rank the single most relevant passage first — and assembly can still bury it in the middle of the prompt, right where a model is statistically least likely to actually use it. Where a passage sits in the assembled context matters every bit as much as whether it was retrieved at all.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/anatomy-of-a-rag-pipeline/" data-topic="rag/anatomy-of-a-rag-pipeline">Anatomy of a RAG Pipeline</a>, <a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">Context Rot and Lost-in-the-Middle Effects</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does it matter what order retrieved passages are assembled in?&quot; Yes — this reuses the exact <a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">lost-in-the-middle</a> finding already established on the LLMs planet: a model is most likely to actually use information placed near the start or end of its context, and least likely to use information buried in the middle, regardless of how relevant that information actually is. Assembly is the stage that decides this placement, so it directly controls how much of retrieval&#39;s hard-won ranking actually survives into the generated answer.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Handing someone a stack of five documents and asking them to answer a question using the third one from the top, specifically, works less reliably than handing them the same document as either the very first or very last thing they read — not because the document changed, but because where it sits in the stack changes how much attention it tends to get.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">accuracy(position) = lost-in-the-middle curve: high near the edges, low in the middle
+</code></pre>
+<p>(exact formula already derived in <a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">Context Rot and Lost-in-the-Middle Effects</a>)</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The single most relevant retrieved passage, placed at different positions among 5 assembled passages:</p>
+<pre><code class="language-text">position 1 of 5 (at the start):  95.0% chance it&#39;s actually used
+position 3 of 5 (in the middle): 55.0% chance it&#39;s actually used
+position 5 of 5 (at the end):    95.0% chance it&#39;s actually used
+</code></pre>
+<p>Moving the exact same, most-relevant passage from the start of the assembled context to the middle cuts the odds it actually gets used almost in half — from 95% down to 55% — with nothing about the passage itself changing at all.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="context-position-accuracy" data-title="First, last, or buried in the middle"><p class="bench-fallback"><strong>Interactive bench: First, last, or buried in the middle.</strong> Slide where the most relevant passage sits in the assembled context and watch the odds it actually gets used.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with the most relevant passage at position 1 and note the high accuracy.</li>
+<li>Slide it toward the middle and watch accuracy drop.</li>
+<li>Slide it to the last position and watch accuracy recover.</li>
+</ol>
+<p><strong>What you should notice:</strong> the curve is symmetric — the start and the end are equally good positions, and the dip is centered exactly in the middle of the assembled passages, not biased toward either side.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is a direct, practical application of <a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">Context Rot and Lost-in-the-Middle Effects</a>&#39;s own worked example</strong>, applied specifically to deciding assembly order rather than measuring the general phenomenon.</li>
+<li><strong>A re-ranker&#39;s job (<a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a>) isn&#39;t finished once it scores passages</strong> — the resulting order still needs to be placed into the context in a way that actually benefits from that ranking.</li>
+<li><strong><a class="wikilink" href="/rag/context-window-budgeting-for-rag/" data-topic="rag/context-window-budgeting-for-rag">Context-Window Budgeting for RAG</a> decides how many passages fit at all</strong>; this topic decides where, among the ones that do fit, each one should go.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assembling retrieved passages in an arbitrary order (alphabetical, by document ID) instead of by relevance-aware placement.</strong> The worked example shows a 40-percentage-point accuracy swing purely from positioning — an arbitrary order wastes exactly the ranking signal retrieval worked to produce.</li>
+<li><strong>Assuming the most relevant passage should always go first.</strong> Depending on the specific lost-in-the-middle curve, the last position can be just as strong — some systems deliberately place the top result last, closest to the question itself.</li>
+<li><strong>Treating assembly order as a one-time decision that doesn&#39;t need revisiting.</strong> The right ordering can depend on the specific model being used, since different models can have somewhat different lost-in-the-middle profiles.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does moving the most relevant passage to the middle hurt its odds of being used, when nothing about the passage's content changed?</summary>
+The lost-in-the-middle effect is about *position* within the context, not content — a model is statistically less likely to attend to and use information placed in the middle of a long context, regardless of how relevant that information actually is.
+</details>
+
+<details><summary>2. Is the start of the context always a better position than the end?</summary>
+No — the worked example's curve is symmetric, with both the start and the end scoring equally well (95%); the problem is specifically the middle, not either edge in particular.
+</details>
+
+<details><summary>3. What does assembly order control that retrieval ranking alone doesn't?</summary>
+Retrieval ranking determines which passages are the most relevant; assembly order determines where those passages physically sit in the prompt, which independently affects how likely the model is to actually use each one.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Context assembly:</strong> arranging retrieved passages into the final prompt sent to the generating model.</li>
+<li><strong>Lost-in-the-middle effect:</strong> the tendency for information in the middle of a long context to be used less reliably than information at the start or end.</li>
+<li><strong>Assembly order:</strong> the specific sequence in which retrieved passages are placed within the assembled context.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">Context Rot and Lost-in-the-Middle Effects</a> · <a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a> · <a class="wikilink" href="/rag/context-window-budgeting-for-rag/" data-topic="rag/context-window-budgeting-for-rag">Context-Window Budgeting for RAG</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/context-assembly-and-ordering">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/citation-and-source-attribution/"><small>Read next</small><b>Citation and Source Attribution</b><p>An answer that cites its sources lets a reader check it; an answer that doesn&#39;t asks for blind trust.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/anatomy-of-a-rag-pipeline/"><b>Anatomy of a RAG Pipeline</b><p>Every retrieval-augmented system, however elaborate, is built from the same handful of stages in the same order: a question comes in, it becomes a vector, that vector finds relevant passages,…</p></a><a class="rc-card" href="/llms/context-rot-and-lost-in-the-middle-effects/"><b>Context Rot and Lost-in-the-Middle Effects</b><p>Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem:…</p></a><a class="rc-card" href="/rag/re-ranking-retrieved-results/"><b>Re-Ranking Retrieved Results</b><p>Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet&#39;s own illustrative units — far too much for a live request.</p></a><a class="rc-card" href="/rag/context-window-budgeting-for-rag/"><b>Context-Window Budgeting for RAG</b><p>Retrieved chunks don&#39;t get the entire context window to themselves — a running conversation&#39;s own history is sitting in there too, and the two are competing for the exact same limited space.</p></a><a class="rc-card" href="/rag/generation-with-retrieved-context/"><b>Generation with Retrieved Context</b><p>Retrieval only hands a model raw material; what the model does with that material is a separate problem.</p></a><a class="rc-card" href="/rag/production-rag-pipeline-architecture/"><b>Production RAG Pipeline Architecture</b><p>Every topic on this road so far has zoomed into one stage of a RAG system.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/generation-with-retrieved-context/">← Previous: Generation with Retrieved Context</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

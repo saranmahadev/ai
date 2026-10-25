@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rate and Temporal Coding — AI Base</title>
+<meta name="description" content="A spike itself carries almost no information — it is the same all-or-nothing event every time.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/rate-and-temporal-coding/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Rate and Temporal Coding — AI Base">
+<meta property="og:description" content="A spike itself carries almost no information — it is the same all-or-nothing event every time.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/rate-and-temporal-coding/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Rate and Temporal Coding","item":"https://ai.saranmahadev.in/neural-networks/rate-and-temporal-coding/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Rate and Temporal Coding","description":"A spike itself carries almost no information — it is the same all-or-nothing event every time.","url":"https://ai.saranmahadev.in/neural-networks/rate-and-temporal-coding/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does rate coding measure, and what does temporal (latency) coding measure?","acceptedAnswer":{"@type":"Answer","text":"Rate coding measures the number of spikes in a time window; temporal coding measures the precise timing of spikes, most simply the delay to the first one."}},{"@type":"Question","name":"In the worked example, which code could in principle report a result sooner?","acceptedAnswer":{"@type":"Answer","text":"Temporal (latency) coding — it only needs the first spike, while rate coding needs the entire counting window to finish."}},{"@type":"Question","name":"What happens to both codes if the input is too weak to reach the firing threshold?","acceptedAnswer":{"@type":"Answer","text":"Neither is defined — with no spikes, there is nothing to count (for rate) and no first spike to time (for latency)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Spiking and Neuromorphic Computing</p>
+        <h1 class="doc-title">Rate and Temporal Coding</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1bosv9abg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="c1bosv9apl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1bosv9abg)"/>
+  <circle cx="754" cy="404" r="185" fill="#e3f6e5" opacity="0.57"/><circle cx="187" cy="368" r="161" fill="#c5d79b" opacity="0.49"/><circle cx="1099" cy="343" r="229" fill="#50736a" opacity="0.28"/><circle cx="590" cy="232" r="138" fill="#50736a" opacity="0.57"/><circle cx="327" cy="42" r="100" fill="#50736a" opacity="0.41"/><circle cx="726" cy="370" r="84" fill="#50736a" opacity="0.56"/><circle cx="101" cy="186" r="227" fill="#c5d79b" opacity="0.61"/>
+  <path d="M0,420 L0,306 L30,308 L60,310 L90,314 L120,318 L150,323 L180,328 L210,334 L240,338 L270,343 L300,346 L330,348 L360,349 L390,349 L420,348 L450,346 L480,343 L510,338 L540,334 L570,328 L600,323 L630,318 L660,314 L690,310 L720,308 L750,306 L780,306 L810,306 L840,308 L870,311 L900,315 L930,320 L960,325 L990,330 L1020,335 L1050,340 L1080,344 L1110,347 L1140,349 L1170,350 L1200,349 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,390 L30,392 L60,394 L90,394 L120,392 L150,389 L180,385 L210,380 L240,375 L270,370 L300,366 L330,364 L360,362 L390,362 L420,364 L450,367 L480,371 L510,376 L540,381 L570,386 L600,390 L630,392 L660,394 L690,394 L720,392 L750,389 L780,385 L810,380 L840,375 L870,370 L900,366 L930,364 L960,362 L990,362 L1020,364 L1050,367 L1080,371 L1110,376 L1140,381 L1170,386 L1200,390 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="644" cy="141" rx="206" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(20.2 644 141)"/><ellipse cx="644" cy="141" rx="285" ry="80" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(26.2 644 141)"/>
+  <circle cx="644" cy="141" r="81" fill="url(#c1bosv9apl)"/>
+  <circle cx="656" cy="242" r="11" fill="#ffffff" opacity="0.84"/><circle cx="427" cy="193" r="9" fill="#ffffff" opacity="0.73"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A spike itself carries almost no information — it is the same all-or-nothing event every time. Whatever a spiking neuron is &quot;saying&quot; has to live somewhere else: in how <em>often</em> it spikes, or in <em>exactly when</em> it spikes. These are the two standard ways to read a spike train, and they are genuinely different codes, not two names for the same thing.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/spiking-neural-networks/" data-topic="neural-networks/spiking-neural-networks">Spiking Neural Networks</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If a spike itself carries no information beyond &#39;now,&#39; how can a train of spikes represent a continuous quantity like stimulus strength?&quot; Two ways, both compatible with the exact same underlying neuron: <strong>rate coding</strong> reads the <em>number</em> of spikes in a time window, while <strong>temporal coding</strong> reads the <em>precise timing</em> of spikes — most simply, how long the first spike takes to arrive after the stimulus starts.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine turning up the brightness of a light shone on a sensor neuron. Under rate coding, a brighter light makes the neuron fire more spikes per second — count spikes over a window, and you recover roughly how bright the light was. Under temporal coding, the same brighter light instead makes the neuron fire its <em>first</em> spike sooner after the light switches on — measure the delay to that first spike, and you again recover roughly how bright the light was. Both are valid ways to decode the same stimulus; biological neurons appear to use both, depending on the circuit.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">rate code:     r ≈ (spike count in window T) / T
+temporal code: latency ≈ time to first spike after stimulus onset
+</code></pre>
+<p>Rate coding is more robust to the exact timing of any individual spike (only the count matters) but needs a long-enough window to be reliable. Temporal (latency) coding can in principle convey information from a single spike, but is more sensitive to any noise that shifts spike timing.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three LIF neurons (same as <a class="wikilink" href="/neural-networks/spiking-neural-networks/" data-topic="neural-networks/spiking-neural-networks">Spiking Neural Networks</a>, <code>leak = 0.1</code>, <code>threshold = 1</code>), each given a different constant input for 16 time steps:</p>
+<pre><code class="language-text">input 0.3:  spikes at t = 4, 8, 12, 16   → rate = 4/16 = 0.25   first-spike latency = 4
+input 0.5:  spikes at t = 3, 6, 9, 12, 15 → rate = 5/16 ≈ 0.31  first-spike latency = 3
+input 0.8:  spikes at t = 2, 4, 6, 8, 10, 12, 14, 16 → rate = 8/16 = 0.50  first-spike latency = 2
+</code></pre>
+<p>Both codes move in the same direction as the input strength increases — the rate goes up, and the latency goes down — but they are measuring different things from the same spike trains: one counts events over the whole window, the other looks only at when the very first event happened.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="spike-codes" data-title="Reading the same spikes two ways"><p class="bench-fallback"><strong>Interactive bench: Reading the same spikes two ways.</strong> Set an input strength for a LIF neuron and see both its firing rate and its first-spike latency over a fixed time window, side by side.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Increase the input and watch the rate rise while the latency falls.</li>
+<li>Find an input weak enough that no spike occurs in the window at all — both codes become undefined.</li>
+<li>Compare how quickly each code becomes readable: the latency is known after one spike, while the rate needs the whole window to finish.</li>
+</ol>
+<p><strong>What you should notice:</strong> temporal coding can in principle deliver information faster (after just one spike) than rate coding (which needs to wait out the whole counting window) — a real advantage in circuits where speed matters.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the foundation for training signals in spiking networks</strong>: some training methods for spiking neural networks explicitly target either spike rates or spike timing, and the choice shapes what the network can learn efficiently.</li>
+<li><strong><a class="wikilink" href="/neural-networks/spike-timing-dependent-plasticity/" data-topic="neural-networks/spike-timing-dependent-plasticity">the next topic&#39;s</a> learning rule depends on exact spike timing</strong>, which only makes sense once temporal coding is on the table — a purely rate-based view would miss it entirely.</li>
+<li><strong>Neuromorphic hardware (see <a class="wikilink" href="/neural-networks/neuromorphic-hardware/" data-topic="neural-networks/neuromorphic-hardware">Neuromorphic Hardware</a>) is often designed around one coding scheme or the other</strong>, since the two put very different demands on how precisely spike times need to be preserved by the hardware.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming rate coding is &quot;the&quot; code and temporal coding is a minor variant.</strong> Both are standard, well-studied coding schemes; different biological circuits appear to favour one or the other.</li>
+<li><strong>Confusing latency coding with rate coding at low rates.</strong> A low firing rate and a long first-spike latency often correlate, but they are still conceptually distinct measurements of the same spike train.</li>
+<li><strong>Forgetting both codes need the input to be strong enough to spike at all.</strong> Below the firing threshold established in <a class="wikilink" href="/neural-networks/spiking-neural-networks/" data-topic="neural-networks/spiking-neural-networks">Spiking Neural Networks</a>, neither code carries any information — there is nothing to count or time.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does rate coding measure, and what does temporal (latency) coding measure?</summary>
+Rate coding measures the number of spikes in a time window; temporal coding measures the precise timing of spikes, most simply the delay to the first one.
+</details>
+
+<details><summary>2. In the worked example, which code could in principle report a result sooner?</summary>
+Temporal (latency) coding — it only needs the first spike, while rate coding needs the entire counting window to finish.
+</details>
+
+<details><summary>3. What happens to both codes if the input is too weak to reach the firing threshold?</summary>
+Neither is defined — with no spikes, there is nothing to count (for rate) and no first spike to time (for latency).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Rate coding:</strong> representing a signal&#39;s strength by how many spikes occur in a fixed time window.</li>
+<li><strong>Temporal (latency) coding:</strong> representing a signal&#39;s strength by the precise timing of spikes, often the delay to the first one.</li>
+<li><strong>Firing rate:</strong> the spike count in a window divided by the window&#39;s length.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/spiking-neural-networks/" data-topic="neural-networks/spiking-neural-networks">Spiking Neural Networks</a> · <a class="wikilink" href="/neural-networks/spike-timing-dependent-plasticity/" data-topic="neural-networks/spike-timing-dependent-plasticity">Spike-Timing-Dependent Plasticity</a> · <a class="wikilink" href="/neural-networks/neuromorphic-hardware/" data-topic="neural-networks/neuromorphic-hardware">Neuromorphic Hardware</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/rate-and-temporal-coding">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/spike-timing-dependent-plasticity/"><small>Read next</small><b>Spike-Timing-Dependent Plasticity</b><p>Hebb&#39;s rule says neurons that fire together wire together, but says nothing about order.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/spiking-neural-networks/"><b>Spiking Neural Networks</b><p>Every network so far on this planet, and every one on Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.</p></a><a class="rc-card" href="/neural-networks/spike-timing-dependent-plasticity/"><b>Spike-Timing-Dependent Plasticity</b><p>Hebb&#39;s rule says neurons that fire together wire together, but says nothing about order.</p></a><a class="rc-card" href="/neural-networks/neuromorphic-hardware/"><b>Neuromorphic Hardware</b><p>A GPU evaluates every unit in a layer on every clock cycle, whether or not that unit has anything new to say.</p></a><a class="rc-card" href="/neural-networks/the-biological-neuron/"><b>The Biological Neuron</b><p>A real neuron is a cell: dendrites collect incoming signals from other neurons, the cell body sums them up, and if that sum crosses a threshold, the neuron fires a brief electrical spike down its…</p></a><a class="rc-card" href="/neural-networks/spiking-and-neuromorphic-computing/"><b>Spiking and Neuromorphic Computing</b><p>A real neuron doesn&#39;t output a continuous number — it stays silent, then fires a brief, discrete spike.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/spiking-neural-networks/">← Previous: Spiking Neural Networks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

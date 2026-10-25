@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norms and Distance — AI Base</title>
+<meta name="description" content="A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/norms-and-distance/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Norms and Distance — AI Base">
+<meta property="og:description" content="A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/norms-and-distance/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Norms and Distance","item":"https://ai.saranmahadev.in/math/norms-and-distance/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Norms and Distance","description":"A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.","url":"https://ai.saranmahadev.in/math/norms-and-distance/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the L1 and L2 norms of (−6, 8)?","acceptedAnswer":{"@type":"Answer","text":"14 and 10."}},{"@type":"Question","name":"What is the unit vector for (0, 5)?","acceptedAnswer":{"@type":"Answer","text":"(0, 1)."}},{"@type":"Question","name":"What is the L∞ norm of (2, −7, 4)?","acceptedAnswer":{"@type":"Answer","text":"7."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Linear Algebra</p>
+        <h1 class="doc-title">Norms and Distance</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cxz4rz4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cxz4rz4pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cxz4rz4bg)"/>
+  <circle cx="635" cy="254" r="146" fill="#ddbecb" opacity="0.31"/><circle cx="613" cy="99" r="83" fill="#eee9fd" opacity="0.41"/><circle cx="352" cy="8" r="209" fill="#68599a" opacity="0.61"/><circle cx="892" cy="27" r="95" fill="#eee9fd" opacity="0.32"/><circle cx="825" cy="199" r="131" fill="#ddbecb" opacity="0.33"/><circle cx="243" cy="229" r="67" fill="#eee9fd" opacity="0.46"/>
+  <path d="M0,420 L0,349 L30,348 L60,346 L90,344 L120,341 L150,338 L180,335 L210,332 L240,328 L270,325 L300,322 L330,318 L360,315 L390,313 L420,310 L450,308 L480,307 L510,306 L540,306 L570,306 L600,306 L630,308 L660,309 L690,311 L720,314 L750,317 L780,320 L810,323 L840,327 L870,330 L900,334 L930,337 L960,340 L990,343 L1020,345 L1050,347 L1080,348 L1110,349 L1140,350 L1170,349 L1200,349 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,390 L90,386 L120,381 L150,376 L180,372 L210,367 L240,364 L270,362 L300,362 L330,363 L360,366 L390,370 L420,375 L450,380 L480,384 L510,389 L540,392 L570,394 L600,394 L630,393 L660,390 L690,386 L720,381 L750,376 L780,372 L810,367 L840,364 L870,362 L900,362 L930,363 L960,366 L990,370 L1020,375 L1050,380 L1080,384 L1110,389 L1140,392 L1170,394 L1200,394 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="716" cy="228" rx="177" ry="50" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(15.7 716 228)"/><ellipse cx="716" cy="228" rx="245" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(21.7 716 228)"/>
+  <circle cx="716" cy="228" r="70" fill="url(#cxz4rz4pl)"/>
+  <circle cx="524" cy="263" r="16" fill="#ffffff" opacity="0.65"/><circle cx="867" cy="147" r="15" fill="#ffffff" opacity="0.89"/><circle cx="531" cy="246" r="11" fill="#ffffff" opacity="0.73"/><circle cx="548" cy="149" r="14" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>norm</strong> measures the size of a vector, and the distance between two vectors is the norm of their difference. Different norms (L1, L2, L∞) measure &quot;size&quot; differently, and choosing between them changes how models behave.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/scalars-and-vectors/" data-topic="math/scalars-and-vectors">Scalars and Vectors</a>, <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a> and <a class="wikilink" href="/math/coordinates-and-distance/" data-topic="math/coordinates-and-distance">Coordinates and Distance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How big is this vector, and how far apart are these two?&quot; Prediction error, regularisation and similarity search all rely on a chosen way of measuring size.</p>
+<h2 id="intuition-different-rulers">Intuition: different rulers</h2>
+<p>For a vector <code>v = (3, 4)</code>:</p>
+<pre><code class="language-text">L2 norm (Euclidean):  ‖v‖₂ = √(3² + 4²) = 5           straight-line length
+L1 norm (Manhattan):  ‖v‖₁ = |3| + |4| = 7             sum of absolute values
+L∞ norm (maximum):    ‖v‖∞ = max(|3|, |4|) = 4         largest component
+</code></pre>
+<p>The <strong>unit ball</strong> of each norm, all vectors of size 1, has a different shape in the plane: a circle for L2, a diamond for L1, a square for L∞. The general formula covers them all: <code>‖v‖ₚ = (Σ |vᵢ|ᵖ)^(1/p)</code>.</p>
+<h2 id="distance-and-unit-vectors">Distance and unit vectors</h2>
+<pre><code class="language-text">distance(a, b) = ‖a − b‖
+unit vector:     v / ‖v‖        (same direction, length 1)
+</code></pre>
+<p>For <code>v = (3, 4)</code>, the unit vector is <code>(3, 4) / 5 = (0.6, 0.8)</code>, and its length is <code>√(0.36 + 0.64) = 1</code> ✓.</p>
+<p>Norms obey a few natural rules: a norm is never negative and is zero only for the zero vector, <code>‖c v‖ = |c| ‖v‖</code>, and the <strong>triangle inequality</strong> <code>‖a + b‖ ≤ ‖a‖ + ‖b‖</code> (a detour is never shorter).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two predictions <code>a = (2, 5)</code> and truth <code>b = (4, 1)</code>. The difference is <code>a − b = (−2, 4)</code>.</p>
+<pre><code class="language-text">L2 distance: √(4 + 16) = √20 ≈ 4.47
+L1 distance: 2 + 4 = 6
+L∞ distance: 4
+</code></pre>
+<p>L2 punishes one large miss more than several small ones (squares), while L1 treats every unit of miss the same. This is why squared error and absolute error train models differently (see <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="norm-shapes" data-title="Three ways to measure size"><p class="bench-fallback"><strong>Interactive bench: Three ways to measure size.</strong> Drag a vector on a grid to see its L1, L2 and L-infinity norms, with the unit circle of each norm drawn as a diamond, circle or square.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Drag the vector to (3, 4) and read the three norms.</li>
+<li>Move along an axis: which norms agree?</li>
+<li>Move along the diagonal: which norm is the largest?</li>
+<li>Switch on each unit ball and see which vectors have size 1.</li>
+</ol>
+<p><strong>What you should notice:</strong> all norms agree along an axis and differ on a diagonal, and each norm has its own &quot;circle&quot;.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Loss functions:</strong> L2 (mean squared error) and L1 (mean absolute error).</li>
+<li><strong>Regularisation:</strong> L1 penalties push weights toward exactly zero, L2 penalties shrink them smoothly (see <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a>).</li>
+<li><strong>Nearest-neighbour search</strong> uses a norm to define &quot;nearest&quot;.</li>
+<li><strong>Gradient clipping</strong> limits a gradient&#39;s norm.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Comparing norms of different kinds.</strong> L1 and L2 of the same vector differ.</li>
+<li><strong>Forgetting the square root</strong> in L2.</li>
+<li><strong>Normalising the zero vector.</strong> It has no direction.</li>
+<li><strong>Ignoring feature scale</strong> when using distance.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are the L1 and L2 norms of (−6, 8)?</summary>
+14 and 10.
+</details>
+
+<details><summary>2. What is the unit vector for (0, 5)?</summary>
+(0, 1).
+</details>
+
+<details><summary>3. What is the L∞ norm of (2, −7, 4)?</summary>
+7.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Norm:</strong> a measure of a vector&#39;s size.</li>
+<li><strong>L1 / L2 / L∞:</strong> sum of absolute values, Euclidean length, largest component.</li>
+<li><strong>Unit vector:</strong> a vector of length 1.</li>
+<li><strong>Triangle inequality:</strong> <code>‖a + b‖ ≤ ‖a‖ + ‖b‖</code>.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/coordinates-and-distance/" data-topic="math/coordinates-and-distance">Coordinates and Distance</a> · <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a> · <a class="wikilink" href="/math/cosine-similarity/" data-topic="math/cosine-similarity">Cosine Similarity</a> · <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a> · <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/norms-and-distance">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/dot-product/"><small>Read next</small><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/scalars-and-vectors/"><b>Scalars and Vectors</b><p>A scalar is a single number, and a vector is an ordered list of numbers.</p></a><a class="rc-card" href="/math/vector-operations/"><b>Vector Operations</b><p>Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.</p></a><a class="rc-card" href="/math/coordinates-and-distance/"><b>Coordinates and Distance</b><p>A coordinate system locates a point with numbers, (x, y) on a plane, and a distance formula measures how far apart two points are.</p></a><a class="rc-card" href="/math/loss-functions/"><b>Loss Functions</b><p>A loss function turns &quot;how wrong is the model?&quot; into a single number: small when predictions are good, large when they are bad.</p></a><a class="rc-card" href="/math/regularization-as-a-constraint/"><b>Regularization as a Constraint</b><p>Regularization keeps a model from fitting noise by discouraging large weights: add a penalty such as λ‖w‖² to the loss.</p></a><a class="rc-card" href="/math/dot-product/"><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p></a></div></section>
+        <p class="doc-prev"><a href="/math/linear-independence-and-basis/">← Previous: Linear Independence and Basis</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

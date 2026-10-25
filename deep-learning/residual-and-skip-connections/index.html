@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Residual and Skip Connections — AI Base</title>
+<meta name="description" content="ResNet&#39;s fix for the degradation problem is almost absurdly simple: instead of a block computing output = F(x), make it compute output = F(x) + x — adding the block&#39;s own input straight back onto…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/residual-and-skip-connections/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Residual and Skip Connections — AI Base">
+<meta property="og:description" content="ResNet&#39;s fix for the degradation problem is almost absurdly simple: instead of a block computing output = F(x), make it compute output = F(x) + x — adding the block&#39;s own input straight back onto…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/residual-and-skip-connections/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Residual and Skip Connections","item":"https://ai.saranmahadev.in/deep-learning/residual-and-skip-connections/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Residual and Skip Connections","description":"ResNet's fix for the degradation problem is almost absurdly simple: instead of a block computing output = F(x), make it compute output = F(x) + x — adding the block's own input straight back onto…","url":"https://ai.saranmahadev.in/deep-learning/residual-and-skip-connections/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a residual block compute, instead of a plain block's F(x)?","acceptedAnswer":{"@type":"Answer","text":"F(x) + x — the block's own transformation plus its original input, added back on."}},{"@type":"Question","name":"Why does the \"+1\" in a residual block's gradient matter so much?","acceptedAnswer":{"@type":"Answer","text":"It guarantees a gradient of at least close to 1 flows through the block regardless of how small the block's own internal gradient is, directly countering vanishing gradients."}},{"@type":"Question","name":"What is the easiest function for a residual block to learn, that is hard for a plain block?","acceptedAnswer":{"@type":"Answer","text":"The identity function (doing nothing extra) — a residual block gets this for free by learning F(x) ≈ 0, while a plain block has to learn to approximate identity through its entire transformation."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Convolutional Neural Networks</p>
+        <h1 class="doc-title">Residual and Skip Connections</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cdxsgu7bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cdxsgu7pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cdxsgu7bg)"/>
+  <circle cx="1182" cy="182" r="219" fill="#ffe6e6" opacity="0.42"/><circle cx="494" cy="300" r="75" fill="#8a546c" opacity="0.37"/><circle cx="296" cy="122" r="189" fill="#8a546c" opacity="0.60"/><circle cx="782" cy="276" r="116" fill="#ffe6e6" opacity="0.53"/><circle cx="1078" cy="85" r="201" fill="#ffb6b6" opacity="0.53"/>
+  <path d="M0,420 L0,315 L30,310 L60,307 L90,306 L120,306 L150,309 L180,314 L210,320 L240,327 L270,334 L300,340 L330,345 L360,348 L390,350 L420,349 L450,346 L480,341 L510,335 L540,328 L570,322 L600,315 L630,310 L660,307 L690,306 L720,306 L750,309 L780,314 L810,320 L840,327 L870,334 L900,340 L930,345 L960,348 L990,350 L1020,349 L1050,346 L1080,341 L1110,335 L1140,328 L1170,322 L1200,315 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,365 L60,363 L90,362 L120,363 L150,365 L180,369 L210,373 L240,378 L270,383 L300,388 L330,391 L360,393 L390,394 L420,393 L450,391 L480,387 L510,383 L540,378 L570,373 L600,368 L630,365 L660,363 L690,362 L720,363 L750,365 L780,369 L810,373 L840,378 L870,383 L900,388 L930,391 L960,393 L990,394 L1020,393 L1050,391 L1080,387 L1110,383 L1140,378 L1170,373 L1200,368 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="756" cy="272" rx="250" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-16.7 756 272)"/><ellipse cx="756" cy="272" rx="345" ry="97" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-10.7 756 272)"/>
+  <circle cx="756" cy="272" r="98" fill="url(#cdxsgu7pl)"/>
+  <circle cx="1098" cy="232" r="12" fill="#ffffff" opacity="0.69"/><circle cx="463" cy="252" r="10" fill="#ffffff" opacity="0.81"/><circle cx="412" cy="227" r="18" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>ResNet&#39;s fix for <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">the degradation problem</a> is almost absurdly simple: instead of a block computing <code>output = F(x)</code>, make it compute <code>output = F(x) + x</code> — adding the block&#39;s own input straight back onto its output. This one <strong>skip connection</strong> both makes &quot;do nothing&quot; trivially learnable and gives gradients a direct path around the block entirely.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> and <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If depth is supposed to help (see <a class="wikilink" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps">Why Depth Helps</a>), why did very deep plain networks start training <em>worse</em> — not just overfitting, but worse even on training data — as more layers were added?&quot; Because a plain stack of layers cannot easily learn to leave its input alone, and because its gradients shrink multiplicatively with every added layer; the skip connection fixes both at once.</p>
+<h2 id="intuition-an-elevator-and-a-staircase-beside-it">Intuition: an elevator, and a staircase beside it</h2>
+<p>In a plain deep network, every layer&#39;s output must pass <em>through</em> that layer&#39;s full transformation to reach the next one — like a staircase that forces every step. A residual block puts an elevator next to the staircase: the input can skip straight past the block (the <code>+x</code> term) while the block&#39;s own computation (<code>F(x)</code>) adds whatever extra adjustment is useful on top. If a block has nothing useful to add, it can simply learn <code>F(x) ≈ 0</code> and let the elevator carry the signal through unchanged — &quot;doing nothing&quot; is now one of the easiest things a block can learn, instead of one of the hardest.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">plain block:      y = F(x)
+residual block:    y = F(x) + x
+
+gradient through a plain block:      ∂y/∂x = F&#39;(x)
+gradient through a residual block:   ∂y/∂x = F&#39;(x) + 1
+</code></pre>
+<p>That <code>+1</code> is the whole trick: even if a block&#39;s own gradient <code>F&#39;(x)</code> is tiny (vanishing), the total gradient through the block is still at least close to 1, because the skip connection passes the incoming gradient straight through unchanged.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Ten blocks, each with an internal gradient factor of just <code>0.1</code> (nearly &quot;dead&quot;):</p>
+<pre><code class="language-text">without skip connections:  0.1¹⁰  =  0.0000000001          (vanished)
+with skip connections:    (1 + 0.1)¹⁰ = 1.1¹⁰ ≈ 2.594      (still order-1, not vanished)
+</code></pre>
+<p>Ten plain layers this weak would leave almost no gradient reaching the first layer at all. Ten residual blocks this weak still pass a gradient of a very reasonable size all the way back — the skip connections alone are enough to prevent the vanishing, regardless of how weak each block&#39;s own contribution is.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="resnet-skip" data-title="Gradient flow with and without a skip connection"><p class="bench-fallback"><strong>Interactive bench: Gradient flow with and without a skip connection.</strong> A depth slider and a per-block internal gradient factor slider. Compare the total gradient reaching the first layer with plain stacking versus residual (skip) connections, on a log scale.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the per-block factor low (say 0.1) and increase depth, comparing the two lines.</li>
+<li>Watch the plain-stacking line vanish quickly while the residual line stays near order 1.</li>
+<li>Set the per-block factor to exactly 1 and see both lines behave similarly — skip connections matter most when blocks are weak.</li>
+</ol>
+<p><strong>What you should notice:</strong> the skip connection&#39;s advantage is largest exactly when each block&#39;s own contribution is weak — which is precisely the situation <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">vanishing gradients</a> describe.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every architecture descended from ResNet</strong> uses this pattern, including most modern CNNs and the residual connections inside every transformer block (see <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>).</li>
+<li><strong>&quot;Highway networks&quot;</strong> introduced a closely related, slightly more flexible gated version of the same idea shortly before ResNet.</li>
+<li><strong>Very deep networks (100+ layers) are only practical because of this trick</strong> — without it, depth this extreme reliably trained worse, not better.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Thinking skip connections are only about gradients.</strong> They also make the <em>identity function</em> trivially representable, which matters even in a forward-pass sense: a block that would otherwise need to learn a complicated way to approximate &quot;do nothing&quot; can now just learn nothing extra.</li>
+<li><strong>Assuming the shapes always match for a <code>+x</code>.</strong> When a block changes the number of channels or the spatial size, the skip path needs its own small transformation (often a 1×1 convolution) to match shapes before adding.</li>
+<li><strong>Confusing &quot;residual&quot; with &quot;recurrent.&quot;</strong> A residual connection skips across a fixed number of layers in a feedforward network; it has nothing to do with the recurrence in <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a>.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does a residual block compute, instead of a plain block's F(x)?</summary>
+F(x) + x — the block's own transformation plus its original input, added back on.
+</details>
+
+<details><summary>2. Why does the "+1" in a residual block's gradient matter so much?</summary>
+It guarantees a gradient of at least close to 1 flows through the block regardless of how small the block's own internal gradient is, directly countering vanishing gradients.
+</details>
+
+<details><summary>3. What is the easiest function for a residual block to learn, that is hard for a plain block?</summary>
+The identity function (doing nothing extra) — a residual block gets this for free by learning F(x) ≈ 0, while a plain block has to learn to approximate identity through its entire transformation.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Skip connection:</strong> a path that carries a layer&#39;s input forward, around (added to) that layer&#39;s own output.</li>
+<li><strong>Residual block:</strong> a block computing <code>F(x) + x</code> rather than just <code>F(x)</code>.</li>
+<li><strong>Degradation problem:</strong> very deep plain networks training worse, even on training data, as depth increases past a point.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> · <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> · <a class="wikilink" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps">Why Depth Helps</a> · <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/residual-and-skip-connections">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/receptive-fields-and-depth/"><small>Read next</small><b>Receptive Fields and Depth</b><p>A single output unit in a convolutional network does not &quot;see&quot; the whole input image — it only depends on some region of it, called its receptive field.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/"><b>CNN Architectures: From LeNet to ResNet</b><p>Convolutional architectures did not arrive all at once.</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/why-depth-helps/"><b>Why Depth Helps</b><p>Universal Approximation showed one wide hidden layer can represent almost anything.</p></a><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/deep-learning/recurrent-neural-networks/"><b>Recurrent Neural Networks</b><p>A recurrent neural network (RNN) reads a sequence one element at a time, carrying a hidden state forward from each step to the next — a running summary of everything seen so far.</p></a><a class="rc-card" href="/deep-learning/convolutional-neural-networks/"><b>Convolutional Neural Networks</b><p>A photograph has structure a plain feedforward network ignores: a cat&#39;s ear looks the same whether it is in the top-left or bottom-right corner.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/cnn-architectures-from-lenet-to-resnet/">← Previous: CNN Architectures: From LeNet to ResNet</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

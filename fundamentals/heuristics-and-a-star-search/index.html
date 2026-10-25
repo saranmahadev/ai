@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heuristics and A-star Search — AI Base</title>
+<meta name="description" content="A heuristic is an informed guess about how far you still are from the goal.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/heuristics-and-a-star-search/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Heuristics and A-star Search — AI Base">
+<meta property="og:description" content="A heuristic is an informed guess about how far you still are from the goal.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/heuristics-and-a-star-search/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Heuristics and A-star Search","item":"https://ai.saranmahadev.in/fundamentals/heuristics-and-a-star-search/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Heuristics and A-star Search","description":"A heuristic is an informed guess about how far you still are from the goal.","url":"https://ai.saranmahadev.in/fundamentals/heuristics-and-a-star-search/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the Manhattan distance between (2, 3) and (6, 1)?","acceptedAnswer":{"@type":"Answer","text":"|6 − 2| + |1 − 3| = 4 + 2 = 6."}},{"@type":"Question","name":"What does it mean for a heuristic to be admissible?","acceptedAnswer":{"@type":"Answer","text":"It never overestimates the true remaining cost, so A* is guaranteed to find the shortest path."}},{"@type":"Question","name":"Why can greedy search return a longer path than A*?","acceptedAnswer":{"@type":"Answer","text":"It looks only at the guessed distance to the goal and ignores the cost already paid, so it can commit to a poor route."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · Classic AI</p>
+        <h1 class="doc-title">Heuristics and A-star Search</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cdc5lc7bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="cdc5lc7pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cdc5lc7bg)"/>
+  <circle cx="409" cy="16" r="66" fill="#a8e2d7" opacity="0.54"/><circle cx="563" cy="100" r="147" fill="#e2f5f1" opacity="0.36"/><circle cx="68" cy="394" r="144" fill="#4e7283" opacity="0.32"/><circle cx="707" cy="80" r="170" fill="#e2f5f1" opacity="0.60"/><circle cx="27" cy="412" r="112" fill="#e2f5f1" opacity="0.59"/>
+  <path d="M0,420 L0,346 L30,342 L60,336 L90,329 L120,322 L150,316 L180,311 L210,307 L240,306 L270,306 L300,309 L330,314 L360,320 L390,326 L420,333 L450,339 L480,345 L510,348 L540,350 L570,349 L600,346 L630,342 L660,336 L690,329 L720,322 L750,316 L780,311 L810,307 L840,306 L870,306 L900,309 L930,314 L960,320 L990,326 L1020,333 L1050,339 L1080,345 L1110,348 L1140,350 L1170,349 L1200,346 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,380 L30,375 L60,370 L90,366 L120,364 L150,362 L180,362 L210,364 L240,367 L270,371 L300,376 L330,381 L360,386 L390,390 L420,392 L450,394 L480,394 L510,392 L540,389 L570,385 L600,380 L630,375 L660,370 L690,366 L720,364 L750,362 L780,362 L810,364 L840,367 L870,371 L900,376 L930,381 L960,386 L990,390 L1020,392 L1050,394 L1080,394 L1110,392 L1140,389 L1170,385 L1200,380 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="751" cy="284" rx="252" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(8.9 751 284)"/><ellipse cx="751" cy="284" rx="349" ry="98" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(14.9 751 284)"/>
+  <circle cx="751" cy="284" r="99" fill="url(#cdc5lc7pl)"/>
+  <circle cx="440" cy="362" r="11" fill="#ffffff" opacity="0.64"/><circle cx="932" cy="408" r="16" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>heuristic</strong> is an informed guess about how far you still are from the goal. <strong>A* search</strong> combines the distance already travelled with that guess to choose which state to explore next, and it finds the shortest path while exploring far fewer states than blind search, as long as the guess never overestimates.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/search/" data-topic="fundamentals/search">Search</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>Breadth-first search finds the shortest path but explores everywhere. Can a machine use what it knows about the goal to search smarter?</p>
+<h2 id="intuition-a-compass-that-is-never-too-optimistic">Intuition: a compass that is never too optimistic</h2>
+<p>Walking through a city to a landmark, you glance at it and prefer streets that lead in its direction. That glance is a heuristic. On a grid, a good one is the <strong>Manhattan distance</strong>: the number of steps you would need if there were no walls at all, <code>|Δrow| + |Δcolumn|</code>.</p>
+<p>Three searches use the guess differently, and each one scores a state by a value it tries to keep small:</p>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Score of a state</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>BFS</strong></td>
+<td>steps taken so far (<code>g</code>)</td>
+<td>ignores the goal, explores in rings</td>
+</tr>
+<tr>
+<td><strong>Greedy best-first</strong></td>
+<td>the guess only (<code>h</code>)</td>
+<td>rushes towards the goal, but can be fooled</td>
+</tr>
+<tr>
+<td><strong>A*</strong></td>
+<td>steps so far plus the guess (<code>g + h</code>)</td>
+<td>leans towards the goal while staying honest about cost</td>
+</tr>
+</tbody></table>
+<p>A* is <strong>optimal</strong> when the heuristic is <strong>admissible</strong>, meaning it never claims the goal is farther than it really is. The Manhattan distance on a grid with unit steps qualifies, because walls can only make the trip longer.</p>
+<h2 id="a-worked-example-three-searches-on-scattered-rocks">A worked example: three searches on scattered rocks</h2>
+<p>On the bench&#39;s &quot;Scattered rocks&quot; grid, the start and goal are 11 steps apart in a straight line but rocks force detours:</p>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Cells explored</th>
+<th>Path length</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BFS</td>
+<td>109</td>
+<td>15 (shortest)</td>
+</tr>
+<tr>
+<td>A*</td>
+<td>31</td>
+<td>15 (shortest)</td>
+</tr>
+<tr>
+<td>Greedy</td>
+<td>30</td>
+<td>19 (<strong>not</strong> the shortest)</td>
+</tr>
+</tbody></table>
+<p>A* found the same shortest path as BFS after exploring under a third as many cells. Greedy explored a little less again but took a 19-step route: fast and sloppy. The guess saves work, and <em>how</em> you use it decides whether the answer is still the best one.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="astar-vs-bfs" data-title="A guess that saves work: BFS, A* and greedy"><p class="bench-fallback"><strong>Interactive bench: A guess that saves work: BFS, A* and greedy.</strong> A grid with rocks. A table compares breadth-first search, A* and greedy search on the same grid (cells explored and path length), and you can animate any one of them and draw walls.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With <strong>Scattered rocks</strong>, read the table. Which algorithm explores the fewest cells? Which gives the shortest path?</li>
+<li>Animate greedy and watch where it rushes. Then animate A* on the same grid.</li>
+<li>Switch to <strong>Open field</strong>. How big is the gap between BFS and A* when nothing is in the way?</li>
+<li>Draw a wall right across the middle with one far-away gap. What does the guess do to help, or to mislead, greedy?</li>
+</ol>
+<p><strong>What you should notice:</strong> A* explores a narrow beam towards the goal. Greedy explores even less but can lose the shortest path. BFS explores everything nearby.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<p>A* powers route finding in maps and games. The idea of scoring options with a cheap estimate reappears in modern systems: game programs use a learned model to score positions, and many machine-learning methods rely on cheap approximations to avoid exhaustive search. <a class="wikilink" href="/math/optimization/" data-topic="math/optimization">Optimization</a> is closely related: finding the best option among many.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>A bad heuristic breaks the guarantee.</strong> If the guess overestimates, A* may return a path that is not the shortest.</li>
+<li><strong>A heuristic must be cheap.</strong> If computing it takes longer than the search it saves, it is no help.</li>
+<li><strong>Greedy is tempting and risky.</strong> It is fast and sometimes wrong.</li>
+<li><strong>Guesses are problem-specific.</strong> Manhattan distance suits grids and not much else.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the Manhattan distance between (2, 3) and (6, 1)?</summary>
+|6 − 2| + |1 − 3| = 4 + 2 = 6.
+</details>
+
+<details><summary>2. What does it mean for a heuristic to be admissible?</summary>
+It never overestimates the true remaining cost, so A* is guaranteed to find the shortest path.
+</details>
+
+<details><summary>3. Why can greedy search return a longer path than A*?</summary>
+It looks only at the guessed distance to the goal and ignores the cost already paid, so it can commit to a poor route.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Heuristic:</strong> a cheap, informed estimate of how far a state is from the goal.</li>
+<li><strong>Admissible heuristic:</strong> one that never overestimates the true remaining cost.</li>
+<li><strong>Manhattan distance:</strong> the steps needed on a grid if nothing blocked the way: |Δrow| + |Δcolumn|.</li>
+<li><em><em>A</em>:</em>* a search that picks states by steps so far plus the heuristic estimate.</li>
+<li><strong>Greedy best-first search:</strong> a search that follows the heuristic alone.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/search/" data-topic="fundamentals/search">Search</a> · <a class="wikilink" href="/fundamentals/planning/" data-topic="fundamentals/planning">Planning</a> · <a class="wikilink" href="/math/optimization/" data-topic="math/optimization">Optimization</a> · <a class="wikilink" href="/fundamentals/state-and-representation/" data-topic="fundamentals/state-and-representation">State and Representation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/heuristics-and-a-star-search">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/logic-and-knowledge-representation/"><small>Read next</small><b>Logic and Knowledge Representation</b><p>Classic AI stored what it knew as facts and rules, and used inference to work out new facts from them. Writing knowledge in a form a machine can reason with is called knowledge representation.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/search/"><b>Search</b><p>Search is how a machine finds a path or a plan by exploring possibilities systematically.</p></a><a class="rc-card" href="/math/optimization/"><b>Optimization</b><p>Optimization is the art of finding the best values: the parameters that make a model&#39;s error as small as possible.</p></a><a class="rc-card" href="/fundamentals/planning/"><b>Planning</b><p>Planning is finding a sequence of actions that turns the current situation into a goal.</p></a><a class="rc-card" href="/fundamentals/state-and-representation/"><b>State and Representation</b><p>The state is the agent&#39;s summary of the situation: everything it needs to know to choose a good action, and nothing more.</p></a><a class="rc-card" href="/fundamentals/classic-ai/"><b>Classic AI</b><p>Before machine learning took over, AI meant searching, reasoning and planning with hand-built knowledge.</p></a><a class="rc-card" href="/math/growth-rates-and-big-o/"><b>Growth Rates and Big-O</b><p>Big-O notation describes how the cost of an algorithm (time or memory) grows as the input size n grows, ignoring constant factors.</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/search/">← Previous: Search</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

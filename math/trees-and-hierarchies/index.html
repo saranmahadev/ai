@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trees and Hierarchies — AI Base</title>
+<meta name="description" content="A tree is a connected graph with no cycles: one root, branches, and leaves at the ends.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/trees-and-hierarchies/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Trees and Hierarchies — AI Base">
+<meta property="og:description" content="A tree is a connected graph with no cycles: one root, branches, and leaves at the ends.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/trees-and-hierarchies/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Trees and Hierarchies","item":"https://ai.saranmahadev.in/math/trees-and-hierarchies/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Trees and Hierarchies","description":"A tree is a connected graph with no cycles: one root, branches, and leaves at the ends.","url":"https://ai.saranmahadev.in/math/trees-and-hierarchies/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How many edges does a tree with 10 nodes have?","acceptedAnswer":{"@type":"Answer","text":"9."}},{"@type":"Question","name":"How many leaves does a full binary tree of depth 4 have?","acceptedAnswer":{"@type":"Answer","text":"2⁴ = 16."}},{"@type":"Question","name":"About how many comparisons to search 1,000 sorted items in a balanced tree?","acceptedAnswer":{"@type":"Answer","text":"About 10 (log₂ 1000 ≈ 9.97)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Sets, Logic and Counting</p>
+        <h1 class="doc-title">Trees and Hierarchies</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1kp87lgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1kp87lgpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1kp87lgbg)"/>
+  <circle cx="914" cy="52" r="150" fill="#cebff9" opacity="0.29"/><circle cx="137" cy="9" r="70" fill="#ddbecb" opacity="0.35"/><circle cx="491" cy="212" r="145" fill="#eee9fd" opacity="0.31"/><circle cx="494" cy="316" r="100" fill="#68599a" opacity="0.31"/><circle cx="582" cy="391" r="84" fill="#ddbecb" opacity="0.40"/><circle cx="355" cy="11" r="156" fill="#eee9fd" opacity="0.38"/>
+  <path d="M0,420 L0,348 L30,347 L60,345 L90,343 L120,340 L150,337 L180,334 L210,330 L240,327 L270,323 L300,320 L330,317 L360,314 L390,312 L420,309 L450,308 L480,306 L510,306 L540,306 L570,306 L600,307 L630,308 L660,310 L690,313 L720,315 L750,318 L780,321 L810,325 L840,328 L870,332 L900,335 L930,338 L960,341 L990,344 L1020,346 L1050,348 L1080,349 L1110,349 L1140,350 L1170,349 L1200,348 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,364 L90,368 L120,372 L150,377 L180,382 L210,386 L240,390 L270,393 L300,394 L330,394 L360,392 L390,388 L420,384 L450,379 L480,374 L510,370 L540,366 L570,363 L600,362 L630,362 L660,364 L690,368 L720,372 L750,377 L780,382 L810,386 L840,390 L870,393 L900,394 L930,394 L960,392 L990,388 L1020,384 L1050,379 L1080,374 L1110,370 L1140,366 L1170,363 L1200,362 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="967" cy="234" rx="243" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-12.8 967 234)"/><ellipse cx="967" cy="234" rx="336" ry="94" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-6.8 967 234)"/>
+  <circle cx="967" cy="234" r="95" fill="url(#c1kp87lgpl)"/>
+  <circle cx="1217" cy="342" r="16" fill="#ffffff" opacity="0.62"/><circle cx="688" cy="141" r="13" fill="#ffffff" opacity="0.78"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>tree</strong> is a connected graph with no cycles: one root, branches, and leaves at the ends. Trees describe hierarchies and chains of decisions, and a balanced tree lets you find something among a million items in about twenty steps.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/graphs-and-networks/" data-topic="math/graphs-and-networks">Graphs and Networks</a> and <a class="wikilink" href="/math/exponents-and-roots/" data-topic="math/exponents-and-roots">Exponents and Roots</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I organise choices or data so that looking something up is fast?&quot; A decision tree asks one question at a time, and each answer narrows the options.</p>
+<h2 id="intuition-a-family-tree-turned-upside-down">Intuition: a family tree turned upside down</h2>
+<p>Start at the <strong>root</strong>. Each node has <strong>children</strong>; a node with no children is a <strong>leaf</strong>. There is exactly one path between any two nodes, so no loops.</p>
+<pre><code class="language-text">a tree with n nodes has exactly n − 1 edges
+depth: the number of edges from the root to a node
+</code></pre>
+<p>A <strong>binary tree</strong> gives each node at most two children. A full binary tree of depth <code>d</code> has <code>2ᵈ</code> leaves and <code>2ᵈ⁺¹ − 1</code> nodes in total.</p>
+<h2 id="halving-the-problem">Halving the problem</h2>
+<p>In a <strong>binary search tree</strong> every step compares with a node and goes left (smaller) or right (larger), discarding half the remaining items. So finding an item among <code>n</code> needs about <code>log₂ n</code> comparisons (see <a class="wikilink" href="/math/logarithms/" data-topic="math/logarithms">Logarithms</a>).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A full binary tree of depth 3:</p>
+<pre><code class="language-text">level 0:  1 node
+level 1:  2 nodes
+level 2:  4 nodes
+level 3:  8 nodes (the leaves)
+total: 1 + 2 + 4 + 8 = 15 = 2⁴ − 1 nodes, and 14 edges
+</code></pre>
+<p>Searching for a value among 15 items takes at most 4 comparisons (depth 3, plus the root). For a million items (<code>2²⁰ ≈ 1,048,576</code>), a balanced tree needs only about 20 comparisons, instead of up to a million for scanning a list.</p>
+<p>A <strong>decision tree</strong> for classifying fruit might ask &quot;is it round?&quot;, then &quot;is it red?&quot;, and end at a label in each leaf.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="tree-walker" data-title="Walk down a search tree"><p class="bench-fallback"><strong>Interactive bench: Walk down a search tree.</strong> A binary search tree with a chosen depth is drawn; pick a target and step down from the root, seeing the comparison at each node and the number of steps taken.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Pick a target and step down. At each node, which way do you go and why?</li>
+<li>Increase the depth. How many more steps does the search need?</li>
+<li>Compare the node count with the steps taken.</li>
+<li>Pick the root value, then a leaf.</li>
+</ol>
+<p><strong>What you should notice:</strong> doubling the number of items adds only one step, which is what a logarithm looks like.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Decision trees and random forests</strong> are trees of questions.</li>
+<li><strong>Search algorithms</strong> explore game trees and planning trees (see <a class="wikilink" href="/fundamentals/search/" data-topic="fundamentals/search">Search</a>).</li>
+<li><strong>Hierarchical structure</strong> appears in parse trees and in file and taxonomy hierarchies.</li>
+<li><strong>Fast lookup</strong> in nearest-neighbour indexes uses tree structures.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming every tree is balanced.</strong> A lopsided tree can be as slow as a list.</li>
+<li><strong>Confusing depth with number of nodes.</strong></li>
+<li><strong>Allowing cycles.</strong> Then it is not a tree.</li>
+<li><strong>Forgetting the count n − 1 for edges.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. How many edges does a tree with 10 nodes have?</summary>
+9.
+</details>
+
+<details><summary>2. How many leaves does a full binary tree of depth 4 have?</summary>
+2⁴ = 16.
+</details>
+
+<details><summary>3. About how many comparisons to search 1,000 sorted items in a balanced tree?</summary>
+About 10 (log₂ 1000 ≈ 9.97).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Tree:</strong> a connected graph with no cycles.</li>
+<li><strong>Root / leaf:</strong> the top node / a node with no children.</li>
+<li><strong>Depth:</strong> the number of edges from the root.</li>
+<li><strong>Binary tree:</strong> each node has at most two children.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/graphs-and-networks/" data-topic="math/graphs-and-networks">Graphs and Networks</a> · <a class="wikilink" href="/math/logarithms/" data-topic="math/logarithms">Logarithms</a> · <a class="wikilink" href="/math/growth-rates-and-big-o/" data-topic="math/growth-rates-and-big-o">Growth Rates and Big-O</a> · <a class="wikilink" href="/fundamentals/search/" data-topic="fundamentals/search">Search</a> · <a class="wikilink" href="/math/logic-and-truth-tables/" data-topic="math/logic-and-truth-tables">Logic and Truth Tables</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/trees-and-hierarchies">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/growth-rates-and-big-o/"><small>Read next</small><b>Growth Rates and Big-O</b><p>Big-O notation describes how the cost of an algorithm (time or memory) grows as the input size n grows, ignoring constant factors.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/graphs-and-networks/"><b>Graphs and Networks</b><p>A graph is a set of nodes joined by edges. It is the natural way to describe anything connected: friends, roads, web pages, atoms, and the computation inside a neural network.</p></a><a class="rc-card" href="/math/exponents-and-roots/"><b>Exponents and Roots</b><p>An exponent says how many times to multiply a number by itself, and a root undoes it.</p></a><a class="rc-card" href="/math/logarithms/"><b>Logarithms</b><p>A logarithm answers &quot;what power do I raise this base to, to get that number?&quot; log₂ 8 = 3 because 2³ = 8.</p></a><a class="rc-card" href="/fundamentals/search/"><b>Search</b><p>Search is how a machine finds a path or a plan by exploring possibilities systematically.</p></a><a class="rc-card" href="/math/growth-rates-and-big-o/"><b>Growth Rates and Big-O</b><p>Big-O notation describes how the cost of an algorithm (time or memory) grows as the input size n grows, ignoring constant factors.</p></a><a class="rc-card" href="/math/logic-and-truth-tables/"><b>Logic and Truth Tables</b><p>Logic deals with statements that are either true or false and the ways of combining them: AND, OR, NOT, XOR and IF … THEN.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/graphs-and-networks/">← Previous: Graphs and Networks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

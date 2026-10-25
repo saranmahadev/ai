@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Markov Chains — AI Base</title>
+<meta name="description" content="A Markov chain is a sequence of random states where the next state depends only on the current one, not on how you got there.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/markov-chains/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Markov Chains — AI Base">
+<meta property="og:description" content="A Markov chain is a sequence of random states where the next state depends only on the current one, not on how you got there.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/markov-chains/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Markov Chains","item":"https://ai.saranmahadev.in/math/markov-chains/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Markov Chains","description":"A Markov chain is a sequence of random states where the next state depends only on the current one, not on how you got there.","url":"https://ai.saranmahadev.in/math/markov-chains/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What must each row of a transition matrix sum to?","acceptedAnswer":{"@type":"Answer","text":"1."}},{"@type":"Question","name":"With P as above, starting Rainy, what is the distribution after one day?","acceptedAnswer":{"@type":"Answer","text":"(0.4, 0.6)."}},{"@type":"Question","name":"What does the stationary distribution tell you?","acceptedAnswer":{"@type":"Answer","text":"The long-run fraction of time spent in each state."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Probability</p>
+        <h1 class="doc-title">Markov Chains</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cbdu4oxbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cbdu4oxpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cbdu4oxbg)"/>
+  <circle cx="615" cy="185" r="201" fill="#68599a" opacity="0.56"/><circle cx="636" cy="131" r="105" fill="#68599a" opacity="0.27"/><circle cx="104" cy="388" r="126" fill="#68599a" opacity="0.36"/><circle cx="1086" cy="342" r="189" fill="#eee9fd" opacity="0.54"/><circle cx="104" cy="357" r="217" fill="#ddbecb" opacity="0.31"/><circle cx="807" cy="392" r="213" fill="#68599a" opacity="0.54"/>
+  <path d="M0,420 L0,310 L30,307 L60,306 L90,306 L120,309 L150,314 L180,320 L210,327 L240,334 L270,340 L300,345 L330,348 L360,350 L390,349 L420,346 L450,341 L480,335 L510,328 L540,321 L570,315 L600,310 L630,307 L660,306 L690,306 L720,309 L750,314 L780,320 L810,327 L840,334 L870,340 L900,345 L930,348 L960,350 L990,349 L1020,346 L1050,341 L1080,335 L1110,328 L1140,321 L1170,315 L1200,310 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,363 L60,365 L90,367 L120,370 L150,373 L180,377 L210,381 L240,384 L270,388 L300,390 L330,392 L360,394 L390,394 L420,393 L450,392 L480,390 L510,387 L540,384 L570,380 L600,376 L630,373 L660,369 L690,366 L720,364 L750,363 L780,362 L810,362 L840,363 L870,365 L900,368 L930,371 L960,375 L990,378 L1020,382 L1050,386 L1080,389 L1110,391 L1140,393 L1170,394 L1200,394 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="707" cy="186" rx="176" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(6.3 707 186)"/><ellipse cx="707" cy="186" rx="244" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(12.3 707 186)"/>
+  <circle cx="707" cy="186" r="69" fill="url(#cbdu4oxpl)"/>
+  <circle cx="673" cy="261" r="8" fill="#ffffff" opacity="0.71"/><circle cx="532" cy="108" r="16" fill="#ffffff" opacity="0.89"/><circle cx="912" cy="154" r="15" fill="#ffffff" opacity="0.75"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>Markov chain</strong> is a sequence of random states where the next state depends only on the current one, not on how you got there. A table of transition probabilities describes it completely, and over time the chain often settles into a steady long-run pattern.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a>, <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a> and <a class="wikilink" href="/math/sequences-and-series/" data-topic="math/sequences-and-series">Sequences and Series</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If things move randomly from state to state, where do they end up, and how often are they in each state?&quot; Web browsing, weather, text generation and reinforcement learning all evolve step by step in this way.</p>
+<h2 id="intuition-a-random-walk-with-a-short-memory">Intuition: a random walk with a short memory</h2>
+<p>Imagine weather with two states, Sunny and Rainy. Tomorrow&#39;s weather depends only on today&#39;s:</p>
+<pre><code class="language-text">from Sunny:  stays Sunny 0.8,  turns Rainy 0.2
+from Rainy:  turns Sunny 0.4,  stays Rainy 0.6
+</code></pre>
+<p>Store this as a <strong>transition matrix</strong> whose rows are &quot;from&quot; states and sum to 1:</p>
+<pre><code class="language-text">P = [ 0.8  0.2 ]
+    [ 0.4  0.6 ]
+</code></pre>
+<p>A distribution over states is a row vector <code>π</code>. One step later it is <code>π P</code> (a vector-matrix product, see <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a>).</p>
+<h2 id="stationary-distribution">Stationary distribution</h2>
+<p>Often the distribution stops changing: <code>π P = π</code>. That is the <strong>stationary distribution</strong>, the long-run fraction of time in each state, and it does not depend on where you started (for well-behaved chains).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Start sure to be Sunny: <code>π₀ = (1, 0)</code>.</p>
+<pre><code class="language-text">day 1:  (0.8, 0.2)
+day 2:  (0.8·0.8 + 0.2·0.4,  0.8·0.2 + 0.2·0.6)  = (0.72, 0.28)
+day 3:  (0.72·0.8 + 0.28·0.4, 0.72·0.2 + 0.28·0.6) = (0.688, 0.312)
+</code></pre>
+<p>The Sunny share falls toward a limit. To find it, solve <code>π_S = 0.8 π_S + 0.4 π_R</code> with <code>π_S + π_R = 1</code>:</p>
+<pre><code class="language-text">0.2 π_S = 0.4 π_R   →   π_S = 2 π_R   →   π_S = 2/3,   π_R = 1/3
+</code></pre>
+<p>In the long run two days out of three are sunny, whatever the start. Check: <code>(2/3)(0.8) + (1/3)(0.4) = 0.5333 + 0.1333 = 0.6667</code> ✓.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="random-walker-chain" data-title="A two-state Markov chain"><p class="bench-fallback"><strong>Interactive bench: A two-state Markov chain.</strong> Sliders set the chance of switching from sunny to rainy and back; bars show the distribution over states step by step, starting from one state, next to the stationary distribution; a walker simulates one path.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through and watch the bars approach the stationary values.</li>
+<li>Change the starting state. Does the destination change?</li>
+<li>Make switching very unlikely and see how slowly it settles.</li>
+<li>Compare the simulated fraction of time with the stationary values.</li>
+</ol>
+<p><strong>What you should notice:</strong> the distribution converges to the same limit from any start, and sticky chains take longer to get there.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>PageRank</strong> is the stationary distribution of a random surfer.</li>
+<li><strong>Language generation</strong> predicts the next token from the current context (a Markov chain in the simplest models).</li>
+<li><strong>Reinforcement learning</strong> models environments as Markov decision processes.</li>
+<li><strong>MCMC sampling</strong> designs chains whose stationary distribution is the one you want to sample from.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming the past matters</strong> in a chain; by definition only the present does.</li>
+<li><strong>Rows that do not sum to 1.</strong></li>
+<li><strong>Expecting convergence</strong> for chains that cycle or split into disconnected parts.</li>
+<li><strong>Confusing the transition matrix&#39;s rows and columns.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What must each row of a transition matrix sum to?</summary>
+1.
+</details>
+
+<details><summary>2. With P as above, starting Rainy, what is the distribution after one day?</summary>
+(0.4, 0.6).
+</details>
+
+<details><summary>3. What does the stationary distribution tell you?</summary>
+The long-run fraction of time spent in each state.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Markov chain:</strong> a random sequence where the next state depends only on the current state.</li>
+<li><strong>Transition matrix:</strong> the table of probabilities of moving between states.</li>
+<li><strong>Stationary distribution:</strong> a distribution unchanged by a step.</li>
+<li><strong>Markov property:</strong> the future depends on the present, not the past.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a> · <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a> · <a class="wikilink" href="/math/eigenvalues-and-eigenvectors/" data-topic="math/eigenvalues-and-eigenvectors">Eigenvalues and Eigenvectors</a> · <a class="wikilink" href="/math/sequences-and-series/" data-topic="math/sequences-and-series">Sequences and Series</a> · <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/markov-chains">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/statistics/"><small>Read next</small><b>Statistics</b><p>Probability reasons from a known chance process to what data it will produce. Statistics runs the other way: it starts from data and reasons back to what produced it.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/conditional-probability/"><b>Conditional Probability</b><p>Conditional probability is the probability of an event given that another has happened: P(A | B), read &quot;the probability of A given B&quot;.</p></a><a class="rc-card" href="/math/matrix-multiplication/"><b>Matrix Multiplication</b><p>Matrix multiplication combines two matrices into one that does both transformations in a row. Each entry of the result is a dot product of a row of the first matrix with a column of the second.</p></a><a class="rc-card" href="/math/sequences-and-series/"><b>Sequences and Series</b><p>A sequence is an ordered list of numbers that follows a rule, and a series is what you get by adding its terms.</p></a><a class="rc-card" href="/math/eigenvalues-and-eigenvectors/"><b>Eigenvalues and Eigenvectors</b><p>An eigenvector of a matrix is a direction that the matrix only stretches, without turning: A v = λ v. The stretch factor λ is its eigenvalue.</p></a><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/math/probability/"><b>Probability</b><p>Probability is the maths of uncertainty. It gives numbers to &quot;how likely?&quot;, and rules for combining those numbers.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/central-limit-theorem/">← Previous: Central Limit Theorem</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

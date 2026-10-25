@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear Regression End to End — AI Base</title>
+<meta name="description" content="Linear regression fits a straight line ŷ = m·x + b to data by choosing the slope and intercept that minimise the mean squared error.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/linear-regression-end-to-end/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Linear Regression End to End — AI Base">
+<meta property="og:description" content="Linear regression fits a straight line ŷ = m·x + b to data by choosing the slope and intercept that minimise the mean squared error.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/linear-regression-end-to-end/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Linear Regression End to End","item":"https://ai.saranmahadev.in/math/linear-regression-end-to-end/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Linear Regression End to End","description":"Linear regression fits a straight line ŷ = m·x + b to data by choosing the slope and intercept that minimise the mean squared error.","url":"https://ai.saranmahadev.in/math/linear-regression-end-to-end/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the example, what is the prediction at x = 6?","acceptedAnswer":{"@type":"Answer","text":"0.9 × 6 + 1.3 = 6.7."}},{"@type":"Question","name":"What does the gradient ∂L/∂b tell you?","acceptedAnswer":{"@type":"Answer","text":"How the loss changes as the intercept changes."}},{"@type":"Question","name":"What is R² = 0.81?","acceptedAnswer":{"@type":"Answer","text":"The line explains 81% of the variation in y."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Math in AI</p>
+        <h1 class="doc-title">Linear Regression End to End</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cbvr5bobg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cbvr5bopl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cbvr5bobg)"/>
+  <circle cx="73" cy="326" r="64" fill="#68599a" opacity="0.49"/><circle cx="1106" cy="65" r="192" fill="#ddbecb" opacity="0.39"/><circle cx="950" cy="176" r="190" fill="#eee9fd" opacity="0.39"/><circle cx="957" cy="256" r="71" fill="#ddbecb" opacity="0.25"/><circle cx="236" cy="401" r="145" fill="#cebff9" opacity="0.38"/>
+  <path d="M0,420 L0,349 L30,348 L60,346 L90,342 L120,338 L150,333 L180,328 L210,323 L240,318 L270,314 L300,310 L330,307 L360,306 L390,306 L420,307 L450,309 L480,312 L510,316 L540,320 L570,325 L600,331 L630,336 L660,340 L690,344 L720,347 L750,349 L780,350 L810,349 L840,347 L870,345 L900,341 L930,336 L960,332 L990,326 L1020,321 L1050,317 L1080,312 L1110,309 L1140,307 L1170,306 L1200,306 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,385 L30,380 L60,375 L90,370 L120,366 L150,363 L180,362 L210,362 L240,364 L270,367 L300,371 L330,376 L360,381 L390,386 L420,390 L450,393 L480,394 L510,394 L540,392 L570,389 L600,385 L630,380 L660,375 L690,370 L720,366 L750,363 L780,362 L810,362 L840,364 L870,367 L900,371 L930,376 L960,381 L990,386 L1020,390 L1050,393 L1080,394 L1110,394 L1140,392 L1170,389 L1200,385 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="997" cy="247" rx="229" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-9.8 997 247)"/><ellipse cx="997" cy="247" rx="317" ry="89" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-3.8 997 247)"/>
+  <circle cx="997" cy="247" r="90" fill="url(#cbvr5bopl)"/>
+  <circle cx="830" cy="309" r="12" fill="#ffffff" opacity="0.73"/><circle cx="619" cy="244" r="12" fill="#ffffff" opacity="0.76"/><circle cx="759" cy="280" r="13" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Linear regression</strong> fits a straight line <code>ŷ = m·x + b</code> to data by choosing the slope and intercept that minimise the mean squared error. You can get the answer in one step from a formula (<a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a>), or by walking downhill with gradient descent (<a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a>). Both reach the same line.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/linear-functions/" data-topic="math/linear-functions">Linear Functions</a>, <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a>, <a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a> and <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Given examples of an input and a number to predict, what is the best straight-line rule?&quot; It is the simplest model that learns from data, and everything larger builds on the same recipe: model, loss, gradient, update.</p>
+<h2 id="the-recipe">The recipe</h2>
+<ol>
+<li><strong>Model:</strong> <code>ŷ = m x + b</code>, with parameters <code>m</code> and <code>b</code>.</li>
+<li><strong>Loss:</strong> mean squared error, <code>L = (1/n) Σ (ŷᵢ − yᵢ)²</code>.</li>
+<li><strong>Gradients:</strong> by the chain rule,</li>
+</ol>
+<pre><code class="language-text">∂L/∂m = (2/n) Σ (ŷᵢ − yᵢ) · xᵢ
+∂L/∂b = (2/n) Σ (ŷᵢ − yᵢ)
+</code></pre>
+<ol start="4">
+<li><strong>Update:</strong> <code>m ← m − η ∂L/∂m</code>, <code>b ← b − η ∂L/∂b</code>, repeat.</li>
+</ol>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Data <code>(x, y)</code>: <code>(1, 2), (2, 3), (3, 5), (4, 4), (5, 6)</code>.</p>
+<p><strong>Closed form.</strong> Means <code>x̄ = 3</code>, <code>ȳ = 4</code>. <code>Σ (x − 3)(y − 4) = 4 + 1 + 0 + 0 + 4 = 9</code> and <code>Σ (x − 3)² = 10</code>.</p>
+<pre><code class="language-text">m = 9 / 10 = 0.9        b = 4 − 0.9 × 3 = 1.3        line: ŷ = 0.9 x + 1.3
+predictions 2.2, 3.1, 4.0, 4.9, 5.8   residuals −0.2, −0.1, 1.0, −0.9, 0.2
+SSE = 0.04 + 0.01 + 1 + 0.81 + 0.04 = 1.90        MSE = 0.38
+R² = 1 − SSE / SST = 1 − 1.90 / 10 = 0.81           (SST = Σ (y − ȳ)² = 10)
+</code></pre>
+<p><strong>Gradient descent</strong> from <code>m = 0, b = 0</code> with <code>η = 0.01</code>:</p>
+<pre><code class="language-text">start:   L = (4 + 9 + 25 + 16 + 36) / 5 = 18
+gradients: ∂L/∂m = (2/5)(−69) = −27.6     ∂L/∂b = (2/5)(−20) = −8
+step 1:  m = 0.276    b = 0.080     L = 10.72
+step 2:  m = 0.486    b = 0.142     L = 6.48
+step 3:  m = 0.647    b = 0.190     L = 4.00
+...
+step 1000: m ≈ 0.909  b ≈ 1.267    L ≈ 0.380   (the closed form gives 0.9, 1.3, 0.38)
+</code></pre>
+<p>The loss falls at every step and the parameters home in on the closed-form answer. <strong>R²</strong> (0.81 here) says the line explains 81% of the variation in <code>y</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="regression-workshop" data-title="Fit a line by hand, by formula and by descent"><p class="bench-fallback"><strong>Interactive bench: Fit a line by hand, by formula and by descent.</strong> Five draggable points and sliders for slope and intercept; the bench shows the line, the squared-error loss and R squared, a stepper that runs gradient descent with an adjustable learning rate, and the closed-form best line for comparison.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Fit the line by hand and note your loss.</li>
+<li>Press &quot;Closed-form best fit&quot; and compare.</li>
+<li>Reset and run gradient descent step by step.</li>
+<li>Raise the learning rate until it becomes unstable.</li>
+</ol>
+<p><strong>What you should notice:</strong> descent walks toward the same line the formula gives, and a learning rate that is too large makes it overshoot.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Baselines:</strong> a linear model is the first thing to try.</li>
+<li><strong>Neural networks</strong> have linear layers at their core, trained by the same loop.</li>
+<li><strong>Feature engineering</strong> turns curved problems into linear ones.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Extrapolating beyond the data.</strong></li>
+<li><strong>Forgetting to scale features,</strong> which slows descent (see <a class="wikilink" href="/math/conditioning/" data-topic="math/conditioning">Conditioning</a>).</li>
+<li><strong>Reading a high R² as proof of a good model</strong> (check on new data).</li>
+<li><strong>Ignoring outliers,</strong> which squared error magnifies.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the example, what is the prediction at x = 6?</summary>
+0.9 × 6 + 1.3 = 6.7.
+</details>
+
+<details><summary>2. What does the gradient ∂L/∂b tell you?</summary>
+How the loss changes as the intercept changes.
+</details>
+
+<details><summary>3. What is R² = 0.81?</summary>
+The line explains 81% of the variation in y.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Linear regression:</strong> fitting <code>ŷ = m x + b</code> to minimise squared error.</li>
+<li><strong>Residual:</strong> the difference between the actual and predicted value.</li>
+<li><strong>R²:</strong> the share of variation explained by the model.</li>
+<li><strong>Closed-form solution:</strong> an exact formula for the best parameters.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> · <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a> · <a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">Logistic Regression and the Sigmoid</a> · <a class="wikilink" href="/fundamentals/a-model-is-a-function/" data-topic="fundamentals/a-model-is-a-function">A Model Is a Function</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/linear-regression-end-to-end">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/logistic-regression-and-the-sigmoid/"><small>Read next</small><b>Logistic Regression and the Sigmoid</b><p>Logistic regression answers yes/no questions with a probability.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/least-squares/"><b>Least Squares</b><p>When a system of equations has more equations than unknowns, it usually has no exact solution. Least squares finds the values that come closest, by minimising the total squared error.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/linear-functions/"><b>Linear Functions</b><p>A linear function y = m·x + b draws a straight line: m is its slope (how steeply it rises) and b is its intercept (where it crosses the vertical axis).</p></a><a class="rc-card" href="/math/loss-functions/"><b>Loss Functions</b><p>A loss function turns &quot;how wrong is the model?&quot; into a single number: small when predictions are good, large when they are bad.</p></a><a class="rc-card" href="/math/conditioning/"><b>Conditioning</b><p>A problem is ill-conditioned when tiny changes in its input cause huge changes in its answer, no matter how carefully you compute. The condition number measures that sensitivity.</p></a><a class="rc-card" href="/math/logistic-regression-and-the-sigmoid/"><b>Logistic Regression and the Sigmoid</b><p>Logistic regression answers yes/no questions with a probability.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/math-in-ai/">← Previous: Math in AI</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

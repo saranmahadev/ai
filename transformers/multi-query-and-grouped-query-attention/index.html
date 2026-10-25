@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Query and Grouped-Query Attention — AI Base</title>
+<meta name="description" content="Standard multi-head attention gives every head its own query, key and value projections.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/multi-query-and-grouped-query-attention/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Multi-Query and Grouped-Query Attention — AI Base">
+<meta property="og:description" content="Standard multi-head attention gives every head its own query, key and value projections.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/multi-query-and-grouped-query-attention/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Multi-Query and Grouped-Query Attention","item":"https://ai.saranmahadev.in/transformers/multi-query-and-grouped-query-attention/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Multi-Query and Grouped-Query Attention","description":"Standard multi-head attention gives every head its own query, key and value projections.","url":"https://ai.saranmahadev.in/transformers/multi-query-and-grouped-query-attention/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is shared across heads in multi-query attention, and what stays separate per head?","acceptedAnswer":{"@type":"Answer","text":"A single key and value projection is shared across all heads; each head still has its own separate query projection."}},{"@type":"Question","name":"In the worked example, by what factor did the KV cache shrink going from standard multi-head attention to MQA?","acceptedAnswer":{"@type":"Answer","text":"8×, directly matching the drop from 8 KV heads to 1."}},{"@type":"Question","name":"What does grouped-query attention trade off, relative to multi-query attention?","acceptedAnswer":{"@type":"Answer","text":"More KV heads than MQA's single shared one (so a larger cache, less savings) in exchange for more representational capacity than fully sharing key/value information across every head."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Efficient and Scaled Attention</p>
+        <h1 class="doc-title">Multi-Query and Grouped-Query Attention</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="chxmrnbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="chxmrnpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#chxmrnbg)"/>
+  <circle cx="1126" cy="76" r="110" fill="#4f669f" opacity="0.40"/><circle cx="436" cy="164" r="93" fill="#c5cacf" opacity="0.31"/><circle cx="1149" cy="64" r="106" fill="#c5cacf" opacity="0.58"/><circle cx="54" cy="294" r="134" fill="#e2efff" opacity="0.50"/><circle cx="447" cy="25" r="150" fill="#abd0ff" opacity="0.22"/><circle cx="844" cy="308" r="226" fill="#e2efff" opacity="0.43"/>
+  <path d="M0,420 L0,310 L30,312 L60,314 L90,317 L120,321 L150,324 L180,327 L210,331 L240,334 L270,337 L300,340 L330,343 L360,345 L390,347 L420,348 L450,349 L480,350 L510,349 L540,349 L570,347 L600,346 L630,343 L660,341 L690,338 L720,335 L750,331 L780,328 L810,324 L840,321 L870,318 L900,315 L930,312 L960,310 L990,308 L1020,307 L1050,306 L1080,306 L1110,306 L1140,307 L1170,308 L1200,310 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,388 L60,391 L90,393 L120,394 L150,393 L180,391 L210,387 L240,382 L270,377 L300,373 L330,368 L360,365 L390,363 L420,362 L450,363 L480,365 L510,369 L540,374 L570,379 L600,383 L630,388 L660,391 L690,393 L720,394 L750,393 L780,391 L810,387 L840,382 L870,377 L900,373 L930,368 L960,365 L990,363 L1020,362 L1050,363 L1080,365 L1110,369 L1140,374 L1170,379 L1200,383 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="868" cy="167" rx="183" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-16.8 868 167)"/><ellipse cx="868" cy="167" rx="254" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-10.8 868 167)"/>
+  <circle cx="868" cy="167" r="72" fill="url(#chxmrnpl)"/>
+  <circle cx="764" cy="76" r="17" fill="#ffffff" opacity="0.79"/><circle cx="582" cy="143" r="15" fill="#ffffff" opacity="0.74"/><circle cx="1071" cy="92" r="19" fill="#ffffff" opacity="0.67"/><circle cx="769" cy="244" r="19" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Standard multi-head attention</a> gives every head its own query, key and value projections. That costs something specific at inference time: every head&#39;s keys and values have to be stored and reused as generation proceeds. Multi-query and grouped-query attention keep the per-head queries but share the keys and values across heads — shrinking exactly that storage cost.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does every attention head really need its own separate keys and values, or only its own queries?&quot; Multi-query attention (MQA) answers no: give every head its own query projection, but share a single key and value projection across <em>all</em> heads. Grouped-query attention (GQA) is the middle ground: split the heads into a handful of groups, and share one key/value projection per group. Both leave the query side fully multi-head — only the keys and values, the part that has to be stored and reused during generation, get shared.</p>
+<h2 id="intuition">Intuition</h2>
+<p>In standard multi-head attention, every one of the 8 (or more) heads keeps its own separate copy of &quot;what does every past token mean, as a key and a value&quot; — redundant storage, since much of that information overlaps across heads. MQA asks every head to share one single copy of that key/value information, while still letting each head query it differently. GQA compromises: a handful of shared key/value copies, a middle point between MQA&#39;s single shared copy and standard attention&#39;s one copy per head.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">standard (MHA):  num_kv_heads = num_heads        — one K/V projection per head
+GQA:             num_kv_heads = num_groups        — one K/V projection per group of heads
+MQA:             num_kv_heads = 1                 — a single, shared K/V projection for every head
+
+KV cache size per token ∝ num_kv_heads × head_dim × num_layers
+</code></pre>
+<p>Only <code>num_kv_heads</code> changes between the three schemes — the number of query heads, and everything else about the attention computation, stays the same.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A model with <code>d_model = 512</code>, 8 heads, <code>head_dim = 64</code>, and 12 layers, comparing the per-token KV cache cost:</p>
+<pre><code class="language-text">MHA (num_kv_heads = 8):  12,288 floats per token
+GQA (num_kv_heads = 2):   3,072 floats per token   (4× smaller than MHA)
+MQA (num_kv_heads = 1):   1,536 floats per token   (8× smaller than MHA)
+</code></pre>
+<p>For a sequence of 2,048 tokens (4 bytes per float), the full KV cache comes out to:</p>
+<pre><code class="language-text">MHA: 100.66 MB
+GQA:  25.17 MB
+MQA:  12.58 MB
+</code></pre>
+<p>Switching from standard multi-head attention to MQA shrinks the KV cache that needs to be stored and read back at every generation step by a full 8×, at this configuration — with only the key/value side of attention changed.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="kv-heads-cache" data-title="Shrinking what has to be cached"><p class="bench-fallback"><strong>Interactive bench: Shrinking what has to be cached.</strong> Set the number of KV heads and see the per-token and per-sequence KV cache size change, from standard multi-head attention down to a single shared KV head.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move from 8 KV heads down to 1 and watch the cache size shrink proportionally.</li>
+<li>Try an intermediate value (2 or 4) to see GQA&#39;s middle-ground cost.</li>
+<li>Increase the sequence length and watch the absolute cache size at each KV-head setting.</li>
+</ol>
+<p><strong>What you should notice:</strong> the cache size scales linearly with <code>num_kv_heads</code> — going from 8 to 1 KV head doesn&#39;t just help a little, it&#39;s a direct, proportional 8× reduction in exactly the thing that has to be stored during generation.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It directly sets up <a class="wikilink" href="/transformers/kv-caching-for-autoregressive-inference/" data-topic="transformers/kv-caching-for-autoregressive-inference">the next topic</a></strong>: the whole reason the number of KV heads matters this much is the cache that gets built and reused during generation.</li>
+<li><strong>GQA in particular is a widely-used practical compromise</strong> in many modern large language models — most of MQA&#39;s memory savings, with less of the capacity loss that comes from sharing key/value information across every single head.</li>
+<li><strong>It is a pure inference-time efficiency choice</strong>: the training objective and the rest of the architecture are unaffected — only how keys and values are shared across heads changes.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming MQA or GQA shrinks the query side too.</strong> Only the key/value projections are shared; every head still computes its own distinct query.</li>
+<li><strong>Treating this as free.</strong> Sharing key/value information across heads does cost some representational capacity compared to giving every head its own — the savings come with a genuine, if often small, trade-off.</li>
+<li><strong>Confusing &quot;num_kv_heads&quot; with &quot;num_heads.&quot;</strong> The query side&#39;s head count is unchanged by this topic entirely — only how many <em>distinct</em> key/value projections exist changes.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is shared across heads in multi-query attention, and what stays separate per head?</summary>
+A single key and value projection is shared across all heads; each head still has its own separate query projection.
+</details>
+
+<details><summary>2. In the worked example, by what factor did the KV cache shrink going from standard multi-head attention to MQA?</summary>
+8×, directly matching the drop from 8 KV heads to 1.
+</details>
+
+<details><summary>3. What does grouped-query attention trade off, relative to multi-query attention?</summary>
+More KV heads than MQA's single shared one (so a larger cache, less savings) in exchange for more representational capacity than fully sharing key/value information across every head.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>num_kv_heads:</strong> the number of distinct key/value projections, which can be fewer than the number of query heads.</li>
+<li><strong>Multi-query attention (MQA):</strong> sharing a single key/value projection across every attention head.</li>
+<li><strong>Grouped-query attention (GQA):</strong> sharing one key/value projection per group of heads, a middle ground between standard multi-head attention and MQA.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a> · <a class="wikilink" href="/transformers/kv-caching-for-autoregressive-inference/" data-topic="transformers/kv-caching-for-autoregressive-inference">KV-Caching for Autoregressive Inference</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/multi-query-and-grouped-query-attention">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/kv-caching-for-autoregressive-inference/"><small>Read next</small><b>KV-Caching for Autoregressive Inference</b><p>Generating text one token at a time means recomputing attention at every single step.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/transformers/kv-caching-for-autoregressive-inference/"><b>KV-Caching for Autoregressive Inference</b><p>Generating text one token at a time means recomputing attention at every single step.</p></a><a class="rc-card" href="/transformers/efficient-and-scaled-attention/"><b>Efficient and Scaled Attention</b><p>Plain multi-head attention gets expensive fast: its cost grows with the square of sequence length, and its memory traffic during inference grows with every token generated.</p></a><a class="rc-card" href="/transformers/io-aware-attention-computation/"><b>IO-Aware Attention Computation</b><p>Linear attention changes what gets computed — trading exact softmax for an approximation. This topic changes nothing about what&#39;s computed at all.</p></a><a class="rc-card" href="/transformers/inference-serving-trade-offs/"><b>Inference Serving Trade-offs</b><p>Everything so far on this planet has been about making a single forward pass efficient.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/efficient-and-scaled-attention/">← Previous: Efficient and Scaled Attention</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

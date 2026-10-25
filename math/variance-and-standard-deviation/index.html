@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variance and Standard Deviation — AI Base</title>
+<meta name="description" content="Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/variance-and-standard-deviation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Variance and Standard Deviation — AI Base">
+<meta property="og:description" content="Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/variance-and-standard-deviation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Variance and Standard Deviation","item":"https://ai.saranmahadev.in/math/variance-and-standard-deviation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Variance and Standard Deviation","description":"Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.","url":"https://ai.saranmahadev.in/math/variance-and-standard-deviation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Var(X) = 9. What is the standard deviation?","acceptedAnswer":{"@type":"Answer","text":"3."}},{"@type":"Question","name":"If σ = 2, what is the standard deviation of 5X?","acceptedAnswer":{"@type":"Answer","text":"10."}},{"@type":"Question","name":"Two independent variables have variances 4 and 5. What is the variance of their sum?","acceptedAnswer":{"@type":"Answer","text":"9."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Probability</p>
+        <h1 class="doc-title">Variance and Standard Deviation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1meludrbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1meludrpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1meludrbg)"/>
+  <circle cx="1090" cy="224" r="68" fill="#cebff9" opacity="0.31"/><circle cx="938" cy="227" r="227" fill="#68599a" opacity="0.54"/><circle cx="607" cy="271" r="196" fill="#ddbecb" opacity="0.57"/><circle cx="893" cy="142" r="170" fill="#eee9fd" opacity="0.31"/><circle cx="1129" cy="190" r="121" fill="#68599a" opacity="0.31"/>
+  <path d="M0,420 L0,314 L30,317 L60,320 L90,323 L120,327 L150,330 L180,334 L210,337 L240,340 L270,343 L300,345 L330,347 L360,348 L390,349 L420,350 L450,349 L480,349 L510,348 L540,346 L570,344 L600,341 L630,338 L660,335 L690,332 L720,328 L750,325 L780,321 L810,318 L840,315 L870,313 L900,310 L930,308 L960,307 L990,306 L1020,306 L1050,306 L1080,306 L1110,308 L1140,309 L1170,312 L1200,314 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,383 L60,386 L90,388 L120,390 L150,391 L180,392 L210,393 L240,394 L270,394 L300,394 L330,393 L360,392 L390,391 L420,389 L450,387 L480,385 L510,383 L540,380 L570,378 L600,375 L630,373 L660,370 L690,368 L720,366 L750,365 L780,364 L810,363 L840,362 L870,362 L900,362 L930,363 L960,364 L990,365 L1020,367 L1050,369 L1080,371 L1110,373 L1140,376 L1170,378 L1200,381 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="891" cy="153" rx="168" ry="47" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.4 891 153)"/><ellipse cx="891" cy="153" rx="233" ry="65" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.4 891 153)"/>
+  <circle cx="891" cy="153" r="66" fill="url(#c1meludrpl)"/>
+  <circle cx="721" cy="175" r="8" fill="#ffffff" opacity="0.75"/><circle cx="997" cy="221" r="14" fill="#ffffff" opacity="0.74"/><circle cx="840" cy="59" r="19" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Variance</strong> measures how spread out a random variable is around its mean: the average squared distance from the mean. Its square root, the <strong>standard deviation</strong>, brings the spread back into the variable&#39;s own units. Two variables can have the same mean and very different spreads.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a> and <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How much does this vary?&quot; A model whose prediction is 10 plus or minus 1 is very different from one whose prediction is 10 plus or minus 8, though both average 10.</p>
+<h2 id="intuition-the-typical-distance-from-the-mean">Intuition: the typical distance from the mean</h2>
+<p>Measure how far each outcome is from the mean, square those distances (so signs do not cancel and big gaps count more), and average them.</p>
+<pre><code class="language-text">μ = E[X]
+Var(X) = E[(X − μ)²] = E[X²] − μ²
+σ (standard deviation) = √Var(X)
+</code></pre>
+<h2 id="rules">Rules</h2>
+<pre><code class="language-text">Var(a·X + b) = a² · Var(X)           shifting changes nothing; scaling by a scales σ by |a|
+Var(X + Y)   = Var(X) + Var(Y)        when X and Y are independent
+</code></pre>
+<p>Doubling every value multiplies the standard deviation by 2 but the variance by 4.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A fair die: <code>μ = 3.5</code>.</p>
+<pre><code class="language-text">E[X²] = (1 + 4 + 9 + 16 + 25 + 36)/6 = 91/6 = 15.1667
+Var(X) = 15.1667 − 3.5² = 15.1667 − 12.25 = 2.9167       σ = √2.9167 ≈ 1.708
+</code></pre>
+<p>Two independent dice: <code>Var = 2.9167 + 2.9167 = 5.833</code>, so <code>σ ≈ 2.415</code>. Note that the standard deviation grew only by <code>√2</code>, not by 2: independent variation partly cancels.</p>
+<p>Compare two datasets with the same mean: <code>(9, 10, 11)</code> and <code>(0, 10, 20)</code>. Both average 10. Their variances are <code>(1 + 0 + 1)/3 = 0.667</code> and <code>(100 + 0 + 100)/3 = 66.7</code>. The second is 100 times as spread out in variance terms (10 times in standard deviation).</p>
+<p>In data, the sample version divides by <code>n − 1</code> instead of <code>n</code> to correct for estimating the mean from the same data (see <a class="wikilink" href="/math/describing-data/" data-topic="math/describing-data">Describing Data</a>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="spread-band" data-title="Mean, spread and rescaling"><p class="bench-fallback"><strong>Interactive bench: Mean, spread and rescaling.</strong> A histogram of 40 values with the mean and one-standard-deviation band; sliders shift and stretch the values and the bench shows how the mean, variance and standard deviation respond.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Shift all the values and see that the spread does not change.</li>
+<li>Stretch the values by 2. How do σ and the variance change?</li>
+<li>Squash them to a small scale.</li>
+<li>Compare the band width with the histogram.</li>
+</ol>
+<p><strong>What you should notice:</strong> shifting moves the mean but not the spread, while stretching multiplies the standard deviation by the factor and the variance by its square.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Normalisation:</strong> <code>(x − μ)/σ</code> puts features on a common scale.</li>
+<li><strong>Uncertainty:</strong> the spread of a prediction is its confidence.</li>
+<li><strong>Noise and error:</strong> variance of errors is central in the bias-variance trade-off (see <a class="wikilink" href="/math/bias-variance-and-the-whole-picture/" data-topic="math/bias-variance-and-the-whole-picture">Bias, Variance and the Whole Picture</a>).</li>
+<li><strong>Initialisation:</strong> weights are drawn with a chosen variance.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Reporting variance in squared units</strong> without saying so.</li>
+<li><strong>Forgetting that <code>Var(aX) = a² Var(X)</code>.</strong></li>
+<li><strong>Adding standard deviations</strong> instead of variances for independent sums.</li>
+<li><strong>Using <code>n</code> instead of <code>n − 1</code></strong> for a sample estimate.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Var(X) = 9. What is the standard deviation?</summary>
+3.
+</details>
+
+<details><summary>2. If σ = 2, what is the standard deviation of 5X?</summary>
+10.
+</details>
+
+<details><summary>3. Two independent variables have variances 4 and 5. What is the variance of their sum?</summary>
+9.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Variance:</strong> the mean squared distance from the mean.</li>
+<li><strong>Standard deviation:</strong> the square root of the variance.</li>
+<li><strong>Spread:</strong> how far values typically lie from the centre.</li>
+<li><strong>Normalisation (standardisation):</strong> subtracting the mean and dividing by the standard deviation.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a> · <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a> · <a class="wikilink" href="/math/describing-data/" data-topic="math/describing-data">Describing Data</a> · <a class="wikilink" href="/math/central-limit-theorem/" data-topic="math/central-limit-theorem">Central Limit Theorem</a> · <a class="wikilink" href="/math/bias-variance-and-the-whole-picture/" data-topic="math/bias-variance-and-the-whole-picture">Bias, Variance and the Whole Picture</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/variance-and-standard-deviation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/discrete-distributions/"><small>Read next</small><b>Discrete Distributions</b><p>A few discrete distributions describe most counting situations.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/expectation/"><b>Expectation</b><p>The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a><a class="rc-card" href="/math/describing-data/"><b>Describing Data</b><p>A few numbers can summarise a whole data set: where its centre is (mean, median, mode) and how spread out it is (range, variance, standard deviation, quartiles).</p></a><a class="rc-card" href="/math/bias-variance-and-the-whole-picture/"><b>Bias, Variance and the Whole Picture</b><p>A model&#39;s error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…</p></a><a class="rc-card" href="/math/central-limit-theorem/"><b>Central Limit Theorem</b><p>The central limit theorem says that the average (or sum) of many independent random values follows a bell curve, whatever shape the individual values have. Its spread shrinks as σ / √n.</p></a><a class="rc-card" href="/math/probability/"><b>Probability</b><p>Probability is the maths of uncertainty. It gives numbers to &quot;how likely?&quot;, and rules for combining those numbers.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/expectation/">← Previous: Expectation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

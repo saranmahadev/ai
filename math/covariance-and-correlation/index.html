@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Covariance and Correlation — AI Base</title>
+<meta name="description" content="Covariance measures whether two variables tend to be above or below their means together.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/covariance-and-correlation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Covariance and Correlation — AI Base">
+<meta property="og:description" content="Covariance measures whether two variables tend to be above or below their means together.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/covariance-and-correlation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Covariance and Correlation","item":"https://ai.saranmahadev.in/math/covariance-and-correlation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Covariance and Correlation","description":"Covariance measures whether two variables tend to be above or below their means together.","url":"https://ai.saranmahadev.in/math/covariance-and-correlation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can correlation be 1.5?","acceptedAnswer":{"@type":"Answer","text":"No: it always lies between −1 and 1."}},{"@type":"Question","name":"If y = −2x exactly, what is r?","acceptedAnswer":{"@type":"Answer","text":"−1."}},{"@type":"Question","name":"Why divide covariance by both standard deviations?","acceptedAnswer":{"@type":"Answer","text":"To remove units and get a value between −1 and 1."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Statistics</p>
+        <h1 class="doc-title">Covariance and Correlation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="czoqv6hbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="czoqv6hpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#czoqv6hbg)"/>
+  <circle cx="893" cy="89" r="191" fill="#eee9fd" opacity="0.38"/><circle cx="323" cy="1" r="169" fill="#cebff9" opacity="0.41"/><circle cx="707" cy="133" r="61" fill="#eee9fd" opacity="0.31"/><circle cx="156" cy="150" r="121" fill="#eee9fd" opacity="0.42"/><circle cx="1146" cy="323" r="149" fill="#cebff9" opacity="0.29"/><circle cx="841" cy="275" r="154" fill="#68599a" opacity="0.50"/>
+  <path d="M0,420 L0,338 L30,343 L60,347 L90,349 L120,349 L150,347 L180,343 L210,338 L240,331 L270,324 L300,318 L330,312 L360,308 L390,306 L420,306 L450,308 L480,312 L510,318 L540,324 L570,331 L600,338 L630,343 L660,347 L690,349 L720,349 L750,347 L780,343 L810,338 L840,331 L870,324 L900,318 L930,312 L960,308 L990,306 L1020,306 L1050,308 L1080,312 L1110,318 L1140,324 L1170,331 L1200,338 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,380 L30,384 L60,387 L90,390 L120,392 L150,393 L180,394 L210,394 L240,392 L270,390 L300,388 L330,384 L360,381 L390,377 L420,373 L450,370 L480,367 L510,365 L540,363 L570,362 L600,362 L630,363 L660,365 L690,367 L720,370 L750,374 L780,378 L810,381 L840,385 L870,388 L900,391 L930,393 L960,394 L990,394 L1020,393 L1050,392 L1080,390 L1110,387 L1140,383 L1170,380 L1200,376 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="749" cy="130" rx="254" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-12.1 749 130)"/><ellipse cx="749" cy="130" rx="351" ry="98" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-6.1 749 130)"/>
+  <circle cx="749" cy="130" r="100" fill="url(#czoqv6hpl)"/>
+  <circle cx="1062" cy="136" r="13" fill="#ffffff" opacity="0.66"/><circle cx="457" cy="95" r="11" fill="#ffffff" opacity="0.67"/><circle cx="1025" cy="148" r="9" fill="#ffffff" opacity="0.87"/><circle cx="893" cy="39" r="17" fill="#ffffff" opacity="0.61"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Covariance</strong> measures whether two variables tend to be above or below their means <em>together</em>. <strong>Correlation</strong> rescales it to a number between −1 and 1 that does not depend on units: +1 is a perfect rising line, −1 a perfect falling line, and 0 means no <em>linear</em> relationship.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/describing-data/" data-topic="math/describing-data">Describing Data</a>, <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> and <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Do these two quantities rise and fall together, and how strongly?&quot; Feature selection, portfolio design and PCA all start from this question.</p>
+<h2 id="intuition-do-the-deviations-agree-in-sign">Intuition: do the deviations agree in sign?</h2>
+<p>For each pair <code>(x, y)</code>, look at how far each is from its own mean. If both are usually above or both below, the products of the deviations are mostly positive: positive covariance. If one is up when the other is down, negative.</p>
+<pre><code class="language-text">cov(X, Y) = Σ (xᵢ − x̄)(yᵢ − ȳ) / (n − 1)
+r         = cov(X, Y) / (sₓ · s_y)              always between −1 and 1
+</code></pre>
+<p>Covariance has awkward units (units of X times units of Y), so it is hard to compare. Dividing by both standard deviations gives the unit-free correlation <code>r</code>. (Notice the resemblance to <a class="wikilink" href="/math/cosine-similarity/" data-topic="math/cosine-similarity">Cosine Similarity</a>: <code>r</code> is the cosine of the angle between the centred data vectors.)</p>
+<h2 id="a-worked-example">A worked example</h2>
+<pre><code class="language-text">x = (1, 2, 3, 4, 5)      ȳ = 4, x̄ = 3      y = (2, 4, 5, 4, 5)
+deviations x: −2 −1  0  1  2        deviations y: −2  0  1  0  1
+products:      4   0  0  0  2        sum = 6
+cov = 6 / 4 = 1.5
+var x = 10 / 4 = 2.5       var y = 6 / 4 = 1.5
+r = 1.5 / √(2.5 × 1.5) = 1.5 / 1.936 = 0.775
+</code></pre>
+<p>The covariance matrix collects them: <code>[[2.5, 1.5], [1.5, 1.5]]</code>. That symmetric matrix is the input to PCA (see <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a>).</p>
+<p><strong>Limits of <code>r</code>:</strong> it measures only <em>linear</em> association. A perfect U-shaped relation (like <code>y = x²</code> on symmetric data) can have <code>r = 0</code>. One outlier can swing it, and it says nothing about causation (see <a class="wikilink" href="/math/correlation-vs-causation/" data-topic="math/correlation-vs-causation">Correlation vs Causation</a>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="correlation-slider" data-title="What does r look like?"><p class="bench-fallback"><strong>Interactive bench: What does r look like?.</strong> Choose a data pattern (rising line, falling line, U-shaped curve, two clusters) or set a target correlation; the scatter plot and the correlation coefficient update, and an outlier control shows how one point changes r.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set r to +0.9, 0, then −0.9 and see the cloud change.</li>
+<li>Choose the U-shaped pattern and read r.</li>
+<li>Add an outlier to a tight cloud.</li>
+<li>Find two very different plots with the same r.</li>
+</ol>
+<p><strong>What you should notice:</strong> r captures only straight-line association, a curved pattern can give zero, and one outlier can change it a lot.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Feature selection:</strong> drop redundant, highly correlated features.</li>
+<li><strong>PCA and covariance matrices</strong> in dimensionality reduction (see <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a>).</li>
+<li><strong>Model diagnostics:</strong> correlation between predictions and truth.</li>
+<li><strong>Gaussian models</strong> are defined by means and covariances.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Reading r = 0 as &quot;unrelated&quot;.</strong></li>
+<li><strong>Trusting r from a few points or with outliers.</strong></li>
+<li><strong>Comparing raw covariances</strong> across differently scaled variables.</li>
+<li><strong>Assuming a high r implies causation.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Can correlation be 1.5?</summary>
+No: it always lies between −1 and 1.
+</details>
+
+<details><summary>2. If y = −2x exactly, what is r?</summary>
+−1.
+</details>
+
+<details><summary>3. Why divide covariance by both standard deviations?</summary>
+To remove units and get a value between −1 and 1.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Covariance:</strong> the average product of the two variables&#39; deviations.</li>
+<li><strong>Correlation coefficient (r):</strong> covariance scaled to −1 to 1.</li>
+<li><strong>Covariance matrix:</strong> a table of all pairwise covariances.</li>
+<li><strong>Linear association:</strong> a straight-line relationship.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> · <a class="wikilink" href="/math/cosine-similarity/" data-topic="math/cosine-similarity">Cosine Similarity</a> · <a class="wikilink" href="/math/correlation-vs-causation/" data-topic="math/correlation-vs-causation">Correlation vs Causation</a> · <a class="wikilink" href="/math/joint-and-marginal-distributions/" data-topic="math/joint-and-marginal-distributions">Joint and Marginal Distributions</a> · <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/covariance-and-correlation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/correlation-vs-causation/"><small>Read next</small><b>Correlation vs Causation</b><p>Two quantities are correlated when they tend to move together, but that alone does not mean one causes the other.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/describing-data/"><b>Describing Data</b><p>A few numbers can summarise a whole data set: where its centre is (mean, median, mode) and how spread out it is (range, variance, standard deviation, quartiles).</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/math/dot-product/"><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p></a><a class="rc-card" href="/math/cosine-similarity/"><b>Cosine Similarity</b><p>Cosine similarity measures how closely two vectors point in the same direction, ignoring how long they are: cos θ = (a · b) / (‖a‖ ‖b‖).</p></a><a class="rc-card" href="/math/svd-and-pca/"><b>SVD and PCA</b><p>The singular value decomposition (SVD) breaks any matrix into a rotation, a stretch along perpendicular axes, and another rotation: A = U Σ Vᵀ.</p></a><a class="rc-card" href="/math/correlation-vs-causation/"><b>Correlation vs Causation</b><p>Two quantities are correlated when they tend to move together, but that alone does not mean one causes the other.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/sampling-and-bias/">← Previous: Sampling and Bias</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

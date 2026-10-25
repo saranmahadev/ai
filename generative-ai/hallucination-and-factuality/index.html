@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hallucination and Factuality — AI Base</title>
+<meta name="description" content="Nothing in how a language model generates text requires what it says to be true — it only requires the next token to be a plausible continuation.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/hallucination-and-factuality/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Hallucination and Factuality — AI Base">
+<meta property="og:description" content="Nothing in how a language model generates text requires what it says to be true — it only requires the next token to be a plausible continuation.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/hallucination-and-factuality/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Hallucination and Factuality","item":"https://ai.saranmahadev.in/generative-ai/hallucination-and-factuality/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hallucination and Factuality","description":"Nothing in how a language model generates text requires what it says to be true — it only requires the next token to be a plausible continuation.","url":"https://ai.saranmahadev.in/generative-ai/hallucination-and-factuality/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes a generated claim a hallucination, specifically?","acceptedAnswer":{"@type":"Answer","text":"It's stated fluently and with confidence, but it doesn't match a known, checkable fact — the key failure is confident, plausible-sounding falsehood, not obvious uncertainty or gibberish."}},{"@type":"Question","name":"In the worked example, what did the two false claims have in common with the two true claims?","acceptedAnswer":{"@type":"Answer","text":"Both pairs were phrased with similar fluency and comparably high stated confidence — nothing about their phrasing distinguished the true claims from the false ones."}},{"@type":"Question","name":"Why doesn't a model's confident tone tell you anything reliable about whether a claim is true?","acceptedAnswer":{"@type":"Answer","text":"A model is trained to produce plausible, fluent continuations of text, not to separately track or verify the truth of what it states — confident phrasing reflects learned patterns of how confident claims typically sound, not a checked fact."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Risks and Responsible Generation</p>
+        <h1 class="doc-title">Hallucination and Factuality</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1cera69bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c1cera69pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1cera69bg)"/>
+  <circle cx="581" cy="229" r="124" fill="#ffe9f4" opacity="0.45"/><circle cx="826" cy="372" r="99" fill="#ffbfe0" opacity="0.37"/><circle cx="588" cy="313" r="219" fill="#ffbeba" opacity="0.39"/><circle cx="94" cy="128" r="175" fill="#ffbeba" opacity="0.27"/><circle cx="627" cy="103" r="220" fill="#8a5989" opacity="0.50"/><circle cx="979" cy="412" r="204" fill="#8a5989" opacity="0.55"/>
+  <path d="M0,420 L0,320 L30,325 L60,330 L90,335 L120,340 L150,344 L180,347 L210,349 L240,350 L270,349 L300,347 L330,345 L360,341 L390,337 L420,332 L450,327 L480,321 L510,317 L540,313 L570,309 L600,307 L630,306 L660,306 L690,307 L720,309 L750,313 L780,317 L810,322 L840,327 L870,332 L900,337 L930,341 L960,345 L990,348 L1020,349 L1050,350 L1080,349 L1110,347 L1140,344 L1170,340 L1200,335 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,389 L60,385 L90,380 L120,375 L150,370 L180,366 L210,364 L240,362 L270,362 L300,364 L330,367 L360,371 L390,376 L420,381 L450,386 L480,390 L510,392 L540,394 L570,394 L600,392 L630,389 L660,385 L690,380 L720,375 L750,370 L780,366 L810,364 L840,362 L870,362 L900,364 L930,367 L960,371 L990,376 L1020,381 L1050,386 L1080,390 L1110,392 L1140,394 L1170,394 L1200,392 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="925" cy="192" rx="174" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-17.6 925 192)"/><ellipse cx="925" cy="192" rx="241" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-11.6 925 192)"/>
+  <circle cx="925" cy="192" r="68" fill="url(#c1cera69pl)"/>
+  <circle cx="842" cy="98" r="18" fill="#ffffff" opacity="0.73"/><circle cx="1101" cy="117" r="9" fill="#ffffff" opacity="0.72"/><circle cx="699" cy="180" r="12" fill="#ffffff" opacity="0.81"/><circle cx="1096" cy="124" r="15" fill="#ffffff" opacity="0.65"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Nothing in how a language model generates text requires what it says to be true — it only requires the next token to be a plausible continuation. This note covers the gap that opens up between &quot;sounds right&quot; and &quot;is right,&quot; and the specific danger of a model that sounds right while being wrong.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/human-evaluation-of-generated-content/" data-topic="generative-ai/human-evaluation-of-generated-content">Human Evaluation of Generated Content</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why does a model sometimes state false things with the same fluent confidence as true ones?&quot; <strong>Hallucination</strong> is generated content that&#39;s fluent and often stated confidently, but doesn&#39;t correspond to fact. It&#39;s not the same failure as low confidence or obvious gibberish — the dangerous case is specifically when a false claim is delivered with the same tone, structure and apparent certainty as a true one, because nothing about <em>how</em> it&#39;s phrased distinguishes the two.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A student who&#39;s memorized the shape and rhythm of a confident answer, without actually knowing the material, can produce something that sounds exactly like genuine expertise — right up until the content is checked against reality. A language model trained to predict plausible continuations of text has learned the shape of confident, fluent claims extremely well; it has no separate, built-in mechanism that specifically tracks whether each claim is actually true.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">a claim is a hallucination when:
+  it is stated with no hedging (confidently, fluently)
+  AND it does not match a known, checkable fact
+
+→ fluency and confidence of phrasing say nothing, by themselves,
+  about whether a claim is checkable-true or checkable-false
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four claims, each generated with a stated confidence, checked against a small fact base:</p>
+<pre><code class="language-text">&quot;Paris is the capital of France&quot;                       conf 0.97   TRUE   → correct
+&quot;The Great Wall of China is visible from the Moon&quot;      conf 0.89   FALSE  → HALLUCINATION
+&quot;Water boils at 100°C at sea level&quot;                      conf 0.95   TRUE   → correct
+&quot;Napoleon was extremely short for his era&quot;               conf 0.80   FALSE  → HALLUCINATION
+</code></pre>
+<p>Two of the four claims are a well-known myth and a long-debunked piece of trivia (Napoleon&#39;s height was, in fact, roughly average for his era) — both stated with high confidence, phrased no differently from the two true claims right alongside them. Nothing about <em>how</em> any of the four claims were stated distinguishes the true ones from the false ones; only checking each one against an outside source does.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="hallucination-confidence" data-title="Confident, and wrong"><p class="bench-fallback"><strong>Interactive bench: Confident, and wrong.</strong> Step through generated claims and see which ones, despite sounding equally confident, turn out to be false.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through each claim and track how many turn out to be hallucinations.</li>
+<li>Notice the stated confidence values don&#39;t obviously separate the true claims from the false ones.</li>
+<li>Consider how you&#39;d have told them apart without a fact base to check against.</li>
+</ol>
+<p><strong>What you should notice:</strong> fluency and confidence of phrasing carry essentially no information about truth on their own — the only way to catch a hallucination is to check the content against something outside the generation itself.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Retrieval-augmented generation (grounding a model in retrieved documents) is one of the main practical mitigations</strong>, specifically because it gives the model something to check claims against, rather than relying purely on parametric memory.</li>
+<li><strong>Hallucination rates are a standard evaluation axis for LLMs</strong>, usually measured by checking generated claims against a trusted source, exactly as this worked example does by hand.</li>
+<li><strong>It&#39;s distinct from low-confidence uncertainty</strong>: a well-calibrated model that says &quot;I&#39;m not sure&quot; about something it doesn&#39;t know is behaving correctly; hallucination specifically means confident, fluent, and wrong.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming fluent, confident-sounding text is more likely to be true.</strong> The worked example shows fluency and confidence are present in both the true and false claims — they&#39;re not a reliable signal either way.</li>
+<li><strong>Treating hallucination as a rare edge case.</strong> It&#39;s a direct, structural consequence of how generation works (predicting plausible continuations, not verified facts), not an occasional bug limited to unusual inputs.</li>
+<li><strong>Assuming hallucination only happens on obscure facts.</strong> Models can hallucinate about well-known topics too, particularly ones involving commonly repeated myths (like the Great Wall claim here) that appear confidently stated throughout their training data.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What makes a generated claim a hallucination, specifically?</summary>
+It's stated fluently and with confidence, but it doesn't match a known, checkable fact — the key failure is confident, plausible-sounding falsehood, not obvious uncertainty or gibberish.
+</details>
+
+<details><summary>2. In the worked example, what did the two false claims have in common with the two true claims?</summary>
+Both pairs were phrased with similar fluency and comparably high stated confidence — nothing about their phrasing distinguished the true claims from the false ones.
+</details>
+
+<details><summary>3. Why doesn't a model's confident tone tell you anything reliable about whether a claim is true?</summary>
+A model is trained to produce plausible, fluent continuations of text, not to separately track or verify the truth of what it states — confident phrasing reflects learned patterns of how confident claims typically sound, not a checked fact.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Hallucination:</strong> fluent, often confidently stated generated content that doesn&#39;t match fact.</li>
+<li><strong>Grounding:</strong> connecting a model&#39;s output to retrieved or verified external sources, to reduce hallucination.</li>
+<li><strong>Calibration:</strong> how well a model&#39;s stated confidence matches its actual correctness — hallucination is a specific, severe failure of calibration.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/human-evaluation-of-generated-content/" data-topic="generative-ai/human-evaluation-of-generated-content">Human Evaluation of Generated Content</a> · <a class="wikilink" href="/generative-ai/bias-and-representational-harm-in-generation/" data-topic="generative-ai/bias-and-representational-harm-in-generation">Bias and Representational Harm in Generation</a> · <a class="wikilink" href="/generative-ai/memorization-and-training-data-leakage/" data-topic="generative-ai/memorization-and-training-data-leakage">Memorization and Training Data Leakage</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/hallucination-and-factuality">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/bias-and-representational-harm-in-generation/"><small>Read next</small><b>Bias and Representational Harm in Generation</b><p>A model&#39;s embeddings encode whatever statistical patterns were in its training data — including patterns nobody deliberately put there.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/human-evaluation-of-generated-content/"><b>Human Evaluation of Generated Content</b><p>Every metric so far on this planet is automatic — computed from numbers, with no judgment involved.</p></a><a class="rc-card" href="/generative-ai/bias-and-representational-harm-in-generation/"><b>Bias and Representational Harm in Generation</b><p>A model&#39;s embeddings encode whatever statistical patterns were in its training data — including patterns nobody deliberately put there.</p></a><a class="rc-card" href="/generative-ai/memorization-and-training-data-leakage/"><b>Memorization and Training Data Leakage</b><p>overlap detection checks whether generated output matches training data verbatim.</p></a><a class="rc-card" href="/generative-ai/risks-and-responsible-generation/"><b>Risks and Responsible Generation</b><p>Generative models fail in ways discriminative models mostly don&#39;t: confidently wrong output, reproduced training data, content nobody consented to be trained on, and output that&#39;s hard to tell…</p></a><a class="rc-card" href="/llms/reward-hacking-and-sycophancy/"><b>Reward Hacking and Sycophancy</b><p>Every method in this district optimizes a policy to satisfy a reward signal — a reward model&#39;s score, an AI judge&#39;s ranking.</p></a><a class="rc-card" href="/rag/rag/"><b>RAG</b><p>A language model only knows what was baked into its weights during training — it can&#39;t read your company&#39;s internal wiki, last week&#39;s news, or a PDF you just uploaded.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/risks-and-responsible-generation/">← Previous: Risks and Responsible Generation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

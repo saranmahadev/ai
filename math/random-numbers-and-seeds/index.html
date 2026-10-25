@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random Numbers and Seeds — AI Base</title>
+<meta name="description" content="Computers cannot produce true randomness by calculation, so they use pseudo-random number generators: deterministic recipes that produce sequences that look random. The seed is the starting value.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/random-numbers-and-seeds/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Random Numbers and Seeds — AI Base">
+<meta property="og:description" content="Computers cannot produce true randomness by calculation, so they use pseudo-random number generators: deterministic recipes that produce sequences that look random. The seed is the starting value.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/random-numbers-and-seeds/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Random Numbers and Seeds","item":"https://ai.saranmahadev.in/math/random-numbers-and-seeds/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Random Numbers and Seeds","description":"Computers cannot produce true randomness by calculation, so they use pseudo-random number generators: deterministic recipes that produce sequences that look random. The seed is the starting value.","url":"https://ai.saranmahadev.in/math/random-numbers-and-seeds/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does the same seed always give the same sequence?","acceptedAnswer":{"@type":"Answer","text":"Yes, on the same generator."}},{"@type":"Question","name":"Why report an average over several seeds?","acceptedAnswer":{"@type":"Answer","text":"A single seed may be unusually lucky or unlucky."}},{"@type":"Question","name":"What is a generator's period?","acceptedAnswer":{"@type":"Answer","text":"The length after which its sequence repeats."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Numerical Computing</p>
+        <h1 class="doc-title">Random Numbers and Seeds</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cue0hv3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cue0hv3pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cue0hv3bg)"/>
+  <circle cx="923" cy="9" r="201" fill="#cebff9" opacity="0.60"/><circle cx="9" cy="151" r="84" fill="#cebff9" opacity="0.24"/><circle cx="735" cy="88" r="81" fill="#68599a" opacity="0.52"/><circle cx="684" cy="140" r="170" fill="#68599a" opacity="0.41"/><circle cx="1037" cy="178" r="69" fill="#ddbecb" opacity="0.47"/>
+  <path d="M0,420 L0,347 L30,345 L60,342 L90,340 L120,337 L150,333 L180,330 L210,327 L240,323 L270,320 L300,317 L330,314 L360,311 L390,309 L420,308 L450,306 L480,306 L510,306 L540,306 L570,307 L600,308 L630,310 L660,313 L690,315 L720,318 L750,322 L780,325 L810,329 L840,332 L870,335 L900,338 L930,341 L960,344 L990,346 L1020,348 L1050,349 L1080,349 L1110,350 L1140,349 L1170,348 L1200,347 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,362 L60,362 L90,364 L120,366 L150,370 L180,375 L210,380 L240,385 L270,389 L300,392 L330,394 L360,394 L390,392 L420,390 L450,386 L480,381 L510,376 L540,371 L570,367 L600,364 L630,362 L660,362 L690,364 L720,366 L750,370 L780,375 L810,380 L840,385 L870,389 L900,392 L930,394 L960,394 L990,392 L1020,390 L1050,386 L1080,381 L1110,376 L1140,371 L1170,367 L1200,364 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="989" cy="261" rx="158" ry="44" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(13.2 989 261)"/><ellipse cx="989" cy="261" rx="218" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(19.2 989 261)"/>
+  <circle cx="989" cy="261" r="62" fill="url(#cue0hv3pl)"/>
+  <circle cx="1151" cy="317" r="14" fill="#ffffff" opacity="0.90"/><circle cx="1006" cy="187" r="11" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Computers cannot produce true randomness by calculation, so they use <strong>pseudo-random number generators</strong>: deterministic recipes that produce sequences that look random. The <strong>seed</strong> is the starting value. The same seed gives the same sequence, which is exactly what you want for reproducible experiments.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/rounding-absolute-value-and-modulo/" data-topic="math/rounding-absolute-value-and-modulo">Rounding, Absolute Value and Modulo</a>, <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> and <a class="wikilink" href="/math/sequences-and-series/" data-topic="math/sequences-and-series">Sequences and Series</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Where does the randomness in my model and simulations come from, and how do I get the same result twice?&quot; Weight initialisation, data shuffling, dropout and sampling all use random numbers, and two runs that differ only by seed can give different results.</p>
+<h2 id="intuition-a-scrambled-recipe">Intuition: a scrambled recipe</h2>
+<p>A generator holds an internal <strong>state</strong>. Each call updates the state by a fixed rule and outputs a number derived from it. Nothing is random: knowing the state tells you every future number. But a good rule scrambles the state so thoroughly that the outputs pass statistical tests of randomness.</p>
+<p>A tiny example, the <strong>linear congruential generator</strong>: <code>x ← (a·x + c) mod m</code>. With <code>a = 5</code>, <code>c = 3</code>, <code>m = 16</code> and seed <code>7</code>:</p>
+<pre><code class="language-text">7 → 6 → 1 → 8 → 11 → 10 → 5 → 12 → 15 → 14 → 9 → 0 → 3 → 2 → 13 → 4 → 7 → …
+</code></pre>
+<p>It visits all 16 values once and then <strong>repeats</strong> (period 16). Real generators use huge states, with periods far beyond any run you will ever make, and better mixing than this toy (which is easy to predict and shows lattice patterns).</p>
+<h2 id="seeds-and-reproducibility">Seeds and reproducibility</h2>
+<ul>
+<li><strong>Same seed, same sequence</strong>, so experiments can be re-run exactly.</li>
+<li><strong>Different seeds</strong> give different, equally valid runs, which is how you measure how much results vary.</li>
+<li><strong>Uniform to other shapes:</strong> generators produce uniform numbers in <code>[0, 1)</code>; other distributions are made from them (for example the <strong>Box–Muller</strong> transform turns two uniforms into a normal sample).</li>
+</ul>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A seed of 42 and a shuffle of 10 items gives one particular order every time you run it. Change the seed to 43 and you get another. Report results as an average over several seeds (say 5) with the spread, because a single lucky seed can mislead.</p>
+<p>Reproducibility also depends on more than the seed: the order of floating-point additions on a GPU, library versions and hardware can change results slightly even with a fixed seed (see <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="seed-replayer" data-title="The same seed replays the same numbers"><p class="bench-fallback"><strong>Interactive bench: The same seed replays the same numbers.</strong> Choose a seed and a generator; the bench lists the first ten numbers, replays them identically for the same seed, changes them for a new seed, and plots consecutive pairs to reveal the pattern in a poor generator.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Use a seed and note the first numbers. Press &quot;Replay&quot;.</li>
+<li>Change the seed by one and compare.</li>
+<li>Switch to the tiny generator and look at the plot of pairs.</li>
+<li>Compare it with the good generator&#39;s plot.</li>
+</ol>
+<p><strong>What you should notice:</strong> the same seed always gives the same list, and a poor generator shows a visible pattern where a good one fills the square evenly.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Initialisation, shuffling and dropout</strong> all draw random numbers.</li>
+<li><strong>Reproducible research</strong> fixes and reports seeds.</li>
+<li><strong>Monte Carlo methods</strong> and sampling from models need good generators.</li>
+<li><strong>Cross-validation splits</strong> are seeded so they can be repeated.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Not setting or recording the seed.</strong></li>
+<li><strong>Assuming a fixed seed guarantees identical results</strong> across hardware and libraries.</li>
+<li><strong>Reusing one seed</strong> for things that should be independent.</li>
+<li><strong>Judging a method from one seed.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Does the same seed always give the same sequence?</summary>
+Yes, on the same generator.
+</details>
+
+<details><summary>2. Why report an average over several seeds?</summary>
+A single seed may be unusually lucky or unlucky.
+</details>
+
+<details><summary>3. What is a generator's period?</summary>
+The length after which its sequence repeats.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Pseudo-random generator:</strong> a deterministic recipe producing random-looking numbers.</li>
+<li><strong>Seed:</strong> the starting state of the generator.</li>
+<li><strong>Period:</strong> the length before the sequence repeats.</li>
+<li><strong>Reproducibility:</strong> getting the same results by repeating the setup.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/rounding-absolute-value-and-modulo/" data-topic="math/rounding-absolute-value-and-modulo">Rounding, Absolute Value and Modulo</a> · <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> · <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a> · <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a> · <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/random-numbers-and-seeds">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/math-in-ai/"><small>Read next</small><b>Math in AI</b><p>This last district puts the earlier ones to work.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/rounding-absolute-value-and-modulo/"><b>Rounding, Absolute Value and Modulo</b><p>Four small operations show up constantly: rounding (to the nearest whole number or a set of decimals), floor and ceiling (always down or always up), absolute value (distance from zero) and modulo…</p></a><a class="rc-card" href="/math/continuous-distributions/"><b>Continuous Distributions</b><p>A continuous random variable can take any value in a range, so no single value has positive probability.</p></a><a class="rc-card" href="/math/sequences-and-series/"><b>Sequences and Series</b><p>A sequence is an ordered list of numbers that follows a rule, and a series is what you get by adding its terms.</p></a><a class="rc-card" href="/math/floating-point/"><b>Floating Point</b><p>Computers store real numbers in floating point: a fixed number of significant binary digits and an exponent.</p></a><a class="rc-card" href="/math/law-of-large-numbers/"><b>Law of Large Numbers</b><p>The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.</p></a><a class="rc-card" href="/math/stochastic-gradient-descent/"><b>Stochastic Gradient Descent</b><p>Stochastic gradient descent (SGD) takes each step using the gradient from a small random mini-batch of examples instead of the whole data set.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/conditioning/">← Previous: Conditioning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

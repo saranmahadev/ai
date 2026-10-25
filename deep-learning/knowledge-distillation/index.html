@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Knowledge Distillation — AI Base</title>
+<meta name="description" content="A large, accurate teacher network&#39;s final prediction is one number per class — but its full output, before being squashed into near-certainty, carries far more information: how confident it was,…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/knowledge-distillation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Knowledge Distillation — AI Base">
+<meta property="og:description" content="A large, accurate teacher network&#39;s final prediction is one number per class — but its full output, before being squashed into near-certainty, carries far more information: how confident it was,…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/knowledge-distillation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Knowledge Distillation","item":"https://ai.saranmahadev.in/deep-learning/knowledge-distillation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Knowledge Distillation","description":"A large, accurate teacher network's final prediction is one number per class — but its full output, before being squashed into near-certainty, carries far more information: how confident it was,…","url":"https://ai.saranmahadev.in/deep-learning/knowledge-distillation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What extra information does a softened teacher output provide beyond a hard label?","acceptedAnswer":{"@type":"Answer","text":"Its relative confidence across every class, not just which one it predicted — including how it ranked the classes it got wrong."}},{"@type":"Question","name":"What happens to a softmax distribution as temperature increases?","acceptedAnswer":{"@type":"Answer","text":"It flattens, spreading probability more evenly across classes and revealing finer distinctions in relative confidence."}},{"@type":"Question","name":"Why is distillation loss often combined with an ordinary loss against the true hard labels?","acceptedAnswer":{"@type":"Answer","text":"Relying only on the teacher's output risks the student learning the teacher's mistakes as faithfully as its correct judgements; grounding in true labels helps avoid that."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Efficiency and Deployment</p>
+        <h1 class="doc-title">Knowledge Distillation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cojk70pbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cojk70ppl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cojk70pbg)"/>
+  <circle cx="734" cy="327" r="67" fill="#ffb6b6" opacity="0.32"/><circle cx="59" cy="111" r="165" fill="#ffb89d" opacity="0.49"/><circle cx="73" cy="285" r="79" fill="#ffb6b6" opacity="0.54"/><circle cx="1024" cy="311" r="121" fill="#ffe6e6" opacity="0.61"/><circle cx="488" cy="288" r="88" fill="#8a546c" opacity="0.23"/><circle cx="650" cy="380" r="185" fill="#ffe6e6" opacity="0.61"/><circle cx="572" cy="32" r="200" fill="#ffb89d" opacity="0.47"/>
+  <path d="M0,420 L0,344 L30,347 L60,349 L90,349 L120,347 L150,343 L180,337 L210,330 L240,324 L270,317 L300,312 L330,308 L360,306 L390,306 L420,308 L450,312 L480,318 L510,325 L540,332 L570,338 L600,344 L630,347 L660,349 L690,349 L720,347 L750,343 L780,337 L810,330 L840,324 L870,317 L900,312 L930,308 L960,306 L990,306 L1020,308 L1050,312 L1080,318 L1110,325 L1140,332 L1170,338 L1200,344 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,365 L60,363 L90,362 L120,362 L150,363 L180,364 L210,366 L240,369 L270,372 L300,376 L330,380 L360,384 L390,387 L420,390 L450,392 L480,393 L510,394 L540,394 L570,393 L600,391 L630,388 L660,385 L690,381 L720,377 L750,374 L780,370 L810,367 L840,365 L870,363 L900,362 L930,362 L960,363 L990,365 L1020,367 L1050,370 L1080,374 L1110,377 L1140,381 L1170,385 L1200,388 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="644" cy="262" rx="165" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(23.1 644 262)"/><ellipse cx="644" cy="262" rx="228" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(29.1 644 262)"/>
+  <circle cx="644" cy="262" r="65" fill="url(#cojk70ppl)"/>
+  <circle cx="472" cy="321" r="13" fill="#ffffff" opacity="0.66"/><circle cx="495" cy="305" r="14" fill="#ffffff" opacity="0.84"/><circle cx="602" cy="331" r="15" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A large, accurate <strong>teacher</strong> network&#39;s final prediction is one number per class — but its <em>full</em> output, before being squashed into near-certainty, carries far more information: how confident it was, and how it ranked the classes it got wrong. <strong>Knowledge distillation</strong> trains a small <strong>student</strong> network to mimic that fuller picture, not just the teacher&#39;s single correct answer.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/model-pruning/" data-topic="deep-learning/model-pruning">Model Pruning</a> and <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;A big, accurate model is too slow or large to deploy — can a much smaller model learn almost as much, directly from the big one, rather than from raw labels alone?&quot; Yes — train the small student to match the teacher&#39;s <em>softened</em> output distribution, which reveals relative confidence across all classes, not just which one &quot;won.&quot;</p>
+<h2 id="intuition-learning-from-a-tutor-s-full-reasoning-not-just-their-final-answer">Intuition: learning from a tutor&#39;s full reasoning, not just their final answer</h2>
+<p>A teacher&#39;s ordinary softmax output is usually extremely confident — one class near 100%, everything else near 0% — which hides almost all of the teacher&#39;s more nuanced judgement about which <em>wrong</em> answers were still plausible. <strong>Temperature</strong> softens that peak: dividing the logits by a temperature <code>T &gt; 1</code> before the softmax flattens the distribution, revealing the teacher&#39;s relative ranking of all the classes — information a hard 0-or-1 label could never have conveyed on its own.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">softened softmax:   P_i = softmax(z / T)_i        (T = 1 is ordinary softmax; T &gt; 1 softens it)
+
+distillation loss:  cross-entropy between the student&#39;s softened output and the teacher&#39;s softened output
+                     (often averaged with an ordinary loss against the true hard labels)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Teacher logits <code>(3.0, 1.0, 0.5)</code> for 3 classes, compared at ordinary temperature and a softened one:</p>
+<pre><code class="language-text">T = 1 (ordinary):  P = (0.8214, 0.1112, 0.0674)     — very peaked, almost all weight on class 1
+T = 4 (softened):  P = (0.4669, 0.2832, 0.2499)     — reveals class 2 is a noticeably closer runner-up than class 3
+</code></pre>
+<p>A student with its own logits <code>(2.0, 1.2, 0.8)</code>, softened the same way, gives <code>(0.3907, 0.3199, 0.2894)</code> at <code>T = 4</code>. Comparing the two softened distributions with cross-entropy gives a distillation loss of about <code>1.0714</code> — a loss that specifically rewards the student for matching the teacher&#39;s <em>relative</em> ranking of all three classes, not merely picking the same top class.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="distill-temp" data-title="Softening a teacher's output with temperature"><p class="bench-fallback"><strong>Interactive bench: Softening a teacher's output with temperature.</strong> Adjustable teacher logits and a temperature slider. See the teacher's softmax distribution flatten as temperature rises, and compare a student's distillation loss against the softened teacher target.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set temperature to 1 and note how sharply the teacher&#39;s distribution favours one class.</li>
+<li>Raise the temperature and watch the distribution flatten, revealing the relative order of the other classes more clearly.</li>
+<li>Adjust the student&#39;s logits to better match the teacher&#39;s ranking and watch the distillation loss fall.</li>
+</ol>
+<p><strong>What you should notice:</strong> at a high temperature, a student is rewarded for matching the teacher&#39;s <em>entire</em> ranking of classes, not just its top pick — which is exactly the extra signal ordinary hard labels don&#39;t provide.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Deploying a smaller, faster model</strong> that approximates a larger one&#39;s behaviour, when the larger model is too slow or large for the deployment target (see <a class="wikilink" href="/deep-learning/edge-and-on-device-deep-learning/" data-topic="deep-learning/edge-and-on-device-deep-learning">Edge and On-Device Deep Learning</a>).</li>
+<li><strong>Distillation is often combined with <a class="wikilink" href="/deep-learning/model-pruning/" data-topic="deep-learning/model-pruning">Model Pruning</a> and <a class="wikilink" href="/deep-learning/quantization/" data-topic="deep-learning/quantization">Quantization</a></strong> as part of a broader model-compression pipeline.</li>
+<li><strong>Self-distillation</strong>, a variant not covered in detail here, uses a model to distill into a smaller or even same-sized version of itself, sometimes improving results beyond ordinary training.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting to also use the true hard labels, where available.</strong> Distillation loss alone, with no grounding in the actual correct answers, can let a student learn the teacher&#39;s mistakes just as readily as its correct judgements.</li>
+<li><strong>Using too low a temperature.</strong> Near <code>T = 1</code>, the teacher&#39;s output is almost as peaked as a hard label, losing much of the extra signal distillation is meant to provide.</li>
+<li><strong>Assuming the student can match the teacher at any size.</strong> A sufficiently small student may lack the capacity to capture everything the teacher&#39;s full output is conveying, however good the distillation signal.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What extra information does a softened teacher output provide beyond a hard label?</summary>
+Its relative confidence across every class, not just which one it predicted — including how it ranked the classes it got wrong.
+</details>
+
+<details><summary>2. What happens to a softmax distribution as temperature increases?</summary>
+It flattens, spreading probability more evenly across classes and revealing finer distinctions in relative confidence.
+</details>
+
+<details><summary>3. Why is distillation loss often combined with an ordinary loss against the true hard labels?</summary>
+Relying only on the teacher's output risks the student learning the teacher's mistakes as faithfully as its correct judgements; grounding in true labels helps avoid that.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Teacher / student:</strong> the large, already-trained model and the smaller model being trained to mimic it.</li>
+<li><strong>Temperature:</strong> a scaling factor that softens (or sharpens) a softmax distribution.</li>
+<li><strong>Distillation loss:</strong> cross-entropy between a student&#39;s and teacher&#39;s softened output distributions.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/model-pruning/" data-topic="deep-learning/model-pruning">Model Pruning</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a> · <a class="wikilink" href="/deep-learning/quantization/" data-topic="deep-learning/quantization">Quantization</a> · <a class="wikilink" href="/deep-learning/edge-and-on-device-deep-learning/" data-topic="deep-learning/edge-and-on-device-deep-learning">Edge and On-Device Deep Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/knowledge-distillation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/neural-architecture-search/"><small>Read next</small><b>Neural Architecture Search</b><p>Depth, width, kernel sizes, how layers connect — every architecture in the CNN lineage was designed by hand, by researchers trying ideas and comparing results.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/model-pruning/"><b>Model Pruning</b><p>A trained network rarely needs every single weight it ended up with.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/deep-learning/edge-and-on-device-deep-learning/"><b>Edge and On-Device Deep Learning</b><p>Running a model on a phone, a smartwatch, or a tiny embedded chip is a different problem from running it on a server: memory, compute, power and network connectivity are all far more constrained,…</p></a><a class="rc-card" href="/deep-learning/quantization/"><b>Quantization</b><p>A weight stored as a 32-bit float can represent an enormous range of values with high precision — far more precision than most trained weights actually need.</p></a><a class="rc-card" href="/deep-learning/early-stopping-and-ensembling-deep-nets/"><b>Early Stopping and Ensembling Deep Nets</b><p>Training loss can keep falling long after a network has stopped getting better on data it hasn&#39;t seen.</p></a><a class="rc-card" href="/deep-learning/efficiency-and-deployment/"><b>Efficiency and Deployment</b><p>A network that trains well is not automatically one you can afford to run.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/quantization/">← Previous: Quantization</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benchmark Suites (MMLU, HELM, BIG-bench) — AI Base</title>
+<meta name="description" content="Comparing two LLMs fairly requires testing them on the same questions, under the same conditions, at a scale no individual could check by hand.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/benchmark-suites-mmlu-helm-big-bench/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Benchmark Suites (MMLU, HELM, BIG-bench) — AI Base">
+<meta property="og:description" content="Comparing two LLMs fairly requires testing them on the same questions, under the same conditions, at a scale no individual could check by hand.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/benchmark-suites-mmlu-helm-big-bench/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Benchmark Suites (MMLU, HELM, BIG-bench)","item":"https://ai.saranmahadev.in/llms/benchmark-suites-mmlu-helm-big-bench/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Benchmark Suites (MMLU, HELM, BIG-bench)","description":"Comparing two LLMs fairly requires testing them on the same questions, under the same conditions, at a scale no individual could check by hand.","url":"https://ai.saranmahadev.in/llms/benchmark-suites-mmlu-helm-big-bench/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can an overall benchmark average hide a serious weakness in one category?","acceptedAnswer":{"@type":"Answer","text":"Because averaging across several categories dampens the visibility of any single one — strong performance in most categories can pull the overall average up even when one specific category is seriously weak."}},{"@type":"Question","name":"In the worked example, what was hidden behind the overall average of 0.750?","acceptedAnswer":{"@type":"Answer","text":"A safety_qa score of just 0.40, a real weakness, while the other four categories all scored 0.80 or above."}},{"@type":"Question","name":"Why do real benchmark reports typically publish per-category breakdowns alongside an overall score?","acceptedAnswer":{"@type":"Answer","text":"Because the overall score alone is known to obscure category-specific weaknesses — a per-category breakdown is needed to actually see where a model is strong or weak."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Evaluating LLMs</p>
+        <h1 class="doc-title">Benchmark Suites (MMLU, HELM, BIG-bench)</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c13ct054bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c13ct054pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c13ct054bg)"/>
+  <circle cx="466" cy="169" r="67" fill="#8a5f5e" opacity="0.40"/><circle cx="750" cy="285" r="179" fill="#ffc38f" opacity="0.43"/><circle cx="543" cy="416" r="157" fill="#ffc38f" opacity="0.22"/><circle cx="888" cy="206" r="160" fill="#ffc7a2" opacity="0.31"/><circle cx="646" cy="409" r="151" fill="#ffc38f" opacity="0.51"/><circle cx="757" cy="302" r="91" fill="#ffc38f" opacity="0.27"/>
+  <path d="M0,420 L0,324 L30,317 L60,312 L90,308 L120,306 L150,306 L180,308 L210,312 L240,318 L270,324 L300,331 L330,338 L360,343 L390,347 L420,349 L450,349 L480,347 L510,343 L540,337 L570,331 L600,324 L630,317 L660,312 L690,308 L720,306 L750,306 L780,308 L810,312 L840,318 L870,324 L900,331 L930,338 L960,343 L990,347 L1020,349 L1050,349 L1080,347 L1110,343 L1140,337 L1170,331 L1200,324 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,391 L90,388 L120,383 L150,378 L180,373 L210,369 L240,365 L270,363 L300,362 L330,363 L360,365 L390,368 L420,373 L450,378 L480,383 L510,387 L540,391 L570,393 L600,394 L630,393 L660,391 L690,388 L720,383 L750,378 L780,373 L810,369 L840,365 L870,363 L900,362 L930,363 L960,365 L990,368 L1020,373 L1050,378 L1080,383 L1110,387 L1140,391 L1170,393 L1200,394 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="797" cy="203" rx="172" ry="48" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-23.2 797 203)"/><ellipse cx="797" cy="203" rx="237" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-17.2 797 203)"/>
+  <circle cx="797" cy="203" r="67" fill="url(#c13ct054pl)"/>
+  <circle cx="925" cy="280" r="13" fill="#ffffff" opacity="0.70"/><circle cx="744" cy="298" r="17" fill="#ffffff" opacity="0.74"/><circle cx="1006" cy="197" r="16" fill="#ffffff" opacity="0.81"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Comparing two LLMs fairly requires testing them on the same questions, under the same conditions, at a scale no individual could check by hand. A benchmark suite is exactly that: a large, standardized, repeatable test — but standardized testing has its own well-known blind spot.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/test-time-compute-scaling/" data-topic="llms/test-time-compute-scaling">Test-Time Compute Scaling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does the field actually measure and compare LLM capability at scale?&quot; <strong>Benchmark suites</strong> (MMLU&#39;s broad academic-subject multiple choice, HELM&#39;s wide battery of tasks and metrics, BIG-bench&#39;s crowd-sourced diverse tasks, among many others) run a model against thousands of fixed questions spanning many categories, then report scores per category and an <strong>overall average</strong> across all of them. The overall average is convenient for ranking models at a glance — and it can also hide a serious weakness in one specific category behind strong performance everywhere else.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A student&#39;s overall GPA can look solidly good while hiding a single subject they&#39;re genuinely struggling in, if their other grades are strong enough to pull the average up. Anyone looking only at the GPA would never know; anyone looking at the full transcript, subject by subject, would catch it immediately. A benchmark&#39;s overall score works exactly the same way — it&#39;s a genuinely useful single number, but it&#39;s also a number specifically built to average away the detail a per-category breakdown would reveal.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">overall score = (1/k) · Σ scoreᵢ   across k categories
+
+→ one low-scoring category, averaged with several high-scoring ones,
+  can leave the overall score looking comfortably high
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy model&#39;s scores across five benchmark categories:</p>
+<pre><code class="language-text">math:        0.85
+reading:     0.82
+coding:      0.88
+safety_qa:   0.40   ← a real weakness
+commonsense: 0.80
+
+overall average: 0.750
+</code></pre>
+<p>The overall average of 0.750 looks like a solidly competent model — and by four of five categories, it is. But the <code>safety_qa</code> category sits at just 0.40, a serious weakness that the overall number alone gives no hint of at all. Anyone comparing models purely by their overall average would never notice this gap unless they specifically looked at the category breakdown.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="benchmark-category-breakdown" data-title="One weak score, hidden in the average"><p class="bench-fallback"><strong>Interactive bench: One weak score, hidden in the average.</strong> Adjust one category's score and watch how little it moves the overall average, even when that category is seriously weak.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the safety_qa score low and note the overall average.</li>
+<li>Raise it toward the other categories&#39; level and compare.</li>
+<li>Consider how different the overall average would need to be before you&#39;d suspect a hidden weak category.</li>
+</ol>
+<p><strong>What you should notice:</strong> the overall average changes only modestly even when one category swings dramatically — averaging across several categories is specifically what dampens the visibility of any single one.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Real benchmark reports (MMLU, HELM, BIG-bench and others) typically do publish per-category breakdowns alongside an overall score</strong>, precisely because the overall number alone is known to obscure category-specific weaknesses.</li>
+<li><strong><a class="wikilink" href="/llms/benchmark-contamination-and-leakage/" data-topic="llms/benchmark-contamination-and-leakage">a benchmark&#39;s score is only meaningful if the model hasn&#39;t already seen the test questions</a></strong> — a high score contaminated by leaked test data says nothing real about genuine capability.</li>
+<li><strong><a class="wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">leaderboards built from these benchmarks</a> inherit this same averaging problem</strong>, often compounded by how different leaderboards choose to weight categories against each other.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Ranking models purely by overall benchmark score, with no category breakdown.</strong> The worked example shows exactly how a meaningful weakness can hide behind an otherwise-strong average.</li>
+<li><strong>Assuming a high overall score means uniformly strong performance.</strong> It only means the <em>average</em> is high — individual categories can vary far more than the overall number suggests.</li>
+<li><strong>Treating benchmark categories as equally important for every use case.</strong> A model&#39;s weak category might be entirely irrelevant for one application and critical for another — the right way to weigh categories depends on what the model will actually be used for.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why can an overall benchmark average hide a serious weakness in one category?</summary>
+Because averaging across several categories dampens the visibility of any single one — strong performance in most categories can pull the overall average up even when one specific category is seriously weak.
+</details>
+
+<details><summary>2. In the worked example, what was hidden behind the overall average of 0.750?</summary>
+A safety_qa score of just 0.40, a real weakness, while the other four categories all scored 0.80 or above.
+</details>
+
+<details><summary>3. Why do real benchmark reports typically publish per-category breakdowns alongside an overall score?</summary>
+Because the overall score alone is known to obscure category-specific weaknesses — a per-category breakdown is needed to actually see where a model is strong or weak.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Benchmark suite:</strong> a large, standardized set of test questions used to measure and compare model capability.</li>
+<li><strong>Overall average:</strong> a single score computed by averaging performance across all benchmark categories.</li>
+<li><strong>Category breakdown:</strong> per-category scores that reveal strengths and weaknesses an overall average can hide.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/test-time-compute-scaling/" data-topic="llms/test-time-compute-scaling">Test-Time Compute Scaling</a> · <a class="wikilink" href="/llms/benchmark-contamination-and-leakage/" data-topic="llms/benchmark-contamination-and-leakage">Benchmark Contamination and Leakage</a> · <a class="wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">Leaderboards and Their Limits</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/benchmark-suites-mmlu-helm-big-bench">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/benchmark-contamination-and-leakage/"><small>Read next</small><b>Benchmark Contamination and Leakage</b><p>A benchmark score only means something if the model is actually being tested, rather than recalling something it already saw.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/test-time-compute-scaling/"><b>Test-Time Compute Scaling</b><p>Every technique in this district so far — longer chains, wider search, more refinement rounds, tool calls — shares something in common: none of them change the model&#39;s weights.</p></a><a class="rc-card" href="/llms/benchmark-contamination-and-leakage/"><b>Benchmark Contamination and Leakage</b><p>A benchmark score only means something if the model is actually being tested, rather than recalling something it already saw.</p></a><a class="rc-card" href="/llms/leaderboards-and-their-limits/"><b>Leaderboards and Their Limits</b><p>A leaderboard promises a simple answer to &quot;which model is best?&quot; — rank them by score, read off the winner.</p></a><a class="rc-card" href="/llms/emergent-abilities-and-capability-jumps/"><b>Emergent Abilities and Capability Jumps</b><p>Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.</p></a><a class="rc-card" href="/llms/context-rot-and-lost-in-the-middle-effects/"><b>Context Rot and Lost-in-the-Middle Effects</b><p>Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem:…</p></a><a class="rc-card" href="/llms/evaluating-llms/"><b>Evaluating LLMs</b><p>Knowing whether an LLM is actually good — not just at one cherry-picked example, but systematically — means building and trusting the right measurement tools.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/evaluating-llms/">← Previous: Evaluating LLMs</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

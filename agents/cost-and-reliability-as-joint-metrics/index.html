@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cost and Reliability as Joint Metrics — AI Base</title>
+<meta name="description" content="A 95%-success-rate agent sounds better than an 85%-success-rate one, full stop — until the first one costs ten times as much per attempt.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/cost-and-reliability-as-joint-metrics/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Cost and Reliability as Joint Metrics — AI Base">
+<meta property="og:description" content="A 95%-success-rate agent sounds better than an 85%-success-rate one, full stop — until the first one costs ten times as much per attempt.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/cost-and-reliability-as-joint-metrics/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Cost and Reliability as Joint Metrics","item":"https://ai.saranmahadev.in/agents/cost-and-reliability-as-joint-metrics/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Cost and Reliability as Joint Metrics","description":"A 95%-success-rate agent sounds better than an 85%-success-rate one, full stop — until the first one costs ten times as much per attempt.","url":"https://ai.saranmahadev.in/agents/cost-and-reliability-as-joint-metrics/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the heavy-retry configuration lose on cost per success despite its higher success rate?","acceptedAnswer":{"@type":"Answer","text":"Its cost per attempt is ten times higher than the single-pass configuration's, and that gap outweighs its 10-percentage-point success-rate advantage once both are combined into cost per success."}},{"@type":"Question","name":"What does \"cost per success\" actually divide?","acceptedAnswer":{"@type":"Answer","text":"Cost per attempt divided by success rate — it answers \"how much does it cost, on average, to get one successful run,\" accounting for the attempts spent on runs that fail along the way."}},{"@type":"Question","name":"Why isn't success rate alone enough to choose between two agent configurations?","acceptedAnswer":{"@type":"Answer","text":"A higher success rate can come at a cost (more retries, more compute) that outweighs the reliability gain once cost per successful run is actually computed — success rate alone says nothing about what that reliability costs to achieve."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Evaluating Agents</p>
+        <h1 class="doc-title">Cost and Reliability as Joint Metrics</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1opeffmbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1opeffmpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1opeffmbg)"/>
+  <circle cx="902" cy="31" r="62" fill="#e7bdc8" opacity="0.59"/><circle cx="125" cy="358" r="149" fill="#e7bdc8" opacity="0.46"/><circle cx="927" cy="253" r="107" fill="#e7bdc8" opacity="0.41"/><circle cx="162" cy="220" r="208" fill="#725998" opacity="0.24"/><circle cx="17" cy="242" r="131" fill="#f3e9fc" opacity="0.39"/><circle cx="239" cy="417" r="221" fill="#e7bdc8" opacity="0.36"/>
+  <path d="M0,420 L0,345 L30,341 L60,337 L90,332 L120,327 L150,322 L180,317 L210,313 L240,309 L270,307 L300,306 L330,306 L360,307 L390,309 L420,313 L450,317 L480,322 L510,327 L540,332 L570,337 L600,341 L630,345 L660,348 L690,349 L720,350 L750,349 L780,347 L810,344 L840,340 L870,335 L900,330 L930,325 L960,320 L990,315 L1020,311 L1050,308 L1080,306 L1110,306 L1140,306 L1170,308 L1200,310 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,393 L60,394 L90,394 L120,394 L150,394 L180,393 L210,392 L240,390 L270,388 L300,386 L330,384 L360,382 L390,379 L420,377 L450,374 L480,372 L510,370 L540,368 L570,366 L600,364 L630,363 L660,362 L690,362 L720,362 L750,362 L780,363 L810,364 L840,366 L870,368 L900,370 L930,372 L960,374 L990,377 L1020,379 L1050,382 L1080,384 L1110,386 L1140,388 L1170,390 L1200,392 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="668" cy="281" rx="195" ry="55" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-10.1 668 281)"/><ellipse cx="668" cy="281" rx="270" ry="76" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-4.1 668 281)"/>
+  <circle cx="668" cy="281" r="77" fill="url(#c1opeffmpl)"/>
+  <circle cx="753" cy="184" r="16" fill="#ffffff" opacity="0.77"/><circle cx="797" cy="349" r="9" fill="#ffffff" opacity="0.72"/><circle cx="487" cy="362" r="11" fill="#ffffff" opacity="0.75"/><circle cx="587" cy="363" r="12" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A 95%-success-rate agent sounds better than an 85%-success-rate one, full stop — until the first one costs ten times as much per attempt. Cost per <em>successful</em> run, not success rate alone, is the number that actually decides which configuration is worth deploying.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/success-rate-metrics-and-their-blind-spots/" data-topic="agents/success-rate-metrics-and-their-blind-spots">Success-Rate Metrics and Their Blind Spots</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Is the agent configuration with the higher success rate automatically the better choice?&quot; Not once cost enters the picture. An agent that retries heavily to squeeze out a higher success rate pays for every one of those retries, including the ones spent on runs that eventually succeed. <strong>Cost per success</strong> — total cost divided by success rate — is the joint metric that can flip which configuration actually looks better, compared to looking at either number alone.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A delivery service that reroutes every package through three backup routes gets a slightly higher on-time rate than one that just sends packages directly — but if the backup routes cost ten times as much to run, the &quot;more reliable&quot; service might be a much worse deal per package actually delivered on time.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">cost per success = cost per attempt / success rate
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two agent configurations for the same task, one using heavy retries and one running a single pass:</p>
+<pre><code class="language-text">heavy retries:  success rate 95%,  cost per attempt $0.50
+  cost per success = $0.50 / 0.95 = $0.526
+
+single pass:    success rate 85%,  cost per attempt $0.05
+  cost per success = $0.05 / 0.85 = $0.059
+
+heavy retries costs about 8.9× more per successful run than single pass
+</code></pre>
+<p>The heavy-retry configuration does succeed more often per attempt — but each of its attempts costs ten times as much as the single-pass configuration&#39;s, and that gap dwarfs the 10-percentage-point success-rate advantage. Judged by cost per success, single pass is the clearly better deal, even though it fails more often in raw terms.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="cost-per-success" data-title="Success rate alone isn't the whole story"><p class="bench-fallback"><strong>Interactive bench: Success rate alone isn't the whole story.</strong> Compare two agent configurations' cost per successful run, not just their raw success rates.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the two configurations&#39; cost per success.</li>
+<li>Notice how much larger the gap is than the 10-percentage-point success-rate difference alone would suggest.</li>
+<li>Imagine the single-pass configuration&#39;s cost per attempt rose to $0.45 instead of $0.05 — would it still win on cost per success?</li>
+</ol>
+<p><strong>What you should notice:</strong> success rate and cost per attempt can each look individually reasonable while the combined cost-per-success number tells a very different story about which configuration is actually worth deploying.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This reuses the task-cost reasoning from <a class="wikilink" href="/agents/cost-and-latency-of-agent-loops/" data-topic="agents/cost-and-latency-of-agent-loops">Cost and Latency of Agent Loops</a></strong>, folding in success rate specifically to answer &quot;worth it for what you actually get,&quot; not just &quot;how much does one attempt cost.&quot;</li>
+<li><strong>Production agent deployments routinely report cost per successful task as a primary metric</strong>, exactly because success rate and raw cost can each look fine individually while hiding a bad trade when combined.</li>
+<li><strong><a class="wikilink" href="/agents/production-agent-architecture/" data-topic="agents/production-agent-architecture">Production Agent Architecture</a>, covered in the final district, puts this joint metric into a real deployment decision</strong>, alongside latency and reliability requirements that a single success-rate number can&#39;t capture.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Comparing agent configurations by success rate alone.</strong> The worked example shows the &quot;more reliable&quot; configuration can still be the clearly worse deal once its cost per attempt is folded in.</li>
+<li><strong>Comparing by raw cost per attempt alone, ignoring success rate.</strong> A cheaper configuration that fails much more often could still cost more per <em>successful</em> run than a pricier, more reliable one — the two numbers need to be combined, not compared separately.</li>
+<li><strong>Optimizing success rate without a cost budget in mind.</strong> Heavier retries almost always raise success rate somewhat, but past some point the marginal cost of each additional percentage point of success rate outweighs what it&#39;s worth.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does the heavy-retry configuration lose on cost per success despite its higher success rate?</summary>
+Its cost per attempt is ten times higher than the single-pass configuration's, and that gap outweighs its 10-percentage-point success-rate advantage once both are combined into cost per success.
+</details>
+
+<details><summary>2. What does "cost per success" actually divide?</summary>
+Cost per attempt divided by success rate — it answers "how much does it cost, on average, to get one successful run," accounting for the attempts spent on runs that fail along the way.
+</details>
+
+<details><summary>3. Why isn't success rate alone enough to choose between two agent configurations?</summary>
+A higher success rate can come at a cost (more retries, more compute) that outweighs the reliability gain once cost per successful run is actually computed — success rate alone says nothing about what that reliability costs to achieve.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Cost per success:</strong> total cost per attempt divided by success rate — the cost of achieving one successful run, accounting for failed attempts.</li>
+<li><strong>Heavy retries:</strong> a configuration that re-attempts a task multiple times to raise its success rate, at a proportional cost.</li>
+<li><strong>Joint metric:</strong> a single number (like cost per success) that combines two individually incomplete metrics into one that reflects the actual trade-off.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/cost-and-latency-of-agent-loops/" data-topic="agents/cost-and-latency-of-agent-loops">Cost and Latency of Agent Loops</a> · <a class="wikilink" href="/agents/production-agent-architecture/" data-topic="agents/production-agent-architecture">Production Agent Architecture</a> · <a class="wikilink" href="/agents/success-rate-metrics-and-their-blind-spots/" data-topic="agents/success-rate-metrics-and-their-blind-spots">Success-Rate Metrics and Their Blind Spots</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/cost-and-reliability-as-joint-metrics">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/agent-safety-and-governance/"><small>Read next</small><b>Agent Safety and Governance</b><p>An agent that can act on the real world — sending money, deleting files, emailing someone — needs more than good intentions to be safe to run unsupervised.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/success-rate-metrics-and-their-blind-spots/"><b>Success-Rate Metrics and Their Blind Spots</b><p>Two agents can share the exact same success rate and still be nowhere near equally good.</p></a><a class="rc-card" href="/agents/cost-and-latency-of-agent-loops/"><b>Cost and Latency of Agent Loops</b><p>A single LLM call&#39;s cost and latency already has its own math, covered on the LLMs planet.</p></a><a class="rc-card" href="/agents/production-agent-architecture/"><b>Production Agent Architecture</b><p>Every topic on this road so far has zoomed into one piece of an agent — planning, a tool call, a memory lookup.</p></a><a class="rc-card" href="/agents/evaluating-agents/"><b>Evaluating Agents</b><p>Scoring a single generated answer is one problem; scoring a hundred-step trajectory of actions, any one of which could be the reason the whole task failed, is a different and harder one.</p></a><a class="rc-card" href="/agents/llm-as-judge-for-agent-trajectories/"><b>LLM-as-Judge for Agent Trajectories</b><p>Checking an agent&#39;s full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there&#39;s no reference string for &quot;was this a reasonable approach.&quot; Using an…</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/llm-as-judge-for-agent-trajectories/">← Previous: LLM-as-Judge for Agent Trajectories</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

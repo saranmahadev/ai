@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automatic Differentiation — AI Base</title>
+<meta name="description" content="Automatic differentiation (autodiff) is how software computes exact derivatives: it records each operation in a computational graph, then applies the chain rule backwards through that graph.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/automatic-differentiation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Automatic Differentiation — AI Base">
+<meta property="og:description" content="Automatic differentiation (autodiff) is how software computes exact derivatives: it records each operation in a computational graph, then applies the chain rule backwards through that graph.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/automatic-differentiation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Automatic Differentiation","item":"https://ai.saranmahadev.in/math/automatic-differentiation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Automatic Differentiation","description":"Automatic differentiation (autodiff) is how software computes exact derivatives: it records each operation in a computational graph, then applies the chain rule backwards through that graph.","url":"https://ai.saranmahadev.in/math/automatic-differentiation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In f = x·y at x = 2, y = 5, what is ∂f/∂x?","acceptedAnswer":{"@type":"Answer","text":"5."}},{"@type":"Question","name":"Why does the backward pass start with derivative 1?","acceptedAnswer":{"@type":"Answer","text":"The derivative of the output with respect to itself is 1."}},{"@type":"Question","name":"Why is reverse mode efficient for training?","acceptedAnswer":{"@type":"Answer","text":"One backward sweep gives the gradient for every parameter of a single output (the loss)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Calculus</p>
+        <h1 class="doc-title">Automatic Differentiation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1m3ui6xbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1m3ui6xpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1m3ui6xbg)"/>
+  <circle cx="1155" cy="245" r="181" fill="#cebff9" opacity="0.56"/><circle cx="962" cy="92" r="140" fill="#ddbecb" opacity="0.25"/><circle cx="438" cy="17" r="126" fill="#ddbecb" opacity="0.38"/><circle cx="245" cy="299" r="123" fill="#ddbecb" opacity="0.33"/><circle cx="6" cy="128" r="198" fill="#68599a" opacity="0.38"/><circle cx="978" cy="37" r="96" fill="#68599a" opacity="0.32"/>
+  <path d="M0,420 L0,306 L30,306 L60,308 L90,311 L120,315 L150,320 L180,325 L210,330 L240,335 L270,340 L300,344 L330,347 L360,349 L390,350 L420,349 L450,348 L480,345 L510,341 L540,337 L570,332 L600,327 L630,322 L660,317 L690,313 L720,309 L750,307 L780,306 L810,306 L840,307 L870,309 L900,313 L930,317 L960,321 L990,327 L1020,332 L1050,337 L1080,341 L1110,345 L1140,347 L1170,349 L1200,350 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,364 L60,365 L90,367 L120,369 L150,371 L180,373 L210,376 L240,378 L270,381 L300,383 L330,386 L360,388 L390,390 L420,391 L450,392 L480,393 L510,394 L540,394 L570,394 L600,393 L630,392 L660,391 L690,389 L720,387 L750,385 L780,383 L810,380 L840,378 L870,375 L900,373 L930,370 L960,368 L990,366 L1020,365 L1050,364 L1080,363 L1110,362 L1140,362 L1170,362 L1200,363 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="744" cy="149" rx="165" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(23.4 744 149)"/><ellipse cx="744" cy="149" rx="228" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(29.4 744 149)"/>
+  <circle cx="744" cy="149" r="65" fill="url(#c1m3ui6xpl)"/>
+  <circle cx="902" cy="91" r="18" fill="#ffffff" opacity="0.68"/><circle cx="981" cy="146" r="15" fill="#ffffff" opacity="0.77"/><circle cx="594" cy="116" r="12" fill="#ffffff" opacity="0.70"/><circle cx="932" cy="124" r="15" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Automatic differentiation</strong> (autodiff) is how software computes exact derivatives: it records each operation in a <strong>computational graph</strong>, then applies the chain rule backwards through that graph. It is what powers backpropagation in every modern deep-learning framework.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a>, <a class="wikilink" href="/math/derivative-rules/" data-topic="math/derivative-rules">Derivative Rules</a> and <a class="wikilink" href="/math/graphs-and-networks/" data-topic="math/graphs-and-networks">Graphs and Networks</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can a computer get the gradient of a function with millions of parameters, exactly and cheaply?&quot; Doing it by hand is impossible, and estimating each derivative by nudging inputs would need one full evaluation per parameter.</p>
+<h2 id="intuition-a-recipe-written-as-a-graph">Intuition: a recipe written as a graph</h2>
+<p>Break a calculation into small steps, each a simple operation whose derivative is known: add, multiply, <code>sin</code>, <code>exp</code>. Draw them as a graph: inputs on the left, the final output on the right.</p>
+<ul>
+<li><strong>Forward pass:</strong> compute each node&#39;s value from left to right.</li>
+<li><strong>Backward pass:</strong> start at the output with derivative 1, then move right to left. At each node, multiply the incoming derivative by the local derivative and pass it on to the inputs (adding contributions when a value is used more than once).</li>
+</ul>
+<p>This is the chain rule, organised so every derivative is computed in <strong>one backward sweep</strong>, no matter how many inputs there are. That is why training a model with a billion parameters costs only a small multiple of running it.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Let <code>f(x, y) = x·y + sin(x)</code> at <code>x = 2</code>, <code>y = 3</code>.</p>
+<pre><code class="language-text">forward:   a = x · y     = 6
+           b = sin x     = 0.9093
+           f = a + b     = 6.9093
+
+backward:  ∂f/∂a = 1      ∂f/∂b = 1
+           ∂a/∂x = y = 3   ∂a/∂y = x = 2      ∂b/∂x = cos x = −0.4161
+
+∂f/∂x = ∂f/∂a·∂a/∂x + ∂f/∂b·∂b/∂x = 1·3 + 1·(−0.4161) = 2.5839
+∂f/∂y = ∂f/∂a·∂a/∂y = 1·2 = 2
+</code></pre>
+<p>Notice <code>x</code> feeds two nodes (<code>a</code> and <code>b</code>), so its derivative <em>adds</em> two paths. Check by the formula: <code>∂f/∂x = y + cos x = 3 − 0.4161 = 2.5839</code> ✓.</p>
+<p>Compare with <strong>numerical differentiation</strong> (nudging <code>x</code> by a tiny amount), which is approximate and needs a separate run per input, and with <strong>symbolic</strong> differentiation, which can produce enormous expressions. Autodiff is exact and efficient.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="graph-backprop" data-title="Forward and backward through a graph"><p class="bench-fallback"><strong>Interactive bench: Forward and backward through a graph.</strong> A small computational graph for f(x, y) = x·y + sin x; sliders set x and y, and a stepper walks the forward pass and then the backward pass, showing each node's value and derivative.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step forward and watch each value fill in.</li>
+<li>Step backward and see the derivatives flow right to left.</li>
+<li>Compare the result with the numerical check.</li>
+<li>Change x and see which derivatives change.</li>
+</ol>
+<p><strong>What you should notice:</strong> a value used twice collects derivative from both paths, and one backward sweep gives the derivative for every input.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Backpropagation</strong> is reverse-mode autodiff (see <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a>).</li>
+<li><strong>Frameworks</strong> (PyTorch, JAX, TensorFlow) build the graph as you compute.</li>
+<li><strong>Custom losses and layers</strong> need no hand-derived gradients.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting to add paths</strong> when a value is reused.</li>
+<li><strong>Confusing autodiff with numerical differentiation.</strong></li>
+<li><strong>Ignoring memory:</strong> the backward pass needs stored forward values.</li>
+<li><strong>Non-differentiable operations</strong> (rounding, argmax) give zero or undefined gradients.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In f = x·y at x = 2, y = 5, what is ∂f/∂x?</summary>
+5.
+</details>
+
+<details><summary>2. Why does the backward pass start with derivative 1?</summary>
+The derivative of the output with respect to itself is 1.
+</details>
+
+<details><summary>3. Why is reverse mode efficient for training?</summary>
+One backward sweep gives the gradient for every parameter of a single output (the loss).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Computational graph:</strong> operations and values drawn as a graph.</li>
+<li><strong>Forward pass:</strong> computing values from inputs to output.</li>
+<li><strong>Backward pass:</strong> propagating derivatives from output to inputs.</li>
+<li><strong>Reverse-mode autodiff:</strong> the method behind backpropagation.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a> · <a class="wikilink" href="/math/graphs-and-networks/" data-topic="math/graphs-and-networks">Graphs and Networks</a> · <a class="wikilink" href="/math/gradients/" data-topic="math/gradients">Gradients</a> · <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a> · <a class="wikilink" href="/math/a-forward-pass-by-hand/" data-topic="math/a-forward-pass-by-hand">A Forward Pass by Hand</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/automatic-differentiation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/probability/"><small>Read next</small><b>Probability</b><p>Probability is the maths of uncertainty. It gives numbers to &quot;how likely?&quot;, and rules for combining those numbers.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/chain-rule/"><b>Chain Rule</b><p>The chain rule finds the derivative of a function built from other functions: d/dx f(g(x)) = f′(g(x)) · g′(x). Rates multiply along the chain, like gears turning one another.</p></a><a class="rc-card" href="/math/derivative-rules/"><b>Derivative Rules</b><p>You do not compute a derivative from the limit every time.</p></a><a class="rc-card" href="/math/graphs-and-networks/"><b>Graphs and Networks</b><p>A graph is a set of nodes joined by edges. It is the natural way to describe anything connected: friends, roads, web pages, atoms, and the computation inside a neural network.</p></a><a class="rc-card" href="/math/backpropagation-by-hand/"><b>Backpropagation by Hand</b><p>Backpropagation computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs.</p></a><a class="rc-card" href="/math/gradients/"><b>Gradients</b><p>The gradient collects all the partial derivatives of a function into one vector, ∇f = (∂f/∂x, ∂f/∂y, …).</p></a><a class="rc-card" href="/math/a-forward-pass-by-hand/"><b>A Forward Pass by Hand</b><p>A forward pass pushes an input through a network layer by layer to produce a prediction. Each layer is the same recipe: multiply by a weight matrix, add a bias, apply an activation function.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/taylor-approximation/">← Previous: Taylor Approximation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

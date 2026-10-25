@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Supervised Learning — AI Base</title>
+<meta name="description" content="Autoencoders showed one way to train without human labels: reconstruct the input itself.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/self-supervised-learning/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Self-Supervised Learning — AI Base">
+<meta property="og:description" content="Autoencoders showed one way to train without human labels: reconstruct the input itself.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/self-supervised-learning/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Self-Supervised Learning","item":"https://ai.saranmahadev.in/deep-learning/self-supervised-learning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Self-Supervised Learning","description":"Autoencoders showed one way to train without human labels: reconstruct the input itself.","url":"https://ai.saranmahadev.in/deep-learning/self-supervised-learning/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes a task \"self-supervised\" rather than needing human-labelled data?","acceptedAnswer":{"@type":"Answer","text":"The training target is generated automatically from the raw, unlabelled data itself (for example, a masked-out piece of the input), with no human annotation required."}},{"@type":"Question","name":"In the worked example, why was the prediction wrong at the shape's edge but correct in the flat region?","acceptedAnswer":{"@type":"Answer","text":"The simple \"average the neighbours\" rule works well where nearby pixels agree, but breaks down exactly where they don't — right at the boundary between the shape's two regions."}},{"@type":"Question","name":"What is typically done with the representations learned by solving a pretext task?","acceptedAnswer":{"@type":"Answer","text":"They are reused, via transfer learning, as a starting point for a different downstream task that may have much less labelled data available."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Representation Learning</p>
+        <h1 class="doc-title">Self-Supervised Learning</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ctxwvm2bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="ctxwvm2pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ctxwvm2bg)"/>
+  <circle cx="360" cy="28" r="215" fill="#ffb6b6" opacity="0.30"/><circle cx="701" cy="292" r="229" fill="#8a546c" opacity="0.41"/><circle cx="757" cy="187" r="124" fill="#ffb89d" opacity="0.27"/><circle cx="396" cy="389" r="176" fill="#8a546c" opacity="0.35"/><circle cx="254" cy="217" r="209" fill="#ffe6e6" opacity="0.57"/><circle cx="571" cy="406" r="114" fill="#ffe6e6" opacity="0.49"/><circle cx="518" cy="132" r="223" fill="#8a546c" opacity="0.61"/>
+  <path d="M0,420 L0,306 L30,306 L60,308 L90,312 L120,318 L150,325 L180,331 L210,338 L240,343 L270,347 L300,349 L330,349 L360,347 L390,343 L420,337 L450,331 L480,324 L510,317 L540,312 L570,308 L600,306 L630,306 L660,308 L690,312 L720,318 L750,325 L780,331 L810,338 L840,343 L870,347 L900,349 L930,349 L960,347 L990,343 L1020,337 L1050,331 L1080,324 L1110,317 L1140,312 L1170,308 L1200,306 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,362 L90,363 L120,364 L150,365 L180,367 L210,369 L240,371 L270,373 L300,376 L330,378 L360,381 L390,383 L420,386 L450,388 L480,390 L510,391 L540,392 L570,393 L600,394 L630,394 L660,394 L690,393 L720,392 L750,391 L780,389 L810,387 L840,385 L870,383 L900,380 L930,378 L960,375 L990,373 L1020,370 L1050,368 L1080,366 L1110,365 L1140,364 L1170,363 L1200,362 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="802" cy="235" rx="216" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(22.0 802 235)"/><ellipse cx="802" cy="235" rx="299" ry="84" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(28.0 802 235)"/>
+  <circle cx="802" cy="235" r="85" fill="url(#ctxwvm2pl)"/>
+  <circle cx="1150" cy="208" r="8" fill="#ffffff" opacity="0.84"/><circle cx="575" cy="136" r="10" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/deep-learning/autoencoders/" data-topic="deep-learning/autoencoders">Autoencoders</a> showed one way to train without human labels: reconstruct the input itself. <strong>Self-supervised learning</strong> generalises that idea into a whole family of techniques, each inventing a <strong>pretext task</strong> — some question whose correct answer can be generated automatically from the raw data, with no human annotation at all — chosen specifically because solving it well requires learning genuinely useful representations.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/autoencoders/" data-topic="deep-learning/autoencoders">Autoencoders</a> and <a class="wikilink" href="/deep-learning/what-deep-networks-learn/" data-topic="deep-learning/what-deep-networks-learn">What Deep Networks Learn</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Labelled data is expensive and limited — can a network still learn useful representations from the enormous amount of <em>unlabelled</em> data available?&quot; Yes, by manufacturing its own training signal: hide or alter part of the data, and train the network to recover or predict what was hidden, using nothing but the rest of the data as the &quot;label.&quot;</p>
+<h2 id="intuition-fill-in-the-blank-invented-automatically">Intuition: fill-in-the-blank, invented automatically</h2>
+<p>Think of a fill-in-the-blank exercise: cover up a word in a sentence, and ask someone to guess it from context. No human had to write a special answer key — the blanked-out word <em>is</em> the answer, already present in the original uncut sentence. A model trained on millions of auto-generated fill-in-the-blank exercises like this has to learn a great deal about language structure just to get good at a task that required zero manual labelling.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">pretext task:   any task whose &quot;label&quot; comes directly from the unlabelled data itself
+
+examples:       masked prediction  — hide part of the input, predict it from the rest
+                next-step prediction — predict what comes next in a sequence
+                context prediction — predict nearby words (see word2vec, [[Word Embeddings]])
+                rotation/jigsaw tasks (vision) — predict an applied transformation, or reassemble shuffled patches
+</code></pre>
+<p>The representations learned solving a pretext task are usually not the end goal — they are reused afterward via <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a> for the task you actually care about, which may have far less labelled data available.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy &quot;fill in the masked pixel&quot; pretext task on a 4×4 image, predicting a hidden pixel as the average of its up/down/left/right neighbours:</p>
+<pre><code class="language-text">image (true values)
+0 0 0 0
+0 0 0 0
+0 0 1 1
+0 0 1 1
+
+mask position (1,1), true value 0:    neighbours (0,0,0,0)  →  predicted 0.000   (correct)
+mask position (2,2), true value 1:    neighbours (0,1,0,1)  →  predicted 0.500   (wrong, but informative)
+</code></pre>
+<p>The simple &quot;average the neighbours&quot; rule gets the easy, uniform region exactly right, but is clearly wrong right at the shape&#39;s actual edge — exactly where more context and a cleverer model would be needed, which is the whole point: a model that got <em>better</em> at this pretext task would necessarily have learned something real about where edges are.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="masked-pixel" data-title="Guessing a masked pixel from its neighbours"><p class="bench-fallback"><strong>Interactive bench: Guessing a masked pixel from its neighbours.</strong> A toy image with one pixel hidden. See the simple neighbour-average prediction, compare it to the true value, and try different mask positions to see where the simple rule does well or poorly.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Mask a pixel in a flat, uniform region and see the prediction land exactly right.</li>
+<li>Mask a pixel right at an edge and see the prediction land roughly halfway between the two regions — neither fully right nor fully wrong.</li>
+<li>Switch to a different toy shape and find the hardest position to predict.</li>
+</ol>
+<p><strong>What you should notice:</strong> the pretext task&#39;s prediction error is itself informative — it is highest exactly where the &quot;interesting&quot; structure (an edge, in this case) is, which is exactly the kind of signal that pushes a real model toward learning to detect that structure.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Masked language modelling</strong> (predicting masked-out words from context) underlies the pretraining of many modern language models.</li>
+<li><strong>Contrastive methods</strong> (see <a class="wikilink" href="/deep-learning/contrastive-learning/" data-topic="deep-learning/contrastive-learning">Contrastive Learning</a>) are a related but distinct self-supervised family, learning from <em>which views belong together</em> rather than from filling in missing content.</li>
+<li><strong>Self-supervised pretraining followed by <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">fine-tuning</a> on a small labelled dataset</strong> is now the dominant recipe across vision and language, precisely because unlabelled data is so much more abundant than labelled data.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming any pretext task works equally well.</strong> A poorly chosen pretext task (too easy, or solvable with a trivial shortcut) teaches the network little that transfers usefully.</li>
+<li><strong>Confusing self-supervised with unsupervised learning.</strong> Self-supervised learning still trains with a clear, computable target (the hidden content); it just generates that target automatically rather than having it hand-labelled.</li>
+<li><strong>Forgetting the pretext task itself is rarely the end goal.</strong> Its real value is the representation learned while solving it, reused for a different downstream task.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What makes a task "self-supervised" rather than needing human-labelled data?</summary>
+The training target is generated automatically from the raw, unlabelled data itself (for example, a masked-out piece of the input), with no human annotation required.
+</details>
+
+<details><summary>2. In the worked example, why was the prediction wrong at the shape's edge but correct in the flat region?</summary>
+The simple "average the neighbours" rule works well where nearby pixels agree, but breaks down exactly where they don't — right at the boundary between the shape's two regions.
+</details>
+
+<details><summary>3. What is typically done with the representations learned by solving a pretext task?</summary>
+They are reused, via transfer learning, as a starting point for a different downstream task that may have much less labelled data available.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Self-supervised learning:</strong> training with targets generated automatically from unlabelled data, rather than from human annotation.</li>
+<li><strong>Pretext task:</strong> the specific, auto-labelled task a self-supervised model is trained to solve.</li>
+<li><strong>Downstream task:</strong> the real task of interest, which reuses representations learned via a pretext task.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/autoencoders/" data-topic="deep-learning/autoencoders">Autoencoders</a> · <a class="wikilink" href="/deep-learning/what-deep-networks-learn/" data-topic="deep-learning/what-deep-networks-learn">What Deep Networks Learn</a> · <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a> · <a class="wikilink" href="/deep-learning/contrastive-learning/" data-topic="deep-learning/contrastive-learning">Contrastive Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/self-supervised-learning">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/contrastive-learning/"><small>Read next</small><b>Contrastive Learning</b><p>Self-Supervised Learning can invent a pretext task besides &quot;fill in the missing piece.&quot; Contrastive learning instead asks: given an anchor and several candidates, which one is really just another…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/autoencoders/"><b>Autoencoders</b><p>An autoencoder is a network trained to do something that sounds pointless — reproduce its own input — except it must pass the signal through a narrow bottleneck on the way.</p></a><a class="rc-card" href="/deep-learning/what-deep-networks-learn/"><b>What Deep Networks Learn</b><p>Looking at what individual units respond to across a whole trained network reveals a consistent pattern: early layers learn simple, generic detectors (edges, colours, basic textures); later layers…</p></a><a class="rc-card" href="/deep-learning/transfer-learning-and-fine-tuning/"><b>Transfer Learning and Fine-Tuning</b><p>A network trained on one large task has already learned a great deal of generally useful structure — edges and textures for vision, grammar and common phrasing for language.</p></a><a class="rc-card" href="/deep-learning/contrastive-learning/"><b>Contrastive Learning</b><p>Self-Supervised Learning can invent a pretext task besides &quot;fill in the missing piece.&quot; Contrastive learning instead asks: given an anchor and several candidates, which one is really just another…</p></a><a class="rc-card" href="/deep-learning/representation-learning/"><b>Representation Learning</b><p>A trained network&#39;s real product is not just its predictions but the representations its hidden layers learned along the way.</p></a><a class="rc-card" href="/neural-networks/hebbian-learning/"><b>Hebbian Learning</b><p>&quot;Cells that fire together wire together.&quot; Hebbian learning strengthens the connection between two neurons in direct proportion to how often they&#39;re active at the same time — no error signal, no…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/what-deep-networks-learn/">← Previous: What Deep Networks Learn</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Energy Functions and Attractor Dynamics — AI Base</title>
+<meta name="description" content="The previous topic claimed that asynchronous updates always stop. This topic proves it, with a single number that can only go down: the network&#39;s energy.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/energy-functions-and-attractor-dynamics/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Energy Functions and Attractor Dynamics — AI Base">
+<meta property="og:description" content="The previous topic claimed that asynchronous updates always stop. This topic proves it, with a single number that can only go down: the network&#39;s energy.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/energy-functions-and-attractor-dynamics/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Energy Functions and Attractor Dynamics","item":"https://ai.saranmahadev.in/neural-networks/energy-functions-and-attractor-dynamics/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Energy Functions and Attractor Dynamics","description":"The previous topic claimed that asynchronous updates always stop. This topic proves it, with a single number that can only go down: the network's energy.","url":"https://ai.saranmahadev.in/neural-networks/energy-functions-and-attractor-dynamics/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What two facts about energy together guarantee that updates eventually stop?","acceptedAnswer":{"@type":"Answer","text":"Energy never increases on any update, and it is bounded below (there are only finitely many states, each with some energy) — so it cannot decrease forever."}},{"@type":"Question","name":"In the worked example, why is ΔE negative rather than positive?","acceptedAnswer":{"@type":"Answer","text":"The update rule always flips the unit to match the sign of its own local field, so `(s_new − s_old)` and `h_i` always have the same sign, making their product non-negative and `ΔE = −(that product)` non-positive."}},{"@type":"Question","name":"Does synchronous (all-at-once) updating have the same settling guarantee as asynchronous updating?","acceptedAnswer":{"@type":"Answer","text":"No — synchronous updates can cycle between two states instead of settling, so the classical energy-decrease guarantee is specific to one-unit-at-a-time updates."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Energy-Based Networks</p>
+        <h1 class="doc-title">Energy Functions and Attractor Dynamics</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="czcxdi9bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="czcxdi9pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#czcxdi9bg)"/>
+  <circle cx="116" cy="380" r="113" fill="#ace3b3" opacity="0.46"/><circle cx="843" cy="32" r="107" fill="#50736a" opacity="0.39"/><circle cx="1006" cy="336" r="222" fill="#ace3b3" opacity="0.38"/><circle cx="673" cy="196" r="67" fill="#50736a" opacity="0.28"/><circle cx="1029" cy="272" r="93" fill="#50736a" opacity="0.25"/><circle cx="140" cy="172" r="70" fill="#50736a" opacity="0.61"/><circle cx="315" cy="335" r="173" fill="#e3f6e5" opacity="0.51"/>
+  <path d="M0,420 L0,350 L30,349 L60,346 L90,341 L120,335 L150,328 L180,321 L210,315 L240,310 L270,307 L300,306 L330,307 L360,310 L390,315 L420,321 L450,327 L480,334 L510,340 L540,345 L570,348 L600,350 L630,349 L660,346 L690,341 L720,335 L750,328 L780,321 L810,315 L840,310 L870,307 L900,306 L930,307 L960,310 L990,315 L1020,321 L1050,327 L1080,334 L1110,340 L1140,345 L1170,348 L1200,350 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,393 L120,391 L150,389 L180,386 L210,382 L240,378 L270,375 L300,371 L330,368 L360,365 L390,363 L420,362 L450,362 L480,363 L510,364 L540,366 L570,369 L600,373 L630,376 L660,380 L690,384 L720,387 L750,390 L780,392 L810,393 L840,394 L870,394 L900,392 L930,390 L960,388 L990,385 L1020,381 L1050,377 L1080,373 L1110,370 L1140,367 L1170,365 L1200,363 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="674" cy="182" rx="212" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-8.9 674 182)"/><ellipse cx="674" cy="182" rx="293" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-2.9 674 182)"/>
+  <circle cx="674" cy="182" r="83" fill="url(#czcxdi9pl)"/>
+  <circle cx="681" cy="289" r="8" fill="#ffffff" opacity="0.89"/><circle cx="630" cy="70" r="12" fill="#ffffff" opacity="0.66"/><circle cx="970" cy="150" r="14" fill="#ffffff" opacity="0.72"/><circle cx="622" cy="79" r="10" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">The previous topic</a> claimed that asynchronous updates always stop. This topic proves it, with a single number that can only go down: the network&#39;s energy.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">Hopfield Networks</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why does a Hopfield network ever stop updating, instead of flipping units forever?&quot; Because every single-unit update is guaranteed to never <em>increase</em> a specific quantity — the energy — and a quantity that only ever decreases (and is bounded below) cannot decrease forever.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Think of energy as a height on a landscape, and each unit&#39;s update as the ball checking its own slope and always stepping downhill or staying put, never uphill. If every step is downhill or flat, and the landscape has a lowest floor, the ball must eventually land somewhere and stop — that resting point is a <strong>stable point</strong>, or <strong>attractor</strong>. The stored patterns are built, by the Hebbian weight rule, to sit at the bottom of these dips.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>The energy of a state <code>s</code> is:</p>
+<pre><code class="language-text">E(s) = −1/2 · Σᵢ Σⱼ W_ij · s_i · s_j
+</code></pre>
+<p>The <strong>local field</strong> at unit <code>i</code> is <code>h_i = Σⱼ W_ij · s_j</code> (the same sum the update rule uses). When a single unit <code>i</code> flips from <code>s_i^old</code> to <code>s_i^new = sign(h_i)</code>, the change in energy works out to:</p>
+<pre><code class="language-text">ΔE = E_new − E_old = −(s_i^new − s_i^old) · h_i
+</code></pre>
+<p>Because the update rule always sets <code>s_i^new</code> to have the <em>same sign</em> as <code>h_i</code>, the product <code>(s_i^new − s_i^old) · h_i</code> is always zero or positive — so <code>ΔE</code> is always zero or <strong>negative</strong>. Energy never increases.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Reusing <a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">the previous topic&#39;s</a> example — one stored pattern <code>p = [1, 1, −1, −1]</code>, starting state <code>s = [1, −1, −1, −1]</code>, updating unit 1:</p>
+<pre><code class="language-text">local field:   h_1 = Σⱼ W_1j s_j = 3
+old state:     s_1^old = −1
+new state:     s_1^new = sign(3) = 1
+
+ΔE = −(s_1^new − s_1^old) · h_1 = −(1 − (−1)) · 3 = −2 × 3 = −6
+</code></pre>
+<p>Checking directly: <code>E(s)</code> before the update is <code>0</code>, and <code>E(s)</code> after is <code>−6</code> — a drop of exactly <code>−6</code>, matching the formula. The energy fell because the unit flipped to agree with its own local field, and it can never rise from here for this stored pattern and starting state.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="energy-descent" data-title="Watch energy fall, one update at a time"><p class="bench-fallback"><strong>Interactive bench: Watch energy fall, one update at a time.</strong> Step through single-unit updates on a small Hopfield network and watch the energy value after each one — it only ever goes down or stays the same, never up.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through updates one at a time and read the energy after each step.</li>
+<li>Try to find an update that makes the energy go up — the rule itself will not let you pick one that does.</li>
+<li>Compare the energy of a stored pattern against a random, unstored state.</li>
+</ol>
+<p><strong>What you should notice:</strong> the energy trace is monotonically non-increasing no matter which units update or in what order — that single fact is the entire reason the network is guaranteed to settle.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the reason Hopfield recall terminates</strong> at all, which is what makes <a class="wikilink" href="/neural-networks/content-addressable-memory-and-capacity/" data-topic="neural-networks/content-addressable-memory-and-capacity">associative memory</a> usable rather than an unpredictable, possibly-endless process.</li>
+<li><strong>The same &quot;energy never increases&quot; argument underlies <a class="wikilink" href="/neural-networks/boltzmann-machines/" data-topic="neural-networks/boltzmann-machines">Boltzmann Machines</a></strong>, with randomness added so the network can occasionally climb a small hill to escape a bad dip.</li>
+<li><strong>It is a genuinely different notion of &quot;training&quot; from anything on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a></strong>: there is no loss function being minimized by gradient descent here — the states themselves descend a fixed landscape at inference time.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing energy with loss.</strong> A loss function is minimized over <em>weights</em> during training; this energy is minimized over <em>unit states</em> during recall, with the weights already fixed.</li>
+<li><strong>Assuming synchronous updates have the same guarantee.</strong> Updating every unit simultaneously can cause oscillation between two states (energy alternating, not falling) — the monotonic-decrease proof only applies to one-unit-at-a-time updates.</li>
+<li><strong>Forgetting the landscape has more than one dip.</strong> Energy only guarantees settling <em>somewhere</em> — not necessarily at the dip you intended, especially near a cue equidistant from two stored patterns.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What two facts about energy together guarantee that updates eventually stop?</summary>
+Energy never increases on any update, and it is bounded below (there are only finitely many states, each with some energy) — so it cannot decrease forever.
+</details>
+
+<details><summary>2. In the worked example, why is ΔE negative rather than positive?</summary>
+The update rule always flips the unit to match the sign of its own local field, so `(s_new − s_old)` and `h_i` always have the same sign, making their product non-negative and `ΔE = −(that product)` non-positive.
+</details>
+
+<details><summary>3. Does synchronous (all-at-once) updating have the same settling guarantee as asynchronous updating?</summary>
+No — synchronous updates can cycle between two states instead of settling, so the classical energy-decrease guarantee is specific to one-unit-at-a-time updates.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Energy function:</strong> a single number computed from a Hopfield network&#39;s current state, built so stored patterns sit at low values.</li>
+<li><strong>Local field:</strong> the weighted sum a unit&#39;s own update rule uses, <code>h_i = Σⱼ W_ij s_j</code>.</li>
+<li><strong>Attractor:</strong> a stable state that nearby states settle into; here, a local minimum of the energy function.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">Hopfield Networks</a> · <a class="wikilink" href="/neural-networks/content-addressable-memory-and-capacity/" data-topic="neural-networks/content-addressable-memory-and-capacity">Content-Addressable Memory and Capacity</a> · <a class="wikilink" href="/neural-networks/boltzmann-machines/" data-topic="neural-networks/boltzmann-machines">Boltzmann Machines</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/energy-functions-and-attractor-dynamics">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/content-addressable-memory-and-capacity/"><small>Read next</small><b>Content-Addressable Memory and Capacity</b><p>A Hopfield network&#39;s memory is not free: pack in too many patterns and recall starts failing, often all at once rather than gradually.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/hopfield-networks/"><b>Hopfield Networks</b><p>A Hopfield network stores a set of patterns not as a lookup table but as the stable points of a dynamical system: give it a noisy or partial version of a pattern, let every unit repeatedly update…</p></a><a class="rc-card" href="/neural-networks/content-addressable-memory-and-capacity/"><b>Content-Addressable Memory and Capacity</b><p>A Hopfield network&#39;s memory is not free: pack in too many patterns and recall starts failing, often all at once rather than gradually.</p></a><a class="rc-card" href="/neural-networks/boltzmann-machines/"><b>Boltzmann Machines</b><p>A Hopfield network only ever moves downhill, so it can get permanently stuck in a shallow dip that isn&#39;t the pattern you wanted.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/neural-networks/energy-based-networks/"><b>Energy-Based Networks</b><p>Instead of computing an output in one forward pass, an energy-based network keeps nudging itself downhill on a landscape of its own making until it settles — and whatever it settles on is the answer.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/hopfield-networks/">← Previous: Hopfield Networks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

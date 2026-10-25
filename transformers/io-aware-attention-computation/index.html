@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IO-Aware Attention Computation — AI Base</title>
+<meta name="description" content="Linear attention changes what gets computed — trading exact softmax for an approximation. This topic changes nothing about what&#39;s computed at all.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/io-aware-attention-computation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="IO-Aware Attention Computation — AI Base">
+<meta property="og:description" content="Linear attention changes what gets computed — trading exact softmax for an approximation. This topic changes nothing about what&#39;s computed at all.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/io-aware-attention-computation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"IO-Aware Attention Computation","item":"https://ai.saranmahadev.in/transformers/io-aware-attention-computation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"IO-Aware Attention Computation","description":"Linear attention changes what gets computed — trading exact softmax for an approximation. This topic changes nothing about what's computed at all.","url":"https://ai.saranmahadev.in/transformers/io-aware-attention-computation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What, if anything, does IO-aware attention computation approximate?","acceptedAnswer":{"@type":"Answer","text":"Nothing — it computes the exact same softmax attention result as the naive approach, just reorganized to avoid holding the full score row in memory at once."}},{"@type":"Question","name":"What role does the \"correction factor\" play in the online softmax algorithm?","acceptedAnswer":{"@type":"Answer","text":"It rescales everything accumulated from earlier blocks whenever a new block reveals a larger maximum score, keeping the running total mathematically consistent with what a single, full-row computation would have produced."}},{"@type":"Question","name":"How does IO-aware computation relate to windowed and linear attention?","acceptedAnswer":{"@type":"Answer","text":"It addresses a different cost (memory movement, not compute pattern) and can be combined with either of the other two rather than replacing them."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Efficient and Scaled Attention</p>
+        <h1 class="doc-title">IO-Aware Attention Computation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c4mngmzbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c4mngmzpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c4mngmzbg)"/>
+  <circle cx="334" cy="208" r="60" fill="#abd0ff" opacity="0.43"/><circle cx="385" cy="346" r="73" fill="#abd0ff" opacity="0.53"/><circle cx="881" cy="412" r="188" fill="#4f669f" opacity="0.27"/><circle cx="896" cy="28" r="89" fill="#abd0ff" opacity="0.51"/><circle cx="860" cy="106" r="122" fill="#4f669f" opacity="0.51"/>
+  <path d="M0,420 L0,318 L30,315 L60,313 L90,310 L120,308 L150,307 L180,306 L210,306 L240,306 L270,306 L300,308 L330,309 L360,312 L390,314 L420,317 L450,320 L480,324 L510,327 L540,330 L570,334 L600,337 L630,340 L660,343 L690,345 L720,347 L750,348 L780,349 L810,350 L840,349 L870,349 L900,347 L930,346 L960,344 L990,341 L1020,338 L1050,335 L1080,332 L1110,328 L1140,325 L1170,321 L1200,318 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,373 L30,370 L60,367 L90,364 L120,363 L150,362 L180,362 L210,363 L240,365 L270,367 L300,371 L330,374 L360,378 L390,382 L420,385 L450,388 L480,391 L510,393 L540,394 L570,394 L600,393 L630,392 L660,389 L690,387 L720,383 L750,379 L780,376 L810,372 L840,369 L870,366 L900,364 L930,362 L960,362 L990,362 L1020,364 L1050,366 L1080,368 L1110,372 L1140,375 L1170,379 L1200,383 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="844" cy="233" rx="216" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(7.1 844 233)"/><ellipse cx="844" cy="233" rx="298" ry="84" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(13.1 844 233)"/>
+  <circle cx="844" cy="233" r="85" fill="url(#c4mngmzpl)"/>
+  <circle cx="1030" cy="310" r="12" fill="#ffffff" opacity="0.80"/><circle cx="493" cy="215" r="12" fill="#ffffff" opacity="0.63"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/linear-attention-approximations/" data-topic="transformers/linear-attention-approximations">Linear attention</a> changes what gets computed — trading exact softmax for an approximation. This topic changes nothing about what&#39;s computed at all. The exact same softmax attention, computed in a different order, without ever holding the full n×n score matrix in memory at once.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/linear-attention-approximations/" data-topic="transformers/linear-attention-approximations">Linear Attention Approximations</a>, <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can exact softmax attention be made faster without approximating anything?&quot; Yes — a large part of attention&#39;s real-world cost isn&#39;t the arithmetic itself, it&#39;s moving data between slow and fast memory. FlashAttention-style computation processes attention in small tiles that fit in fast on-chip memory, using a running (&quot;online&quot;) version of softmax that never needs the full row of scores available at once — producing the mathematically identical result to ordinary softmax attention, just computed with far less data shuffled through slow memory.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Ordinary softmax needs every score in a row before it can normalize any of them — compute the max, subtract it from everything, exponentiate, sum, divide. That seems to require holding the whole row at once. The <strong>online softmax</strong> trick shows this isn&#39;t actually true: process the row in small chunks, keeping a running maximum and a running sum, and correct the running total each time a new chunk reveals a larger maximum than seen so far. The correction factor exactly accounts for everything computed before — no information is lost, nothing is approximated, and the full row never needs to exist in memory simultaneously.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">process keys/values in blocks. Maintain running max m, running sum l, running weighted output acc.
+for each block:
+  m_new = max(m, max(block scores))
+  correction = exp(m − m_new)                      — rescales everything computed so far
+  l = l × correction + Σ exp(block scores − m_new)
+  acc = acc × correction + Σ exp(block scores − m_new) × block values
+  m = m_new
+final output = acc / l
+</code></pre>
+<p>This is exact — not an approximation of softmax, unlike <a class="wikilink" href="/transformers/linear-attention-approximations/" data-topic="transformers/linear-attention-approximations">linear attention&#39;s</a> feature map. It only changes <em>when</em> each piece of the computation happens, never <em>what</em> the final answer is.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Eight keys and values, 3-dimensional, processed in blocks of 3 (so three blocks: sizes 3, 3, 2):</p>
+<pre><code class="language-text">naive (full-row) softmax output:   [0.564455, -0.043759, -0.412017]
+online (block-by-block) output:    [0.564455, -0.043759, -0.412017]
+
+match: exact, to the digit
+</code></pre>
+<p>Processing the same 8 keys and values in three separate chunks — never holding all 8 scores at once, correcting the running totals each time a new chunk arrives — produces precisely the same output as computing the full softmax in one shot.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="online-softmax" data-title="The same softmax, one block at a time"><p class="bench-fallback"><strong>Interactive bench: The same softmax, one block at a time.</strong> Step through computing attention in blocks using the online softmax trick, and compare the running result against the naive full-row computation at the end.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through the blocks one at a time and watch the running max and running sum update.</li>
+<li>Compare the block-by-block result against the naive full-row result once all blocks are processed.</li>
+<li>Change the block size and confirm the final result doesn&#39;t change, only how many update steps it took.</li>
+</ol>
+<p><strong>What you should notice:</strong> the running correction factor exactly undoes any bias from an outdated running maximum — the math guarantees the final answer never depends on how the row happened to be chopped into blocks.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the core idea behind FlashAttention and similar exact, memory-efficient attention implementations</strong>, widely used in practice because they compute identical results to standard attention while running meaningfully faster on real hardware.</li>
+<li><strong>It complements rather than replaces the other efficiency topics on this planet</strong>: nothing stops combining IO-aware computation with <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">windowed</a> or <a class="wikilink" href="/transformers/multi-query-and-grouped-query-attention/" data-topic="transformers/multi-query-and-grouped-query-attention">grouped-query</a> attention — they address different costs (compute pattern, memory bandwidth, and cache size respectively).</li>
+<li><strong>The online-softmax trick itself is useful anywhere a softmax needs to be computed over data too large to hold at once</strong> — not specific to attention at all.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing this with an approximation technique.</strong> Unlike linear attention, nothing about the final numerical result changes — this is purely about the order and locality of computation.</li>
+<li><strong>Assuming block size affects correctness.</strong> It doesn&#39;t — the worked example&#39;s match confirms the result is identical regardless of how the row is chunked; block size affects only performance, not the answer.</li>
+<li><strong>Assuming this removes the need for other efficiency techniques.</strong> It specifically targets memory-movement cost, not the fact that attention still compares every allowed pair — windowed or linear attention address that different cost.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What, if anything, does IO-aware attention computation approximate?</summary>
+Nothing — it computes the exact same softmax attention result as the naive approach, just reorganized to avoid holding the full score row in memory at once.
+</details>
+
+<details><summary>2. What role does the "correction factor" play in the online softmax algorithm?</summary>
+It rescales everything accumulated from earlier blocks whenever a new block reveals a larger maximum score, keeping the running total mathematically consistent with what a single, full-row computation would have produced.
+</details>
+
+<details><summary>3. How does IO-aware computation relate to windowed and linear attention?</summary>
+It addresses a different cost (memory movement, not compute pattern) and can be combined with either of the other two rather than replacing them.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Online (running) softmax:</strong> computing softmax incrementally over blocks, using a running maximum and sum, instead of requiring the full row at once.</li>
+<li><strong>IO-aware:</strong> designed around minimizing data movement between slow and fast memory, not just minimizing arithmetic operations.</li>
+<li><strong>Correction factor:</strong> the rescaling term that keeps a running softmax computation consistent as new blocks of data arrive.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/linear-attention-approximations/" data-topic="transformers/linear-attention-approximations">Linear Attention Approximations</a> · <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention</a> · <a class="wikilink" href="/transformers/multi-query-and-grouped-query-attention/" data-topic="transformers/multi-query-and-grouped-query-attention">Multi-Query and Grouped-Query Attention</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/io-aware-attention-computation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/scaling-the-block/"><small>Read next</small><b>Scaling the Block</b><p>Making a transformer bigger raises three separate questions: whether every parameter has to run on every input, how big &quot;bigger&quot; actually is in concrete numbers, and how a single block&#39;s…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/linear-attention-approximations/"><b>Linear Attention Approximations</b><p>Windowed attention cuts cost by refusing to compute most pairs at all.</p></a><a class="rc-card" href="/transformers/sparse-and-local-windowed-attention/"><b>Sparse and Local (Windowed) Attention</b><p>KV-caching fixes redundant recomputation, but the underlying attention computation itself still scales with the square of sequence length.</p></a><a class="rc-card" href="/transformers/multi-query-and-grouped-query-attention/"><b>Multi-Query and Grouped-Query Attention</b><p>Standard multi-head attention gives every head its own query, key and value projections.</p></a><a class="rc-card" href="/transformers/efficient-and-scaled-attention/"><b>Efficient and Scaled Attention</b><p>Plain multi-head attention gets expensive fast: its cost grows with the square of sequence length, and its memory traffic during inference grows with every token generated.</p></a><a class="rc-card" href="/generative-ai/vocoders-and-neural-audio-synthesis/"><b>Vocoders and Neural Audio Synthesis</b><p>Every generative model covered so far on this planet outputs some intermediate representation — a latent, a spectrogram-like set of frequencies and amplitudes — but none of that is sound yet.</p></a><a class="rc-card" href="/llms/long-context-transformers/"><b>Long-Context Transformers</b><p>Every mechanism this road has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more…</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/linear-attention-approximations/">← Previous: Linear Attention Approximations</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

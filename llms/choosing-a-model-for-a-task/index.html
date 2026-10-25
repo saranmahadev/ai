@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing a Model for a Task — AI Base</title>
+<meta name="description" content="There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/choosing-a-model-for-a-task/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Choosing a Model for a Task — AI Base">
+<meta property="og:description" content="There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/choosing-a-model-for-a-task/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Choosing a Model for a Task","item":"https://ai.saranmahadev.in/llms/choosing-a-model-for-a-task/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Choosing a Model for a Task","description":"There's no single \"best\" LLM — only the best model for a particular task's particular mix of needs.","url":"https://ai.saranmahadev.in/llms/choosing-a-model-for-a-task/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the \"small\" model win the latency-sensitive scenario despite having the lowest quality score of the three?","acceptedAnswer":{"@type":"Answer","text":"Because that scenario weights speed and affordability far more heavily than quality (0.6 and 0.2 versus 0.2), and small scores highest on exactly those two dimensions."}},{"@type":"Question","name":"Does picking the model with the single highest quality score always give the best result for a task?","acceptedAnswer":{"@type":"Answer","text":"No — the right choice depends on the task's weighting across all the dimensions that matter to it, not on any one dimension's score alone, as the worked example's two different winners show."}},{"@type":"Question","name":"What mechanism does this topic reuse from evaluating LLMs more generally?","acceptedAnswer":{"@type":"Answer","text":"The weighted-scoring formula from leaderboard reweighting — the same arithmetic, applied here to choosing a model for a task instead of to ranking a leaderboard."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · LLMs in Practice</p>
+        <h1 class="doc-title">Choosing a Model for a Task</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ce65jqbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="ce65jqpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ce65jqbg)"/>
+  <circle cx="1038" cy="251" r="201" fill="#8a5f5e" opacity="0.55"/><circle cx="530" cy="153" r="105" fill="#ffc38f" opacity="0.46"/><circle cx="426" cy="83" r="95" fill="#8a5f5e" opacity="0.24"/><circle cx="1003" cy="91" r="153" fill="#ffc38f" opacity="0.35"/><circle cx="1088" cy="253" r="102" fill="#ffece0" opacity="0.36"/>
+  <path d="M0,420 L0,333 L30,338 L60,342 L90,346 L120,348 L150,349 L180,349 L210,348 L240,346 L270,343 L300,339 L330,334 L360,329 L390,324 L420,319 L450,314 L480,311 L510,308 L540,306 L570,306 L600,306 L630,308 L660,311 L690,315 L720,320 L750,325 L780,330 L810,335 L840,339 L870,343 L900,347 L930,349 L960,350 L990,349 L1020,348 L1050,345 L1080,342 L1110,337 L1140,332 L1170,327 L1200,322 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,392 L60,391 L90,389 L120,388 L150,385 L180,383 L210,381 L240,378 L270,376 L300,373 L330,371 L360,369 L390,367 L420,365 L450,364 L480,363 L510,362 L540,362 L570,362 L600,363 L630,364 L660,365 L690,367 L720,368 L750,371 L780,373 L810,375 L840,378 L870,380 L900,383 L930,385 L960,387 L990,389 L1020,391 L1050,392 L1080,393 L1110,394 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="902" cy="127" rx="183" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-24.7 902 127)"/><ellipse cx="902" cy="127" rx="253" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-18.7 902 127)"/>
+  <circle cx="902" cy="127" r="72" fill="url(#ce65jqpl)"/>
+  <circle cx="1098" cy="77" r="10" fill="#ffffff" opacity="0.82"/><circle cx="1057" cy="178" r="10" fill="#ffffff" opacity="0.63"/><circle cx="976" cy="229" r="13" fill="#ffffff" opacity="0.86"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs. A model that tops every capability benchmark can still be the wrong choice if the task cares more about speed or cost than about squeezing out the last few points of quality.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">Leaderboards and Their Limits</a>, <a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Given several models of different sizes, how do you pick the right one for a specific task?&quot; The same weighted-scoring mechanism already derived for reweighting a leaderboard (<a class="wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">Leaderboards and Their Limits</a>) applies directly here: score each candidate model on the dimensions the task actually cares about (quality, speed, affordability), weight those dimensions by how much the task values each one, and the model with the highest weighted score is the right choice <em>for that task</em> — not necessarily the most capable model in the abstract.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Choosing a vehicle for a job isn&#39;t about which vehicle is &quot;best&quot; overall — it&#39;s about matching the vehicle to the job. A sports car wins on speed; a cargo van wins on capacity; neither is simply better than the other until you specify what you&#39;re hauling and how fast you need to get there. Choosing a model works the same way: specify what the task needs, then rank models against exactly that.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">score(model, weights) = Σ model[dimension] × weights[dimension]  /  Σ weights[dimension]
+</code></pre>
+<p>Exactly the weighted-leaderboard formula from <a class="wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">Leaderboards and Their Limits</a>, now applied with task-specific weights instead of a general-purpose leaderboard&#39;s weights.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three model sizes, scored on quality, speed and affordability (0–1, higher is better):</p>
+<pre><code class="language-text">small:  quality 0.60, speed 0.95, affordability 0.95
+medium: quality 0.80, speed 0.70, affordability 0.70
+large:  quality 0.95, speed 0.30, affordability 0.30
+</code></pre>
+<p>Scored under two different task weightings:</p>
+<pre><code class="language-text">latency-sensitive chat (weights: quality 0.2, speed 0.6, affordability 0.2):
+  small 0.880  medium 0.720  large 0.430   →  small wins
+
+quality-sensitive offline task (weights: quality 0.9, speed 0.05, affordability 0.05):
+  small 0.635  medium 0.790  large 0.885   →  large wins
+</code></pre>
+<p>The same three models, the same three scores each — but which one wins flips entirely depending on what the task actually values. Neither &quot;small&quot; nor &quot;large&quot; is the universally right answer.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="model-choice-weighted" data-title="The best model depends on what the task actually needs"><p class="bench-fallback"><strong>Interactive bench: The best model depends on what the task actually needs.</strong> Switch between task scenarios and see which model size actually scores best for each.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the winning model under each scenario and note that it&#39;s not the same model both times.</li>
+<li>Look at how close medium and large are under the quality-sensitive scenario, despite large&#39;s much worse speed and affordability scores.</li>
+<li>Imagine a third scenario that weights all three dimensions equally — which model would you expect to win, and why?</li>
+</ol>
+<p><strong>What you should notice:</strong> &quot;large&quot; isn&#39;t a safe default choice even when quality matters most — it only wins when quality is weighted heavily enough to outweigh its much worse speed and affordability scores.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This reuses the exact weighted-scoring mechanism from <a class="wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">Leaderboards and Their Limits</a></strong>, applied to model selection instead of leaderboard ranking — the same lesson (reweighting flips the winner) shows up at both levels.</li>
+<li><strong>The &quot;speed&quot; and &quot;affordability&quot; dimensions here are exactly what <a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a> measures concretely</strong> — this topic is about the decision; that one is about the underlying numbers.</li>
+<li><strong>A model&#39;s capability score itself comes from the kind of benchmark evaluation covered on the Evaluating LLMs stretch of this road</strong> — model choice sits downstream of how models are measured in the first place.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Defaulting to the largest, most capable model &quot;to be safe.&quot;</strong> The worked example shows this can be a clearly worse choice when the task actually values speed or cost — &quot;most capable&quot; and &quot;best for this task&quot; are different questions.</li>
+<li><strong>Picking a model based on one dimension&#39;s score alone.</strong> A model can look great on a quality benchmark and still be the wrong choice once speed and cost are weighted in at the levels the task actually requires.</li>
+<li><strong>Assuming the right weighting is obvious or fixed.</strong> Two products that look similar can have very different latency or cost sensitivity, which changes the right choice even with identical candidate models.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the "small" model win the latency-sensitive scenario despite having the lowest quality score of the three?</summary>
+Because that scenario weights speed and affordability far more heavily than quality (0.6 and 0.2 versus 0.2), and small scores highest on exactly those two dimensions.
+</details>
+
+<details><summary>2. Does picking the model with the single highest quality score always give the best result for a task?</summary>
+No — the right choice depends on the task's weighting across all the dimensions that matter to it, not on any one dimension's score alone, as the worked example's two different winners show.
+</details>
+
+<details><summary>3. What mechanism does this topic reuse from evaluating LLMs more generally?</summary>
+The weighted-scoring formula from leaderboard reweighting — the same arithmetic, applied here to choosing a model for a task instead of to ranking a leaderboard.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Task-specific weighting:</strong> assigning importance to each evaluation dimension (quality, speed, cost) according to what a particular task actually needs.</li>
+<li><strong>Weighted score:</strong> a single number combining a model&#39;s scores across several dimensions, according to a chosen set of weights.</li>
+<li><strong>Model selection:</strong> choosing which available model to deploy for a task, based on how well it matches that task&#39;s specific requirements.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">Leaderboards and Their Limits</a> · <a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a> · <a class="wikilink" href="/llms/fine-tuning-for-a-specific-task/" data-topic="llms/fine-tuning-for-a-specific-task">Fine-Tuning for a Specific Task</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/choosing-a-model-for-a-task">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/guardrails-and-deployment-time-safety-filters/"><small>Read next</small><b>Guardrails and Deployment-Time Safety Filters</b><p>Alignment training shapes what a model tends to do on its own, but a deployed product rarely relies on that alone.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/leaderboards-and-their-limits/"><b>Leaderboards and Their Limits</b><p>A leaderboard promises a simple answer to &quot;which model is best?&quot; — rank them by score, read off the winner.</p></a><a class="rc-card" href="/llms/cost-and-latency-of-llm-apis/"><b>Cost and Latency of LLM APIs</b><p>A request to an LLM API has two separate costs that don&#39;t move together: how much it costs in money, and how long it takes to come back.</p></a><a class="rc-card" href="/llms/fine-tuning-for-a-specific-task/"><b>Fine-Tuning for a Specific Task</b><p>An aligned, general-purpose assistant is often not what a product actually needs — a narrower model trained specifically on one job&#39;s data can do that one job better, cheaper, and more predictably.</p></a><a class="rc-card" href="/llms/llms-in-practice/"><b>LLMs in Practice</b><p>The last stretch of this planet&#39;s road: adapting a model to a specific task, prompting and serving it as part of a real product, the practical failure modes of each, and a capstone that traces the…</p></a><a class="rc-card" href="/llms/structured-output-and-tool-calling-apis/"><b>Structured Output and Tool-Calling APIs</b><p>Code that calls an LLM usually needs the response in a specific shape — valid JSON with particular fields, or a specific function call with typed arguments — not free-flowing prose.</p></a><a class="rc-card" href="/llms/model-merging-and-weight-averaging/"><b>Model Merging and Weight Averaging</b><p>Training a brand-new model that&#39;s good at two different tasks usually means training on both tasks&#39; data together.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/cost-and-latency-of-llm-apis/">← Previous: Cost and Latency of LLM APIs</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

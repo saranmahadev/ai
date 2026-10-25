@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Early Stopping and Ensembling Deep Nets — AI Base</title>
+<meta name="description" content="Training loss can keep falling long after a network has stopped getting better on data it hasn&#39;t seen.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/early-stopping-and-ensembling-deep-nets/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Early Stopping and Ensembling Deep Nets — AI Base">
+<meta property="og:description" content="Training loss can keep falling long after a network has stopped getting better on data it hasn&#39;t seen.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/early-stopping-and-ensembling-deep-nets/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Early Stopping and Ensembling Deep Nets","item":"https://ai.saranmahadev.in/deep-learning/early-stopping-and-ensembling-deep-nets/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Early Stopping and Ensembling Deep Nets","description":"Training loss can keep falling long after a network has stopped getting better on data it hasn't seen.","url":"https://ai.saranmahadev.in/deep-learning/early-stopping-and-ensembling-deep-nets/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked early-stopping example, why does early stopping keep the epoch-13 checkpoint rather than epoch 30's?","acceptedAnswer":{"@type":"Answer","text":"Validation loss is lowest at epoch 13; by epoch 30, training loss has kept falling but validation loss has risen far above its epoch-13 value, a sign of overfitting."}},{"@type":"Question","name":"Why did averaging five predictions produce a smaller error than any typical individual prediction?","acceptedAnswer":{"@type":"Answer","text":"The individual models' errors point in different directions around the true value, so averaging cancels out much of that scatter rather than compounding it."}},{"@type":"Question","name":"What do early stopping and ensembling have in common?","acceptedAnswer":{"@type":"Answer","text":"Both are ways to counter overfitting without changing the model's architecture — one by controlling training duration, the other by combining multiple trained models."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Regularization and Generalization</p>
+        <h1 class="doc-title">Early Stopping and Ensembling Deep Nets</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c9d1dk5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c9d1dk5pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c9d1dk5bg)"/>
+  <circle cx="637" cy="358" r="133" fill="#ffe6e6" opacity="0.24"/><circle cx="720" cy="7" r="78" fill="#ffe6e6" opacity="0.27"/><circle cx="856" cy="108" r="174" fill="#8a546c" opacity="0.57"/><circle cx="921" cy="218" r="180" fill="#ffe6e6" opacity="0.51"/><circle cx="227" cy="46" r="77" fill="#ffb89d" opacity="0.51"/><circle cx="592" cy="255" r="100" fill="#ffb89d" opacity="0.38"/><circle cx="935" cy="198" r="67" fill="#8a546c" opacity="0.29"/>
+  <path d="M0,420 L0,311 L30,315 L60,319 L90,324 L120,330 L150,335 L180,339 L210,343 L240,346 L270,349 L300,350 L330,349 L360,348 L390,345 L420,342 L450,337 L480,333 L510,327 L540,322 L570,317 L600,313 L630,310 L660,307 L690,306 L720,306 L750,307 L780,309 L810,312 L840,316 L870,321 L900,326 L930,331 L960,336 L990,341 L1020,344 L1050,347 L1080,349 L1110,350 L1140,349 L1170,347 L1200,344 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,385 L60,387 L90,389 L120,391 L150,392 L180,393 L210,394 L240,394 L270,394 L300,393 L330,392 L360,391 L390,390 L420,388 L450,386 L480,383 L510,381 L540,378 L570,376 L600,373 L630,371 L660,369 L690,367 L720,365 L750,364 L780,363 L810,362 L840,362 L870,362 L900,363 L930,364 L960,365 L990,366 L1020,368 L1050,370 L1080,373 L1110,375 L1140,378 L1170,380 L1200,383 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="813" cy="259" rx="194" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.0 813 259)"/><ellipse cx="813" cy="259" rx="268" ry="75" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.0 813 259)"/>
+  <circle cx="813" cy="259" r="76" fill="url(#c9d1dk5pl)"/>
+  <circle cx="1041" cy="207" r="16" fill="#ffffff" opacity="0.66"/><circle cx="814" cy="185" r="12" fill="#ffffff" opacity="0.90"/><circle cx="796" cy="173" r="16" fill="#ffffff" opacity="0.68"/><circle cx="938" cy="189" r="14" fill="#ffffff" opacity="0.69"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Training loss can keep falling long after a network has stopped getting better on data it hasn&#39;t seen. <strong>Early stopping</strong> watches validation loss during training and keeps the checkpoint from the point where it was lowest, rather than training&#39;s final weights. <strong>Ensembling</strong> takes a different, complementary route to the same goal: train several networks and average their predictions, so each one&#39;s individual mistakes partly cancel out.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a> and <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Training loss is still improving — does that mean I should keep training?&quot; Not necessarily: once validation loss starts rising while training loss keeps falling, the network has moved from learning the task to memorising the training set&#39;s noise.</p>
+<h2 id="intuition-stop-at-the-fork-or-ask-several-opinions">Intuition: stop at the fork, or ask several opinions</h2>
+<p>Early stopping is like checking in on a hike every so often: as long as each check-in is closer to the destination than the last, keep going; the moment a check-in moves further away, go back to the best one you had. Ensembling takes a different approach entirely: instead of trying to pick the single best-trained network, train several and let their mistakes average out — much like asking five people to each guess a jar&#39;s contents and averaging their guesses, which tends to beat any one guesser&#39;s bias.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">early stopping:  track val_loss(epoch); keep the checkpoint at argmin(val_loss), even if training continues past it
+
+ensembling:      ŷ = (1/K) Σ fₖ(x)      — the average prediction over K independently trained models
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p><strong>Early stopping.</strong> A training loss that keeps decaying and a validation loss with an overfitting term that eventually turns it back up:</p>
+<pre><code class="language-text">epoch        0       5      10      13      15      20      25      30
+train       2.100   0.836   0.371   0.249   0.200   0.137   0.114   0.105
+val         2.100   0.861   0.471   0.418   0.425   0.537   0.739   1.005
+</code></pre>
+<p>Validation loss is lowest at epoch 13 (0.418); training loss keeps falling all the way to epoch 30 and beyond. Early stopping keeps the epoch-13 checkpoint, even though a model trained for the full 30 epochs would show a far better <em>training</em> loss.</p>
+<p><strong>Ensembling.</strong> Five independently trained networks&#39; predictions on one test point, true value <code>0.65</code>:</p>
+<pre><code class="language-text">predictions:  0.62   0.71   0.55   0.68   0.59
+average:      0.63
+
+individual squared errors: 0.0009  0.0036  0.0100  0.0009  0.0036   → average 0.0038
+ensemble (average) squared error: (0.63 − 0.65)² = 0.0004
+</code></pre>
+<p>The ensemble&#39;s error (0.0004) is roughly ten times smaller than the <em>average</em> individual network&#39;s error (0.0038) — the networks&#39; mistakes point in different directions and partly cancel when averaged.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="early-stop-ensemble" data-title="Stopping at the best epoch, and averaging several models"><p class="bench-fallback"><strong>Interactive bench: Stopping at the best epoch, and averaging several models.</strong> Two linked views. One steps through training epochs, tracking training and validation loss and marking the best checkpoint so far. The other shows several models' predictions on one point and compares each one's error to the ensemble average's error.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through the training-curve view epoch by epoch and watch when the &quot;best so far&quot; marker stops moving.</li>
+<li>Keep stepping well past that point and compare how training loss and validation loss diverge.</li>
+<li>Switch to the ensembling view and add models one at a time, watching the ensemble&#39;s error shrink as more (independent) predictions are averaged in.</li>
+</ol>
+<p><strong>What you should notice:</strong> early stopping is about <em>when</em> to stop one model; ensembling is about combining <em>several</em> models — and they are not mutually exclusive, since each member of an ensemble can itself use early stopping.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Nearly every deep learning training run uses some form of early stopping</strong>, even just &quot;keep the checkpoint with the best validation score.&quot;</li>
+<li><strong>Ensembling is expensive at inference time</strong> (every member model must run), so it is more common in settings where accuracy matters more than latency, or compressed afterward (see <a class="wikilink" href="/deep-learning/knowledge-distillation/" data-topic="deep-learning/knowledge-distillation">Knowledge Distillation</a>).</li>
+<li><strong>Both are safety nets for exactly the overfitting behaviour described in <a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a></strong> — stopping on time, and averaging away idiosyncratic mistakes.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Stopping too early, on a single noisy validation fluctuation.</strong> Early stopping is usually combined with &quot;patience&quot; — waiting several epochs without improvement before actually stopping — to avoid reacting to noise.</li>
+<li><strong>Ensembling models that are not actually independent.</strong> Five copies of the same network with the same initialization and data order will mostly make the same mistakes, and averaging them gains little.</li>
+<li><strong>Forgetting ensembling costs compute at inference, not just training.</strong> Every member model must be run on every prediction.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked early-stopping example, why does early stopping keep the epoch-13 checkpoint rather than epoch 30's?</summary>
+Validation loss is lowest at epoch 13; by epoch 30, training loss has kept falling but validation loss has risen far above its epoch-13 value, a sign of overfitting.
+</details>
+
+<details><summary>2. Why did averaging five predictions produce a smaller error than any typical individual prediction?</summary>
+The individual models' errors point in different directions around the true value, so averaging cancels out much of that scatter rather than compounding it.
+</details>
+
+<details><summary>3. What do early stopping and ensembling have in common?</summary>
+Both are ways to counter overfitting without changing the model's architecture — one by controlling training duration, the other by combining multiple trained models.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Early stopping:</strong> halting training (or keeping an earlier checkpoint) once validation performance stops improving.</li>
+<li><strong>Patience:</strong> the number of epochs without improvement tolerated before actually stopping.</li>
+<li><strong>Ensembling:</strong> averaging the predictions of several independently trained models.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a> · <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a> · <a class="wikilink" href="/deep-learning/dropout/" data-topic="deep-learning/dropout">Dropout</a> · <a class="wikilink" href="/deep-learning/knowledge-distillation/" data-topic="deep-learning/knowledge-distillation">Knowledge Distillation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/early-stopping-and-ensembling-deep-nets">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/convolutional-neural-networks/"><small>Read next</small><b>Convolutional Neural Networks</b><p>A photograph has structure a plain feedforward network ignores: a cat&#39;s ear looks the same whether it is in the top-left or bottom-right corner.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/overfitting-and-double-descent/"><b>Overfitting and Double Descent</b><p>The classical picture of overfitting says test error falls as a model grows, then rises once it has enough capacity to memorise noise — a U-shape.</p></a><a class="rc-card" href="/machine-learning/cross-validation/"><b>Cross-Validation</b><p>One train/validation split gives one score, and that score depends on which points happened to land where.</p></a><a class="rc-card" href="/deep-learning/knowledge-distillation/"><b>Knowledge Distillation</b><p>A large, accurate teacher network&#39;s final prediction is one number per class — but its full output, before being squashed into near-certainty, carries far more information: how confident it was,…</p></a><a class="rc-card" href="/deep-learning/dropout/"><b>Dropout</b><p>Dropout trains a network while randomly switching off a fraction of its units on every single step — a different random subset each time — so no unit can become so important that the network…</p></a><a class="rc-card" href="/deep-learning/regularization-and-generalization/"><b>Regularization and Generalization</b><p>A deep network has enough parameters to memorise its training set outright.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/data-augmentation/">← Previous: Data Augmentation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hebbian Learning — AI Base</title>
+<meta name="description" content="&quot;Cells that fire together wire together.&quot; Hebbian learning strengthens the connection between two neurons in direct proportion to how often they&#39;re active at the same time — no error signal, no…">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/hebbian-learning/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Hebbian Learning — AI Base">
+<meta property="og:description" content="&quot;Cells that fire together wire together.&quot; Hebbian learning strengthens the connection between two neurons in direct proportion to how often they&#39;re active at the same time — no error signal, no…">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/hebbian-learning/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Hebbian Learning","item":"https://ai.saranmahadev.in/neural-networks/hebbian-learning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hebbian Learning","description":"\"Cells that fire together wire together.\" Hebbian learning strengthens the connection between two neurons in direct proportion to how often they're active at the same time — no error signal, no…","url":"https://ai.saranmahadev.in/neural-networks/hebbian-learning/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What information does Hebb's rule need that the perceptron's update does not?","acceptedAnswer":{"@type":"Answer","text":"Trick question — it needs less: only the two neurons' own activations, with no target label at all, unlike the perceptron's mistake-driven update."}},{"@type":"Question","name":"In the worked example, why does the weight keep growing by exactly the same amount each step?","acceptedAnswer":{"@type":"Answer","text":"Both neurons' activations are held fixed, so the update `η·x·y` is the same constant value every step."}},{"@type":"Question","name":"What problem does plain Hebbian learning have that later variants fix?","acceptedAnswer":{"@type":"Answer","text":"Weights can grow without bound, since nothing in the basic rule caps or normalizes them."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Biological and Historical Foundations</p>
+        <h1 class="doc-title">Hebbian Learning</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c18375s0bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="c18375s0pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c18375s0bg)"/>
+  <circle cx="182" cy="8" r="104" fill="#e3f6e5" opacity="0.35"/><circle cx="190" cy="373" r="82" fill="#50736a" opacity="0.36"/><circle cx="824" cy="38" r="146" fill="#e3f6e5" opacity="0.39"/><circle cx="685" cy="312" r="64" fill="#c5d79b" opacity="0.61"/><circle cx="642" cy="357" r="130" fill="#c5d79b" opacity="0.50"/><circle cx="1171" cy="94" r="197" fill="#50736a" opacity="0.38"/>
+  <path d="M0,420 L0,326 L30,320 L60,314 L90,309 L120,306 L150,306 L180,307 L210,311 L240,316 L270,322 L300,329 L330,336 L360,342 L390,346 L420,349 L450,350 L480,348 L510,345 L540,339 L570,333 L600,326 L630,320 L660,314 L690,309 L720,306 L750,306 L780,307 L810,311 L840,316 L870,322 L900,329 L930,336 L960,342 L990,346 L1020,349 L1050,350 L1080,348 L1110,345 L1140,339 L1170,333 L1200,326 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,380 L30,376 L60,373 L90,369 L120,366 L150,364 L180,363 L210,362 L240,362 L270,363 L300,365 L330,368 L360,371 L390,375 L420,379 L450,382 L480,386 L510,389 L540,391 L570,393 L600,394 L630,394 L660,393 L690,391 L720,389 L750,386 L780,382 L810,379 L840,375 L870,371 L900,368 L930,366 L960,364 L990,362 L1020,362 L1050,363 L1080,364 L1110,366 L1140,369 L1170,372 L1200,376 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="833" cy="183" rx="241" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(6.8 833 183)"/><ellipse cx="833" cy="183" rx="334" ry="93" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(12.8 833 183)"/>
+  <circle cx="833" cy="183" r="95" fill="url(#c18375s0pl)"/>
+  <circle cx="525" cy="218" r="10" fill="#ffffff" opacity="0.69"/><circle cx="931" cy="63" r="17" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>&quot;Cells that fire together wire together.&quot; <strong>Hebbian learning</strong> strengthens the connection between two neurons in direct proportion to how often they&#39;re active at the same time — no error signal, no label, no teacher telling it what the right answer should have been. It is the oldest learning rule in this field, and the ancestor of every unsupervised rule on this planet.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/the-biological-neuron/" data-topic="neural-networks/the-biological-neuron">The Biological Neuron</a> and <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Every learning rule so far on these planets corrects a <em>mistake</em> — what would a rule that has no notion of &#39;mistake&#39; at all even look like?&quot; One that simply strengthens connections between neurons that tend to activate together, and weakens nothing on its own — correlation, not correction, as the entire basis for learning.</p>
+<h2 id="intuition-wiring-follows-coincidence">Intuition: wiring follows coincidence</h2>
+<p>If neuron A reliably fires whenever neuron B does, Hebb&#39;s rule says: make the connection from A to B a little stronger, every single time. There&#39;s no concept of &quot;right&quot; or &quot;wrong&quot; here, no target output to compare against — just raw co-occurrence, strengthened a little more each time it happens. Over many repetitions, connections between neurons that are frequently active together grow large; connections between neurons whose activity is unrelated stay small.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">Δw_ij = η · x_i · y_j
+
+x_i    presynaptic neuron&#39;s activation (the &quot;input&quot; side)
+y_j    postsynaptic neuron&#39;s activation (the &quot;output&quot; side)
+η      learning rate
+</code></pre>
+<p>Unlike the <a class="wikilink" href="/machine-learning/the-perceptron/" data-topic="machine-learning/the-perceptron">perceptron&#39;s</a> mistake-driven update, Hebb&#39;s rule needs no label <code>y</code> to compare against — only the two neurons&#39; own activations, making it entirely <strong>unsupervised</strong>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two neurons, activations <code>x = 0.8</code> and <code>y = 0.6</code>, starting weight <code>w = 0.2</code>, learning rate <code>η = 0.1</code>, updated every time they co-activate:</p>
+<pre><code class="language-text">step        1       2       3       4       5
+Δw        0.048   0.048   0.048   0.048   0.048
+w         0.248   0.296   0.344   0.392   0.440
+</code></pre>
+<p>The weight grows by the same fixed amount every step, as long as the two neurons keep co-activating the same way — and nothing in the plain rule ever stops it. Five repetitions already moved the weight by more than its entire starting value; left unchecked, it keeps growing without bound.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="hebb-update" data-title="Strengthening a connection by co-activation"><p class="bench-fallback"><strong>Interactive bench: Strengthening a connection by co-activation.</strong> Two adjustable neuron activations and a learning rate. Step through repeated Hebbian updates and watch the weight grow, unbounded, as long as the two neurons keep firing together.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through several updates with both activations held fixed and watch the weight climb steadily.</li>
+<li>Lower one activation to near zero and watch the weight stop changing almost entirely.</li>
+<li>Notice there is no mechanism in the plain rule to ever make the weight shrink.</li>
+</ol>
+<p><strong>What you should notice:</strong> plain Hebbian learning has no ceiling — nothing in the rule itself prevents a weight from growing forever, which is exactly the instability later variants (not covered in depth here) add normalization specifically to fix.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every other unsupervised rule on this planet traces back to this idea</strong>: <a class="wikilink" href="/neural-networks/self-organizing-maps/" data-topic="neural-networks/self-organizing-maps">self-organizing maps</a>, <a class="wikilink" href="/neural-networks/competitive-learning-and-vector-quantization/" data-topic="neural-networks/competitive-learning-and-vector-quantization">competitive learning</a>, and <a class="wikilink" href="/neural-networks/spike-timing-dependent-plasticity/" data-topic="neural-networks/spike-timing-dependent-plasticity">spike-timing-dependent plasticity</a> are all, at heart, correlation-driven updates in Hebb&#39;s spirit.</li>
+<li><strong>Modern self-supervised learning</strong> (see <a class="wikilink" href="/deep-learning/self-supervised-learning/" data-topic="deep-learning/self-supervised-learning">Self-Supervised Learning</a> on the Deep Learning planet) is a very different, much more engineered answer to the same underlying question: how do you learn something useful with no labels?</li>
+<li><strong>Hebb&#39;s original 1949 proposal predates the perceptron by nearly a decade</strong>, making it one of the earliest concrete theories of how learning might work in a nervous system.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting Hebbian learning to solve a classification problem on its own.</strong> It has no notion of a target output to get right or wrong — it is a mechanism for strengthening correlations, not minimizing an error.</li>
+<li><strong>Assuming the weight update eventually settles.</strong> Without an added normalization or saturation term, repeated co-activation keeps growing the weight indefinitely.</li>
+<li><strong>Confusing &quot;unsupervised&quot; with &quot;no structure in the data.&quot;</strong> Hebbian learning still needs the input activations themselves to carry real, exploitable correlations — it finds structure, it doesn&#39;t invent it.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What information does Hebb's rule need that the perceptron's update does not?</summary>
+Trick question — it needs less: only the two neurons' own activations, with no target label at all, unlike the perceptron's mistake-driven update.
+</details>
+
+<details><summary>2. In the worked example, why does the weight keep growing by exactly the same amount each step?</summary>
+Both neurons' activations are held fixed, so the update `η·x·y` is the same constant value every step.
+</details>
+
+<details><summary>3. What problem does plain Hebbian learning have that later variants fix?</summary>
+Weights can grow without bound, since nothing in the basic rule caps or normalizes them.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Hebbian learning:</strong> strengthening a connection in proportion to how often the two neurons it connects are active together.</li>
+<li><strong>Presynaptic / postsynaptic:</strong> the input-side and output-side neuron of a connection.</li>
+<li><strong>Unsupervised rule:</strong> a learning rule needing no labelled target to compare against.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/the-biological-neuron/" data-topic="neural-networks/the-biological-neuron">The Biological Neuron</a> · <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a> · <a class="wikilink" href="/neural-networks/the-mcculloch-pitts-neuron/" data-topic="neural-networks/the-mcculloch-pitts-neuron">The McCulloch-Pitts Neuron</a> · <a class="wikilink" href="/neural-networks/self-organizing-maps/" data-topic="neural-networks/self-organizing-maps">Self-Organizing Maps</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/hebbian-learning">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/the-mcculloch-pitts-neuron/"><small>Read next</small><b>The McCulloch-Pitts Neuron</b><p>Fifteen years before the perceptron learned anything, Warren McCulloch and Walter Pitts proposed the first mathematical neuron, in 1943.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/the-biological-neuron/"><b>The Biological Neuron</b><p>A real neuron is a cell: dendrites collect incoming signals from other neurons, the cell body sums them up, and if that sum crosses a threshold, the neuron fires a brief electrical spike down its…</p></a><a class="rc-card" href="/math/vector-operations/"><b>Vector Operations</b><p>Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.</p></a><a class="rc-card" href="/machine-learning/the-perceptron/"><b>The Perceptron</b><p>The perceptron is the oldest learning machine: compute a weighted sum of the inputs, answer &quot;yes&quot; if it is positive and &quot;no&quot; otherwise, and after every mistake nudge the weights so that mistake is…</p></a><a class="rc-card" href="/neural-networks/self-organizing-maps/"><b>Self-Organizing Maps</b><p>Give a grid of units nothing but unlabelled data points, and a rule that says &quot;move the unit closest to each point a little closer, and drag its neighbours along too&quot; — and the grid gradually…</p></a><a class="rc-card" href="/neural-networks/competitive-learning-and-vector-quantization/"><b>Competitive Learning and Vector Quantization</b><p>The previous topic&#39;s update rule has two parts: find the winner, then update the winner and its neighbours.</p></a><a class="rc-card" href="/neural-networks/spike-timing-dependent-plasticity/"><b>Spike-Timing-Dependent Plasticity</b><p>Hebb&#39;s rule says neurons that fire together wire together, but says nothing about order.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/the-biological-neuron/">← Previous: The Biological Neuron</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

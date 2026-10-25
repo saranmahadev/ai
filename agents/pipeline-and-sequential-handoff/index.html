@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipeline and Sequential Handoff — AI Base</title>
+<meta name="description" content="A research agent hands its findings to a drafting agent, which hands its draft to a review agent, which hands its approval to a finalizing agent.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/pipeline-and-sequential-handoff/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Pipeline and Sequential Handoff — AI Base">
+<meta property="og:description" content="A research agent hands its findings to a drafting agent, which hands its draft to a review agent, which hands its approval to a finalizing agent.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/pipeline-and-sequential-handoff/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Pipeline and Sequential Handoff","item":"https://ai.saranmahadev.in/agents/pipeline-and-sequential-handoff/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Pipeline and Sequential Handoff","description":"A research agent hands its findings to a drafting agent, which hands its draft to a review agent, which hands its approval to a finalizing agent.","url":"https://ai.saranmahadev.in/agents/pipeline-and-sequential-handoff/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why are exactly 2 stages wasted when the flaw appears at stage 2 of 4, without a gate?","acceptedAnswer":{"@type":"Answer","text":"Every stage after the one that produced the flaw (stages 3 and 4) runs on the flawed input anyway, since nothing checks it at the handoff — that's 4 total stages minus the 2 stages up to and including where the flaw appeared, leaving 2 wasted."}},{"@type":"Question","name":"What's the key structural difference between a pipeline and a supervisor pattern?","acceptedAnswer":{"@type":"Answer","text":"A pipeline's order is fixed in advance and each stage hands off directly to the next; a supervisor pattern instead routes each piece of work through a central decision-maker that decides which specialist handles it."}},{"@type":"Question","name":"Does adding a gate make a pipeline's individual stages less likely to produce a flaw?","acceptedAnswer":{"@type":"Answer","text":"No — the gate doesn't change how often a stage produces a flawed result; it changes how much work gets wasted after a flaw happens, by catching it at the very next handoff instead of letting it propagate further down the pipeline."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Multi-Agent Systems</p>
+        <h1 class="doc-title">Pipeline and Sequential Handoff</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1h37zdzbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1h37zdzpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1h37zdzbg)"/>
+  <circle cx="1095" cy="145" r="149" fill="#f3e9fc" opacity="0.45"/><circle cx="785" cy="123" r="119" fill="#f3e9fc" opacity="0.56"/><circle cx="561" cy="55" r="167" fill="#dcbef5" opacity="0.55"/><circle cx="877" cy="329" r="114" fill="#f3e9fc" opacity="0.39"/><circle cx="379" cy="219" r="130" fill="#725998" opacity="0.45"/><circle cx="678" cy="351" r="186" fill="#e7bdc8" opacity="0.53"/><circle cx="467" cy="395" r="132" fill="#e7bdc8" opacity="0.54"/>
+  <path d="M0,420 L0,307 L30,311 L60,316 L90,322 L120,329 L150,336 L180,342 L210,346 L240,349 L270,350 L300,348 L330,344 L360,339 L390,333 L420,326 L450,319 L480,313 L510,309 L540,306 L570,306 L600,307 L630,311 L660,316 L690,322 L720,329 L750,336 L780,342 L810,346 L840,349 L870,350 L900,348 L930,344 L960,339 L990,333 L1020,326 L1050,319 L1080,313 L1110,309 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,391 L90,388 L120,384 L150,379 L180,374 L210,369 L240,366 L270,363 L300,362 L330,363 L360,365 L390,368 L420,372 L450,377 L480,382 L510,387 L540,390 L570,393 L600,394 L630,393 L660,391 L690,388 L720,384 L750,379 L780,374 L810,369 L840,366 L870,363 L900,362 L930,363 L960,365 L990,368 L1020,372 L1050,377 L1080,382 L1110,387 L1140,390 L1170,393 L1200,394 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="622" cy="260" rx="239" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(5.8 622 260)"/><ellipse cx="622" cy="260" rx="330" ry="92" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(11.8 622 260)"/>
+  <circle cx="622" cy="260" r="94" fill="url(#c1h37zdzpl)"/>
+  <circle cx="716" cy="134" r="15" fill="#ffffff" opacity="0.88"/><circle cx="410" cy="374" r="9" fill="#ffffff" opacity="0.80"/><circle cx="991" cy="209" r="11" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A research agent hands its findings to a drafting agent, which hands its draft to a review agent, which hands its approval to a finalizing agent. Each stage is a fixed, known step in a chain — the order never changes, and each stage only ever talks to the one right after it.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/supervisor-orchestrator-patterns/" data-topic="agents/supervisor-orchestrator-patterns">Supervisor/Orchestrator Patterns</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What&#39;s the simplest way to wire several specialist agents in a fixed sequence?&quot; A pipeline runs a fixed chain of agents, each one handing its output directly to the next — no central router deciding where things go, because the order is already known in advance. This is <a class="wikilink" href="/agents/prompt-chaining/" data-topic="agents/prompt-chaining">prompt chaining</a>, one level up: the &quot;steps&quot; in the chain are now full agents rather than single calls, and the validation gate between them can check an entire stage&#39;s output before the next agent ever sees it.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">pipeline: stage1 → gate(result1) → stage2 → gate(result2) → stage3 → stage4
+no gate:  a flaw at stage k flows into every later stage, wasting (total − k) stages
+gate:     a flaw at stage k is caught at the handoff — 0 later stages wasted
+</code></pre>
+<h2 id="intuition">Intuition</h2>
+<p>An assembly line where each station passes its work straight to the next one, and nowhere in between, only works smoothly if a flawed part gets caught at the handoff rather than quietly continuing down the line. A line with inspection at every handoff stops wasting the later stations&#39; work on something already broken; a line without it keeps assembling around a flaw until the final inspection finally catches it.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 4-stage report pipeline, with a flaw introduced at stage 2, compared with and without a validation gate at each handoff:</p>
+<pre><code class="language-text">stages: research → draft → review → finalize
+flaw appears at stage 2 (draft)
+
+no gate between stages:
+  stage 1 (research): runs normally
+  stage 2 (draft):     produces the flaw
+  stage 3 (review):    runs anyway, on flawed input     ← wasted
+  stage 4 (finalize):  runs anyway, on flawed input     ← wasted
+  stages wasted: 4 − 2 = 2
+
+gated handoff:
+  stage 1 (research): runs normally
+  stage 2 (draft):     produces the flaw
+  → caught at the handoff, before stage 3 ever runs
+  stages wasted: 0
+</code></pre>
+<p>The gate doesn&#39;t make stage 2 any less likely to produce a flaw — what it changes is how much gets wasted <em>after</em> the flaw happens, by catching it at the very next handoff instead of letting it propagate.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="pipeline-handoff-gate" data-title="A flaw caught at handoff, or three stages later"><p class="bench-fallback"><strong>Interactive bench: A flaw caught at handoff, or three stages later.</strong> Compare stages wasted on a flawed handoff with and without a per-stage validation gate.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the flaw&#39;s stage earlier and later and watch how many stages get wasted without a gate.</li>
+<li>Turn the gate on and see wasted stages drop to 0 regardless of where the flaw appears.</li>
+<li>Imagine a flaw that the gate&#39;s check doesn&#39;t actually test for — what happens to the gate&#39;s benefit in that case?</li>
+</ol>
+<p><strong>What you should notice:</strong> the earlier a flaw appears in an ungated pipeline, the more later stages get wasted running on it — which is exactly why a gate&#39;s value grows with pipeline length, not just with how often flaws happen.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is <a class="wikilink" href="/agents/prompt-chaining/" data-topic="agents/prompt-chaining">prompt chaining</a> with full agents as the chain&#39;s steps</strong>, and its validation gate is the same mechanism, now checking an agent&#39;s whole output rather than one call&#39;s result.</li>
+<li><strong><a class="wikilink" href="/agents/supervisor-orchestrator-patterns/" data-topic="agents/supervisor-orchestrator-patterns">Supervisor/orchestrator patterns</a> wire specialists through a central router instead</strong>; a pipeline is the simpler case where the order is fixed enough that no router is needed at all.</li>
+<li><strong><a class="wikilink" href="/agents/orchestrator-workers/" data-topic="agents/orchestrator-workers">Orchestrator-Workers</a> runs its workers in parallel on independent subtasks</strong>; a pipeline&#39;s stages are sequential and dependent on each other specifically because each one needs the previous stage&#39;s output.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating a pipeline as fault-tolerant just because each stage is specialized.</strong> Specialization helps each individual stage do its job well — it does nothing to stop a flawed result from flowing straight into the next stage unless something actually checks it at the handoff.</li>
+<li><strong>Putting the gate at the very end instead of between every stage.</strong> A single check after the last stage catches a problem no earlier than the worked example&#39;s ungated case — the benefit specifically comes from checking at <em>every</em> handoff, not just the final one.</li>
+<li><strong>Assuming sequential means slow.</strong> A pipeline&#39;s stages are sequential because each depends on the previous one&#39;s output, not because sequential execution is inherently the only option — independent work still belongs in <a class="wikilink" href="/agents/parallelization-sectioning-and-voting/" data-topic="agents/parallelization-sectioning-and-voting">sectioning</a> instead.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why are exactly 2 stages wasted when the flaw appears at stage 2 of 4, without a gate?</summary>
+Every stage after the one that produced the flaw (stages 3 and 4) runs on the flawed input anyway, since nothing checks it at the handoff — that's 4 total stages minus the 2 stages up to and including where the flaw appeared, leaving 2 wasted.
+</details>
+
+<details><summary>2. What's the key structural difference between a pipeline and a supervisor pattern?</summary>
+A pipeline's order is fixed in advance and each stage hands off directly to the next; a supervisor pattern instead routes each piece of work through a central decision-maker that decides which specialist handles it.
+</details>
+
+<details><summary>3. Does adding a gate make a pipeline's individual stages less likely to produce a flaw?</summary>
+No — the gate doesn't change how often a stage produces a flawed result; it changes how much work gets wasted after a flaw happens, by catching it at the very next handoff instead of letting it propagate further down the pipeline.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Pipeline:</strong> a fixed sequence of specialist agents, each handing its output directly to the next.</li>
+<li><strong>Handoff:</strong> the point where one stage&#39;s output becomes the next stage&#39;s input.</li>
+<li><strong>Validation gate (agent-level):</strong> a check at a handoff that verifies a stage&#39;s output before the next stage runs on it.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/prompt-chaining/" data-topic="agents/prompt-chaining">Prompt Chaining</a> · <a class="wikilink" href="/agents/supervisor-orchestrator-patterns/" data-topic="agents/supervisor-orchestrator-patterns">Supervisor/Orchestrator Patterns</a> · <a class="wikilink" href="/agents/orchestrator-workers/" data-topic="agents/orchestrator-workers">Orchestrator-Workers</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/pipeline-and-sequential-handoff">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/swarm-and-peer-to-peer-coordination/"><small>Read next</small><b>Swarm and Peer-to-Peer Coordination</b><p>Remove the supervisor from a star topology and every specialist loses its only connection to the rest of the system at once.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/supervisor-orchestrator-patterns/"><b>Supervisor-Orchestrator Patterns</b><p>A supervisor agent never does the specialized work itself — it decides which specialist should handle a piece of a task, hands it off, and collects the result.</p></a><a class="rc-card" href="/agents/prompt-chaining/"><b>Prompt Chaining</b><p>Splitting a task into a fixed sequence of calls — outline, then draft, then polish — lets each step check the previous one&#39;s work before building on it.</p></a><a class="rc-card" href="/agents/orchestrator-workers/"><b>Orchestrator-Workers</b><p>A single call asked to analyze a market, project financials, and assess risk, all in one response, often trails off after the first section or two — there was only so much the model would produce…</p></a><a class="rc-card" href="/agents/parallelization-sectioning-and-voting/"><b>Parallelization: Sectioning and Voting</b><p>Running three independent pieces of a task one after another wastes time that didn&#39;t need to be spent sequentially at all — none of the three pieces needed the others to finish first.</p></a><a class="rc-card" href="/agents/multi-agent-systems/"><b>Multi-Agent Systems</b><p>One agent can only hold one line of thought at a time.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/supervisor-orchestrator-patterns/">← Previous: Supervisor-Orchestrator Patterns</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

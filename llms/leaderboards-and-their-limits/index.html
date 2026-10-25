@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leaderboards and Their Limits — AI Base</title>
+<meta name="description" content="A leaderboard promises a simple answer to &quot;which model is best?&quot; — rank them by score, read off the winner.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/leaderboards-and-their-limits/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Leaderboards and Their Limits — AI Base">
+<meta property="og:description" content="A leaderboard promises a simple answer to &quot;which model is best?&quot; — rank them by score, read off the winner.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/leaderboards-and-their-limits/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Leaderboards and Their Limits","item":"https://ai.saranmahadev.in/llms/leaderboards-and-their-limits/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Leaderboards and Their Limits","description":"A leaderboard promises a simple answer to \"which model is best?\" — rank them by score, read off the winner.","url":"https://ai.saranmahadev.in/llms/leaderboards-and-their-limits/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can two leaderboards disagree about which model is \"best\" even when they agree on individual category scores?","acceptedAnswer":{"@type":"Answer","text":"Because the overall ranking depends on how those category scores are weighted and combined — different weighting choices can produce different rankings from identical underlying scores."}},{"@type":"Question","name":"In the worked example, what caused the ranking between Model X and Model Y to flip?","acceptedAnswer":{"@type":"Answer","text":"Only the weighting applied to the fixed category scores changed — from favoring reasoning to favoring creativity — with no change at all to either model's actual underlying scores."}},{"@type":"Question","name":"What should someone choosing a model for a specific task look at, rather than relying solely on an aggregate leaderboard rank?","acceptedAnswer":{"@type":"Answer","text":"The category-level score breakdown directly, weighted according to what actually matters for their specific use case, rather than trusting a general leaderboard's own (often unstated) weighting choices."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Evaluating LLMs</p>
+        <h1 class="doc-title">Leaderboards and Their Limits</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1rbjiq4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1rbjiq4pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1rbjiq4bg)"/>
+  <circle cx="107" cy="62" r="205" fill="#ffece0" opacity="0.49"/><circle cx="1130" cy="353" r="101" fill="#ffc38f" opacity="0.57"/><circle cx="570" cy="346" r="228" fill="#8a5f5e" opacity="0.33"/><circle cx="924" cy="253" r="160" fill="#ffc38f" opacity="0.59"/><circle cx="975" cy="150" r="161" fill="#ffc7a2" opacity="0.54"/><circle cx="836" cy="238" r="77" fill="#ffc7a2" opacity="0.55"/><circle cx="704" cy="208" r="210" fill="#ffece0" opacity="0.61"/>
+  <path d="M0,420 L0,348 L30,350 L60,349 L90,346 L120,341 L150,335 L180,328 L210,322 L240,315 L270,310 L300,307 L330,306 L360,306 L390,309 L420,314 L450,320 L480,327 L510,334 L540,340 L570,345 L600,348 L630,350 L660,349 L690,346 L720,341 L750,335 L780,328 L810,322 L840,315 L870,310 L900,307 L930,306 L960,306 L990,309 L1020,314 L1050,320 L1080,327 L1110,334 L1140,340 L1170,345 L1200,348 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,373 L30,375 L60,378 L90,380 L120,383 L150,385 L180,387 L210,389 L240,391 L270,392 L300,393 L330,394 L360,394 L390,394 L420,393 L450,392 L480,391 L510,390 L540,388 L570,386 L600,383 L630,381 L660,378 L690,376 L720,373 L750,371 L780,369 L810,367 L840,365 L870,364 L900,363 L930,362 L960,362 L990,362 L1020,363 L1050,364 L1080,365 L1110,366 L1140,368 L1170,370 L1200,373 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="884" cy="153" rx="184" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(18.0 884 153)"/><ellipse cx="884" cy="153" rx="254" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(24.0 884 153)"/>
+  <circle cx="884" cy="153" r="72" fill="url(#c1rbjiq4pl)"/>
+  <circle cx="719" cy="90" r="10" fill="#ffffff" opacity="0.90"/><circle cx="1103" cy="214" r="18" fill="#ffffff" opacity="0.86"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A leaderboard promises a simple answer to &quot;which model is best?&quot; — rank them by score, read off the winner. The quiet catch: that ranking depends entirely on a weighting decision that&#39;s usually invisible, and a different reasonable weighting can produce a different winner from the exact same underlying scores.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/capability-evaluation-vs-safety-evaluation/" data-topic="llms/capability-evaluation-vs-safety-evaluation">Capability Evaluation vs. Safety Evaluation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can a single leaderboard ranking be trusted as <em>the</em> answer to which model is best?&quot; Not without knowing how it was weighted. A leaderboard combines scores across several categories into one ranking number — and which category gets more weight is a real choice, not a neutral default. Two models can trade the #1 spot depending entirely on that weighting, even with their individual category scores held completely fixed.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Ranking job candidates by &quot;overall fit&quot; when one is clearly stronger on technical skill and the other is clearly stronger on communication produces a different winner depending on how much the hiring decision happens to weigh technical skill against communication — neither candidate&#39;s individual skills changed, only which one the ranking favors did. A leaderboard combining several evaluation categories into one score is making exactly this kind of weighting decision, usually without making it explicit.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">weighted leaderboard score(model) = Σᵢ weightᵢ · scoreᵢ(model) / Σᵢ weightᵢ
+
+→ the RANKING between two models can flip entirely depending on
+  which weighting is used, even with every individual score fixed
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two models with fixed category scores:</p>
+<pre><code class="language-text">Model X:  reasoning 0.90   creativity 0.50   safety 0.70
+Model Y:  reasoning 0.60   creativity 0.90   safety 0.70
+</code></pre>
+<p>Under a weighting that favors reasoning 3× over the others:</p>
+<pre><code class="language-text">Model X: 0.780      Model Y: 0.680      → Model X leads
+</code></pre>
+<p>Under a weighting that favors creativity 3× over the others instead:</p>
+<pre><code class="language-text">Model X: 0.620      Model Y: 0.800      → Model Y leads
+</code></pre>
+<p>Neither model&#39;s underlying category scores changed at all between the two calculations — only the weighting did, and the leaderboard&#39;s declared &quot;winner&quot; flipped completely as a result.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="leaderboard-reweight" data-title="The ranking depends on the weighting"><p class="bench-fallback"><strong>Interactive bench: The ranking depends on the weighting.</strong> Adjust how heavily a leaderboard weighs one category and watch which of two models comes out on top.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the creativity weight low and note which model leads.</li>
+<li>Raise the creativity weight and watch the leader flip.</li>
+<li>Find the weighting where the two models are essentially tied.</li>
+</ol>
+<p><strong>What you should notice:</strong> the flip happens with absolutely no change to either model — it&#39;s purely a consequence of the weighting applied to the same fixed underlying scores.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Different public LLM leaderboards genuinely rank the same models differently</strong>, in no small part because they weigh categories (reasoning, safety, creativity, cost, speed) differently, not because they disagree about any individual category score.</li>
+<li><strong>A leaderboard&#39;s weighting choice reflects a judgment about what matters most</strong>, which may or may not match what matters most for a specific downstream use case — the &quot;best&quot; model on a general leaderboard isn&#39;t necessarily the best choice for a specific task.</li>
+<li><strong><a class="wikilink" href="/llms/choosing-a-model-for-a-task/" data-topic="llms/choosing-a-model-for-a-task">picking a model for a real application</a> should generally look at the relevant category breakdown directly</strong>, rather than relying on a single aggregate leaderboard ranking built around someone else&#39;s weighting choices.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating a leaderboard&#39;s #1 ranking as an objective, universal fact.</strong> It&#39;s the result of a specific, often unstated weighting decision applied to the underlying category scores — a different reasonable weighting can produce a different #1.</li>
+<li><strong>Assuming different leaderboards disagreeing means one of them is simply wrong.</strong> Both can be using accurate underlying category scores while still disagreeing on the final ranking, purely due to different weighting choices.</li>
+<li><strong>Ignoring the category breakdown in favor of the aggregate rank.</strong> The most actionable information — which model is actually better for a specific need — usually lives in the category-level scores, not the single combined ranking number.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why can two leaderboards disagree about which model is "best" even when they agree on individual category scores?</summary>
+Because the overall ranking depends on how those category scores are weighted and combined — different weighting choices can produce different rankings from identical underlying scores.
+</details>
+
+<details><summary>2. In the worked example, what caused the ranking between Model X and Model Y to flip?</summary>
+Only the weighting applied to the fixed category scores changed — from favoring reasoning to favoring creativity — with no change at all to either model's actual underlying scores.
+</details>
+
+<details><summary>3. What should someone choosing a model for a specific task look at, rather than relying solely on an aggregate leaderboard rank?</summary>
+The category-level score breakdown directly, weighted according to what actually matters for their specific use case, rather than trusting a general leaderboard's own (often unstated) weighting choices.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Leaderboard:</strong> a ranking of models by a combined score across evaluation categories.</li>
+<li><strong>Category weighting:</strong> the relative importance assigned to each evaluation category when combining them into one score.</li>
+<li><strong>Ranking flip:</strong> a change in which model ranks highest, caused purely by a change in weighting rather than in underlying scores.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/capability-evaluation-vs-safety-evaluation/" data-topic="llms/capability-evaluation-vs-safety-evaluation">Capability Evaluation vs. Safety Evaluation</a> · <a class="wikilink" href="/llms/benchmark-suites-mmlu-helm-big-bench/" data-topic="llms/benchmark-suites-mmlu-helm-big-bench">Benchmark Suites (MMLU, HELM, BIG-bench)</a> · <a class="wikilink" href="/llms/choosing-a-model-for-a-task/" data-topic="llms/choosing-a-model-for-a-task">Choosing a Model for a Task</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/leaderboards-and-their-limits">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/adversarial-and-jailbreak-evaluation/"><small>Read next</small><b>Adversarial and Jailbreak Evaluation</b><p>safety evaluation on ordinary, well-behaved inputs only tells you how a model behaves when nobody&#39;s trying to break it.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/capability-evaluation-vs-safety-evaluation/"><b>Capability Evaluation vs. Safety Evaluation</b><p>&quot;Is this model good?&quot; is really two separate questions wearing one trench coat: can it do the task, and will it behave safely while trying?</p></a><a class="rc-card" href="/llms/choosing-a-model-for-a-task/"><b>Choosing a Model for a Task</b><p>There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs.</p></a><a class="rc-card" href="/llms/benchmark-suites-mmlu-helm-big-bench/"><b>Benchmark Suites (MMLU, HELM, BIG-bench)</b><p>Comparing two LLMs fairly requires testing them on the same questions, under the same conditions, at a scale no individual could check by hand.</p></a><a class="rc-card" href="/llms/evaluating-llms/"><b>Evaluating LLMs</b><p>Knowing whether an LLM is actually good — not just at one cherry-picked example, but systematically — means building and trusting the right measurement tools.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/capability-evaluation-vs-safety-evaluation/">← Previous: Capability Evaluation vs. Safety Evaluation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

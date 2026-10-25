@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing an Architecture for a Problem — AI Base</title>
+<meta name="description" content="Every architecture in this planet was built to exploit some specific structure in its data: convolution exploits a grid, recurrence and attention exploit a sequence, graph networks exploit…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/choosing-an-architecture-for-a-problem/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Choosing an Architecture for a Problem — AI Base">
+<meta property="og:description" content="Every architecture in this planet was built to exploit some specific structure in its data: convolution exploits a grid, recurrence and attention exploit a sequence, graph networks exploit…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/choosing-an-architecture-for-a-problem/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Choosing an Architecture for a Problem","item":"https://ai.saranmahadev.in/deep-learning/choosing-an-architecture-for-a-problem/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Choosing an Architecture for a Problem","description":"Every architecture in this planet was built to exploit some specific structure in its data: convolution exploits a grid, recurrence and attention exploit a sequence, graph networks exploit…","url":"https://ai.saranmahadev.in/deep-learning/choosing-an-architecture-for-a-problem/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the first question to ask when choosing an architecture for a new problem?","acceptedAnswer":{"@type":"Answer","text":"What structure does the data actually have — a grid, a sequence, a graph, or none of those — since that determines which architecture family was built to exploit it."}},{"@type":"Question","name":"Why might a plain feedforward network (or even a classic ML model) be the right choice for a small tabular dataset?","acceptedAnswer":{"@type":"Answer","text":"There is no spatial or sequential structure for a more specialised architecture to exploit, and a large deep model risks overfitting badly on a small dataset."}},{"@type":"Question","name":"In the worked example, why does the X-ray scenario suggest transfer learning rather than training a CNN from scratch?","acceptedAnswer":{"@type":"Answer","text":"5,000 labelled images is a comparatively modest dataset for training a deep CNN from random initialization; starting from a pretrained backbone reuses already-learned general visual features."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Deep Learning in Practice</p>
+        <h1 class="doc-title">Choosing an Architecture for a Problem</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1r4g9xmbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1r4g9xmpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1r4g9xmbg)"/>
+  <circle cx="448" cy="352" r="156" fill="#ffb89d" opacity="0.39"/><circle cx="451" cy="107" r="101" fill="#8a546c" opacity="0.45"/><circle cx="1174" cy="179" r="115" fill="#ffb6b6" opacity="0.43"/><circle cx="540" cy="279" r="103" fill="#ffe6e6" opacity="0.34"/><circle cx="397" cy="324" r="61" fill="#8a546c" opacity="0.34"/>
+  <path d="M0,420 L0,310 L30,308 L60,306 L90,306 L120,306 L150,308 L180,311 L210,315 L240,320 L270,325 L300,330 L330,335 L360,340 L390,344 L420,347 L450,349 L480,350 L510,349 L540,348 L570,345 L600,341 L630,337 L660,332 L690,327 L720,322 L750,317 L780,313 L810,309 L840,307 L870,306 L900,306 L930,307 L960,309 L990,313 L1020,317 L1050,322 L1080,327 L1110,332 L1140,337 L1170,341 L1200,345 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,367 L30,371 L60,376 L90,381 L120,385 L150,389 L180,392 L210,394 L240,394 L270,392 L300,389 L330,385 L360,380 L390,375 L420,371 L450,367 L480,364 L510,362 L540,362 L570,364 L600,367 L630,371 L660,376 L690,381 L720,385 L750,389 L780,392 L810,394 L840,394 L870,392 L900,389 L930,385 L960,380 L990,375 L1020,371 L1050,367 L1080,364 L1110,362 L1140,362 L1170,364 L1200,367 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="837" cy="194" rx="211" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.5 837 194)"/><ellipse cx="837" cy="194" rx="292" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.5 837 194)"/>
+  <circle cx="837" cy="194" r="83" fill="url(#c1r4g9xmpl)"/>
+  <circle cx="1088" cy="161" r="13" fill="#ffffff" opacity="0.81"/><circle cx="546" cy="220" r="16" fill="#ffffff" opacity="0.89"/><circle cx="1067" cy="97" r="9" fill="#ffffff" opacity="0.64"/><circle cx="809" cy="99" r="11" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every architecture in this planet was built to exploit some specific structure in its data: convolution exploits a grid, recurrence and attention exploit a sequence, graph networks exploit arbitrary connections. <strong>Choosing an architecture</strong> starts from asking what structure your actual data has — not from picking whatever is currently most popular.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> and <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Given a new problem, how do I even start deciding which architecture family to reach for?&quot; Look at what structure the input actually has — a grid, a sequence, a graph, or none of those — and match it to the family built to exploit exactly that structure.</p>
+<h2 id="intuition-match-the-tool-to-the-shape-of-the-problem">Intuition: match the tool to the shape of the problem</h2>
+<p>A hammer is excellent for nails and useless for screws — not because hammers are bad, but because the tool and the task&#39;s shape need to match. A photograph&#39;s pixels have a 2D grid structure a convolution is built to exploit; a sentence&#39;s words have a sequential, order-sensitive structure that recurrence or attention is built to exploit; a social network&#39;s connections have neither — they need a graph-based approach instead. Reaching for the architecture that matches your data&#39;s actual shape, rather than the most hyped architecture of the moment, is most of the decision.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">data structure                architecture family (usually the starting point)
+grid (images, spectrograms)    convolutional networks
+sequence (text, audio, time series)   recurrent networks, or attention-based (transformer) models
+graph (social networks, molecules)    graph neural networks
+tabular, no spatial/sequential structure   a plain feedforward network (or often, a classic ML model
+                                            from the Machine Learning planet, which can be a stronger
+                                            and cheaper baseline)
+</code></pre>
+<p>Dataset size and compute budget matter too: a small dataset with a big, attention-heavy architecture risks overfitting badly (see <a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a>) long before it risks underfitting.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three short scenarios and the architecture each one points toward:</p>
+<pre><code class="language-text">scenario 1: classify X-ray images into &quot;pneumonia&quot; or &quot;healthy,&quot; 5,000 labelled images
+  → grid-structured input, moderate dataset size
+  → a CNN, likely starting from a pretrained backbone via transfer learning (see
+    Transfer Learning and Fine-Tuning), rather than training a huge model from scratch
+
+scenario 2: predict next week&#39;s sales from the past two years of daily sales figures
+  → sequential input, single long series, no obvious grid or graph structure
+  → a recurrent network or a small attention-based model; given one single series (not
+    thousands of independent sequences), model size and overfitting risk should stay modest
+
+scenario 3: a few hundred rows of a spreadsheet: age, income, location, purchase history
+  → tabular, no spatial or sequential structure to exploit, small dataset
+  → likely best served by a classic ML model (see the Machine Learning planet) or a small
+    plain feedforward network at most — a large deep architecture here would be overkill,
+    with a high risk of overfitting a dataset this small
+</code></pre>
+<p>None of these decisions required knowing the very latest architecture — they followed directly from the shape of each problem&#39;s data.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="architecture-match" data-title="Matching a problem to an architecture family"><p class="bench-fallback"><strong>Interactive bench: Matching a problem to an architecture family.</strong> A handful of short problem descriptions. Pick one, and see which data structure it has and which architecture family that structure points toward, with a brief reason.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Read through several scenarios and guess the architecture family before checking the answer.</li>
+<li>Try a scenario that seems to combine two structures (say, images with captions) and think about what that might call for.</li>
+<li>Consider a scenario with a tiny dataset and think about whether a large deep model is actually the right call at all.</li>
+</ol>
+<p><strong>What you should notice:</strong> the data&#39;s structure narrows the choice dramatically before any architecture-specific tuning even begins — most of the decision is &quot;grid, sequence, graph, or none of those,&quot; not a fine-grained comparison between dozens of specific architectures.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Multimodal problems</strong> (see <a class="wikilink" href="/deep-learning/deep-learning-across-modalities/" data-topic="deep-learning/deep-learning-across-modalities">Deep Learning Across Modalities</a>) often combine architecture families — a CNN or vision transformer for images alongside an attention-based model for accompanying text, say.</li>
+<li><strong>Dataset size is as important a factor as data structure.</strong> A small dataset often calls for transfer learning, a simpler model, or a classic ML approach, regardless of which architecture family would otherwise seem to fit.</li>
+<li><strong>Starting from a well-known, pretrained architecture</strong> (rather than designing one from scratch) is the practical default for most real problems today, reserving custom design for cases that genuinely need it.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Reaching for the most complex or recent architecture by default.</strong> Matching the architecture to the data&#39;s actual structure (and the dataset&#39;s actual size) matters far more than novelty.</li>
+<li><strong>Ignoring compute and data constraints.</strong> An architecture that would be ideal with unlimited data and compute may be a poor practical choice given what&#39;s actually available.</li>
+<li><strong>Treating this as a one-time decision.</strong> Starting with a reasonable, simple baseline and only reaching for something more complex if the baseline clearly falls short is usually the more efficient path.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the first question to ask when choosing an architecture for a new problem?</summary>
+What structure does the data actually have — a grid, a sequence, a graph, or none of those — since that determines which architecture family was built to exploit it.
+</details>
+
+<details><summary>2. Why might a plain feedforward network (or even a classic ML model) be the right choice for a small tabular dataset?</summary>
+There is no spatial or sequential structure for a more specialised architecture to exploit, and a large deep model risks overfitting badly on a small dataset.
+</details>
+
+<details><summary>3. In the worked example, why does the X-ray scenario suggest transfer learning rather than training a CNN from scratch?</summary>
+5,000 labelled images is a comparatively modest dataset for training a deep CNN from random initialization; starting from a pretrained backbone reuses already-learned general visual features.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Data structure (for architecture choice):</strong> whether the input is grid-shaped, sequential, graph-shaped, or none of these.</li>
+<li><strong>Baseline:</strong> a simple, well-understood model used as a starting comparison point before trying something more complex.</li>
+<li><strong>Multimodal:</strong> a problem combining more than one kind of data structure (such as images and text together).</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> · <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a> · <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a> · <a class="wikilink" href="/deep-learning/deep-learning-across-modalities/" data-topic="deep-learning/deep-learning-across-modalities">Deep Learning Across Modalities</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/choosing-an-architecture-for-a-problem">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/adversarial-examples-and-robustness/"><small>Read next</small><b>Adversarial Examples and Robustness</b><p>Saliency measures how sensitive a prediction is to each input pixel — and that same sensitivity can be turned around and used against a model.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/"><b>CNN Architectures: From LeNet to ResNet</b><p>Convolutional architectures did not arrive all at once.</p></a><a class="rc-card" href="/deep-learning/recurrent-neural-networks/"><b>Recurrent Neural Networks</b><p>A recurrent neural network (RNN) reads a sequence one element at a time, carrying a hidden state forward from each step to the next — a running summary of everything seen so far.</p></a><a class="rc-card" href="/deep-learning/overfitting-and-double-descent/"><b>Overfitting and Double Descent</b><p>The classical picture of overfitting says test error falls as a model grows, then rises once it has enough capacity to memorise noise — a U-shape.</p></a><a class="rc-card" href="/deep-learning/deep-learning-across-modalities/"><b>Deep Learning Across Modalities</b><p>Vision, speech and language look like completely different fields from the outside — but underneath, the same handful of architectural ideas (convolution, recurrence, attention, embeddings) keep…</p></a><a class="rc-card" href="/deep-learning/transfer-learning-and-fine-tuning/"><b>Transfer Learning and Fine-Tuning</b><p>A network trained on one large task has already learned a great deal of generally useful structure — edges and textures for vision, grammar and common phrasing for language.</p></a><a class="rc-card" href="/deep-learning/neural-architecture-search/"><b>Neural Architecture Search</b><p>Depth, width, kernel sizes, how layers connect — every architecture in the CNN lineage was designed by hand, by researchers trying ideas and comparing results.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/deep-learning-in-practice/">← Previous: Deep Learning in Practice</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

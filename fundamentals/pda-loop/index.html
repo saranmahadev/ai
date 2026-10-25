@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDA Loop — AI Base</title>
+<meta name="description" content="The Perception → Decision → Action loop is the heartbeat of every intelligent system.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/pda-loop/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="PDA Loop — AI Base">
+<meta property="og:description" content="The Perception → Decision → Action loop is the heartbeat of every intelligent system.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/pda-loop/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"PDA Loop","item":"https://ai.saranmahadev.in/fundamentals/pda-loop/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"PDA Loop","description":"The Perception → Decision → Action loop is the heartbeat of every intelligent system.","url":"https://ai.saranmahadev.in/fundamentals/pda-loop/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the thermostat example, why is the loop needed at all?","acceptedAnswer":{"@type":"Answer","text":"The right amount of heating is not known in advance. Each perception shows the effect of the last action, so the agent can keep adjusting until the goal is met."}},{"@type":"Question","name":"A robot perceives a wall that is not there and refuses to move. Which phase failed?","acceptedAnswer":{"@type":"Answer","text":"Perception. The decision rule may be perfectly sensible; it was given wrong input."}},{"@type":"Question","name":"What is the difference between an open loop and a closed loop?","acceptedAnswer":{"@type":"Answer","text":"An open loop acts without checking the result, like a timer. A closed loop perceives the result and adjusts, like a thermostat."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · The Agent</p>
+        <h1 class="doc-title">PDA Loop</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1oeye26bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="c1oeye26pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1oeye26bg)"/>
+  <circle cx="857" cy="120" r="185" fill="#c3d6b3" opacity="0.50"/><circle cx="1112" cy="319" r="211" fill="#4e7283" opacity="0.50"/><circle cx="355" cy="208" r="182" fill="#a8e2d7" opacity="0.37"/><circle cx="1076" cy="18" r="109" fill="#c3d6b3" opacity="0.59"/><circle cx="1081" cy="165" r="74" fill="#e2f5f1" opacity="0.45"/><circle cx="1137" cy="310" r="74" fill="#a8e2d7" opacity="0.48"/><circle cx="354" cy="118" r="223" fill="#e2f5f1" opacity="0.34"/>
+  <path d="M0,420 L0,320 L30,327 L60,333 L90,340 L120,345 L150,348 L180,350 L210,349 L240,346 L270,341 L300,335 L330,329 L360,322 L390,315 L420,310 L450,307 L480,306 L510,306 L540,309 L570,314 L600,320 L630,327 L660,333 L690,340 L720,345 L750,348 L780,350 L810,349 L840,346 L870,341 L900,335 L930,329 L960,322 L990,315 L1020,310 L1050,307 L1080,306 L1110,306 L1140,309 L1170,314 L1200,320 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,362 L60,362 L90,363 L120,365 L150,368 L180,371 L210,374 L240,378 L270,382 L300,385 L330,389 L360,391 L390,393 L420,394 L450,394 L480,393 L510,392 L540,389 L570,386 L600,383 L630,379 L660,375 L690,372 L720,368 L750,366 L780,364 L810,362 L840,362 L870,362 L900,364 L930,366 L960,369 L990,372 L1020,376 L1050,379 L1080,383 L1110,387 L1140,389 L1170,392 L1200,393 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="791" cy="205" rx="252" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-18.6 791 205)"/><ellipse cx="791" cy="205" rx="349" ry="98" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-12.6 791 205)"/>
+  <circle cx="791" cy="205" r="99" fill="url(#c1oeye26pl)"/>
+  <circle cx="952" cy="285" r="11" fill="#ffffff" opacity="0.80"/><circle cx="499" cy="115" r="12" fill="#ffffff" opacity="0.88"/><circle cx="504" cy="100" r="12" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>Perception → Decision → Action loop</strong> is the heartbeat of every intelligent system. It <strong>perceives</strong> what is happening, <strong>decides</strong> what to do about it, <strong>acts</strong>, and then perceives again, this time seeing the result of its own action.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>What does an agent actually <em>do</em>, moment to moment? It does not sense once and act once. It runs a loop, and the loop is where intelligent behaviour comes from.</p>
+<h2 id="the-three-phases">The three phases</h2>
+<h3 id="perception-what-is-happening">Perception: &quot;What is happening?&quot;</h3>
+<p>The agent collects information from its environment and turns it into an understanding of the situation. The senses can be cameras, microphones, sensors, or text and data from files and websites.</p>
+<p><strong>Example:</strong> a self-driving car&#39;s camera detects a pedestrian at the kerb.</p>
+<h3 id="decision-what-should-i-do">Decision: &quot;What should I do?&quot;</h3>
+<p>The agent analyses the situation and chooses an action. The choice may rest on rules, goals, previous experience, a learned model, or predictions of what might happen next.</p>
+<p><strong>Example:</strong> the car judges that the pedestrian is likely to step into its path, and decides to slow down and stop.</p>
+<h3 id="action-do-it">Action: &quot;Do it&quot;</h3>
+<p>The agent carries out the decision and changes the world. It might move a robot arm, apply brakes, speak, or show a recommendation.</p>
+<p><strong>Example:</strong> the car applies the brakes.</p>
+<h2 id="why-it-is-a-loop">Why it is a loop</h2>
+<p>Acting changes the environment, so the next perception is different. That feedback is what lets an agent correct itself:</p>
+<pre><code class="language-text">   ┌─────────────── Environment ───────────────┐
+   ▼                                           │
+Perceive ──▶ Decide ──▶ Act ───────────────────┘
+</code></pre>
+<p>Robotics has long used the same idea under the name <strong>sense–plan–act</strong>. Compare a system that acts once and never looks again (an <em>open loop</em>, like a toaster on a timer) with one that keeps checking (a <em>closed loop</em>, like a thermostat). The closed loop copes with surprises, and the open loop does not.</p>
+<h2 id="a-worked-example-three-trips-round-the-loop">A worked example: three trips round the loop</h2>
+<p>A thermostat, target 20 °C:</p>
+<table>
+<thead>
+<tr>
+<th>Loop</th>
+<th>Perceive</th>
+<th>Decide</th>
+<th>Act</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>17 °C</td>
+<td>too cold: heat</td>
+<td>heating on</td>
+</tr>
+<tr>
+<td>2</td>
+<td>19 °C</td>
+<td>still cold: keep heating</td>
+<td>heating stays on</td>
+</tr>
+<tr>
+<td>3</td>
+<td>20.5 °C</td>
+<td>warm enough: stop</td>
+<td>heating off</td>
+</tr>
+</tbody></table>
+<p>Each decision depends on the perception that the previous action helped produce. Nothing is decided in advance about <em>how long</em> to heat. The loop finds out.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="pda-grid-loop" data-title="The perceive – decide – act loop"><p class="bench-fallback"><strong>Interactive bench: The perceive – decide – act loop.</strong> A small grid world with an agent, a wall and a goal. Each press of Step runs one phase (perceive, decide or act). Sliders add sensor noise and turn the agent's memory on or off.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Press <strong>Step</strong> repeatedly with no noise. Name what the agent does in each phase.</li>
+<li>Turn <strong>Remember where it has been</strong> off, then run again. What happens when the agent meets the wall?</li>
+<li>Turn memory back on and raise the sensor noise to 30–40%. What changes? What does a bump tell you about the perception phase?</li>
+<li>Use <strong>New run with different noise</strong> a few times. Is every run the same?</li>
+</ol>
+<p><strong>What you should notice:</strong> a bad perception makes a bad decision even when the decision rule is fine, and without memory a simple agent can get stuck repeating one mistake. The loop is only as good as its weakest phase.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<p>This loop returns in every later planet. A learned model usually lives inside the <em>decide</em> phase. Reinforcement learning is about improving the decisions over many trips round the loop. In the <a class="wikilink" href="/agents/agents/" data-topic="agents/agents">Agents</a> planet, a language model perceives text and tool results, decides what to do next, and acts by calling a tool, and then the loop runs again.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>It is not one pass.</strong> The value is in repetition and feedback.</li>
+<li><strong>Perception is not passive.</strong> The agent has to interpret raw signals, and can misread them.</li>
+<li><strong>Deciding is not acting.</strong> A perfect plan is useless if the actuators fail, and a good actuator is useless with a bad plan.</li>
+<li><strong>Delay matters.</strong> If the world changes faster than the loop runs, the agent acts on stale information.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the thermostat example, why is the loop needed at all?</summary>
+The right amount of heating is not known in advance. Each perception shows the effect of the last action, so the agent can keep adjusting until the goal is met.
+</details>
+
+<details><summary>2. A robot perceives a wall that is not there and refuses to move. Which phase failed?</summary>
+Perception. The decision rule may be perfectly sensible; it was given wrong input.
+</details>
+
+<details><summary>3. What is the difference between an open loop and a closed loop?</summary>
+An open loop acts without checking the result, like a timer. A closed loop perceives the result and adjusts, like a thermostat.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Perception:</strong> turning raw signals into an understanding of the situation.</li>
+<li><strong>Decision:</strong> choosing an action based on that understanding and the goal.</li>
+<li><strong>Action:</strong> carrying out the choice and changing the world.</li>
+<li><strong>Feedback:</strong> the effect of an action coming back as the next perception.</li>
+<li><strong>Closed loop:</strong> a system that checks the results of its actions and adjusts, unlike an open loop that acts blindly.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a> · <a class="wikilink" href="/fundamentals/goals-utility-and-rationality/" data-topic="fundamentals/goals-utility-and-rationality">Goals, Utility and Rationality</a> · <a class="wikilink" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments">Kinds of Environments</a> · <a class="wikilink" href="/agents/agents/" data-topic="agents/agents">Agents</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/pda-loop">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/goals-utility-and-rationality/"><small>Read next</small><b>Goals, Utility and Rationality</b><p>An agent needs a way to choose between options.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/agents-and-environments/"><b>Agents and Environments</b><p>An agent is anything that perceives its surroundings through sensors and acts on them through actuators to pursue a goal. The surroundings it lives in are its environment.</p></a><a class="rc-card" href="/agents/agents/"><b>Agents</b><p>Every planet before this one covered a model answering one request at a time: a prompt goes in, an answer comes out.</p></a><a class="rc-card" href="/fundamentals/goals-utility-and-rationality/"><b>Goals, Utility and Rationality</b><p>An agent needs a way to choose between options.</p></a><a class="rc-card" href="/fundamentals/kinds-of-environments/"><b>Kinds of Environments</b><p>Some AI problems are easy and others are brutal, and much of the difference lies in the environment.</p></a><a class="rc-card" href="/fundamentals/what-counts-as-ai/"><b>What Counts as AI</b><p>Artificial intelligence has no single agreed definition, so whether something &quot;counts&quot; depends on the question you ask.</p></a><a class="rc-card" href="/fundamentals/the-agent/"><b>The Agent</b><p>Almost every AI system, however different it looks, has the same shape: it is an agent inside an environment. It senses what is happening, decides what to do to reach a goal, and acts, over and over.</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/agents-and-environments/">← Previous: Agents and Environments</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

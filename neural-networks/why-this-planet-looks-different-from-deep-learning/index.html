@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why This Planet Looks Different from Deep Learning — AI Base</title>
+<meta name="description" content="Every architecture on the Deep Learning planet is trained the same fundamental way: compute an error against a known target, and adjust every weight to reduce it, by backpropagation.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/why-this-planet-looks-different-from-deep-learning/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Why This Planet Looks Different from Deep Learning — AI Base">
+<meta property="og:description" content="Every architecture on the Deep Learning planet is trained the same fundamental way: compute an error against a known target, and adjust every weight to reduce it, by backpropagation.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/why-this-planet-looks-different-from-deep-learning/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Why This Planet Looks Different from Deep Learning","item":"https://ai.saranmahadev.in/neural-networks/why-this-planet-looks-different-from-deep-learning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Why This Planet Looks Different from Deep Learning","description":"Every architecture on the Deep Learning planet is trained the same fundamental way: compute an error against a known target, and adjust every weight to reduce it, by backpropagation.","url":"https://ai.saranmahadev.in/neural-networks/why-this-planet-looks-different-from-deep-learning/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does error-driven learning require that the other three strategies on this planet do not?","acceptedAnswer":{"@type":"Answer","text":"A known, correct target to compare the output against."}},{"@type":"Question","name":"In the worked example, why is the Hebbian update unaffected by what the target is set to?","acceptedAnswer":{"@type":"Answer","text":"Hebb's rule never looks at the target at all — it only depends on the input and the output's own current values."}},{"@type":"Question","name":"Name one strategy covered on this planet for learning (or not learning) with no target available.","acceptedAnswer":{"@type":"Answer","text":"Correlation-driven (Hebbian) learning, energy-driven settling, or using fixed/random weights with nothing trained — any one of the three."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Biological and Historical Foundations</p>
+        <h1 class="doc-title">Why This Planet Looks Different from Deep Learning</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cfctcambg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="cfctcampl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cfctcambg)"/>
+  <circle cx="1153" cy="213" r="216" fill="#ace3b3" opacity="0.39"/><circle cx="94" cy="208" r="160" fill="#50736a" opacity="0.61"/><circle cx="246" cy="261" r="88" fill="#50736a" opacity="0.59"/><circle cx="674" cy="258" r="61" fill="#e3f6e5" opacity="0.61"/><circle cx="1196" cy="46" r="111" fill="#50736a" opacity="0.57"/><circle cx="132" cy="151" r="150" fill="#50736a" opacity="0.32"/><circle cx="848" cy="406" r="110" fill="#e3f6e5" opacity="0.53"/>
+  <path d="M0,420 L0,333 L30,326 L60,320 L90,314 L120,309 L150,306 L180,306 L210,307 L240,311 L270,316 L300,322 L330,329 L360,336 L390,342 L420,346 L450,349 L480,350 L510,348 L540,345 L570,339 L600,333 L630,326 L660,320 L690,314 L720,309 L750,306 L780,306 L810,307 L840,311 L870,316 L900,322 L930,329 L960,336 L990,342 L1020,346 L1050,349 L1080,350 L1110,348 L1140,345 L1170,339 L1200,333 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,389 L30,390 L60,392 L90,393 L120,394 L150,394 L180,394 L210,394 L240,393 L270,392 L300,390 L330,388 L360,386 L390,384 L420,382 L450,379 L480,377 L510,374 L540,372 L570,369 L600,367 L630,366 L660,364 L690,363 L720,362 L750,362 L780,362 L810,362 L840,363 L870,364 L900,366 L930,368 L960,370 L990,372 L1020,374 L1050,377 L1080,379 L1110,382 L1140,384 L1170,387 L1200,389 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="648" cy="154" rx="243" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-14.0 648 154)"/><ellipse cx="648" cy="154" rx="336" ry="94" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-8.0 648 154)"/>
+  <circle cx="648" cy="154" r="95" fill="url(#cfctcampl)"/>
+  <circle cx="360" cy="63" r="12" fill="#ffffff" opacity="0.60"/><circle cx="982" cy="78" r="19" fill="#ffffff" opacity="0.79"/><circle cx="958" cy="185" r="16" fill="#ffffff" opacity="0.87"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every architecture on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">the Deep Learning planet</a> is trained the same fundamental way: compute an error against a known target, and adjust every weight to reduce it, by <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">backpropagation</a>. Almost nothing on <em>this</em> planet is trained that way. This topic is the map: what the alternative training signals ahead actually are, and why none of them need backpropagation at all.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/the-mcculloch-pitts-neuron/" data-topic="neural-networks/the-mcculloch-pitts-neuron">The McCulloch-Pitts Neuron</a> and <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If backpropagation works so well, why does an entire planet exist for networks that don&#39;t use it?&quot; Because backpropagation needs something not every situation has: a known, correct target to measure error against. Every topic ahead finds a different way to learn without one — or sidesteps learning from data altogether.</p>
+<h2 id="intuition-four-different-sources-of-a-training-signal">Intuition: four different sources of a training signal</h2>
+<p><strong>Error-driven learning</strong> (backprop, the perceptron, Deep Learning&#39;s entire training story) needs a target: compute how wrong the output was, and adjust to reduce that error. <strong>Correlation-driven learning</strong> (<a class="wikilink" href="/neural-networks/hebbian-learning/" data-topic="neural-networks/hebbian-learning">Hebbian Learning</a>, and everything built on it ahead) needs no target at all — only how often two neurons are active together. <strong>Energy-driven settling</strong> (<a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">Hopfield Networks</a>, <a class="wikilink" href="/neural-networks/boltzmann-machines/" data-topic="neural-networks/boltzmann-machines">Boltzmann Machines</a>) needs no target either — a network just moves toward lower &quot;energy&quot; states and calls wherever it lands the answer. <strong>No learning at all</strong> (<a class="wikilink" href="/neural-networks/the-mcculloch-pitts-neuron/" data-topic="neural-networks/the-mcculloch-pitts-neuron">The McCulloch-Pitts Neuron</a>, and later <a class="wikilink" href="/neural-networks/reservoir-computing-and-liquid-state-machines/" data-topic="neural-networks/reservoir-computing-and-liquid-state-machines">reservoir computing</a>&#39;s fixed core) hand-sets or randomizes the weights and trains nothing, or almost nothing.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">error-driven:     Δw ∝ (target − output) · input        — needs a known target
+correlation-driven: Δw ∝ input · output                  — needs no target
+energy-driven:      move toward lower energy              — needs no target
+fixed/random:       nothing learned, or only a small readout trained
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The same connection — weight <code>w = 0.2</code>, input <code>x = 0.8</code>, output <code>y = w·x = 0.16</code> — updated two different ways, with a target of <code>1.0</code> and learning rate <code>η = 0.1</code>:</p>
+<pre><code class="language-text">error-driven (delta rule):  Δw = η(target − y)x = 0.1 × 0.84 × 0.8 = 0.0672
+correlation-driven (Hebb):  Δw = η · x · y       = 0.1 × 0.8 × 0.16 = 0.0128
+</code></pre>
+<p>The error-driven update is more than five times larger here, and <em>specifically</em> pushes the weight toward making <code>y</code> closer to <code>1.0</code>. The Hebbian update has no idea the target is <code>1.0</code> at all — it only reinforces the correlation between <code>x</code> and <code>y</code> exactly as it already is, whether or not that happens to be moving the output in a useful direction.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="signal-sources" data-title="Four ways to get a training signal"><p class="bench-fallback"><strong>Interactive bench: Four ways to get a training signal.</strong> The same connection, updated by each of the four signal sources in turn. See how differently (or not at all) each one changes the weight, and whether a target is used at all.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the error-driven and correlation-driven updates on the same starting weight and inputs.</li>
+<li>Set the target equal to the current output and see the error-driven update shrink to zero, while the Hebbian update is unaffected (it never looked at the target).</li>
+<li>Think about what each of the four approaches assumes is available — and what happens when that assumption doesn&#39;t hold.</li>
+</ol>
+<p><strong>What you should notice:</strong> &quot;no target available&quot; is not a dead end — three different, genuinely useful strategies (correlation, energy, or no learning at all) exist for exactly that situation, and the rest of this planet is organised around them.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Correlation-driven and energy-driven learning solve real problems backpropagation can&#39;t reach directly</strong>: learning with no labels at all, or building associative memory that recalls a whole pattern from a partial cue.</li>
+<li><strong>Several of these ideas resurface inside modern deep learning anyway</strong> — layer-wise pretraining (see <a class="wikilink" href="/neural-networks/layer-wise-and-unsupervised-pretraining/" data-topic="neural-networks/layer-wise-and-unsupervised-pretraining">Layer-Wise and Unsupervised Pretraining</a>) and the attention-equivalence of modern Hopfield networks (see <a class="wikilink" href="/neural-networks/modern-hopfield-networks-and-attention/" data-topic="neural-networks/modern-hopfield-networks-and-attention">Modern Hopfield Networks and Attention</a>) are two direct examples ahead on this road.</li>
+<li><strong>Choosing among them is itself a real decision</strong> (see <a class="wikilink" href="/neural-networks/choosing-classical-vs-modern-approaches/" data-topic="neural-networks/choosing-classical-vs-modern-approaches">Choosing Classical vs Modern Approaches</a>) that depends on whether labels exist, what kind of answer you need, and what hardware you&#39;re targeting.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming &quot;classical&quot; means &quot;obsolete.&quot;</strong> Several ideas on this planet are in active, practical use — reservoir computing, spiking hardware, and self-organizing maps all solve real problems today.</li>
+<li><strong>Expecting every topic ahead to be trained the same way.</strong> Even within this planet, the four strategies above are genuinely different, not just variations on backpropagation.</li>
+<li><strong>Forgetting backpropagation itself needs a target.</strong> It is extremely effective exactly when one exists — the topics ahead matter precisely for the situations where it doesn&#39;t.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does error-driven learning require that the other three strategies on this planet do not?</summary>
+A known, correct target to compare the output against.
+</details>
+
+<details><summary>2. In the worked example, why is the Hebbian update unaffected by what the target is set to?</summary>
+Hebb's rule never looks at the target at all — it only depends on the input and the output's own current values.
+</details>
+
+<details><summary>3. Name one strategy covered on this planet for learning (or not learning) with no target available.</summary>
+Correlation-driven (Hebbian) learning, energy-driven settling, or using fixed/random weights with nothing trained — any one of the three.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Error-driven learning:</strong> adjusting weights to reduce a measured difference from a known target.</li>
+<li><strong>Correlation-driven learning:</strong> adjusting weights based on how often two neurons are active together, with no target.</li>
+<li><strong>Energy-driven settling:</strong> a network moving toward lower-energy states instead of following a gradient of error.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/the-mcculloch-pitts-neuron/" data-topic="neural-networks/the-mcculloch-pitts-neuron">The McCulloch-Pitts Neuron</a> · <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a> · <a class="wikilink" href="/neural-networks/hebbian-learning/" data-topic="neural-networks/hebbian-learning">Hebbian Learning</a> · <a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">Hopfield Networks</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/why-this-planet-looks-different-from-deep-learning">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/energy-based-networks/"><small>Read next</small><b>Energy-Based Networks</b><p>Instead of computing an output in one forward pass, an energy-based network keeps nudging itself downhill on a landscape of its own making until it settles — and whatever it settles on is the answer.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/math/backpropagation-by-hand/"><b>Backpropagation by Hand</b><p>Backpropagation computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs.</p></a><a class="rc-card" href="/neural-networks/the-mcculloch-pitts-neuron/"><b>The McCulloch-Pitts Neuron</b><p>Fifteen years before the perceptron learned anything, Warren McCulloch and Walter Pitts proposed the first mathematical neuron, in 1943.</p></a><a class="rc-card" href="/neural-networks/hebbian-learning/"><b>Hebbian Learning</b><p>&quot;Cells that fire together wire together.&quot; Hebbian learning strengthens the connection between two neurons in direct proportion to how often they&#39;re active at the same time — no error signal, no…</p></a><a class="rc-card" href="/neural-networks/hopfield-networks/"><b>Hopfield Networks</b><p>A Hopfield network stores a set of patterns not as a lookup table but as the stable points of a dynamical system: give it a noisy or partial version of a pattern, let every unit repeatedly update…</p></a><a class="rc-card" href="/neural-networks/boltzmann-machines/"><b>Boltzmann Machines</b><p>A Hopfield network only ever moves downhill, so it can get permanently stuck in a shallow dip that isn&#39;t the pattern you wanted.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/the-mcculloch-pitts-neuron/">← Previous: The McCulloch-Pitts Neuron</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

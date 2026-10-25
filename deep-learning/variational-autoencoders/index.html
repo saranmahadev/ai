@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variational Autoencoders — AI Base</title>
+<meta name="description" content="A plain autoencoder&#39;s bottleneck is one fixed vector per input — useful for compression, but there&#39;s no obvious way to &quot;make up&quot; a new, realistic vector to decode into something new.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/variational-autoencoders/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Variational Autoencoders — AI Base">
+<meta property="og:description" content="A plain autoencoder&#39;s bottleneck is one fixed vector per input — useful for compression, but there&#39;s no obvious way to &quot;make up&quot; a new, realistic vector to decode into something new.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/variational-autoencoders/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Variational Autoencoders","item":"https://ai.saranmahadev.in/deep-learning/variational-autoencoders/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Variational Autoencoders","description":"A plain autoencoder's bottleneck is one fixed vector per input — useful for compression, but there's no obvious way to \"make up\" a new, realistic vector to decode into something new.","url":"https://ai.saranmahadev.in/deep-learning/variational-autoencoders/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a VAE's encoder output, instead of a single vector?","acceptedAnswer":{"@type":"Answer","text":"A mean and variance (describing a Gaussian distribution) for each latent dimension."}},{"@type":"Question","name":"Why is the reparameterization trick necessary?","acceptedAnswer":{"@type":"Answer","text":"Directly sampling from a distribution isn't differentiable; rewriting the sample as μ + σ·ε (with ε drawn independently) keeps μ and σ differentiable, so gradients can still flow through the sampling step during training."}},{"@type":"Question","name":"What does the KL divergence term in the loss encourage?","acceptedAnswer":{"@type":"Answer","text":"It pushes each input's learned latent distribution to resemble the standard normal distribution, so that the whole latent space is smoothly, densely covered and sampling from the standard normal at generation time produces plausible outputs."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Generative Deep Learning</p>
+        <h1 class="doc-title">Variational Autoencoders</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1sp2j4nbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1sp2j4npl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1sp2j4nbg)"/>
+  <circle cx="725" cy="78" r="185" fill="#ffb6b6" opacity="0.50"/><circle cx="929" cy="298" r="214" fill="#8a546c" opacity="0.58"/><circle cx="5" cy="175" r="90" fill="#ffe6e6" opacity="0.34"/><circle cx="900" cy="170" r="121" fill="#8a546c" opacity="0.58"/><circle cx="23" cy="417" r="89" fill="#ffe6e6" opacity="0.41"/><circle cx="678" cy="115" r="84" fill="#ffb6b6" opacity="0.36"/><circle cx="873" cy="322" r="61" fill="#ffe6e6" opacity="0.61"/>
+  <path d="M0,420 L0,349 L30,350 L60,349 L90,347 L120,344 L150,340 L180,335 L210,330 L240,325 L270,320 L300,315 L330,312 L360,308 L390,306 L420,306 L450,306 L480,308 L510,310 L540,314 L570,318 L600,323 L630,328 L660,333 L690,338 L720,342 L750,346 L780,348 L810,349 L840,349 L870,348 L900,346 L930,343 L960,338 L990,334 L1020,329 L1050,323 L1080,318 L1110,314 L1140,310 L1170,308 L1200,306 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,394 L120,393 L150,392 L180,391 L210,389 L240,387 L270,385 L300,383 L330,380 L360,378 L390,375 L420,373 L450,370 L480,368 L510,366 L540,365 L570,364 L600,363 L630,362 L660,362 L690,362 L720,363 L750,364 L780,365 L810,367 L840,369 L870,371 L900,373 L930,376 L960,378 L990,381 L1020,383 L1050,386 L1080,388 L1110,390 L1140,391 L1170,392 L1200,393 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="937" cy="278" rx="159" ry="44" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(7.8 937 278)"/><ellipse cx="937" cy="278" rx="219" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(13.8 937 278)"/>
+  <circle cx="937" cy="278" r="62" fill="url(#c1sp2j4npl)"/>
+  <circle cx="1110" cy="316" r="13" fill="#ffffff" opacity="0.70"/><circle cx="901" cy="359" r="9" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A plain <a class="wikilink" href="/deep-learning/autoencoders/" data-topic="deep-learning/autoencoders">autoencoder</a>&#39;s bottleneck is one fixed vector per input — useful for compression, but there&#39;s no obvious way to &quot;make up&quot; a new, realistic vector to decode into something new. A <strong>variational autoencoder (VAE)</strong> fixes that by making the bottleneck a whole probability distribution instead of a single point, trained so that sampling <em>any</em> reasonable point from a known, simple distribution produces a plausible decoded output.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/autoencoders/" data-topic="deep-learning/autoencoders">Autoencoders</a> and <a class="wikilink" href="/machine-learning/generative-vs-discriminative-models/" data-topic="machine-learning/generative-vs-discriminative-models">Generative vs Discriminative Models</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;A trained decoder can reconstruct known inputs — but how do I generate <em>new</em> ones that were never in the training set?&quot; Train the encoder to describe each input as a small Gaussian distribution (a mean and a variance) rather than a single point, and push all those distributions to resemble a standard normal distribution — then sampling from that standard normal and decoding gives you new, never-seen data.</p>
+<h2 id="intuition-a-neighbourhood-not-a-pin">Intuition: a neighbourhood, not a pin</h2>
+<p>A plain autoencoder places each input at one exact point in latent space — a pin on a map. A VAE instead places each input as a small cloud (a Gaussian) around a point — a neighbourhood, not a pin — and requires nearby points in that neighbourhood to decode into something similar. Because every input&#39;s cloud is also pushed to resemble a single shared standard normal shape, the <em>whole</em> latent space ends up densely, smoothly covered by overlapping neighbourhoods: any point you pick, even one never specifically seen during training, lands inside <em>some</em> input&#39;s learned neighbourhood and decodes into something plausible.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">encoder outputs:  μ (mean), log(σ²) (log-variance), per latent dimension
+
+reparameterization trick:  z = μ + σ · ε,     ε ~ N(0, 1)   (sampling, but still differentiable in μ, σ)
+
+loss = reconstruction error  +  KL( N(μ, σ²) ‖ N(0, 1) )
+KL(N(μ, σ²) ‖ N(0, 1)) = ½(σ² + μ² − 1 − log σ²)
+</code></pre>
+<p>The KL term is what pulls every input&#39;s latent distribution toward the shared standard normal shape; without it, the model could ignore the &quot;distribution&quot; framing and collapse back toward a plain autoencoder&#39;s sharp points.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>An encoder outputs <code>μ = 0.5</code>, <code>log(σ²) = −0.2</code> for one latent dimension. Sampling with a drawn standard-normal value <code>ε = 1.2</code>:</p>
+<pre><code class="language-text">σ = exp(−0.2 / 2) = exp(−0.1) ≈ 0.9048
+
+z = μ + σ·ε = 0.5 + 0.9048 × 1.2 ≈ 1.5858
+
+KL(N(0.5, 0.8187) ‖ N(0, 1)) = ½(0.8187 + 0.5² − 1 − (−0.2)) = ½(0.8187 + 0.25 − 1 + 0.2) ≈ 0.1344
+</code></pre>
+<p>A small KL value (0.1344) here means this particular input&#39;s distribution is already fairly close to the shared standard normal shape — not yet exactly there, but the training pressure is pulling it further in that direction with every step.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="vae-sample" data-title="Sampling from a learned distribution"><p class="bench-fallback"><strong>Interactive bench: Sampling from a learned distribution.</strong> An adjustable mean and log-variance for one latent dimension, plus a draggable random sample ε. See the resulting latent value z, and how far this distribution's KL divergence sits from the standard normal target.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set μ and σ to match the standard normal (μ=0, log-variance=0) and watch KL drop to exactly 0.</li>
+<li>Push μ or σ far from the standard normal and watch KL grow.</li>
+<li>Change ε and watch z move, while μ and σ (and so KL) stay exactly the same.</li>
+</ol>
+<p><strong>What you should notice:</strong> ε is pure randomness drawn fresh every time; μ and σ are what the encoder actually learned for this input, and are the only part of z&#39;s computation that training can push toward (or away from) the standard normal.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Generating new samples</strong> at inference time simply means sampling <code>z ~ N(0, 1)</code> directly (no encoder needed) and running it through the decoder.</li>
+<li><strong>The reparameterization trick</strong> is what makes training possible at all — sampling on its own isn&#39;t differentiable, but expressing the sample as a differentiable function of μ, σ and an independent random ε is.</li>
+<li><strong><a class="wikilink" href="/deep-learning/generative-adversarial-networks/" data-topic="deep-learning/generative-adversarial-networks">GANs</a> and <a class="wikilink" href="/deep-learning/diffusion-models/" data-topic="deep-learning/diffusion-models">Diffusion Models</a></strong> are alternative generative approaches that solve the &quot;generate something new&quot; problem by entirely different means, each with their own trade-offs against a VAE&#39;s approach.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting the KL term&#39;s role.</strong> Without it, nothing pushes different inputs&#39; latent distributions to overlap or resemble a common shape, and sampling randomly from the prior would likely land in &quot;empty&quot; regions the decoder never learned to handle.</li>
+<li><strong>Treating z as fully determined by the input.</strong> It genuinely depends on a random draw (ε) as well as the encoder&#39;s output — the same input produces a different z (though from the same distribution) on repeated encodings.</li>
+<li><strong>Expecting VAE samples to be as sharp as GAN samples.</strong> VAEs are well known for often producing somewhat blurrier outputs than adversarial approaches, a direct consequence of how their loss is structured.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does a VAE's encoder output, instead of a single vector?</summary>
+A mean and variance (describing a Gaussian distribution) for each latent dimension.
+</details>
+
+<details><summary>2. Why is the reparameterization trick necessary?</summary>
+Directly sampling from a distribution isn't differentiable; rewriting the sample as μ + σ·ε (with ε drawn independently) keeps μ and σ differentiable, so gradients can still flow through the sampling step during training.
+</details>
+
+<details><summary>3. What does the KL divergence term in the loss encourage?</summary>
+It pushes each input's learned latent distribution to resemble the standard normal distribution, so that the whole latent space is smoothly, densely covered and sampling from the standard normal at generation time produces plausible outputs.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Variational autoencoder (VAE):</strong> an autoencoder whose bottleneck is a learned probability distribution rather than a fixed vector.</li>
+<li><strong>Reparameterization trick:</strong> expressing a random sample as a differentiable function of learned parameters and independent noise.</li>
+<li><strong>KL divergence:</strong> a measure of how different two probability distributions are, used here to pull latent distributions toward the standard normal.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/autoencoders/" data-topic="deep-learning/autoencoders">Autoencoders</a> · <a class="wikilink" href="/machine-learning/generative-vs-discriminative-models/" data-topic="machine-learning/generative-vs-discriminative-models">Generative vs Discriminative Models</a> · <a class="wikilink" href="/deep-learning/generative-adversarial-networks/" data-topic="deep-learning/generative-adversarial-networks">Generative Adversarial Networks</a> · <a class="wikilink" href="/deep-learning/diffusion-models/" data-topic="deep-learning/diffusion-models">Diffusion Models</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/variational-autoencoders">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/generative-adversarial-networks/"><small>Read next</small><b>Generative Adversarial Networks</b><p>A generative adversarial network (GAN) trains two networks against each other: a generator that turns random noise into fake samples, trying to fool the second network, and a discriminator that…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/autoencoders/"><b>Autoencoders</b><p>An autoencoder is a network trained to do something that sounds pointless — reproduce its own input — except it must pass the signal through a narrow bottleneck on the way.</p></a><a class="rc-card" href="/machine-learning/generative-vs-discriminative-models/"><b>Generative vs Discriminative Models</b><p>There are two ways to build a classifier. A generative model learns what each class looks like (how its examples are distributed) and uses Bayes&#39; rule to decide.</p></a><a class="rc-card" href="/deep-learning/generative-adversarial-networks/"><b>Generative Adversarial Networks</b><p>A generative adversarial network (GAN) trains two networks against each other: a generator that turns random noise into fake samples, trying to fool the second network, and a discriminator that…</p></a><a class="rc-card" href="/deep-learning/diffusion-models/"><b>Diffusion Models</b><p>A diffusion model learns to generate by learning the opposite of something easy: gradually turning clean data into pure noise is a simple, fixed process with no learning involved at all; a…</p></a><a class="rc-card" href="/deep-learning/generative-deep-learning/"><b>Generative Deep Learning</b><p>Generative vs Discriminative Models on the Machine Learning planet draws the line; this district walks the deep architectures that learn to generate rather than only recognise, from a bottleneck…</p></a><a class="rc-card" href="/deep-learning/normalizing-flows/"><b>Normalizing Flows</b><p>Neither a VAE nor a GAN can tell you the exact probability their model assigns to a specific data point — a VAE only has an approximation, and a GAN has no likelihood at all.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/generative-deep-learning/">← Previous: Generative Deep Learning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boltzmann Machines — AI Base</title>
+<meta name="description" content="A Hopfield network only ever moves downhill, so it can get permanently stuck in a shallow dip that isn&#39;t the pattern you wanted.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/boltzmann-machines/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Boltzmann Machines — AI Base">
+<meta property="og:description" content="A Hopfield network only ever moves downhill, so it can get permanently stuck in a shallow dip that isn&#39;t the pattern you wanted.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/boltzmann-machines/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Boltzmann Machines","item":"https://ai.saranmahadev.in/neural-networks/boltzmann-machines/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Boltzmann Machines","description":"A Hopfield network only ever moves downhill, so it can get permanently stuck in a shallow dip that isn't the pattern you wanted.","url":"https://ai.saranmahadev.in/neural-networks/boltzmann-machines/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What happens to a Boltzmann machine's update rule as temperature approaches zero?","acceptedAnswer":{"@type":"Answer","text":"It becomes the deterministic Hopfield rule — a unit flips to match the sign of its own local field with probability 1."}},{"@type":"Question","name":"In the worked example, why does the unit occasionally stay at +1 even though its local field favours −1?","acceptedAnswer":{"@type":"Answer","text":"Because the update is stochastic rather than deterministic — at a finite temperature, there is always some nonzero probability of moving against the local field, and that probability is what lets the network escape shallow dips."}},{"@type":"Question","name":"What does simulated annealing mean in this context?","acceptedAnswer":{"@type":"Answer","text":"Starting at a high temperature (very stochastic, able to explore widely) and gradually cooling toward zero (increasingly deterministic), to settle into a good low-energy state rather than the first shallow dip found."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Energy-Based Networks</p>
+        <h1 class="doc-title">Boltzmann Machines</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1yqfzgcbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="c1yqfzgcpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1yqfzgcbg)"/>
+  <circle cx="354" cy="267" r="227" fill="#c5d79b" opacity="0.32"/><circle cx="333" cy="102" r="167" fill="#e3f6e5" opacity="0.54"/><circle cx="279" cy="197" r="108" fill="#c5d79b" opacity="0.25"/><circle cx="553" cy="287" r="172" fill="#e3f6e5" opacity="0.30"/><circle cx="629" cy="116" r="118" fill="#e3f6e5" opacity="0.31"/>
+  <path d="M0,420 L0,332 L30,325 L60,318 L90,312 L120,308 L150,306 L180,306 L210,308 L240,312 L270,317 L300,324 L330,331 L360,337 L390,343 L420,347 L450,349 L480,349 L510,347 L540,344 L570,338 L600,332 L630,325 L660,318 L690,312 L720,308 L750,306 L780,306 L810,308 L840,312 L870,317 L900,324 L930,331 L960,337 L990,343 L1020,347 L1050,349 L1080,349 L1110,347 L1140,344 L1170,338 L1200,332 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,381 L60,378 L90,376 L120,373 L150,371 L180,369 L210,367 L240,365 L270,364 L300,363 L330,362 L360,362 L390,362 L420,363 L450,364 L480,365 L510,366 L540,368 L570,370 L600,373 L630,375 L660,378 L690,380 L720,383 L750,385 L780,387 L810,389 L840,391 L870,392 L900,393 L930,394 L960,394 L990,394 L1020,393 L1050,392 L1080,391 L1110,390 L1140,388 L1170,386 L1200,383 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="715" cy="200" rx="209" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(5.4 715 200)"/><ellipse cx="715" cy="200" rx="288" ry="81" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(11.4 715 200)"/>
+  <circle cx="715" cy="200" r="82" fill="url(#c1yqfzgcpl)"/>
+  <circle cx="964" cy="160" r="17" fill="#ffffff" opacity="0.62"/><circle cx="703" cy="109" r="18" fill="#ffffff" opacity="0.61"/><circle cx="592" cy="126" r="9" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A Hopfield network only ever moves downhill, so it can get permanently stuck in a shallow dip that isn&#39;t the pattern you wanted. A Boltzmann machine fixes this with one change: let units flip against their own local field sometimes, with a probability controlled by a temperature, so the network can occasionally climb out of a bad dip on its way to a better one.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/energy-functions-and-attractor-dynamics/" data-topic="neural-networks/energy-functions-and-attractor-dynamics">Energy Functions and Attractor Dynamics</a>, <a class="wikilink" href="/neural-networks/content-addressable-memory-and-capacity/" data-topic="neural-networks/content-addressable-memory-and-capacity">Content-Addressable Memory and Capacity</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can an energy-based network avoid getting trapped in a bad local minimum?&quot; By replacing the Hopfield network&#39;s deterministic <code>sign(h_i)</code> update with a <em>probabilistic</em> one: update to <code>+1</code> with a probability that favours the direction the local field points, but never with certainty, so there is always some chance of moving the &quot;wrong&quot; way and escaping a shallow dip.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Picture the energy landscape again, but now imagine shaking the whole table gently while the ball rolls. A gentle shake lets the ball hop out of a shallow dip it would otherwise be trapped in, while a deep dip still holds it most of the time. Shake harder (<strong>higher temperature</strong>) and the ball moves almost randomly, ignoring the landscape; shake less (<strong>lower temperature</strong>) and it behaves more and more like the deterministic Hopfield rule. Boltzmann machines usually start hot and cool down — <strong>simulated annealing</strong> — so early exploration gives way to settling into a good, hopefully global, minimum.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>A Boltzmann machine update replaces the Hopfield sign rule with a stochastic one, using the same local field <code>h_i = Σⱼ W_ij s_j</code> and a temperature <code>T &gt; 0</code>:</p>
+<pre><code class="language-text">P(s_i = 1) = sigmoid(h_i / T) = 1 / (1 + exp(−h_i / T))
+</code></pre>
+<p>As <code>T → 0</code>, this sharpens into the deterministic Hopfield rule (<code>P → 1</code> when <code>h_i &gt; 0</code>, <code>P → 0</code> when <code>h_i &lt; 0</code>). As <code>T</code> grows large, <code>P → 0.5</code> regardless of <code>h_i</code>: the network ignores the landscape and moves essentially at random. Sampling many units this way, over many steps, is a form of <strong>Gibbs sampling</strong>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two units with connection weight <code>W_01 = −1</code>, both currently at <code>s = [1, 1]</code>. Unit 0&#39;s local field is <code>h_0 = W_01 · s_1 = −1 × 1 = −1</code> — the connection &quot;wants&quot; unit 0 to be <code>−1</code>, but it currently is not. The probability of unit 0 staying at <code>+1</code> (moving against its own local field) at three temperatures:</p>
+<pre><code class="language-text">T = 0.2 (cold):  P(s_0 = 1) = sigmoid(−1 / 0.2) = sigmoid(−5)  ≈ 0.007
+T = 1   (medium): P(s_0 = 1) = sigmoid(−1 / 1)   = sigmoid(−1)  ≈ 0.269
+T = 5   (hot):    P(s_0 = 1) = sigmoid(−1 / 5)   = sigmoid(−0.2) ≈ 0.450
+</code></pre>
+<p>At the cold temperature the unit almost certainly flips to agree with its local field, just like a Hopfield network. At the hot temperature it is nearly a coin flip — the network barely notices the landscape. The medium temperature sits in between: biased toward flipping, but genuinely able to stay put roughly 27% of the time, which is exactly the kind of &quot;wrong&quot; move that lets a bigger network wander out of a shallow dip.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="boltzmann-anneal" data-title="Temperature, probability and escaping a dip"><p class="bench-fallback"><strong>Interactive bench: Temperature, probability and escaping a dip.</strong> Set a temperature and see the probability that a unit stays against its own local field, then watch simulated annealing cool a network from hot to cold over a run.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the temperature from hot to cold and watch the &quot;stay against the field&quot; probability shrink toward zero.</li>
+<li>Run the annealing schedule and watch the network accept more uphill moves early, and almost none by the end.</li>
+<li>Compare a single cold run (prone to getting stuck) against a full hot-to-cold anneal starting from the same state.</li>
+</ol>
+<p><strong>What you should notice:</strong> temperature is the only new ingredient over a Hopfield network — set it to (near) zero and a Boltzmann machine&#39;s behaviour collapses back to the deterministic rule from <a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">Hopfield Networks</a>.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It generalizes the Hopfield network&#39;s settling rule</strong> to one that can escape the spurious, shallow local minima described in <a class="wikilink" href="/neural-networks/content-addressable-memory-and-capacity/" data-topic="neural-networks/content-addressable-memory-and-capacity">Content-Addressable Memory and Capacity</a>.</li>
+<li><strong>Hidden units turn it into a real learning model</strong>: units not clamped to the visible pattern let the network represent correlations between visible units that a plain Hopfield network cannot — the next two topics, <a class="wikilink" href="/neural-networks/layer-wise-and-unsupervised-pretraining/" data-topic="neural-networks/layer-wise-and-unsupervised-pretraining">Contrastive Divergence</a> and <a class="wikilink" href="/neural-networks/restricted-boltzmann-machines/" data-topic="neural-networks/restricted-boltzmann-machines">Restricted Boltzmann Machines</a>, build on exactly this.</li>
+<li><strong>Simulated annealing</strong> (cooling temperature over time to search for a good, low-energy solution) is a general-purpose optimization technique that outlived Boltzmann machines themselves and is used well beyond neural networks.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating temperature as a training hyperparameter.</strong> It controls the stochasticity of <em>inference</em> (settling), not a learning rate for weights.</li>
+<li><strong>Expecting annealing to guarantee the global minimum.</strong> It greatly improves the odds of escaping shallow dips, but offers no hard guarantee for a finite cooling schedule.</li>
+<li><strong>Running a fully-connected Boltzmann machine at scale.</strong> Exact training is intractable for large networks with many hidden units — which is exactly the problem <a class="wikilink" href="/neural-networks/restricted-boltzmann-machines/" data-topic="neural-networks/restricted-boltzmann-machines">Restricted Boltzmann Machines</a> exists to solve.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What happens to a Boltzmann machine's update rule as temperature approaches zero?</summary>
+It becomes the deterministic Hopfield rule — a unit flips to match the sign of its own local field with probability 1.
+</details>
+
+<details><summary>2. In the worked example, why does the unit occasionally stay at +1 even though its local field favours −1?</summary>
+Because the update is stochastic rather than deterministic — at a finite temperature, there is always some nonzero probability of moving against the local field, and that probability is what lets the network escape shallow dips.
+</details>
+
+<details><summary>3. What does simulated annealing mean in this context?</summary>
+Starting at a high temperature (very stochastic, able to explore widely) and gradually cooling toward zero (increasingly deterministic), to settle into a good low-energy state rather than the first shallow dip found.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Temperature:</strong> a parameter controlling how stochastic a Boltzmann machine&#39;s updates are; low temperature behaves like a Hopfield network, high temperature behaves nearly randomly.</li>
+<li><strong>Gibbs sampling:</strong> repeatedly sampling each unit&#39;s state from its conditional probability given all the others, holding the rest fixed.</li>
+<li><strong>Simulated annealing:</strong> cooling the temperature over the course of a run to combine early exploration with late-stage settling.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">Hopfield Networks</a> · <a class="wikilink" href="/neural-networks/content-addressable-memory-and-capacity/" data-topic="neural-networks/content-addressable-memory-and-capacity">Content-Addressable Memory and Capacity</a> · <a class="wikilink" href="/neural-networks/restricted-boltzmann-machines/" data-topic="neural-networks/restricted-boltzmann-machines">Restricted Boltzmann Machines</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/boltzmann-machines">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/restricted-boltzmann-machines/"><small>Read next</small><b>Restricted Boltzmann Machines</b><p>A general Boltzmann machine connects every unit to every other unit, which makes exact training intractable past a handful of units.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/energy-functions-and-attractor-dynamics/"><b>Energy Functions and Attractor Dynamics</b><p>The previous topic claimed that asynchronous updates always stop. This topic proves it, with a single number that can only go down: the network&#39;s energy.</p></a><a class="rc-card" href="/neural-networks/content-addressable-memory-and-capacity/"><b>Content-Addressable Memory and Capacity</b><p>A Hopfield network&#39;s memory is not free: pack in too many patterns and recall starts failing, often all at once rather than gradually.</p></a><a class="rc-card" href="/neural-networks/hopfield-networks/"><b>Hopfield Networks</b><p>A Hopfield network stores a set of patterns not as a lookup table but as the stable points of a dynamical system: give it a noisy or partial version of a pattern, let every unit repeatedly update…</p></a><a class="rc-card" href="/neural-networks/layer-wise-and-unsupervised-pretraining/"><b>Layer-Wise and Unsupervised Pretraining</b><p>Before 2012&#39;s deep networks could be trained end to end by backpropagation alone, researchers found a workaround: train one layer at a time, unsupervised, stacking Restricted Boltzmann Machines…</p></a><a class="rc-card" href="/neural-networks/restricted-boltzmann-machines/"><b>Restricted Boltzmann Machines</b><p>A general Boltzmann machine connects every unit to every other unit, which makes exact training intractable past a handful of units.</p></a><a class="rc-card" href="/neural-networks/why-this-planet-looks-different-from-deep-learning/"><b>Why This Planet Looks Different from Deep Learning</b><p>Every architecture on the Deep Learning planet is trained the same fundamental way: compute an error against a known target, and adjust every weight to reduce it, by backpropagation.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/content-addressable-memory-and-capacity/">← Previous: Content-Addressable Memory and Capacity</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

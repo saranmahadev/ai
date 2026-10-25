@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scaling Laws and Model Capacity — AI Base</title>
+<meta name="description" content="Double descent showed overparameterized models often generalise well.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/scaling-laws-and-model-capacity/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Scaling Laws and Model Capacity — AI Base">
+<meta property="og:description" content="Double descent showed overparameterized models often generalise well.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/scaling-laws-and-model-capacity/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Scaling Laws and Model Capacity","item":"https://ai.saranmahadev.in/deep-learning/scaling-laws-and-model-capacity/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Scaling Laws and Model Capacity","description":"Double descent showed overparameterized models often generalise well.","url":"https://ai.saranmahadev.in/deep-learning/scaling-laws-and-model-capacity/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the defining visual signature of a true power-law relationship?","acceptedAnswer":{"@type":"Answer","text":"A straight line when plotted with both axes on a logarithmic scale."}},{"@type":"Question","name":"In the worked example, why does a ten-thousand-fold increase in parameters only modestly reduce loss?","acceptedAnswer":{"@type":"Answer","text":"The relationship follows a power law with a fairly small exponent (0.3 here), so each order-of-magnitude increase in scale buys a shrinking, though still real, relative improvement."}},{"@type":"Question","name":"Do the specific exponent and constants from one model's scaling study transfer directly to a very different model or dataset?","acceptedAnswer":{"@type":"Answer","text":"Not necessarily — the power-law *shape* tends to generalise, but the specific fitted numbers are usually particular to that model family, dataset and training setup."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Deep Learning in Practice</p>
+        <h1 class="doc-title">Scaling Laws and Model Capacity</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1wjpddtbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1wjpddtpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1wjpddtbg)"/>
+  <circle cx="1185" cy="281" r="178" fill="#ffb6b6" opacity="0.38"/><circle cx="433" cy="127" r="186" fill="#8a546c" opacity="0.36"/><circle cx="776" cy="246" r="61" fill="#ffe6e6" opacity="0.33"/><circle cx="802" cy="170" r="122" fill="#8a546c" opacity="0.56"/><circle cx="462" cy="404" r="210" fill="#ffe6e6" opacity="0.32"/><circle cx="255" cy="124" r="198" fill="#ffb89d" opacity="0.54"/>
+  <path d="M0,420 L0,313 L30,310 L60,307 L90,306 L120,306 L150,307 L180,309 L210,312 L240,316 L270,321 L300,326 L330,331 L360,336 L390,341 L420,345 L450,347 L480,349 L510,350 L540,349 L570,347 L600,344 L630,340 L660,336 L690,331 L720,325 L750,320 L780,316 L810,312 L840,309 L870,307 L900,306 L930,306 L960,307 L990,310 L1020,314 L1050,318 L1080,323 L1110,328 L1140,333 L1170,338 L1200,342 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,392 L60,390 L90,387 L120,384 L150,381 L180,377 L210,373 L240,370 L270,367 L300,364 L330,363 L360,362 L390,362 L420,363 L450,365 L480,368 L510,371 L540,374 L570,378 L600,382 L630,385 L660,388 L690,391 L720,393 L750,394 L780,394 L810,393 L840,392 L870,389 L900,386 L930,383 L960,379 L990,376 L1020,372 L1050,369 L1080,366 L1110,364 L1140,362 L1170,362 L1200,362 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="928" cy="217" rx="230" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(15.2 928 217)"/><ellipse cx="928" cy="217" rx="318" ry="89" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(21.2 928 217)"/>
+  <circle cx="928" cy="217" r="90" fill="url(#c1wjpddtpl)"/>
+  <circle cx="1174" cy="179" r="17" fill="#ffffff" opacity="0.65"/><circle cx="584" cy="169" r="18" fill="#ffffff" opacity="0.62"/><circle cx="643" cy="275" r="11" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Double descent</a> showed overparameterized models often generalise well. <strong>Scaling laws</strong> go further: empirical research has repeatedly found that, across many orders of magnitude, a model&#39;s loss falls in a smooth, predictable <strong>power-law</strong> relationship as parameters, data, or compute grow — with sharply diminishing returns the bigger the model gets.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a> and <a class="wikilink" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps">Why Depth Helps</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does making a model bigger always help proportionally, or does the benefit taper off?&quot; It tapers off — in a very specific, mathematically regular way: loss tends to fall roughly as a power of the scale (parameters, data, or compute), meaning each further order-of-magnitude increase buys a shrinking, predictable improvement, not a constant one.</p>
+<h2 id="intuition-diminishing-returns-but-predictably-diminishing">Intuition: diminishing returns, but <em>predictably</em> diminishing</h2>
+<p>Going from 1 to 10 employees might double a small business&#39;s output; going from 10,000 to 10,010 employees would barely move it at all — the <em>relative</em> gain from adding more shrinks as scale grows. A power-law scaling relationship is a precise, quantifiable version of exactly that intuition: multiplying the scale by a fixed factor (say, 10×) always reduces the loss by roughly the same <em>relative</em> amount, however big the model already is — which is a much more specific and useful statement than just &quot;bigger is better, with diminishing returns.&quot;</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">loss(N) ≈ a · N^(−α) + c           (N = scale — parameters, data, or compute; α, a, c are fitted constants)
+
+on a log-log plot of (loss − c) against N, this relationship is a straight line of slope −α
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>An illustrative power-law curve, <code>loss(N) = 10 · N^(−0.3) + 1.5</code>, evaluated at five scales spanning four orders of magnitude:</p>
+<pre><code class="language-text">N (parameters)    10⁶       10⁷       10⁸       10⁹       10¹⁰
+loss             1.6585    1.5794    1.5398    1.5200    1.5100
+</code></pre>
+<p>Going from <code>10⁶</code> to <code>10¹⁰</code> parameters — ten thousand times more parameters — only reduces loss from about 1.66 to about 1.51, a modest improvement despite the enormous increase in scale. Plotting <code>log₁₀(loss − 1.5)</code> against <code>log₁₀(N)</code> gives exactly a straight line with slope <code>−0.3</code>, the defining signature of a true power-law relationship.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="scaling-law" data-title="Diminishing returns on a log-log scale"><p class="bench-fallback"><strong>Interactive bench: Diminishing returns on a log-log scale.</strong> A power-law loss curve with an adjustable exponent. See the loss values at several scales, and the same relationship plotted on a log-log axis as a straight line.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the loss at two scales ten times apart and note how small the improvement is at large scale.</li>
+<li>Switch to the log-log view and confirm the curve is a straight line.</li>
+<li>Change the exponent and see how it changes the line&#39;s steepness — a larger exponent means scale helps more per order of magnitude.</li>
+</ol>
+<p><strong>What you should notice:</strong> the ordinary (linear-scale) plot makes improvements at large scale look negligible; the log-log plot reveals that the same relationship is perfectly regular and predictable throughout — it&#39;s the display, not the underlying law, that makes large-scale gains look small.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Research on scaling large language models</strong> found that loss follows this kind of power-law behaviour remarkably consistently across many orders of magnitude of parameters, data and compute, which has directly informed decisions about how large to train new models.</li>
+<li><strong>The exact exponents and constants are specific to a given model family, dataset and training setup</strong> — the power-law <em>shape</em> generalises well; the specific numbers do not transfer automatically between very different setups.</li>
+<li><strong>Scaling laws inform compute allocation</strong>: given a fixed training budget, research in this area has studied how to split it between more parameters versus more data for the best resulting loss.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a power law continues forever.</strong> Real relationships eventually deviate from the idealised power-law fit at extreme scales, for all kinds of practical reasons (data quality limits, architecture limits, and others).</li>
+<li><strong>Confusing &quot;diminishing returns&quot; with &quot;no returns.&quot;</strong> The relative improvement shrinks, but a true power law keeps improving, just more slowly — it never becomes exactly flat.</li>
+<li><strong>Reading a linear-scale plot and concluding scale &quot;stopped mattering.&quot;</strong> The same relationship looks dramatically different depending on whether the axes are linear or logarithmic; the log-log view is what reveals the underlying regularity.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the defining visual signature of a true power-law relationship?</summary>
+A straight line when plotted with both axes on a logarithmic scale.
+</details>
+
+<details><summary>2. In the worked example, why does a ten-thousand-fold increase in parameters only modestly reduce loss?</summary>
+The relationship follows a power law with a fairly small exponent (0.3 here), so each order-of-magnitude increase in scale buys a shrinking, though still real, relative improvement.
+</details>
+
+<details><summary>3. Do the specific exponent and constants from one model's scaling study transfer directly to a very different model or dataset?</summary>
+Not necessarily — the power-law *shape* tends to generalise, but the specific fitted numbers are usually particular to that model family, dataset and training setup.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Power law:</strong> a relationship where one quantity scales as a fixed power of another, appearing as a straight line on a log-log plot.</li>
+<li><strong>Scaling law (in deep learning):</strong> an empirical power-law relationship between a model&#39;s loss and its scale (parameters, data, or compute).</li>
+<li><strong>Diminishing returns:</strong> a shrinking relative improvement from each further increase in scale.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/overfitting-and-double-descent/" data-topic="deep-learning/overfitting-and-double-descent">Overfitting and Double Descent</a> · <a class="wikilink" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps">Why Depth Helps</a> · <a class="wikilink" href="/deep-learning/mixture-of-experts/" data-topic="deep-learning/mixture-of-experts">Mixture of Experts</a> · <a class="wikilink" href="/deep-learning/deep-learning-across-modalities/" data-topic="deep-learning/deep-learning-across-modalities">Deep Learning Across Modalities</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/scaling-laws-and-model-capacity">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/deep-learning-across-modalities/"><small>Read next</small><b>Deep Learning Across Modalities</b><p>Vision, speech and language look like completely different fields from the outside — but underneath, the same handful of architectural ideas (convolution, recurrence, attention, embeddings) keep…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/overfitting-and-double-descent/"><b>Overfitting and Double Descent</b><p>The classical picture of overfitting says test error falls as a model grows, then rises once it has enough capacity to memorise noise — a U-shape.</p></a><a class="rc-card" href="/deep-learning/why-depth-helps/"><b>Why Depth Helps</b><p>Universal Approximation showed one wide hidden layer can represent almost anything.</p></a><a class="rc-card" href="/deep-learning/mixture-of-experts/"><b>Mixture of Experts</b><p>A plain dense layer runs every input through the exact same weights.</p></a><a class="rc-card" href="/deep-learning/deep-learning-across-modalities/"><b>Deep Learning Across Modalities</b><p>Vision, speech and language look like completely different fields from the outside — but underneath, the same handful of architectural ideas (convolution, recurrence, attention, embeddings) keep…</p></a><a class="rc-card" href="/deep-learning/hyperparameter-tuning-for-deep-networks/"><b>Hyperparameter Tuning for Deep Networks</b><p>Hyperparameter Tuning already covered searching over settings like regularization strength for classic models.</p></a><a class="rc-card" href="/deep-learning/deep-learning-in-practice/"><b>Deep Learning in Practice</b><p>The last stretch of the road is judgment: picking an architecture, trusting it, knowing where it breaks, and seeing the whole planet in one project.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/interpretability-and-attribution/">← Previous: Interpretability and Attribution</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

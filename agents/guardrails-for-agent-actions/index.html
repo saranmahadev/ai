@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guardrails for Agent Actions — AI Base</title>
+<meta name="description" content="A text guardrail scores free-form output for risk and has to guess at intent from wording alone.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/guardrails-for-agent-actions/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Guardrails for Agent Actions — AI Base">
+<meta property="og:description" content="A text guardrail scores free-form output for risk and has to guess at intent from wording alone.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/guardrails-for-agent-actions/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Guardrails for Agent Actions","item":"https://ai.saranmahadev.in/agents/guardrails-for-agent-actions/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Guardrails for Agent Actions","description":"A text guardrail scores free-form output for risk and has to guess at intent from wording alone.","url":"https://ai.saranmahadev.in/agents/guardrails-for-agent-actions/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can an action guardrail check with exact matching where a text guardrail needs a probabilistic score?","acceptedAnswer":{"@type":"Answer","text":"A proposed action has structured parameters (a table name, a function call, a dollar amount) that either match a rule or don't, unlike free-form text, which has no fixed structure to match against and has to be scored for how risky it sounds."}},{"@type":"Question","name":"In the worked example, why do exactly 2 of the 6 actions get blocked?","acceptedAnswer":{"@type":"Answer","text":"Only the table-drop and the wire-transfer call match the high-risk pattern set used by the guardrail; the other four actions (a read query, a routine update, a search, and sending an email) don't match any rule in that set."}},{"@type":"Question","name":"Why isn't an action guardrail alone a complete safety solution?","acceptedAnswer":{"@type":"Answer","text":"It only catches actions matching its existing rule set — a destructive action phrased in a way the rules don't anticipate passes through unchecked, which is why it's paired with scope limits that remove unneeded capabilities entirely rather than relying only on catching misuse after the fact."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Agent Safety and Governance</p>
+        <h1 class="doc-title">Guardrails for Agent Actions</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c174lnxubg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c174lnxupl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c174lnxubg)"/>
+  <circle cx="433" cy="105" r="157" fill="#dcbef5" opacity="0.50"/><circle cx="388" cy="414" r="88" fill="#f3e9fc" opacity="0.39"/><circle cx="253" cy="312" r="153" fill="#e7bdc8" opacity="0.40"/><circle cx="478" cy="276" r="63" fill="#e7bdc8" opacity="0.26"/><circle cx="326" cy="219" r="163" fill="#725998" opacity="0.61"/>
+  <path d="M0,420 L0,319 L30,324 L60,329 L90,334 L120,339 L150,343 L180,346 L210,348 L240,350 L270,349 L300,348 L330,345 L360,342 L390,338 L420,333 L450,328 L480,323 L510,318 L540,313 L570,310 L600,307 L630,306 L660,306 L690,307 L720,309 L750,312 L780,316 L810,321 L840,326 L870,331 L900,336 L930,340 L960,344 L990,347 L1020,349 L1050,350 L1080,349 L1110,347 L1140,344 L1170,341 L1200,336 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,391 L30,387 L60,383 L90,378 L120,373 L150,368 L180,365 L210,363 L240,362 L270,363 L300,365 L330,369 L360,373 L390,378 L420,383 L450,388 L480,391 L510,393 L540,394 L570,393 L600,391 L630,387 L660,383 L690,378 L720,373 L750,368 L780,365 L810,363 L840,362 L870,363 L900,365 L930,369 L960,373 L990,378 L1020,383 L1050,388 L1080,391 L1110,393 L1140,394 L1170,393 L1200,391 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="832" cy="216" rx="256" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-1.8 832 216)"/><ellipse cx="832" cy="216" rx="354" ry="99" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(4.2 832 216)"/>
+  <circle cx="832" cy="216" r="100" fill="url(#c174lnxupl)"/>
+  <circle cx="1122" cy="204" r="15" fill="#ffffff" opacity="0.89"/><circle cx="1063" cy="142" r="17" fill="#ffffff" opacity="0.85"/><circle cx="566" cy="115" r="17" fill="#ffffff" opacity="0.79"/><circle cx="1089" cy="281" r="8" fill="#ffffff" opacity="0.87"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A text guardrail scores free-form output for risk and has to guess at intent from wording alone. An action guardrail doesn&#39;t have to guess — a proposed tool call has structured parameters, so checking whether it matches a high-risk pattern (a table name, a dollar amount, a destination account) can be exact instead of a probabilistic judgment call.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/guardrails-and-deployment-time-safety-filters/" data-topic="llms/guardrails-and-deployment-time-safety-filters">Guardrails and Deployment-Time Safety Filters</a>, <a class="wikilink" href="/agents/tool-result-verification/" data-topic="agents/tool-result-verification">Tool Result Verification</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you stop a specific proposed action before it runs, rather than filtering the text around it?&quot; An <strong>action guardrail</strong> sits between an agent&#39;s decision and its execution, checking the proposed action&#39;s actual parameters against a policy — block anything matching a known high-risk pattern, let everything else through. Unlike the text classifier covered in <a class="wikilink" href="/llms/guardrails-and-deployment-time-safety-filters/" data-topic="llms/guardrails-and-deployment-time-safety-filters">the earlier, LLMs-planet guardrail</a>, which scores ambiguous free text on a continuous threshold, an action guardrail can often match exactly: a <code>DROP TABLE</code> statement or a <code>wire_transfer</code> call either matches a rule or it doesn&#39;t.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A bank&#39;s wire transfer system doesn&#39;t try to guess the customer&#39;s <em>intent</em> from how politely they phrased the request — it checks the actual transfer amount and destination against a fixed set of rules (amounts over a threshold need extra verification, transfers to new destinations get flagged) before the money moves. The check runs on the structured transaction, not on free-form reasoning about what the customer probably meant.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">without guardrail:  every proposed action executes
+with guardrail:     action executes only if it matches no rule in the high-risk pattern set
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Six proposed database and transfer actions, two of which match a high-risk pattern set (<code>DROP TABLE</code>, <code>wire_transfer</code>):</p>
+<pre><code class="language-text">SELECT * FROM users                      — not high-risk
+UPDATE profile SET name=&#39;x&#39;              — not high-risk
+DROP TABLE orders                        — high-risk  ⛔
+wire_transfer(5000, &#39;external_acct&#39;)     — high-risk  ⛔
+search(&#39;refund policy&#39;)                  — not high-risk
+send_email(summary)                      — not high-risk
+
+without guardrail: 6 of 6 actions execute
+with guardrail:     4 of 6 actions execute, 2 blocked
+</code></pre>
+<p>Without a guardrail, the destructive table drop and the outbound transfer run exactly like the four harmless actions around them — nothing distinguished them at execution time. With the guardrail in place, the same two actions are caught by matching their actual parameters against the rule set, with no ambiguity about whether they qualify.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="action-guardrail-block" data-title="Checking the action, not the explanation"><p class="bench-fallback"><strong>Interactive bench: Checking the action, not the explanation.</strong> Toggle an action-level guardrail and watch it block proposed actions matching a high-risk pattern.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the ungated list and note all six actions execute, including the destructive ones.</li>
+<li>Turn the guardrail on and watch the table drop and wire transfer get blocked.</li>
+<li>Imagine an action phrased differently but with the same effect (say, a stored procedure that internally drops the table) — would this specific rule set still catch it?</li>
+</ol>
+<p><strong>What you should notice:</strong> the guardrail&#39;s reliability comes from checking the action&#39;s actual effect on structured data (a table name, a function call) rather than from understanding the agent&#39;s stated reasoning for taking it.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This directly extends <a class="wikilink" href="/llms/guardrails-and-deployment-time-safety-filters/" data-topic="llms/guardrails-and-deployment-time-safety-filters">Guardrails and Deployment-Time Safety Filters</a></strong> from a continuous risk score on free text to an exact match on an action&#39;s structured parameters — the same deployment-time-filter idea, applied where it can be more precise.</li>
+<li><strong><a class="wikilink" href="/agents/autonomy-levels-and-human-oversight-tiers/" data-topic="agents/autonomy-levels-and-human-oversight-tiers">Autonomy Levels and Human Oversight Tiers</a>&#39;s irreversible/reversible split is a natural rule set for an action guardrail to encode</strong> — routing irreversible actions through extra checks is one concrete policy this mechanism can enforce automatically.</li>
+<li><strong><a class="wikilink" href="/agents/prompt-injection-in-agent-contexts/" data-topic="agents/prompt-injection-in-agent-contexts">Prompt Injection in Agent Contexts</a>, next in this district, shows exactly why this matters</strong>: an action guardrail still blocks a high-risk action even when the <em>instruction</em> asking for it came from somewhere the agent never should have trusted.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Writing a rule set that only catches today&#39;s known high-risk patterns.</strong> Like a text classifier, an action guardrail is only as good as its rule set — a new destructive action phrased differently from anything in the rules passes through unchecked.</li>
+<li><strong>Relying on an action guardrail alone, with no scope limits underneath it.</strong> A guardrail is a second layer, not a replacement for the first one; <a class="wikilink" href="/agents/excessive-agency-and-scope-limits/" data-topic="agents/excessive-agency-and-scope-limits">Excessive Agency and Scope Limits</a> removing an unneeded tool entirely is a stronger guarantee than hoping every risky call through it gets caught.</li>
+<li><strong>Assuming structured-parameter matching means zero false positives.</strong> A rule like &quot;block anything containing DROP TABLE&quot; can also block a legitimate, reviewed migration script — exact matching removes ambiguity about whether a rule fired, not about whether the rule itself is well-calibrated.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why can an action guardrail check with exact matching where a text guardrail needs a probabilistic score?</summary>
+A proposed action has structured parameters (a table name, a function call, a dollar amount) that either match a rule or don't, unlike free-form text, which has no fixed structure to match against and has to be scored for how risky it sounds.
+</details>
+
+<details><summary>2. In the worked example, why do exactly 2 of the 6 actions get blocked?</summary>
+Only the table-drop and the wire-transfer call match the high-risk pattern set used by the guardrail; the other four actions (a read query, a routine update, a search, and sending an email) don't match any rule in that set.
+</details>
+
+<details><summary>3. Why isn't an action guardrail alone a complete safety solution?</summary>
+It only catches actions matching its existing rule set — a destructive action phrased in a way the rules don't anticipate passes through unchecked, which is why it's paired with scope limits that remove unneeded capabilities entirely rather than relying only on catching misuse after the fact.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Action guardrail:</strong> a check that matches a proposed action&#39;s structured parameters against a policy before it executes.</li>
+<li><strong>High-risk pattern:</strong> a rule identifying action parameters (a command, a table, an amount) that should be blocked or flagged.</li>
+<li><strong>Structured parameters:</strong> the specific, checkable fields of a proposed action, as opposed to unstructured free text.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/guardrails-and-deployment-time-safety-filters/" data-topic="llms/guardrails-and-deployment-time-safety-filters">Guardrails and Deployment-Time Safety Filters</a> · <a class="wikilink" href="/agents/excessive-agency-and-scope-limits/" data-topic="agents/excessive-agency-and-scope-limits">Excessive Agency and Scope Limits</a> · <a class="wikilink" href="/agents/prompt-injection-in-agent-contexts/" data-topic="agents/prompt-injection-in-agent-contexts">Prompt Injection in Agent Contexts</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/guardrails-for-agent-actions">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/prompt-injection-in-agent-contexts/"><small>Read next</small><b>Prompt Injection in Agent Contexts</b><p>A chatbot tricked by hidden text into saying something it shouldn&#39;t is embarrassing.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/guardrails-and-deployment-time-safety-filters/"><b>Guardrails and Deployment-Time Safety Filters</b><p>Alignment training shapes what a model tends to do on its own, but a deployed product rarely relies on that alone.</p></a><a class="rc-card" href="/agents/tool-result-verification/"><b>Tool Result Verification</b><p>A weather tool call that returns no exception isn&#39;t the same as a weather tool call that actually returned a usable result.</p></a><a class="rc-card" href="/agents/autonomy-levels-and-human-oversight-tiers/"><b>Autonomy Levels and Human Oversight Tiers</b><p>An agent that must stop and ask before every single action is safe but slow; an agent that never asks is fast but unwatched.</p></a><a class="rc-card" href="/agents/prompt-injection-in-agent-contexts/"><b>Prompt Injection in Agent Contexts</b><p>A chatbot tricked by hidden text into saying something it shouldn&#39;t is embarrassing.</p></a><a class="rc-card" href="/agents/excessive-agency-and-scope-limits/"><b>Excessive Agency and Scope Limits</b><p>An agent built to summarize an inbox only needs to read email.</p></a><a class="rc-card" href="/agents/verifier-guided-agent-loops/"><b>Verifier-Guided Agent Loops</b><p>An agent that runs six actions in sequence, one of which is subtly wrong, finds out it failed only once all six are done — by which point the bad action has already fed into whatever came after it.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/excessive-agency-and-scope-limits/">← Previous: Excessive Agency and Scope Limits</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

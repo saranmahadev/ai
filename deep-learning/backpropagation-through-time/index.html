@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backpropagation Through Time — AI Base</title>
+<meta name="description" content="Training an RNN means unrolling it across every time step into one long chain — h₀ → h₁ → h₂ → … → h_T — and running ordinary backpropagation over that whole chain.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/backpropagation-through-time/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Backpropagation Through Time — AI Base">
+<meta property="og:description" content="Training an RNN means unrolling it across every time step into one long chain — h₀ → h₁ → h₂ → … → h_T — and running ordinary backpropagation over that whole chain.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/backpropagation-through-time/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Backpropagation Through Time","item":"https://ai.saranmahadev.in/deep-learning/backpropagation-through-time/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Backpropagation Through Time","description":"Training an RNN means unrolling it across every time step into one long chain — h₀ → h₁ → h₂ → … → h_T — and running ordinary backpropagation over that whole chain.","url":"https://ai.saranmahadev.in/deep-learning/backpropagation-through-time/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why is backpropagation through a recurrent network given its own name, \"backpropagation through time\"?","acceptedAnswer":{"@type":"Answer","text":"Because the network is unrolled across time steps into a deep graph where the same weights are reused at every step, and gradients for those shared weights must be summed across all the steps they appeared in."}},{"@type":"Question","name":"In the worked example, why did the gradient reaching h₁ shrink to about a fifth of its size after only two steps?","acceptedAnswer":{"@type":"Answer","text":"Each step multiplies the gradient by a factor around 0.34–0.61 (the recurrent weight times the local tanh derivative), and these factors compound multiplicatively."}},{"@type":"Question","name":"What is one practical fix commonly paired with BPTT to handle exploding gradients?","acceptedAnswer":{"@type":"Answer","text":"Gradient clipping, applied to the total gradient before the weight update."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Sequence Models</p>
+        <h1 class="doc-title">Backpropagation Through Time</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cf7sioibg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cf7sioipl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cf7sioibg)"/>
+  <circle cx="172" cy="342" r="161" fill="#ffb6b6" opacity="0.48"/><circle cx="705" cy="307" r="66" fill="#8a546c" opacity="0.51"/><circle cx="995" cy="66" r="184" fill="#ffb89d" opacity="0.22"/><circle cx="389" cy="387" r="102" fill="#8a546c" opacity="0.41"/><circle cx="1144" cy="96" r="190" fill="#ffe6e6" opacity="0.58"/><circle cx="475" cy="1" r="64" fill="#ffb6b6" opacity="0.40"/>
+  <path d="M0,420 L0,321 L30,318 L60,315 L90,312 L120,310 L150,308 L180,307 L210,306 L240,306 L270,306 L300,307 L330,308 L360,310 L390,312 L420,314 L450,317 L480,321 L510,324 L540,327 L570,331 L600,334 L630,337 L660,340 L690,343 L720,345 L750,347 L780,348 L810,349 L840,350 L870,349 L900,349 L930,347 L960,346 L990,343 L1020,341 L1050,338 L1080,335 L1110,331 L1140,328 L1170,324 L1200,321 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,373 L30,377 L60,381 L90,385 L120,388 L150,390 L180,392 L210,394 L240,394 L270,393 L300,392 L330,390 L360,387 L390,384 L420,380 L450,376 L480,373 L510,369 L540,366 L570,364 L600,363 L630,362 L660,362 L690,363 L720,365 L750,368 L780,371 L810,375 L840,378 L870,382 L900,386 L930,389 L960,391 L990,393 L1020,394 L1050,394 L1080,393 L1110,391 L1140,389 L1170,386 L1200,383 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="781" cy="241" rx="219" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(20.5 781 241)"/><ellipse cx="781" cy="241" rx="303" ry="85" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(26.5 781 241)"/>
+  <circle cx="781" cy="241" r="86" fill="url(#cf7sioipl)"/>
+  <circle cx="1044" cy="190" r="13" fill="#ffffff" opacity="0.75"/><circle cx="833" cy="115" r="16" fill="#ffffff" opacity="0.61"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Training an RNN means unrolling it across every time step into one long chain — <code>h₀ → h₁ → h₂ → … → h_T</code> — and running ordinary <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">backpropagation</a> over that whole chain. Because the <em>same</em> weight matrix is reused at every step, this has a name of its own: <strong>backpropagation through time (BPTT)</strong>.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a> and <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;The same weights appear at every time step — how does backprop handle training a weight that was used T different times?&quot; By unrolling the recurrence into a plain, deep computational graph and summing up that weight&#39;s gradient contribution from every one of its T uses.</p>
+<h2 id="intuition-one-long-chain-not-t-separate-networks">Intuition: one long chain, not T separate networks</h2>
+<p>Unrolled, an RNN run over <code>T</code> steps looks exactly like a <code>T</code>-layer feedforward network — except every &quot;layer&quot; uses the identical weight matrix <code>Wₕ</code>. Backprop computes a gradient for <code>Wₕ</code> at each of those <code>T</code> positions separately, as if they were different matrices, then adds all <code>T</code> gradients together into one total update for the single real <code>Wₕ</code>.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">∂L/∂h_t      depends on ∂L/∂h_(t+1) through the same recurrence, chained backward
+
+∂h_t/∂h_(t-1) ≈ Wₕ · tanh&#39;(z_t)        one &quot;per-step factor&quot;, same shape as in
+                                        Vanishing and Exploding Gradients
+
+gradient reaching h_1 from h_T  ≈  (product of T-1 such per-step factors)
+</code></pre>
+<p>Exactly as in a plain deep network, that product of per-step factors can shrink toward zero (vanish) or grow unbounded (explode) as the sequence gets longer — only here, &quot;depth&quot; means sequence length.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Using the hidden states from <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">the RNN worked example</a> (<code>h₁ = 0.537</code>, <code>h₂ = 0.4851</code>, <code>h₃ = 0.7565</code>, <code>Wₕ = 0.8</code>), the per-step factors for carrying a gradient backward:</p>
+<pre><code class="language-text">factor (h₃ → h₂) = Wₕ · (1 − h₃²) = 0.8 × (1 − 0.5723) = 0.8 × 0.4277 ≈ 0.3422
+factor (h₂ → h₁) = Wₕ · (1 − h₂²) = 0.8 × (1 − 0.2353) = 0.8 × 0.7647 ≈ 0.6117
+
+gradient reaching h₁ from h₃ ≈ 0.3422 × 0.6117 ≈ 0.2093
+</code></pre>
+<p>Even over just two steps, the gradient reaching the earliest hidden state has already shrunk to about a fifth of its starting size. Over a long sequence of hundreds of steps, this same compounding is why plain RNNs struggle to learn dependencies that span a long distance.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="bptt-chain" data-title="A gradient's path back through time"><p class="bench-fallback"><strong>Interactive bench: A gradient's path back through time.</strong> Step backward through an unrolled RNN, multiplying the per-step factor at each hidden state and watching how much of the original gradient has survived by the time it reaches the earliest step.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step backward through the default short sequence and watch the surviving gradient shrink at each step.</li>
+<li>Lengthen the sequence and see how much further it shrinks by the time it reaches the start.</li>
+<li>Compare what happens when the per-step factor happens to be close to 1 versus well below it.</li>
+</ol>
+<p><strong>What you should notice:</strong> this is the exact same multiplicative compounding behind <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">vanishing gradients</a> in a deep feedforward network — only here, each &quot;layer&quot; is one time step, and the number of layers is the sequence length.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Gradient clipping</strong> (see <a class="wikilink" href="/deep-learning/gradient-clipping/" data-topic="deep-learning/gradient-clipping">Gradient Clipping</a>) is used almost by default when training RNNs with BPTT, since occasional exploding gradients are common over long sequences.</li>
+<li><strong><a class="wikilink" href="/deep-learning/long-short-term-memory/" data-topic="deep-learning/long-short-term-memory">LSTM</a> and <a class="wikilink" href="/deep-learning/gated-recurrent-units/" data-topic="deep-learning/gated-recurrent-units">GRU</a></strong> exist specifically to give BPTT a more stable path back through time than a plain RNN&#39;s tanh-based recurrence provides.</li>
+<li><strong>Truncated BPTT</strong>, a practical variant not covered in depth here, only backpropagates a limited number of steps instead of the entire sequence, trading some accuracy for speed and memory.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Thinking of the T unrolled copies as separate, independently trainable weights.</strong> They are the same matrix; their gradients are summed, not averaged or kept apart.</li>
+<li><strong>Forgetting BPTT&#39;s compute and memory cost grows with sequence length.</strong> Every unrolled step must be kept around until the backward pass visits it.</li>
+<li><strong>Expecting a plain RNN to reliably learn very long-range dependencies.</strong> The vanishing-gradient compounding shown here is exactly why it often cannot, without the gating mechanisms in LSTM or GRU.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why is backpropagation through a recurrent network given its own name, "backpropagation through time"?</summary>
+Because the network is unrolled across time steps into a deep graph where the same weights are reused at every step, and gradients for those shared weights must be summed across all the steps they appeared in.
+</details>
+
+<details><summary>2. In the worked example, why did the gradient reaching h₁ shrink to about a fifth of its size after only two steps?</summary>
+Each step multiplies the gradient by a factor around 0.34–0.61 (the recurrent weight times the local tanh derivative), and these factors compound multiplicatively.
+</details>
+
+<details><summary>3. What is one practical fix commonly paired with BPTT to handle exploding gradients?</summary>
+Gradient clipping, applied to the total gradient before the weight update.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Backpropagation through time (BPTT):</strong> backpropagation applied to an RNN unrolled across its time steps.</li>
+<li><strong>Unrolling:</strong> representing a recurrence over T steps as an explicit T-layer computational graph.</li>
+<li><strong>Truncated BPTT:</strong> backpropagating through only a limited number of recent steps instead of the whole sequence.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a> · <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a> · <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> · <a class="wikilink" href="/deep-learning/gradient-clipping/" data-topic="deep-learning/gradient-clipping">Gradient Clipping</a> · <a class="wikilink" href="/deep-learning/long-short-term-memory/" data-topic="deep-learning/long-short-term-memory">Long Short-Term Memory</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/backpropagation-through-time">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/long-short-term-memory/"><small>Read next</small><b>Long Short-Term Memory</b><p>A plain RNN&#39;s hidden state is rewritten from scratch at every step — nothing is deliberately preserved.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/backpropagation-by-hand/"><b>Backpropagation by Hand</b><p>Backpropagation computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs.</p></a><a class="rc-card" href="/deep-learning/recurrent-neural-networks/"><b>Recurrent Neural Networks</b><p>A recurrent neural network (RNN) reads a sequence one element at a time, carrying a hidden state forward from each step to the next — a running summary of everything seen so far.</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/gradient-clipping/"><b>Gradient Clipping</b><p>Even with good initialization, one unlucky batch can produce a gradient with an enormous spike in one direction — enough to blow up the weights in a single step.</p></a><a class="rc-card" href="/deep-learning/long-short-term-memory/"><b>Long Short-Term Memory</b><p>A plain RNN&#39;s hidden state is rewritten from scratch at every step — nothing is deliberately preserved.</p></a><a class="rc-card" href="/deep-learning/gated-recurrent-units/"><b>Gated Recurrent Units</b><p>A GRU (gated recurrent unit) keeps LSTM&#39;s core idea — gates deciding what to keep and what to update — but drops the separate cell state and merges LSTM&#39;s forget and input gates into a single…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/recurrent-neural-networks/">← Previous: Recurrent Neural Networks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

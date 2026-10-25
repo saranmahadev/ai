@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attention as Dot Products — AI Base</title>
+<meta name="description" content="Attention lets a model decide, for each item, which other items to focus on.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/attention-as-dot-products/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Attention as Dot Products — AI Base">
+<meta property="og:description" content="Attention lets a model decide, for each item, which other items to focus on.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/attention-as-dot-products/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Attention as Dot Products","item":"https://ai.saranmahadev.in/math/attention-as-dot-products/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Attention as Dot Products","description":"Attention lets a model decide, for each item, which other items to focus on.","url":"https://ai.saranmahadev.in/math/attention-as-dot-products/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do attention weights add up to 1?","acceptedAnswer":{"@type":"Answer","text":"Yes; they come from a softmax."}},{"@type":"Question","name":"With scores (0, 0, 0), what are the weights?","acceptedAnswer":{"@type":"Answer","text":"Equal: (1/3, 1/3, 1/3)."}},{"@type":"Question","name":"If the sequence length doubles, how does the attention cost change?","acceptedAnswer":{"@type":"Answer","text":"It roughly quadruples."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Math in AI</p>
+        <h1 class="doc-title">Attention as Dot Products</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1pm28fobg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1pm28fopl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1pm28fobg)"/>
+  <circle cx="843" cy="60" r="109" fill="#68599a" opacity="0.29"/><circle cx="787" cy="206" r="151" fill="#ddbecb" opacity="0.43"/><circle cx="1088" cy="357" r="151" fill="#68599a" opacity="0.55"/><circle cx="824" cy="31" r="91" fill="#ddbecb" opacity="0.59"/><circle cx="703" cy="251" r="203" fill="#eee9fd" opacity="0.59"/><circle cx="535" cy="142" r="137" fill="#eee9fd" opacity="0.52"/>
+  <path d="M0,420 L0,311 L30,307 L60,306 L90,306 L120,309 L150,314 L180,319 L210,326 L240,333 L270,339 L300,345 L330,348 L360,350 L390,349 L420,346 L450,342 L480,336 L510,329 L540,322 L570,316 L600,311 L630,307 L660,306 L690,306 L720,309 L750,314 L780,319 L810,326 L840,333 L870,339 L900,345 L930,348 L960,350 L990,349 L1020,346 L1050,342 L1080,336 L1110,329 L1140,322 L1170,316 L1200,311 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,364 L60,365 L90,366 L120,368 L150,370 L180,373 L210,375 L240,378 L270,380 L300,383 L330,385 L360,387 L390,389 L420,391 L450,392 L480,393 L510,394 L540,394 L570,394 L600,393 L630,392 L660,391 L690,390 L720,388 L750,386 L780,383 L810,381 L840,378 L870,376 L900,373 L930,371 L960,369 L990,367 L1020,365 L1050,364 L1080,363 L1110,362 L1140,362 L1170,362 L1200,363 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="708" cy="168" rx="205" ry="57" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(18.0 708 168)"/><ellipse cx="708" cy="168" rx="283" ry="79" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(24.0 708 168)"/>
+  <circle cx="708" cy="168" r="80" fill="url(#c1pm28fopl)"/>
+  <circle cx="820" cy="56" r="15" fill="#ffffff" opacity="0.84"/><circle cx="573" cy="265" r="13" fill="#ffffff" opacity="0.81"/><circle cx="781" cy="65" r="8" fill="#ffffff" opacity="0.60"/><circle cx="933" cy="75" r="17" fill="#ffffff" opacity="0.88"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Attention</strong> lets a model decide, for each item, which other items to focus on. It is three ideas from this planet in a row: compare a <strong>query</strong> with every <strong>key</strong> using dot products, turn the scores into weights with softmax, and take a weighted average of the <strong>values</strong>. It is the core of the Transformer.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a>, <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a>, <a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a> and <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;When processing this word, which other words matter, and by how much?&quot; In &quot;the animal didn&#39;t cross the street because it was tired&quot;, the word &quot;it&quot; should draw on &quot;animal&quot;, not &quot;street&quot;. Attention computes that weighting.</p>
+<h2 id="the-three-steps">The three steps</h2>
+<p>Each item produces a <strong>query</strong> <code>q</code>, a <strong>key</strong> <code>k</code> and a <strong>value</strong> <code>v</code> (all vectors). For one query and <code>n</code> keys:</p>
+<pre><code class="language-text">1. scores   sᵢ = (q · kᵢ) / √d            dot-product similarity, scaled by √(dimension d)
+2. weights  wᵢ = softmax(s)ᵢ               positive, sum to 1
+3. output   o  = Σ wᵢ · vᵢ                 a weighted average of the values
+</code></pre>
+<p>The <code>1/√d</code> keeps scores from growing with the dimension, which would make the softmax too sharp (see <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a>). Stacking all queries into a matrix gives the compact formula <code>softmax(Q Kᵀ / √d) V</code>: two matrix products and a softmax.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Dimension <code>d = 2</code>. Query <code>q = (1, 0)</code>. Three keys, with values equal to the keys: <code>k₁ = v₁ = (1, 0)</code>, <code>k₂ = v₂ = (0, 1)</code>, <code>k₃ = v₃ = (1, 1)</code>.</p>
+<pre><code class="language-text">scores  = ( q·k₁, q·k₂, q·k₃ ) / √2 = ( 1, 0, 1 ) / 1.414 = ( 0.707, 0, 0.707 )
+softmax: e^ = ( 2.028, 1, 2.028 ), sum = 5.056  →  weights ( 0.401, 0.198, 0.401 )
+output  = 0.401·(1,0) + 0.198·(0,1) + 0.401·(1,1) = ( 0.802, 0.599 )
+</code></pre>
+<p>The query points along the first axis, so it attends most to the keys that share that direction (<code>k₁</code> and <code>k₃</code>) and least to <code>k₂</code>. The output is pulled toward those values.</p>
+<h2 id="the-cost">The cost</h2>
+<p>Every item attends to every other, so <code>n</code> items need <code>n²</code> score computations. That quadratic growth in the sequence length is why long contexts are expensive (see <a class="wikilink" href="/math/growth-rates-and-big-o/" data-topic="math/growth-rates-and-big-o">Growth Rates and Big-O</a>): doubling the length quadruples the attention cost.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="attention-heatmap" data-title="A query attends to five keys"><p class="bench-fallback"><strong>Interactive bench: A query attends to five keys.</strong> A query vector set by an angle and a length attends to five keys around a half-circle; bars show the attention weights, arrows show the query and the weighted output, and a switch turns the one over root d scaling on or off.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Rotate the query and see which keys get the most weight.</li>
+<li>Lengthen the query and watch the attention sharpen.</li>
+<li>Turn the scaling off and on.</li>
+<li>Find a query that attends almost equally to all keys.</li>
+</ol>
+<p><strong>What you should notice:</strong> keys pointing the way the query points get the most weight, longer vectors give sharper attention, and the output is the weighted average of the values.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Transformers</strong> apply attention in every layer (see <a class="wikilink" href="/transformers/transformers/" data-topic="transformers/transformers">Transformers</a>).</li>
+<li><strong>Large language models</strong> use it to relate each token to earlier ones.</li>
+<li><strong>Image and audio models</strong> use it to relate patches or frames.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting the <code>√d</code> scaling.</strong></li>
+<li><strong>Reading attention weights as a full explanation</strong> of the model&#39;s behaviour.</li>
+<li><strong>Ignoring the quadratic cost</strong> on long sequences.</li>
+<li><strong>Confusing keys and values.</strong> Keys are matched against; values are averaged.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Do attention weights add up to 1?</summary>
+Yes; they come from a softmax.
+</details>
+
+<details><summary>2. With scores (0, 0, 0), what are the weights?</summary>
+Equal: (1/3, 1/3, 1/3).
+</details>
+
+<details><summary>3. If the sequence length doubles, how does the attention cost change?</summary>
+It roughly quadruples.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Query / key / value:</strong> the three vectors each item produces.</li>
+<li><strong>Attention weights:</strong> the softmax of scaled query–key dot products.</li>
+<li><strong>Scaled dot-product attention:</strong> <code>softmax(Q Kᵀ / √d) V</code>.</li>
+<li><strong>Self-attention:</strong> items in a sequence attending to one another.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a> · <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a> · <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a> · <a class="wikilink" href="/transformers/transformers/" data-topic="transformers/transformers">Transformers</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/attention-as-dot-products">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/bias-variance-and-the-whole-picture/"><small>Read next</small><b>Bias, Variance and the Whole Picture</b><p>A model&#39;s error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/dot-product/"><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/math/expectation/"><b>Expectation</b><p>The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.</p></a><a class="rc-card" href="/math/matrix-multiplication/"><b>Matrix Multiplication</b><p>Matrix multiplication combines two matrices into one that does both transformations in a row. Each entry of the result is a dot product of a row of the first matrix with a column of the second.</p></a><a class="rc-card" href="/math/growth-rates-and-big-o/"><b>Growth Rates and Big-O</b><p>Big-O notation describes how the cost of an algorithm (time or memory) grows as the input size n grows, ignoring constant factors.</p></a><a class="rc-card" href="/transformers/transformers/"><b>Transformers</b><p>Every modern transformer is built from one mechanism — the scaled dot-product attention already derived on Math and Deep Learning — wrapped in the same handful of engineering decisions, over and…</p></a></div></section>
+        <p class="doc-prev"><a href="/math/embeddings-and-similarity-search/">← Previous: Embeddings and Similarity Search</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modern Hopfield Networks and Attention — AI Base</title>
+<meta name="description" content="The classical Hopfield network&#39;s capacity problem was fixed in 2020 by a surprising result: generalize the energy function to continuous states, and the resulting update rule turns out to be…">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/modern-hopfield-networks-and-attention/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Modern Hopfield Networks and Attention — AI Base">
+<meta property="og:description" content="The classical Hopfield network&#39;s capacity problem was fixed in 2020 by a surprising result: generalize the energy function to continuous states, and the resulting update rule turns out to be…">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/modern-hopfield-networks-and-attention/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Modern Hopfield Networks and Attention","item":"https://ai.saranmahadev.in/neural-networks/modern-hopfield-networks-and-attention/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Modern Hopfield Networks and Attention","description":"The classical Hopfield network's capacity problem was fixed in 2020 by a surprising result: generalize the energy function to continuous states, and the resulting update rule turns out to be…","url":"https://ai.saranmahadev.in/neural-networks/modern-hopfield-networks-and-attention/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What was shown to be mathematically equivalent to the attention mechanism used in transformers?","acceptedAnswer":{"@type":"Answer","text":"The update rule of a continuous, generalized Hopfield network, with stored patterns acting as keys and values and the current state acting as a query."}},{"@type":"Question","name":"In the worked example, what determined how sharply the update concentrated on the nearest pattern?","acceptedAnswer":{"@type":"Answer","text":"The inverse-temperature parameter β — a higher β sharpens the softmax weighting toward a near-one-hot result on the closest pattern."}},{"@type":"Question","name":"What capacity limitation does the continuous Hopfield network fix relative to the classical one?","acceptedAnswer":{"@type":"Answer","text":"The classical network's roughly `0.138 N` pattern capacity; the continuous version's capacity scales exponentially rather than linearly in the pattern dimension."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Neural Networks in Practice</p>
+        <h1 class="doc-title">Modern Hopfield Networks and Attention</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1yofdq9bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="c1yofdq9pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1yofdq9bg)"/>
+  <circle cx="860" cy="358" r="204" fill="#ace3b3" opacity="0.56"/><circle cx="753" cy="77" r="106" fill="#50736a" opacity="0.45"/><circle cx="706" cy="320" r="92" fill="#c5d79b" opacity="0.28"/><circle cx="448" cy="413" r="95" fill="#ace3b3" opacity="0.49"/><circle cx="556" cy="3" r="132" fill="#50736a" opacity="0.24"/><circle cx="716" cy="142" r="202" fill="#e3f6e5" opacity="0.23"/><circle cx="539" cy="345" r="97" fill="#50736a" opacity="0.54"/>
+  <path d="M0,420 L0,339 L30,343 L60,346 L90,348 L120,349 L150,349 L180,348 L210,346 L240,342 L270,338 L300,333 L330,328 L360,323 L390,318 L420,314 L450,310 L480,307 L510,306 L540,306 L570,307 L600,309 L630,312 L660,316 L690,320 L720,325 L750,331 L780,336 L810,340 L840,344 L870,347 L900,349 L930,350 L960,349 L990,347 L1020,345 L1050,341 L1080,336 L1110,331 L1140,326 L1170,321 L1200,316 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,370 L30,375 L60,380 L90,384 L120,389 L150,392 L180,394 L210,394 L240,393 L270,390 L300,386 L330,381 L360,376 L390,372 L420,367 L450,364 L480,362 L510,362 L540,363 L570,366 L600,370 L630,375 L660,380 L690,384 L720,389 L750,392 L780,394 L810,394 L840,393 L870,390 L900,386 L930,381 L960,376 L990,372 L1020,367 L1050,364 L1080,362 L1110,362 L1140,363 L1170,366 L1200,370 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="833" cy="282" rx="176" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(2.6 833 282)"/><ellipse cx="833" cy="282" rx="243" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(8.6 833 282)"/>
+  <circle cx="833" cy="282" r="69" fill="url(#c1yofdq9pl)"/>
+  <circle cx="641" cy="219" r="15" fill="#ffffff" opacity="0.77"/><circle cx="784" cy="191" r="9" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/neural-networks/content-addressable-memory-and-capacity/" data-topic="neural-networks/content-addressable-memory-and-capacity">The classical Hopfield network&#39;s capacity problem</a> was fixed in 2020 by a surprising result: generalize the energy function to continuous states, and the resulting update rule turns out to be <em>exactly</em> the attention mechanism that powers every transformer on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>. Associative memory and attention were, mathematically, the same idea all along.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/content-addressable-memory-and-capacity/" data-topic="neural-networks/content-addressable-memory-and-capacity">Content-Addressable Memory and Capacity</a>, <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Attention</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Is there any deep mathematical connection between old-fashioned associative memory and the attention mechanism built decades later for entirely different reasons?&quot; Yes: Ramsauer et al. (2020) showed that generalizing a Hopfield network&#39;s energy function from binary <code>±1</code> states to continuous vectors produces an update rule that is, term for term, the scaled dot-product attention formula — with stored patterns playing the role of keys and values, and the current state playing the role of a query.</p>
+<h2 id="intuition">Intuition</h2>
+<p><a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">The classical network</a> updates one binary unit at a time, moving toward the single closest stored pattern, and could only reliably hold about <code>0.138 N</code> patterns before interference took over. The modern, continuous version instead updates the <em>entire state vector at once</em>, by taking a <strong>softmax-weighted average</strong> of every stored pattern — weighted by how similar each one is to the current state. Turn the &quot;temperature&quot; of that softmax down (a high <code>β</code>), and the weighting sharpens until it points almost entirely at the single nearest pattern, recovering something close to the classical network&#39;s behaviour — but now with capacity that scales exponentially in the pattern dimension, not linearly.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>For stored patterns <code>p₁, …, pₖ</code> and current state <code>ξ</code>:</p>
+<pre><code class="language-text">ξ_new = Σᵢ softmax(β · pᵢ · ξ)ᵢ · pᵢ
+</code></pre>
+<p>Compare this directly to scaled dot-product attention, with a single query <code>q</code>, keys <code>K = [p₁, …, pₖ]</code>, and values <code>V = [p₁, …, pₖ]</code> (the same patterns playing both roles):</p>
+<pre><code class="language-text">attention(q, K, V) = Σᵢ softmax(q · Kᵢ)ᵢ · Vᵢ
+</code></pre>
+<p>These are the same computation. <code>β</code> plays the role attention&#39;s scaling factor <code>1/√d</code> plays — both control how sharply the softmax weighting concentrates on the best-matching entries.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three stored patterns, the standard basis vectors <code>p₁=[1,0,0], p₂=[0,1,0], p₃=[0,0,1]</code>, and a query state <code>ξ = [0.9, 0.1, 0.0]</code> — close to <code>p₁</code> but not identical to it — with <code>β = 4</code>:</p>
+<pre><code class="language-text">similarity scores:  β·(p₁·ξ, p₂·ξ, p₃·ξ) = 4×(0.9, 0.1, 0.0) = (3.6, 0.4, 0.0)
+softmax weights:    (0.936, 0.038, 0.026)
+
+ξ_new = 0.936·p₁ + 0.038·p₂ + 0.026·p₃ = [0.936, 0.038, 0.026]
+</code></pre>
+<p>The update pulled the state almost entirely toward <code>p₁</code>, the closest stored pattern — the same behaviour the classical network would show, but produced by a softmax-weighted average over <em>all</em> the patterns at once, exactly the formula a single query&#39;s attention output would compute over the same three &quot;keys and values.&quot;</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="modern-hopfield" data-title="One formula, two names"><p class="bench-fallback"><strong>Interactive bench: One formula, two names.</strong> Set a query vector near one of three stored patterns and a temperature parameter, and watch the modern Hopfield update converge toward the nearest pattern as the temperature sharpens — computed by exactly the attention formula.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move the query closer to one stored pattern and watch that pattern&#39;s softmax weight dominate.</li>
+<li>Increase β and watch the weighting sharpen toward a near-one-hot result, closer to the classical network&#39;s all-or-nothing recall.</li>
+<li>Decrease β toward zero and watch the update blur into something close to a plain average of all stored patterns.</li>
+</ol>
+<p><strong>What you should notice:</strong> nothing about the computation changes between calling this &quot;associative memory recall&quot; and calling it &quot;attention&quot; — only the names given to the quantities involved (stored patterns vs. keys/values, query state vs. query) differ.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It retroactively explains why attention works so well</strong>: it is performing exactly the kind of content-addressable, similarity-weighted retrieval that <a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">Hopfield networks</a> were designed for, just applied as a one-shot computation inside a trained network rather than an iterative settling process.</li>
+<li><strong>It resolves <a class="wikilink" href="/neural-networks/content-addressable-memory-and-capacity/" data-topic="neural-networks/content-addressable-memory-and-capacity">the classical capacity problem</a></strong>: the continuous, exponential-capacity version can store far more patterns reliably than the <code>0.138 N</code> limit of the binary network.</li>
+<li><strong>It is a genuine, cited mathematical result</strong>, not just an analogy — &quot;Hopfield Networks is All You Need&quot; (Ramsauer et al., 2020) derives the equivalence formally from a generalized energy function.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating this as a loose metaphor.</strong> The equivalence is an exact mathematical result for the specific energy function the paper proposes, not just a surface-level resemblance between two formulas.</li>
+<li><strong>Forgetting attention is normally a one-shot computation.</strong> A classical Hopfield network iterates until it settles; attention, as used in transformers, typically applies this update once per layer rather than repeating it to convergence.</li>
+<li><strong>Assuming every attention variant is literally performing associative memory.</strong> The equivalence is for the standard scaled dot-product formula; many practical variants add extra structure (multiple heads, masking, position information) beyond the basic Hopfield-equivalent core.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What was shown to be mathematically equivalent to the attention mechanism used in transformers?</summary>
+The update rule of a continuous, generalized Hopfield network, with stored patterns acting as keys and values and the current state acting as a query.
+</details>
+
+<details><summary>2. In the worked example, what determined how sharply the update concentrated on the nearest pattern?</summary>
+The inverse-temperature parameter β — a higher β sharpens the softmax weighting toward a near-one-hot result on the closest pattern.
+</details>
+
+<details><summary>3. What capacity limitation does the continuous Hopfield network fix relative to the classical one?</summary>
+The classical network's roughly `0.138 N` pattern capacity; the continuous version's capacity scales exponentially rather than linearly in the pattern dimension.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Continuous (modern) Hopfield network:</strong> a generalization of the classical network to continuous states, whose update rule is mathematically equivalent to attention.</li>
+<li><strong>Inverse temperature (β):</strong> a parameter sharpening or softening the softmax weighting over stored patterns, playing the same role as attention&#39;s scaling factor.</li>
+<li><strong>Query, key, value:</strong> the roles the current state and the stored patterns play in the shared formula, using attention&#39;s standard vocabulary.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">Hopfield Networks</a> · <a class="wikilink" href="/neural-networks/content-addressable-memory-and-capacity/" data-topic="neural-networks/content-addressable-memory-and-capacity">Content-Addressable Memory and Capacity</a> · <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Attention</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/modern-hopfield-networks-and-attention">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/choosing-classical-vs-modern-approaches/"><small>Read next</small><b>Choosing Classical vs Modern Approaches</b><p>Every topic on this planet solves a real problem, but almost none of them is anyone&#39;s first choice for a brand-new project today.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/content-addressable-memory-and-capacity/"><b>Content-Addressable Memory and Capacity</b><p>A Hopfield network&#39;s memory is not free: pack in too many patterns and recall starts failing, often all at once rather than gradually.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/deep-learning/encoder-decoder-architectures-with-attention/"><b>Encoder-Decoder Architectures with Attention</b><p>The plain seq2seq decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts.</p></a><a class="rc-card" href="/neural-networks/hopfield-networks/"><b>Hopfield Networks</b><p>A Hopfield network stores a set of patterns not as a lookup table but as the stable points of a dynamical system: give it a noisy or partial version of a pattern, let every unit repeatedly update…</p></a><a class="rc-card" href="/neural-networks/why-this-planet-looks-different-from-deep-learning/"><b>Why This Planet Looks Different from Deep Learning</b><p>Every architecture on the Deep Learning planet is trained the same fundamental way: compute an error against a known target, and adjust every weight to reduce it, by backpropagation.</p></a><a class="rc-card" href="/neural-networks/neural-networks-in-practice/"><b>Neural Networks in Practice</b><p>The last stretch of the road asks what any of this is still for: where these classical ideas resurface, unannounced, inside modern deep learning; when to actually reach for one today; and a…</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/neural-networks-in-practice/">← Previous: Neural Networks in Practice</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Goal Decomposition into Subtasks — AI Base</title>
+<meta name="description" content="Told to &quot;launch the product,&quot; an agent that lists tasks in whatever order they occur to it can end up trying to launch before the thing it&#39;s launching has been tested — the launch step depends on…">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/goal-decomposition-into-subtasks/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Goal Decomposition into Subtasks — AI Base">
+<meta property="og:description" content="Told to &quot;launch the product,&quot; an agent that lists tasks in whatever order they occur to it can end up trying to launch before the thing it&#39;s launching has been tested — the launch step depends on…">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/goal-decomposition-into-subtasks/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Goal Decomposition into Subtasks","item":"https://ai.saranmahadev.in/agents/goal-decomposition-into-subtasks/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Goal Decomposition into Subtasks","description":"Told to \"launch the product,\" an agent that lists tasks in whatever order they occur to it can end up trying to launch before the thing it's launching has been tested — the launch step depends on…","url":"https://ai.saranmahadev.in/agents/goal-decomposition-into-subtasks/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the flat order in the worked example have exactly 3 violations?","acceptedAnswer":{"@type":"Answer","text":"\"Launch\" is listed first but needs integration test to finish before it; \"integration test\" is listed before both \"build backend\" and \"build frontend\" have finished — each of those three mismatches between a task's position and its prerequisites' position counts as one violation."}},{"@type":"Question","name":"What guarantees the decomposed order has zero violations?","acceptedAnswer":{"@type":"Answer","text":"It's constructed as a topological order of the dependency graph — by definition, a topological order places every task after all of its prerequisites, so no violation can occur."}},{"@type":"Question","name":"What does it mean if a goal's subtask graph has no valid topological order?","acceptedAnswer":{"@type":"Answer","text":"There's a cycle of dependencies (some subtask directly or indirectly depends on itself through others), which makes the goal as decomposed unsatisfiable — the subtasks or their stated dependencies need to be reconsidered."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Planning and Task Decomposition</p>
+        <h1 class="doc-title">Goal Decomposition into Subtasks</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1qi7buvbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1qi7buvpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1qi7buvbg)"/>
+  <circle cx="67" cy="403" r="158" fill="#dcbef5" opacity="0.28"/><circle cx="272" cy="82" r="84" fill="#725998" opacity="0.52"/><circle cx="277" cy="168" r="89" fill="#725998" opacity="0.32"/><circle cx="84" cy="407" r="230" fill="#dcbef5" opacity="0.37"/><circle cx="608" cy="258" r="150" fill="#dcbef5" opacity="0.59"/><circle cx="619" cy="253" r="101" fill="#725998" opacity="0.24"/><circle cx="751" cy="175" r="135" fill="#725998" opacity="0.34"/>
+  <path d="M0,420 L0,333 L30,330 L60,326 L90,323 L120,320 L150,317 L180,314 L210,311 L240,309 L270,307 L300,306 L330,306 L360,306 L390,306 L420,307 L450,309 L480,311 L510,313 L540,316 L570,319 L600,322 L630,325 L660,329 L690,332 L720,336 L750,339 L780,342 L810,344 L840,346 L870,348 L900,349 L930,349 L960,350 L990,349 L1020,348 L1050,347 L1080,345 L1110,342 L1140,340 L1170,336 L1200,333 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,393 L60,394 L90,394 L120,394 L150,393 L180,392 L210,391 L240,389 L270,387 L300,385 L330,382 L360,380 L390,377 L420,375 L450,373 L480,370 L510,368 L540,366 L570,365 L600,364 L630,363 L660,362 L690,362 L720,362 L750,363 L780,364 L810,365 L840,367 L870,369 L900,371 L930,374 L960,376 L990,379 L1020,381 L1050,383 L1080,386 L1110,388 L1140,390 L1170,391 L1200,392 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="814" cy="211" rx="185" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(10.0 814 211)"/><ellipse cx="814" cy="211" rx="255" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(16.0 814 211)"/>
+  <circle cx="814" cy="211" r="72" fill="url(#c1qi7buvpl)"/>
+  <circle cx="1063" cy="226" r="10" fill="#ffffff" opacity="0.76"/><circle cx="1067" cy="161" r="14" fill="#ffffff" opacity="0.62"/><circle cx="678" cy="157" r="12" fill="#ffffff" opacity="0.82"/><circle cx="520" cy="238" r="17" fill="#ffffff" opacity="0.89"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Told to &quot;launch the product,&quot; an agent that lists tasks in whatever order they occur to it can end up trying to launch before the thing it&#39;s launching has been tested — the launch step depends on a step that hasn&#39;t run yet. Goal decomposition breaks a goal into subtasks and their dependencies explicitly, so the order the agent actually runs them in respects what each one needs to already be true.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/anatomy-of-an-agent-architecture/" data-topic="agents/anatomy-of-an-agent-architecture">Anatomy of an Agent Architecture</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does an agent turn one big goal into an ordered sequence of smaller steps it can actually execute?&quot; Goal decomposition identifies a goal&#39;s subtasks and the dependencies between them — which subtasks need which others to have finished first — then orders the subtasks so that every dependency is satisfied before the subtask that needs it runs. A <strong>flat</strong> ordering, one that lists subtasks without working out their dependencies, can easily put a subtask before something it secretly depends on.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Told to &quot;throw a dinner party,&quot; listing tasks in the order they come to mind — clean the house, buy ingredients, cook the meal, invite guests — puts cooking before buying ingredients and invites after the cooking&#39;s already supposed to start. Working out what depends on what first (buy ingredients → cook → invite guests with a time that&#39;s actually realistic) gives an order that could actually be followed.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">subtask graph:  task → [its prerequisite tasks]
+dependency violation:  a task appears in the order before one of its own prerequisites has completed
+decomposed order = a topological order of the subtask graph (zero violations, by construction)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A &quot;launch the product&quot; goal with five subtasks and real dependencies between them, ordered two ways:</p>
+<pre><code class="language-text">dependencies:
+  write spec            → (none)
+  build backend         → needs: write spec
+  build frontend        → needs: write spec
+  integration test      → needs: build backend, build frontend
+  launch                → needs: integration test
+
+flat order (as first mentioned): launch, write spec, integration test, build backend, build frontend
+  → 3 dependency violations
+
+decomposed order (topological):  write spec, build backend, build frontend, integration test, launch
+  → 0 dependency violations
+</code></pre>
+<p>The flat order isn&#39;t a careless mistake — it&#39;s what naturally happens when subtasks are listed without first asking what each one needs. Working out the dependency graph and sorting by it is what guarantees zero violations, not luck.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="goal-decomposition-order" data-title="Decomposed order, or a flat guess"><p class="bench-fallback"><strong>Interactive bench: Decomposed order, or a flat guess.</strong> Compare a flat task order against one derived from the actual dependencies between subtasks.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the flat order and find each place a task is marked as needing something that hasn&#39;t happened yet.</li>
+<li>Switch to the decomposed order and confirm every task&#39;s prerequisites are already checked off.</li>
+<li>Imagine adding a sixth subtask that only &quot;launch&quot; depends on — where would decomposition place it?</li>
+</ol>
+<p><strong>What you should notice:</strong> the violations in the flat order aren&#39;t about which task is more &quot;important&quot; — they&#39;re purely about whether a task&#39;s prerequisites happened before it, which is exactly what a dependency graph makes explicit and a flat list doesn&#39;t.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong><a class="wikilink" href="/agents/orchestrator-workers/" data-topic="agents/orchestrator-workers">Orchestrator-Workers</a>&#39;s decomposition step is this same mechanism</strong>, applied specifically to splitting a task into pieces that can be assigned to parallel workers — the dependency-tracking half of this topic is what decides whether those pieces can safely run in parallel at all.</li>
+<li><strong><a class="wikilink" href="/agents/plan-and-execute-agents/" data-topic="agents/plan-and-execute-agents">Plan-and-Execute Agents</a> uses decomposition&#39;s output as its plan</strong>: once subtasks are ordered, a plan-and-execute agent executes them one at a time.</li>
+<li><strong>A subtask graph with no valid topological order (a cycle) means the goal as stated is unsatisfiable</strong> — two subtasks that each depend on the other can never both run first.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Listing subtasks in the order they&#39;re mentioned rather than the order their dependencies require.</strong> The worked example shows this isn&#39;t a minor risk — three of five tasks violate a real dependency when ordered this way.</li>
+<li><strong>Assuming decomposition alone guarantees correctness.</strong> Decomposition only guarantees the <em>order</em> respects dependencies; it doesn&#39;t guarantee the subtasks list itself is complete, or that each subtask is actually achievable.</li>
+<li><strong>Treating every subtask as independent by default.</strong> The actual dependency structure needs to be worked out, not assumed away — assuming independence is exactly what the flat order implicitly does.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does the flat order in the worked example have exactly 3 violations?</summary>
+"Launch" is listed first but needs integration test to finish before it; "integration test" is listed before both "build backend" and "build frontend" have finished — each of those three mismatches between a task's position and its prerequisites' position counts as one violation.
+</details>
+
+<details><summary>2. What guarantees the decomposed order has zero violations?</summary>
+It's constructed as a topological order of the dependency graph — by definition, a topological order places every task after all of its prerequisites, so no violation can occur.
+</details>
+
+<details><summary>3. What does it mean if a goal's subtask graph has no valid topological order?</summary>
+There's a cycle of dependencies (some subtask directly or indirectly depends on itself through others), which makes the goal as decomposed unsatisfiable — the subtasks or their stated dependencies need to be reconsidered.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Goal decomposition:</strong> breaking a goal into subtasks and the dependencies between them.</li>
+<li><strong>Dependency violation:</strong> a subtask appearing in an order before one of its own prerequisites has completed.</li>
+<li><strong>Topological order:</strong> an ordering of a dependency graph&#39;s tasks that places every task after all of its prerequisites.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/anatomy-of-an-agent-architecture/" data-topic="agents/anatomy-of-an-agent-architecture">Anatomy of an Agent Architecture</a> · <a class="wikilink" href="/agents/orchestrator-workers/" data-topic="agents/orchestrator-workers">Orchestrator-Workers</a> · <a class="wikilink" href="/agents/plan-and-execute-agents/" data-topic="agents/plan-and-execute-agents">Plan-and-Execute Agents</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/goal-decomposition-into-subtasks">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/plan-and-execute-agents/"><small>Read next</small><b>Plan-and-Execute Agents</b><p>Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/anatomy-of-an-agent-architecture/"><b>Anatomy of an Agent Architecture</b><p>Every agent architecture this road covers, however different the application, is built from the same five named pieces: something that perceives the current request, something that remembers…</p></a><a class="rc-card" href="/agents/orchestrator-workers/"><b>Orchestrator-Workers</b><p>A single call asked to analyze a market, project financials, and assess risk, all in one response, often trails off after the first section or two — there was only so much the model would produce…</p></a><a class="rc-card" href="/agents/plan-and-execute-agents/"><b>Plan-and-Execute Agents</b><p>Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop.</p></a><a class="rc-card" href="/agents/from-a-single-call-to-a-loop/"><b>From a Single Call to a Loop</b><p>A single call to a model follows exactly one link in a chain of facts, no matter how the chain continues from there.</p></a><a class="rc-card" href="/agents/planning-and-task-decomposition/"><b>Planning and Task Decomposition</b><p>A genuinely open-ended goal can&#39;t be handled by a fixed workflow written in advance — nobody knows the steps until the agent starts looking at the specific situation.</p></a><a class="rc-card" href="/agents/hierarchical-task-planning/"><b>Hierarchical Task Planning</b><p>&quot;Organize a conference&quot; eventually breaks down into 36 individual primitive actions — booking a specific venue, sending a specific email, printing a specific badge.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/planning-and-task-decomposition/">← Previous: Planning and Task Decomposition</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encoder-Decoder Architectures with Attention — AI Base</title>
+<meta name="description" content="The plain seq2seq decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/encoder-decoder-architectures-with-attention/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Encoder-Decoder Architectures with Attention — AI Base">
+<meta property="og:description" content="The plain seq2seq decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/encoder-decoder-architectures-with-attention/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Encoder-Decoder Architectures with Attention","item":"https://ai.saranmahadev.in/deep-learning/encoder-decoder-architectures-with-attention/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Encoder-Decoder Architectures with Attention","description":"The plain seq2seq decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts.","url":"https://ai.saranmahadev.in/deep-learning/encoder-decoder-architectures-with-attention/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the key limitation of plain seq2seq that attention fixes here?","acceptedAnswer":{"@type":"Answer","text":"The decoder only ever sees the input through one fixed context vector, computed once; attention lets it look back at every encoder state, freshly, at every step."}},{"@type":"Question","name":"In the worked example, why does the third encoder step get the highest attention weight?","acceptedAnswer":{"@type":"Answer","text":"Its hidden state (0.7565) has the highest dot product with the current decoder hidden state (0.6), making it the most relevant under this scoring rule."}},{"@type":"Question","name":"Does the context vector stay the same across all decoding steps?","acceptedAnswer":{"@type":"Answer","text":"No — it is recomputed at every step, using the decoder's current hidden state at that step, so it can (and usually does) change from step to step."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Attention and the Road to Transformers</p>
+        <h1 class="doc-title">Encoder-Decoder Architectures with Attention</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c18pmiv0bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c18pmiv0pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c18pmiv0bg)"/>
+  <circle cx="967" cy="379" r="159" fill="#ffb6b6" opacity="0.50"/><circle cx="383" cy="87" r="96" fill="#ffe6e6" opacity="0.43"/><circle cx="728" cy="236" r="166" fill="#ffb89d" opacity="0.50"/><circle cx="760" cy="51" r="144" fill="#ffe6e6" opacity="0.39"/><circle cx="764" cy="215" r="229" fill="#ffe6e6" opacity="0.41"/><circle cx="297" cy="124" r="130" fill="#8a546c" opacity="0.37"/><circle cx="847" cy="253" r="177" fill="#ffb6b6" opacity="0.47"/>
+  <path d="M0,420 L0,315 L30,321 L60,328 L90,335 L120,341 L150,346 L180,349 L210,350 L240,348 L270,345 L300,340 L330,334 L360,327 L390,320 L420,314 L450,310 L480,307 L510,306 L540,307 L570,310 L600,315 L630,321 L660,328 L690,335 L720,341 L750,346 L780,349 L810,350 L840,348 L870,345 L900,340 L930,334 L960,327 L990,320 L1020,314 L1050,310 L1080,307 L1110,306 L1140,307 L1170,310 L1200,315 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,388 L30,383 L60,379 L90,374 L120,369 L150,365 L180,363 L210,362 L240,363 L270,365 L300,368 L330,373 L360,377 L390,382 L420,387 L450,391 L480,393 L510,394 L540,393 L570,391 L600,388 L630,383 L660,379 L690,374 L720,369 L750,365 L780,363 L810,362 L840,363 L870,365 L900,368 L930,373 L960,377 L990,382 L1020,387 L1050,391 L1080,393 L1110,394 L1140,393 L1170,391 L1200,388 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="667" cy="278" rx="191" ry="53" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-8.5 667 278)"/><ellipse cx="667" cy="278" rx="263" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-2.5 667 278)"/>
+  <circle cx="667" cy="278" r="75" fill="url(#c18pmiv0pl)"/>
+  <circle cx="463" cy="289" r="10" fill="#ffffff" opacity="0.62"/><circle cx="488" cy="239" r="9" fill="#ffffff" opacity="0.73"/><circle cx="776" cy="354" r="18" fill="#ffffff" opacity="0.88"/><circle cx="643" cy="191" r="8" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The plain <a class="wikilink" href="/deep-learning/sequence-to-sequence-models/" data-topic="deep-learning/sequence-to-sequence-models">seq2seq</a> decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts. Adding <strong>attention</strong> lets the decoder instead look back at <em>every</em> encoder hidden state, fresh, at <em>every</em> decoding step — computing a new, step-specific context each time, weighted by relevance to whatever the decoder currently needs.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/sequence-to-sequence-models/" data-topic="deep-learning/sequence-to-sequence-models">Sequence-to-Sequence Models</a> and <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;A single fixed context vector is a serious bottleneck for long inputs — can the decoder instead consult the whole input, as needed, at every step?&quot; Yes: score every encoder hidden state against the decoder&#39;s current state, turn those scores into weights, and let the decoder&#39;s context at this step be the weighted combination — different every step, instead of fixed once at the start.</p>
+<h2 id="intuition-looking-back-at-your-notes-as-you-write-not-just-once-before-you-start">Intuition: looking back at your notes as you write, not just once before you start</h2>
+<p>Plain seq2seq is like reading a document once, writing down one summary, and then writing a translation using only that summary — never looking back at the original. Attention-augmented decoding is like keeping the whole document open on the desk, and at each word you write, glancing back at whichever parts of the document are currently most relevant — different parts for different words.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">at decoder step t, with decoder hidden state h_d:
+
+score_i = h_d · h_enc_i                      (relevance of encoder step i, right now)
+weights  = softmax(score₁, …, score_n)
+context_t = Σᵢ weightᵢ · h_enc_i              (a fresh, step-specific context vector)
+</code></pre>
+<p>The decoder then uses <code>context_t</code> (often concatenated with its own hidden state) to produce this step&#39;s output — a different blend of the input for every single decoding step, instead of seq2seq&#39;s one fixed context used throughout.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Encoder hidden states from reading <code>(1, 0, 1)</code> (reusing <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">the earlier RNN example</a>): <code>h_enc = (0.5370, 0.4851, 0.7565)</code>. At a decoder step where the decoder&#39;s current hidden state is <code>h_d = 0.6</code>:</p>
+<pre><code class="language-text">scores = h_d · h_enc = (0.6×0.5370, 0.6×0.4851, 0.6×0.7565) = (0.3222, 0.2911, 0.4539)
+
+weights = softmax(scores) = (0.3215, 0.3117, 0.3668)
+
+context = 0.3215×0.5370 + 0.3117×0.4851 + 0.3668×0.7565 ≈ 0.6013
+</code></pre>
+<p>The third encoder step gets the most weight (0.3668) because its hidden state is most aligned with the decoder&#39;s current state — and at a <em>different</em> decoder step, with a different <code>h_d</code>, these weights (and the resulting context) would come out differently, something plain seq2seq&#39;s single fixed context could never provide.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="attn-decode" data-title="A fresh context at every decoding step"><p class="bench-fallback"><strong>Interactive bench: A fresh context at every decoding step.</strong> Three encoder hidden states and an adjustable decoder hidden state. See the attention scores, weights and the resulting context vector update as the decoder state changes.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move the decoder hidden state slider and watch which encoder step gets the most attention weight shift.</li>
+<li>Set the decoder hidden state to match one encoder step closely and watch that step dominate the weights.</li>
+<li>Compare the resulting context to what a fixed, seq2seq-style single context (say, just the final encoder state) would have given instead.</li>
+</ol>
+<p><strong>What you should notice:</strong> the attention weights — and therefore the context — depend on the decoder&#39;s <em>current</em> state, not just on the encoder&#39;s output; the same encoder states produce a different context at every decoding step.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Bahdanau and Luong attention</strong>, introduced not long after plain seq2seq, were the first widely-used versions of exactly this idea, dramatically improving translation quality on long sentences.</li>
+<li><strong>This per-step attention mechanism is the direct ancestor of the self-attention used throughout transformers</strong> (see <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>) — the same scoring-and-weighting idea, generalised to attend within a sequence as well as across encoder and decoder.</li>
+<li><strong>Attention weights are often visualised directly</strong> (as a grid of input versus output positions) to show, qualitatively, which input words a model attended to when producing each output word.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming attention replaces the encoder and decoder RNNs entirely.</strong> In this architecture, attention is an addition to the RNN-based encoder-decoder, not (yet) a replacement for the recurrence itself — that step comes with <a class="wikilink" href="/deep-learning/why-attention-replaced-recurrence/" data-topic="deep-learning/why-attention-replaced-recurrence">Why Attention Replaced Recurrence</a>.</li>
+<li><strong>Confusing this per-step, cross-sequence attention with the self-attention inside a transformer block.</strong> Both use the same scoring mechanism, but this version attends from the decoder <em>to</em> the encoder, not within one sequence.</li>
+<li><strong>Thinking the context vector is computed once and reused.</strong> It is recomputed fresh at every single decoding step.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the key limitation of plain seq2seq that attention fixes here?</summary>
+The decoder only ever sees the input through one fixed context vector, computed once; attention lets it look back at every encoder state, freshly, at every step.
+</details>
+
+<details><summary>2. In the worked example, why does the third encoder step get the highest attention weight?</summary>
+Its hidden state (0.7565) has the highest dot product with the current decoder hidden state (0.6), making it the most relevant under this scoring rule.
+</details>
+
+<details><summary>3. Does the context vector stay the same across all decoding steps?</summary>
+No — it is recomputed at every step, using the decoder's current hidden state at that step, so it can (and usually does) change from step to step.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Attention score:</strong> a measure of relevance between a decoder state and an encoder state.</li>
+<li><strong>Context vector (attention-based):</strong> the weighted combination of encoder states, recomputed at every decoding step.</li>
+<li><strong>Alignment:</strong> which input positions a model attended to most strongly when producing a given output.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/sequence-to-sequence-models/" data-topic="deep-learning/sequence-to-sequence-models">Sequence-to-Sequence Models</a> · <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a> · <a class="wikilink" href="/deep-learning/why-attention-replaced-recurrence/" data-topic="deep-learning/why-attention-replaced-recurrence">Why Attention Replaced Recurrence</a> · <a class="wikilink" href="/deep-learning/positional-encoding/" data-topic="deep-learning/positional-encoding">Positional Encoding</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/encoder-decoder-architectures-with-attention">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/why-attention-replaced-recurrence/"><small>Read next</small><b>Why Attention Replaced Recurrence</b><p>Attention started as an addition to RNN-based encoder-decoders.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/sequence-to-sequence-models/"><b>Sequence-to-Sequence Models</b><p>A sequence-to-sequence (seq2seq) model turns one sequence into another, possibly of a different length — a sentence in one language into a sentence in another, say.</p></a><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/deep-learning/recurrent-neural-networks/"><b>Recurrent Neural Networks</b><p>A recurrent neural network (RNN) reads a sequence one element at a time, carrying a hidden state forward from each step to the next — a running summary of everything seen so far.</p></a><a class="rc-card" href="/deep-learning/why-attention-replaced-recurrence/"><b>Why Attention Replaced Recurrence</b><p>Attention started as an addition to RNN-based encoder-decoders.</p></a><a class="rc-card" href="/deep-learning/positional-encoding/"><b>Positional Encoding</b><p>Attention computes a weighted average over a set of values — and an average has no idea what order its inputs came in.</p></a><a class="rc-card" href="/deep-learning/layer-normalization/"><b>Layer Normalization</b><p>Layer normalization computes exactly the same mean-and-variance normalization as batch normalization — but across a single example&#39;s own features, instead of across the batch.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/positional-encoding/">← Previous: Positional Encoding</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

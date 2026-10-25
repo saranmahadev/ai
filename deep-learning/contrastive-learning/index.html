@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contrastive Learning — AI Base</title>
+<meta name="description" content="Self-Supervised Learning can invent a pretext task besides &quot;fill in the missing piece.&quot; Contrastive learning instead asks: given an anchor and several candidates, which one is really just another…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/contrastive-learning/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Contrastive Learning — AI Base">
+<meta property="og:description" content="Self-Supervised Learning can invent a pretext task besides &quot;fill in the missing piece.&quot; Contrastive learning instead asks: given an anchor and several candidates, which one is really just another…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/contrastive-learning/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Contrastive Learning","item":"https://ai.saranmahadev.in/deep-learning/contrastive-learning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Contrastive Learning","description":"Self-Supervised Learning can invent a pretext task besides \"fill in the missing piece.\" Contrastive learning instead asks: given an anchor and several candidates, which one is really just another…","url":"https://ai.saranmahadev.in/deep-learning/contrastive-learning/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes a pair \"positive\" in contrastive learning, typically?","acceptedAnswer":{"@type":"Answer","text":"Both members come from the same original source (such as two different augmented views of the same image), generated automatically with no human labelling."}},{"@type":"Question","name":"What does lowering the temperature τ do to the softmax probabilities?","acceptedAnswer":{"@type":"Answer","text":"It sharpens them, concentrating probability more heavily on whichever candidate has the highest similarity score."}},{"@type":"Question","name":"In the worked example, why is the loss low even though negative₂'s score isn't very negative?","acceptedAnswer":{"@type":"Answer","text":"The positive's score (1.988) is still comfortably the highest, so it captures the large majority of the softmax probability regardless of how the negatives compare to each other."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Representation Learning</p>
+        <h1 class="doc-title">Contrastive Learning</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1sld523bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1sld523pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1sld523bg)"/>
+  <circle cx="1184" cy="335" r="172" fill="#ffe6e6" opacity="0.23"/><circle cx="381" cy="224" r="77" fill="#ffb89d" opacity="0.59"/><circle cx="89" cy="215" r="170" fill="#ffb89d" opacity="0.23"/><circle cx="135" cy="143" r="220" fill="#8a546c" opacity="0.25"/><circle cx="237" cy="133" r="111" fill="#ffb6b6" opacity="0.45"/><circle cx="729" cy="365" r="127" fill="#ffb89d" opacity="0.49"/><circle cx="781" cy="365" r="131" fill="#8a546c" opacity="0.54"/>
+  <path d="M0,420 L0,330 L30,336 L60,342 L90,346 L120,349 L150,350 L180,348 L210,344 L240,339 L270,333 L300,326 L330,319 L360,313 L390,309 L420,306 L450,306 L480,307 L510,311 L540,316 L570,323 L600,330 L630,336 L660,342 L690,346 L720,349 L750,350 L780,348 L810,344 L840,339 L870,333 L900,326 L930,319 L960,313 L990,309 L1020,306 L1050,306 L1080,307 L1110,311 L1140,316 L1170,323 L1200,330 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,377 L30,374 L60,370 L90,367 L120,365 L150,363 L180,362 L210,362 L240,363 L270,365 L300,367 L330,370 L360,374 L390,378 L420,381 L450,385 L480,388 L510,391 L540,393 L570,394 L600,394 L630,393 L660,392 L690,390 L720,387 L750,383 L780,380 L810,376 L840,372 L870,369 L900,366 L930,364 L960,363 L990,362 L1020,362 L1050,364 L1080,366 L1110,368 L1140,371 L1170,375 L1200,379 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="847" cy="285" rx="173" ry="48" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(22.6 847 285)"/><ellipse cx="847" cy="285" rx="239" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(28.6 847 285)"/>
+  <circle cx="847" cy="285" r="68" fill="url(#c1sld523pl)"/>
+  <circle cx="824" cy="198" r="10" fill="#ffffff" opacity="0.74"/><circle cx="960" cy="206" r="13" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/deep-learning/self-supervised-learning/" data-topic="deep-learning/self-supervised-learning">Self-Supervised Learning</a> can invent a pretext task besides &quot;fill in the missing piece.&quot; <strong>Contrastive learning</strong> instead asks: given an <strong>anchor</strong> and several candidates, which one is really just another view of the same thing? Train embeddings to pull a true matching pair close together and push everything else apart, and the resulting geometry tends to capture real similarity structure — with no labels at all.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/self-supervised-learning/" data-topic="deep-learning/self-supervised-learning">Self-Supervised Learning</a> and <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Masked prediction isn&#39;t the only way to learn without labels — can a model instead learn directly from &#39;these two things are related, this other thing isn&#39;t&#39;?&quot; Yes: generate related pairs automatically (two different augmented crops of the same photo, say), treat everything else in a batch as unrelated, and train embeddings to reflect exactly that structure.</p>
+<h2 id="intuition-a-lineup-not-a-fill-in-the-blank">Intuition: a lineup, not a fill-in-the-blank</h2>
+<p>Instead of hiding part of an input and guessing it, contrastive learning sets up a lineup: here is an anchor, here is its true match (a different crop, or augmentation, of the <em>same</em> underlying image), and here are several decoys (crops from <em>other</em> images). The model&#39;s job is to pick the true match out of the lineup — and it can only get consistently good at that by learning an embedding space where genuinely related things really do sit close together.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">anchor a, positive p (same source as a), negatives n₁, …, n_k (different sources)
+
+similarity(x, y) = cosine similarity of their embeddings
+score_i = similarity(a, candidate_i) / τ        (τ = temperature, a scaling constant)
+
+P(positive | anchor) = softmax over all candidates&#39; scores, read off at the positive&#39;s position
+loss = −log P(positive | anchor)                (InfoNCE loss, in essence)
+</code></pre>
+<p>A lower temperature <code>τ</code> makes the softmax sharper — it punishes a near-miss on the positive more heavily, pushing training harder toward separating the true match from everything else.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>2D (unit-normalized) embeddings: anchor <code>a</code>, a positive <code>p</code> (meant to represent another view of the same source), and three negatives, with temperature <code>τ = 0.5</code>:</p>
+<pre><code class="language-text">cosine similarity, divided by τ:    positive = 1.988     negative₁ = −2.000
+                                     negative₂ = 0.000     negative₃ = −1.414
+
+softmax →  P(positive) = 0.8411,  P(neg₁) = 0.0156,  P(neg₂) = 0.1152,  P(neg₃) = 0.0280
+
+contrastive loss = −log(0.8411) ≈ 0.173
+</code></pre>
+<p>The positive, being genuinely close to the anchor, gets the overwhelming majority of the probability (84%) — and the loss is small precisely because the model is already doing a good job distinguishing it from the three negatives. A model whose embeddings didn&#39;t yet separate the positive from the negatives well would show a much higher loss here.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="contrastive-lineup" data-title="Picking the true match out of a lineup"><p class="bench-fallback"><strong>Interactive bench: Picking the true match out of a lineup.</strong> An anchor, a positive and several negative embeddings in 2D. Move any point and watch the similarity scores, softmax probabilities and the resulting contrastive loss update.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move the positive closer to the anchor and watch the loss fall.</li>
+<li>Move one negative very close to the anchor instead and watch the loss rise, even with the positive unchanged.</li>
+<li>Lower the temperature and see how much more sharply the probabilities concentrate on whichever candidate is closest.</li>
+</ol>
+<p><strong>What you should notice:</strong> the loss cares about <em>relative</em> closeness, not absolute distance — a positive that is close to the anchor but has a negative almost as close still produces a meaningfully higher loss than a positive that clearly stands out.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>SimCLR and similar vision methods</strong> generate positive pairs by applying two different random augmentations (crop, colour jitter, flip) to the same image, treating every other image in the batch as a negative.</li>
+<li><strong>CLIP-style models</strong> apply the same contrastive principle across <em>different modalities</em> — pulling an image and its matching caption&#39;s embeddings together, pushing mismatched image-caption pairs apart.</li>
+<li><strong>The choice of negatives matters a great deal in practice</strong>: &quot;hard&quot; negatives (similar but genuinely different) teach the model more than negatives that were already obviously dissimilar.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting the loss is relative, not absolute.</strong> A positive&#39;s raw similarity score alone doesn&#39;t determine the loss; how it compares to the negatives in the same batch does.</li>
+<li><strong>Using too small a batch (too few negatives).</strong> Contrastive learning&#39;s negatives come from the batch itself in most implementations, so a small batch gives a much easier (and less informative) task.</li>
+<li><strong>Picking an augmentation strategy that destroys the thing you actually want the model to learn.</strong> If augmentations are too aggressive, &quot;same source&quot; pairs may no longer share the structure you intended to teach.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What makes a pair "positive" in contrastive learning, typically?</summary>
+Both members come from the same original source (such as two different augmented views of the same image), generated automatically with no human labelling.
+</details>
+
+<details><summary>2. What does lowering the temperature τ do to the softmax probabilities?</summary>
+It sharpens them, concentrating probability more heavily on whichever candidate has the highest similarity score.
+</details>
+
+<details><summary>3. In the worked example, why is the loss low even though negative₂'s score isn't very negative?</summary>
+The positive's score (1.988) is still comfortably the highest, so it captures the large majority of the softmax probability regardless of how the negatives compare to each other.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Anchor, positive, negative:</strong> the reference example, its true match, and unrelated distractor examples in a contrastive training batch.</li>
+<li><strong>Temperature (τ):</strong> a scaling constant controlling how sharply the softmax concentrates on the closest candidate.</li>
+<li><strong>InfoNCE loss:</strong> the standard contrastive loss, a softmax cross-entropy over similarity scores against one true positive.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/self-supervised-learning/" data-topic="deep-learning/self-supervised-learning">Self-Supervised Learning</a> · <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a> · <a class="wikilink" href="/deep-learning/what-deep-networks-learn/" data-topic="deep-learning/what-deep-networks-learn">What Deep Networks Learn</a> · <a class="wikilink" href="/deep-learning/data-augmentation/" data-topic="deep-learning/data-augmentation">Data Augmentation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/contrastive-learning">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/generative-deep-learning/"><small>Read next</small><b>Generative Deep Learning</b><p>Generative vs Discriminative Models on the Machine Learning planet draws the line; this district walks the deep architectures that learn to generate rather than only recognise, from a bottleneck…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/self-supervised-learning/"><b>Self-Supervised Learning</b><p>Autoencoders showed one way to train without human labels: reconstruct the input itself.</p></a><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/deep-learning/what-deep-networks-learn/"><b>What Deep Networks Learn</b><p>Looking at what individual units respond to across a whole trained network reveals a consistent pattern: early layers learn simple, generic detectors (edges, colours, basic textures); later layers…</p></a><a class="rc-card" href="/deep-learning/data-augmentation/"><b>Data Augmentation</b><p>Data augmentation manufactures new, harmless variations of existing training examples — a flipped image, a rotated one, a sentence with a synonym swapped in — so the network sees more of the input…</p></a><a class="rc-card" href="/deep-learning/representation-learning/"><b>Representation Learning</b><p>A trained network&#39;s real product is not just its predictions but the representations its hidden layers learned along the way.</p></a><a class="rc-card" href="/deep-learning/deep-learning-across-modalities/"><b>Deep Learning Across Modalities</b><p>Vision, speech and language look like completely different fields from the outside — but underneath, the same handful of architectural ideas (convolution, recurrence, attention, embeddings) keep…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/self-supervised-learning/">← Previous: Self-Supervised Learning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

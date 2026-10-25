@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bi-Encoders and Dense Embeddings — AI Base</title>
+<meta name="description" content="Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered on the Math planet.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/bi-encoders-and-dense-embeddings/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Bi-Encoders and Dense Embeddings — AI Base">
+<meta property="og:description" content="Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered on the Math planet.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/bi-encoders-and-dense-embeddings/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Bi-Encoders and Dense Embeddings","item":"https://ai.saranmahadev.in/rag/bi-encoders-and-dense-embeddings/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bi-Encoders and Dense Embeddings","description":"Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered on the Math planet.","url":"https://ai.saranmahadev.in/rag/bi-encoders-and-dense-embeddings/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can a bi-encoder's document vectors be computed once and reused for every future query?","acceptedAnswer":{"@type":"Answer","text":"Because the query and document are encoded independently — a document's vector doesn't depend on what query will eventually be compared against it, so it never needs to be recomputed."}},{"@type":"Question","name":"In the worked example, why does the cross-encoder's cost grow so much faster than the bi-encoder's as the collection size increases?","acceptedAnswer":{"@type":"Answer","text":"Both costs scale linearly with collection size, but the cross-encoder's per-document cost (a full joint forward pass) is far larger than the bi-encoder's (a single dot product against an already-computed vector), so the same linear growth reaches a much larger total."}},{"@type":"Question","name":"What has to happen to a collection's stored vectors if the embedding model used to produce them is replaced?","acceptedAnswer":{"@type":"Answer","text":"Every document has to be re-encoded and re-indexed with the new model — a bi-encoder's stored vectors are only comparable to queries encoded by that same model."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Embeddings for Retrieval</p>
+        <h1 class="doc-title">Bi-Encoders and Dense Embeddings</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1ads492bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1ads492pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1ads492bg)"/>
+  <circle cx="504" cy="83" r="215" fill="#b7d5be" opacity="0.34"/><circle cx="942" cy="316" r="187" fill="#42718e" opacity="0.52"/><circle cx="1064" cy="359" r="178" fill="#42718e" opacity="0.44"/><circle cx="742" cy="195" r="226" fill="#b7d5be" opacity="0.40"/><circle cx="484" cy="70" r="84" fill="#97e1e6" opacity="0.43"/>
+  <path d="M0,420 L0,313 L30,309 L60,307 L90,306 L120,306 L150,307 L180,309 L210,313 L240,317 L270,322 L300,327 L330,332 L360,337 L390,341 L420,345 L450,348 L480,349 L510,350 L540,349 L570,347 L600,344 L630,340 L660,335 L690,330 L720,325 L750,320 L780,315 L810,311 L840,308 L870,306 L900,306 L930,306 L960,308 L990,310 L1020,314 L1050,318 L1080,323 L1110,329 L1140,334 L1170,338 L1200,343 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,391 L60,388 L90,384 L120,379 L150,374 L180,369 L210,366 L240,363 L270,362 L300,363 L330,365 L360,368 L390,372 L420,377 L450,382 L480,387 L510,390 L540,393 L570,394 L600,393 L630,391 L660,388 L690,384 L720,379 L750,374 L780,369 L810,366 L840,363 L870,362 L900,363 L930,365 L960,368 L990,372 L1020,377 L1050,382 L1080,387 L1110,390 L1140,393 L1170,394 L1200,393 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="886" cy="270" rx="224" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-8.1 886 270)"/><ellipse cx="886" cy="270" rx="310" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-2.1 886 270)"/>
+  <circle cx="886" cy="270" r="88" fill="url(#c1ads492pl)"/>
+  <circle cx="767" cy="142" r="12" fill="#ffffff" opacity="0.90"/><circle cx="1172" cy="205" r="9" fill="#ffffff" opacity="0.73"/><circle cx="767" cy="183" r="19" fill="#ffffff" opacity="0.61"/><circle cx="921" cy="180" r="11" fill="#ffffff" opacity="0.66"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered on the Math planet. A <strong>bi-encoder</strong> is the specific choice of encoding the query and each document <em>independently</em>, so every document&#39;s vector can be computed once, stored, and reused across every future query — the whole reason retrieval over millions of documents can be fast at all.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a>, <a class="wikilink" href="/rag/anatomy-of-a-rag-pipeline/" data-topic="rag/anatomy-of-a-rag-pipeline">Anatomy of a RAG Pipeline</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why does retrieval scale to huge collections when comparing a query to every document directly wouldn&#39;t?&quot; A bi-encoder passes the query through an encoder and each document through the <em>same</em> encoder, separately — &quot;bi&quot; for the two independent passes. Because documents never need to be re-encoded once a query arrives, their vectors can be computed ahead of time, indexed, and compared against any future query with nothing more expensive than a dot product.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Looking up a word in a dictionary works because every entry was alphabetized once, in advance — finding &quot;retrieval&quot; doesn&#39;t require re-sorting the whole dictionary for every lookup. A bi-encoder&#39;s precomputed document vectors are the same idea: the expensive part (encoding) happens once per document, forever, and every query only pays the cheap part (one encode, then fast comparisons).</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">doc_vec  = encode(document)        -- computed once, stored
+query_vec = encode(query)          -- computed per query
+score(query, doc) = cosine_similarity(query_vec, doc_vec)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>One query against three precomputed document vectors, ranked by cosine similarity:</p>
+<pre><code class="language-text">query: &quot;how long do refunds take&quot; → [0.90, 0.10]
+
+&quot;refund timeline&quot;   [0.95, 0.05]  →  similarity 0.9983
+&quot;returns policy&quot;     [0.85, 0.15]  →  similarity 0.9980
+&quot;shipping times&quot;     [0.30, 0.20]  →  similarity 0.8882
+</code></pre>
+<p>The compute cost tells the real story: with a 1,000-document collection, a bi-encoder spends roughly 1 query encode plus 1,000 cheap dot products (about 1,001 cost units). A cross-encoder, which must jointly process the query with <em>each</em> document from scratch, spends roughly 1,000 full forward passes — each far more expensive than a dot product, totaling around 100,000 cost units in this illustration. The gap only widens as the collection grows.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="bi-encoder-ranking" data-title="Precompute the documents once, compare cheaply forever"><p class="bench-fallback"><strong>Interactive bench: Precompute the documents once, compare cheaply forever.</strong> Rank documents by bi-encoder cosine similarity and compare the per-query compute cost against a cross-encoder's.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the ranking — it&#39;s the same cosine-similarity computation from the Math planet, applied to retrieval.</li>
+<li>Slide the collection size up and watch the cost gap between bi-encoder and cross-encoder widen.</li>
+<li>Imagine a collection of a million documents — would re-encoding every one of them for every query still be feasible?</li>
+</ol>
+<p><strong>What you should notice:</strong> the bi-encoder&#39;s cost grows roughly linearly with collection size, driven by cheap dot products; a cross-encoder&#39;s cost grows the same way but driven by expensive joint forward passes — the same shape of growth, at a vastly different constant factor.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong><a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a> exists specifically to store and search the precomputed document vectors a bi-encoder produces.</strong></li>
+<li><strong><a class="wikilink" href="/rag/cross-encoders-and-re-rankers/" data-topic="rag/cross-encoders-and-re-rankers">Cross-Encoders and Re-Rankers</a> covers the more accurate, more expensive alternative</strong> that a bi-encoder&#39;s speed makes practical to apply only to a short, already-narrowed shortlist.</li>
+<li><strong>Multi-vector retrieval (<a class="wikilink" href="/rag/multi-vector-and-late-interaction-retrieval/" data-topic="rag/multi-vector-and-late-interaction-retrieval">Multi-Vector and Late-Interaction Retrieval</a>) is a middle ground</strong>: still precomputed like a bi-encoder, but keeping several vectors per document instead of pooling into one.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a bi-encoder&#39;s precomputed vectors mean zero cost per query.</strong> Encoding the query itself still has a real cost — the savings come from not having to re-encode every <em>document</em> for every query.</li>
+<li><strong>Expecting bi-encoder similarity to always match true relevance exactly.</strong> Encoding the query and document independently is what makes precomputation possible, but it can miss fine-grained interactions a joint encoding would catch — the trade-off <a class="wikilink" href="/rag/cross-encoders-and-re-rankers/" data-topic="rag/cross-encoders-and-re-rankers">Cross-Encoders and Re-Rankers</a> covers next.</li>
+<li><strong>Forgetting that document vectors need re-computing if the embedding model changes.</strong> A bi-encoder&#39;s speed advantage assumes the stored vectors and any new query vector come from the same model — swapping models means re-indexing the whole collection.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why can a bi-encoder's document vectors be computed once and reused for every future query?</summary>
+Because the query and document are encoded independently — a document's vector doesn't depend on what query will eventually be compared against it, so it never needs to be recomputed.
+</details>
+
+<details><summary>2. In the worked example, why does the cross-encoder's cost grow so much faster than the bi-encoder's as the collection size increases?</summary>
+Both costs scale linearly with collection size, but the cross-encoder's per-document cost (a full joint forward pass) is far larger than the bi-encoder's (a single dot product against an already-computed vector), so the same linear growth reaches a much larger total.
+</details>
+
+<details><summary>3. What has to happen to a collection's stored vectors if the embedding model used to produce them is replaced?</summary>
+Every document has to be re-encoded and re-indexed with the new model — a bi-encoder's stored vectors are only comparable to queries encoded by that same model.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Bi-encoder:</strong> an encoder applied independently to the query and to each document, enabling document vectors to be precomputed.</li>
+<li><strong>Dense embedding:</strong> a vector representation (as opposed to a sparse, word-count-based one) produced by an encoder like a bi-encoder.</li>
+<li><strong>Precomputation:</strong> computing and storing document vectors once, ahead of any specific query.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/cross-encoders-and-re-rankers/" data-topic="rag/cross-encoders-and-re-rankers">Cross-Encoders and Re-Rankers</a> · <a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a> · <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/bi-encoders-and-dense-embeddings">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/cross-encoders-and-re-rankers/"><small>Read next</small><b>Cross-Encoders and Re-Rankers</b><p>A bi-encoder&#39;s speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/rag/anatomy-of-a-rag-pipeline/"><b>Anatomy of a RAG Pipeline</b><p>Every retrieval-augmented system, however elaborate, is built from the same handful of stages in the same order: a question comes in, it becomes a vector, that vector finds relevant passages,…</p></a><a class="rc-card" href="/rag/vector-databases-and-index-management/"><b>Vector Databases and Index Management</b><p>An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest?</p></a><a class="rc-card" href="/rag/cross-encoders-and-re-rankers/"><b>Cross-Encoders and Re-Rankers</b><p>A bi-encoder&#39;s speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented.</p></a><a class="rc-card" href="/rag/multi-vector-and-late-interaction-retrieval/"><b>Multi-Vector and Late-Interaction Retrieval</b><p>Pooling every token of a document into one vector means a single, strong, exact match can get diluted by everything else in the document — the more unrelated text surrounds it, the weaker its…</p></a><a class="rc-card" href="/rag/dense-retrieval/"><b>Dense Retrieval</b><p>&quot;Automobile repair&quot; and &quot;car maintenance&quot; share not a single word, yet mean almost the same thing.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/embeddings-for-retrieval/">← Previous: Embeddings for Retrieval</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

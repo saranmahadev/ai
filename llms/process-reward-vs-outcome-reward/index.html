@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Process Reward vs. Outcome Reward — AI Base</title>
+<meta name="description" content="Once a model shows its reasoning steps, a new question opens up: should those steps themselves be rewarded, or only whether the final answer happens to be right?">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/process-reward-vs-outcome-reward/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Process Reward vs. Outcome Reward — AI Base">
+<meta property="og:description" content="Once a model shows its reasoning steps, a new question opens up: should those steps themselves be rewarded, or only whether the final answer happens to be right?">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/process-reward-vs-outcome-reward/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Process Reward vs. Outcome Reward","item":"https://ai.saranmahadev.in/llms/process-reward-vs-outcome-reward/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Process Reward vs. Outcome Reward","description":"Once a model shows its reasoning steps, a new question opens up: should those steps themselves be rewarded, or only whether the final answer happens to be right?","url":"https://ai.saranmahadev.in/llms/process-reward-vs-outcome-reward/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key difference between what outcome reward and process reward each check?","acceptedAnswer":{"@type":"Answer","text":"Outcome reward checks only whether the final answer is correct; process reward checks the validity of every individual intermediate step, regardless of where the chain ultimately ends up."}},{"@type":"Question","name":"In the worked example, why did outcome reward reward a chain that process reward flagged as invalid?","acceptedAnswer":{"@type":"Answer","text":"Two separate arithmetic errors in the chain happened to cancel each other out, producing a final answer that matched the true answer — outcome reward only sees that final match, while process reward caught both individual errors."}},{"@type":"Question","name":"Why is training a process reward model generally harder than training an outcome reward model?","acceptedAnswer":{"@type":"Answer","text":"It requires step-level correctness labels for training data, which are far more expensive and labor-intensive to collect than a single final-answer correctness judgment per example."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Reasoning</p>
+        <h1 class="doc-title">Process Reward vs. Outcome Reward</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cpkdpfpbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="cpkdpfppl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cpkdpfpbg)"/>
+  <circle cx="951" cy="136" r="86" fill="#8a5f5e" opacity="0.38"/><circle cx="602" cy="197" r="63" fill="#ffc38f" opacity="0.27"/><circle cx="496" cy="202" r="82" fill="#ffc38f" opacity="0.31"/><circle cx="370" cy="345" r="75" fill="#ffc7a2" opacity="0.25"/><circle cx="1015" cy="141" r="102" fill="#ffc38f" opacity="0.24"/><circle cx="1038" cy="302" r="132" fill="#8a5f5e" opacity="0.60"/><circle cx="1035" cy="285" r="219" fill="#ffc38f" opacity="0.51"/>
+  <path d="M0,420 L0,348 L30,350 L60,349 L90,348 L120,346 L150,342 L180,338 L210,333 L240,328 L270,323 L300,318 L330,313 L360,310 L390,307 L420,306 L450,306 L480,307 L510,309 L540,312 L570,316 L600,321 L630,326 L660,331 L690,336 L720,340 L750,344 L780,347 L810,349 L840,350 L870,349 L900,347 L930,344 L960,341 L990,336 L1020,331 L1050,326 L1080,321 L1110,316 L1140,312 L1170,309 L1200,307 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,364 L60,366 L90,369 L120,372 L150,376 L180,379 L210,383 L240,387 L270,389 L300,392 L330,393 L360,394 L390,394 L420,393 L450,391 L480,388 L510,385 L540,382 L570,378 L600,374 L630,371 L660,367 L690,365 L720,363 L750,362 L780,362 L810,363 L840,364 L870,367 L900,370 L930,373 L960,377 L990,381 L1020,384 L1050,388 L1080,390 L1110,392 L1140,394 L1170,394 L1200,394 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="760" cy="134" rx="222" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-14.8 760 134)"/><ellipse cx="760" cy="134" rx="307" ry="86" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-8.8 760 134)"/>
+  <circle cx="760" cy="134" r="87" fill="url(#cpkdpfppl)"/>
+  <circle cx="998" cy="105" r="16" fill="#ffffff" opacity="0.63"/><circle cx="1048" cy="168" r="11" fill="#ffffff" opacity="0.85"/><circle cx="889" cy="9" r="9" fill="#ffffff" opacity="0.80"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Once a model shows its reasoning steps, a new question opens up: should those steps themselves be rewarded, or only whether the final answer happens to be right? The difference matters more than it might sound.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/chain-of-thought-prompting/" data-topic="llms/chain-of-thought-prompting">Chain-of-Thought Prompting</a>, <a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Should a reward signal check every reasoning step, or only the final answer?&quot; An <strong>outcome reward</strong> checks only whether the final answer is correct, ignoring everything in between. A <strong>process reward</strong> checks the validity of each intermediate step directly. The gap between them matters precisely because a chain of reasoning can contain genuine errors that happen to cancel out, landing on a correct final answer anyway — outcome reward would reward that chain; process reward would catch the flawed steps inside it.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A teacher grading only the final numerical answer on a multi-step math problem might give full marks to a student whose work contains two separate arithmetic mistakes that happen to cancel each other out — the answer is correct, so outcome-only grading sees nothing wrong. A teacher who checks every line of work would catch both errors, even though the final number was, by coincidence, still right. Only the second kind of grading can tell &quot;got the right answer for the right reasons&quot; apart from &quot;got the right answer by accident.&quot;</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">outcome reward(chain) = correct(final_answer(chain))
+
+process reward(chain) = AND over every step: valid(stepᵢ)
+  (can flag a chain as flawed even when the final answer is correct)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A reasoning chain solving <code>15 + 7 − 3</code>, whose true answer is 19:</p>
+<pre><code class="language-text">step 1: &quot;15 + 7 = 23&quot;   — INVALID (true value: 22)
+step 2: &quot;23 - 3 = 19&quot;   — INVALID (given 23, true value: 20)
+final answer written: 19
+
+outcome reward: final answer 19 matches the true answer 19 → REWARDED
+process reward: both intermediate steps contain arithmetic errors → NOT REWARDED
+</code></pre>
+<p>Two separate arithmetic slips — one in the addition, one in the subtraction — happen to cancel out exactly, producing a final answer that matches the true answer perfectly. Outcome reward, seeing only the final number, rewards this chain in full. Process reward, checking each step&#39;s own arithmetic, correctly identifies that neither step was actually valid.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="process-vs-outcome-reward" data-title="Two wrongs, one accidentally right answer"><p class="bench-fallback"><strong>Interactive bench: Two wrongs, one accidentally right answer.</strong> Reveal a reasoning chain's steps one at a time and compare what outcome reward sees against what process reward catches.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Reveal the first step and check whether its arithmetic is actually correct.</li>
+<li>Reveal the second step and check it against the number it was actually given.</li>
+<li>Compare the final outcome-reward and process-reward verdicts once both steps are visible.</li>
+</ol>
+<p><strong>What you should notice:</strong> outcome reward&#39;s verdict depends only on the very last number written down; process reward&#39;s verdict depends on checking every single step against what came before it, regardless of where the chain ends up.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Process reward models (PRMs) have been shown to catch training signal that outcome reward models (ORMs) miss entirely</strong>, specifically on multi-step math and logic tasks where canceling errors like this worked example&#39;s are a real, documented failure mode.</li>
+<li><strong>Training a process reward model is harder than training an outcome reward model</strong>: it needs step-level correctness labels, which are far more expensive to collect than a single final-answer judgment per example.</li>
+<li><strong><a class="wikilink" href="/llms/tree-of-thought-and-search-based-reasoning/" data-topic="llms/tree-of-thought-and-search-based-reasoning">search-based reasoning methods</a> often use process-level signals to decide which partial reasoning paths are worth continuing to explore</strong>, rather than waiting until a full chain is finished to find out if it was any good.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a correct final answer means the reasoning that produced it was sound.</strong> The worked example is built specifically to show this isn&#39;t guaranteed — canceling errors are rare but real, and more common on harder, more error-prone problems.</li>
+<li><strong>Assuming process reward is strictly superior in every case.</strong> It requires much more expensive step-level labels to train, and for many simpler tasks, outcome reward alone is a perfectly adequate and far cheaper signal.</li>
+<li><strong>Forgetting that one canceling-errors example doesn&#39;t mean most correct chains are flawed.</strong> It&#39;s a real but comparatively rare failure mode that process reward is specifically built to catch — most chains that reach a correct answer do so through genuinely valid steps.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key difference between what outcome reward and process reward each check?</summary>
+Outcome reward checks only whether the final answer is correct; process reward checks the validity of every individual intermediate step, regardless of where the chain ultimately ends up.
+</details>
+
+<details><summary>2. In the worked example, why did outcome reward reward a chain that process reward flagged as invalid?</summary>
+Two separate arithmetic errors in the chain happened to cancel each other out, producing a final answer that matched the true answer — outcome reward only sees that final match, while process reward caught both individual errors.
+</details>
+
+<details><summary>3. Why is training a process reward model generally harder than training an outcome reward model?</summary>
+It requires step-level correctness labels for training data, which are far more expensive and labor-intensive to collect than a single final-answer correctness judgment per example.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Outcome reward:</strong> a reward signal based only on whether a chain&#39;s final answer is correct.</li>
+<li><strong>Process reward:</strong> a reward signal that checks the validity of each intermediate reasoning step.</li>
+<li><strong>Canceling errors:</strong> multiple mistakes in a reasoning chain that happen to offset each other, producing a correct final answer despite flawed steps.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/chain-of-thought-prompting/" data-topic="llms/chain-of-thought-prompting">Chain-of-Thought Prompting</a> · <a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a> · <a class="wikilink" href="/llms/tree-of-thought-and-search-based-reasoning/" data-topic="llms/tree-of-thought-and-search-based-reasoning">Tree-of-Thought and Search-Based Reasoning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/process-reward-vs-outcome-reward">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/tree-of-thought-and-search-based-reasoning/"><small>Read next</small><b>Tree-of-Thought and Search-Based Reasoning</b><p>Chain-of-thought commits to one reasoning path and follows it to the end.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/chain-of-thought-prompting/"><b>Chain-of-Thought Prompting</b><p>Ask a model for a multi-step answer directly, and it has to get everything right in one uninterrupted guess.</p></a><a class="rc-card" href="/llms/reward-modeling/"><b>Reward Modeling</b><p>Judging &quot;which of these two responses is better&quot; is a question most people can answer confidently; assigning an absolute numerical quality score to a single response, consistently, is much harder…</p></a><a class="rc-card" href="/llms/tree-of-thought-and-search-based-reasoning/"><b>Tree-of-Thought and Search-Based Reasoning</b><p>Chain-of-thought commits to one reasoning path and follows it to the end.</p></a><a class="rc-card" href="/llms/reasoning/"><b>Reasoning</b><p>An aligned, instruction-following model still has to decide how to actually arrive at an answer — straight to a conclusion, or by working through intermediate steps the way a person solving the…</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/chain-of-thought-prompting/">← Previous: Chain-of-Thought Prompting</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

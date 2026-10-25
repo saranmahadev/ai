@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Approximate Nearest Neighbor Search with HNSW — AI Base</title>
+<meta name="description" content="Instead of checking every vector in a collection, HNSW (Hierarchical Navigable Small World) searches a graph where each vector is linked to a handful of its nearest neighbors, plus a few…">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/approximate-nearest-neighbor-search-with-hnsw/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Approximate Nearest Neighbor Search with HNSW — AI Base">
+<meta property="og:description" content="Instead of checking every vector in a collection, HNSW (Hierarchical Navigable Small World) searches a graph where each vector is linked to a handful of its nearest neighbors, plus a few…">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/approximate-nearest-neighbor-search-with-hnsw/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Approximate Nearest Neighbor Search with HNSW","item":"https://ai.saranmahadev.in/rag/approximate-nearest-neighbor-search-with-hnsw/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Approximate Nearest Neighbor Search with HNSW","description":"Instead of checking every vector in a collection, HNSW (Hierarchical Navigable Small World) searches a graph where each vector is linked to a handful of its nearest neighbors, plus a few…","url":"https://ai.saranmahadev.in/rag/approximate-nearest-neighbor-search-with-hnsw/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, what specifically let the greedy search reach the correct answer in only 8 comparisons?","acceptedAnswer":{"@type":"Answer","text":"A long-range shortcut link connecting node \"A\" (in a distant region of the graph) directly toward node \"H\" and then \"N\" (near the query), letting the search cross most of the distance in two hops instead of crawling through every intermediate node."}},{"@type":"Question","name":"Is greedy graph search guaranteed to find the true nearest neighbor on every query?","acceptedAnswer":{"@type":"Answer","text":"No — it's an approximate method; without the right long-range links positioned well relative to a given query, it can get stuck in the wrong local neighborhood and settle on a worse answer."}},{"@type":"Question","name":"What's the \"small world\" idea that makes HNSW's long-range links useful?","acceptedAnswer":{"@type":"Answer","text":"A small number of well-placed long-range connections let a search jump between distant regions of the graph quickly, dramatically shortening the path between any two points compared to a graph with only local, nearest-neighbor links."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Vector Search and Indexing</p>
+        <h1 class="doc-title">Approximate Nearest Neighbor Search with HNSW</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c5e6ns5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c5e6ns5pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c5e6ns5bg)"/>
+  <circle cx="280" cy="299" r="75" fill="#42718e" opacity="0.34"/><circle cx="228" cy="21" r="73" fill="#dcf5f7" opacity="0.27"/><circle cx="597" cy="124" r="182" fill="#42718e" opacity="0.28"/><circle cx="685" cy="88" r="186" fill="#97e1e6" opacity="0.55"/><circle cx="45" cy="250" r="194" fill="#97e1e6" opacity="0.22"/><circle cx="154" cy="269" r="87" fill="#42718e" opacity="0.28"/><circle cx="942" cy="138" r="103" fill="#42718e" opacity="0.36"/>
+  <path d="M0,420 L0,312 L30,314 L60,317 L90,321 L120,324 L150,327 L180,331 L210,334 L240,337 L270,340 L300,343 L330,345 L360,347 L390,348 L420,349 L450,350 L480,349 L510,349 L540,347 L570,346 L600,343 L630,341 L660,338 L690,335 L720,331 L750,328 L780,324 L810,321 L840,318 L870,315 L900,312 L930,310 L960,308 L990,307 L1020,306 L1050,306 L1080,306 L1110,307 L1140,308 L1170,310 L1200,312 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,363 L90,365 L120,368 L150,371 L180,375 L210,378 L240,382 L270,386 L300,389 L330,391 L360,393 L390,394 L420,394 L450,393 L480,391 L510,389 L540,386 L570,383 L600,379 L630,375 L660,372 L690,368 L720,366 L750,364 L780,362 L810,362 L840,363 L870,364 L900,366 L930,369 L960,372 L990,376 L1020,380 L1050,383 L1080,387 L1110,390 L1140,392 L1170,393 L1200,394 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="630" cy="183" rx="200" ry="56" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(4.9 630 183)"/><ellipse cx="630" cy="183" rx="276" ry="77" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(10.9 630 183)"/>
+  <circle cx="630" cy="183" r="78" fill="url(#c5e6ns5pl)"/>
+  <circle cx="886" cy="172" r="15" fill="#ffffff" opacity="0.63"/><circle cx="500" cy="88" r="15" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Instead of checking every vector in a collection, HNSW (Hierarchical Navigable Small World) searches a graph where each vector is linked to a handful of its nearest neighbors, plus a few longer-range shortcuts. Starting somewhere and repeatedly hopping to whichever linked neighbor is closer to the query reaches a good answer after checking only a small fraction of the graph.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/exact-nearest-neighbor-search/" data-topic="rag/exact-nearest-neighbor-search">Exact Nearest Neighbor Search</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can a search avoid checking every vector while still usually finding the right one?&quot; A graph where every node links to its nearest neighbors lets a <strong>greedy search</strong> start anywhere, repeatedly move to whichever unvisited linked neighbor is closest to the query, and stop once no neighbor is any closer. Most of the graph never gets touched — only the handful of nodes actually visited along the path. A few long-range links (the &quot;small world&quot; part) are what let the search jump between distant regions of the graph quickly, instead of only crawling locally.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Finding a specific house in an unfamiliar city by asking a local for directions, then asking someone closer each time you get nearer, reaches the destination without ever having to check every house in the city — a handful of well-chosen conversations get you there, as long as each conversation points you reliably closer.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">greedy_search(query, start):
+  current = start
+  loop:
+    look at current&#39;s unvisited linked neighbors
+    move to whichever one is closest to the query
+    stop once no neighbor is closer than where you already are
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A graph of 15 points, searched for the one closest to a query at [0.95, 0.90]:</p>
+<pre><code class="language-text">brute-force (exact): checks all 15 points → finds the true nearest, &quot;N&quot;, at distance 0
+
+greedy graph search, starting from a distant node &quot;A&quot;:
+  path: A → H → N
+  comparisons made: 8 (vs. 15 for brute force)
+  found: &quot;N&quot;, distance 0 — the exact same answer, for roughly half the comparisons
+</code></pre>
+<p>The greedy search follows two hops along pre-built links — one short link within its starting neighborhood, then a long-range shortcut straight toward the query&#39;s region — and lands on the true nearest neighbor after only 8 comparisons instead of checking all 15 points.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="hnsw-greedy-search" data-title="A shortcut path instead of checking everyone"><p class="bench-fallback"><strong>Interactive bench: A shortcut path instead of checking everyone.</strong> Step a greedy graph search toward a query and compare its comparison count against brute force.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through the search path and watch the distance to the query shrink at each hop.</li>
+<li>Compare the final comparison count against the number of points in the graph.</li>
+<li>Imagine this same graph with a million points instead of 15 — would the greedy search&#39;s path length grow the same way brute force&#39;s cost does?</li>
+</ol>
+<p><strong>What you should notice:</strong> the search doesn&#39;t need to get lucky to reach the right answer here — the long-range shortcut link is exactly what lets it cross most of the way to the query&#39;s region in a single hop, instead of crawling node by node.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This directly trades <a class="wikilink" href="/rag/exact-nearest-neighbor-search/" data-topic="rag/exact-nearest-neighbor-search">Exact Nearest Neighbor Search</a>&#39;s guarantee for speed</strong> — greedy graph search is not guaranteed to always find the true nearest neighbor; without a well-placed long-range link, it can get stuck in the wrong neighborhood entirely.</li>
+<li><strong><a class="wikilink" href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/" data-topic="rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization">Approximate Nearest Neighbor Search with IVF and Product Quantization</a> solves the same problem with a different data structure</strong> (partitioning into clusters instead of a navigable graph) — both trade exactness for speed, differently.</li>
+<li><strong><a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a> typically offers HNSW as one of several index types to choose from</strong>, alongside IVF and others, depending on the collection&#39;s size and update patterns.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming greedy graph search always finds the true nearest neighbor.</strong> It&#39;s an <em>approximate</em> method — a graph without enough long-range links can leave the search stranded in the wrong region, finding a decent-but-not-optimal answer, or occasionally a poor one.</li>
+<li><strong>Building a graph with only short-range links, expecting it to work like this worked example&#39;s shortcut-equipped one.</strong> The long-range links are what make the &quot;small world&quot; property work; a purely local graph degenerates toward the kind of local-optimum trap exact search doesn&#39;t have to worry about.</li>
+<li><strong>Treating &quot;fewer comparisons&quot; as automatically &quot;faster in wall-clock time.&quot;</strong> Graph traversal has its own overhead (following pointers, maintaining a visited set) that a simple, cache-friendly linear scan doesn&#39;t — the comparison-count savings has to be large enough to outweigh that overhead.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, what specifically let the greedy search reach the correct answer in only 8 comparisons?</summary>
+A long-range shortcut link connecting node "A" (in a distant region of the graph) directly toward node "H" and then "N" (near the query), letting the search cross most of the distance in two hops instead of crawling through every intermediate node.
+</details>
+
+<details><summary>2. Is greedy graph search guaranteed to find the true nearest neighbor on every query?</summary>
+No — it's an approximate method; without the right long-range links positioned well relative to a given query, it can get stuck in the wrong local neighborhood and settle on a worse answer.
+</details>
+
+<details><summary>3. What's the "small world" idea that makes HNSW's long-range links useful?</summary>
+A small number of well-placed long-range connections let a search jump between distant regions of the graph quickly, dramatically shortening the path between any two points compared to a graph with only local, nearest-neighbor links.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>HNSW (Hierarchical Navigable Small World):</strong> an approximate nearest-neighbor method based on greedy search over a graph of linked vectors.</li>
+<li><strong>Greedy search:</strong> repeatedly moving to whichever linked neighbor is closest to the query, stopping once no neighbor improves on the current position.</li>
+<li><strong>Long-range link:</strong> a graph edge connecting distant regions, letting a search cross large distances in a single hop.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/exact-nearest-neighbor-search/" data-topic="rag/exact-nearest-neighbor-search">Exact Nearest Neighbor Search</a> · <a class="wikilink" href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/" data-topic="rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization">Approximate Nearest Neighbor Search with IVF and Product Quantization</a> · <a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/approximate-nearest-neighbor-search-with-hnsw">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/"><small>Read next</small><b>Approximate Nearest Neighbor Search with IVF and Product Quantization</b><p>Rather than navigating a graph one hop at a time, IVF (inverted file index) takes a different shortcut: group every vector into a cluster ahead of time, and at query time, only search inside the…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/exact-nearest-neighbor-search/"><b>Exact Nearest Neighbor Search</b><p>Finding the true closest vectors to a query is conceptually the simplest possible search: compute the similarity between the query and every single vector in the collection, then keep the…</p></a><a class="rc-card" href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/"><b>Approximate Nearest Neighbor Search with IVF and Product Quantization</b><p>Rather than navigating a graph one hop at a time, IVF (inverted file index) takes a different shortcut: group every vector into a cluster ahead of time, and at query time, only search inside the…</p></a><a class="rc-card" href="/rag/vector-databases-and-index-management/"><b>Vector Databases and Index Management</b><p>An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest?</p></a><a class="rc-card" href="/rag/vector-search-and-indexing/"><b>Vector Search and Indexing</b><p>Once a collection has a few million chunks, each with its own embedding, finding the handful nearest to a query vector stops being a problem you can solve by checking every single one.</p></a><a class="rc-card" href="/rag/production-rag-pipeline-architecture/"><b>Production RAG Pipeline Architecture</b><p>Every topic on this road so far has zoomed into one stage of a RAG system.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/exact-nearest-neighbor-search/">← Previous: Exact Nearest Neighbor Search</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

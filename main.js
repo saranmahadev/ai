@@ -190,8 +190,68 @@ function planetView(p) {
         </section>`).join("");
   return `
     <header class="page-head" style="--c:${p.color}">${planetDot(p)}<div><p class="kicker">${STATUS[p.status]}</p><h2>${esc(p.title)}</h2><p class="blurb">${esc(p.blurb)}</p>
-    ${prog ? `<div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${prog.pct}"><i style="width:${prog.pct}%"></i></div><p class="meta"><span>${prog.n} of ${prog.total} read</span></p>` : ""}</div></header>
+    ${prog ? `<div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${prog.pct}"><i style="width:${prog.pct}%"></i></div><p class="meta"><span>${prog.n} of ${prog.total} read</span></p>` : ""}
+    ${!p.planned ? `<p class="subject-links"><a href="#/${p.id}/glossary">Glossary →</a></p>` : ""}</div></header>
     ${body}`;
+}
+
+// ---------- subject glossary: every Key term from every written topic in a subject, aggregated client-side
+// (the data already lives in content.topics[id].glossary — no build-script change needed).
+function subjectGlossaryData(p) {
+  const byTerm = new Map();
+  for (const id of p.districts.flatMap((d) => d.topics)) {
+    const t = content.topics[id];
+    if (!t || t.status !== "written" || !t.glossary) continue;
+    for (const g of t.glossary) {
+      const key = g.term.trim().toLowerCase();
+      if (!byTerm.has(key)) byTerm.set(key, { term: g.term, entries: [] });
+      const group = byTerm.get(key);
+      if (!group.entries.some((e) => e.def === g.def)) group.entries.push({ def: g.def, topicId: id, topicTitle: t.title });
+    }
+  }
+  return [...byTerm.values()].sort((a, b) => a.term.localeCompare(b.term));
+}
+
+function subjectGlossaryView(p) {
+  const terms = subjectGlossaryData(p);
+  const topicCount = p.districts.flatMap((d) => d.topics).filter((id) => content.topics[id] && content.topics[id].status === "written").length;
+  const body = p.planned
+    ? `<p class="notice">This subject hasn’t been written yet. When notes are added to the vault and assigned to it in <code>.site/planets.json</code>, its glossary appears here.</p>`
+    : !terms.length
+      ? `<p class="notice">No key terms yet.</p>`
+      : `<label class="sr-only" for="gfilter">Filter glossary terms</label>
+         <input id="gfilter" class="glossary-filter" type="search" placeholder="Filter ${terms.length} terms…" autocomplete="off">
+         <p class="glossary-letters" aria-hidden="true">${[...new Set(terms.map((g) => g.term[0].toUpperCase()))].map((l) => `<a href="#gl-${l}">${l}</a>`).join("")}</p>
+         <p class="glossary-count" aria-live="polite" id="gcount"></p>
+         <dl class="glossary-list" id="glist">
+           ${terms.map((g, i) => {
+             const letter = g.term[0].toUpperCase();
+             const showLetter = i === 0 || terms[i - 1].term[0].toUpperCase() !== letter;
+             return `${showLetter ? `<div class="glossary-letter" id="gl-${letter}">${letter}</div>` : ""}
+               <div class="glossary-entry" data-term="${esc(g.term.toLowerCase())}">
+                 <dt>${esc(g.term)}</dt>
+                 ${g.entries.map((e) => `<dd>${esc(e.def)} <a class="glossary-source" href="#/${e.topicId}">from ${esc(e.topicTitle)}</a></dd>`).join("")}
+               </div>`;
+           }).join("")}
+         </dl>`;
+  return `
+    <header class="page-head" style="--c:${p.color}">${planetDot(p)}<div><p class="kicker">Glossary</p><h2>${esc(p.title)} Glossary</h2>
+    <p class="blurb">${terms.length} term${terms.length === 1 ? "" : "s"} across ${topicCount} written topic${topicCount === 1 ? "" : "s"}.</p></div></header>
+    ${body}`;
+}
+function wireGlossaryFilter() {
+  const input = $("#gfilter"), list = $("#glist"), count = $("#gcount");
+  if (!input || !list) return;
+  const entries = [...list.querySelectorAll(".glossary-entry")];
+  const letters = [...document.querySelectorAll(".glossary-letter")];
+  const apply = () => {
+    const q = input.value.trim().toLowerCase();
+    let shown = 0;
+    for (const el of entries) { const hit = !q || el.dataset.term.includes(q); el.hidden = !hit; if (hit) shown++; }
+    for (const l of letters) { const next = l.nextElementSibling; let has = false, el = next; while (el && !el.classList.contains("glossary-letter")) { if (!el.hidden) has = true; el = el.nextElementSibling; } l.hidden = !has; }
+    count.textContent = q ? `${shown} of ${entries.length} terms` : "";
+  };
+  input.addEventListener("input", apply);
 }
 
 function topicView(t) {
@@ -378,6 +438,8 @@ function route() {
   const key = parts.join("/");
   const explorerMode = getMode() === "explore";
   const planetObj = parts.length === 1 && content.planets.find((p) => p.id === key);
+  // checked ahead of any topic lookup: a topic id is also <planet>/<slug>-shaped, so a sub-route always wins
+  const glossaryPlanet = parts.length === 2 && parts[1] === "glossary" && content.planets.find((p) => p.id === parts[0]);
   const isPlanet = !!(explorerMode && planetScene && planetObj && !planetObj.planned && query !== "text");
   const isHome = parts.length === 0;
   const isGalaxy = explorerMode && key === "galaxy" && !!galaxy;
@@ -403,7 +465,7 @@ function route() {
   if (isHome) { refreshHomeProgress(); setTitle("AI Base"); return; }
   if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
 
-  const wanted = content.topics[key];
+  const wanted = !glossaryPlanet && content.topics[key];
   if (wanted && wanted.html === undefined && wanted.status !== "outlined") {
     const at = location.hash;
     view.innerHTML = `<p class="notice" role="status">Loading…</p>`;
@@ -414,12 +476,14 @@ function route() {
   let html, title;
   if (key === "path") { html = pathView(); title = "My path"; }
   else if (key === "galaxy" || key === "list" || key === "explore") { html = galaxyView(); title = "Explore"; }
+  else if (glossaryPlanet) { html = subjectGlossaryView(glossaryPlanet); title = `${glossaryPlanet.title} Glossary`; }
   else if (content.topics[key]) { html = topicView(content.topics[key]); title = content.topics[key].title; }
   else if (content.planets.find((p) => p.id === key)) { const p = content.planets.find((x) => x.id === key); html = planetView(p); title = p.title; }
   else { html = notFoundView(); title = "Not found"; }
   view.innerHTML = html;
   { const h = view.querySelector("h1, h2"); if (h && !document.body.classList.contains("searching")) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
-  if (content.topics[key]) { enhanceArticle(content.topics[key]); if (planetScene && content.topics[key].planet) planetScene.remember(content.topics[key].planet, key); }
+  if (glossaryPlanet) wireGlossaryFilter();
+  if (content.topics[key] && !glossaryPlanet) { enhanceArticle(content.topics[key]); if (planetScene && content.topics[key].planet) planetScene.remember(content.topics[key].planet, key); }
   else if (cleanupArticle) { cleanupArticle(); cleanupArticle = null; }
   setTitle(`${title} · AI Base`);
   scrollTo(0, 0);
@@ -508,9 +572,9 @@ $("#home-launch").addEventListener("click", async () => {
 try {
   await loading;
 } catch (err) {
-  console.warn("content.json missing; run `npm run content` in .site/", err);
+  console.warn("content.json failed to load; in development, run `npm run content` in .site/", err);
   document.body.classList.add("no-gl");
-  home.innerHTML = `<h1>Almost there</h1><p class="lede">The content index hasn’t been built. Run <code>npm run content</code> in <code>.site/</code>.</p>`;
+  home.innerHTML = `<h1>Something went wrong</h1><p class="lede">The site couldn’t load just now. Please <a href="${location.pathname}">refresh the page</a> — if it keeps happening, let us know.</p>`;
 }
 if (content) {
   mountSearch({ content, onGo: (d) => { location.hash = `#/${d.id}`; } });

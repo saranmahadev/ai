@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Central Limit Theorem — AI Base</title>
+<meta name="description" content="The central limit theorem says that the average (or sum) of many independent random values follows a bell curve, whatever shape the individual values have. Its spread shrinks as σ / √n.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/central-limit-theorem/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Central Limit Theorem — AI Base">
+<meta property="og:description" content="The central limit theorem says that the average (or sum) of many independent random values follows a bell curve, whatever shape the individual values have. Its spread shrinks as σ / √n.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/central-limit-theorem/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Central Limit Theorem","item":"https://ai.saranmahadev.in/math/central-limit-theorem/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Central Limit Theorem","description":"The central limit theorem says that the average (or sum) of many independent random values follows a bell curve, whatever shape the individual values have. Its spread shrinks as σ / √n.","url":"https://ai.saranmahadev.in/math/central-limit-theorem/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the standard error of a mean of 100 values with σ = 20?","acceptedAnswer":{"@type":"Answer","text":"20 / 10 = 2."}},{"@type":"Question","name":"Does the CLT say individual values are bell-shaped?","acceptedAnswer":{"@type":"Answer","text":"No, the averages are."}},{"@type":"Question","name":"About what share of sample means lie within 2 standard errors of the true mean?","acceptedAnswer":{"@type":"Answer","text":"About 95%."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Probability</p>
+        <h1 class="doc-title">Central Limit Theorem</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1b90nmhbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1b90nmhpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1b90nmhbg)"/>
+  <circle cx="1061" cy="93" r="89" fill="#cebff9" opacity="0.38"/><circle cx="1135" cy="20" r="107" fill="#68599a" opacity="0.51"/><circle cx="78" cy="128" r="209" fill="#cebff9" opacity="0.46"/><circle cx="1059" cy="42" r="116" fill="#ddbecb" opacity="0.33"/><circle cx="877" cy="264" r="130" fill="#cebff9" opacity="0.41"/>
+  <path d="M0,420 L0,307 L30,310 L60,315 L90,321 L120,328 L150,335 L180,341 L210,346 L240,349 L270,350 L300,348 L330,345 L360,340 L390,334 L420,327 L450,320 L480,314 L510,309 L540,306 L570,306 L600,307 L630,310 L660,315 L690,321 L720,328 L750,335 L780,341 L810,346 L840,349 L870,350 L900,348 L930,345 L960,340 L990,334 L1020,327 L1050,320 L1080,314 L1110,309 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,366 L30,364 L60,363 L90,362 L120,362 L150,362 L180,362 L210,363 L240,364 L270,366 L300,368 L330,370 L360,372 L390,374 L420,377 L450,379 L480,382 L510,384 L540,386 L570,388 L600,390 L630,392 L660,393 L690,394 L720,394 L750,394 L780,394 L810,393 L840,392 L870,390 L900,388 L930,386 L960,384 L990,382 L1020,379 L1050,377 L1080,374 L1110,372 L1140,370 L1170,368 L1200,366 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="980" cy="183" rx="164" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.2 980 183)"/><ellipse cx="980" cy="183" rx="226" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.2 980 183)"/>
+  <circle cx="980" cy="183" r="64" fill="url(#c1b90nmhpl)"/>
+  <circle cx="835" cy="255" r="17" fill="#ffffff" opacity="0.85"/><circle cx="799" cy="135" r="17" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>central limit theorem</strong> says that the average (or sum) of many independent random values follows a bell curve, whatever shape the individual values have. Its spread shrinks as <code>σ / √n</code>. It explains why the normal distribution appears everywhere, and why we can attach error bars to averages.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a>, <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> and <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why are so many quantities bell-shaped, and how far can I trust an average?&quot; Heights, measurement errors and test scores are all sums of many small independent influences.</p>
+<h2 id="intuition-many-small-pushes-add-up-to-a-bell">Intuition: many small pushes add up to a bell</h2>
+<p>Each individual value may be lopsided: waiting times pile near zero, income has a long tail. But the <em>average</em> of, say, 30 of them is pulled toward the middle: extremes are rare because they require many values to be extreme in the same direction. Repeat the averaging many times and the collection of averages is bell-shaped.</p>
+<pre><code class="language-text">if X₁ … Xₙ are independent with mean μ and standard deviation σ, then
+the sample mean X̄ₙ is approximately Normal( μ , (σ/√n)² )      for large n
+</code></pre>
+<p>The typical size of the error of a sample mean, <code>σ / √n</code>, is called the <strong>standard error</strong>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A fair die has <code>μ = 3.5</code> and <code>σ = 1.708</code>. Average 30 rolls:</p>
+<pre><code class="language-text">standard error = 1.708 / √30 = 1.708 / 5.477 = 0.312
+about 95% of such averages lie within  3.5 ± 1.96 × 0.312 = 3.5 ± 0.61   →  [2.89, 4.11]
+</code></pre>
+<p>Even though a single roll is uniform (flat), the average of 30 is bell-shaped around 3.5 with spread 0.31. Averaging 120 rolls halves the spread to 0.156.</p>
+<p>This is how a poll works: for a yes/no question with true share <code>p = 0.5</code> and <code>n = 1,000</code> people, the standard error is <code>√(0.25/1000) = 0.0158</code>, so a poll result is typically within about ±3% of the truth (<code>1.96 × 0.0158 ≈ 0.031</code>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="sample-means-bell" data-title="Averages turn into bell curves"><p class="bench-fallback"><strong>Interactive bench: Averages turn into bell curves.</strong> Choose a source distribution (flat, skewed or two-humped) and a sample size; the bench draws thousands of sample means as a histogram with the matching normal curve and shows the mean and standard error.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With sample size 1, look at the source shape.</li>
+<li>Raise the sample size to 5, 10, 30 and watch the histogram.</li>
+<li>Try the skewed source and see how many samples it takes to look bell-shaped.</li>
+<li>Compare the histogram&#39;s spread with σ divided by the square root of n.</li>
+</ol>
+<p><strong>What you should notice:</strong> the histogram of averages becomes a bell centred on the true mean, and it narrows as n grows.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Confidence intervals</strong> and error bars on model accuracy rely on it.</li>
+<li><strong>Hypothesis tests and A/B tests</strong> use normal approximations to averages.</li>
+<li><strong>Weight initialisation and noise models</strong> often assume normality.</li>
+<li><strong>Mini-batch gradient noise</strong> is roughly normal.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Applying it to a tiny sample</strong> of a very skewed variable.</li>
+<li><strong>Forgetting independence.</strong></li>
+<li><strong>Confusing the spread of the data with the spread of the mean</strong> (σ versus σ/√n).</li>
+<li><strong>Assuming individual values become normal.</strong> Only their averages do.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the standard error of a mean of 100 values with σ = 20?</summary>
+20 / 10 = 2.
+</details>
+
+<details><summary>2. Does the CLT say individual values are bell-shaped?</summary>
+No, the averages are.
+</details>
+
+<details><summary>3. About what share of sample means lie within 2 standard errors of the true mean?</summary>
+About 95%.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Central limit theorem:</strong> sample means become normal as n grows.</li>
+<li><strong>Standard error:</strong> <code>σ / √n</code>, the spread of a sample mean.</li>
+<li><strong>Sampling distribution:</strong> the distribution of a statistic over repeated samples.</li>
+<li><strong>Normal approximation:</strong> using the bell curve as a stand-in.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a> · <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> · <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> · <a class="wikilink" href="/math/confidence-intervals/" data-topic="math/confidence-intervals">Confidence Intervals</a> · <a class="wikilink" href="/math/hypothesis-testing-and-p-values/" data-topic="math/hypothesis-testing-and-p-values">Hypothesis Testing and P-values</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/central-limit-theorem">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/markov-chains/"><small>Read next</small><b>Markov Chains</b><p>A Markov chain is a sequence of random states where the next state depends only on the current one, not on how you got there.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/law-of-large-numbers/"><b>Law of Large Numbers</b><p>The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.</p></a><a class="rc-card" href="/math/continuous-distributions/"><b>Continuous Distributions</b><p>A continuous random variable can take any value in a range, so no single value has positive probability.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/math/confidence-intervals/"><b>Confidence Intervals</b><p>A confidence interval is a range built from a sample that expresses how uncertain an estimate is: &quot;the average is 52, give or take about 2&quot;.</p></a><a class="rc-card" href="/math/hypothesis-testing-and-p-values/"><b>Hypothesis Testing and P-values</b><p>A hypothesis test asks whether a result could plausibly be due to chance alone.</p></a><a class="rc-card" href="/math/probability/"><b>Probability</b><p>Probability is the maths of uncertainty. It gives numbers to &quot;how likely?&quot;, and rules for combining those numbers.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/law-of-large-numbers/">← Previous: Law of Large Numbers</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

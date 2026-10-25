@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layer Normalization — AI Base</title>
+<meta name="description" content="Layer normalization computes exactly the same mean-and-variance normalization as batch normalization — but across a single example&#39;s own features, instead of across the batch.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/layer-normalization/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Layer Normalization — AI Base">
+<meta property="og:description" content="Layer normalization computes exactly the same mean-and-variance normalization as batch normalization — but across a single example&#39;s own features, instead of across the batch.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/layer-normalization/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Layer Normalization","item":"https://ai.saranmahadev.in/deep-learning/layer-normalization/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Layer Normalization","description":"Layer normalization computes exactly the same mean-and-variance normalization as batch normalization — but across a single example's own features, instead of across the batch.","url":"https://ai.saranmahadev.in/deep-learning/layer-normalization/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the key difference between batch norm and layer norm?","acceptedAnswer":{"@type":"Answer","text":"Batch norm computes mean and variance across the batch, per feature; layer norm computes them across the features, per example — otherwise the formula is identical."}},{"@type":"Question","name":"Why does layer norm work fine with a batch size of 1?","acceptedAnswer":{"@type":"Answer","text":"Its statistics come entirely from one example's own features, so it never needs more than one example to compute a meaningful mean and variance."}},{"@type":"Question","name":"In the worked example, why do batch norm and layer norm produce different mean and variance numbers from the same table?","acceptedAnswer":{"@type":"Answer","text":"They average over different groups of cells — columns (across examples) for batch norm, rows (across features) for layer norm — so the same raw numbers produce different statistics."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Regularization and Generalization</p>
+        <h1 class="doc-title">Layer Normalization</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cs29bs7bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cs29bs7pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cs29bs7bg)"/>
+  <circle cx="1093" cy="55" r="89" fill="#ffb6b6" opacity="0.46"/><circle cx="77" cy="137" r="205" fill="#ffb6b6" opacity="0.24"/><circle cx="248" cy="110" r="190" fill="#ffb6b6" opacity="0.22"/><circle cx="773" cy="147" r="118" fill="#8a546c" opacity="0.29"/><circle cx="485" cy="119" r="203" fill="#ffb89d" opacity="0.52"/><circle cx="554" cy="272" r="181" fill="#ffe6e6" opacity="0.51"/><circle cx="318" cy="134" r="212" fill="#8a546c" opacity="0.54"/>
+  <path d="M0,420 L0,344 L30,346 L60,348 L90,349 L120,350 L150,350 L180,349 L210,348 L240,346 L270,344 L300,342 L330,339 L360,336 L390,333 L420,329 L450,326 L480,322 L510,319 L540,316 L570,313 L600,311 L630,309 L660,307 L690,306 L720,306 L750,306 L780,306 L810,307 L840,309 L870,311 L900,313 L930,316 L960,319 L990,322 L1020,326 L1050,329 L1080,333 L1110,336 L1140,339 L1170,342 L1200,344 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,391 L30,388 L60,383 L90,378 L120,373 L150,369 L180,365 L210,363 L240,362 L270,363 L300,365 L330,368 L360,373 L390,378 L420,383 L450,387 L480,391 L510,393 L540,394 L570,393 L600,391 L630,388 L660,383 L690,378 L720,373 L750,369 L780,365 L810,363 L840,362 L870,363 L900,365 L930,368 L960,373 L990,378 L1020,383 L1050,387 L1080,391 L1110,393 L1140,394 L1170,393 L1200,391 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="816" cy="147" rx="168" ry="47" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(20.3 816 147)"/><ellipse cx="816" cy="147" rx="232" ry="65" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(26.3 816 147)"/>
+  <circle cx="816" cy="147" r="66" fill="url(#cs29bs7pl)"/>
+  <circle cx="913" cy="218" r="16" fill="#ffffff" opacity="0.72"/><circle cx="797" cy="228" r="8" fill="#ffffff" opacity="0.72"/><circle cx="574" cy="140" r="12" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Layer normalization</strong> computes exactly the same mean-and-variance normalization as <a class="wikilink" href="/deep-learning/batch-normalization/" data-topic="deep-learning/batch-normalization">batch normalization</a> — but across a single example&#39;s own features, instead of across the batch. That one change in which axis you average over removes batch normalization&#39;s biggest practical headache: needing a sizeable, reliable batch to compute statistics from.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/batch-normalization/" data-topic="deep-learning/batch-normalization">Batch Normalization</a> and <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Batch normalization needs a batch to compute statistics from — what do I do when there isn&#39;t a meaningful batch, like generating one sequence element at a time?&quot; Normalize across the example&#39;s own features instead, which needs nothing from any other example at all.</p>
+<h2 id="intuition-average-down-a-column-or-across-a-row">Intuition: average down a column, or across a row</h2>
+<p>Lay a mini-batch out as a table: one row per example, one column per feature. Batch normalization computes each column&#39;s mean and variance — down the column, across examples, one statistic per feature. Layer normalization computes each row&#39;s mean and variance instead — across the row, across features, one statistic per example. Same arithmetic, different axis.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">batch norm (per feature j):   μⱼ, σⱼ² over all examples in the batch, for that one feature
+layer norm (per example i):   μᵢ, σᵢ² over all features of that one example, needing no other example
+
+both then apply:  x̂ = (x − μ) / √σ²        y = γ·x̂ + β
+</code></pre>
+<p>Because layer normalization&#39;s statistics come entirely from one example, it works identically whether the batch size is 256 or 1, and it needs no running statistics at test time — unlike batch normalization, there is no train/test mismatch to manage.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A tiny batch of 3 examples, 4 features each:</p>
+<pre><code class="language-text">     f0  f1  f2  f3
+e0:   2   4   4   4
+e1:   5   1   3   6
+e2:   0   2   8   2
+</code></pre>
+<p><strong>Batch norm</strong> (down each column, across the 3 examples):</p>
+<pre><code class="language-text">feature       f0      f1      f2      f3
+mean         2.333   2.333   5.000   4.000
+variance     4.222   1.556   4.667   2.667
+</code></pre>
+<p><strong>Layer norm</strong> (across each row, across the 4 features):</p>
+<pre><code class="language-text">example       e0      e1      e2
+mean         3.500   3.750   3.000
+variance     0.750   3.688   9.000
+</code></pre>
+<p>Both compute a mean and a variance with the identical formula — they simply slide along different axes of the same table.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="layernorm-axis" data-title="Batch norm's column vs layer norm's row"><p class="bench-fallback"><strong>Interactive bench: Batch norm's column vs layer norm's row.</strong> A small table of raw values. Toggle between batch normalization (statistics down each column) and layer normalization (statistics across each row) and watch which cells get highlighted together and what each one's mean and variance come out to.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Switch between &quot;batch norm&quot; and &quot;layer norm&quot; and watch the highlighted group of cells rotate from columns to rows.</li>
+<li>Edit a single value and see that it changes one column&#39;s statistics under batch norm, but only its own row&#39;s statistics under layer norm.</li>
+<li>Shrink the table to a single row (one example) and see that batch norm&#39;s statistics per feature become degenerate, while layer norm is unaffected.</li>
+</ol>
+<p><strong>What you should notice:</strong> the two methods compute literally the same formula; the only difference is which group of cells — a column of same-feature values across examples, or a row of same-example values across features — is treated as the group to normalize over.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Recurrent networks and transformers</strong> (see <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a> and <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>) use layer normalization almost by default, since sequence lengths and batch composition vary too much for batch statistics to stay reliable.</li>
+<li><strong>Any setting with a batch size of 1</strong> (generating one example at a time, as in <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">many generation setups</a>) needs layer norm or similar, since batch norm has no batch to work with.</li>
+<li><strong>Group normalization and instance normalization</strong> are further variants, each choosing a different grouping of cells to normalize over.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming layer norm is strictly &quot;better&quot; than batch norm.</strong> They solve different problems; batch norm&#39;s cross-example statistics can act as a mild regulariser that layer norm&#39;s per-example statistics do not provide.</li>
+<li><strong>Forgetting layer norm still has learned γ and β</strong>, just like batch norm — only the statistics it normalizes with are computed differently.</li>
+<li><strong>Mixing up which axis is which when implementing either from scratch</strong> — a frequent source of silent bugs, since both use the exact same formula.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the key difference between batch norm and layer norm?</summary>
+Batch norm computes mean and variance across the batch, per feature; layer norm computes them across the features, per example — otherwise the formula is identical.
+</details>
+
+<details><summary>2. Why does layer norm work fine with a batch size of 1?</summary>
+Its statistics come entirely from one example's own features, so it never needs more than one example to compute a meaningful mean and variance.
+</details>
+
+<details><summary>3. In the worked example, why do batch norm and layer norm produce different mean and variance numbers from the same table?</summary>
+They average over different groups of cells — columns (across examples) for batch norm, rows (across features) for layer norm — so the same raw numbers produce different statistics.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Layer normalization:</strong> normalizing across one example&#39;s own features, independent of the batch.</li>
+<li><strong>Batch normalization:</strong> normalizing across the batch, for each feature (see <a class="wikilink" href="/deep-learning/batch-normalization/" data-topic="deep-learning/batch-normalization">Batch Normalization</a>).</li>
+<li><strong>Train/test mismatch:</strong> the need for running statistics at test time that batch norm has and layer norm avoids.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/batch-normalization/" data-topic="deep-learning/batch-normalization">Batch Normalization</a> · <a class="wikilink" href="/math/vector-operations/" data-topic="math/vector-operations">Vector Operations</a> · <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a> · <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/layer-normalization">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/data-augmentation/"><small>Read next</small><b>Data Augmentation</b><p>Data augmentation manufactures new, harmless variations of existing training examples — a flipped image, a rotated one, a sentence with a synonym swapped in — so the network sees more of the input…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/batch-normalization/"><b>Batch Normalization</b><p>Batch normalization re-centres and re-scales a layer&#39;s activations, using the statistics of the current mini-batch, so every unit sees roughly mean-0, unit-variance inputs no matter how the layers…</p></a><a class="rc-card" href="/math/vector-operations/"><b>Vector Operations</b><p>Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.</p></a><a class="rc-card" href="/deep-learning/recurrent-neural-networks/"><b>Recurrent Neural Networks</b><p>A recurrent neural network (RNN) reads a sequence one element at a time, carrying a hidden state forward from each step to the next — a running summary of everything seen so far.</p></a><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/deep-learning/encoder-decoder-architectures-with-attention/"><b>Encoder-Decoder Architectures with Attention</b><p>The plain seq2seq decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts.</p></a><a class="rc-card" href="/deep-learning/regularization-and-generalization/"><b>Regularization and Generalization</b><p>A deep network has enough parameters to memorise its training set outright.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/batch-normalization/">← Previous: Batch Normalization</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

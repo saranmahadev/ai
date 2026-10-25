@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sandboxing and Isolation — AI Base</title>
+<meta name="description" content="A code-execution agent running generated code with full access to the host machine can reach every file on it — including ones that have nothing to do with its task.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/sandboxing-and-isolation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Sandboxing and Isolation — AI Base">
+<meta property="og:description" content="A code-execution agent running generated code with full access to the host machine can reach every file on it — including ones that have nothing to do with its task.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/sandboxing-and-isolation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Sandboxing and Isolation","item":"https://ai.saranmahadev.in/agents/sandboxing-and-isolation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sandboxing and Isolation","description":"A code-execution agent running generated code with full access to the host machine can reach every file on it — including ones that have nothing to do with its task.","url":"https://ai.saranmahadev.in/agents/sandboxing-and-isolation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does restricting execution to one directory reduce reachable files from 7 to 2 in the worked example?","acceptedAnswer":{"@type":"Answer","text":"Only two of the seven files sit inside the sandbox's allowed path (the scratch directory); the other five, including the sensitive ones, are outside that path and so are never reachable from inside the sandbox, regardless of what the running code tries."}},{"@type":"Question","name":"Does sandboxing require trusting the generated code to behave well?","acceptedAnswer":{"@type":"Answer","text":"No — a sandbox's guarantee comes from what is physically reachable from inside it, which holds whether the code is well-behaved, buggy, or deliberately malicious; it's a property of the boundary, not of the code's intentions."}},{"@type":"Question","name":"Why would a sandbox that only restricts the filesystem still be incomplete?","acceptedAnswer":{"@type":"Answer","text":"If network access is left open, data can leak through that channel even with no file access at all — isolation needs to close off every channel a running piece of code could use, not just the filesystem."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Agent Safety and Governance</p>
+        <h1 class="doc-title">Sandboxing and Isolation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ctai4ilbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="ctai4ilpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ctai4ilbg)"/>
+  <circle cx="198" cy="48" r="137" fill="#dcbef5" opacity="0.29"/><circle cx="703" cy="9" r="82" fill="#f3e9fc" opacity="0.41"/><circle cx="417" cy="412" r="226" fill="#725998" opacity="0.61"/><circle cx="412" cy="7" r="213" fill="#e7bdc8" opacity="0.46"/><circle cx="1167" cy="341" r="109" fill="#dcbef5" opacity="0.33"/>
+  <path d="M0,420 L0,307 L30,308 L60,310 L90,312 L120,315 L150,318 L180,321 L210,325 L240,328 L270,332 L300,335 L330,338 L360,341 L390,344 L420,346 L450,347 L480,349 L510,349 L540,350 L570,349 L600,348 L630,347 L660,345 L690,343 L720,340 L750,337 L780,334 L810,331 L840,327 L870,324 L900,320 L930,317 L960,314 L990,312 L1020,309 L1050,308 L1080,307 L1110,306 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,370 L60,372 L90,375 L120,377 L150,380 L180,382 L210,385 L240,387 L270,389 L300,391 L330,392 L360,393 L390,394 L420,394 L450,394 L480,393 L510,393 L540,391 L570,390 L600,388 L630,386 L660,384 L690,381 L720,379 L750,376 L780,374 L810,371 L840,369 L870,367 L900,365 L930,364 L960,363 L990,362 L1020,362 L1050,362 L1080,363 L1110,363 L1140,365 L1170,366 L1200,368 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="704" cy="213" rx="177" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-15.5 704 213)"/><ellipse cx="704" cy="213" rx="244" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-9.5 704 213)"/>
+  <circle cx="704" cy="213" r="69" fill="url(#ctai4ilpl)"/>
+  <circle cx="938" cy="228" r="18" fill="#ffffff" opacity="0.83"/><circle cx="720" cy="119" r="15" fill="#ffffff" opacity="0.79"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A code-execution agent running generated code with full access to the host machine can reach every file on it — including ones that have nothing to do with its task. Run that same code inside a sandbox limited to one working directory, and there&#39;s nothing <em>to</em> reach outside it, regardless of what the code tries to do.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/code-execution-agents/" data-topic="agents/code-execution-agents">Code-Execution Agents</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you limit the damage a tool call can do, independent of whether the agent &#39;decides&#39; to misuse it?&quot; A <strong>sandbox</strong> is an isolated execution environment — a container, a restricted filesystem view, a process with no network access — that constrains what a running piece of code can reach, regardless of what instructions produced that code or what the code itself attempts. Sandboxing doesn&#39;t make an agent&#39;s decisions more correct; it makes an incorrect decision&#39;s <strong>blast radius</strong> smaller, because the mistake has nowhere to spread.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A contractor doing renovation work inside one room of a house, with the rest of the house locked, can&#39;t accidentally (or deliberately) damage anything outside that room — not because they&#39;ve been told not to, but because the other rooms are physically inaccessible to them. A contractor given keys to the whole house has to be trusted not to wander, which is a much weaker guarantee than a locked door.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">unsandboxed: reachable files = every file the process has permission to touch
+sandboxed:   reachable files = only files under the sandbox&#39;s allowed path
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Seven files on a host machine — two inside the agent&#39;s intended working directory, five outside it (SSH keys, system password file, a secrets file, another user&#39;s private document, cloud credentials):</p>
+<pre><code class="language-text">unsandboxed execution: 7 of 7 files reachable
+sandboxed execution (restricted to /scratch/): 2 of 7 files reachable
+</code></pre>
+<p>Restricting execution to the one directory the task actually needs doesn&#39;t just make the five sensitive files harder to reach — it makes them unreachable to this process at all. No prompt, no generated code, and no injected instruction running inside that sandbox can touch a file the sandbox was never given access to.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="sandbox-reachable-files" data-title="What a sandbox keeps out of reach"><p class="bench-fallback"><strong>Interactive bench: What a sandbox keeps out of reach.</strong> Toggle sandboxing and watch how many host files a running piece of code can reach.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the unsandboxed list and note every file, including the sensitive ones, is reachable.</li>
+<li>Turn on sandboxing and watch the five files outside the scratch directory disappear from reach.</li>
+<li>Imagine the generated code itself was specifically written (by a bug or an injected instruction) to try reading <code>/etc/shadow</code> — does sandboxing depend on that code behaving well?</li>
+</ol>
+<p><strong>What you should notice:</strong> sandboxing&#39;s guarantee doesn&#39;t depend on the running code&#39;s intentions at all — it&#39;s a property of what&#39;s physically reachable from inside the sandbox, which holds whether the code is buggy, careless, or actively malicious.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the complementary approach to <a class="wikilink" href="/agents/autonomy-levels-and-human-oversight-tiers/" data-topic="agents/autonomy-levels-and-human-oversight-tiers">Autonomy Levels and Human Oversight Tiers</a></strong>: instead of a human catching a mistake before it runs, a sandbox limits how much damage the mistake can do even if nobody catches it in time.</li>
+<li><strong><a class="wikilink" href="/agents/excessive-agency-and-scope-limits/" data-topic="agents/excessive-agency-and-scope-limits">Excessive Agency and Scope Limits</a>, next in this district, applies the identical idea to tool grants rather than filesystem access</strong> — restricting what&#39;s reachable, whether that&#39;s files on disk or actions through an API.</li>
+<li><strong>This directly extends <a class="wikilink" href="/agents/code-execution-agents/" data-topic="agents/code-execution-agents">Code-Execution Agents</a></strong>: that topic covers what a code-execution agent can do; this one covers containing what it can do when something goes wrong.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Relying on the agent&#39;s own judgment instead of a sandbox boundary.</strong> The worked example&#39;s whole point is that sandboxing works regardless of judgment — a boundary that depends on the code &quot;choosing&quot; not to misbehave isn&#39;t a boundary at all.</li>
+<li><strong>Sandboxing the filesystem but leaving network access open.</strong> A sandbox that blocks file access but still allows outbound network calls can leak data a different way — isolation needs to cover every channel the running code could use, not just the obvious one.</li>
+<li><strong>Assuming a looser sandbox is &quot;mostly fine&quot; if nothing has gone wrong yet.</strong> A sandbox&#39;s value is specifically in the case that hasn&#39;t happened yet — a wider boundary that has never been tested by a real mistake offers exactly the same false confidence as no boundary, until the day it is.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does restricting execution to one directory reduce reachable files from 7 to 2 in the worked example?</summary>
+Only two of the seven files sit inside the sandbox's allowed path (the scratch directory); the other five, including the sensitive ones, are outside that path and so are never reachable from inside the sandbox, regardless of what the running code tries.
+</details>
+
+<details><summary>2. Does sandboxing require trusting the generated code to behave well?</summary>
+No — a sandbox's guarantee comes from what is physically reachable from inside it, which holds whether the code is well-behaved, buggy, or deliberately malicious; it's a property of the boundary, not of the code's intentions.
+</details>
+
+<details><summary>3. Why would a sandbox that only restricts the filesystem still be incomplete?</summary>
+If network access is left open, data can leak through that channel even with no file access at all — isolation needs to close off every channel a running piece of code could use, not just the filesystem.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Sandbox:</strong> an isolated execution environment that restricts what a running process can reach.</li>
+<li><strong>Blast radius:</strong> how much damage a mistake or attack can cause, bounded by what it can actually reach.</li>
+<li><strong>Isolation:</strong> containing a process so its effects can&#39;t spread beyond an intended boundary.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/code-execution-agents/" data-topic="agents/code-execution-agents">Code-Execution Agents</a> · <a class="wikilink" href="/agents/autonomy-levels-and-human-oversight-tiers/" data-topic="agents/autonomy-levels-and-human-oversight-tiers">Autonomy Levels and Human Oversight Tiers</a> · <a class="wikilink" href="/agents/excessive-agency-and-scope-limits/" data-topic="agents/excessive-agency-and-scope-limits">Excessive Agency and Scope Limits</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/sandboxing-and-isolation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/excessive-agency-and-scope-limits/"><small>Read next</small><b>Excessive Agency and Scope Limits</b><p>An agent built to summarize an inbox only needs to read email.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/code-execution-agents/"><b>Code-Execution Agents</b><p>Running code one snippet at a time from a clean slate means every new snippet has to re-establish everything the previous ones already set up — reload the data, redefine the variables — before it…</p></a><a class="rc-card" href="/agents/autonomy-levels-and-human-oversight-tiers/"><b>Autonomy Levels and Human Oversight Tiers</b><p>An agent that must stop and ask before every single action is safe but slow; an agent that never asks is fast but unwatched.</p></a><a class="rc-card" href="/agents/excessive-agency-and-scope-limits/"><b>Excessive Agency and Scope Limits</b><p>An agent built to summarize an inbox only needs to read email.</p></a><a class="rc-card" href="/agents/agent-safety-and-governance/"><b>Agent Safety and Governance</b><p>An agent that can act on the real world — sending money, deleting files, emailing someone — needs more than good intentions to be safe to run unsupervised.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/autonomy-levels-and-human-oversight-tiers/">← Previous: Autonomy Levels and Human Oversight Tiers</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Policy Gradients — AI Base</title>
+<meta name="description" content="Instead of learning values and reading off a policy, policy gradient methods learn the policy directly: a probability for each action, adjusted after every reward so that actions which paid become…">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/policy-gradients/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Policy Gradients — AI Base">
+<meta property="og:description" content="Instead of learning values and reading off a policy, policy gradient methods learn the policy directly: a probability for each action, adjusted after every reward so that actions which paid become…">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/policy-gradients/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Policy Gradients","item":"https://ai.saranmahadev.in/machine-learning/policy-gradients/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Policy Gradients","description":"Instead of learning values and reading off a policy, policy gradient methods learn the policy directly: a probability for each action, adjusted after every reward so that actions which paid become…","url":"https://ai.saranmahadev.in/machine-learning/policy-gradients/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a positive advantage (r − b) do?","acceptedAnswer":{"@type":"Answer","text":"It raises the probability of the action taken."}},{"@type":"Question","name":"Why subtract a baseline?","acceptedAnswer":{"@type":"Answer","text":"To reduce the variance of the updates, so only better-than-usual actions are reinforced."}},{"@type":"Question","name":"How does a policy gradient differ from Q-learning?","acceptedAnswer":{"@type":"Answer","text":"It adjusts the policy's probabilities directly, instead of learning action values and acting greedily."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Reinforcement Learning Basics</p>
+        <h1 class="doc-title">Policy Gradients</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cghjgyibg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="cghjgyipl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cghjgyibg)"/>
+  <circle cx="558" cy="165" r="226" fill="#ffd08d" opacity="0.48"/><circle cx="39" cy="98" r="142" fill="#ffd99f" opacity="0.52"/><circle cx="377" cy="359" r="78" fill="#ffd08d" opacity="0.52"/><circle cx="998" cy="226" r="144" fill="#8a6b5c" opacity="0.26"/><circle cx="204" cy="257" r="181" fill="#ffd99f" opacity="0.36"/><circle cx="381" cy="285" r="165" fill="#ffd99f" opacity="0.49"/><circle cx="911" cy="325" r="194" fill="#ffd99f" opacity="0.25"/>
+  <path d="M0,420 L0,334 L30,329 L60,323 L90,318 L120,314 L150,310 L180,308 L210,306 L240,306 L270,306 L300,308 L330,311 L360,315 L390,320 L420,325 L450,330 L480,335 L510,340 L540,344 L570,347 L600,349 L630,350 L660,349 L690,348 L720,345 L750,341 L780,337 L810,332 L840,327 L870,322 L900,317 L930,313 L960,309 L990,307 L1020,306 L1050,306 L1080,307 L1110,309 L1140,313 L1170,317 L1200,322 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,365 L60,368 L90,371 L120,374 L150,378 L180,382 L210,385 L240,388 L270,391 L300,393 L330,394 L360,394 L390,393 L420,392 L450,389 L480,386 L510,383 L540,379 L570,375 L600,372 L630,369 L660,366 L690,364 L720,362 L750,362 L780,362 L810,364 L840,366 L870,369 L900,372 L930,376 L960,379 L990,383 L1020,386 L1050,389 L1080,392 L1110,393 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="929" cy="258" rx="228" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-6.3 929 258)"/><ellipse cx="929" cy="258" rx="315" ry="88" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-0.3 929 258)"/>
+  <circle cx="929" cy="258" r="89" fill="url(#cghjgyipl)"/>
+  <circle cx="805" cy="176" r="13" fill="#ffffff" opacity="0.62"/><circle cx="1134" cy="204" r="12" fill="#ffffff" opacity="0.86"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Instead of learning values and reading off a policy, <strong>policy gradient</strong> methods learn the policy directly: a probability for each action, adjusted after every reward so that actions which paid become more likely. A <strong>baseline</strong> (such as the average reward) makes the updates far steadier, because only better-than-usual actions are reinforced.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/q-learning/" data-topic="machine-learning/q-learning">Q-Learning</a>, <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> and <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can I improve a policy without estimating values first?&quot; Yes, by nudging its parameters in the direction that raises expected reward, using rewards from actions actually taken. It also handles continuous actions and stochastic policies naturally, which tables of Q-values do not.</p>
+<h2 id="intuition-raise-the-odds-of-what-paid">Intuition: raise the odds of what paid</h2>
+<p>A policy is a set of probabilities, say from a softmax over three preferences. After taking an action and seeing a reward, increase the probability of that action if the reward was good, decrease it if bad. &quot;Good&quot; must mean <em>better than usual</em>: if every reward is around 5, then every action gets reinforced, the probabilities wander, and the signal is buried in noise. Subtracting the average reward (the baseline) turns &quot;5&quot; into &quot;slightly above average&quot; or &quot;below average&quot;, so only actions that really beat the norm gain probability.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">policy      π(a) = softmax(θ)                       the probability of each action
+update      θⱼ ← θⱼ + η · (r − b) · ( 1[j = a] − π(j) )
+            η learning rate;  b baseline;  (r − b) is the advantage
+REINFORCE   the algorithm that applies this update after each episode or action
+actor–critic  learn a value function as the baseline and a policy to act
+</code></pre>
+<p>The update follows the gradient of expected reward. A baseline <code>b</code> does not change the average direction of the update, but it can greatly reduce its variance.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three actions with true average rewards 4.2, 4.6 and 5.0 (noise 0.5). The best action is only slightly better than the others, and all rewards are large and positive. After 300 actions, probability given to the best action, over 10 runs from different seeds:</p>
+<pre><code class="language-text">learning rate 0.1, with baseline:      mean 0.94  (runs between 0.92 and 0.97)
+learning rate 0.1, without baseline:   mean 0.50  (runs between 0.00 and 0.99)
+</code></pre>
+<p>With the baseline every run ends up settled on the best action. Without it, the runs are wildly inconsistent: some lock onto the worst action (probability of the best near 0) because all rewards are positive, so whichever action happens to be tried early is reinforced regardless of how good it is. A small learning rate (0.02) with the baseline is safe but slow (mean 0.61 after 300 actions).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="policy-gradient" data-title="Nudge the probabilities toward what paid"><p class="bench-fallback"><strong>Interactive bench: Nudge the probabilities toward what paid.</strong> A softmax policy over three actions with average rewards 4.2, 4.6 and 5.0 is updated after every action; step or play, choose the learning rate, switch the baseline on or off, and watch the action probabilities over time, with a button to start a new run.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With the baseline on, play a run and watch the probabilities.</li>
+<li>Press <strong>Start a new run</strong> several times.</li>
+<li>Turn the baseline off and repeat.</li>
+<li>Lower the learning rate to 0.02 and compare speed.</li>
+</ol>
+<p><strong>What you should notice:</strong> with a baseline the best action wins reliably, without it some runs lock onto a bad action, and the learning rate trades speed against jitter.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Fine-tuning language models with human feedback:</strong> PPO and related methods are policy-gradient algorithms.</li>
+<li><strong>Robotics and games</strong> with continuous or stochastic actions.</li>
+<li><strong>Actor–critic methods,</strong> which combine a policy with a learned value baseline.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>No baseline,</strong> giving noisy, unreliable learning.</li>
+<li><strong>Too large a step,</strong> collapsing the policy onto one action too early.</li>
+<li><strong>Rewards that are not comparable across episodes.</strong></li>
+<li><strong>Sample hunger:</strong> policy gradients often need many episodes.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does a positive advantage (r − b) do?</summary>
+It raises the probability of the action taken.
+</details>
+
+<details><summary>2. Why subtract a baseline?</summary>
+To reduce the variance of the updates, so only better-than-usual actions are reinforced.
+</details>
+
+<details><summary>3. How does a policy gradient differ from Q-learning?</summary>
+It adjusts the policy's probabilities directly, instead of learning action values and acting greedily.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Policy gradient:</strong> adjusting policy parameters to increase expected reward.</li>
+<li><strong>Advantage:</strong> how much better a reward was than the baseline.</li>
+<li><strong>Baseline:</strong> a reference value subtracted to reduce variance.</li>
+<li><strong>Actor–critic:</strong> a policy (actor) trained with a learned value function (critic).</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/q-learning/" data-topic="machine-learning/q-learning">Q-Learning</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a> · <a class="wikilink" href="/machine-learning/bandits-and-exploration/" data-topic="machine-learning/bandits-and-exploration">Bandits and Exploration</a> · <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/policy-gradients">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/machine-learning-in-practice/"><small>Read next</small><b>Machine Learning in Practice</b><p>Knowing the algorithms is half the craft.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/q-learning/"><b>Q-Learning</b><p>Value iteration needs to know how the world works.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/machine-learning/bandits-and-exploration/"><b>Bandits and Exploration</b><p>The simplest reinforcement problem has no states: several slot machines (&quot;arms&quot;) with unknown average payouts, and you choose one each time.</p></a><a class="rc-card" href="/math/stochastic-gradient-descent/"><b>Stochastic Gradient Descent</b><p>Stochastic gradient descent (SGD) takes each step using the gradient from a small random mini-batch of examples instead of the whole data set.</p></a><a class="rc-card" href="/machine-learning/reinforcement-learning-basics/"><b>Reinforcement Learning Basics</b><p>Some problems come with no answer key, only a score after the fact. Reinforcement learning is about agents that learn to act from rewards.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/q-learning/">← Previous: Q-Learning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

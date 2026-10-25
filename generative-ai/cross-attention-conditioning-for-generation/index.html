@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross-Attention Conditioning for Generation — AI Base</title>
+<meta name="description" content="Guidance (as in Classifier-Free Guidance) steers generation toward a condition through the score itself; this note covers a completely different way a condition enters a generative model —…">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/cross-attention-conditioning-for-generation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Cross-Attention Conditioning for Generation — AI Base">
+<meta property="og:description" content="Guidance (as in Classifier-Free Guidance) steers generation toward a condition through the score itself; this note covers a completely different way a condition enters a generative model —…">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/cross-attention-conditioning-for-generation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Cross-Attention Conditioning for Generation","item":"https://ai.saranmahadev.in/generative-ai/cross-attention-conditioning-for-generation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Cross-Attention Conditioning for Generation","description":"Guidance (as in Classifier-Free Guidance) steers generation toward a condition through the score itself; this note covers a completely different way a condition enters a generative model —…","url":"https://ai.saranmahadev.in/generative-ai/cross-attention-conditioning-for-generation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In cross-attention conditioning, what plays the role of queries, and what plays the role of keys and values?","acceptedAnswer":{"@type":"Answer","text":"The positions being generated (e.g. image patches) are the queries; the conditioning input's tokens (e.g. text embeddings) supply the keys and values."}},{"@type":"Question","name":"In the worked example, why did latent 1 attend most strongly to \"cat\"?","acceptedAnswer":{"@type":"Answer","text":"Because latent 1's query vector was built to closely resemble the \"cat\" token's key vector, giving their dot-product similarity (and so their attention weight) the highest value among the three conditioning tokens."}},{"@type":"Question","name":"How does cross-attention conditioning differ from guidance, mechanically?","acceptedAnswer":{"@type":"Answer","text":"Cross-attention is built into the model's architecture and runs on every forward pass regardless of any guidance setting; guidance is a separate adjustment applied to the model's output (its score) at sampling time, with no architectural change required."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Conditioning and Guidance</p>
+        <h1 class="doc-title">Cross-Attention Conditioning for Generation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ck8o5nubg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="ck8o5nupl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ck8o5nubg)"/>
+  <circle cx="1127" cy="379" r="203" fill="#ffbfe0" opacity="0.43"/><circle cx="593" cy="147" r="76" fill="#ffbeba" opacity="0.40"/><circle cx="613" cy="266" r="186" fill="#ffbfe0" opacity="0.27"/><circle cx="203" cy="232" r="86" fill="#ffbeba" opacity="0.32"/><circle cx="1095" cy="162" r="213" fill="#8a5989" opacity="0.50"/>
+  <path d="M0,420 L0,337 L30,330 L60,324 L90,317 L120,312 L150,308 L180,306 L210,306 L240,308 L270,312 L300,318 L330,325 L360,332 L390,338 L420,344 L450,347 L480,349 L510,349 L540,347 L570,343 L600,337 L630,330 L660,324 L690,317 L720,312 L750,308 L780,306 L810,306 L840,308 L870,312 L900,318 L930,325 L960,332 L990,338 L1020,344 L1050,347 L1080,349 L1110,349 L1140,347 L1170,343 L1200,337 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,369 L30,366 L60,364 L90,362 L120,362 L150,362 L180,364 L210,366 L240,369 L270,372 L300,375 L330,379 L360,383 L390,386 L420,389 L450,392 L480,393 L510,394 L540,394 L570,393 L600,391 L630,388 L660,385 L690,382 L720,378 L750,374 L780,371 L810,368 L840,365 L870,363 L900,362 L930,362 L960,363 L990,364 L1020,367 L1050,370 L1080,373 L1110,377 L1140,380 L1170,384 L1200,387 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="898" cy="155" rx="172" ry="48" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-5.2 898 155)"/><ellipse cx="898" cy="155" rx="238" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(0.8 898 155)"/>
+  <circle cx="898" cy="155" r="67" fill="url(#ck8o5nupl)"/>
+  <circle cx="989" cy="90" r="12" fill="#ffffff" opacity="0.84"/><circle cx="1162" cy="146" r="8" fill="#ffffff" opacity="0.71"/><circle cx="795" cy="71" r="15" fill="#ffffff" opacity="0.76"/><circle cx="869" cy="55" r="16" fill="#ffffff" opacity="0.60"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Guidance (as in <a class="wikilink" href="/generative-ai/classifier-free-guidance/" data-topic="generative-ai/classifier-free-guidance">Classifier-Free Guidance</a>) steers generation toward a condition through the score itself; this note covers a completely different way a condition enters a generative model — directly inside its architecture, through <a class="wikilink" href="/transformers/encoder-decoder-architectures-as-a-pattern/" data-topic="transformers/encoder-decoder-architectures-as-a-pattern">cross-attention</a>, letting the generated content look at the condition at every layer.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/encoder-decoder-architectures-as-a-pattern/" data-topic="transformers/encoder-decoder-architectures-as-a-pattern">Encoder-Decoder Architectures as a Pattern</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does a text prompt&#39;s embedding actually influence pixel generation, mechanically?&quot; In most modern text-to-image and text-to-video models, every position being generated (an image patch, say) acts as a cross-attention <em>query</em> against the prompt&#39;s token embeddings, which serve as the <em>keys and values</em>. Each generated position attends over the whole prompt and pulls in — weighted by relevance — whichever words matter most to it, the same cross-attention mechanism used in encoder-decoder transformers, just with &quot;generated content&quot; and &quot;condition&quot; standing in for decoder and encoder.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Picture painting a canvas while a sentence describing the scene is pinned to the wall beside you. Before placing each brushstroke, you glance at the sentence and focus on whichever word is most relevant to that particular patch of canvas — &quot;red&quot; might draw your eye for one patch, &quot;cat&quot; for another. Every patch gets its own glance, and its own personalized mix of which words mattered — nothing forces every patch to react to the whole sentence equally.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">queries:        one per position being generated (e.g. an image latent patch)
+keys, values:   one per conditioning token (e.g. a word embedding from the prompt)
+
+attention(Q, K, V) = softmax(QKᵗ / √d) · V
+→ each query&#39;s output is a weighted blend of the condition&#39;s value vectors,
+  weighted by how similar that query is to each conditioning token&#39;s key
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two image-latent positions attend over three text-conditioning tokens — &quot;a&quot;, &quot;cat&quot;, &quot;red&quot; — using identity projections so the raw similarity is easy to trace. The first latent is built to resemble &quot;a&quot;, the second to resemble &quot;cat&quot;:</p>
+<pre><code class="language-text">latent 0 (≈ &quot;a&quot;):    attention weights  a: 0.419   cat: 0.254   red: 0.327
+latent 1 (≈ &quot;cat&quot;):  attention weights  a: 0.274   cat: 0.408   red: 0.318
+</code></pre>
+<p>Each latent&#39;s highest attention weight lands on the text token it&#39;s closest to — latent 0 on &quot;a&quot; (0.419), latent 1 on &quot;cat&quot; (0.408) — and its output becomes a blend of all three conditioning values, dominated by whichever one it attended to most. Nothing forced this; it falls directly out of the same dot-product similarity that drives every other attention computation on this road.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="cross-attn-conditioning" data-title="An image latent attends over the prompt"><p class="bench-fallback"><strong>Interactive bench: An image latent attends over the prompt.</strong> Pick an image-latent position and see which word in a text prompt it attends to most, and by how much.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Pick the latent built to resemble &quot;a&quot; and check that it attends most to &quot;a&quot;.</li>
+<li>Pick the one built to resemble &quot;cat&quot; and compare.</li>
+<li>Pick the blended latent and notice its attention is more evenly split.</li>
+</ol>
+<p><strong>What you should notice:</strong> each latent&#39;s attention weights are its own — there&#39;s no single, shared &quot;how much does the prompt matter&quot; number; every generated position gets its own personalized read of the condition.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Stable Diffusion-style text-to-image models insert cross-attention layers between the image&#39;s spatial positions and the text encoder&#39;s token embeddings</strong> at multiple resolutions throughout the network, exactly this mechanism, repeated many times.</li>
+<li><strong>It&#39;s why some words in a prompt visibly &quot;attach&quot; to specific regions of a generated image</strong> — attention maps for individual prompt tokens can be visualized directly, showing which pixels attended most to which word.</li>
+<li><strong>It composes with <a class="wikilink" href="/generative-ai/classifier-free-guidance/" data-topic="generative-ai/classifier-free-guidance">guidance</a></strong> rather than replacing it: cross-attention is how the condition gets <em>used</em> inside the network; guidance is a separate, sampling-time lever for how strongly to <em>weight</em> that condition&#39;s influence overall.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing this with <a class="wikilink" href="/generative-ai/classifier-free-guidance/" data-topic="generative-ai/classifier-free-guidance">guidance</a>.</strong> Guidance operates on the score at sampling time and needs no architectural change; cross-attention conditioning is built into the model&#39;s layers and runs during every forward pass, with or without any guidance on top.</li>
+<li><strong>Assuming every generated position attends equally to the whole prompt.</strong> The worked example shows the opposite — attention weights differ sharply from one position to the next, based on each one&#39;s own query.</li>
+<li><strong>Forgetting this is the exact same mechanism as encoder-decoder cross-attention.</strong> Nothing about it is specific to generation — &quot;queries from one sequence, keys and values from another&quot; is the whole idea, wherever it shows up.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In cross-attention conditioning, what plays the role of queries, and what plays the role of keys and values?</summary>
+The positions being generated (e.g. image patches) are the queries; the conditioning input's tokens (e.g. text embeddings) supply the keys and values.
+</details>
+
+<details><summary>2. In the worked example, why did latent 1 attend most strongly to "cat"?</summary>
+Because latent 1's query vector was built to closely resemble the "cat" token's key vector, giving their dot-product similarity (and so their attention weight) the highest value among the three conditioning tokens.
+</details>
+
+<details><summary>3. How does cross-attention conditioning differ from guidance, mechanically?</summary>
+Cross-attention is built into the model's architecture and runs on every forward pass regardless of any guidance setting; guidance is a separate adjustment applied to the model's output (its score) at sampling time, with no architectural change required.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Cross-attention conditioning:</strong> using a condition&#39;s embeddings as the keys and values that generated positions attend over.</li>
+<li><strong>Attention map:</strong> the per-position attention weights over a conditioning input, often visualized to see which words or regions influenced which output.</li>
+<li><strong>Query, key, value:</strong> the three attention roles — here, generated positions supply queries, and the condition supplies keys and values.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/encoder-decoder-architectures-as-a-pattern/" data-topic="transformers/encoder-decoder-architectures-as-a-pattern">Encoder-Decoder Architectures as a Pattern</a> · <a class="wikilink" href="/generative-ai/classifier-free-guidance/" data-topic="generative-ai/classifier-free-guidance">Classifier-Free Guidance</a> · <a class="wikilink" href="/generative-ai/text-to-image-pipelines/" data-topic="generative-ai/text-to-image-pipelines">Text-to-Image Pipelines</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/cross-attention-conditioning-for-generation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/controlnet-style-structural-conditioning/"><small>Read next</small><b>ControlNet-Style Structural Conditioning</b><p>Guidance and cross-attention both steer generation toward a concept — a class, a prompt — expressed as a direction or an attended-to embedding. Neither one forces an exact structure.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/classifier-free-guidance/"><b>Classifier-Free Guidance</b><p>Classifier Guidance works, but it needs a second model — a classifier trained specifically to work on noisy, partially-denoised samples.</p></a><a class="rc-card" href="/transformers/encoder-decoder-architectures-as-a-pattern/"><b>Encoder-Decoder Architectures as a Pattern</b><p>Encoder-only and decoder-only architectures each use one kind of self-attention throughout.</p></a><a class="rc-card" href="/generative-ai/text-to-image-pipelines/"><b>Text-to-Image Pipelines</b><p>Every mechanism on the previous district&#39;s road — guidance, cross-attention conditioning — exists to answer one practical question: given a sentence of text, how do you actually get a picture out…</p></a><a class="rc-card" href="/generative-ai/conditioning-and-guidance/"><b>Conditioning and Guidance</b><p>Decoding controls how output is assembled token by token; this district covers a different lever — how a generative model&#39;s output is pushed toward a specific condition, image, or structure during…</p></a><a class="rc-card" href="/generative-ai/controlnet-style-structural-conditioning/"><b>ControlNet-Style Structural Conditioning</b><p>Guidance and cross-attention both steer generation toward a concept — a class, a prompt — expressed as a direction or an attended-to embedding. Neither one forces an exact structure.</p></a><a class="rc-card" href="/generative-ai/instruction-based-image-editing/"><b>Instruction-Based Image Editing</b><p>Masks and locked structural coordinates both require drawing an exact region by hand.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/classifier-free-guidance/">← Previous: Classifier-Free Guidance</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

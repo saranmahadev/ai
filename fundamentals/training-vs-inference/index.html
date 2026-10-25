@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Training vs Inference — AI Base</title>
+<meta name="description" content="Training is when a model&#39;s parameters are adjusted using examples. Inference is when the finished, frozen model is used to make predictions on new inputs.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/training-vs-inference/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Training vs Inference — AI Base">
+<meta property="og:description" content="Training is when a model&#39;s parameters are adjusted using examples. Inference is when the finished, frozen model is used to make predictions on new inputs.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/training-vs-inference/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Training vs Inference","item":"https://ai.saranmahadev.in/fundamentals/training-vs-inference/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Training vs Inference","description":"Training is when a model's parameters are adjusted using examples. Inference is when the finished, frozen model is used to make predictions on new inputs.","url":"https://ai.saranmahadev.in/fundamentals/training-vs-inference/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What changes during training that does not change during inference?","acceptedAnswer":{"@type":"Answer","text":"The model's parameters."}},{"@type":"Question","name":"Why can a deployed model be wrong about new events?","acceptedAnswer":{"@type":"Answer","text":"Its parameters were set from data that stopped at training time, and it does not learn from use."}},{"@type":"Question","name":"What are the four steps of the training loop?","acceptedAnswer":{"@type":"Answer","text":"Predict, measure the error, nudge the parameters to reduce it, and repeat."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · Data and Models</p>
+        <h1 class="doc-title">Training vs Inference</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cpucyqhbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="cpucyqhpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cpucyqhbg)"/>
+  <circle cx="395" cy="19" r="217" fill="#c3d6b3" opacity="0.45"/><circle cx="840" cy="12" r="150" fill="#a8e2d7" opacity="0.27"/><circle cx="742" cy="3" r="83" fill="#e2f5f1" opacity="0.46"/><circle cx="248" cy="16" r="168" fill="#c3d6b3" opacity="0.28"/><circle cx="175" cy="230" r="120" fill="#a8e2d7" opacity="0.31"/><circle cx="1106" cy="310" r="139" fill="#c3d6b3" opacity="0.38"/>
+  <path d="M0,420 L0,349 L30,349 L60,348 L90,344 L120,339 L150,332 L180,325 L210,319 L240,313 L270,309 L300,306 L330,306 L360,307 L390,311 L420,316 L450,323 L480,330 L510,336 L540,342 L570,347 L600,349 L630,349 L660,348 L690,344 L720,339 L750,332 L780,325 L810,319 L840,313 L870,309 L900,306 L930,306 L960,307 L990,311 L1020,316 L1050,323 L1080,330 L1110,336 L1140,342 L1170,347 L1200,349 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,374 L30,370 L60,367 L90,365 L120,363 L150,362 L180,362 L210,363 L240,365 L270,367 L300,370 L330,374 L360,377 L390,381 L420,385 L450,388 L480,391 L510,393 L540,394 L570,394 L600,393 L630,392 L660,390 L690,387 L720,384 L750,380 L780,376 L810,372 L840,369 L870,366 L900,364 L930,363 L960,362 L990,362 L1020,363 L1050,365 L1080,368 L1110,371 L1140,375 L1170,379 L1200,382 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="805" cy="243" rx="228" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-0.8 805 243)"/><ellipse cx="805" cy="243" rx="316" ry="88" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(5.2 805 243)"/>
+  <circle cx="805" cy="243" r="90" fill="url(#cpucyqhpl)"/>
+  <circle cx="657" cy="173" r="12" fill="#ffffff" opacity="0.86"/><circle cx="1141" cy="302" r="18" fill="#ffffff" opacity="0.80"/><circle cx="1056" cy="201" r="8" fill="#ffffff" opacity="0.84"/><circle cx="593" cy="199" r="14" fill="#ffffff" opacity="0.82"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Training</strong> is when a model&#39;s parameters are adjusted using examples. <strong>Inference</strong> is when the finished, frozen model is used to make predictions on new inputs. The two phases have different costs, and a deployed model does not keep learning unless someone retrains it.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/a-model-is-a-function/" data-topic="fundamentals/a-model-is-a-function">A Model Is a Function</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>When does a model learn, and when does it just answer? Mixing the two up is behind many misunderstandings about what AI systems &quot;remember&quot;.</p>
+<h2 id="intuition-studying-versus-taking-the-exam">Intuition: studying versus taking the exam</h2>
+<p>Training is studying: you go through practice problems, compare your answers with the solutions, and adjust your understanding. Inference is the exam: you answer new questions with what you already know. You do not learn anything new mid-exam.</p>
+<h2 id="the-training-loop">The training loop</h2>
+<p>Training repeats a simple cycle:</p>
+<ol>
+<li><strong>Predict</strong> on the training examples using the current parameters.</li>
+<li><strong>Measure the error</strong>: how far off were the predictions? This number is the <strong>loss</strong>.</li>
+<li><strong>Nudge the parameters</strong> a little in the direction that shrinks the error.</li>
+<li><strong>Repeat.</strong></li>
+</ol>
+<p>The error usually drops quickly at first and then more slowly, until further nudges bring little improvement. The method of choosing the nudge, following the slope of the loss downhill, is <strong>gradient descent</strong>, made possible by the derivative (see <a class="wikilink" href="/math/derivatives/" data-topic="math/derivatives">Derivatives</a> and <a class="wikilink" href="/math/optimization/" data-topic="math/optimization">Optimization</a>).</p>
+<h2 id="inference">Inference</h2>
+<p>Once training stops, the parameters are <strong>frozen</strong>. Now the model takes new inputs and produces outputs, over and over, without changing. This is what happens every time you use a deployed system.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Training</th>
+<th>Inference</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Purpose</td>
+<td>set the parameters</td>
+<td>use the parameters</td>
+</tr>
+<tr>
+<td>Data</td>
+<td>many labelled examples</td>
+<td>one new input at a time</td>
+</tr>
+<tr>
+<td>Parameters</td>
+<td>change</td>
+<td>frozen</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>heavy, done occasionally</td>
+<td>light per use, but repeated constantly</td>
+</tr>
+<tr>
+<td>Errors it can fix</td>
+<td>yes, by adjusting</td>
+<td>no</td>
+</tr>
+</tbody></table>
+<h2 id="a-worked-example-training-a-house-price-line">A worked example: training a house-price line</h2>
+<p>Starting with both dials at 0, the model predicts $0 for every house, an average miss of about $249k. After training steps, the average miss falls roughly like this:</p>
+<table>
+<thead>
+<tr>
+<th>Training steps</th>
+<th>Average miss</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>about $249k</td>
+</tr>
+<tr>
+<td>1</td>
+<td>about $209k</td>
+</tr>
+<tr>
+<td>5</td>
+<td>about $102k</td>
+</tr>
+<tr>
+<td>10</td>
+<td>about $50k</td>
+</tr>
+<tr>
+<td>20</td>
+<td>about $33k</td>
+</tr>
+<tr>
+<td>200</td>
+<td>about $24k</td>
+</tr>
+</tbody></table>
+<p>Most of the improvement comes early, and later steps refine it. Then the model is frozen, and asked about a house it has never seen.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="train-then-freeze" data-title="Training, then inference"><p class="bench-fallback"><strong>Interactive bench: Training, then inference.</strong> A house-price line that starts untrained. Each step nudges its two numbers to reduce the average miss, and a chart shows the error falling. Freezing the model lets you click a new house size and see its prediction.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Press <strong>Train 1 step</strong> a few times, then press <strong>Play</strong>. Watch the line and the error curve.</li>
+<li>When does the error stop falling much? Is more training always worth it?</li>
+<li>Press <strong>Freeze the model</strong> and click different house sizes. Does the line move now?</li>
+<li>Press <strong>Reset</strong> and freeze after just one step. How good are the answers?</li>
+</ol>
+<p><strong>What you should notice:</strong> learning happens only in training. After freezing, the model can only apply what it has learned, so if the world changes, it must be retrained.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<p>Every system in <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a> and <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a> follows this split. Training a large <a class="wikilink" href="/llms/llms/" data-topic="llms/llms">LLMs</a> model takes enormous computing effort, while using it is comparatively cheap per question, though it adds up at scale. A chat that seems to &quot;remember&quot; you is usually keeping earlier messages in its input, not learning from you.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Inference is not learning.</strong> A deployed model does not improve from being used unless it is retrained.</li>
+<li><strong>Lower training error is not always better.</strong> A model can memorise its training examples and fail on new ones (see <a class="wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a>).</li>
+<li><strong>Training data is fixed at training time.</strong> The model knows nothing that happened afterwards.</li>
+<li><strong>&quot;Training&quot; and &quot;using&quot; are separate costs.</strong> A system can be expensive to build and cheap to run, or the reverse.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What changes during training that does not change during inference?</summary>
+The model's parameters.
+</details>
+
+<details><summary>2. Why can a deployed model be wrong about new events?</summary>
+Its parameters were set from data that stopped at training time, and it does not learn from use.
+</details>
+
+<details><summary>3. What are the four steps of the training loop?</summary>
+Predict, measure the error, nudge the parameters to reduce it, and repeat.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Training:</strong> adjusting a model&#39;s parameters using examples.</li>
+<li><strong>Inference:</strong> using a trained, frozen model to make predictions on new inputs.</li>
+<li><strong>Loss:</strong> the number that training tries to make small.</li>
+<li><strong>Gradient descent:</strong> repeatedly nudging parameters in the direction that lowers the loss.</li>
+<li><strong>Converged:</strong> no longer improving noticeably, so training can stop.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/a-model-is-a-function/" data-topic="fundamentals/a-model-is-a-function">A Model Is a Function</a> · <a class="wikilink" href="/fundamentals/types-of-tasks/" data-topic="fundamentals/types-of-tasks">Types of Tasks</a> · <a class="wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a> · <a class="wikilink" href="/math/derivatives/" data-topic="math/derivatives">Derivatives</a> · <a class="wikilink" href="/math/optimization/" data-topic="math/optimization">Optimization</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/training-vs-inference">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/types-of-tasks/"><small>Read next</small><b>Types of Tasks</b><p>Most AI problems fall into a few kinds: classify (pick a category), predict a number, group similar things without labels, generate new content, or choose actions over time.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/a-model-is-a-function/"><b>A Model Is a Function</b><p>A model is a function: give it inputs and it returns a prediction.</p></a><a class="rc-card" href="/math/derivatives/"><b>Derivatives</b><p>The derivative tells you how fast a function&#39;s output is changing at one particular input: the slope of the curve at a point.</p></a><a class="rc-card" href="/math/optimization/"><b>Optimization</b><p>Optimization is the art of finding the best values: the parameters that make a model&#39;s error as small as possible.</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/llms/llms/"><b>LLMs</b><p>A large language model is, mechanically, nothing more than the decoder-only transformer and the decoding, conditioning and evaluation machinery already covered on Transformers and Generative AI.</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/a-model-is-a-function/">← Previous: A Model Is a Function</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Splitting a Transformer Across Devices — AI Base</title>
+<meta name="description" content="A large transformer&#39;s matrices can be far too big to fit on one device at all.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/splitting-a-transformer-across-devices/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Splitting a Transformer Across Devices — AI Base">
+<meta property="og:description" content="A large transformer&#39;s matrices can be far too big to fit on one device at all.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/splitting-a-transformer-across-devices/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Splitting a Transformer Across Devices","item":"https://ai.saranmahadev.in/transformers/splitting-a-transformer-across-devices/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Splitting a Transformer Across Devices","description":"A large transformer's matrices can be far too big to fit on one device at all.","url":"https://ai.saranmahadev.in/transformers/splitting-a-transformer-across-devices/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is split across devices in tensor parallelism, as opposed to data parallelism?","acceptedAnswer":{"@type":"Answer","text":"The model's own weight matrices are split, with every device seeing the same input; data parallelism instead copies the whole model and splits the input data across devices."}},{"@type":"Question","name":"In the worked example, how was the single-device output exactly reproduced by two devices?","acceptedAnswer":{"@type":"Answer","text":"By splitting the first matrix's rows (output dimension) and the second matrix's matching columns across the two devices, then summing their two partial outputs together."}},{"@type":"Question","name":"What real cost does splitting a matrix across devices introduce that a single device never pays?","acceptedAnswer":{"@type":"Answer","text":"Communication — the partial results computed on each device have to be combined (summed, in this pattern), which requires devices to exchange data."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Scaling the Block</p>
+        <h1 class="doc-title">Splitting a Transformer Across Devices</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1px0r8jbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1px0r8jpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1px0r8jbg)"/>
+  <circle cx="313" cy="301" r="106" fill="#4f669f" opacity="0.45"/><circle cx="543" cy="327" r="207" fill="#e2efff" opacity="0.35"/><circle cx="815" cy="101" r="147" fill="#c5cacf" opacity="0.39"/><circle cx="883" cy="294" r="191" fill="#e2efff" opacity="0.56"/><circle cx="1064" cy="101" r="224" fill="#abd0ff" opacity="0.22"/><circle cx="391" cy="351" r="111" fill="#4f669f" opacity="0.51"/>
+  <path d="M0,420 L0,307 L30,308 L60,310 L90,313 L120,315 L150,318 L180,322 L210,325 L240,329 L270,332 L300,335 L330,338 L360,341 L390,344 L420,346 L450,348 L480,349 L510,349 L540,350 L570,349 L600,348 L630,347 L660,345 L690,342 L720,340 L750,337 L780,333 L810,330 L840,327 L870,323 L900,320 L930,317 L960,314 L990,311 L1020,309 L1050,308 L1080,306 L1110,306 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,391 L60,388 L90,383 L120,378 L150,373 L180,369 L210,365 L240,363 L270,362 L300,363 L330,365 L360,368 L390,373 L420,378 L450,383 L480,387 L510,391 L540,393 L570,394 L600,393 L630,391 L660,388 L690,383 L720,378 L750,373 L780,369 L810,365 L840,363 L870,362 L900,363 L930,365 L960,368 L990,373 L1020,378 L1050,383 L1080,387 L1110,391 L1140,393 L1170,394 L1200,393 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="634" cy="161" rx="191" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-12.8 634 161)"/><ellipse cx="634" cy="161" rx="265" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-6.8 634 161)"/>
+  <circle cx="634" cy="161" r="75" fill="url(#c1px0r8jpl)"/>
+  <circle cx="440" cy="220" r="18" fill="#ffffff" opacity="0.85"/><circle cx="829" cy="101" r="15" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/counting-a-transformer-s-parameters-and-flops/" data-topic="transformers/counting-a-transformer-s-parameters-and-flops">A large transformer&#39;s matrices</a> can be far too big to fit on one device at all. Tensor parallelism splits a <em>single</em> weight matrix across several devices, so no one device ever needs to hold the whole thing — a genuinely different problem from the data-parallel training covered on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>, which copies the <em>entire</em> model onto every device instead.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/counting-a-transformer-s-parameters-and-flops/" data-topic="transformers/counting-a-transformer-s-parameters-and-flops">Counting a Transformer&#39;s Parameters and FLOPs</a>, <a class="wikilink" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training">Distributed and Data-Parallel Training</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;When even one transformer block&#39;s weight matrices are too large for a single device&#39;s memory, how is the computation itself split up?&quot; Tensor parallelism splits the matrices directly: part of each weight matrix lives on each device, each device computes its own partial result from the piece it holds, and the partial results are combined — summed, in the standard pattern — to reconstruct the exact same answer a single device would have produced.</p>
+<h2 id="intuition">Intuition</h2>
+<p><a class="wikilink" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training">Data parallelism</a> puts a full copy of the model on every device and splits the <em>data</em> across them. Tensor parallelism does the opposite: every device sees the same input, but only holds a <em>slice</em> of the model&#39;s own weights. For the feed-forward sublayer specifically, the standard split is: cut the first matrix&#39;s output dimension into chunks (each device computes a different slice of the hidden layer), then cut the second matrix&#39;s input dimension to match (each device computes a partial contribution to the final output), and sum the partial outputs together — a single communication step, instead of needing every device to hold the whole matrix.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">split d_ff across D devices, chunk size = d_ff / D
+
+device d computes:
+  hidden_d = activation(W1_d · x)            — W1_d: a chunk of W1&#39;s rows
+  partial_d = W2_d · hidden_d                — W2_d: the matching chunk of W2&#39;s columns
+
+combine (all-reduce, i.e. sum):
+  output = Σ_d partial_d
+</code></pre>
+<p>Each device only ever stores <code>1/D</code> of <code>W1</code> and <code>1/D</code> of <code>W2</code> — the full matrices never need to exist on any single device at once.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A feed-forward sublayer (<code>d_model = 4</code>, <code>d_ff = 8</code>, 64 total weights) split across 2 devices, on input <code>x = [0.5, -0.3, 0.8, 0.1]</code>:</p>
+<pre><code class="language-text">single-device output:        [0.29676, 0.03862, -0.00036, -0.07130]
+2-device (tensor-parallel) output:  [0.29676, 0.03862, -0.00036, -0.07130]
+
+match: exact
+
+device A&#39;s weight parameters: 32 (half of 64)
+device B&#39;s weight parameters: 32 (half of 64)
+</code></pre>
+<p>Splitting the computation across two devices produces an output identical to the single-device computation — and each device only ever needs to store exactly half the weights, confirming neither device needed the full matrices to participate.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="tensor-parallel-ffn" data-title="Split the matrix, sum the results"><p class="bench-fallback"><strong>Interactive bench: Split the matrix, sum the results.</strong> Split a feed-forward sublayer's weights across a chosen number of devices and confirm the combined output matches the single-device result, while each device's memory footprint shrinks accordingly.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Confirm the split-and-summed output matches the single-device result exactly.</li>
+<li>Increase the number of devices and watch each device&#39;s share of the weights shrink proportionally.</li>
+<li>Consider what has to be communicated between devices (and when) for this scheme to work.</li>
+</ol>
+<p><strong>What you should notice:</strong> the result is identical regardless of how many devices the computation is split across — tensor parallelism changes where the computation happens, never what it computes.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It&#39;s what makes training and running models far larger than any single device&#39;s memory possible at all</strong> — a genuinely different scaling axis from <a class="wikilink" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training">data parallelism</a>, and the two are routinely combined in practice.</li>
+<li><strong>The same splitting idea applies to the attention sublayer&#39;s matrices too</strong> (not just the feed-forward sublayer shown here), typically splitting across attention heads so each device handles a subset of heads end to end.</li>
+<li><strong><a class="wikilink" href="/transformers/mixture-of-experts-transformer-blocks/" data-topic="transformers/mixture-of-experts-transformer-blocks">MoE blocks</a> add a natural, related option</strong>: placing different experts on different devices, since each token only ever needs a few of them at once.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming tensor parallelism and data parallelism solve the same problem.</strong> Data parallelism needs every device to hold the <em>whole</em> model; tensor parallelism exists specifically because the whole model doesn&#39;t fit on one device at all.</li>
+<li><strong>Forgetting the combination step requires communication.</strong> The sum across devices (an all-reduce) is a real, non-free step — splitting a matrix doesn&#39;t eliminate the need for devices to exchange their partial results.</li>
+<li><strong>Splitting a matrix the wrong way.</strong> The worked example&#39;s column-then-row pattern is specifically chosen so only one communication step (summing the final outputs) is needed — a careless split can require far more cross-device communication.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is split across devices in tensor parallelism, as opposed to data parallelism?</summary>
+The model's own weight matrices are split, with every device seeing the same input; data parallelism instead copies the whole model and splits the input data across devices.
+</details>
+
+<details><summary>2. In the worked example, how was the single-device output exactly reproduced by two devices?</summary>
+By splitting the first matrix's rows (output dimension) and the second matrix's matching columns across the two devices, then summing their two partial outputs together.
+</details>
+
+<details><summary>3. What real cost does splitting a matrix across devices introduce that a single device never pays?</summary>
+Communication — the partial results computed on each device have to be combined (summed, in this pattern), which requires devices to exchange data.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Tensor parallelism:</strong> splitting a single weight matrix&#39;s rows or columns across multiple devices.</li>
+<li><strong>All-reduce:</strong> combining (here, summing) partial results computed on different devices into one final result.</li>
+<li><strong>Chunk:</strong> the portion of a split weight matrix stored and computed on one device.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/counting-a-transformer-s-parameters-and-flops/" data-topic="transformers/counting-a-transformer-s-parameters-and-flops">Counting a Transformer&#39;s Parameters and FLOPs</a> · <a class="wikilink" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training">Distributed and Data-Parallel Training</a> · <a class="wikilink" href="/transformers/mixture-of-experts-transformer-blocks/" data-topic="transformers/mixture-of-experts-transformer-blocks">Mixture-of-Experts Transformer Blocks</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/splitting-a-transformer-across-devices">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/transformers-beyond-text/"><small>Read next</small><b>Transformers Beyond Text</b><p>Nothing about the transformer block is specific to language — it only needs a sequence of vectors to attend over.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/counting-a-transformer-s-parameters-and-flops/"><b>Counting a Transformer&#39;s Parameters and FLOPs</b><p>Every number quoted for a transformer&#39;s size — &quot;110 million parameters,&quot; &quot;175 billion parameters&quot; — comes from literally adding up the matrices covered earlier on this planet.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/deep-learning/distributed-and-data-parallel-training/"><b>Distributed and Data-Parallel Training</b><p>One accelerator has a limit to how much data it can process at once.</p></a><a class="rc-card" href="/transformers/mixture-of-experts-transformer-blocks/"><b>Mixture-of-Experts Transformer Blocks</b><p>The feed-forward sublayer runs the same, single network on every position.</p></a><a class="rc-card" href="/transformers/scaling-the-block/"><b>Scaling the Block</b><p>Making a transformer bigger raises three separate questions: whether every parameter has to run on every input, how big &quot;bigger&quot; actually is in concrete numbers, and how a single block&#39;s…</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/counting-a-transformer-s-parameters-and-flops/">← Previous: Counting a Transformer&#39;s Parameters and FLOPs</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

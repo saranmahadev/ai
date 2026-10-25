@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rejection Sampling and Best-of-N Fine-Tuning — AI Base</title>
+<meta name="description" content="best-of-N sampling picks the best of several candidates at answer time. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/rejection-sampling-and-best-of-n-fine-tuning/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Rejection Sampling and Best-of-N Fine-Tuning — AI Base">
+<meta property="og:description" content="best-of-N sampling picks the best of several candidates at answer time. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/rejection-sampling-and-best-of-n-fine-tuning/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Rejection Sampling and Best-of-N Fine-Tuning","item":"https://ai.saranmahadev.in/llms/rejection-sampling-and-best-of-n-fine-tuning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Rejection Sampling and Best-of-N Fine-Tuning","description":"best-of-N sampling picks the best of several candidates at answer time. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.","url":"https://ai.saranmahadev.in/llms/rejection-sampling-and-best-of-n-fine-tuning/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does rejection sampling fine-tuning actually train on?","acceptedAnswer":{"@type":"Answer","text":"Ordinary supervised fine-tuning, but on a dataset curated by sampling N candidates per prompt and keeping only the single highest-reward-model-scored one."}},{"@type":"Question","name":"In the worked example, roughly how much did the kept sample's mean reward improve from N=1 to N=16?","acceptedAnswer":{"@type":"Answer","text":"From about 0.4005 to about 0.6941 — nearly a 75% increase, purely from selecting the best of more independent samples."}},{"@type":"Question","name":"What's the key difference between rejection sampling fine-tuning and RLHF?","acceptedAnswer":{"@type":"Answer","text":"Rejection sampling fine-tuning uses ordinary SFT on a reward-model-filtered dataset, with no policy gradient or RL loop; RLHF directly optimizes the policy against the reward model's scores using reinforcement learning."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Instruction Tuning and Alignment</p>
+        <h1 class="doc-title">Rejection Sampling and Best-of-N Fine-Tuning</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cd6e1tlbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="cd6e1tlpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cd6e1tlbg)"/>
+  <circle cx="527" cy="375" r="99" fill="#ffc7a2" opacity="0.60"/><circle cx="228" cy="219" r="66" fill="#ffc38f" opacity="0.30"/><circle cx="694" cy="149" r="225" fill="#8a5f5e" opacity="0.41"/><circle cx="966" cy="312" r="97" fill="#ffc38f" opacity="0.35"/><circle cx="676" cy="373" r="152" fill="#ffece0" opacity="0.29"/><circle cx="1195" cy="316" r="120" fill="#ffece0" opacity="0.29"/>
+  <path d="M0,420 L0,309 L30,312 L60,314 L90,317 L120,320 L150,324 L180,327 L210,330 L240,334 L270,337 L300,340 L330,343 L360,345 L390,347 L420,348 L450,349 L480,350 L510,349 L540,349 L570,347 L600,346 L630,344 L660,341 L690,338 L720,335 L750,332 L780,328 L810,325 L840,321 L870,318 L900,315 L930,312 L960,310 L990,308 L1020,307 L1050,306 L1080,306 L1110,306 L1140,307 L1170,308 L1200,309 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,390 L60,386 L90,381 L120,376 L150,371 L180,367 L210,364 L240,362 L270,362 L300,363 L330,366 L360,370 L390,375 L420,380 L450,385 L480,389 L510,392 L540,394 L570,394 L600,393 L630,390 L660,386 L690,381 L720,376 L750,371 L780,367 L810,364 L840,362 L870,362 L900,363 L930,366 L960,370 L990,375 L1020,380 L1050,385 L1080,389 L1110,392 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="698" cy="250" rx="187" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(5.2 698 250)"/><ellipse cx="698" cy="250" rx="258" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(11.2 698 250)"/>
+  <circle cx="698" cy="250" r="73" fill="url(#cd6e1tlpl)"/>
+  <circle cx="446" cy="308" r="10" fill="#ffffff" opacity="0.72"/><circle cx="929" cy="251" r="16" fill="#ffffff" opacity="0.60"/><circle cx="825" cy="314" r="10" fill="#ffffff" opacity="0.77"/><circle cx="733" cy="323" r="9" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">best-of-N sampling</a> picks the best of several candidates at <em>answer time</em>. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a>, <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can you improve a model without a full RLHF or DPO training loop?&quot; <strong>Rejection sampling fine-tuning</strong> (sometimes called RAFT) samples N candidate responses per prompt from the current model, scores every one with a reward model, keeps only the single best-scoring candidate per prompt, and runs ordinary <a class="wikilink" href="/llms/supervised-fine-tuning-sft/" data-topic="llms/supervised-fine-tuning-sft">supervised fine-tuning</a> on that curated set of &quot;winners.&quot; No policy gradient, no preference-pair loss — just SFT, but on a dataset that&#39;s been pre-filtered to contain disproportionately good examples.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Instead of trying to directly teach someone to write better by critiquing every draft (RLHF&#39;s approach) or showing them exactly which of two drafts was better (DPO&#39;s approach), you could simply have them write ten different drafts, pick the best one by whatever judgment you trust, and have them study and imitate <em>that</em> draft specifically. Do this across many prompts, and the resulting &quot;imitate your own best work&quot; training set is measurably better than what the model would produce from a single, unfiltered attempt — purely because filtering removed the weaker attempts before training ever saw them.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">for each prompt:
+  sample N candidate responses from the current model
+  score all N with a reward model
+  keep only the single highest-scoring candidate
+
+fine-tune (ordinary SFT) on the curated {prompt: best-of-N response} set
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The expected reward of the kept response, as N grows, averaged over many simulated prompts:</p>
+<pre><code class="language-text">N =  1:  mean reward of kept sample = 0.4005
+N =  2:  mean reward of kept sample = 0.5049
+N =  4:  mean reward of kept sample = 0.5901
+N =  8:  mean reward of kept sample = 0.6507
+N = 16:  mean reward of kept sample = 0.6941
+</code></pre>
+<p>At N=1 there&#39;s no selection at all — the &quot;kept&quot; response is just whatever was sampled, with a mean reward of 0.4005. By N=16, the kept response&#39;s mean reward has risen to 0.6941, nearly 75% higher, purely from keeping only the best of 16 independent tries rather than accepting the first one. A model fine-tuned on these higher-reward examples inherits some of that improvement.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="best-of-n-rejection" data-title="Keeping only the best of N samples"><p class="bench-fallback"><strong>Interactive bench: Keeping only the best of N samples.</strong> Adjust how many samples are drawn per prompt before keeping only the best one, and watch the kept sample's mean reward improve.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare N=1 (no selection) against N=2.</li>
+<li>Keep raising N and track how much more the mean reward improves.</li>
+<li>Notice the improvement&#39;s rate slowing as N grows further.</li>
+</ol>
+<p><strong>What you should notice:</strong> this is exactly the same underlying effect as <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">best-of-N sampling at generation time</a> — the difference here is that the selected &quot;winners&quot; become training data, rather than being the final answer shown to a user.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Rejection sampling fine-tuning is a popular, comparatively simple alignment step</strong> — it reuses ordinary SFT machinery, with all the alignment improvement coming from how the training data was curated rather than from a new training algorithm.</li>
+<li><strong>It composes naturally with <a class="wikilink" href="/llms/reinforcement-learning-from-human-feedback-rlhf/" data-topic="llms/reinforcement-learning-from-human-feedback-rlhf">RLHF</a> or <a class="wikilink" href="/llms/direct-preference-optimization-dpo/" data-topic="llms/direct-preference-optimization-dpo">DPO</a></strong>, often as an earlier, cheaper stage before (or instead of) a full preference-optimization pass.</li>
+<li><strong>Its effectiveness is capped by the reward model&#39;s quality</strong>, exactly the same dependency <a class="wikilink" href="/llms/reinforcement-learning-from-human-feedback-rlhf/" data-topic="llms/reinforcement-learning-from-human-feedback-rlhf">RLHF</a> has — selecting the reward model&#39;s favorite candidate is only useful if the reward model&#39;s favorites are actually good.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming larger N always keeps improving training data proportionally.</strong> The worked example&#39;s own curve shows diminishing returns — going from N=8 to N=16 gains far less than going from N=1 to N=2 did.</li>
+<li><strong>Forgetting this still needs a reward model.</strong> The selection step is only as good as whatever scores the N candidates — a poor reward model means &quot;best of N&quot; selects something that only looks good by a flawed metric.</li>
+<li><strong>Treating this as equivalent to RLHF or DPO.</strong> It&#39;s a simpler, cheaper technique that captures part of the same benefit (training toward higher-reward behavior) without a policy-gradient or preference-pair loss — it&#39;s not a drop-in replacement for either.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does rejection sampling fine-tuning actually train on?</summary>
+Ordinary supervised fine-tuning, but on a dataset curated by sampling N candidates per prompt and keeping only the single highest-reward-model-scored one.
+</details>
+
+<details><summary>2. In the worked example, roughly how much did the kept sample's mean reward improve from N=1 to N=16?</summary>
+From about 0.4005 to about 0.6941 — nearly a 75% increase, purely from selecting the best of more independent samples.
+</details>
+
+<details><summary>3. What's the key difference between rejection sampling fine-tuning and RLHF?</summary>
+Rejection sampling fine-tuning uses ordinary SFT on a reward-model-filtered dataset, with no policy gradient or RL loop; RLHF directly optimizes the policy against the reward model's scores using reinforcement learning.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Rejection sampling fine-tuning (RAFT):</strong> fine-tuning on a dataset built by keeping only the best-of-N reward-model-scored samples per prompt.</li>
+<li><strong>Curated training set:</strong> a dataset filtered to disproportionately contain high-quality examples, rather than a raw, unfiltered sample.</li>
+<li><strong>Best-of-N selection:</strong> sampling several candidates and keeping only the highest-scoring one.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a> · <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a> · <a class="wikilink" href="/llms/supervised-fine-tuning-sft/" data-topic="llms/supervised-fine-tuning-sft">Supervised Fine-Tuning (SFT)</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/rejection-sampling-and-best-of-n-fine-tuning">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/reward-hacking-and-sycophancy/"><small>Read next</small><b>Reward Hacking and Sycophancy</b><p>Every method in this district optimizes a policy to satisfy a reward signal — a reward model&#39;s score, an AI judge&#39;s ranking.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/self-consistency-and-best-of-n-sampling/"><b>Self-Consistency and Best-of-N Sampling</b><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.</p></a><a class="rc-card" href="/llms/reward-modeling/"><b>Reward Modeling</b><p>Judging &quot;which of these two responses is better&quot; is a question most people can answer confidently; assigning an absolute numerical quality score to a single response, consistently, is much harder…</p></a><a class="rc-card" href="/llms/supervised-fine-tuning-sft/"><b>Supervised Fine-Tuning (SFT)</b><p>A pretrained model is extremely good at continuing text in whatever style it appears in — but &quot;the internet&quot; doesn&#39;t naturally produce the specific pattern of a helpful assistant replying to a…</p></a><a class="rc-card" href="/llms/reinforcement-learning-from-human-feedback-rlhf/"><b>Reinforcement Learning from Human Feedback (RLHF)</b><p>A reward model can score any response — but scoring responses isn&#39;t the same as producing better ones.</p></a><a class="rc-card" href="/llms/direct-preference-optimization-dpo/"><b>Direct Preference Optimization (DPO)</b><p>RLHF&#39;s reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones.</p></a><a class="rc-card" href="/llms/instruction-tuning-and-alignment/"><b>Instruction Tuning and Alignment</b><p>A model pretrained purely to predict the next token has no particular reason to follow an instruction, refuse a harmful request, or prefer a helpful answer over a merely plausible one.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/constitutional-ai-and-rlaif/">← Previous: Constitutional AI and RLAIF</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

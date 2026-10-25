@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The ML Workflow — AI Base</title>
+<meta name="description" content="Building a model is a sequence of steps, and the order matters as much as the choices.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/the-ml-workflow/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="The ML Workflow — AI Base">
+<meta property="og:description" content="Building a model is a sequence of steps, and the order matters as much as the choices.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/the-ml-workflow/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"The ML Workflow","item":"https://ai.saranmahadev.in/machine-learning/the-ml-workflow/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The ML Workflow","description":"Building a model is a sequence of steps, and the order matters as much as the choices.","url":"https://ai.saranmahadev.in/machine-learning/the-ml-workflow/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"On which data are a scaler's mean and spread computed?","acceptedAnswer":{"@type":"Answer","text":"The training data only."}},{"@type":"Question","name":"When is the test set scored?","acceptedAnswer":{"@type":"Answer","text":"Once, at the very end."}},{"@type":"Question","name":"Why remove duplicates before splitting?","acceptedAnswer":{"@type":"Answer","text":"Otherwise the same example can appear in both training and test data, which leaks."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Machine Learning in Practice</p>
+        <h1 class="doc-title">The ML Workflow</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1imk1h2bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1imk1h2pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1imk1h2bg)"/>
+  <circle cx="1030" cy="24" r="125" fill="#fff2de" opacity="0.40"/><circle cx="879" cy="334" r="126" fill="#8a6b5c" opacity="0.34"/><circle cx="176" cy="45" r="194" fill="#ffd08d" opacity="0.32"/><circle cx="944" cy="320" r="119" fill="#ffd99f" opacity="0.52"/><circle cx="787" cy="405" r="89" fill="#ffd08d" opacity="0.30"/><circle cx="621" cy="188" r="116" fill="#ffd08d" opacity="0.25"/><circle cx="578" cy="66" r="96" fill="#ffd08d" opacity="0.56"/>
+  <path d="M0,420 L0,341 L30,344 L60,346 L90,347 L120,349 L150,349 L180,350 L210,349 L240,348 L270,347 L300,345 L330,343 L360,340 L390,337 L420,334 L450,330 L480,327 L510,324 L540,320 L570,317 L600,314 L630,312 L660,309 L690,308 L720,306 L750,306 L780,306 L810,306 L840,307 L870,308 L900,310 L930,313 L960,315 L990,318 L1020,321 L1050,325 L1080,328 L1110,332 L1140,335 L1170,338 L1200,341 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,363 L90,366 L120,370 L150,375 L180,380 L210,385 L240,389 L270,392 L300,394 L330,394 L360,393 L390,390 L420,386 L450,381 L480,376 L510,371 L540,367 L570,364 L600,362 L630,362 L660,363 L690,366 L720,370 L750,375 L780,380 L810,385 L840,389 L870,392 L900,394 L930,394 L960,393 L990,390 L1020,386 L1050,381 L1080,376 L1110,371 L1140,367 L1170,364 L1200,362 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="877" cy="235" rx="227" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-20.7 877 235)"/><ellipse cx="877" cy="235" rx="314" ry="88" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-14.7 877 235)"/>
+  <circle cx="877" cy="235" r="89" fill="url(#c1imk1h2pl)"/>
+  <circle cx="1072" cy="312" r="12" fill="#ffffff" opacity="0.83"/><circle cx="735" cy="165" r="15" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Building a model is a sequence of steps, and the <em>order</em> matters as much as the choices. Decide what success means, look at the data, split it, prepare features using only the training data, choose models with validation data, and open the test set once at the end. Almost every embarrassing failure of a machine learning project is one of these steps done out of order.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets">Train, Validation and Test Sets</a>, <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a> and <a class="wikilink" href="/machine-learning/hyperparameter-tuning/" data-topic="machine-learning/hyperparameter-tuning">Hyperparameter Tuning</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What do I actually do, and in what order?&quot; The steps are individually simple; the discipline is in never letting information from the future (the test set) reach the model or your decisions.</p>
+<h2 id="intuition-an-exam-that-must-stay-secret">Intuition: an exam that must stay secret</h2>
+<p>Everything you do up to the final step is preparation. The test set is the sealed exam paper: once you peek, even to guide small decisions, it stops being a fair test. So each step asks a single question: <em>which data am I allowed to look at?</em></p>
+<h2 id="the-steps">The steps</h2>
+<pre><code class="language-text">1  frame the problem     what is predicted, from what, at what moment; what error costs
+2  choose the metric     and a baseline to beat (majority class, last value, a simple rule)
+3  inspect and clean     duplicates, impossible values, leakage (before splitting)
+4  split                 train / validation / test (by time or by group when needed)
+5  build features        scalers, imputers, encoders are fitted on training data only
+6  train and compare     baselines first, then models; choices made on validation folds
+7  error analysis        look at mistakes and weak slices (on validation data)
+8  final exam            train on training + validation, score the test set once
+9  deploy and monitor    watch inputs and outcomes (see Deployment and Monitoring)
+</code></pre>
+<p>The loop between steps 5 and 7 repeats many times; the loop must never include the test set.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A shop has 10,000 past orders and wants to predict returns.</p>
+<pre><code class="language-text">remove 700 duplicate rows             10,000 − 700 = 9,300 rows
+split 70 / 15 / 15                    6,510 train  ·  1,395 validation  ·  1,395 test
+median for missing ages               computed from the 6,510 training rows only, then reused
+model choices (depth, penalty)        picked using the 1,395 validation rows or cross-validation
+error analysis                        looked at validation mistakes, never test mistakes
+final exam                            the model is scored on the 1,395 test rows once
+</code></pre>
+<p>Suppose duplicates had been removed <em>after</em> splitting: an order that appears twice could sit in training and in test, and the model would be marked correct simply for remembering it. Suppose the median age had been computed on all 9,300 rows: the test set would have contributed to the model&#39;s inputs. Both errors would inflate the test score without improving the model. The bench below is a small drill in deciding which data each step may touch.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="workflow-order" data-title="When may each step touch which data?"><p class="bench-fallback"><strong>Interactive bench: When may each step touch which data?.</strong> Eight project steps are sorted into three bins: before the split, using training data only, and using the test data once at the end, with an explanation for any wrong placement.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Sort all eight steps without checking.</li>
+<li>Check, and read the reason for any miss.</li>
+<li>Restart and explain each placement in your own words.</li>
+</ol>
+<p><strong>What you should notice:</strong> anything that <em>learns from data</em> (a mean, a choice, a model) belongs on training data, and only the final score touches the test set.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every applied ML project,</strong> from spreadsheets to large models.</li>
+<li><strong>Competitions:</strong> leaderboards separate a public and a private test set for this reason.</li>
+<li><strong>MLOps pipelines</strong> automate the steps so the order cannot be broken by accident.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Peeking at the test set</strong> &quot;just to check&quot;.</li>
+<li><strong>Fitting preprocessing before splitting.</strong></li>
+<li><strong>Skipping the baseline,</strong> so no one knows whether the model adds value.</li>
+<li><strong>Random splits of time-ordered or grouped data.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. On which data are a scaler's mean and spread computed?</summary>
+The training data only.
+</details>
+
+<details><summary>2. When is the test set scored?</summary>
+Once, at the very end.
+</details>
+
+<details><summary>3. Why remove duplicates before splitting?</summary>
+Otherwise the same example can appear in both training and test data, which leaks.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Baseline:</strong> a simple reference model to beat.</li>
+<li><strong>Pipeline:</strong> the ordered chain of preparation and modelling steps.</li>
+<li><strong>Leakage:</strong> information from outside the training data reaching the model.</li>
+<li><strong>Final exam:</strong> scoring the test set once.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets">Train, Validation and Test Sets</a> · <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a> · <a class="wikilink" href="/machine-learning/pipelines-and-leakage/" data-topic="machine-learning/pipelines-and-leakage">Pipelines and Leakage</a> · <a class="wikilink" href="/machine-learning/baselines-and-error-analysis/" data-topic="machine-learning/baselines-and-error-analysis">Baselines and Error Analysis</a> · <a class="wikilink" href="/machine-learning/datasets-features-and-labels/" data-topic="machine-learning/datasets-features-and-labels">Datasets, Features and Labels</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/the-ml-workflow">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/baselines-and-error-analysis/"><small>Read next</small><b>Baselines and Error Analysis</b><p>Before building anything clever, build something trivial and measure it: that is your baseline, and any model must beat it to be worth keeping.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/train-validation-and-test-sets/"><b>Train, Validation and Test Sets</b><p>To know whether a model works you must measure it on data it has not learned from.</p></a><a class="rc-card" href="/machine-learning/cross-validation/"><b>Cross-Validation</b><p>One train/validation split gives one score, and that score depends on which points happened to land where.</p></a><a class="rc-card" href="/machine-learning/hyperparameter-tuning/"><b>Hyperparameter Tuning</b><p>Parameters are learned; hyperparameters are chosen before training: learning rate, tree depth, penalty strength, number of neighbours.</p></a><a class="rc-card" href="/machine-learning/pipelines-and-leakage/"><b>Pipelines and Leakage</b><p>Leakage is when information the model should not have sneaks into training, making test scores look wonderful and real performance poor.</p></a><a class="rc-card" href="/machine-learning/baselines-and-error-analysis/"><b>Baselines and Error Analysis</b><p>Before building anything clever, build something trivial and measure it: that is your baseline, and any model must beat it to be worth keeping.</p></a><a class="rc-card" href="/machine-learning/datasets-features-and-labels/"><b>Datasets, Features and Labels</b><p>A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/machine-learning-in-practice/">← Previous: Machine Learning in Practice</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

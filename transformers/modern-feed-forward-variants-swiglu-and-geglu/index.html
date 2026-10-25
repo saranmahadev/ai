@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modern Feed-Forward Variants: SwiGLU and GeGLU — AI Base</title>
+<meta name="description" content="The plain feed-forward sublayer expands, activates, and projects back down with one activation function applied directly.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/modern-feed-forward-variants-swiglu-and-geglu/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Modern Feed-Forward Variants: SwiGLU and GeGLU — AI Base">
+<meta property="og:description" content="The plain feed-forward sublayer expands, activates, and projects back down with one activation function applied directly.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/modern-feed-forward-variants-swiglu-and-geglu/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Modern Feed-Forward Variants: SwiGLU and GeGLU","item":"https://ai.saranmahadev.in/transformers/modern-feed-forward-variants-swiglu-and-geglu/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Modern Feed-Forward Variants: SwiGLU and GeGLU","description":"The plain feed-forward sublayer expands, activates, and projects back down with one activation function applied directly.","url":"https://ai.saranmahadev.in/transformers/modern-feed-forward-variants-swiglu-and-geglu/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the two projections in a gated feed-forward sublayer, and which one passes through an activation function?","acceptedAnswer":{"@type":"Answer","text":"The gate projection and the up projection; only the gate passes through an activation function (SiLU for SwiGLU, GELU for GeGLU) — the up projection stays linear."}},{"@type":"Question","name":"How do SwiGLU and GeGLU differ from each other?","acceptedAnswer":{"@type":"Answer","text":"Only in which activation function gates the output — SiLU for SwiGLU, GELU for GeGLU; the overall gated structure is identical."}},{"@type":"Question","name":"Why is d_ff typically reduced when switching from a plain feed-forward sublayer to a gated one?","acceptedAnswer":{"@type":"Answer","text":"A gated sublayer needs three weight matrices instead of two, costing more parameters per hidden unit — shrinking d_ff keeps the total parameter count comparable to a plain feed-forward sublayer."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · The Transformer Block</p>
+        <h1 class="doc-title">Modern Feed-Forward Variants: SwiGLU and GeGLU</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1i7b6ssbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1i7b6sspl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1i7b6ssbg)"/>
+  <circle cx="47" cy="86" r="165" fill="#4f669f" opacity="0.62"/><circle cx="526" cy="296" r="74" fill="#abd0ff" opacity="0.53"/><circle cx="583" cy="184" r="217" fill="#4f669f" opacity="0.53"/><circle cx="515" cy="65" r="156" fill="#e2efff" opacity="0.25"/><circle cx="490" cy="75" r="83" fill="#abd0ff" opacity="0.32"/><circle cx="1168" cy="18" r="141" fill="#e2efff" opacity="0.40"/>
+  <path d="M0,420 L0,343 L30,346 L60,349 L90,350 L120,349 L150,348 L180,345 L210,342 L240,337 L270,332 L300,327 L330,322 L360,317 L390,313 L420,310 L450,307 L480,306 L510,306 L540,307 L570,309 L600,312 L630,316 L660,321 L690,326 L720,331 L750,336 L780,341 L810,344 L840,347 L870,349 L900,350 L930,349 L960,347 L990,344 L1020,340 L1050,336 L1080,331 L1110,326 L1140,321 L1170,316 L1200,312 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,362 L60,362 L90,364 L120,366 L150,370 L180,375 L210,380 L240,385 L270,389 L300,392 L330,394 L360,394 L390,392 L420,390 L450,386 L480,381 L510,376 L540,371 L570,367 L600,364 L630,362 L660,362 L690,364 L720,366 L750,370 L780,375 L810,380 L840,385 L870,389 L900,392 L930,394 L960,394 L990,392 L1020,390 L1050,386 L1080,381 L1110,376 L1140,371 L1170,367 L1200,364 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="912" cy="262" rx="191" ry="53" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.8 912 262)"/><ellipse cx="912" cy="262" rx="263" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.2 912 262)"/>
+  <circle cx="912" cy="262" r="75" fill="url(#c1i7b6sspl)"/>
+  <circle cx="667" cy="266" r="17" fill="#ffffff" opacity="0.64"/><circle cx="986" cy="155" r="11" fill="#ffffff" opacity="0.65"/><circle cx="995" cy="186" r="7" fill="#ffffff" opacity="0.69"/><circle cx="672" cy="286" r="18" fill="#ffffff" opacity="0.86"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/the-feed-forward-sublayer/" data-topic="transformers/the-feed-forward-sublayer">The plain feed-forward sublayer</a> expands, activates, and projects back down with one activation function applied directly. Most modern large transformers use a small but consistent twist instead: two parallel projections, where one <em>gates</em> the other through an activation, before the result is projected back down.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/the-feed-forward-sublayer/" data-topic="transformers/the-feed-forward-sublayer">The Feed-Forward Sublayer</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Is applying an activation function directly to one projection the only way to introduce nonlinearity into the feed-forward sublayer?&quot; No — a <strong>gated</strong> feed-forward sublayer computes two separate projections of the input instead of one, passes one of them through an activation function, and multiplies the two together element by element before projecting back down. SwiGLU (using the SiLU activation) and GeGLU (using GELU) are the two most common instances of this pattern.</p>
+<h2 id="intuition">Intuition</h2>
+<p>The plain feed-forward sublayer decides how much each hidden unit fires using only its own linear combination of the input, run through an activation. A gated version splits that job in two: one projection (the <strong>gate</strong>) decides, through an activation, &quot;how open is this channel?&quot; while a second, purely linear projection (the <strong>up</strong> projection) carries &quot;what value would flow through if it were fully open?&quot; Multiplying the two together lets the network learn a much more flexible, input-dependent filter than a single activation function can express on its own.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">plain FFN:   out = W_down · activation(W · x)
+gated FFN:   gate = activation(W_gate · x)
+             up   = W_up · x
+             out  = W_down · (gate ⊙ up)        (⊙ is elementwise multiplication)
+</code></pre>
+<p>SwiGLU uses <code>activation = SiLU</code> (<code>x · sigmoid(x)</code>); GeGLU uses <code>activation = GELU</code>. Both drop the bias terms common in a plain feed-forward sublayer, matching standard practice. Because there are now <em>three</em> weight matrices (<code>W_gate</code>, <code>W_up</code>, <code>W_down</code>) instead of two, <code>d_ff</code> is usually shrunk somewhat to keep the total parameter count close to a plain feed-forward sublayer&#39;s.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The same input as <a class="wikilink" href="/transformers/the-feed-forward-sublayer/" data-topic="transformers/the-feed-forward-sublayer">the previous topic&#39;s example</a>, <code>x = [0.5, -0.3, 0.8, 0.1]</code>, through a SwiGLU sublayer with <code>d_ff = 6</code>:</p>
+<pre><code class="language-text">gate (after SiLU):     [0.048, -0.077, 0.046, 0.010, -0.086, 0.133]
+up (linear, no activation): [0.127, -0.371, -0.221, 0.218, 0.592, -0.220]
+gated (elementwise product): [0.006, 0.029, -0.010, 0.002, -0.051, -0.029]
+
+output: [0.0032, -0.0338, -0.0029, 0.0310]
+</code></pre>
+<p>Notice the gated values are much smaller in magnitude than either the gate or the up projection alone — the elementwise product squeezes down wherever either side is small, giving the sublayer a genuinely different shape of nonlinearity than a single activation applied directly.</p>
+<p>Parameter count: a SwiGLU sublayer at this size needs <code>3 × (6 × 4) = 72</code> weights (three same-shaped matrices, no biases); a plain feed-forward sublayer at <code>d_ff = 6</code> needs <code>2 × (6 × 4) + 6 + 4 = 58</code> (two matrices plus biases) — the gated version costs more per hidden unit, which is exactly why <code>d_ff</code> is usually reduced to compensate when switching to a gated design.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="gated-ffn" data-title="Two projections, one gating the other"><p class="bench-fallback"><strong>Interactive bench: Two projections, one gating the other.</strong> Push a vector through a SwiGLU-style gated feed-forward sublayer and compare the gate, the up projection and their product against a plain feed-forward sublayer's output.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the gate and up projections side by side, then look at their elementwise product.</li>
+<li>Switch the gating activation between SiLU and GELU and see how the gated values shift.</li>
+<li>Compare the parameter count of a gated sublayer against a plain one at the same <code>d_ff</code>.</li>
+</ol>
+<p><strong>What you should notice:</strong> the gated output is shaped by <em>two</em> learned projections working together, not one activation applied to a single projection — giving the sublayer more expressive power per hidden unit, at the cost of an extra weight matrix.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>SwiGLU and its relatives are the standard feed-forward design in most modern large transformers</strong> — a direct, practical successor to the plain ReLU feed-forward sublayer from the original transformer paper.</li>
+<li><strong>The gating idea itself predates transformers</strong>, echoing the gating mechanisms inside <a class="wikilink" href="/deep-learning/long-short-term-memory/" data-topic="deep-learning/long-short-term-memory">LSTMs</a> on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>, where a learned gate also controls how much of a signal passes through.</li>
+<li><strong><a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">the next topic</a> can use either a plain or a gated feed-forward sublayer</strong> — the rest of the block&#39;s structure (attention, residuals, normalization) doesn&#39;t change either way.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming gating doubles the parameter count for free performance.</strong> It genuinely costs more parameters per hidden unit — real models compensate by shrinking <code>d_ff</code>, not by ignoring the cost.</li>
+<li><strong>Confusing the gate and the up projection&#39;s roles.</strong> Only the gate passes through an activation function; the up projection stays purely linear, and swapping which one is which changes the computation.</li>
+<li><strong>Treating SwiGLU and GeGLU as fundamentally different mechanisms.</strong> They are the identical gated structure, differing only in which activation function (SiLU vs. GELU) is used for the gate.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are the two projections in a gated feed-forward sublayer, and which one passes through an activation function?</summary>
+The gate projection and the up projection; only the gate passes through an activation function (SiLU for SwiGLU, GELU for GeGLU) — the up projection stays linear.
+</details>
+
+<details><summary>2. How do SwiGLU and GeGLU differ from each other?</summary>
+Only in which activation function gates the output — SiLU for SwiGLU, GELU for GeGLU; the overall gated structure is identical.
+</details>
+
+<details><summary>3. Why is d_ff typically reduced when switching from a plain feed-forward sublayer to a gated one?</summary>
+A gated sublayer needs three weight matrices instead of two, costing more parameters per hidden unit — shrinking d_ff keeps the total parameter count comparable to a plain feed-forward sublayer.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Gate:</strong> a projection passed through an activation function, controlling how much of a parallel projection&#39;s value passes through.</li>
+<li><strong>SwiGLU / GeGLU:</strong> gated feed-forward designs using SiLU or GELU, respectively, as the gating activation.</li>
+<li><strong>Elementwise multiplication (⊙):</strong> multiplying two vectors position by position, combining the gate and up projections.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/the-feed-forward-sublayer/" data-topic="transformers/the-feed-forward-sublayer">The Feed-Forward Sublayer</a> · <a class="wikilink" href="/deep-learning/long-short-term-memory/" data-topic="deep-learning/long-short-term-memory">Long Short-Term Memory</a> · <a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">Assembling One Transformer Block</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/modern-feed-forward-variants-swiglu-and-geglu">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/assembling-one-transformer-block/"><small>Read next</small><b>Assembling One Transformer Block</b><p>Every piece needed is now on the table: attention itself, residual connections, normalization placement, and the feed-forward sublayer.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/the-feed-forward-sublayer/"><b>The Feed-Forward Sublayer</b><p>Attention lets every position look at every other position — but it never actually transforms a position&#39;s own content on its own.</p></a><a class="rc-card" href="/deep-learning/long-short-term-memory/"><b>Long Short-Term Memory</b><p>A plain RNN&#39;s hidden state is rewritten from scratch at every step — nothing is deliberately preserved.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/transformers/assembling-one-transformer-block/"><b>Assembling One Transformer Block</b><p>Every piece needed is now on the table: attention itself, residual connections, normalization placement, and the feed-forward sublayer.</p></a><a class="rc-card" href="/transformers/the-transformer-block/"><b>The Transformer Block</b><p>Attention on its own is only half of a transformer layer.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/the-feed-forward-sublayer/">← Previous: The Feed-Forward Sublayer</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

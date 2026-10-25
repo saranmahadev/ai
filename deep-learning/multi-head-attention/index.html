@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Head Attention — AI Base</title>
+<meta name="description" content="Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/multi-head-attention/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Multi-Head Attention — AI Base">
+<meta property="og:description" content="Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/multi-head-attention/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Multi-Head Attention","item":"https://ai.saranmahadev.in/deep-learning/multi-head-attention/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Multi-Head Attention","description":"Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.","url":"https://ai.saranmahadev.in/deep-learning/multi-head-attention/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does each attention head have that is uniquely its own?","acceptedAnswer":{"@type":"Answer","text":"Its own query, key and value projection matrices, letting it attend to the input in its own way."}},{"@type":"Question","name":"In the worked example, why do the two heads produce different attention weights for the same query token?","acceptedAnswer":{"@type":"Answer","text":"Each head's projections look at a different part of the token embeddings (the first two dimensions versus the last two), so they are effectively comparing different information even though the input tokens are the same."}},{"@type":"Question","name":"How are the heads' outputs combined into one final output?","acceptedAnswer":{"@type":"Answer","text":"By concatenating each head's output vector into one longer vector (often followed by a linear mixing layer)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Attention and the Road to Transformers</p>
+        <h1 class="doc-title">Multi-Head Attention</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cga53g5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cga53g5pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cga53g5bg)"/>
+  <circle cx="108" cy="344" r="81" fill="#ffb89d" opacity="0.30"/><circle cx="583" cy="96" r="72" fill="#ffb89d" opacity="0.60"/><circle cx="362" cy="242" r="179" fill="#ffb89d" opacity="0.60"/><circle cx="292" cy="151" r="89" fill="#ffe6e6" opacity="0.42"/><circle cx="516" cy="7" r="65" fill="#ffb89d" opacity="0.55"/>
+  <path d="M0,420 L0,307 L30,306 L60,306 L90,309 L120,313 L150,319 L180,326 L210,333 L240,339 L270,344 L300,348 L330,350 L360,349 L390,346 L420,342 L450,336 L480,329 L510,322 L540,316 L570,311 L600,307 L630,306 L660,306 L690,309 L720,313 L750,319 L780,326 L810,333 L840,339 L870,344 L900,348 L930,350 L960,349 L990,346 L1020,342 L1050,336 L1080,329 L1110,322 L1140,316 L1170,311 L1200,307 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,391 L90,389 L120,386 L150,383 L180,379 L210,375 L240,372 L270,368 L300,366 L330,364 L360,362 L390,362 L420,363 L450,364 L480,366 L510,369 L540,372 L570,376 L600,380 L630,383 L660,387 L690,390 L720,392 L750,393 L780,394 L810,394 L840,393 L870,391 L900,388 L930,385 L960,381 L990,378 L1020,374 L1050,370 L1080,367 L1110,365 L1140,363 L1170,362 L1200,362 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="978" cy="165" rx="159" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-7.9 978 165)"/><ellipse cx="978" cy="165" rx="220" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-1.9 978 165)"/>
+  <circle cx="978" cy="165" r="62" fill="url(#cga53g5pl)"/>
+  <circle cx="1131" cy="98" r="8" fill="#ffffff" opacity="0.89"/><circle cx="1146" cy="183" r="15" fill="#ffffff" opacity="0.83"/><circle cx="993" cy="74" r="17" fill="#ffffff" opacity="0.88"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products">Attention as Dot Products</a> computes one weighted average per query — one way of deciding what to focus on. <strong>Multi-head attention</strong> runs several such attention computations in parallel, each looking at the input through its own learned projection, then concatenates all of their outputs — so the model can attend to several different kinds of relationship at once, not just one.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products">Attention as Dot Products</a> and <a class="wikilink" href="/deep-learning/sequence-to-sequence-models/" data-topic="deep-learning/sequence-to-sequence-models">Sequence-to-Sequence Models</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;A sentence can have several relevant relationships at once — grammatical agreement, which pronoun refers to what, topical similarity — can one attention computation really capture all of them simultaneously?&quot; Not well on its own; give the model several independent attention &quot;heads&quot; instead, each free to specialise in a different kind of relationship.</p>
+<h2 id="intuition-several-readers-each-with-their-own-highlighter-colour">Intuition: several readers, each with their own highlighter colour</h2>
+<p>Imagine several readers going through the same sentence together, each one highlighting whatever they personally find relevant — one highlights grammatical subjects and verbs, another highlights pronouns and what they refer to, a third highlights topically related words. No single highlighter colour could capture everything useful; multiple independent passes, each looking for something different, can.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">for head i:  Qᵢ = Wᵢ^Q x,   Kᵢ = Wᵢ^K x,   Vᵢ = Wᵢ^V x    (each head has its own projection matrices)
+headᵢ_output = attention(Qᵢ, Kᵢ, Vᵢ)                      (ordinary dot-product attention, within that head)
+
+multi-head output = concat(head₁_output, head₂_output, …, head_h_output)
+</code></pre>
+<p>Each head operates in a smaller subspace (if the full embedding is dimension <code>d</code> and there are <code>h</code> heads, each head typically works in dimension <code>d/h</code>), so running several heads costs roughly the same total compute as one full-size attention computation — the capacity is spent on <em>diversity</em> of attention patterns, not extra total size.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three token embeddings (4 dimensions each), with two heads: head A&#39;s projections look only at the first two dimensions, head B&#39;s look only at the last two:</p>
+<pre><code class="language-text">x₁ = (1, 0, 1, 0),   x₂ = (0, 1, 0, 1),   x₃ = (1, 1, 0, 0)
+</code></pre>
+<p>Using <code>x₁</code> as the query, each head computes its own attention weights over all three tokens:</p>
+<pre><code class="language-text">head A weights:  (0.401, 0.198, 0.401)    →  output ≈ (0.802, 0.599)
+head B weights:  (0.503, 0.248, 0.248)    →  output ≈ (0.503, 0.248)
+
+concatenated:    (0.802, 0.599, 0.503, 0.248)
+</code></pre>
+<p>Because the two heads look at different dimensions of the input, they produce genuinely different attention patterns over the <em>same</em> three tokens from the <em>same</em> query — exactly the point of running more than one head.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="multihead-compare" data-title="Two heads, two attention patterns"><p class="bench-fallback"><strong>Interactive bench: Two heads, two attention patterns.</strong> Three toy tokens and two attention heads, each looking at a different part of the embedding. Pick a query token and compare the two heads' attention weights and outputs side by side.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the two heads&#39; weight distributions for the default query and see how differently they weigh the same three tokens.</li>
+<li>Switch the query token and see both heads&#39; weights shift.</li>
+<li>Imagine adding a third head looking at yet another part of the embedding — would it necessarily agree with either of the first two?</li>
+</ol>
+<p><strong>What you should notice:</strong> nothing forces the two heads to agree on which tokens matter most — each is free to specialise, constrained only by the part of the embedding it was set up (or, in a trained model, learns) to look at.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every transformer block</strong> (see <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Encoder-Decoder Architectures with Attention</a>) uses multi-head attention as its core building block, typically with 8 to 96 or more heads depending on the model&#39;s size.</li>
+<li><strong>Different heads in trained transformers have been observed specialising</strong> in specific patterns — some track syntactic structure, others track long-range topical relationships — though which head does what emerges from training, not from design.</li>
+<li><strong>The final concatenated output is usually passed through one more linear layer</strong> (not shown here) to mix information across heads before moving to the next part of the network.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming more heads always helps.</strong> Splitting the same total dimension across more heads gives each one less room to work with; there is a practical trade-off, not a free upgrade.</li>
+<li><strong>Expecting heads to specialise in humanly interpretable ways by design.</strong> Any such specialisation is a trained, emergent property, not something multi-head attention guarantees on its own.</li>
+<li><strong>Forgetting each head has its own, separately learned projection matrices.</strong> They are not the same attention computation run multiple times — each one can learn to look at the input completely differently.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does each attention head have that is uniquely its own?</summary>
+Its own query, key and value projection matrices, letting it attend to the input in its own way.
+</details>
+
+<details><summary>2. In the worked example, why do the two heads produce different attention weights for the same query token?</summary>
+Each head's projections look at a different part of the token embeddings (the first two dimensions versus the last two), so they are effectively comparing different information even though the input tokens are the same.
+</details>
+
+<details><summary>3. How are the heads' outputs combined into one final output?</summary>
+By concatenating each head's output vector into one longer vector (often followed by a linear mixing layer).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Attention head:</strong> one independent attention computation with its own query, key and value projections.</li>
+<li><strong>Multi-head attention:</strong> running several attention heads in parallel and concatenating their outputs.</li>
+<li><strong>Head dimension:</strong> the (usually reduced) dimensionality each head&#39;s projections operate in.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products">Attention as Dot Products</a> · <a class="wikilink" href="/deep-learning/sequence-to-sequence-models/" data-topic="deep-learning/sequence-to-sequence-models">Sequence-to-Sequence Models</a> · <a class="wikilink" href="/deep-learning/positional-encoding/" data-topic="deep-learning/positional-encoding">Positional Encoding</a> · <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Encoder-Decoder Architectures with Attention</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/multi-head-attention">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/positional-encoding/"><small>Read next</small><b>Positional Encoding</b><p>Attention computes a weighted average over a set of values — and an average has no idea what order its inputs came in.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/attention-as-dot-products/"><b>Attention as Dot Products</b><p>Attention lets a model decide, for each item, which other items to focus on.</p></a><a class="rc-card" href="/deep-learning/sequence-to-sequence-models/"><b>Sequence-to-Sequence Models</b><p>A sequence-to-sequence (seq2seq) model turns one sequence into another, possibly of a different length — a sentence in one language into a sentence in another, say.</p></a><a class="rc-card" href="/deep-learning/encoder-decoder-architectures-with-attention/"><b>Encoder-Decoder Architectures with Attention</b><p>The plain seq2seq decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts.</p></a><a class="rc-card" href="/deep-learning/positional-encoding/"><b>Positional Encoding</b><p>Attention computes a weighted average over a set of values — and an average has no idea what order its inputs came in.</p></a><a class="rc-card" href="/deep-learning/layer-normalization/"><b>Layer Normalization</b><p>Layer normalization computes exactly the same mean-and-variance normalization as batch normalization — but across a single example&#39;s own features, instead of across the batch.</p></a><a class="rc-card" href="/deep-learning/residual-and-skip-connections/"><b>Residual and Skip Connections</b><p>ResNet&#39;s fix for the degradation problem is almost absurdly simple: instead of a block computing output = F(x), make it compute output = F(x) + x — adding the block&#39;s own input straight back onto…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/attention-and-the-road-to-transformers/">← Previous: Attention and the Road to Transformers</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

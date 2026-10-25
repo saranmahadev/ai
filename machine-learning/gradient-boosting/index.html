@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gradient Boosting — AI Base</title>
+<meta name="description" content="Boosting builds a model in rounds. Start with a crude prediction, look at what it still gets wrong (the residuals), fit a small tree to those errors, add it in, and repeat.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/gradient-boosting/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Gradient Boosting — AI Base">
+<meta property="og:description" content="Boosting builds a model in rounds. Start with a crude prediction, look at what it still gets wrong (the residuals), fit a small tree to those errors, add it in, and repeat.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/gradient-boosting/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Gradient Boosting","item":"https://ai.saranmahadev.in/machine-learning/gradient-boosting/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Gradient Boosting","description":"Boosting builds a model in rounds. Start with a crude prediction, look at what it still gets wrong (the residuals), fit a small tree to those errors, add it in, and repeat.","url":"https://ai.saranmahadev.in/machine-learning/gradient-boosting/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does each new tree in boosting try to predict?","acceptedAnswer":{"@type":"Answer","text":"The residuals: what the current model still gets wrong."}},{"@type":"Question","name":"What does a smaller learning rate do?","acceptedAnswer":{"@type":"Answer","text":"Each tree contributes less, so more rounds are needed but overfitting is slower."}},{"@type":"Question","name":"How does boosting differ from a random forest?","acceptedAnswer":{"@type":"Answer","text":"Boosting builds trees in sequence to correct earlier errors; a forest builds independent trees in parallel and averages them."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Trees and Ensembles</p>
+        <h1 class="doc-title">Gradient Boosting</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1n1v63ybg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1n1v63ypl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1n1v63ybg)"/>
+  <circle cx="360" cy="405" r="195" fill="#ffd99f" opacity="0.32"/><circle cx="979" cy="115" r="93" fill="#fff2de" opacity="0.25"/><circle cx="928" cy="300" r="100" fill="#ffd08d" opacity="0.62"/><circle cx="335" cy="160" r="106" fill="#ffd08d" opacity="0.42"/><circle cx="26" cy="303" r="62" fill="#ffd99f" opacity="0.33"/><circle cx="717" cy="138" r="110" fill="#8a6b5c" opacity="0.50"/>
+  <path d="M0,420 L0,309 L30,312 L60,314 L90,317 L120,320 L150,324 L180,327 L210,330 L240,334 L270,337 L300,340 L330,343 L360,345 L390,347 L420,348 L450,349 L480,350 L510,349 L540,349 L570,347 L600,346 L630,344 L660,341 L690,338 L720,335 L750,332 L780,328 L810,325 L840,321 L870,318 L900,315 L930,312 L960,310 L990,308 L1020,307 L1050,306 L1080,306 L1110,306 L1140,306 L1170,308 L1200,309 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,370 L30,373 L60,377 L90,381 L120,384 L150,387 L180,390 L210,392 L240,394 L270,394 L300,394 L330,392 L360,390 L390,387 L420,384 L450,380 L480,377 L510,373 L540,370 L570,367 L600,364 L630,363 L660,362 L690,362 L720,363 L750,365 L780,368 L810,371 L840,374 L870,378 L900,382 L930,385 L960,388 L990,391 L1020,393 L1050,394 L1080,394 L1110,393 L1140,392 L1170,389 L1200,386 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="708" cy="272" rx="187" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-1.1 708 272)"/><ellipse cx="708" cy="272" rx="259" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(4.9 708 272)"/>
+  <circle cx="708" cy="272" r="73" fill="url(#c1n1v63ypl)"/>
+  <circle cx="863" cy="190" r="18" fill="#ffffff" opacity="0.76"/><circle cx="933" cy="262" r="11" fill="#ffffff" opacity="0.81"/><circle cx="553" cy="350" r="18" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Boosting</strong> builds a model in rounds. Start with a crude prediction, look at what it still gets wrong (the residuals), fit a small tree to those errors, add it in, and repeat. Each new tree fixes what the previous ones missed. Gradient boosting is the workhorse behind many of the best models for tabular data.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/random-forests/" data-topic="machine-learning/random-forests">Random Forests</a>, <a class="wikilink" href="/machine-learning/the-learning-loop/" data-topic="machine-learning/the-learning-loop">The Learning Loop</a> and <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can many weak models add up to a strong one?&quot; Not by voting independently as a forest does, but by working as a team in sequence, each one specialising in the previous team&#39;s mistakes.</p>
+<h2 id="intuition-correct-the-leftovers">Intuition: correct the leftovers</h2>
+<p>Predict every house price as the average. That is wrong by different amounts for different houses. Fit a small tree to those leftover errors: it learns &quot;large houses are under-predicted&quot;. Add a fraction of its prediction. The errors shrink; fit another tree to the new leftovers, and so on. The <strong>learning rate</strong> scales each tree&#39;s contribution so no single tree dominates.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">start:        F₀(x) = average of y
+each round:   residuals  rᵢ = yᵢ − F(xᵢ)
+              fit a small tree h(x) to the residuals
+              F(x) ← F(x) + η · h(x)          (η is the learning rate, e.g. 0.1)
+</code></pre>
+<p>For squared error the residuals are exactly the negative gradient of the loss, which is where &quot;gradient&quot; comes from: boosting is gradient descent in the space of functions, each tree a step. Trees are kept shallow (stumps or depth 3–6) because they only need to be weak learners.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Sixty noisy points along a wiggly curve; 200 unseen points to test on; each tree is a single split (a stump). The noise alone limits the best possible error to about 0.09. Mean squared error after each round (learning rate 0.3):</p>
+<pre><code class="language-text">trees      0       1      5      10     20     50     100    150
+train    0.546   0.400  0.238  0.177  0.120  0.069  0.050  0.042
+unseen   0.697   0.569  0.383  0.295  0.224  0.153  0.137  0.136
+</code></pre>
+<p>Error falls fast at first and then slowly. With a learning rate of 1 (each stump added at full strength) the model learns faster but overfits sooner:</p>
+<pre><code class="language-text">lr 1:  unseen error 0.151 at 20 trees, rising to 0.160 by 150 trees (training 0.020)
+</code></pre>
+<p>So a small learning rate with many trees usually wins, at the price of more rounds. The number of rounds is chosen on validation data (early stopping).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="gradient-boosting" data-title="Boosting, one small tree at a time"><p class="bench-fallback"><strong>Interactive bench: Boosting, one small tree at a time.</strong> A wiggly curve with noisy points is fitted by adding one single-split tree per step to what is still wrong; a slider sets the learning rate and the bench shows the growing prediction, the residuals and the training and unseen error.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Press <strong>Add a tree</strong> several times and watch the curve bend.</li>
+<li>Play to 100 trees at learning rate 0.3.</li>
+<li>Reset and play with learning rate 1.</li>
+<li>Compare the unseen error at 20 and at 150 trees for each rate.</li>
+</ol>
+<p><strong>What you should notice:</strong> the fitted curve builds up step by step, training error keeps falling, and a large learning rate lets unseen error turn back up sooner.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>XGBoost, LightGBM and CatBoost</strong> dominate tabular competitions and industry ranking and risk models.</li>
+<li><strong>The idea of fitting residuals</strong> reappears in stacked and residual architectures.</li>
+<li><strong>Gradient boosting for other losses:</strong> classification, ranking, quantiles.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Too many rounds without early stopping,</strong> which overfits.</li>
+<li><strong>Deep trees,</strong> which make each round too strong.</li>
+<li><strong>Noisy labels,</strong> which boosting eagerly chases.</li>
+<li><strong>Comparing on the training set:</strong> boosting fits it extremely well.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does each new tree in boosting try to predict?</summary>
+The residuals: what the current model still gets wrong.
+</details>
+
+<details><summary>2. What does a smaller learning rate do?</summary>
+Each tree contributes less, so more rounds are needed but overfitting is slower.
+</details>
+
+<details><summary>3. How does boosting differ from a random forest?</summary>
+Boosting builds trees in sequence to correct earlier errors; a forest builds independent trees in parallel and averages them.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Boosting:</strong> building a model in rounds, each fixing earlier errors.</li>
+<li><strong>Residual:</strong> the current error, actual minus predicted.</li>
+<li><strong>Weak learner:</strong> a small, simple model such as a stump.</li>
+<li><strong>Early stopping:</strong> stopping rounds when validation error stops improving.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/random-forests/" data-topic="machine-learning/random-forests">Random Forests</a> · <a class="wikilink" href="/machine-learning/decision-trees/" data-topic="machine-learning/decision-trees">Decision Trees</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> · <a class="wikilink" href="/machine-learning/the-learning-loop/" data-topic="machine-learning/the-learning-loop">The Learning Loop</a> · <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/gradient-boosting">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/evaluation/"><small>Read next</small><b>Evaluation</b><p>A model is only as good as the evidence for it.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/random-forests/"><b>Random Forests</b><p>A single tree is unstable: change a few training points and its questions change. A random forest trains many trees on slightly different versions of the data and lets them vote.</p></a><a class="rc-card" href="/machine-learning/the-learning-loop/"><b>The Learning Loop</b><p>Training a model is a loop: predict with the current parameters, measure the loss, work out which way each parameter should move to lower it, nudge the parameters, and repeat.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/machine-learning/decision-trees/"><b>Decision Trees</b><p>A decision tree predicts by asking a chain of yes/no questions about the features, like a flowchart: &quot;is income above 50k? is age over 30?&quot;.</p></a><a class="rc-card" href="/math/learning-rate/"><b>Learning Rate</b><p>The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.</p></a><a class="rc-card" href="/machine-learning/trees-and-ensembles/"><b>Trees and Ensembles</b><p>Trees turn learning into a flowchart of yes/no questions, and ensembles combine many trees into something far stronger.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/random-forests/">← Previous: Random Forests</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

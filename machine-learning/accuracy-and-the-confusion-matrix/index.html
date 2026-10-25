@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accuracy and the Confusion Matrix — AI Base</title>
+<meta name="description" content="Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/accuracy-and-the-confusion-matrix/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Accuracy and the Confusion Matrix — AI Base">
+<meta property="og:description" content="Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/accuracy-and-the-confusion-matrix/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Accuracy and the Confusion Matrix","item":"https://ai.saranmahadev.in/machine-learning/accuracy-and-the-confusion-matrix/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Accuracy and the Confusion Matrix","description":"Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it.","url":"https://ai.saranmahadev.in/machine-learning/accuracy-and-the-confusion-matrix/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a false negative?","acceptedAnswer":{"@type":"Answer","text":"A real positive the model failed to flag."}},{"@type":"Question","name":"1% of cases are positive. What accuracy does \"always say no\" get?","acceptedAnswer":{"@type":"Answer","text":"99%."}},{"@type":"Question","name":"TP = 30, FP = 10, FN = 20. What are precision and recall?","acceptedAnswer":{"@type":"Answer","text":"Precision 30/40 = 75%; recall 30/50 = 60%."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Evaluation</p>
+        <h1 class="doc-title">Accuracy and the Confusion Matrix</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cwmyazzbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="cwmyazzpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cwmyazzbg)"/>
+  <circle cx="1010" cy="248" r="179" fill="#ffd99f" opacity="0.41"/><circle cx="329" cy="411" r="176" fill="#8a6b5c" opacity="0.23"/><circle cx="995" cy="268" r="170" fill="#8a6b5c" opacity="0.30"/><circle cx="126" cy="174" r="216" fill="#ffd08d" opacity="0.47"/><circle cx="118" cy="125" r="139" fill="#ffd08d" opacity="0.36"/><circle cx="1111" cy="99" r="204" fill="#ffd08d" opacity="0.34"/><circle cx="678" cy="342" r="106" fill="#8a6b5c" opacity="0.30"/>
+  <path d="M0,420 L0,344 L30,339 L60,333 L90,326 L120,319 L150,313 L180,309 L210,306 L240,306 L270,307 L300,311 L330,316 L360,322 L390,329 L420,336 L450,342 L480,346 L510,349 L540,350 L570,348 L600,344 L630,339 L660,333 L690,326 L720,319 L750,313 L780,309 L810,306 L840,306 L870,307 L900,311 L930,316 L960,322 L990,329 L1020,336 L1050,342 L1080,346 L1110,349 L1140,350 L1170,348 L1200,344 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,392 L90,389 L120,385 L150,381 L180,376 L210,371 L240,367 L270,364 L300,362 L330,362 L360,364 L390,367 L420,371 L450,375 L480,380 L510,385 L540,389 L570,392 L600,394 L630,394 L660,392 L690,389 L720,385 L750,381 L780,376 L810,371 L840,367 L870,364 L900,362 L930,362 L960,364 L990,367 L1020,371 L1050,375 L1080,380 L1110,385 L1140,389 L1170,392 L1200,394 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="912" cy="220" rx="214" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(15.2 912 220)"/><ellipse cx="912" cy="220" rx="296" ry="83" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(21.2 912 220)"/>
+  <circle cx="912" cy="220" r="84" fill="url(#cwmyazzpl)"/>
+  <circle cx="903" cy="94" r="14" fill="#ffffff" opacity="0.84"/><circle cx="783" cy="322" r="11" fill="#ffffff" opacity="0.84"/><circle cx="659" cy="148" r="15" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it. The <strong>confusion matrix</strong> lays out the four ways a prediction can be right or wrong, and every better metric is built from its four counts.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a>, <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a> and <a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How is my classifier actually wrong?&quot; A single accuracy number hides whether it misses real cases, raises false alarms, or both, and those errors rarely cost the same.</p>
+<h2 id="intuition-two-ways-to-be-right-two-ways-to-be-wrong">Intuition: two ways to be right, two ways to be wrong</h2>
+<p>For a yes/no question there are four outcomes: the model says yes and it is yes (<strong>true positive</strong>), says yes but it is no (<strong>false positive</strong>, a false alarm), says no but it is yes (<strong>false negative</strong>, a miss), or says no and it is no (<strong>true negative</strong>). Accuracy lumps the two right outcomes together and ignores which wrong outcome happened.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">                    predicted yes      predicted no
+actually yes           TP                 FN
+actually no            FP                 TN
+
+accuracy    = (TP + TN) / total
+sensitivity = recall = TP / (TP + FN)     of the real positives, how many were caught
+specificity = TN / (TN + FP)              of the real negatives, how many were cleared
+precision   = TP / (TP + FP)              of the flagged cases, how many were real
+prevalence  = (TP + FN) / total           how common the positive class is
+</code></pre>
+<p>The <strong>baseline</strong> to beat is the majority-class predictor: on data with 2% positives, &quot;always say no&quot; is already 98% accurate.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A screening test on 1,000 people; 2% (20 people) have the condition. The test catches 90% of cases and clears 95% of healthy people.</p>
+<pre><code class="language-text">TP = 20 × 0.90  = 18      FN = 20 − 18  = 2
+TN = 980 × 0.95 = 931     FP = 980 − 931 = 49
+
+accuracy  = (18 + 931) / 1000 = 94.9%       &quot;always say no&quot; = 980 / 1000 = 98.0%
+precision = 18 / (18 + 49)    = 26.9%       recall = 18 / 20 = 90%
+</code></pre>
+<p>The test is <em>less</em> accurate than doing nothing, yet it catches 18 of 20 real cases, which the do-nothing rule never does. And only about one in four positive results is real, because healthy people vastly outnumber sick ones: 49 false alarms swamp 18 true ones. This is the base-rate effect of <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="confusion-matrix" data-title="Build a confusion matrix"><p class="bench-fallback"><strong>Interactive bench: Build a confusion matrix.</strong> Sliders set the prevalence, sensitivity and specificity of a test on 1000 cases; the bench shows the four counts of the confusion matrix with accuracy, the accuracy of always saying no, precision and recall.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at 2% prevalence, 90% sensitivity, 95% specificity and compare accuracy with the always-no baseline.</li>
+<li>Raise prevalence to 30% and watch precision.</li>
+<li>Keep prevalence low and raise specificity to 99%.</li>
+<li>Find settings where accuracy beats the baseline yet precision is poor.</li>
+</ol>
+<p><strong>What you should notice:</strong> accuracy barely moves while precision swings widely with prevalence, and rare classes need a much higher specificity to keep false alarms below true hits.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Fraud, disease and defect detection:</strong> all with rare positives.</li>
+<li><strong>Content moderation:</strong> the balance between missing harm and wrongly removing content.</li>
+<li><strong>Every classifier evaluation,</strong> starting from these four counts.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Reporting accuracy on imbalanced data.</strong></li>
+<li><strong>Forgetting the baseline</strong> of predicting the majority class.</li>
+<li><strong>Mixing up precision and recall,</strong> or sensitivity and specificity.</li>
+<li><strong>Ignoring that the two error types cost different amounts.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is a false negative?</summary>
+A real positive the model failed to flag.
+</details>
+
+<details><summary>2. 1% of cases are positive. What accuracy does "always say no" get?</summary>
+99%.
+</details>
+
+<details><summary>3. TP = 30, FP = 10, FN = 20. What are precision and recall?</summary>
+Precision 30/40 = 75%; recall 30/50 = 60%.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Confusion matrix:</strong> the table of TP, FP, FN and TN counts.</li>
+<li><strong>Precision:</strong> the share of flagged cases that are real.</li>
+<li><strong>Recall (sensitivity):</strong> the share of real cases that are flagged.</li>
+<li><strong>Base rate (prevalence):</strong> how common the positive class is.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a> · <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/machine-learning/precision-recall-and-f1/" data-topic="machine-learning/precision-recall-and-f1">Precision, Recall and F1</a> · <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a> · <a class="wikilink" href="/fundamentals/where-ai-goes-wrong/" data-topic="fundamentals/where-ai-goes-wrong">Where AI Goes Wrong</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/accuracy-and-the-confusion-matrix">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/precision-recall-and-f1/"><small>Read next</small><b>Precision, Recall and F1</b><p>Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision).</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/measuring-performance/"><b>Measuring Performance</b><p>To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.</p></a><a class="rc-card" href="/machine-learning/logistic-regression-as-a-classifier/"><b>Logistic Regression as a Classifier</b><p>Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.</p></a><a class="rc-card" href="/math/conditional-probability/"><b>Conditional Probability</b><p>Conditional probability is the probability of an event given that another has happened: P(A | B), read &quot;the probability of A given B&quot;.</p></a><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/machine-learning/precision-recall-and-f1/"><b>Precision, Recall and F1</b><p>Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision).</p></a><a class="rc-card" href="/fundamentals/where-ai-goes-wrong/"><b>Where AI Goes Wrong</b><p>AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/evaluation/">← Previous: Evaluation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

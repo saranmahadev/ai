@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Super-Resolution and Upscaling — AI Base</title>
+<meta name="description" content="A low-resolution image has fewer pixels than you want — every upscaling method has to invent the missing ones somehow.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/super-resolution-and-upscaling/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Super-Resolution and Upscaling — AI Base">
+<meta property="og:description" content="A low-resolution image has fewer pixels than you want — every upscaling method has to invent the missing ones somehow.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/super-resolution-and-upscaling/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Super-Resolution and Upscaling","item":"https://ai.saranmahadev.in/generative-ai/super-resolution-and-upscaling/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Super-Resolution and Upscaling","description":"A low-resolution image has fewer pixels than you want — every upscaling method has to invent the missing ones somehow.","url":"https://ai.saranmahadev.in/generative-ai/super-resolution-and-upscaling/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key difference between nearest-neighbor and bilinear upsampling?","acceptedAnswer":{"@type":"Answer","text":"Nearest-neighbor repeats each original pixel's value across a block, producing hard edges; bilinear linearly blends between neighboring pixels, producing a smooth gradient instead."}},{"@type":"Question","name":"In the worked example, why couldn't either method add detail finer than what's visible in the 2×2 original?","acceptedAnswer":{"@type":"Answer","text":"Because both are purely interpolation methods — they compute new pixel values as some combination (a copy, or a weighted blend) of the existing pixels, with no mechanism for introducing information that wasn't already present."}},{"@type":"Question","name":"How does a learned super-resolution model differ fundamentally from interpolation?","acceptedAnswer":{"@type":"Answer","text":"It has been trained on many pairs of low- and high-resolution images, letting it generate plausible fine detail that was never present in the low-resolution input, rather than only smoothing between existing values."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Image Generation and Editing</p>
+        <h1 class="doc-title">Super-Resolution and Upscaling</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c15h8xjibg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c15h8xjipl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c15h8xjibg)"/>
+  <circle cx="878" cy="385" r="118" fill="#8a5989" opacity="0.24"/><circle cx="96" cy="111" r="177" fill="#ffbeba" opacity="0.46"/><circle cx="818" cy="378" r="165" fill="#8a5989" opacity="0.22"/><circle cx="646" cy="48" r="88" fill="#ffbfe0" opacity="0.32"/><circle cx="407" cy="417" r="102" fill="#ffbeba" opacity="0.59"/>
+  <path d="M0,420 L0,348 L30,349 L60,350 L90,349 L120,349 L150,348 L180,346 L210,344 L240,341 L270,338 L300,335 L330,332 L360,329 L390,325 L420,322 L450,319 L480,315 L510,313 L540,310 L570,308 L600,307 L630,306 L660,306 L690,306 L720,306 L750,308 L780,309 L810,311 L840,314 L870,317 L900,320 L930,323 L960,327 L990,330 L1020,333 L1050,337 L1080,340 L1110,342 L1140,345 L1170,347 L1200,348 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,370 L30,367 L60,365 L90,363 L120,362 L150,362 L180,363 L210,365 L240,367 L270,370 L300,374 L330,377 L360,381 L390,385 L420,388 L450,391 L480,393 L510,394 L540,394 L570,393 L600,392 L630,390 L660,387 L690,383 L720,380 L750,376 L780,372 L810,369 L840,366 L870,364 L900,363 L930,362 L960,362 L990,364 L1020,366 L1050,368 L1080,371 L1110,375 L1140,379 L1170,382 L1200,386 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="655" cy="235" rx="155" ry="43" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(4.9 655 235)"/><ellipse cx="655" cy="235" rx="214" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(10.9 655 235)"/>
+  <circle cx="655" cy="235" r="61" fill="url(#c15h8xjipl)"/>
+  <circle cx="741" cy="311" r="17" fill="#ffffff" opacity="0.61"/><circle cx="803" cy="177" r="15" fill="#ffffff" opacity="0.66"/><circle cx="823" cy="236" r="14" fill="#ffffff" opacity="0.66"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A low-resolution image has fewer pixels than you want — every upscaling method has to invent the missing ones somehow. This note covers the spectrum from the cheapest possible answer to a genuinely learned one.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/text-to-image-pipelines/" data-topic="generative-ai/text-to-image-pipelines">Text-to-Image Pipelines</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you produce a higher-resolution image from a lower-resolution one?&quot; The simplest answer, <strong>nearest-neighbor upsampling</strong>, just repeats each existing pixel to fill the new grid — fast, but visibly blocky. <strong>Bilinear upsampling</strong> instead linearly blends between each pixel&#39;s neighbors, producing smoother (if slightly blurry) transitions. Learned super-resolution models go further still, using a trained network (often diffusion-based) to hallucinate plausible fine detail that was never in the low-resolution image to begin with, rather than merely smoothing between the pixels that were.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Blowing up a small photo in basic image-editing software without any smart scaling gives you visibly chunky squares — that&#39;s nearest-neighbor, each original pixel&#39;s color simply repeated across a block. Blur the result slightly and the blockiness softens into gradients — that&#39;s roughly what bilinear interpolation does mathematically. Neither one adds information that wasn&#39;t there; a learned super-resolution model is the first step that actually can, by having seen many pairs of low- and high-resolution images and learned what plausible fine detail tends to look like.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">nearest-neighbor:  output pixel = nearest input pixel&#39;s value (repeated into a block)
+
+bilinear:  output pixel = weighted average of the 4 nearest input pixels,
+           weights determined by how close the output position is to each
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A tiny 2×2 low-resolution grid <code>[[10, 20], [30, 40]]</code>, upsampled 2× to a 4×4 grid two different ways:</p>
+<pre><code class="language-text">nearest-neighbor:        bilinear:
+10 10 20 20               10.00 12.50 17.50 20.00
+10 10 20 20               15.00 17.50 22.50 25.00
+30 30 40 40               25.00 27.50 32.50 35.00
+30 30 40 40               30.00 32.50 37.50 40.00
+</code></pre>
+<p>Nearest-neighbor produces four hard-edged blocks of exactly the original four values. Bilinear instead produces a smooth gradient between them — every value strictly between 10 and 40, changing gradually across the grid rather than jumping at block boundaries. Neither method invents detail finer than what a smooth blend between the original four values can represent.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="super-resolution-upsample" data-title="Blocky vs. smooth upsampling"><p class="bench-fallback"><strong>Interactive bench: Blocky vs. smooth upsampling.</strong> Compare nearest-neighbor and bilinear upsampling of the same tiny low-resolution grid at different scale factors.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the two grids at the default scale factor.</li>
+<li>Raise the scale factor and watch the nearest-neighbor side get blockier while bilinear stays smooth.</li>
+<li>Consider what neither method can do: add detail finer than a smooth blend of the original four values.</li>
+</ol>
+<p><strong>What you should notice:</strong> bilinear always looks smoother, but it&#39;s still fundamentally limited to interpolating between the original pixels — it cannot add genuinely new information, which is exactly the gap a learned super-resolution model is trained to fill.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Diffusion-based super-resolution models condition a denoising process on the low-resolution image</strong> (much like <a class="wikilink" href="/generative-ai/text-to-image-pipelines/" data-topic="generative-ai/text-to-image-pipelines">text conditioning</a>, but with an image instead of text), letting the model hallucinate plausible detail rather than merely interpolate.</li>
+<li><strong>Nearest-neighbor and bilinear are still used constantly as cheap building blocks</strong> — inside learned models (to resize feature maps between layers), and anywhere upscaling needs to be instant rather than learned.</li>
+<li><strong>Real super-resolution benchmarks measure against a known ground-truth high-resolution image</strong>, which is exactly the setup <a class="wikilink" href="/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/" data-topic="generative-ai/distributional-metrics-fid-inception-score-and-clip-score">distributional image metrics</a> were built to score.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming any interpolation method can recover true lost detail.</strong> Interpolation can only ever produce a smooth function of the pixels that exist — recovering plausible <em>new</em> detail requires a model that has learned what that detail tends to look like from other examples.</li>
+<li><strong>Confusing &quot;smoother&quot; with &quot;more accurate.&quot;</strong> Bilinear&#39;s smoothness is a side effect of linear blending, not evidence it&#39;s closer to what a higher-resolution camera would have actually captured.</li>
+<li><strong>Forgetting learned super-resolution models can hallucinate wrong detail.</strong> Because they invent plausible-looking content rather than recovering real information, they can confidently add detail that looks reasonable but doesn&#39;t match what was actually there.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key difference between nearest-neighbor and bilinear upsampling?</summary>
+Nearest-neighbor repeats each original pixel's value across a block, producing hard edges; bilinear linearly blends between neighboring pixels, producing a smooth gradient instead.
+</details>
+
+<details><summary>2. In the worked example, why couldn't either method add detail finer than what's visible in the 2×2 original?</summary>
+Because both are purely interpolation methods — they compute new pixel values as some combination (a copy, or a weighted blend) of the existing pixels, with no mechanism for introducing information that wasn't already present.
+</details>
+
+<details><summary>3. How does a learned super-resolution model differ fundamentally from interpolation?</summary>
+It has been trained on many pairs of low- and high-resolution images, letting it generate plausible fine detail that was never present in the low-resolution input, rather than only smoothing between existing values.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Nearest-neighbor upsampling:</strong> filling a larger grid by repeating each original pixel&#39;s value across a block.</li>
+<li><strong>Bilinear upsampling:</strong> filling a larger grid by linearly blending between each position&#39;s four nearest original pixels.</li>
+<li><strong>Super-resolution:</strong> producing a higher-resolution version of an image, ranging from simple interpolation to learned detail hallucination.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/text-to-image-pipelines/" data-topic="generative-ai/text-to-image-pipelines">Text-to-Image Pipelines</a> · <a class="wikilink" href="/generative-ai/instruction-based-image-editing/" data-topic="generative-ai/instruction-based-image-editing">Instruction-Based Image Editing</a> · <a class="wikilink" href="/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/" data-topic="generative-ai/distributional-metrics-fid-inception-score-and-clip-score">Distributional Metrics (FID, Inception Score and CLIP Score)</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/super-resolution-and-upscaling">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/inpainting-and-outpainting/"><small>Read next</small><b>Inpainting and Outpainting</b><p>structural conditioning locks part of a generated output to an exact value.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/text-to-image-pipelines/"><b>Text-to-Image Pipelines</b><p>Every mechanism on the previous district&#39;s road — guidance, cross-attention conditioning — exists to answer one practical question: given a sentence of text, how do you actually get a picture out…</p></a><a class="rc-card" href="/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/"><b>Distributional Metrics (FID, Inception Score and CLIP Score)</b><p>BLEU and ROUGE work by comparing a generation directly against one specific reference.</p></a><a class="rc-card" href="/generative-ai/instruction-based-image-editing/"><b>Instruction-Based Image Editing</b><p>Masks and locked structural coordinates both require drawing an exact region by hand.</p></a><a class="rc-card" href="/generative-ai/image-generation-and-editing/"><b>Image Generation and Editing</b><p>With decoding and conditioning covered as general mechanisms, this district applies them to the modality generative AI is best known for: pictures — generating them from text, and then editing…</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/text-to-image-pipelines/">← Previous: Text-to-Image Pipelines</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

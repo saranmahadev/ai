@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text-to-Image Pipelines — AI Base</title>
+<meta name="description" content="Every mechanism on the previous district&#39;s road — guidance, cross-attention conditioning — exists to answer one practical question: given a sentence of text, how do you actually get a picture out…">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/text-to-image-pipelines/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Text-to-Image Pipelines — AI Base">
+<meta property="og:description" content="Every mechanism on the previous district&#39;s road — guidance, cross-attention conditioning — exists to answer one practical question: given a sentence of text, how do you actually get a picture out…">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/text-to-image-pipelines/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Text-to-Image Pipelines","item":"https://ai.saranmahadev.in/generative-ai/text-to-image-pipelines/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Text-to-Image Pipelines","description":"Every mechanism on the previous district's road — guidance, cross-attention conditioning — exists to answer one practical question: given a sentence of text, how do you actually get a picture out…","url":"https://ai.saranmahadev.in/generative-ai/text-to-image-pipelines/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the three cooperating parts of a text-to-image pipeline?","acceptedAnswer":{"@type":"Answer","text":"A text encoder (turns the prompt into conditioning embeddings), cross-attention (lets the image-in-progress read those embeddings at every step), and classifier-free guidance (controls how strongly the result is pulled toward the condition)."}},{"@type":"Question","name":"In the worked example, what determined where each prompt's final position landed?","acceptedAnswer":{"@type":"Answer","text":"Only the target concept position named by the prompt — every prompt started from the exact same point and ran the same guided-denoising procedure."}},{"@type":"Question","name":"Does the text encoder generate any part of the image's content directly?","acceptedAnswer":{"@type":"Answer","text":"No — it only produces conditioning embeddings; the image content is produced by the denoising process, which repeatedly reads those embeddings through cross-attention."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Image Generation and Editing</p>
+        <h1 class="doc-title">Text-to-Image Pipelines</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cjrinzfbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="cjrinzfpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cjrinzfbg)"/>
+  <circle cx="96" cy="371" r="116" fill="#ffe9f4" opacity="0.54"/><circle cx="1122" cy="277" r="149" fill="#ffbeba" opacity="0.59"/><circle cx="822" cy="210" r="195" fill="#8a5989" opacity="0.36"/><circle cx="456" cy="409" r="97" fill="#ffe9f4" opacity="0.46"/><circle cx="141" cy="217" r="128" fill="#ffbeba" opacity="0.59"/><circle cx="207" cy="58" r="97" fill="#ffe9f4" opacity="0.24"/><circle cx="85" cy="226" r="210" fill="#ffbeba" opacity="0.32"/>
+  <path d="M0,420 L0,349 L30,348 L60,347 L90,345 L120,343 L150,340 L180,337 L210,334 L240,330 L270,327 L300,323 L330,320 L360,317 L390,314 L420,312 L450,309 L480,308 L510,306 L540,306 L570,306 L600,306 L630,307 L660,308 L690,310 L720,313 L750,315 L780,318 L810,322 L840,325 L870,328 L900,332 L930,335 L960,338 L990,341 L1020,344 L1050,346 L1080,348 L1110,349 L1140,349 L1170,350 L1200,349 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,370 L30,373 L60,377 L90,381 L120,384 L150,388 L180,390 L210,392 L240,394 L270,394 L300,393 L330,392 L360,390 L390,387 L420,384 L450,380 L480,376 L510,373 L540,369 L570,366 L600,364 L630,363 L660,362 L690,362 L720,363 L750,365 L780,368 L810,371 L840,375 L870,378 L900,382 L930,386 L960,389 L990,391 L1020,393 L1050,394 L1080,394 L1110,393 L1140,391 L1170,389 L1200,386 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="629" cy="151" rx="183" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-21.7 629 151)"/><ellipse cx="629" cy="151" rx="253" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-15.7 629 151)"/>
+  <circle cx="629" cy="151" r="72" fill="url(#cjrinzfpl)"/>
+  <circle cx="527" cy="69" r="11" fill="#ffffff" opacity="0.78"/><circle cx="837" cy="143" r="8" fill="#ffffff" opacity="0.73"/><circle cx="690" cy="54" r="14" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every mechanism on the previous district&#39;s road — guidance, cross-attention conditioning — exists to answer one practical question: given a sentence of text, how do you actually get a picture out the other end? This note assembles them into one pipeline.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/classifier-free-guidance/" data-topic="generative-ai/classifier-free-guidance">Classifier-Free Guidance</a>, <a class="wikilink" href="/generative-ai/cross-attention-conditioning-for-generation/" data-topic="generative-ai/cross-attention-conditioning-for-generation">Cross-Attention Conditioning for Generation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do a text prompt and a diffusion model actually combine into a finished image?&quot; A text-to-image pipeline has three cooperating parts: a <strong>text encoder</strong> turns the prompt into embeddings; those embeddings condition every denoising step through <strong>cross-attention</strong>, letting the image-in-progress look at the prompt; and <strong>classifier-free guidance</strong> controls how strongly the final image is pulled toward matching that conditioning, versus simply being a plausible image in general. None of the three parts is new — this is where they&#39;re wired together.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A diffusion model without any conditioning is like a sculptor chipping away at marble with no brief beyond &quot;reveal something that looks like it belongs in this studio.&quot; Text conditioning hands the sculptor a written description to consult at every stage. Guidance is how insistently they follow it — ignore it entirely, follow it as one consideration among many, or let it override everything else about what &quot;looks right&quot; on its own.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">pipeline, per denoising step:
+  1. encode prompt → conditioning embeddings  (text encoder, done once)
+  2. image-in-progress attends over those embeddings  (cross-attention, every step)
+  3. combine conditional and unconditional scores  (classifier-free guidance, every step)
+  4. take one denoising step using the combined score
+→ repeat steps 2–4 until the image has fully denoised
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three toy &quot;concepts&quot; sit at fixed positions: cat at <code>(−2, 2)</code>, dog at <code>(2, 2)</code>, bird at <code>(0, −2.5)</code>. Starting every prompt from the same neutral point <code>(0, 0)</code> and running 6 CFG-guided denoising steps (guidance scale 3) toward whichever concept the prompt names:</p>
+<pre><code class="language-text">prompt &quot;cat&quot;:   final position (-1.970, 2.012)   target (-2, 2)
+prompt &quot;dog&quot;:   final position ( 1.970, 2.012)   target ( 2, 2)
+prompt &quot;bird&quot;:  final position ( 0.000, -2.412)  target ( 0, -2.5)
+</code></pre>
+<p>Each prompt&#39;s own conditioning pulled the same starting point toward a different target, landing within a few percent of the exact concept position after only 6 steps — the entire pipeline, from &quot;which word was in the prompt&quot; to &quot;where the generated point ended up,&quot; runs through nothing but conditioning and guidance applied repeatedly.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="text-to-image-pipeline" data-title="Text prompt → denoised image latent"><p class="bench-fallback"><strong>Interactive bench: Text prompt → denoised image latent.</strong> Choose a prompt and step through a toy denoising process that pulls a point toward the matching concept.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Choose each of the three prompts and step through their denoising paths.</li>
+<li>Compare how closely each path&#39;s final step lands on its target concept.</li>
+<li>Notice all three paths start from the exact same point — only the prompt changes where they end up.</li>
+</ol>
+<p><strong>What you should notice:</strong> the three concepts are generated by the exact same stepping procedure; the prompt only changes which direction the conditioning pulls, not how the pulling itself works.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every major text-to-image system (Stable Diffusion, DALL·E, Imagen) follows exactly this three-part structure</strong>, differing mainly in which text encoder, which denoising architecture, and what guidance scale they default to.</li>
+<li><strong>The text encoder is often a model trained on a completely different task</strong> (frequently a contrastive text-image model), reused here purely to produce conditioning embeddings.</li>
+<li><strong><a class="wikilink" href="/transformers/vision-transformers/" data-topic="transformers/vision-transformers">the image side of this pipeline</a> usually isn&#39;t a single pass over raw pixels</strong> — most pipelines denoise a compressed latent representation, decoded to pixels only at the very end.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Thinking the text encoder &quot;draws&quot; the image.</strong> It only produces the conditioning embeddings; all the actual image content comes from the denoising process reading and reacting to those embeddings over many steps.</li>
+<li><strong>Assuming one pass through the pipeline is instant.</strong> Realistic pipelines run tens to hundreds of denoising steps, each one a full cross-attention-and-guidance pass — this worked example&#39;s 6 steps is a deliberately small illustration.</li>
+<li><strong>Forgetting guidance and cross-attention are doing different jobs.</strong> Cross-attention is how the condition gets read at all; guidance is how strongly the result is pulled toward matching it. Removing either changes the result in a different way.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are the three cooperating parts of a text-to-image pipeline?</summary>
+A text encoder (turns the prompt into conditioning embeddings), cross-attention (lets the image-in-progress read those embeddings at every step), and classifier-free guidance (controls how strongly the result is pulled toward the condition).
+</details>
+
+<details><summary>2. In the worked example, what determined where each prompt's final position landed?</summary>
+Only the target concept position named by the prompt — every prompt started from the exact same point and ran the same guided-denoising procedure.
+</details>
+
+<details><summary>3. Does the text encoder generate any part of the image's content directly?</summary>
+No — it only produces conditioning embeddings; the image content is produced by the denoising process, which repeatedly reads those embeddings through cross-attention.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Text encoder:</strong> the component that turns a text prompt into conditioning embeddings for the rest of the pipeline.</li>
+<li><strong>Text-to-image pipeline:</strong> a text encoder, cross-attention conditioning, and classifier-free guidance combined to turn a prompt into an image.</li>
+<li><strong>Denoising step:</strong> one iteration of the diffusion process, informed by the conditioning at every step.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/classifier-free-guidance/" data-topic="generative-ai/classifier-free-guidance">Classifier-Free Guidance</a> · <a class="wikilink" href="/generative-ai/cross-attention-conditioning-for-generation/" data-topic="generative-ai/cross-attention-conditioning-for-generation">Cross-Attention Conditioning for Generation</a> · <a class="wikilink" href="/generative-ai/super-resolution-and-upscaling/" data-topic="generative-ai/super-resolution-and-upscaling">Super-Resolution and Upscaling</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/text-to-image-pipelines">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/super-resolution-and-upscaling/"><small>Read next</small><b>Super-Resolution and Upscaling</b><p>A low-resolution image has fewer pixels than you want — every upscaling method has to invent the missing ones somehow.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/classifier-free-guidance/"><b>Classifier-Free Guidance</b><p>Classifier Guidance works, but it needs a second model — a classifier trained specifically to work on noisy, partially-denoised samples.</p></a><a class="rc-card" href="/generative-ai/cross-attention-conditioning-for-generation/"><b>Cross-Attention Conditioning for Generation</b><p>Guidance (as in Classifier-Free Guidance) steers generation toward a condition through the score itself; this note covers a completely different way a condition enters a generative model —…</p></a><a class="rc-card" href="/transformers/vision-transformers/"><b>Vision Transformers</b><p>Patches became a token sequence several districts ago.</p></a><a class="rc-card" href="/generative-ai/super-resolution-and-upscaling/"><b>Super-Resolution and Upscaling</b><p>A low-resolution image has fewer pixels than you want — every upscaling method has to invent the missing ones somehow.</p></a><a class="rc-card" href="/generative-ai/image-generation-and-editing/"><b>Image Generation and Editing</b><p>With decoding and conditioning covered as general mechanisms, this district applies them to the modality generative AI is best known for: pictures — generating them from text, and then editing…</p></a><a class="rc-card" href="/generative-ai/vocoders-and-neural-audio-synthesis/"><b>Vocoders and Neural Audio Synthesis</b><p>Every generative model covered so far on this planet outputs some intermediate representation — a latent, a spectrogram-like set of frequencies and amplitudes — but none of that is sound yet.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/image-generation-and-editing/">← Previous: Image Generation and Editing</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

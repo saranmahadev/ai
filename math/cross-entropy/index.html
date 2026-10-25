@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross-Entropy — AI Base</title>
+<meta name="description" content="Cross-entropy is the average surprise you feel when the world follows distribution p but you predicted with distribution q: H(p, q) = −Σ p log q.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/cross-entropy/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Cross-Entropy — AI Base">
+<meta property="og:description" content="Cross-entropy is the average surprise you feel when the world follows distribution p but you predicted with distribution q: H(p, q) = −Σ p log q.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/cross-entropy/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Cross-Entropy","item":"https://ai.saranmahadev.in/math/cross-entropy/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Cross-Entropy","description":"Cross-entropy is the average surprise you feel when the world follows distribution p but you predicted with distribution q: H(p, q) = −Σ p log q.","url":"https://ai.saranmahadev.in/math/cross-entropy/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"True class gets q = 0.5. What is the loss in bits?","acceptedAnswer":{"@type":"Answer","text":"1 bit."}},{"@type":"Question","name":"When does H(p, q) equal H(p)?","acceptedAnswer":{"@type":"Answer","text":"When q = p."}},{"@type":"Question","name":"Why is confident and wrong so costly?","acceptedAnswer":{"@type":"Answer","text":"The loss is −log of a very small probability, which is large."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Information Theory</p>
+        <h1 class="doc-title">Cross-Entropy</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1j2g7ibbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1j2g7ibpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1j2g7ibbg)"/>
+  <circle cx="262" cy="307" r="61" fill="#cebff9" opacity="0.53"/><circle cx="622" cy="201" r="133" fill="#eee9fd" opacity="0.49"/><circle cx="73" cy="178" r="150" fill="#68599a" opacity="0.47"/><circle cx="809" cy="368" r="126" fill="#eee9fd" opacity="0.40"/><circle cx="554" cy="75" r="212" fill="#eee9fd" opacity="0.48"/><circle cx="1106" cy="283" r="148" fill="#cebff9" opacity="0.44"/><circle cx="1073" cy="399" r="138" fill="#ddbecb" opacity="0.49"/>
+  <path d="M0,420 L0,349 L30,350 L60,349 L90,348 L120,345 L150,341 L180,337 L210,332 L240,327 L270,322 L300,317 L330,313 L360,309 L390,307 L420,306 L450,306 L480,307 L510,309 L540,313 L570,317 L600,321 L630,327 L660,332 L690,337 L720,341 L750,345 L780,348 L810,349 L840,350 L870,349 L900,347 L930,344 L960,340 L990,335 L1020,330 L1050,325 L1080,320 L1110,316 L1140,312 L1170,308 L1200,306 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,363 L60,365 L90,368 L120,371 L150,374 L180,378 L210,382 L240,385 L270,388 L300,391 L330,393 L360,394 L390,394 L420,393 L450,392 L480,389 L510,386 L540,383 L570,379 L600,375 L630,372 L660,369 L690,366 L720,364 L750,362 L780,362 L810,362 L840,364 L870,366 L900,369 L930,372 L960,376 L990,379 L1020,383 L1050,386 L1080,389 L1110,392 L1140,393 L1170,394 L1200,394 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="962" cy="209" rx="219" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(1.4 962 209)"/><ellipse cx="962" cy="209" rx="303" ry="85" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(7.4 962 209)"/>
+  <circle cx="962" cy="209" r="86" fill="url(#c1j2g7ibpl)"/>
+  <circle cx="676" cy="284" r="14" fill="#ffffff" opacity="0.76"/><circle cx="949" cy="89" r="15" fill="#ffffff" opacity="0.63"/><circle cx="1304" cy="176" r="10" fill="#ffffff" opacity="0.86"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Cross-entropy</strong> is the average surprise you feel when the world follows distribution <code>p</code> but you predicted with distribution <code>q</code>: <code>H(p, q) = −Σ p log q</code>. It is the standard loss for classification and language models. It is smallest when your prediction matches reality, and it punishes confident wrong answers heavily.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/entropy/" data-topic="math/entropy">Entropy</a> and <a class="wikilink" href="/math/surprise-and-information/" data-topic="math/surprise-and-information">Surprise and Information</a>.</p>
+<p>Cross-entropy is used as a loss function; the <a class="wikilink" href="/math/optimization/" data-topic="math/optimization">Optimization</a> district, later on the road, shows how such losses are minimised.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How costly is it to describe reality with the wrong model?&quot; If a classifier says 90% cat and the picture is a dog, that should hurt far more than a hesitant 40%.</p>
+<h2 id="intuition-surprise-under-the-wrong-beliefs">Intuition: surprise under the wrong beliefs</h2>
+<p>Reality draws outcomes from <code>p</code>. You pay <code>−log q(x)</code> bits of surprise for each outcome <code>x</code>, according to <em>your</em> belief <code>q</code>. Averaged over what actually happens:</p>
+<pre><code class="language-text">H(p, q) = − Σ p(x) · log₂ q(x)
+H(p, q) ≥ H(p)          with equality only when q = p
+</code></pre>
+<p>The excess over the true entropy, <code>H(p, q) − H(p)</code>, is the <strong>KL divergence</strong> (see <a class="wikilink" href="/math/kl-divergence/" data-topic="math/kl-divergence">KL Divergence</a>): the extra bits wasted by believing <code>q</code> instead of <code>p</code>.</p>
+<h2 id="classification-one-hot-targets">Classification: one-hot targets</h2>
+<p>If the true label is one class, <code>p</code> is <strong>one-hot</strong> (probability 1 on the true class, 0 elsewhere). The cross-entropy collapses to a single term:</p>
+<pre><code class="language-text">loss = −log₂ q(true class)        (or −ln q in nats, the usual choice in code)
+</code></pre>
+<p>This is exactly the log loss from <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a>: minimising it means giving the true class as high a probability as possible.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>True distribution <code>p = (0.5, 0.5)</code>, prediction <code>q = (0.9, 0.1)</code>:</p>
+<pre><code class="language-text">H(p, q) = −(0.5 · log₂ 0.9 + 0.5 · log₂ 0.1) = 0.5 × 0.152 + 0.5 × 3.322 = 1.737 bits
+H(p)    = 1 bit
+excess  = 1.737 − 1 = 0.737 bits         (the KL divergence)
+</code></pre>
+<p>One-hot example: the truth is class 1 and the model predicts <code>q = (0.7, 0.2, 0.1)</code>. Loss <code>= −log₂ 0.7 = 0.515</code> bits. If it had predicted 0.1 for the true class, the loss would be <code>3.32</code> bits. Confident and wrong is expensive: a prediction of 0.01 costs 6.64 bits.</p>
+<p>The gradient of softmax followed by cross-entropy is beautifully simple: <code>predicted probabilities − true probabilities</code> (see <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="cross-entropy-compare" data-title="True versus predicted distribution"><p class="bench-fallback"><strong>Interactive bench: True versus predicted distribution.</strong> Sliders set a true distribution and a predicted distribution over three classes; the bench shows both as bars and reports the entropy of the truth, the cross-entropy and their difference, and a one-hot mode shows the log-loss of the true class.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Make the prediction equal to the truth and read the cross-entropy.</li>
+<li>Move the prediction away and watch the cross-entropy rise.</li>
+<li>Switch to one-hot truth and lower the probability of the true class.</li>
+<li>Give the true class probability near zero.</li>
+</ol>
+<p><strong>What you should notice:</strong> cross-entropy is never below the true entropy and equals it only for a perfect prediction; near-zero probability on the truth is punished severely.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Classification and language-model training</strong> minimise cross-entropy.</li>
+<li><strong>Softmax outputs</strong> are paired with it.</li>
+<li><strong>Perplexity</strong> is <code>2</code> to the power of the cross-entropy in bits.</li>
+<li><strong>Knowledge distillation</strong> matches a student&#39;s distribution to a teacher&#39;s.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Predicting exactly 0</strong> for a possible class: infinite loss.</li>
+<li><strong>Swapping <code>p</code> and <code>q</code>.</strong> The truth goes in front, the prediction inside the log.</li>
+<li><strong>Mixing bits and nats</strong> when comparing numbers.</li>
+<li><strong>Applying it to unnormalised scores</strong> instead of probabilities.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. True class gets q = 0.5. What is the loss in bits?</summary>
+1 bit.
+</details>
+
+<details><summary>2. When does H(p, q) equal H(p)?</summary>
+When q = p.
+</details>
+
+<details><summary>3. Why is confident and wrong so costly?</summary>
+The loss is −log of a very small probability, which is large.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Cross-entropy:</strong> the average surprise using prediction <code>q</code> when reality is <code>p</code>.</li>
+<li><strong>One-hot:</strong> a target with probability 1 on a single class.</li>
+<li><strong>Log loss:</strong> cross-entropy with a one-hot target.</li>
+<li><strong>Perplexity:</strong> the exponential of the cross-entropy.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/entropy/" data-topic="math/entropy">Entropy</a> · <a class="wikilink" href="/math/kl-divergence/" data-topic="math/kl-divergence">KL Divergence</a> · <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a> · <a class="wikilink" href="/math/maximum-likelihood/" data-topic="math/maximum-likelihood">Maximum Likelihood</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/cross-entropy">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/kl-divergence/"><small>Read next</small><b>KL Divergence</b><p>The KL divergence D(p ‖ q) = Σ p log(p / q) measures how much extra surprise you incur by believing distribution q when the truth is p.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/entropy/"><b>Entropy</b><p>Entropy is the average surprise of a distribution: H = −Σ p log₂ p. It measures how uncertain an outcome is before you see it.</p></a><a class="rc-card" href="/math/surprise-and-information/"><b>Surprise and Information</b><p>The information (or surprise) of an event is −log₂ p bits, where p is its probability. A certain event carries no information, a fair coin flip carries one bit, and a very rare event carries a lot.</p></a><a class="rc-card" href="/math/optimization/"><b>Optimization</b><p>Optimization is the art of finding the best values: the parameters that make a model&#39;s error as small as possible.</p></a><a class="rc-card" href="/math/kl-divergence/"><b>KL Divergence</b><p>The KL divergence D(p ‖ q) = Σ p log(p / q) measures how much extra surprise you incur by believing distribution q when the truth is p.</p></a><a class="rc-card" href="/math/loss-functions/"><b>Loss Functions</b><p>A loss function turns &quot;how wrong is the model?&quot; into a single number: small when predictions are good, large when they are bad.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/joint-and-conditional-entropy/">← Previous: Joint and Conditional Entropy</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diffusion Models — AI Base</title>
+<meta name="description" content="A diffusion model learns to generate by learning the opposite of something easy: gradually turning clean data into pure noise is a simple, fixed process with no learning involved at all; a…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/diffusion-models/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Diffusion Models — AI Base">
+<meta property="og:description" content="A diffusion model learns to generate by learning the opposite of something easy: gradually turning clean data into pure noise is a simple, fixed process with no learning involved at all; a…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/diffusion-models/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Diffusion Models","item":"https://ai.saranmahadev.in/deep-learning/diffusion-models/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Diffusion Models","description":"A diffusion model learns to generate by learning the opposite of something easy: gradually turning clean data into pure noise is a simple, fixed process with no learning involved at all; a…","url":"https://ai.saranmahadev.in/deep-learning/diffusion-models/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the forward diffusion process do, and does it require training?","acceptedAnswer":{"@type":"Answer","text":"It gradually adds noise to data according to a fixed schedule, turning it into pure noise; no training is involved in this direction."}},{"@type":"Question","name":"What does a diffusion model's network actually learn to predict?","acceptedAnswer":{"@type":"Answer","text":"Roughly how much noise was added at a given step, so that noise can be subtracted back out during the reverse (generation) process."}},{"@type":"Question","name":"In the worked example, what happens to the balance between signal weight and noise weight as t increases?","acceptedAnswer":{"@type":"Answer","text":"The signal weight shrinks and the noise weight grows, with the two becoming roughly equal partway through the schedule and noise dominating by the final step."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Generative Deep Learning</p>
+        <h1 class="doc-title">Diffusion Models</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1yydb1abg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1yydb1apl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1yydb1abg)"/>
+  <circle cx="511" cy="149" r="184" fill="#ffb6b6" opacity="0.59"/><circle cx="642" cy="215" r="113" fill="#ffb89d" opacity="0.34"/><circle cx="426" cy="228" r="64" fill="#8a546c" opacity="0.52"/><circle cx="1115" cy="6" r="81" fill="#ffb6b6" opacity="0.37"/><circle cx="779" cy="28" r="128" fill="#ffb6b6" opacity="0.45"/><circle cx="771" cy="144" r="104" fill="#ffe6e6" opacity="0.27"/>
+  <path d="M0,420 L0,338 L30,332 L60,325 L90,318 L120,312 L150,308 L180,306 L210,306 L240,308 L270,312 L300,317 L330,324 L360,330 L390,337 L420,343 L450,347 L480,349 L510,349 L540,347 L570,344 L600,338 L630,332 L660,325 L690,318 L720,312 L750,308 L780,306 L810,306 L840,308 L870,312 L900,317 L930,324 L960,330 L990,337 L1020,343 L1050,347 L1080,349 L1110,349 L1140,347 L1170,344 L1200,338 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,375 L30,371 L60,368 L90,365 L120,363 L150,362 L180,362 L210,363 L240,364 L270,366 L300,369 L330,372 L360,376 L390,380 L420,384 L450,387 L480,390 L510,392 L540,393 L570,394 L600,394 L630,393 L660,391 L690,388 L720,385 L750,381 L780,377 L810,374 L840,370 L870,367 L900,365 L930,363 L960,362 L990,362 L1020,363 L1050,365 L1080,367 L1110,370 L1140,374 L1170,377 L1200,381 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="790" cy="158" rx="201" ry="56" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-11.0 790 158)"/><ellipse cx="790" cy="158" rx="278" ry="78" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-5.0 790 158)"/>
+  <circle cx="790" cy="158" r="79" fill="url(#c1yydb1apl)"/>
+  <circle cx="1095" cy="183" r="9" fill="#ffffff" opacity="0.80"/><circle cx="1069" cy="150" r="15" fill="#ffffff" opacity="0.62"/><circle cx="949" cy="64" r="11" fill="#ffffff" opacity="0.71"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>diffusion model</strong> learns to generate by learning the opposite of something easy: gradually turning clean data into pure noise is a simple, fixed process with no learning involved at all; a diffusion model trains a network to run that process <strong>backward</strong>, turning noise back into data, one small denoising step at a time.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/normalizing-flows/" data-topic="deep-learning/normalizing-flows">Normalizing Flows</a> and <a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">Variational Autoencoders</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Generation from scratch is hard — is there an easier problem to train on that still gets you a generative model?&quot; Yes: train a network to undo one small, fixed amount of noise at a time, repeated enough times, and starting from pure noise and running that trained denoiser repeatedly produces a sample.</p>
+<h2 id="intuition-un-developing-a-photograph-one-grain-at-a-time">Intuition: un-developing a photograph, one grain at a time</h2>
+<p>Imagine a photograph progressively ruined by adding a little grainy noise, over and over, many times, until nothing recognisable remains — pure static. That forward process needs no learning; it&#39;s just adding noise on a fixed schedule. The hard, trained part is the <em>reverse</em>: a network that looks at a noisy image and predicts roughly what noise was just added, so it can be subtracted back out. Chain enough of these small denoising steps together, starting from pure static, and a recognisable image gradually emerges.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">forward process:  x_t = √(ᾱ_t) · x₀ + √(1 − ᾱ_t) · ε,     ε ~ N(0, 1)
+
+ᾱ_t = ∏ (1 − β_s) for s = 1 to t      (cumulative product of per-step &quot;keep&quot; factors)
+β_t = the (small, scheduled) amount of noise added at step t
+</code></pre>
+<p>This &quot;jump directly to step t&quot; formula is one of diffusion&#39;s most useful properties: you never need to simulate every intermediate noising step one by one — you can sample <code>x_t</code> straight from <code>x₀</code> and a single noise draw, using only <code>ᾱ_t</code>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy 4-step noise schedule, <code>β = (0.1, 0.2, 0.3, 0.4)</code>:</p>
+<pre><code class="language-text">step (t)    ᾱ_t      signal weight √ᾱ_t    noise weight √(1−ᾱ_t)
+1          0.9000    0.9487                 0.3162
+2          0.7200    0.8485                 0.5292
+3          0.5040    0.7099                 0.7043
+4          0.3024    0.5499                 0.8352
+</code></pre>
+<p>By step 3, the signal and noise weights are almost equal (0.7099 versus 0.7043) — the data and the noise contribute almost equally to <code>x₃</code>. For <code>x₀ = 1</code> and a drawn noise value <code>ε = 0.5</code> at step 3: <code>x₃ = 0.7099 × 1 + 0.7043 × 0.5 ≈ 1.0621</code>. By step 4, the noise weight (0.8352) has clearly overtaken the signal weight (0.5499) — the original data is nearly swamped.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="diffusion-noise" data-title="Noising a value, step by step"><p class="bench-fallback"><strong>Interactive bench: Noising a value, step by step.</strong> A clean value and a noise schedule. Step forward through the noising process and watch the signal and noise weights trade off, then see how a trained reverse step would need to subtract the noise back out.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step forward through the schedule and watch the signal weight shrink while the noise weight grows.</li>
+<li>Find roughly which step the signal and noise weights cross over.</li>
+<li>Try a gentler schedule (smaller β values) and see how many more steps it takes to reach the same amount of noise.</li>
+</ol>
+<p><strong>What you should notice:</strong> the signal weight and noise weight always satisfy <code>(signal weight)² + (noise weight)² = 1</code> — they trade off along a fixed budget, never both staying large or both shrinking together.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Modern state-of-the-art image generation</strong> is largely built on diffusion models, having displaced GANs as the dominant approach for photorealistic image synthesis in recent years.</li>
+<li><strong>The reverse (denoising) network</strong> is usually a large convolutional or attention-based architecture, trained to predict the noise that was added at a given step, given the noisy input and the step number.</li>
+<li><strong>Sampling requires running the reverse process many times</strong> (often dozens to hundreds of steps), which is a genuine speed trade-off against GANs&#39; single forward pass — a major area of ongoing research is reducing the number of steps needed.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming the forward (noising) process involves any learning.</strong> It is entirely fixed and known in advance; only the reverse (denoising) process is trained.</li>
+<li><strong>Confusing the per-step noise schedule (β_t) with the cumulative signal/noise weights (ᾱ_t and its square root).</strong> The schedule sets how much noise is added at each individual step; the cumulative weights describe the total effect by step t.</li>
+<li><strong>Expecting diffusion sampling to be as fast as a GAN&#39;s single forward pass.</strong> Generating one sample typically requires many sequential denoising steps, a real computational cost diffusion pays for its other advantages.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does the forward diffusion process do, and does it require training?</summary>
+It gradually adds noise to data according to a fixed schedule, turning it into pure noise; no training is involved in this direction.
+</details>
+
+<details><summary>2. What does a diffusion model's network actually learn to predict?</summary>
+Roughly how much noise was added at a given step, so that noise can be subtracted back out during the reverse (generation) process.
+</details>
+
+<details><summary>3. In the worked example, what happens to the balance between signal weight and noise weight as t increases?</summary>
+The signal weight shrinks and the noise weight grows, with the two becoming roughly equal partway through the schedule and noise dominating by the final step.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Forward (noising) process:</strong> the fixed, un-learned process of gradually adding noise to data.</li>
+<li><strong>Reverse (denoising) process:</strong> the trained process of removing noise step by step, used to generate new samples.</li>
+<li><strong>Noise schedule:</strong> the sequence of per-step noise amounts (β_t) controlling how quickly data is noised.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/normalizing-flows/" data-topic="deep-learning/normalizing-flows">Normalizing Flows</a> · <a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">Variational Autoencoders</a> · <a class="wikilink" href="/deep-learning/generative-adversarial-networks/" data-topic="deep-learning/generative-adversarial-networks">Generative Adversarial Networks</a> · <a class="wikilink" href="/deep-learning/training-instabilities-in-gans/" data-topic="deep-learning/training-instabilities-in-gans">Training Instabilities in GANs</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/diffusion-models">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/graphs-structure-and-beyond-grids/"><small>Read next</small><b>Graphs, Structure and Beyond Grids</b><p>Not every input is a grid of pixels or a left-to-right sequence.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/normalizing-flows/"><b>Normalizing Flows</b><p>Neither a VAE nor a GAN can tell you the exact probability their model assigns to a specific data point — a VAE only has an approximation, and a GAN has no likelihood at all.</p></a><a class="rc-card" href="/deep-learning/variational-autoencoders/"><b>Variational Autoencoders</b><p>A plain autoencoder&#39;s bottleneck is one fixed vector per input — useful for compression, but there&#39;s no obvious way to &quot;make up&quot; a new, realistic vector to decode into something new.</p></a><a class="rc-card" href="/deep-learning/generative-adversarial-networks/"><b>Generative Adversarial Networks</b><p>A generative adversarial network (GAN) trains two networks against each other: a generator that turns random noise into fake samples, trying to fool the second network, and a discriminator that…</p></a><a class="rc-card" href="/deep-learning/training-instabilities-in-gans/"><b>Training Instabilities in GANs</b><p>A GAN&#39;s two networks are not cooperating toward one shared loss the way an ordinary supervised model&#39;s layers do — they are actively working against each other.</p></a><a class="rc-card" href="/deep-learning/generative-deep-learning/"><b>Generative Deep Learning</b><p>Generative vs Discriminative Models on the Machine Learning planet draws the line; this district walks the deep architectures that learn to generate rather than only recognise, from a bottleneck…</p></a><a class="rc-card" href="/deep-learning/ethics-and-safety-of-deep-systems/"><b>Ethics and Safety of Deep Systems</b><p>Where AI Goes Wrong and Fairness Metrics cover risks shared across machine learning generally.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/normalizing-flows/">← Previous: Normalizing Flows</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

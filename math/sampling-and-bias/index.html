@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sampling and Bias — AI Base</title>
+<meta name="description" content="A sample is the part of a population you actually observe, and statistics uses it to say something about the whole.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/sampling-and-bias/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Sampling and Bias — AI Base">
+<meta property="og:description" content="A sample is the part of a population you actually observe, and statistics uses it to say something about the whole.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/sampling-and-bias/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Sampling and Bias","item":"https://ai.saranmahadev.in/math/sampling-and-bias/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sampling and Bias","description":"A sample is the part of a population you actually observe, and statistics uses it to say something about the whole.","url":"https://ai.saranmahadev.in/math/sampling-and-bias/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which reduces random error: a bigger sample or a fairer sample?","acceptedAnswer":{"@type":"Answer","text":"A bigger sample reduces random error; a fairer (unbiased) sample removes bias."}},{"@type":"Question","name":"A survey is sent only to existing customers to find out why people don't buy. What is the problem?","acceptedAnswer":{"@type":"Answer","text":"Selection bias: the non-buyers are missing."}},{"@type":"Question","name":"What is the standard error of a mean with σ = 20 and n = 400?","acceptedAnswer":{"@type":"Answer","text":"1."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Statistics</p>
+        <h1 class="doc-title">Sampling and Bias</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1f7odfmbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1f7odfmpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1f7odfmbg)"/>
+  <circle cx="660" cy="251" r="75" fill="#eee9fd" opacity="0.49"/><circle cx="975" cy="59" r="217" fill="#eee9fd" opacity="0.49"/><circle cx="1125" cy="189" r="186" fill="#68599a" opacity="0.56"/><circle cx="1037" cy="317" r="174" fill="#68599a" opacity="0.46"/><circle cx="24" cy="155" r="190" fill="#cebff9" opacity="0.40"/><circle cx="5" cy="109" r="96" fill="#cebff9" opacity="0.51"/><circle cx="440" cy="331" r="196" fill="#68599a" opacity="0.55"/>
+  <path d="M0,420 L0,329 L30,322 L60,316 L90,311 L120,307 L150,306 L180,306 L210,309 L240,313 L270,319 L300,326 L330,333 L360,339 L390,344 L420,348 L450,350 L480,349 L510,346 L540,342 L570,336 L600,329 L630,322 L660,316 L690,311 L720,307 L750,306 L780,306 L810,309 L840,313 L870,319 L900,326 L930,333 L960,339 L990,344 L1020,348 L1050,350 L1080,349 L1110,346 L1140,342 L1170,336 L1200,329 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,385 L30,382 L60,380 L90,377 L120,375 L150,372 L180,370 L210,368 L240,366 L270,365 L300,363 L330,363 L360,362 L390,362 L420,362 L450,363 L480,364 L510,365 L540,367 L570,369 L600,371 L630,374 L660,376 L690,379 L720,381 L750,384 L780,386 L810,388 L840,390 L870,391 L900,393 L930,393 L960,394 L990,394 L1020,394 L1050,393 L1080,392 L1110,391 L1140,389 L1170,387 L1200,385 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="955" cy="283" rx="161" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-3.9 955 283)"/><ellipse cx="955" cy="283" rx="222" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(2.1 955 283)"/>
+  <circle cx="955" cy="283" r="63" fill="url(#c1f7odfmpl)"/>
+  <circle cx="1101" cy="337" r="13" fill="#ffffff" opacity="0.75"/><circle cx="1152" cy="291" r="14" fill="#ffffff" opacity="0.85"/><circle cx="1103" cy="236" r="13" fill="#ffffff" opacity="0.70"/><circle cx="1167" cy="244" r="12" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>sample</strong> is the part of a <strong>population</strong> you actually observe, and statistics uses it to say something about the whole. A <strong>random</strong> sample gives estimates that are right on average and improve with more data. A <strong>biased</strong> sample gives estimates that are systematically off, and no amount of data fixes that.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a>, <a class="wikilink" href="/math/central-limit-theorem/" data-topic="math/central-limit-theorem">Central Limit Theorem</a> and <a class="wikilink" href="/math/describing-data/" data-topic="math/describing-data">Describing Data</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How much can I learn about everyone from a few, and when should I distrust it?&quot; A model trained on data that does not represent its real users will fail on them, however much data it saw.</p>
+<h2 id="intuition-a-spoonful-of-soup">Intuition: a spoonful of soup</h2>
+<p>Stir the pot and taste one spoon: it tells you about the whole pot. Skim only the surface and you learn only about the surface. <strong>Random sampling</strong> means every member of the population has an equal chance of being picked, so the sample is a fair miniature.</p>
+<p>A sample mean varies from sample to sample by about <code>σ / √n</code> (the standard error, see <a class="wikilink" href="/math/central-limit-theorem/" data-topic="math/central-limit-theorem">Central Limit Theorem</a>). More data narrows that spread, but <strong>bias</strong> is a different problem: it shifts the <em>centre</em> of the estimates.</p>
+<h2 id="common-sources-of-bias">Common sources of bias</h2>
+<ul>
+<li><strong>Selection bias:</strong> the way you pick systematically excludes some people (a phone-in poll reaches only those who care to call).</li>
+<li><strong>Survivorship bias:</strong> you see only the cases that survived (successful companies, models that got deployed).</li>
+<li><strong>Non-response bias:</strong> the people who reply differ from those who do not.</li>
+<li><strong>Sampling frame problems:</strong> the list you sample from is not the population.</li>
+</ul>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A population of 1,000 people has an average age of 40. A <strong>random</strong> sample of 100 gives a mean age close to 40, typically within about ±2 if the population&#39;s standard deviation is 15 (<code>15 / √100 = 1.5</code>).</p>
+<p>Now poll only people at a weekday-afternoon event, where mostly retirees show up, and the sample&#39;s mean age is 62. Ask 10,000 such people and the average is still about 62: <strong>more data does not remove bias</strong>; it only makes you more confident in the wrong answer.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="sample-vs-population" data-title="Random sample versus biased sample"><p class="bench-fallback"><strong>Interactive bench: Random sample versus biased sample.</strong> A population of 1,000 hidden values; draw many samples either at random or with a bias toward larger values, and a histogram of the sample averages shows that random samples centre on the truth while biased ones do not, however large.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Draw random samples of size 20 and note where the averages centre.</li>
+<li>Increase the sample size. What narrows?</li>
+<li>Switch to the biased sampler and repeat.</li>
+<li>Increase the sample size again: does the bias go away?</li>
+</ol>
+<p><strong>What you should notice:</strong> a larger sample narrows the spread of the estimates, but a biased sampler stays off-centre.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Training data</strong> that under-represents groups makes models perform worse on them.</li>
+<li><strong>Evaluation sets</strong> must be representative of the deployment population.</li>
+<li><strong>Feedback loops:</strong> a model that shapes which data it sees can bias its own future data.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Believing that a large sample fixes bias.</strong></li>
+<li><strong>Convenience sampling:</strong> using whoever is easy to reach.</li>
+<li><strong>Ignoring who is missing</strong> from the data.</li>
+<li><strong>Confusing sample size with sample quality.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Which reduces random error: a bigger sample or a fairer sample?</summary>
+A bigger sample reduces random error; a fairer (unbiased) sample removes bias.
+</details>
+
+<details><summary>2. A survey is sent only to existing customers to find out why people don't buy. What is the problem?</summary>
+Selection bias: the non-buyers are missing.
+</details>
+
+<details><summary>3. What is the standard error of a mean with σ = 20 and n = 400?</summary>
+1.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Population / sample:</strong> everyone of interest / the part observed.</li>
+<li><strong>Random sample:</strong> every member has an equal chance of selection.</li>
+<li><strong>Selection bias:</strong> systematic exclusion in how the sample is chosen.</li>
+<li><strong>Standard error:</strong> the typical random error of a sample mean.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a> · <a class="wikilink" href="/math/central-limit-theorem/" data-topic="math/central-limit-theorem">Central Limit Theorem</a> · <a class="wikilink" href="/math/describing-data/" data-topic="math/describing-data">Describing Data</a> · <a class="wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a> · <a class="wikilink" href="/fundamentals/where-ai-goes-wrong/" data-topic="fundamentals/where-ai-goes-wrong">Where AI Goes Wrong</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/sampling-and-bias">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/covariance-and-correlation/"><small>Read next</small><b>Covariance and Correlation</b><p>Covariance measures whether two variables tend to be above or below their means together.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/law-of-large-numbers/"><b>Law of Large Numbers</b><p>The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.</p></a><a class="rc-card" href="/math/central-limit-theorem/"><b>Central Limit Theorem</b><p>The central limit theorem says that the average (or sum) of many independent random values follows a bell curve, whatever shape the individual values have. Its spread shrinks as σ / √n.</p></a><a class="rc-card" href="/math/describing-data/"><b>Describing Data</b><p>A few numbers can summarise a whole data set: where its centre is (mean, median, mode) and how spread out it is (range, variance, standard deviation, quartiles).</p></a><a class="rc-card" href="/math/estimation-and-bias/"><b>Estimation and Bias</b><p>An estimator is a recipe for guessing an unknown quantity from data, such as using the sample mean to estimate the population mean.</p></a><a class="rc-card" href="/fundamentals/where-ai-goes-wrong/"><b>Where AI Goes Wrong</b><p>AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…</p></a><a class="rc-card" href="/math/statistics/"><b>Statistics</b><p>Probability reasons from a known chance process to what data it will produce. Statistics runs the other way: it starts from data and reasons back to what produced it.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/data-distributions-and-outliers/">← Previous: Data Distributions and Outliers</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

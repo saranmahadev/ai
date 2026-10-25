@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naive Bayes — AI Base</title>
+<meta name="description" content="Naive Bayes classifies by asking, for each class, how well the observed features fit it, then combining the answers with Bayes&#39; rule.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/naive-bayes/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Naive Bayes — AI Base">
+<meta property="og:description" content="Naive Bayes classifies by asking, for each class, how well the observed features fit it, then combining the answers with Bayes&#39; rule.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/naive-bayes/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Naive Bayes","item":"https://ai.saranmahadev.in/machine-learning/naive-bayes/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Naive Bayes","description":"Naive Bayes classifies by asking, for each class, how well the observed features fit it, then combining the answers with Bayes' rule.","url":"https://ai.saranmahadev.in/machine-learning/naive-bayes/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Prior odds 1 : 1 and a word with likelihood ratio 4. What are the posterior odds?","acceptedAnswer":{"@type":"Answer","text":"4 : 1, that is a probability of 0.8."}},{"@type":"Question","name":"What does \"naive\" refer to?","acceptedAnswer":{"@type":"Answer","text":"Assuming features are independent given the class."}},{"@type":"Question","name":"A word has ratio 0.5. Does it raise or lower the odds of spam?","acceptedAnswer":{"@type":"Answer","text":"It lowers them, halving the odds."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Instance and Probability Methods</p>
+        <h1 class="doc-title">Naive Bayes</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1uuyuwmbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1uuyuwmpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1uuyuwmbg)"/>
+  <circle cx="767" cy="111" r="88" fill="#8a6b5c" opacity="0.45"/><circle cx="174" cy="110" r="96" fill="#8a6b5c" opacity="0.30"/><circle cx="1192" cy="147" r="69" fill="#8a6b5c" opacity="0.36"/><circle cx="1066" cy="63" r="218" fill="#8a6b5c" opacity="0.44"/><circle cx="904" cy="25" r="152" fill="#ffd08d" opacity="0.61"/>
+  <path d="M0,420 L0,316 L30,323 L60,329 L90,336 L120,342 L150,346 L180,349 L210,350 L240,348 L270,344 L300,339 L330,333 L360,326 L390,319 L420,313 L450,309 L480,306 L510,306 L540,307 L570,311 L600,316 L630,323 L660,329 L690,336 L720,342 L750,346 L780,349 L810,350 L840,348 L870,344 L900,339 L930,333 L960,326 L990,319 L1020,313 L1050,309 L1080,306 L1110,306 L1140,307 L1170,311 L1200,316 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,365 L60,367 L90,371 L120,374 L150,378 L180,382 L210,385 L240,388 L270,391 L300,393 L330,394 L360,394 L390,393 L420,392 L450,389 L480,387 L510,383 L540,379 L570,376 L600,372 L630,369 L660,366 L690,364 L720,362 L750,362 L780,362 L810,364 L840,366 L870,368 L900,372 L930,375 L960,379 L990,383 L1020,386 L1050,389 L1080,392 L1110,393 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="724" cy="197" rx="240" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-0.9 724 197)"/><ellipse cx="724" cy="197" rx="332" ry="93" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(5.1 724 197)"/>
+  <circle cx="724" cy="197" r="94" fill="url(#c1uuyuwmpl)"/>
+  <circle cx="393" cy="198" r="16" fill="#ffffff" opacity="0.86"/><circle cx="540" cy="67" r="8" fill="#ffffff" opacity="0.83"/><circle cx="849" cy="107" r="9" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Naive Bayes</strong> classifies by asking, for each class, how well the observed features fit it, then combining the answers with Bayes&#39; rule. The &quot;naive&quot; assumption is that features are independent within a class, so the evidence just multiplies. That assumption is usually false, yet the method is fast, needs little data and often works surprisingly well.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a>, <a class="wikilink" href="/math/independence/" data-topic="math/independence">Independence</a> and <a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Given what I see, which class most likely produced it?&quot; Naive Bayes flips the question: it learns how each class <em>generates</em> features, then uses Bayes&#39; rule to go backwards to the class.</p>
+<h2 id="intuition-evidence-adds-up">Intuition: evidence adds up</h2>
+<p>Start from how common each class is (the prior). Every feature you observe then nudges the odds: the word &quot;free&quot; is far more common in spam than in ordinary mail, so seeing it multiplies the odds of spam; the word &quot;meeting&quot; multiplies them down. Assuming features are independent given the class, each feature&#39;s nudge is a simple multiplication.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">Bayes&#39; rule      P(class | features) ∝ P(class) · P(f₁ | class) · P(f₂ | class) · …
+odds form        posterior odds = prior odds × Π  P(fᵢ | spam) / P(fᵢ | ham)
+likelihood ratio the factor  P(f | spam) / P(f | ham): above 1 favours spam, below 1 favours ham
+</code></pre>
+<p>The product form is where &quot;naive&quot; enters: the true joint probability of features given a class would need every interaction; independence collapses it to one term per feature. The probabilities are just counted from training data.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Take a prior of <code>P(spam) = 0.4</code>. An email contains the words &quot;free&quot; and &quot;urgent&quot;. From training counts: <code>P(free | spam) = 0.6</code>, <code>P(free | ham) = 0.05</code>, <code>P(urgent | spam) = 0.35</code>, <code>P(urgent | ham) = 0.1</code>.</p>
+<pre><code class="language-text">prior odds        = 0.4 / 0.6                      = 0.667
+&quot;free&quot;   ratio    = 0.60 / 0.05                    = 12
+&quot;urgent&quot; ratio    = 0.35 / 0.10                    = 3.5
+posterior odds    = 0.667 × 12 × 3.5               = 28.0
+P(spam | words)   = 28 / (1 + 28)                  = 0.966
+</code></pre>
+<p>Add the word &quot;meeting&quot; (<code>0.05</code> in spam, <code>0.40</code> in ham; ratio 0.125): odds become <code>28 × 0.125 = 3.5</code>, so <code>P(spam) = 3.5 / 4.5 = 0.78</code>. Evidence for ham pulled the probability from 97% down to 78%. The independence assumption means words that tend to appear together (&quot;free&quot; and &quot;winner&quot;) are counted as separate evidence, so naive Bayes tends to be overconfident: its ranking is good, its probabilities are exaggerated.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="naive-bayes-calc" data-title="Multiply the evidence"><p class="bench-fallback"><strong>Interactive bench: Multiply the evidence.</strong> Tick which words appear in an email and set the prior probability of spam; the bench multiplies the likelihood ratios step by step and shows the resulting odds and probability.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Tick only &quot;free&quot; and read the probability.</li>
+<li>Add &quot;winner&quot;, then &quot;urgent&quot;.</li>
+<li>Add &quot;meeting&quot; and &quot;thanks&quot;.</li>
+<li>Change the prior and see how much it matters once several words are present.</li>
+</ol>
+<p><strong>What you should notice:</strong> each word multiplies the odds by its ratio, several strong words overwhelm the prior, and words common in both classes barely matter.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Spam filters and text classification</strong> (see <a class="wikilink" href="/machine-learning/text-classification-with-naive-bayes/" data-topic="machine-learning/text-classification-with-naive-bayes">Text Classification with Naive Bayes</a>).</li>
+<li><strong>Quick baselines</strong> when there is little data or many features.</li>
+<li><strong>The Bayesian idea</strong> of combining a prior with evidence runs through modern machine learning.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Trusting the probabilities:</strong> they are usually too extreme.</li>
+<li><strong>Zero counts:</strong> a word never seen in a class gives probability zero, killing the whole product (see the next topic).</li>
+<li><strong>Strongly correlated features,</strong> which double-count evidence.</li>
+<li><strong>Ignoring the prior</strong> when classes are very unbalanced.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Prior odds 1 : 1 and a word with likelihood ratio 4. What are the posterior odds?</summary>
+4 : 1, that is a probability of 0.8.
+</details>
+
+<details><summary>2. What does "naive" refer to?</summary>
+Assuming features are independent given the class.
+</details>
+
+<details><summary>3. A word has ratio 0.5. Does it raise or lower the odds of spam?</summary>
+It lowers them, halving the odds.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Prior:</strong> the probability of a class before seeing any features.</li>
+<li><strong>Likelihood:</strong> the probability of a feature given a class.</li>
+<li><strong>Likelihood ratio:</strong> the likelihood in one class divided by that in another.</li>
+<li><strong>Posterior:</strong> the probability of a class after seeing the features.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/math/independence/" data-topic="math/independence">Independence</a> · <a class="wikilink" href="/machine-learning/text-classification-with-naive-bayes/" data-topic="machine-learning/text-classification-with-naive-bayes">Text Classification with Naive Bayes</a> · <a class="wikilink" href="/machine-learning/generative-vs-discriminative-models/" data-topic="machine-learning/generative-vs-discriminative-models">Generative vs Discriminative Models</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/naive-bayes">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/text-classification-with-naive-bayes/"><small>Read next</small><b>Text Classification with Naive Bayes</b><p>Text is the classic home of naive Bayes.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/math/independence/"><b>Independence</b><p>Two events are independent when knowing one happened tells you nothing about the other: P(A | B) = P(A). Equivalently, the probability of both is the product: P(A and B) = P(A) · P(B).</p></a><a class="rc-card" href="/math/conditional-probability/"><b>Conditional Probability</b><p>Conditional probability is the probability of an event given that another has happened: P(A | B), read &quot;the probability of A given B&quot;.</p></a><a class="rc-card" href="/machine-learning/text-classification-with-naive-bayes/"><b>Text Classification with Naive Bayes</b><p>Text is the classic home of naive Bayes.</p></a><a class="rc-card" href="/machine-learning/generative-vs-discriminative-models/"><b>Generative vs Discriminative Models</b><p>There are two ways to build a classifier. A generative model learns what each class looks like (how its examples are distributed) and uses Bayes&#39; rule to decide.</p></a><a class="rc-card" href="/machine-learning/instance-and-probability-methods/"><b>Instance and Probability Methods</b><p>Not every learner fits a formula.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/k-nearest-neighbours/">← Previous: k-Nearest Neighbours</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

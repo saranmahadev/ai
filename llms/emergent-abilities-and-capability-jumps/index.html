@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emergent Abilities and Capability Jumps — AI Base</title>
+<meta name="description" content="Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/emergent-abilities-and-capability-jumps/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Emergent Abilities and Capability Jumps — AI Base">
+<meta property="og:description" content="Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/emergent-abilities-and-capability-jumps/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Emergent Abilities and Capability Jumps","item":"https://ai.saranmahadev.in/llms/emergent-abilities-and-capability-jumps/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Emergent Abilities and Capability Jumps","description":"Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.","url":"https://ai.saranmahadev.in/llms/emergent-abilities-and-capability-jumps/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes a capability \"emergent,\" as opposed to just gradually improving with scale?","acceptedAnswer":{"@type":"Answer","text":"Its accuracy stays near a chance-level floor across a wide range of smaller scales, then rises sharply within a comparatively narrow band of scale, rather than improving smoothly and proportionally across the whole range."}},{"@type":"Question","name":"In the worked example, over roughly how much scale did most of the capability jump happen?","acceptedAnswer":{"@type":"Answer","text":"Less than one order of magnitude — from about 10^9.8 to 10^10.5 — accuracy went from near-chance (32.6%) to near-ceiling (93.7%)."}},{"@type":"Question","name":"Why might an all-or-nothing accuracy metric make a smoothly improving underlying skill look like a sudden jump?","acceptedAnswer":{"@type":"Answer","text":"If a task requires getting every step exactly right to count as correct, even a smoothly rising per-step probability can translate into an accuracy curve that looks flat and then jumps sharply, once the per-step probability crosses the point where getting the whole sequence right becomes likely."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Scaling, Capacity and Emergence</p>
+        <h1 class="doc-title">Emergent Abilities and Capability Jumps</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1gvarp8bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1gvarp8pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1gvarp8bg)"/>
+  <circle cx="673" cy="102" r="215" fill="#ffece0" opacity="0.40"/><circle cx="971" cy="24" r="99" fill="#8a5f5e" opacity="0.61"/><circle cx="1123" cy="219" r="169" fill="#ffece0" opacity="0.43"/><circle cx="317" cy="403" r="60" fill="#8a5f5e" opacity="0.52"/><circle cx="1133" cy="354" r="98" fill="#ffece0" opacity="0.33"/>
+  <path d="M0,420 L0,330 L30,335 L60,340 L90,344 L120,347 L150,349 L180,350 L210,349 L240,348 L270,345 L300,341 L330,337 L360,332 L390,327 L420,322 L450,317 L480,313 L510,309 L540,307 L570,306 L600,306 L630,307 L660,309 L690,313 L720,317 L750,321 L780,327 L810,332 L840,337 L870,341 L900,345 L930,348 L960,349 L990,350 L1020,349 L1050,347 L1080,344 L1110,340 L1140,335 L1170,330 L1200,325 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,372 L30,369 L60,366 L90,364 L120,362 L150,362 L180,362 L210,364 L240,366 L270,369 L300,372 L330,375 L360,379 L390,383 L420,386 L450,389 L480,392 L510,393 L540,394 L570,394 L600,393 L630,391 L660,388 L690,385 L720,382 L750,378 L780,374 L810,371 L840,368 L870,365 L900,363 L930,362 L960,362 L990,363 L1020,364 L1050,367 L1080,370 L1110,373 L1140,377 L1170,380 L1200,384 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="785" cy="127" rx="203" ry="57" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(24.9 785 127)"/><ellipse cx="785" cy="127" rx="281" ry="79" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(30.9 785 127)"/>
+  <circle cx="785" cy="127" r="80" fill="url(#c1gvarp8pl)"/>
+  <circle cx="698" cy="35" r="12" fill="#ffffff" opacity="0.65"/><circle cx="856" cy="212" r="15" fill="#ffffff" opacity="0.62"/><circle cx="719" cy="30" r="12" fill="#ffffff" opacity="0.71"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story. Some capabilities don&#39;t follow that story at all: they&#39;re absent at smaller scale, and then, within a surprisingly narrow range of scale, they&#39;re just there.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does every capability improve smoothly with scale, the way loss does?&quot; Not necessarily. An <strong>emergent ability</strong> is a capability that stays near chance performance across a wide range of smaller scales, and then rises sharply — far faster than the smooth loss curve underneath it — within a relatively narrow band of scale. The underlying loss might be improving steadily the whole time; it&#39;s the <em>task accuracy</em> built on top of it that can look like a flat line followed by a cliff.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A plant that&#39;s been growing underground, invisibly, for weeks can appear to &quot;suddenly&quot; break through the soil in a single day — the growth wasn&#39;t actually instantaneous, it was continuous the whole time, but it only became <em>visible above the surface</em> once it crossed a threshold. Emergent abilities can look similar: a smoothly improving underlying capability can cross a threshold where it finally becomes reliable enough to show up as correct answers on a task that&#39;s all-or-nothing in how it&#39;s scored, making the capability look like it switched on abruptly.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">accuracy(scale) stays near a &quot;chance&quot; floor for scale ≪ threshold
+accuracy(scale) rises sharply through a narrow band near the threshold
+accuracy(scale) approaches a ceiling for scale ≫ threshold
+
+→ the rise looks like a step function on a linear accuracy axis, even
+  though the underlying model&#39;s loss may be improving smoothly and
+  continuously across the entire range
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy capability curve across a range of model scales (log₁₀ parameters):</p>
+<pre><code class="language-text">10⁸:    20.0% accuracy   (at the chance floor)
+10⁹:    20.0% accuracy
+10^9.5: 21.3% accuracy
+10^9.8: 32.6% accuracy   ← the climb begins
+10^10:  57.5% accuracy
+10^10.2: 82.4% accuracy  ← most of the jump happened here
+10^10.5: 93.7% accuracy
+10^11:  95.0% accuracy   (near the ceiling)
+10^12:  95.0% accuracy
+</code></pre>
+<p>Between <code>10^9.8</code> and <code>10^10.5</code> — less than one order of magnitude of scale — accuracy went from barely above chance (32.6%) to near its ceiling (93.7%). Below that band, the model looks like it simply can&#39;t do the task at all; above it, the model looks like it has mastered it — and the entire transition happened within a narrow window.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="emergent-ability-curve" data-title="Flat, then a sudden jump"><p class="bench-fallback"><strong>Interactive bench: Flat, then a sudden jump.</strong> Slide through model scale and watch a toy capability stay near chance, then jump sharply across a narrow threshold.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move through scales well below the threshold and note accuracy staying flat.</li>
+<li>Move through the threshold band itself and watch the sharp rise.</li>
+<li>Move past it and note accuracy flattening again near its ceiling.</li>
+</ol>
+<p><strong>What you should notice:</strong> the curve&#39;s <em>shape</em> — flat, then a steep climb, then flat again — is what makes a capability &quot;emergent&quot;; a capability that rose gradually across the whole scale range wouldn&#39;t be described the same way, even if it reached the same final accuracy.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Published emergent-ability findings (Wei et al. and related work) documented specific tasks</strong> — certain arithmetic, multi-step reasoning tasks — where accuracy was near-random for smaller models and sharply higher for larger ones at the same family&#39;s scale steps.</li>
+<li><strong>A live debate exists over how much of &quot;emergence&quot; is a real discontinuity in the underlying capability versus an artifact of using an all-or-nothing accuracy metric</strong> on top of a smoothly improving underlying probability — a metric that only rewards getting every step exactly right can look like a step function even when the underlying skill is continuous.</li>
+<li><strong>It directly complicates <a class="wikilink" href="/llms/benchmark-suites-mmlu-helm-big-bench/" data-topic="llms/benchmark-suites-mmlu-helm-big-bench">benchmark-based model comparison</a></strong>: a benchmark heavy on emergent-style tasks can make two models of similar-but-different scale look far more different in capability than their general competence actually is.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming emergence means something mysterious or unpredictable is happening.</strong> The worked example&#39;s underlying curve is a perfectly ordinary, smooth sigmoid — what looks sudden is the <em>accuracy metric&#39;s</em> sensitivity to that curve&#39;s steep middle section, not evidence of a qualitatively different mechanism.</li>
+<li><strong>Expecting every capability to emerge at the same scale.</strong> Different tasks have been observed to show their own thresholds, if they show emergent behavior at all — some capabilities improve gradually the whole way.</li>
+<li><strong>Treating a flat region below threshold as proof a capability is permanently out of reach.</strong> By definition, an emergent capability is one that&#39;s absent below some scale and present above it — the flat region is temporary, not permanent.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What makes a capability "emergent," as opposed to just gradually improving with scale?</summary>
+Its accuracy stays near a chance-level floor across a wide range of smaller scales, then rises sharply within a comparatively narrow band of scale, rather than improving smoothly and proportionally across the whole range.
+</details>
+
+<details><summary>2. In the worked example, over roughly how much scale did most of the capability jump happen?</summary>
+Less than one order of magnitude — from about 10^9.8 to 10^10.5 — accuracy went from near-chance (32.6%) to near-ceiling (93.7%).
+</details>
+
+<details><summary>3. Why might an all-or-nothing accuracy metric make a smoothly improving underlying skill look like a sudden jump?</summary>
+If a task requires getting every step exactly right to count as correct, even a smoothly rising per-step probability can translate into an accuracy curve that looks flat and then jumps sharply, once the per-step probability crosses the point where getting the whole sequence right becomes likely.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Emergent ability:</strong> a capability near chance performance below a scale threshold and markedly higher above it.</li>
+<li><strong>Capability jump:</strong> the sharp rise in accuracy across a comparatively narrow band of scale.</li>
+<li><strong>All-or-nothing metric:</strong> a scoring method that only counts a fully correct result, which can sharpen a smooth underlying improvement into an apparently sudden one.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a> · <a class="wikilink" href="/llms/grokking-and-delayed-generalization/" data-topic="llms/grokking-and-delayed-generalization">Grokking and Delayed Generalization</a> · <a class="wikilink" href="/llms/benchmark-suites-mmlu-helm-big-bench/" data-topic="llms/benchmark-suites-mmlu-helm-big-bench">Benchmark Suites (MMLU, HELM, BIG-bench)</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/emergent-abilities-and-capability-jumps">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/grokking-and-delayed-generalization/"><small>Read next</small><b>Grokking and Delayed Generalization</b><p>A model that has reached 100% accuracy on its training data looks, by every usual signal, finished.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/compute-optimal-scaling-chinchilla/"><b>Compute-Optimal Scaling (Chinchilla)</b><p>Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data?</p></a><a class="rc-card" href="/llms/benchmark-suites-mmlu-helm-big-bench/"><b>Benchmark Suites (MMLU, HELM, BIG-bench)</b><p>Comparing two LLMs fairly requires testing them on the same questions, under the same conditions, at a scale no individual could check by hand.</p></a><a class="rc-card" href="/llms/grokking-and-delayed-generalization/"><b>Grokking and Delayed Generalization</b><p>A model that has reached 100% accuracy on its training data looks, by every usual signal, finished.</p></a><a class="rc-card" href="/llms/scaling-capacity-and-emergence/"><b>Scaling, Capacity and Emergence</b><p>Make an LLM bigger, train it on more data, or give it more compute, and its capability doesn&#39;t grow in some simple, uniform way — it follows surprisingly predictable curves overall, punctuated by…</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/">← Previous: Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

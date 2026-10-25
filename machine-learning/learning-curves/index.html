@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Curves — AI Base</title>
+<meta name="description" content="A learning curve plots a model&#39;s training error and validation error against the amount of training data.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/learning-curves/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Learning Curves — AI Base">
+<meta property="og:description" content="A learning curve plots a model&#39;s training error and validation error against the amount of training data.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/learning-curves/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Learning Curves","item":"https://ai.saranmahadev.in/machine-learning/learning-curves/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Learning Curves","description":"A learning curve plots a model's training error and validation error against the amount of training data.","url":"https://ai.saranmahadev.in/machine-learning/learning-curves/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Training error 0.05, validation error 0.40. Diagnosis?","acceptedAnswer":{"@type":"Answer","text":"High variance (overfitting): consider more data, regularisation or a simpler model."}},{"@type":"Question","name":"Both errors are 0.30 and equal, but you need 0.10. What now?","acceptedAnswer":{"@type":"Answer","text":"The model is too simple (high bias): use a more flexible model or better features; more data will not help."}},{"@type":"Question","name":"What is the noise floor?","acceptedAnswer":{"@type":"Answer","text":"The error that even a perfect model would make because of randomness in the target."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Bias, Fairness and Failure</p>
+        <h1 class="doc-title">Learning Curves</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ctidc95bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="ctidc95pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ctidc95bg)"/>
+  <circle cx="218" cy="86" r="185" fill="#ffd99f" opacity="0.33"/><circle cx="805" cy="268" r="146" fill="#ffd08d" opacity="0.56"/><circle cx="626" cy="112" r="205" fill="#fff2de" opacity="0.29"/><circle cx="721" cy="238" r="159" fill="#ffd99f" opacity="0.47"/><circle cx="835" cy="73" r="97" fill="#ffd08d" opacity="0.43"/><circle cx="792" cy="331" r="206" fill="#ffd99f" opacity="0.43"/><circle cx="950" cy="227" r="162" fill="#ffd99f" opacity="0.37"/>
+  <path d="M0,420 L0,315 L30,322 L60,329 L90,335 L120,341 L150,346 L180,349 L210,350 L240,348 L270,345 L300,340 L330,333 L360,327 L390,320 L420,314 L450,309 L480,306 L510,306 L540,307 L570,310 L600,315 L630,322 L660,329 L690,335 L720,341 L750,346 L780,349 L810,350 L840,348 L870,345 L900,340 L930,333 L960,327 L990,320 L1020,314 L1050,309 L1080,306 L1110,306 L1140,307 L1170,310 L1200,315 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,389 L30,391 L60,392 L90,393 L120,394 L150,394 L180,394 L210,393 L240,392 L270,391 L300,389 L330,388 L360,385 L390,383 L420,381 L450,378 L480,376 L510,373 L540,371 L570,369 L600,367 L630,365 L660,364 L690,363 L720,362 L750,362 L780,362 L810,363 L840,364 L870,365 L900,367 L930,368 L960,371 L990,373 L1020,375 L1050,378 L1080,380 L1110,383 L1140,385 L1170,387 L1200,389 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="730" cy="157" rx="227" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(23.7 730 157)"/><ellipse cx="730" cy="157" rx="314" ry="88" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(29.7 730 157)"/>
+  <circle cx="730" cy="157" r="89" fill="url(#ctidc95pl)"/>
+  <circle cx="525" cy="90" r="13" fill="#ffffff" opacity="0.66"/><circle cx="776" cy="274" r="10" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>learning curve</strong> plots a model&#39;s training error and validation error against the amount of training data. Its shape says what is wrong: if both errors are high and close together, the model is too simple (<strong>high bias</strong>) and more data will not help; if training error is low and validation error is high, the model is too flexible (<strong>high variance</strong>) and more data probably will.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a>, <a class="wikilink" href="/math/overfitting-in-statistics/" data-topic="math/overfitting-in-statistics">Overfitting in Statistics</a> and <a class="wikilink" href="/math/bias-variance-and-the-whole-picture/" data-topic="math/bias-variance-and-the-whole-picture">Bias, Variance and the Whole Picture</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Should I collect more data, or change the model?&quot; Guessing is expensive: data costs money, and a bigger model on the same data may only overfit. The curve tells you which lever is worth pulling.</p>
+<h2 id="intuition-two-ways-to-be-bad">Intuition: two ways to be bad</h2>
+<p>A straight line fitted to a wiggly pattern is wrong however many points you give it: it is limited by its shape. Its training and validation errors both settle at the same high value. A flexible curve can bend to fit anything, so with few points it memorises noise (tiny training error, large validation error) but with more points it gets pinned down by the pattern and the two errors close in on the noise floor: the best any model could do.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">noise floor        error that no model can remove (random variation in the target)
+high bias          curves converge to a high error: the model cannot represent the pattern
+high variance      a large gap between training and validation error: it fits noise
+diagnosis          gap large            → more data, simpler model, or regularisation
+                   both high, no gap    → a more flexible model or better features
+</code></pre>
+<p>Learning curves are built by training on growing subsets, usually averaged over several random subsets, and scoring on a fixed validation set.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Points from a wavy curve plus noise of spread 0.5 (so the noise floor is an RMS error of 0.5). Average error over 20 random training sets of each size, comparing a straight line with a degree-6 polynomial:</p>
+<pre><code class="language-text">training examples     line: train / validation       degree 6: train / validation
+       12                 0.94 / 1.13                    0.37 / 2.74
+       20                 0.95 / 1.08                    0.43 / 1.26
+       40                 0.97 / 1.04                    0.47 / 0.62
+       80                 0.98 / 1.02                    0.49 / 0.56
+      160                 1.00 / 1.01                    0.50 / 0.52
+</code></pre>
+<p>The line&#39;s curves meet at about 1.0, twice the noise floor: more data cannot fix a model that is too simple. The flexible curve starts badly (validation error 2.74 with 12 points) and its gap closes steadily until both errors reach the 0.5 floor by 160 points. Same data, opposite diagnoses.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="learning-curves" data-title="Learning curves"><p class="bench-fallback"><strong>Interactive bench: Learning curves.</strong> Training and validation error are plotted against training set size for a straight line and a degree-six curve fitted to noisy wavy data; a slider marks a training set size and shows both models' errors there.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide from 12 to 160 examples and watch both models&#39; numbers.</li>
+<li>Compare where the line&#39;s two errors settle with the noise floor.</li>
+<li>Find the size at which the flexible curve&#39;s gap has nearly closed.</li>
+<li>Decide which model you would choose with 20 examples, and with 160.</li>
+</ol>
+<p><strong>What you should notice:</strong> the simple model plateaus above the noise floor no matter what, while the flexible one is terrible when data is scarce and excellent when it is plentiful.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Deciding whether to gather more data</strong> before an expensive labelling effort.</li>
+<li><strong>Scaling studies:</strong> error as a function of data and model size.</li>
+<li><strong>Debugging training runs:</strong> the gap between training and validation loss.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Buying more data for a model with high bias.</strong></li>
+<li><strong>Judging from one random subset:</strong> curves are noisy, so average several.</li>
+<li><strong>Ignoring the noise floor</strong> and chasing zero error.</li>
+<li><strong>Reading a big gap as certain overfitting</strong> when the validation set is small or unrepresentative.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Training error 0.05, validation error 0.40. Diagnosis?</summary>
+High variance (overfitting): consider more data, regularisation or a simpler model.
+</details>
+
+<details><summary>2. Both errors are 0.30 and equal, but you need 0.10. What now?</summary>
+The model is too simple (high bias): use a more flexible model or better features; more data will not help.
+</details>
+
+<details><summary>3. What is the noise floor?</summary>
+The error that even a perfect model would make because of randomness in the target.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Learning curve:</strong> error against training set size.</li>
+<li><strong>High bias (underfitting):</strong> error stays high because the model is too simple.</li>
+<li><strong>High variance (overfitting):</strong> large gap between training and validation error.</li>
+<li><strong>Noise floor:</strong> the irreducible error.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/bias-variance-and-the-whole-picture/" data-topic="math/bias-variance-and-the-whole-picture">Bias, Variance and the Whole Picture</a> · <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a> · <a class="wikilink" href="/machine-learning/pruning-and-overfitting/" data-topic="machine-learning/pruning-and-overfitting">Pruning and Overfitting</a> · <a class="wikilink" href="/math/overfitting-in-statistics/" data-topic="math/overfitting-in-statistics">Overfitting in Statistics</a> · <a class="wikilink" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets">Train, Validation and Test Sets</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/learning-curves">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/bias-in-data/"><small>Read next</small><b>Bias in Data</b><p>A model learns whatever its data shows.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/cross-validation/"><b>Cross-Validation</b><p>One train/validation split gives one score, and that score depends on which points happened to land where.</p></a><a class="rc-card" href="/math/overfitting-in-statistics/"><b>Overfitting in Statistics</b><p>Overfitting happens when a model fits the quirks and noise of its training data instead of the underlying pattern, so it does well on the data it saw and badly on new data.</p></a><a class="rc-card" href="/math/bias-variance-and-the-whole-picture/"><b>Bias, Variance and the Whole Picture</b><p>A model&#39;s error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…</p></a><a class="rc-card" href="/machine-learning/pruning-and-overfitting/"><b>Pruning and Overfitting</b><p>Left alone, a tree keeps splitting until every leaf is pure, which means it memorises noise.</p></a><a class="rc-card" href="/machine-learning/train-validation-and-test-sets/"><b>Train, Validation and Test Sets</b><p>To know whether a model works you must measure it on data it has not learned from.</p></a><a class="rc-card" href="/machine-learning/bias-fairness-and-failure/"><b>Bias, Fairness and Failure</b><p>Getting a good number on a test set is not the same as being trustworthy.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/bias-fairness-and-failure/">← Previous: Bias, Fairness and Failure</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Normalizing Flows — AI Base</title>
+<meta name="description" content="Neither a VAE nor a GAN can tell you the exact probability their model assigns to a specific data point — a VAE only has an approximation, and a GAN has no likelihood at all.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/normalizing-flows/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Normalizing Flows — AI Base">
+<meta property="og:description" content="Neither a VAE nor a GAN can tell you the exact probability their model assigns to a specific data point — a VAE only has an approximation, and a GAN has no likelihood at all.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/normalizing-flows/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Normalizing Flows","item":"https://ai.saranmahadev.in/deep-learning/normalizing-flows/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Normalizing Flows","description":"Neither a VAE nor a GAN can tell you the exact probability their model assigns to a specific data point — a VAE only has an approximation, and a GAN has no likelihood at all.","url":"https://ai.saranmahadev.in/deep-learning/normalizing-flows/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What capability do normalizing flows provide that VAEs and GANs don't?","acceptedAnswer":{"@type":"Answer","text":"An exact, computable likelihood (probability density) for any given data point, rather than an approximation or none at all."}},{"@type":"Question","name":"In the worked example, why does the density at x=5 come out smaller than the density at z=1?","acceptedAnswer":{"@type":"Answer","text":"The transformation stretched the distribution by a factor of 2, thinning out the density by that same factor at the corresponding point."}},{"@type":"Question","name":"What property must every transformation in a normalizing flow have?","acceptedAnswer":{"@type":"Answer","text":"It must be invertible, with a Jacobian determinant that is tractable (cheap) to compute."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Generative Deep Learning</p>
+        <h1 class="doc-title">Normalizing Flows</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cgycmuibg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cgycmuipl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cgycmuibg)"/>
+  <circle cx="502" cy="293" r="160" fill="#8a546c" opacity="0.31"/><circle cx="670" cy="60" r="149" fill="#ffe6e6" opacity="0.44"/><circle cx="476" cy="390" r="181" fill="#ffb89d" opacity="0.54"/><circle cx="451" cy="121" r="140" fill="#ffb89d" opacity="0.47"/><circle cx="115" cy="197" r="129" fill="#ffb89d" opacity="0.36"/><circle cx="719" cy="407" r="136" fill="#ffe6e6" opacity="0.56"/>
+  <path d="M0,420 L0,348 L30,347 L60,345 L90,342 L120,339 L150,336 L180,333 L210,330 L240,326 L270,323 L300,319 L330,316 L360,314 L390,311 L420,309 L450,307 L480,306 L510,306 L540,306 L570,306 L600,307 L630,309 L660,311 L690,313 L720,316 L750,319 L780,322 L810,326 L840,329 L870,332 L900,336 L930,339 L960,342 L990,344 L1020,346 L1050,348 L1080,349 L1110,350 L1140,350 L1170,349 L1200,348 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,363 L60,362 L90,362 L120,362 L150,362 L180,363 L210,364 L240,366 L270,368 L300,370 L330,372 L360,374 L390,377 L420,379 L450,382 L480,384 L510,386 L540,388 L570,390 L600,392 L630,393 L660,394 L690,394 L720,394 L750,394 L780,393 L810,392 L840,390 L870,388 L900,386 L930,384 L960,382 L990,379 L1020,377 L1050,374 L1080,372 L1110,370 L1140,368 L1170,366 L1200,364 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="642" cy="238" rx="250" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-17.1 642 238)"/><ellipse cx="642" cy="238" rx="345" ry="97" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-11.1 642 238)"/>
+  <circle cx="642" cy="238" r="98" fill="url(#cgycmuipl)"/>
+  <circle cx="1032" cy="255" r="9" fill="#ffffff" opacity="0.77"/><circle cx="449" cy="144" r="16" fill="#ffffff" opacity="0.87"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Neither a <a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">VAE</a> nor a <a class="wikilink" href="/deep-learning/generative-adversarial-networks/" data-topic="deep-learning/generative-adversarial-networks">GAN</a> can tell you the exact probability their model assigns to a specific data point — a VAE only has an approximation, and a GAN has no likelihood at all. A <strong>normalizing flow</strong> builds its generator entirely out of transformations that are <strong>invertible</strong> and have a computable <a class="wikilink" href="/math/jacobian/" data-topic="math/jacobian">Jacobian</a>, which buys back an exact likelihood for every single point, in exchange for a real architectural constraint.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">Variational Autoencoders</a> and <a class="wikilink" href="/math/jacobian/" data-topic="math/jacobian">Jacobian</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Is there a generative model where I can compute the exact probability it assigns to any given data point, not just sample from it?&quot; Yes — if every transformation from the simple base distribution to the data is invertible, the classic change-of-variables formula from probability gives you that exact probability for free.</p>
+<h2 id="intuition-stretching-a-dough-and-tracking-exactly-how-much-it-thinned">Intuition: stretching a dough, and tracking exactly how much it thinned</h2>
+<p>Imagine rolling out a ball of dough into a specific shape: every point in the original ball maps to exactly one point in the final shape, and the mapping can be reversed. Wherever the dough was stretched more, it got correspondingly thinner — that local stretching factor is exactly what the Jacobian measures. A normalizing flow builds a generator as a chain of such invertible &quot;stretches,&quot; and the change-of-variables formula uses the <em>total</em> stretching factor to convert the simple base distribution&#39;s density into the correct density for the transformed data.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">x = f(z),    z ~ (simple base distribution, e.g. standard normal)
+f must be invertible: z = f⁻¹(x)
+
+change of variables:   p_x(x) = p_z(f⁻¹(x)) · |det(∂f⁻¹/∂x)|
+                      = p_z(z) / |det(∂f/∂z)|            (for one invertible step)
+</code></pre>
+<p>Stacking several invertible transformations, each with its own computable Jacobian determinant, multiplies the correction factors together — still exactly computable, as long as every step was chosen to be invertible with a tractable Jacobian.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A single affine flow step, <code>x = f(z) = 2z + 3</code>, with <code>z ~ N(0, 1)</code>. The Jacobian here is just the scale factor, <code>2</code>. Evaluating the exact density at <code>x = 5</code>:</p>
+<pre><code class="language-text">z = f⁻¹(x) = (5 − 3) / 2 = 1
+
+p_z(z=1) = standard normal density at 1 ≈ 0.2420
+
+p_x(x=5) = p_z(z) / |2| = 0.2420 / 2 ≈ 0.1210
+</code></pre>
+<p>The transformation stretched the distribution by a factor of 2 (every unit of <code>z</code> becomes 2 units of <code>x</code>), so the density correspondingly thins out by that same factor — exactly what the <code>/ |det|</code> term in the formula accounts for.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="flow-density" data-title="Stretching a distribution and tracking its density"><p class="bench-fallback"><strong>Interactive bench: Stretching a distribution and tracking its density.</strong> A simple affine flow with adjustable scale and shift. See the base distribution, the transformed distribution, and the exact density computed at a chosen point via the change-of-variables formula.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Increase the scale factor and watch the transformed distribution spread out while its peak density drops.</li>
+<li>Decrease the scale factor below 1 and watch the opposite: a narrower, taller transformed distribution.</li>
+<li>Move the evaluation point and check the computed density against reading the transformed curve directly.</li>
+</ol>
+<p><strong>What you should notice:</strong> the transformed density&#39;s peak height is inversely proportional to the scale factor — stretching a fixed amount of probability &quot;mass&quot; over a wider range necessarily thins out how densely packed it is at any one point.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Exact likelihood matters for some applications directly</strong> — density estimation, certain scientific modelling tasks — where knowing precisely how probable a point is (not just being able to sample) is the whole point.</li>
+<li><strong>Real normalizing flows use far more expressive invertible transformations</strong> than a simple affine map, specifically designed to have a Jacobian determinant that is still cheap to compute despite the transformation being complex.</li>
+<li><strong>Flows, VAEs, GANs and <a class="wikilink" href="/deep-learning/diffusion-models/" data-topic="deep-learning/diffusion-models">diffusion models</a> are different trade-offs on the same underlying problem</strong> — generate realistic samples — each giving up or keeping different things (exact likelihood, training stability, sample sharpness, generation speed).</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming any invertible network qualifies as a usable flow.</strong> The architecture also needs a Jacobian determinant that&#39;s cheap to compute — an arbitrary invertible network&#39;s Jacobian can be computationally intractable.</li>
+<li><strong>Forgetting the correction factor&#39;s job.</strong> It is not optional bookkeeping; without dividing by the Jacobian determinant, the &quot;density&quot; computed would not actually integrate to 1 and wouldn&#39;t be a valid probability distribution.</li>
+<li><strong>Expecting flows to always outperform GANs or diffusion models on sample quality.</strong> Exact likelihood is flows&#39; specific advantage, not necessarily the sharpest or most realistic samples in every setting.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What capability do normalizing flows provide that VAEs and GANs don't?</summary>
+An exact, computable likelihood (probability density) for any given data point, rather than an approximation or none at all.
+</details>
+
+<details><summary>2. In the worked example, why does the density at x=5 come out smaller than the density at z=1?</summary>
+The transformation stretched the distribution by a factor of 2, thinning out the density by that same factor at the corresponding point.
+</details>
+
+<details><summary>3. What property must every transformation in a normalizing flow have?</summary>
+It must be invertible, with a Jacobian determinant that is tractable (cheap) to compute.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Normalizing flow:</strong> a generative model built from invertible transformations with computable Jacobians.</li>
+<li><strong>Change of variables:</strong> the probability formula relating a base distribution&#39;s density to a transformed distribution&#39;s density via the Jacobian determinant.</li>
+<li><strong>Jacobian determinant:</strong> the local stretching (or shrinking) factor a transformation applies to volume (or, in 1D, length).</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/variational-autoencoders/" data-topic="deep-learning/variational-autoencoders">Variational Autoencoders</a> · <a class="wikilink" href="/math/jacobian/" data-topic="math/jacobian">Jacobian</a> · <a class="wikilink" href="/deep-learning/generative-adversarial-networks/" data-topic="deep-learning/generative-adversarial-networks">Generative Adversarial Networks</a> · <a class="wikilink" href="/deep-learning/diffusion-models/" data-topic="deep-learning/diffusion-models">Diffusion Models</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/normalizing-flows">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/diffusion-models/"><small>Read next</small><b>Diffusion Models</b><p>A diffusion model learns to generate by learning the opposite of something easy: gradually turning clean data into pure noise is a simple, fixed process with no learning involved at all; a…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/variational-autoencoders/"><b>Variational Autoencoders</b><p>A plain autoencoder&#39;s bottleneck is one fixed vector per input — useful for compression, but there&#39;s no obvious way to &quot;make up&quot; a new, realistic vector to decode into something new.</p></a><a class="rc-card" href="/deep-learning/generative-adversarial-networks/"><b>Generative Adversarial Networks</b><p>A generative adversarial network (GAN) trains two networks against each other: a generator that turns random noise into fake samples, trying to fool the second network, and a discriminator that…</p></a><a class="rc-card" href="/math/jacobian/"><b>Jacobian</b><p>The Jacobian is the matrix of all first partial derivatives of a function that takes several inputs and gives several outputs.</p></a><a class="rc-card" href="/deep-learning/diffusion-models/"><b>Diffusion Models</b><p>A diffusion model learns to generate by learning the opposite of something easy: gradually turning clean data into pure noise is a simple, fixed process with no learning involved at all; a…</p></a><a class="rc-card" href="/deep-learning/generative-deep-learning/"><b>Generative Deep Learning</b><p>Generative vs Discriminative Models on the Machine Learning planet draws the line; this district walks the deep architectures that learn to generate rather than only recognise, from a bottleneck…</p></a><a class="rc-card" href="/deep-learning/training-instabilities-in-gans/"><b>Training Instabilities in GANs</b><p>A GAN&#39;s two networks are not cooperating toward one shared loss the way an ordinary supervised model&#39;s layers do — they are actively working against each other.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/training-instabilities-in-gans/">← Previous: Training Instabilities in GANs</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

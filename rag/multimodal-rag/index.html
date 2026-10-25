@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multimodal RAG — AI Base</title>
+<meta name="description" content="A text query can retrieve an image directly — no caption, no text description needed as an intermediary — as long as the text and the image were embedded into the same shared space in the first place.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/multimodal-rag/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Multimodal RAG — AI Base">
+<meta property="og:description" content="A text query can retrieve an image directly — no caption, no text description needed as an intermediary — as long as the text and the image were embedded into the same shared space in the first place.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/multimodal-rag/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Multimodal RAG","item":"https://ai.saranmahadev.in/rag/multimodal-rag/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Multimodal RAG","description":"A text query can retrieve an image directly — no caption, no text description needed as an intermediary — as long as the text and the image were embedded into the same shared space in the first place.","url":"https://ai.saranmahadev.in/rag/multimodal-rag/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does \"a photo of a golden retriever\" retrieve the matching photo without any text caption or description of the image being involved?","acceptedAnswer":{"@type":"Answer","text":"Both the text query and the image were embedded into the same shared space, trained so that matching text-image pairs land close together — the comparison happens directly between the query's text embedding and the image's own embedding."}},{"@type":"Question","name":"What training approach builds the shared space multimodal RAG depends on?","acceptedAnswer":{"@type":"Answer","text":"Contrastive learning — pulling matching text-image pairs' embeddings together and pushing unrelated pairs apart during training, the same mechanism already covered for same-modality representation learning."}},{"@type":"Question","name":"Does a text-only embedding model support multimodal retrieval?","acceptedAnswer":{"@type":"Answer","text":"No — it has no trained relationship between text embeddings and image embeddings; multimodal retrieval requires an embedding model specifically trained (typically contrastively) on paired data across the modalities involved."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Advanced RAG Patterns</p>
+        <h1 class="doc-title">Multimodal RAG</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cfflwv1bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="cfflwv1pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cfflwv1bg)"/>
+  <circle cx="562" cy="42" r="73" fill="#b7d5be" opacity="0.50"/><circle cx="857" cy="384" r="123" fill="#42718e" opacity="0.28"/><circle cx="883" cy="303" r="110" fill="#dcf5f7" opacity="0.23"/><circle cx="680" cy="357" r="106" fill="#b7d5be" opacity="0.37"/><circle cx="1144" cy="73" r="83" fill="#b7d5be" opacity="0.57"/><circle cx="125" cy="350" r="179" fill="#97e1e6" opacity="0.60"/><circle cx="628" cy="250" r="117" fill="#dcf5f7" opacity="0.37"/>
+  <path d="M0,420 L0,346 L30,343 L60,341 L90,338 L120,335 L150,332 L180,328 L210,325 L240,321 L270,318 L300,315 L330,312 L360,310 L390,308 L420,307 L450,306 L480,306 L510,306 L540,307 L570,308 L600,310 L630,312 L660,314 L690,317 L720,320 L750,324 L780,327 L810,331 L840,334 L870,337 L900,340 L930,343 L960,345 L990,347 L1020,348 L1050,349 L1080,350 L1110,349 L1140,349 L1170,347 L1200,346 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,392 L60,391 L90,389 L120,388 L150,385 L180,383 L210,381 L240,378 L270,376 L300,373 L330,371 L360,369 L390,367 L420,365 L450,364 L480,363 L510,362 L540,362 L570,362 L600,363 L630,364 L660,365 L690,367 L720,368 L750,371 L780,373 L810,375 L840,378 L870,380 L900,383 L930,385 L960,387 L990,389 L1020,391 L1050,392 L1080,393 L1110,394 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="825" cy="202" rx="183" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-7.4 825 202)"/><ellipse cx="825" cy="202" rx="252" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-1.4 825 202)"/>
+  <circle cx="825" cy="202" r="72" fill="url(#cfflwv1pl)"/>
+  <circle cx="995" cy="236" r="10" fill="#ffffff" opacity="0.88"/><circle cx="858" cy="111" r="19" fill="#ffffff" opacity="0.80"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A text query can retrieve an image directly — no caption, no text description needed as an intermediary — as long as the text and the image were embedded into the same shared space in the first place. &quot;A photo of a golden retriever&quot; and an actual photo of one land close together in that space, the same way two pieces of text about the same topic would.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a>, <a class="wikilink" href="/deep-learning/contrastive-learning/" data-topic="deep-learning/contrastive-learning">Contrastive Learning</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can retrieval work across different modalities — text queries finding images, or the reverse?&quot; Multimodal RAG retrieves content in a different modality than the query, by embedding both into the same shared space (built the way <a class="wikilink" href="/deep-learning/contrastive-learning/" data-topic="deep-learning/contrastive-learning">contrastive learning</a> already covered: pulling matching text-image pairs together, pushing unrelated ones apart, during training). Once both modalities share a space, retrieval is the same cosine-similarity operation as always — it just happens to be comparing a text vector to an image vector instead of two text vectors.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A bilingual catalog where every photo and every caption, regardless of which language wrote the caption, gets filed by subject rather than by language lets someone search in one language and find a photo captioned in a different one entirely — because the filing system organizes by <em>meaning</em>, not by modality or language. A shared embedding space does the same thing for text and images.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">shared_space:  embed_text(query) and embed_image(photo) land in the same vector space
+score(query, image) = cosine_similarity(embed_text(query), embed_image(image))
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A text query ranked against three images, using embeddings in a shared text-image space:</p>
+<pre><code class="language-text">query: &quot;a photo of a golden retriever&quot;
+
+golden_retriever.jpg   similarity 0.9997
+invoice_scan.png       similarity 0.7809
+siamese_cat.jpg        similarity 0.2815
+</code></pre>
+<p>The matching photo scores almost perfectly (0.9997), despite the query never containing a single pixel of image data. A mismatched photo (a cat) scores far lower, and an entirely unrelated image (a scanned invoice) lands in between — closer to the query than the cat photo, interestingly, since it shares no strong signal pulling it toward <em>either</em> concept.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="multimodal-rag-retrieval" data-title="A text query, ranking images directly"><p class="bench-fallback"><strong>Interactive bench: A text query, ranking images directly.</strong> Rank images by cross-modal similarity to a text query in a shared embedding space.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Check which image ranks highest for &quot;a photo of a golden retriever.&quot;</li>
+<li>Switch the query to &quot;a photo of a cat&quot; and watch the ranking flip.</li>
+<li>Consider why the invoice scan&#39;s similarity sits between the two animal photos&#39; scores rather than at the very bottom.</li>
+</ol>
+<p><strong>What you should notice:</strong> retrieval itself hasn&#39;t changed at all — it&#39;s still cosine similarity between two vectors; the only thing multimodal RAG adds is that those two vectors can now come from genuinely different kinds of content.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This reuses <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a>&#39;s exact similarity mechanism</strong>, with the only change being which modality each side&#39;s embedding comes from.</li>
+<li><strong>Building the shared space in the first place is exactly <a class="wikilink" href="/deep-learning/contrastive-learning/" data-topic="deep-learning/contrastive-learning">Contrastive Learning</a></strong>, already covered on the Deep Learning planet — this topic is about using that shared space for retrieval, not re-deriving how it&#39;s trained.</li>
+<li><strong>A multimodal RAG system&#39;s generation stage often needs a model capable of reasoning over the retrieved image directly</strong>, not just citing it as text — connecting back to multimodal generation covered on the Generative AI planet.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming any embedding model works across modalities by default.</strong> A shared text-image space has to be deliberately trained that way (contrastively, on paired text-image data) — a text-only embedding model has no meaningful way to compare against an image at all.</li>
+<li><strong>Expecting cross-modal similarity scores to behave exactly like same-modality ones.</strong> The worked example&#39;s invoice scan scoring higher than the mismatched cat photo isn&#39;t necessarily meaningful — cross-modal similarity scales can behave differently from same-modality comparisons, and absolute score values are less directly interpretable.</li>
+<li><strong>Retrieving an image without a plan for how generation will actually use it.</strong> Finding the right image is only half the pipeline — the generating model also needs to be able to process that image as input, not just receive a filename.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does "a photo of a golden retriever" retrieve the matching photo without any text caption or description of the image being involved?</summary>
+Both the text query and the image were embedded into the same shared space, trained so that matching text-image pairs land close together — the comparison happens directly between the query's text embedding and the image's own embedding.
+</details>
+
+<details><summary>2. What training approach builds the shared space multimodal RAG depends on?</summary>
+Contrastive learning — pulling matching text-image pairs' embeddings together and pushing unrelated pairs apart during training, the same mechanism already covered for same-modality representation learning.
+</details>
+
+<details><summary>3. Does a text-only embedding model support multimodal retrieval?</summary>
+No — it has no trained relationship between text embeddings and image embeddings; multimodal retrieval requires an embedding model specifically trained (typically contrastively) on paired data across the modalities involved.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Multimodal RAG:</strong> retrieval where the query and the retrieved content are in different modalities (text and images, for instance).</li>
+<li><strong>Shared embedding space:</strong> a vector space where content from multiple modalities is embedded so that semantically related items land close together regardless of modality.</li>
+<li><strong>Cross-modal similarity:</strong> a similarity score computed between embeddings from two different modalities.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a> · <a class="wikilink" href="/deep-learning/contrastive-learning/" data-topic="deep-learning/contrastive-learning">Contrastive Learning</a> · <a class="wikilink" href="/generative-ai/multimodal-generation/" data-topic="generative-ai/multimodal-generation">Multimodal Generation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/multimodal-rag">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/generation-with-retrieved-context/"><small>Read next</small><b>Generation with Retrieved Context</b><p>Retrieval only hands a model raw material; what the model does with that material is a separate problem.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/dense-retrieval/"><b>Dense Retrieval</b><p>&quot;Automobile repair&quot; and &quot;car maintenance&quot; share not a single word, yet mean almost the same thing.</p></a><a class="rc-card" href="/deep-learning/contrastive-learning/"><b>Contrastive Learning</b><p>Self-Supervised Learning can invent a pretext task besides &quot;fill in the missing piece.&quot; Contrastive learning instead asks: given an anchor and several candidates, which one is really just another…</p></a><a class="rc-card" href="/generative-ai/multimodal-generation/"><b>Multimodal Generation</b><p>Every district so far generates one modality at a time.</p></a><a class="rc-card" href="/rag/advanced-rag-patterns/"><b>Advanced RAG Patterns</b><p>The basic retrieve-then-generate loop has limits: it trusts whatever came back from a single search, treats every document the same whether it&#39;s prose or a spreadsheet, and has no way to notice…</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/retrieval-over-structured-data/">← Previous: Retrieval over Structured Data</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

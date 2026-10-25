@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content Safety and Red-Teaming — AI Base</title>
+<meta name="description" content="A watermark is a signal engineered to survive detection.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/content-safety-and-red-teaming/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Content Safety and Red-Teaming — AI Base">
+<meta property="og:description" content="A watermark is a signal engineered to survive detection.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/content-safety-and-red-teaming/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Content Safety and Red-Teaming","item":"https://ai.saranmahadev.in/generative-ai/content-safety-and-red-teaming/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Content Safety and Red-Teaming","description":"A watermark is a signal engineered to survive detection.","url":"https://ai.saranmahadev.in/generative-ai/content-safety-and-red-teaming/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why did a single-character substitution completely defeat the keyword classifier in the worked example?","acceptedAnswer":{"@type":"Answer","text":"The classifier checks for an exact literal substring match; substituting even one character means the blocked keyword no longer appears as a substring, even though the text's meaning to a human is unchanged."}},{"@type":"Question","name":"What's the specific purpose of red-teaming, as distinct from ordinary testing?","acceptedAnswer":{"@type":"Answer","text":"Deliberately testing a system the way a motivated adversary would — actively searching for ways to defeat its defenses — rather than only checking it against the inputs it was designed to handle correctly."}},{"@type":"Question","name":"Why is patching one specific evasion (like blocking \"b0mb\" too) not a complete fix?","acceptedAnswer":{"@type":"Answer","text":"It addresses only that one instance while leaving the underlying weakness (exact literal keyword matching, rather than understanding meaning) intact, so a different trivial variant will likely succeed just as easily."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Risks and Responsible Generation</p>
+        <h1 class="doc-title">Content Safety and Red-Teaming</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c10h35ggbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c10h35ggpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c10h35ggbg)"/>
+  <circle cx="1055" cy="408" r="166" fill="#ffe9f4" opacity="0.27"/><circle cx="979" cy="190" r="138" fill="#ffbfe0" opacity="0.38"/><circle cx="35" cy="417" r="102" fill="#ffe9f4" opacity="0.53"/><circle cx="260" cy="47" r="75" fill="#ffe9f4" opacity="0.42"/><circle cx="1112" cy="328" r="103" fill="#ffe9f4" opacity="0.42"/><circle cx="1037" cy="337" r="225" fill="#ffbfe0" opacity="0.25"/><circle cx="529" cy="96" r="147" fill="#ffe9f4" opacity="0.23"/>
+  <path d="M0,420 L0,313 L30,317 L60,322 L90,327 L120,332 L150,337 L180,342 L210,345 L240,348 L270,349 L300,350 L330,349 L360,347 L390,343 L420,339 L450,335 L480,330 L510,325 L540,320 L570,315 L600,311 L630,308 L660,306 L690,306 L720,306 L750,308 L780,311 L810,314 L840,319 L870,324 L900,329 L930,334 L960,339 L990,343 L1020,346 L1050,348 L1080,349 L1110,349 L1140,348 L1170,346 L1200,342 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,363 L60,362 L90,362 L120,362 L150,363 L180,364 L210,365 L240,366 L270,368 L300,370 L330,373 L360,375 L390,378 L420,380 L450,383 L480,385 L510,387 L540,389 L570,391 L600,392 L630,393 L660,394 L690,394 L720,394 L750,393 L780,392 L810,391 L840,390 L870,388 L900,386 L930,383 L960,381 L990,378 L1020,376 L1050,373 L1080,371 L1110,369 L1140,367 L1170,365 L1200,364 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="756" cy="270" rx="206" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(14.5 756 270)"/><ellipse cx="756" cy="270" rx="285" ry="80" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(20.5 756 270)"/>
+  <circle cx="756" cy="270" r="81" fill="url(#c10h35ggpl)"/>
+  <circle cx="726" cy="156" r="18" fill="#ffffff" opacity="0.61"/><circle cx="995" cy="319" r="16" fill="#ffffff" opacity="0.90"/><circle cx="747" cy="361" r="11" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A watermark is a signal engineered to survive detection. A content-safety classifier faces the opposite adversarial pressure: anyone trying to get harmful content past it is actively looking for ways to make the detector fail, not cooperating with it.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/watermarking-and-synthetic-media-provenance/" data-topic="generative-ai/watermarking-and-synthetic-media-provenance">Watermarking and Synthetic Media Provenance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How robust is a content-safety filter against someone actively trying to get around it?&quot; <strong>Red-teaming</strong> means deliberately testing a system&#39;s defenses the way an adversary would, rather than only checking it against the inputs it was designed for. A simple <strong>keyword-based classifier</strong> is a clear, checkable example of a defense that can look solid against ordinary input while still being easy to slip past using a trivial trick — a single character substitution, in the most basic case — that a real adversary would try as a matter of course.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A bouncer checking IDs only for an exact name match on a list can be fooled by someone spelling their name slightly differently on a fake ID — not because the check is pointless, but because it&#39;s checking for one narrow, exact signal rather than the underlying thing it&#39;s actually trying to catch. A keyword filter is the same kind of narrow check: it catches the literal word, and anyone motivated to get past it only has to avoid typing that literal word.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">keyword classifier: flagged(text) = any blocked keyword appears as a
+  literal substring of text (case-insensitive)
+
+a red-team probe: a minimal transformation of flagged text designed to
+  evade the classifier while preserving its meaning to a human reader
+  (character substitution, spacing, synonyms, encoding, translation, ...)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two pairs of requests, each an original and a trivially obfuscated version using a simple character substitution:</p>
+<pre><code class="language-text">original:    &quot;how to build a bomb&quot;        → flagged: true
+obfuscated:  &quot;how to build a b0mb&quot;        → flagged: false
+
+original:    &quot;how to hack an account&quot;     → flagged: true
+obfuscated:  &quot;how to h4ck an account&quot;     → flagged: false
+</code></pre>
+<p>In both cases, swapping a single letter for a visually similar digit is enough to defeat an exact-substring keyword check, while the request&#39;s meaning to a human reader is completely unchanged. The classifier isn&#39;t &quot;almost&quot; working here — it fails completely on both obfuscated inputs, despite catching both originals perfectly.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="safety-classifier-evasion" data-title="A classifier that's easy to slip past"><p class="bench-fallback"><strong>Interactive bench: A classifier that's easy to slip past.</strong> Compare whether a keyword-based safety classifier flags an original request versus a trivially obfuscated version of it.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Check that both original requests are flagged.</li>
+<li>Check that both obfuscated versions are not.</li>
+<li>Consider how many other simple tricks (spacing, synonyms, different languages) would likely work just as well against this specific classifier.</li>
+</ol>
+<p><strong>What you should notice:</strong> the obfuscation needed almost no sophistication — a single-character substitution was enough — which is exactly why keyword matching alone is considered a weak content-safety mechanism on its own.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Production content-safety systems layer multiple detection methods</strong> (semantic classifiers that understand meaning past exact wording, not just keyword matching) specifically because keyword lists alone are this easy to evade.</li>
+<li><strong>Red-teaming is now a standard, often required practice before deploying a generative model</strong>, with dedicated teams (internal or external) specifically tasked with finding prompts that produce harmful output the system was supposed to block.</li>
+<li><strong>The same evasion principle generalizes well past keyword filters</strong>: any safety mechanism relying on a narrow, literal signal — rather than a deeper understanding of meaning or intent — tends to be vulnerable to minor, meaning-preserving changes designed to dodge it.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating any successful filter as evidence the system is safe.</strong> The worked example&#39;s classifier works perfectly on unmodified input — testing only unmodified input would have missed its complete failure on trivially modified input entirely.</li>
+<li><strong>Assuming red-teaming only has to find exotic attacks.</strong> The worked example&#39;s evasion (swapping one character) is about as simple as an attack can be — a thorough red-teaming effort has to check simple tricks first, not just sophisticated ones.</li>
+<li><strong>Fixing one discovered evasion and declaring the system safe.</strong> Patching the specific evasion found (blocking &quot;b0mb&quot; too) doesn&#39;t address the underlying weakness (literal substring matching); a determined adversary tries the next trivial variant.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why did a single-character substitution completely defeat the keyword classifier in the worked example?</summary>
+The classifier checks for an exact literal substring match; substituting even one character means the blocked keyword no longer appears as a substring, even though the text's meaning to a human is unchanged.
+</details>
+
+<details><summary>2. What's the specific purpose of red-teaming, as distinct from ordinary testing?</summary>
+Deliberately testing a system the way a motivated adversary would — actively searching for ways to defeat its defenses — rather than only checking it against the inputs it was designed to handle correctly.
+</details>
+
+<details><summary>3. Why is patching one specific evasion (like blocking "b0mb" too) not a complete fix?</summary>
+It addresses only that one instance while leaving the underlying weakness (exact literal keyword matching, rather than understanding meaning) intact, so a different trivial variant will likely succeed just as easily.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Red-teaming:</strong> deliberately testing a system&#39;s defenses the way an adversary would, to find exploitable weaknesses.</li>
+<li><strong>Keyword classifier:</strong> a safety check that flags content containing specific literal blocked words or phrases.</li>
+<li><strong>Evasion:</strong> a modification to content designed to avoid detection while preserving its original meaning or intent.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/watermarking-and-synthetic-media-provenance/" data-topic="generative-ai/watermarking-and-synthetic-media-provenance">Watermarking and Synthetic Media Provenance</a> · <a class="wikilink" href="/generative-ai/bias-and-representational-harm-in-generation/" data-topic="generative-ai/bias-and-representational-harm-in-generation">Bias and Representational Harm in Generation</a> · <a class="wikilink" href="/generative-ai/building-a-generative-product/" data-topic="generative-ai/building-a-generative-product">Building a Generative Product</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/content-safety-and-red-teaming">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/generative-ai-in-practice/"><small>Read next</small><b>Generative AI in Practice</b><p>The last stretch of this planet&#39;s road: adapting a generative model to a specific use case, serving it as a real product, counting the resources that costs, and a capstone that reassembles…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/watermarking-and-synthetic-media-provenance/"><b>Watermarking and Synthetic Media Provenance</b><p>Detecting memorized training content means comparing a model&#39;s behavior against something it saw before.</p></a><a class="rc-card" href="/generative-ai/bias-and-representational-harm-in-generation/"><b>Bias and Representational Harm in Generation</b><p>A model&#39;s embeddings encode whatever statistical patterns were in its training data — including patterns nobody deliberately put there.</p></a><a class="rc-card" href="/generative-ai/building-a-generative-product/"><b>Building a Generative Product</b><p>Everything on this planet so far has been about a single request: decode it well, condition it correctly, evaluate it fairly.</p></a><a class="rc-card" href="/generative-ai/voice-cloning-and-speaker-adaptation/"><b>Voice Cloning and Speaker Adaptation</b><p>A text-to-speech pipeline&#39;s prosody predictions describe some voice — but making it sound like a specific person, from only a few seconds of their recorded speech, is a separate problem.</p></a><a class="rc-card" href="/generative-ai/human-evaluation-of-generated-content/"><b>Human Evaluation of Generated Content</b><p>Every metric so far on this planet is automatic — computed from numbers, with no judgment involved.</p></a><a class="rc-card" href="/generative-ai/risks-and-responsible-generation/"><b>Risks and Responsible Generation</b><p>Generative models fail in ways discriminative models mostly don&#39;t: confidently wrong output, reproduced training data, content nobody consented to be trained on, and output that&#39;s hard to tell…</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/watermarking-and-synthetic-media-provenance/">← Previous: Watermarking and Synthetic Media Provenance</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

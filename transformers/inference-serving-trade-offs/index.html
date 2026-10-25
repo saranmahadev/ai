@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inference Serving Trade-offs — AI Base</title>
+<meta name="description" content="Everything so far on this planet has been about making a single forward pass efficient.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/inference-serving-trade-offs/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Inference Serving Trade-offs — AI Base">
+<meta property="og:description" content="Everything so far on this planet has been about making a single forward pass efficient.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/inference-serving-trade-offs/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Inference Serving Trade-offs","item":"https://ai.saranmahadev.in/transformers/inference-serving-trade-offs/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Inference Serving Trade-offs","description":"Everything so far on this planet has been about making a single forward pass efficient.","url":"https://ai.saranmahadev.in/transformers/inference-serving-trade-offs/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does batch processing time grow much more slowly than batch size itself?","acceptedAnswer":{"@type":"Answer","text":"Most of the cost is fixed overhead, largely independent of batch size, because a GPU has spare parallel capacity that a single request doesn't fully use — adding more requests to the batch is nearly free until that capacity runs out."}},{"@type":"Question","name":"In the worked example, what was the throughput gain going from batch size 1 to batch size 32, and why was it so much larger than the processing-time increase?","acceptedAnswer":{"@type":"Answer","text":"Nearly 13× (95.2 to 1230.8 requests/second), versus only a 2.5× increase in processing time — because the fixed overhead dominating a batch of 1 request gets spread across far more requests at batch size 32."}},{"@type":"Question","name":"What latency cost does batching introduce that isn't captured by processing time alone?","acceptedAnswer":{"@type":"Answer","text":"The time a request spends waiting for its batch to be assembled before processing even starts — a real cost on top of the processing time itself."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Transformers in Practice</p>
+        <h1 class="doc-title">Inference Serving Trade-offs</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1172uyvbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1172uyvpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1172uyvbg)"/>
+  <circle cx="833" cy="350" r="153" fill="#c5cacf" opacity="0.52"/><circle cx="664" cy="327" r="127" fill="#c5cacf" opacity="0.53"/><circle cx="26" cy="276" r="174" fill="#abd0ff" opacity="0.32"/><circle cx="153" cy="42" r="215" fill="#e2efff" opacity="0.51"/><circle cx="1010" cy="29" r="182" fill="#e2efff" opacity="0.22"/><circle cx="1050" cy="265" r="96" fill="#e2efff" opacity="0.43"/>
+  <path d="M0,420 L0,345 L30,347 L60,348 L90,349 L120,350 L150,349 L180,349 L210,348 L240,346 L270,344 L300,341 L330,338 L360,335 L390,332 L420,328 L450,325 L480,322 L510,318 L540,315 L570,313 L600,310 L630,308 L660,307 L690,306 L720,306 L750,306 L780,306 L810,308 L840,309 L870,311 L900,314 L930,317 L960,320 L990,323 L1020,327 L1050,330 L1080,334 L1110,337 L1140,340 L1170,343 L1200,345 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,365 L60,367 L90,370 L120,374 L150,377 L180,381 L210,385 L240,388 L270,391 L300,392 L330,394 L360,394 L390,393 L420,392 L450,390 L480,387 L510,384 L540,380 L570,376 L600,373 L630,369 L660,366 L690,364 L720,363 L750,362 L780,362 L810,363 L840,365 L870,368 L900,371 L930,375 L960,379 L990,382 L1020,386 L1050,389 L1080,391 L1110,393 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="878" cy="278" rx="177" ry="50" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-5.4 878 278)"/><ellipse cx="878" cy="278" rx="245" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(0.6 878 278)"/>
+  <circle cx="878" cy="278" r="69" fill="url(#c1172uyvpl)"/>
+  <circle cx="996" cy="205" r="17" fill="#ffffff" opacity="0.69"/><circle cx="989" cy="347" r="14" fill="#ffffff" opacity="0.76"/><circle cx="1126" cy="322" r="16" fill="#ffffff" opacity="0.69"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Everything so far on this planet has been about making a single forward pass efficient. Serving a transformer to real traffic adds a different question entirely: many requests arrive at once, and how they&#39;re grouped together changes both how much total work the hardware gets through and how long any individual request actually waits.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/kv-caching-for-autoregressive-inference/" data-topic="transformers/kv-caching-for-autoregressive-inference">KV-Caching for Autoregressive Inference</a>, <a class="wikilink" href="/transformers/multi-query-and-grouped-query-attention/" data-topic="transformers/multi-query-and-grouped-query-attention">Multi-Query and Grouped-Query Attention</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Should requests be processed one at a time, or grouped together, when serving a transformer to many users at once?&quot; Grouping them — <strong>batching</strong> — turns out to be dramatically more efficient, for a specific hardware reason: processing one request barely uses a modern accelerator&#39;s parallel compute capacity, so most of the cost of running a batch is fixed overhead, nearly independent of how many requests ride along in it. The trade-off is latency: a request in a larger batch may have to wait for that batch to be assembled before processing even starts.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine a delivery van that costs the same to send out whether it carries one package or thirty — most of the cost is the trip itself, not the cargo. Sending one package at a time means paying for a trip per package; waiting to fill the van with thirty packages means thirty deliveries share one trip&#39;s cost, at the price of the first package having to wait for the van to fill up. Batching a transformer&#39;s inference requests is the same trade: processing time per <em>batch</em> barely grows with batch size (a GPU has spare parallel capacity at small batch sizes), so grouping requests multiplies throughput — but anyone whose request has to wait for the batch to fill pays in added latency.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">batch processing time ≈ T_fixed + T_marginal × batch_size
+  T_fixed:    overhead paid once per batch, largely independent of its size
+  T_marginal: small additional time per request added to the batch
+
+throughput (requests/second) = batch_size / batch_processing_time
+</code></pre>
+<p>Because <code>T_fixed</code> dominates at small batch sizes, throughput grows much faster than processing time as batch size increases — the central reason batching is worth doing at all.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>With <code>T_fixed = 10 ms</code> and <code>T_marginal = 0.5 ms</code> per request, comparing three batch sizes:</p>
+<pre><code class="language-text">batch size  1:  processing time 10.5 ms   →   95.2 requests/second
+batch size  8:  processing time 14.0 ms   →  571.4 requests/second
+batch size 32:  processing time 26.0 ms   → 1230.8 requests/second
+</code></pre>
+<p>Going from batch size 1 to 32 increased processing time by only 2.5× (10.5ms → 26ms) but increased throughput by nearly 13× (95.2 → 1230.8 requests/second) — the fixed overhead that dominates a batch of 1 becomes almost negligible once spread across 32 requests.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="batching-tradeoff" data-title="Throughput and the cost of waiting for a full batch"><p class="bench-fallback"><strong>Interactive bench: Throughput and the cost of waiting for a full batch.</strong> Set a batch size and see processing time and throughput change, alongside the latency cost of waiting for that batch to fill before processing starts.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Increase batch size and compare how much throughput grows versus how much processing time grows.</li>
+<li>Consider a request that arrives just after a batch starts filling — how long might it wait before the next batch begins?</li>
+<li>Change <code>T_fixed</code> relative to <code>T_marginal</code> and see how much that shifts the throughput benefit of larger batches.</li>
+</ol>
+<p><strong>What you should notice:</strong> the throughput gain from batching has a real latency cost attached — not in the processing time itself, which grows slowly, but in how long an individual request may sit waiting for its batch to be assembled in the first place.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every production transformer-serving system has to make this trade-off explicitly</strong>, usually by capping batch size or the maximum wait time before processing a partially-filled batch, rather than choosing one extreme.</li>
+<li><strong><a class="wikilink" href="/transformers/multi-query-and-grouped-query-attention/" data-topic="transformers/multi-query-and-grouped-query-attention">KV-cache size</a> directly limits how large a batch can grow</strong>: each request in a batch needs its own growing cache, so memory — not just compute — caps batch size in practice.</li>
+<li><strong><a class="wikilink" href="/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/" data-topic="transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up">the planet&#39;s capstone</a> closes by tracing a single request through the whole pipeline this planet has built</strong>, end to end.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming bigger batches are always better.</strong> Past some point, GPU parallel capacity really does run out, and <code>T_marginal</code> starts dominating — throughput gains taper off, while latency keeps growing.</li>
+<li><strong>Forgetting batch-fill waiting time is a separate cost from processing time.</strong> The worked example only accounts for processing time; a request&#39;s <em>total</em> latency also includes however long it waited for its batch to be ready.</li>
+<li><strong>Treating this as purely a software scheduling problem.</strong> It&#39;s fundamentally a hardware-utilization fact — GPUs have spare parallel capacity at low batch sizes, which is what makes the whole trade-off exist in the first place.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does batch processing time grow much more slowly than batch size itself?</summary>
+Most of the cost is fixed overhead, largely independent of batch size, because a GPU has spare parallel capacity that a single request doesn't fully use — adding more requests to the batch is nearly free until that capacity runs out.
+</details>
+
+<details><summary>2. In the worked example, what was the throughput gain going from batch size 1 to batch size 32, and why was it so much larger than the processing-time increase?</summary>
+Nearly 13× (95.2 to 1230.8 requests/second), versus only a 2.5× increase in processing time — because the fixed overhead dominating a batch of 1 request gets spread across far more requests at batch size 32.
+</details>
+
+<details><summary>3. What latency cost does batching introduce that isn't captured by processing time alone?</summary>
+The time a request spends waiting for its batch to be assembled before processing even starts — a real cost on top of the processing time itself.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Batching:</strong> grouping multiple inference requests together to process in a single pass, amortizing fixed per-batch overhead.</li>
+<li><strong>Throughput:</strong> the rate at which requests are processed, typically requests or tokens per second.</li>
+<li><strong>Latency:</strong> the total time a single request takes, including both time spent waiting to be batched and time spent being processed.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/kv-caching-for-autoregressive-inference/" data-topic="transformers/kv-caching-for-autoregressive-inference">KV-Caching for Autoregressive Inference</a> · <a class="wikilink" href="/transformers/multi-query-and-grouped-query-attention/" data-topic="transformers/multi-query-and-grouped-query-attention">Multi-Query and Grouped-Query Attention</a> · <a class="wikilink" href="/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/" data-topic="transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up">Capstone: Assembling a Tiny Transformer from the Ground Up</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/inference-serving-trade-offs">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/"><small>Read next</small><b>Capstone: Assembling a Tiny Transformer from the Ground Up</b><p>This capstone traces one phrase through every stage this planet built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer block,…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/kv-caching-for-autoregressive-inference/"><b>KV-Caching for Autoregressive Inference</b><p>Generating text one token at a time means recomputing attention at every single step.</p></a><a class="rc-card" href="/transformers/multi-query-and-grouped-query-attention/"><b>Multi-Query and Grouped-Query Attention</b><p>Standard multi-head attention gives every head its own query, key and value projections.</p></a><a class="rc-card" href="/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/"><b>Capstone: Assembling a Tiny Transformer from the Ground Up</b><p>This capstone traces one phrase through every stage this planet built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer block,…</p></a><a class="rc-card" href="/transformers/transformers-in-practice/"><b>Transformers in Practice</b><p>The last stretch of the road is about running a trained transformer well, and a capstone that walks the whole planet in one place.</p></a><a class="rc-card" href="/generative-ai/building-a-generative-product/"><b>Building a Generative Product</b><p>Everything on this planet so far has been about a single request: decode it well, condition it correctly, evaluate it fairly.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/transformers-in-practice/">← Previous: Transformers in Practice</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

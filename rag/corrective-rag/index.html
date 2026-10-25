@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corrective RAG — AI Base</title>
+<meta name="description" content="Self-RAG discards an individual irrelevant passage; Corrective RAG asks a broader question about the whole retrieval — is this collection of results even worth generating from, or should the…">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/corrective-rag/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Corrective RAG — AI Base">
+<meta property="og:description" content="Self-RAG discards an individual irrelevant passage; Corrective RAG asks a broader question about the whole retrieval — is this collection of results even worth generating from, or should the…">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/corrective-rag/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Corrective RAG","item":"https://ai.saranmahadev.in/rag/corrective-rag/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Corrective RAG","description":"Self-RAG discards an individual irrelevant passage; Corrective RAG asks a broader question about the whole retrieval — is this collection of results even worth generating from, or should the…","url":"https://ai.saranmahadev.in/rag/corrective-rag/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the \"weak retrieval\" scenario trigger a re-query rather than generation or a full fallback?","acceptedAnswer":{"@type":"Answer","text":"Its best score (0.45) falls between the two thresholds — high enough to suggest some real signal exists, but not high enough to trust directly, which is exactly the \"ambiguous\" bucket's definition and corrective action."}},{"@type":"Question","name":"Why does Corrective RAG classify based on the best score among results, rather than the average?","acceptedAnswer":{"@type":"Answer","text":"A single strong, relevant passage can be enough to answer a question even if the rest of the retrieved results are irrelevant noise — averaging would unfairly penalize a good retrieval just for also returning some weak candidates alongside the right one."}},{"@type":"Question","name":"What distinguishes Corrective RAG's \"incorrect\" action from Self-RAG's passage-discarding?","acceptedAnswer":{"@type":"Answer","text":"Self-RAG discards an individual irrelevant passage but still proceeds with whatever else was retrieved; Corrective RAG's \"incorrect\" verdict abandons the current retrieval approach for the whole query, switching to a different strategy entirely."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Advanced RAG Patterns</p>
+        <h1 class="doc-title">Corrective RAG</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1lomptzbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1lomptzpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1lomptzbg)"/>
+  <circle cx="375" cy="369" r="207" fill="#b7d5be" opacity="0.29"/><circle cx="1093" cy="396" r="150" fill="#dcf5f7" opacity="0.61"/><circle cx="340" cy="18" r="112" fill="#42718e" opacity="0.44"/><circle cx="1014" cy="69" r="186" fill="#97e1e6" opacity="0.33"/><circle cx="734" cy="128" r="71" fill="#dcf5f7" opacity="0.59"/><circle cx="134" cy="306" r="175" fill="#42718e" opacity="0.60"/>
+  <path d="M0,420 L0,346 L30,341 L60,336 L90,329 L120,322 L150,316 L180,311 L210,307 L240,306 L270,306 L300,309 L330,314 L360,320 L390,326 L420,333 L450,340 L480,345 L510,348 L540,350 L570,349 L600,346 L630,341 L660,336 L690,329 L720,322 L750,316 L780,311 L810,307 L840,306 L870,306 L900,309 L930,314 L960,320 L990,326 L1020,333 L1050,340 L1080,345 L1110,348 L1140,350 L1170,349 L1200,346 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,370 L30,373 L60,377 L90,381 L120,384 L150,388 L180,390 L210,392 L240,394 L270,394 L300,394 L330,392 L360,390 L390,387 L420,384 L450,380 L480,377 L510,373 L540,369 L570,367 L600,364 L630,363 L660,362 L690,362 L720,363 L750,365 L780,368 L810,371 L840,374 L870,378 L900,382 L930,385 L960,389 L990,391 L1020,393 L1050,394 L1080,394 L1110,393 L1140,392 L1170,389 L1200,386 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="667" cy="272" rx="224" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(3.8 667 272)"/><ellipse cx="667" cy="272" rx="310" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(9.8 667 272)"/>
+  <circle cx="667" cy="272" r="88" fill="url(#c1lomptzpl)"/>
+  <circle cx="403" cy="366" r="11" fill="#ffffff" opacity="0.75"/><circle cx="360" cy="288" r="7" fill="#ffffff" opacity="0.89"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Self-RAG discards an individual irrelevant passage; Corrective RAG asks a broader question about the <em>whole</em> retrieval — is this collection of results even worth generating from, or should the system take a completely different action instead? A classifier scores the retrieval as a whole and routes to a different fallback depending on how bad it looks.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/self-rag-and-reflective-retrieval/" data-topic="rag/self-rag-and-reflective-retrieval">Self-RAG and Reflective Retrieval</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What should happen when an entire retrieval looks weak, not just one passage?&quot; Corrective RAG classifies a retrieval&#39;s overall quality — by the best relevance score among its results — into three buckets: <strong>correct</strong> (confidently relevant, safe to generate from directly), <strong>ambiguous</strong> (some signal, but not strong enough to trust outright — worth refining the query and trying again), or <strong>incorrect</strong> (nothing relevant found at all — fall back to a broader search, such as a web search, rather than generating from what&#39;s clearly the wrong context).</p>
+<h2 id="intuition">Intuition</h2>
+<p>A research assistant handed a weak stack of sources for a report doesn&#39;t just write the report anyway using whatever&#39;s there — if the sources look thin but plausible, they go back and search more specifically; if the sources are clearly about the wrong topic entirely, they start over with a different search strategy altogether. Writing from bad sources regardless isn&#39;t on the list of options.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">classify(scores) = &quot;correct&quot;    if max(scores) ≥ 0.7
+                  = &quot;ambiguous&quot;  if 0.3 ≤ max(scores) &lt; 0.7
+                  = &quot;incorrect&quot;  if max(scores) &lt; 0.3
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three retrieval scenarios for the same query, classified by their best relevance score:</p>
+<pre><code class="language-text">good retrieval (scores: 0.85, 0.3, 0.1):   best 0.85  →  correct    →  generate from retrieved context
+weak retrieval (scores: 0.45, 0.4, 0.2):   best 0.45  →  ambiguous  →  refine query and retrieve again
+bad retrieval  (scores: 0.15, 0.1, 0.05):  best 0.15  →  incorrect  →  fall back to a broader search
+</code></pre>
+<p>Each scenario triggers a genuinely different action, not just a different confidence label — &quot;ambiguous&quot; tries again with a better query, while &quot;incorrect&quot; abandons the current retrieval strategy entirely rather than trying to patch it.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="corrective-rag-classifier" data-title="Checking the retrieval before trusting it"><p class="bench-fallback"><strong>Interactive bench: Checking the retrieval before trusting it.</strong> Classify a retrieval's quality and watch which corrective action it triggers.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the &quot;good retrieval&quot; scenario and note it proceeds straight to generation.</li>
+<li>Switch to &quot;weak retrieval&quot; and see it triggers a re-query instead of generating.</li>
+<li>Switch to &quot;bad retrieval&quot; and see it abandons retrieval-based generation entirely.</li>
+</ol>
+<p><strong>What you should notice:</strong> the classification depends only on the <em>best</em> score among the retrieved passages — a retrieval with several mediocre results and one strong one is judged &quot;correct,&quot; the same as a retrieval with one spectacular result and nothing else.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This extends <a class="wikilink" href="/rag/self-rag-and-reflective-retrieval/" data-topic="rag/self-rag-and-reflective-retrieval">Self-RAG and Reflective Retrieval</a>&#39;s passage-level relevance check to the whole retrieval</strong>, adding genuinely different fallback actions rather than just discarding individual results.</li>
+<li><strong>The &quot;fall back to a broader search&quot; action is itself just another retrieval strategy</strong> (<a class="wikilink" href="/rag/query-expansion-and-rewriting/" data-topic="rag/query-expansion-and-rewriting">Query Expansion and Rewriting</a>, or an entirely different data source) — Corrective RAG decides <em>when</em> to reach for it, not <em>how</em> it works.</li>
+<li><strong><a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a> includes &quot;generated a confident answer from irrelevant retrieved context&quot; as exactly the failure Corrective RAG is designed to intercept before generation ever happens.</strong></li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Setting the &quot;correct&quot; threshold so low that weak retrievals get treated as trustworthy.</strong> The thresholds in the worked example are a design choice — too permissive a cutoff defeats the purpose of checking at all.</li>
+<li><strong>Treating &quot;ambiguous&quot; and &quot;incorrect&quot; the same way.</strong> The worked example deliberately gives them different corrective actions — refining a query is a much smaller intervention than abandoning the retrieval strategy altogether, and conflating them wastes the distinction.</li>
+<li><strong>Relying only on the best score and ignoring how the rest of the results look.</strong> A retrieval with one lucky high-scoring passage and nothing else coherent might still warrant more scrutiny than a single number captures.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the "weak retrieval" scenario trigger a re-query rather than generation or a full fallback?</summary>
+Its best score (0.45) falls between the two thresholds — high enough to suggest some real signal exists, but not high enough to trust directly, which is exactly the "ambiguous" bucket's definition and corrective action.
+</details>
+
+<details><summary>2. Why does Corrective RAG classify based on the best score among results, rather than the average?</summary>
+A single strong, relevant passage can be enough to answer a question even if the rest of the retrieved results are irrelevant noise — averaging would unfairly penalize a good retrieval just for also returning some weak candidates alongside the right one.
+</details>
+
+<details><summary>3. What distinguishes Corrective RAG's "incorrect" action from Self-RAG's passage-discarding?</summary>
+Self-RAG discards an individual irrelevant passage but still proceeds with whatever else was retrieved; Corrective RAG's "incorrect" verdict abandons the current retrieval approach for the whole query, switching to a different strategy entirely.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Corrective RAG:</strong> classifying a retrieval&#39;s overall quality and routing to different corrective actions based on that classification.</li>
+<li><strong>Retrieval verdict:</strong> the bucket (correct, ambiguous, incorrect) a retrieval is classified into.</li>
+<li><strong>Fallback action:</strong> an alternative strategy (query refinement, broader search) triggered when a retrieval is judged too weak to generate from directly.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/self-rag-and-reflective-retrieval/" data-topic="rag/self-rag-and-reflective-retrieval">Self-RAG and Reflective Retrieval</a> · <a class="wikilink" href="/rag/query-expansion-and-rewriting/" data-topic="rag/query-expansion-and-rewriting">Query Expansion and Rewriting</a> · <a class="wikilink" href="/rag/common-rag-failure-modes/" data-topic="rag/common-rag-failure-modes">Common RAG Failure Modes</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/corrective-rag">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/graph-based-rag/"><small>Read next</small><b>Graph-Based RAG</b><p>&quot;What did the studio behind Movie X&#39;s director also produce?&quot; isn&#39;t answered by any single document — it&#39;s answered by chaining three separate facts together: who directed Movie X, who they work…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/self-rag-and-reflective-retrieval/"><b>Self-RAG and Reflective Retrieval</b><p>Every query in a basic RAG pipeline gets retrieved for, whether it needs it or not — &quot;what is 2 + 2&quot; triggers the exact same search-then-generate routine as a question about a company&#39;s…</p></a><a class="rc-card" href="/rag/query-expansion-and-rewriting/"><b>Query Expansion and Rewriting</b><p>Sparse retrieval only ever matches the exact words a query happens to use.</p></a><a class="rc-card" href="/rag/common-rag-failure-modes/"><b>Common RAG Failure Modes</b><p>Across this planet&#39;s road, the same handful of failure symptoms keep recurring — a stale fact, a result count that&#39;s mysteriously short, an answer that confidently cites the wrong thing.</p></a><a class="rc-card" href="/rag/advanced-rag-patterns/"><b>Advanced RAG Patterns</b><p>The basic retrieve-then-generate loop has limits: it trusts whatever came back from a single search, treats every document the same whether it&#39;s prose or a spreadsheet, and has no way to notice…</p></a><a class="rc-card" href="/rag/handling-noisy-or-conflicting-retrieved-context/"><b>Handling Noisy or Conflicting Retrieved Context</b><p>Retrieval sometimes returns two passages that answer the same question differently — an old policy document and a new one, say, each stating a different number for the same thing.</p></a><a class="rc-card" href="/rag/capstone-a-question-answered-traced-from-query-to-grounded-answer/"><b>Capstone: A Question Answered, Traced from Query to Grounded Answer</b><p>Every stage this planet covered separately — retrieving by similarity, re-ranking for accuracy, assembling context sensibly, generating with citations — is usually described one at a time, with…</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/self-rag-and-reflective-retrieval/">← Previous: Self-RAG and Reflective Retrieval</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

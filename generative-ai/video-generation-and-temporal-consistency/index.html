@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video Generation and Temporal Consistency — AI Base</title>
+<meta name="description" content="Generate a sequence of images one frame at a time, each independently, and you get something that technically shows motion but looks nothing like video — it flickers and jumps, because nothing…">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/video-generation-and-temporal-consistency/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Video Generation and Temporal Consistency — AI Base">
+<meta property="og:description" content="Generate a sequence of images one frame at a time, each independently, and you get something that technically shows motion but looks nothing like video — it flickers and jumps, because nothing…">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/video-generation-and-temporal-consistency/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Video Generation and Temporal Consistency","item":"https://ai.saranmahadev.in/generative-ai/video-generation-and-temporal-consistency/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Video Generation and Temporal Consistency","description":"Generate a sequence of images one frame at a time, each independently, and you get something that technically shows motion but looks nothing like video — it flickers and jumps, because nothing…","url":"https://ai.saranmahadev.in/generative-ai/video-generation-and-temporal-consistency/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can a sequence of individually plausible frames still fail to look like video?","acceptedAnswer":{"@type":"Answer","text":"Because each frame's own randomness is independent of the others, so even though every single frame looks fine on its own, the content can jump around unpredictably from one frame to the next."}},{"@type":"Question","name":"In the worked example, what changed between the two runs, and what stayed the same?","acceptedAnswer":{"@type":"Answer","text":"The damping factor λ changed, reducing how much of each frame's proposed movement was allowed to take effect; the underlying noise sequence and the pull toward the data distribution stayed identical in both runs."}},{"@type":"Question","name":"What happens if the temporal-consistency damping factor is set too high?","acceptedAnswer":{"@type":"Answer","text":"The generated sequence barely moves at all from frame to frame, since almost none of each frame's proposed change is allowed to take effect — trading away motion entirely for consistency."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Video, 3D and Code Generation</p>
+        <h1 class="doc-title">Video Generation and Temporal Consistency</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="clycv4zbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="clycv4zpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#clycv4zbg)"/>
+  <circle cx="1092" cy="324" r="179" fill="#ffbeba" opacity="0.54"/><circle cx="1094" cy="93" r="177" fill="#8a5989" opacity="0.31"/><circle cx="918" cy="404" r="97" fill="#ffbeba" opacity="0.26"/><circle cx="410" cy="207" r="181" fill="#8a5989" opacity="0.36"/><circle cx="484" cy="401" r="115" fill="#ffbeba" opacity="0.22"/><circle cx="120" cy="371" r="130" fill="#ffe9f4" opacity="0.30"/>
+  <path d="M0,420 L0,344 L30,348 L60,350 L90,349 L120,346 L150,342 L180,336 L210,329 L240,322 L270,316 L300,311 L330,307 L360,306 L390,306 L420,309 L450,313 L480,319 L510,326 L540,333 L570,339 L600,344 L630,348 L660,350 L690,349 L720,346 L750,342 L780,336 L810,329 L840,322 L870,316 L900,311 L930,307 L960,306 L990,306 L1020,309 L1050,313 L1080,319 L1110,326 L1140,333 L1170,339 L1200,344 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,365 L30,363 L60,362 L90,362 L120,363 L150,365 L180,367 L210,370 L240,374 L270,378 L300,381 L330,385 L360,388 L390,391 L420,393 L450,394 L480,394 L510,393 L540,392 L570,390 L600,387 L630,383 L660,380 L690,376 L720,372 L750,369 L780,366 L810,364 L840,363 L870,362 L900,362 L930,364 L960,366 L990,368 L1020,372 L1050,375 L1080,379 L1110,383 L1140,386 L1170,389 L1200,391 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="661" cy="199" rx="217" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(22.9 661 199)"/><ellipse cx="661" cy="199" rx="300" ry="84" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(28.9 661 199)"/>
+  <circle cx="661" cy="199" r="85" fill="url(#clycv4zpl)"/>
+  <circle cx="904" cy="192" r="15" fill="#ffffff" opacity="0.65"/><circle cx="931" cy="205" r="11" fill="#ffffff" opacity="0.64"/><circle cx="657" cy="330" r="18" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Generate a sequence of images one frame at a time, each independently, and you get something that technically shows motion but looks nothing like video — it flickers and jumps, because nothing ties one frame&#39;s content to the next. This note covers the specific problem of keeping frames coherent with each other, not just individually plausible.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/text-to-image-pipelines/" data-topic="generative-ai/text-to-image-pipelines">Text-to-Image Pipelines</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why doesn&#39;t generating a sequence of plausible images automatically produce a plausible video?&quot; Each frame of a diffusion-generated sequence has its own randomness — its own noise, its own sampling — so two frames generated independently can each look fine on their own while still disagreeing wildly about where things are from one moment to the next. <strong>Temporal consistency</strong> means damping how much a frame is allowed to move away from the previous one, so successive frames stay correlated instead of each being an independent roll of the dice.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Flip through a stack of individually well-drawn photographs of the same scene, each drawn by a different artist with no sight of the others&#39; work, and the &quot;animation&quot; will jump and flicker even though every single photograph looks fine. A flipbook only looks like smooth motion when each page is drawn <em>with the previous page in view</em> — exactly the difference between independently sampling every video frame and generating each frame as a damped continuation of the last.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">without consistency:  frameₜ = frameₜ₋₁ + step_size · score(frameₜ₋₁) + noiseₜ
+                       (independent noise every frame → large frame-to-frame jumps)
+
+with consistency (damping factor λ):
+  frameₜ = frameₜ₋₁ + (1 − λ) · [step_size · score(frameₜ₋₁) + noiseₜ]
+  (λ close to 1: barely move from the previous frame at all;
+   λ = 0: identical to the undamped case)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Eight toy frames generated from the same starting point and the same random noise sequence, compared with and without a damping term:</p>
+<pre><code class="language-text">no consistency (λ=0):    total frame-to-frame motion = 7.599
+with consistency (λ=0.7): total frame-to-frame motion = 2.183
+</code></pre>
+<p>Damping with λ=0.7 cut the total motion across all 8 frames by more than 70%, using the exact same underlying noise and the exact same pull toward the data distribution — the only change was how much of each frame&#39;s proposed movement was allowed to actually take effect.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="video-temporal-consistency" data-title="Jittery frames vs. a temporally consistent sequence"><p class="bench-fallback"><strong>Interactive bench: Jittery frames vs. a temporally consistent sequence.</strong> Adjust a temporal-consistency damping factor and watch the total frame-to-frame motion in a toy generated sequence.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set λ to 0 and look at how jagged the resulting path is.</li>
+<li>Raise λ toward 0.9 and watch the path smooth out into much smaller steps.</li>
+<li>Compare the total-motion readout across a few different λ values.</li>
+</ol>
+<p><strong>What you should notice:</strong> every frame still ends up somewhere near the data distribution regardless of λ — consistency doesn&#39;t change <em>where</em> the content tends to go, only how abruptly it gets there from one frame to the next.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Real video diffusion models add temporal attention or 3D convolutions across frames</strong> rather than a simple damping term, letting the model learn consistency directly instead of imposing it as a fixed rule — but the goal is identical to this worked example&#39;s.</li>
+<li><strong>Too much consistency produces a different, equally obvious failure</strong>: a video that barely moves at all, since very high λ suppresses essentially all frame-to-frame change.</li>
+<li><strong><a class="wikilink" href="/generative-ai/video-editing-and-interpolation/" data-topic="generative-ai/video-editing-and-interpolation">frame interpolation</a> solves a related but distinct problem</strong>: filling in frames <em>between</em> two already-fixed frames, rather than generating a new frame forward from one.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming independently-plausible frames are sufficient for a plausible video.</strong> The worked example is built specifically to show this isn&#39;t true — each frame can be individually fine while the sequence as a whole flickers.</li>
+<li><strong>Treating temporal consistency as purely a post-processing smoothing step.</strong> In the worked example, it&#39;s applied <em>during</em> generation, shaping every frame as it&#39;s produced, not blurring already-finished frames afterward.</li>
+<li><strong>Pushing the damping factor too high.</strong> Past a point, the sequence stops showing meaningful motion at all — consistency and motion are a genuine trade-off, not a free improvement.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why can a sequence of individually plausible frames still fail to look like video?</summary>
+Because each frame's own randomness is independent of the others, so even though every single frame looks fine on its own, the content can jump around unpredictably from one frame to the next.
+</details>
+
+<details><summary>2. In the worked example, what changed between the two runs, and what stayed the same?</summary>
+The damping factor λ changed, reducing how much of each frame's proposed movement was allowed to take effect; the underlying noise sequence and the pull toward the data distribution stayed identical in both runs.
+</details>
+
+<details><summary>3. What happens if the temporal-consistency damping factor is set too high?</summary>
+The generated sequence barely moves at all from frame to frame, since almost none of each frame's proposed change is allowed to take effect — trading away motion entirely for consistency.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Temporal consistency:</strong> keeping successive frames of a generated sequence correlated with each other, rather than independently sampled.</li>
+<li><strong>Damping factor:</strong> how much of a frame&#39;s proposed change from the previous frame is suppressed to maintain consistency.</li>
+<li><strong>Frame-to-frame motion:</strong> the total distance moved between consecutive frames across a sequence.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/text-to-image-pipelines/" data-topic="generative-ai/text-to-image-pipelines">Text-to-Image Pipelines</a> · <a class="wikilink" href="/generative-ai/video-editing-and-interpolation/" data-topic="generative-ai/video-editing-and-interpolation">Video Editing and Interpolation</a> · <a class="wikilink" href="/generative-ai/unified-multimodal-generation/" data-topic="generative-ai/unified-multimodal-generation">Unified Multimodal Generation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/video-generation-and-temporal-consistency">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/video-editing-and-interpolation/"><small>Read next</small><b>Video Editing and Interpolation</b><p>inpainting fills in missing pixels surrounded by known ones.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/text-to-image-pipelines/"><b>Text-to-Image Pipelines</b><p>Every mechanism on the previous district&#39;s road — guidance, cross-attention conditioning — exists to answer one practical question: given a sentence of text, how do you actually get a picture out…</p></a><a class="rc-card" href="/generative-ai/video-editing-and-interpolation/"><b>Video Editing and Interpolation</b><p>inpainting fills in missing pixels surrounded by known ones.</p></a><a class="rc-card" href="/generative-ai/unified-multimodal-generation/"><b>Unified Multimodal Generation</b><p>a multimodal transformer can take text and image patches as input together.</p></a><a class="rc-card" href="/generative-ai/video-3d-and-code-generation/"><b>Video, 3D and Code Generation</b><p>Three modalities that each push generation past where images and audio stop: video adds time, 3D adds an extra spatial dimension and viewpoint consistency, and code adds a requirement neither has…</p></a><a class="rc-card" href="/generative-ai/3d-asset-and-scene-generation/"><b>3D Asset and Scene Generation</b><p>Every generation method so far on this planet produces a flat grid of values — pixels, a spectrogram, a sequence of frames.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/video-3d-and-code-generation/">← Previous: Video, 3D and Code Generation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

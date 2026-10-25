@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Curse of Dimensionality — AI Base</title>
+<meta name="description" content="Every feature you add is a new dimension, and high-dimensional space behaves strangely: it is enormous, data points end up far from everything, and &quot;nearest&quot; stops meaning much.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/the-curse-of-dimensionality/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="The Curse of Dimensionality — AI Base">
+<meta property="og:description" content="Every feature you add is a new dimension, and high-dimensional space behaves strangely: it is enormous, data points end up far from everything, and &quot;nearest&quot; stops meaning much.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/the-curse-of-dimensionality/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"The Curse of Dimensionality","item":"https://ai.saranmahadev.in/machine-learning/the-curse-of-dimensionality/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Curse of Dimensionality","description":"Every feature you add is a new dimension, and high-dimensional space behaves strangely: it is enormous, data points end up far from everything, and \"nearest\" stops meaning much.","url":"https://ai.saranmahadev.in/machine-learning/the-curse-of-dimensionality/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How many cells does a grid with 10 bins per axis have in 6 dimensions?","acceptedAnswer":{"@type":"Answer","text":"10⁶ = 1,000,000."}},{"@type":"Question","name":"What happens to the nearest and farthest distances as dimensions grow?","acceptedAnswer":{"@type":"Answer","text":"They become almost equal."}},{"@type":"Question","name":"Name one remedy.","acceptedAnswer":{"@type":"Answer","text":"Dimensionality reduction (PCA), feature selection, regularisation or more data."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Data and Features</p>
+        <h1 class="doc-title">The Curse of Dimensionality</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c13z4wrebg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c13z4wrepl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c13z4wrebg)"/>
+  <circle cx="725" cy="344" r="180" fill="#fff2de" opacity="0.61"/><circle cx="616" cy="167" r="162" fill="#8a6b5c" opacity="0.32"/><circle cx="172" cy="364" r="147" fill="#ffd08d" opacity="0.40"/><circle cx="630" cy="386" r="110" fill="#ffd08d" opacity="0.41"/><circle cx="988" cy="84" r="86" fill="#ffd08d" opacity="0.53"/><circle cx="450" cy="85" r="80" fill="#ffd99f" opacity="0.52"/><circle cx="304" cy="86" r="210" fill="#8a6b5c" opacity="0.22"/>
+  <path d="M0,420 L0,306 L30,309 L60,313 L90,319 L120,325 L150,332 L180,339 L210,344 L240,348 L270,349 L300,349 L330,347 L360,342 L390,336 L420,330 L450,323 L480,316 L510,311 L540,307 L570,306 L600,306 L630,309 L660,313 L690,319 L720,325 L750,332 L780,339 L810,344 L840,348 L870,349 L900,349 L930,347 L960,342 L990,336 L1020,330 L1050,323 L1080,316 L1110,311 L1140,307 L1170,306 L1200,306 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,393 L90,393 L120,391 L150,390 L180,388 L210,386 L240,384 L270,381 L300,379 L330,376 L360,374 L390,371 L420,369 L450,367 L480,365 L510,364 L540,363 L570,362 L600,362 L630,362 L660,363 L690,363 L720,365 L750,366 L780,368 L810,370 L840,372 L870,375 L900,377 L930,380 L960,382 L990,385 L1020,387 L1050,389 L1080,391 L1110,392 L1140,393 L1170,394 L1200,394 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="768" cy="262" rx="206" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-6.1 768 262)"/><ellipse cx="768" cy="262" rx="285" ry="80" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-0.1 768 262)"/>
+  <circle cx="768" cy="262" r="81" fill="url(#c13z4wrepl)"/>
+  <circle cx="855" cy="179" r="13" fill="#ffffff" opacity="0.64"/><circle cx="856" cy="191" r="16" fill="#ffffff" opacity="0.73"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every feature you add is a new dimension, and high-dimensional space behaves strangely: it is enormous, data points end up far from everything, and &quot;nearest&quot; stops meaning much. Meanwhile the amount of data needed to cover the space grows exponentially. This is the <strong>curse of dimensionality</strong>.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/feature-engineering/" data-topic="machine-learning/feature-engineering">Feature Engineering</a>, <a class="wikilink" href="/math/geometry-in-many-dimensions/" data-topic="math/geometry-in-many-dimensions">Geometry in Many Dimensions</a> and <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why does adding more features sometimes make a model worse?&quot; Because each extra feature spreads the same number of examples over a far larger space, so the model has less evidence for every region.</p>
+<h2 id="intuition-filling-a-room">Intuition: filling a room</h2>
+<p>Divide each axis into 10 intervals. In one dimension there are 10 cells; 200 points fill them well. In two dimensions there are 100 cells, still fine. In ten dimensions there are <code>10¹⁰</code> cells: ten billion. Two hundred points occupy a vanishing fraction, and most cells contain nothing to learn from. Data does not fill the space; it floats in it, sparse.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">cells with b bins per axis and d dimensions:   b^d
+distance concentration:  as d grows, (farthest − nearest) / nearest → 0
+                         every point is roughly equally far from every other
+</code></pre>
+<p>Two consequences: methods that rely on distance to a neighbour lose their signal, and models with many features can fit noise easily. The usual remedies are fewer, better features (<a class="wikilink" href="/machine-learning/feature-engineering/" data-topic="machine-learning/feature-engineering">Feature Engineering</a>), <strong>dimensionality reduction</strong> such as <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a>, regularisation, and more data.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Take 200 random points in the unit cube and one query point (the bench&#39;s fixed seed). Compare the farthest and nearest distances:</p>
+<pre><code class="language-text">dimensions     (farthest − nearest) ÷ nearest
+    2                  43
+   10                   2.3
+   50                   0.56
+  200                   0.22
+</code></pre>
+<p>In two dimensions the farthest point is 44 times as far as the nearest, so &quot;nearest&quot; is meaningful. In 200 dimensions the farthest is only 1.2 times as far as the nearest: everything is about equally distant, and a nearest-neighbour vote is close to random. The cell count tells the same story: <code>10²</code> cells in 2D against <code>10²⁰⁰</code> in 200D.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="sparse-space" data-title="Distances in many dimensions"><p class="bench-fallback"><strong>Interactive bench: Distances in many dimensions.</strong> A slider sets the number of dimensions of 200 random points; the bench draws the histogram of distances from one point to the rest and shows the nearest-to-farthest spread and the number of grid cells per data point.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at 2 dimensions and note the spread of distances.</li>
+<li>Slide to 10, then 50, then 200.</li>
+<li>Watch the cells-per-data-point readout.</li>
+</ol>
+<p><strong>What you should notice:</strong> the distance histogram narrows into a spike as dimensions grow, and the count of empty cells explodes.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Nearest-neighbour search</strong> degrades in raw high dimensions, so it works on compressed embeddings.</li>
+<li><strong>Feature selection and PCA</strong> exist to reduce dimensions.</li>
+<li><strong>Deep learning</strong> works despite huge input dimensions because real data lies on much lower-dimensional shapes.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Adding every available feature</strong> &quot;just in case&quot;.</li>
+<li><strong>Trusting distance-based methods</strong> on hundreds of raw features.</li>
+<li><strong>Assuming more data always cures it;</strong> the needed amount grows exponentially.</li>
+<li><strong>Believing all high-dimensional data is hopeless;</strong> structure in the data saves us.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. How many cells does a grid with 10 bins per axis have in 6 dimensions?</summary>
+10⁶ = 1,000,000.
+</details>
+
+<details><summary>2. What happens to the nearest and farthest distances as dimensions grow?</summary>
+They become almost equal.
+</details>
+
+<details><summary>3. Name one remedy.</summary>
+Dimensionality reduction (PCA), feature selection, regularisation or more data.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Curse of dimensionality:</strong> the troubles of sparse, distance-blind high-dimensional data.</li>
+<li><strong>Sparsity:</strong> most of the space containing no data.</li>
+<li><strong>Distance concentration:</strong> distances becoming nearly equal.</li>
+<li><strong>Dimensionality reduction:</strong> compressing to fewer, informative dimensions.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/geometry-in-many-dimensions/" data-topic="math/geometry-in-many-dimensions">Geometry in Many Dimensions</a> · <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a> · <a class="wikilink" href="/machine-learning/feature-engineering/" data-topic="machine-learning/feature-engineering">Feature Engineering</a> · <a class="wikilink" href="/machine-learning/k-nearest-neighbours/" data-topic="machine-learning/k-nearest-neighbours">k-Nearest Neighbours</a> · <a class="wikilink" href="/machine-learning/ridge-and-lasso/" data-topic="machine-learning/ridge-and-lasso">Ridge and Lasso</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/the-curse-of-dimensionality">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/linear-models/"><small>Read next</small><b>Linear Models</b><p>Linear models compute a weighted sum of the features and either use it directly (regression) or squash it into a probability (classification).</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/feature-engineering/"><b>Feature Engineering</b><p>Feature engineering means creating better inputs from the raw columns: ratios, squares, counts, differences, dates unpacked into weekday and month.</p></a><a class="rc-card" href="/math/geometry-in-many-dimensions/"><b>Geometry in Many Dimensions</b><p>Data in AI often has hundreds or thousands of coordinates, so points live in spaces we cannot picture.</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a><a class="rc-card" href="/math/svd-and-pca/"><b>SVD and PCA</b><p>The singular value decomposition (SVD) breaks any matrix into a rotation, a stretch along perpendicular axes, and another rotation: A = U Σ Vᵀ.</p></a><a class="rc-card" href="/machine-learning/k-nearest-neighbours/"><b>k-Nearest Neighbours</b><p>k-nearest neighbours (kNN) classifies a new point by finding the k training points closest to it and letting them vote. There is no training step: the model is the data.</p></a><a class="rc-card" href="/machine-learning/ridge-and-lasso/"><b>Ridge and Lasso</b><p>When there are many features and little data, a linear model can fit noise with huge, contradictory weights. Regularisation adds a penalty on the weights so the model prefers small ones.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/feature-engineering/">← Previous: Feature Engineering</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

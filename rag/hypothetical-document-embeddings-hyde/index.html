@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hypothetical Document Embeddings (HyDE) — AI Base</title>
+<meta name="description" content="A short question and the long passage that answers it don&#39;t always sit very close together in embedding space — a question is phrased like a question, while the answer is phrased like an answer,…">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/hypothetical-document-embeddings-hyde/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Hypothetical Document Embeddings (HyDE) — AI Base">
+<meta property="og:description" content="A short question and the long passage that answers it don&#39;t always sit very close together in embedding space — a question is phrased like a question, while the answer is phrased like an answer,…">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/hypothetical-document-embeddings-hyde/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Hypothetical Document Embeddings (HyDE)","item":"https://ai.saranmahadev.in/rag/hypothetical-document-embeddings-hyde/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hypothetical Document Embeddings (HyDE)","description":"A short question and the long passage that answers it don't always sit very close together in embedding space — a question is phrased like a question, while the answer is phrased like an answer,…","url":"https://ai.saranmahadev.in/rag/hypothetical-document-embeddings-hyde/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the hypothetical answer's embedding land closer to the real document than the bare question's does?","acceptedAnswer":{"@type":"Answer","text":"A generated hypothetical answer is phrased like an answer — similar in style to the real passages being searched — while a bare question is phrased like a question, a different style that happens to sit further away in embedding space from answer-style text."}},{"@type":"Question","name":"Does the hypothetical answer need to be factually accurate for HyDE to work?","acceptedAnswer":{"@type":"Answer","text":"No — its usefulness comes from matching the phrasing style of real answers, not from being correct; even a plausible-but-wrong guess can improve retrieval this way."}},{"@type":"Question","name":"What extra cost does HyDE add compared to embedding the query directly?","acceptedAnswer":{"@type":"Answer","text":"A full generation call to produce the hypothetical answer, before retrieval can even begin — a real latency and compute cost on top of the embedding and search steps every query already requires."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Retrieval Strategies</p>
+        <h1 class="doc-title">Hypothetical Document Embeddings (HyDE)</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c2wj03xbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c2wj03xpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c2wj03xbg)"/>
+  <circle cx="16" cy="405" r="141" fill="#97e1e6" opacity="0.46"/><circle cx="882" cy="90" r="212" fill="#42718e" opacity="0.32"/><circle cx="1174" cy="66" r="65" fill="#dcf5f7" opacity="0.29"/><circle cx="476" cy="290" r="211" fill="#dcf5f7" opacity="0.49"/><circle cx="7" cy="286" r="182" fill="#dcf5f7" opacity="0.35"/><circle cx="1048" cy="362" r="85" fill="#97e1e6" opacity="0.55"/>
+  <path d="M0,420 L0,313 L30,309 L60,307 L90,306 L120,306 L150,307 L180,309 L210,312 L240,317 L270,321 L300,326 L330,332 L360,337 L390,341 L420,345 L450,347 L480,349 L510,350 L540,349 L570,347 L600,344 L630,340 L660,336 L690,330 L720,325 L750,320 L780,316 L810,312 L840,309 L870,307 L900,306 L930,306 L960,307 L990,310 L1020,314 L1050,318 L1080,323 L1110,328 L1140,333 L1170,338 L1200,342 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,379 L30,376 L60,372 L90,369 L120,366 L150,364 L180,362 L210,362 L240,362 L270,364 L300,366 L330,368 L360,372 L390,375 L420,379 L450,383 L480,386 L510,389 L540,392 L570,393 L600,394 L630,394 L660,393 L690,391 L720,389 L750,385 L780,382 L810,378 L840,374 L870,371 L900,368 L930,365 L960,363 L990,362 L1020,362 L1050,363 L1080,364 L1110,367 L1140,369 L1170,373 L1200,377 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="799" cy="223" rx="223" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(11.7 799 223)"/><ellipse cx="799" cy="223" rx="309" ry="86" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(17.7 799 223)"/>
+  <circle cx="799" cy="223" r="88" fill="url(#c2wj03xpl)"/>
+  <circle cx="643" cy="294" r="18" fill="#ffffff" opacity="0.67"/><circle cx="578" cy="283" r="8" fill="#ffffff" opacity="0.63"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A short question and the long passage that answers it don&#39;t always sit very close together in embedding space — a question is phrased like a question, while the answer is phrased like an answer, and those are different styles of text. HyDE&#39;s trick is to skip embedding the question at all: generate a plausible answer first, then embed <em>that</em>, since a generated answer&#39;s phrasing is naturally much closer to the real answer&#39;s phrasing than the bare question ever was.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can retrieval do better than embedding the query exactly as it was asked?&quot; <strong>HyDE (Hypothetical Document Embeddings)</strong> uses a language model to generate a hypothetical answer to the query — not necessarily a correct one, just a plausible one, written in the style of a real passage — and embeds that generated text instead of the bare question. Because the hypothetical answer is phrased more like the documents being searched than the original question was, its embedding tends to land closer to the real, relevant document.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Looking for a specific paragraph in a textbook by first sketching, from memory, roughly what that paragraph probably says, then searching for text that resembles your sketch, works better than searching with the bare question alone — your sketch is already written in the style of an answer, which is exactly the style the real paragraph is written in too.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">bare query embedding:          embed(question)
+HyDE embedding:                embed(generate_hypothetical_answer(question))
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Comparing both embeddings against the same real, relevant document:</p>
+<pre><code class="language-text">bare question similarity to real document:        0.7962
+hypothetical-answer similarity to real document:  0.9997
+</code></pre>
+<p>The generated hypothetical answer — plausible, but not necessarily factually correct — lands far closer to the real document&#39;s embedding than the bare question did. The hypothetical answer doesn&#39;t need to be <em>true</em> to help retrieval; it only needs to be phrased like the kind of passage that would actually answer the question, which makes its embedding naturally closer to real passages that do.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="hyde-retrieval" data-title="Embedding a guessed answer instead of the question"><p class="bench-fallback"><strong>Interactive bench: Embedding a guessed answer instead of the question.</strong> Compare a bare query's similarity to a real document against a generated hypothetical answer's similarity.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Check the bare question&#39;s similarity to the real document.</li>
+<li>Switch to the hypothetical-answer embedding and see the gap close almost entirely.</li>
+<li>Consider why a <em>wrong</em> hypothetical answer could still help retrieval, as long as it&#39;s phrased the right way.</li>
+</ol>
+<p><strong>What you should notice:</strong> the improvement doesn&#39;t come from the hypothetical answer being correct — it comes from its phrasing matching the style of real documents far better than a bare question&#39;s phrasing does.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This reuses <a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a>&#39;s exact similarity mechanism</strong> — HyDE changes what gets embedded, not how embeddings are compared.</li>
+<li><strong>It&#39;s a generation-time technique, requiring a call to the generating model <em>before</em> retrieval even happens</strong> — an extra cost <a class="wikilink" href="/rag/cost-and-latency-of-rag-systems/" data-topic="rag/cost-and-latency-of-rag-systems">Cost and Latency of RAG Systems</a> has to account for.</li>
+<li><strong><a class="wikilink" href="/rag/query-expansion-and-rewriting/" data-topic="rag/query-expansion-and-rewriting">Query Expansion and Rewriting</a> is a cheaper, non-generative alternative aimed at a similar underlying problem</strong> (query phrasing not matching document phrasing), without needing a model call per query.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming the hypothetical answer needs to be factually correct.</strong> It doesn&#39;t — HyDE works because of phrasing similarity to real documents, not because the generated guess happens to be true.</li>
+<li><strong>Ignoring the added cost of generating a hypothetical answer before every single retrieval.</strong> Unlike query expansion&#39;s cheap synonym lookup, HyDE requires a full generation call per query, adding real latency and cost.</li>
+<li><strong>Using HyDE on a domain the generating model knows little about.</strong> A hypothetical answer generated with no real domain knowledge may be phrased badly too, losing the advantage this technique depends on.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the hypothetical answer's embedding land closer to the real document than the bare question's does?</summary>
+A generated hypothetical answer is phrased like an answer — similar in style to the real passages being searched — while a bare question is phrased like a question, a different style that happens to sit further away in embedding space from answer-style text.
+</details>
+
+<details><summary>2. Does the hypothetical answer need to be factually accurate for HyDE to work?</summary>
+No — its usefulness comes from matching the phrasing style of real answers, not from being correct; even a plausible-but-wrong guess can improve retrieval this way.
+</details>
+
+<details><summary>3. What extra cost does HyDE add compared to embedding the query directly?</summary>
+A full generation call to produce the hypothetical answer, before retrieval can even begin — a real latency and compute cost on top of the embedding and search steps every query already requires.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>HyDE (Hypothetical Document Embeddings):</strong> embedding a generated hypothetical answer instead of the bare query, to better match the phrasing of real documents.</li>
+<li><strong>Hypothetical answer:</strong> a plausible, not-necessarily-correct generated response used only to improve retrieval, not shown to the user.</li>
+<li><strong>Phrasing mismatch:</strong> the stylistic gap between how a question is phrased and how its answer is phrased, which hurts a bare query&#39;s embedding similarity to the real answer.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/dense-retrieval/" data-topic="rag/dense-retrieval">Dense Retrieval</a> · <a class="wikilink" href="/rag/query-expansion-and-rewriting/" data-topic="rag/query-expansion-and-rewriting">Query Expansion and Rewriting</a> · <a class="wikilink" href="/rag/cost-and-latency-of-rag-systems/" data-topic="rag/cost-and-latency-of-rag-systems">Cost and Latency of RAG Systems</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/hypothetical-document-embeddings-hyde">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/multi-hop-and-iterative-retrieval/"><small>Read next</small><b>Multi-Hop and Iterative Retrieval</b><p>&quot;What else did the director of Movie X direct?&quot; can&#39;t be answered by one search.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/dense-retrieval/"><b>Dense Retrieval</b><p>&quot;Automobile repair&quot; and &quot;car maintenance&quot; share not a single word, yet mean almost the same thing.</p></a><a class="rc-card" href="/rag/cost-and-latency-of-rag-systems/"><b>Cost and Latency of RAG Systems</b><p>A plain LLM call already has its own cost and latency math, already covered on the LLMs planet.</p></a><a class="rc-card" href="/rag/query-expansion-and-rewriting/"><b>Query Expansion and Rewriting</b><p>Sparse retrieval only ever matches the exact words a query happens to use.</p></a><a class="rc-card" href="/rag/retrieval-strategies/"><b>Retrieval Strategies</b><p>Having a fast index doesn&#39;t yet say what to search it with.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/query-expansion-and-rewriting/">← Previous: Query Expansion and Rewriting</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

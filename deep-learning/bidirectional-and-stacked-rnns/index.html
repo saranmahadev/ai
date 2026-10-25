@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bidirectional and Stacked RNNs — AI Base</title>
+<meta name="description" content="A plain RNN reading left to right only ever knows the past at any given position — it has no idea what comes next.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/bidirectional-and-stacked-rnns/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Bidirectional and Stacked RNNs — AI Base">
+<meta property="og:description" content="A plain RNN reading left to right only ever knows the past at any given position — it has no idea what comes next.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/bidirectional-and-stacked-rnns/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Bidirectional and Stacked RNNs","item":"https://ai.saranmahadev.in/deep-learning/bidirectional-and-stacked-rnns/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bidirectional and Stacked RNNs","description":"A plain RNN reading left to right only ever knows the past at any given position — it has no idea what comes next.","url":"https://ai.saranmahadev.in/deep-learning/bidirectional-and-stacked-rnns/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can't a bidirectional RNN be used for live, streaming text generation?","acceptedAnswer":{"@type":"Answer","text":"Its backward pass needs the entire sequence available in advance, including positions that, in live generation, haven't been produced yet."}},{"@type":"Question","name":"What does a stacked RNN's second layer actually take as input?","acceptedAnswer":{"@type":"Answer","text":"The first layer's entire output sequence (one hidden state per position), fed in position by position, just as the first layer took the original input sequence."}},{"@type":"Question","name":"In the worked example, why is the backward hidden state at position 3 so small?","acceptedAnswer":{"@type":"Answer","text":"There is nothing after position 3 in the sequence, so the backward pass has only just started there and has absorbed almost no context yet."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Sequence Models</p>
+        <h1 class="doc-title">Bidirectional and Stacked RNNs</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1fi429bbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1fi429bpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1fi429bbg)"/>
+  <circle cx="124" cy="101" r="118" fill="#8a546c" opacity="0.60"/><circle cx="413" cy="410" r="214" fill="#ffb89d" opacity="0.26"/><circle cx="70" cy="124" r="123" fill="#ffb89d" opacity="0.52"/><circle cx="350" cy="60" r="111" fill="#ffb6b6" opacity="0.42"/><circle cx="611" cy="112" r="80" fill="#8a546c" opacity="0.31"/>
+  <path d="M0,420 L0,315 L30,310 L60,307 L90,306 L120,307 L150,310 L180,314 L210,320 L240,327 L270,334 L300,340 L330,345 L360,348 L390,350 L420,349 L450,346 L480,341 L510,335 L540,328 L570,321 L600,315 L630,310 L660,307 L690,306 L720,307 L750,310 L780,314 L810,320 L840,327 L870,334 L900,340 L930,345 L960,348 L990,350 L1020,349 L1050,346 L1080,341 L1110,335 L1140,328 L1170,321 L1200,315 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,362 L60,363 L90,365 L120,368 L150,373 L180,378 L210,383 L240,387 L270,391 L300,393 L330,394 L360,393 L390,391 L420,388 L450,383 L480,378 L510,373 L540,369 L570,365 L600,363 L630,362 L660,363 L690,365 L720,368 L750,373 L780,378 L810,383 L840,387 L870,391 L900,393 L930,394 L960,393 L990,391 L1020,388 L1050,383 L1080,378 L1110,373 L1140,369 L1170,365 L1200,363 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="651" cy="223" rx="229" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(23.5 651 223)"/><ellipse cx="651" cy="223" rx="317" ry="89" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(29.5 651 223)"/>
+  <circle cx="651" cy="223" r="90" fill="url(#c1fi429bpl)"/>
+  <circle cx="564" cy="112" r="17" fill="#ffffff" opacity="0.70"/><circle cx="470" cy="335" r="10" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A plain RNN reading left to right only ever knows the <em>past</em> at any given position — it has no idea what comes next. <strong>Bidirectional RNNs</strong> fix that by running a second RNN in reverse and combining both directions&#39; hidden states. <strong>Stacking</strong> RNN layers, separately, adds depth the same way stacking dense layers does: one layer&#39;s whole output sequence becomes the next layer&#39;s input sequence.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/gated-recurrent-units/" data-topic="deep-learning/gated-recurrent-units">Gated Recurrent Units</a> and <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;For tasks where the whole sequence is available up front — not streaming live — why limit a position&#39;s representation to only what came before it?&quot; It needn&#39;t be limited at all: run one RNN forward, another backward, and give each position the combined output of both.</p>
+<h2 id="intuition-reading-twice-once-each-direction">Intuition: reading twice, once each direction</h2>
+<p>To understand the word &quot;bank&quot; in &quot;I sat by the river bank,&quot; you need what comes <em>after</em> &quot;bank&quot; (&quot;river&quot;) as much as what came before. A bidirectional RNN reads the sentence twice — once left to right, once right to left — and at every position, concatenates what the forward pass knew (everything before) with what the backward pass knew (everything after). Stacking is a separate, orthogonal idea: take the first layer&#39;s full sequence of hidden states and feed that whole sequence, position by position, into a second RNN layer — exactly like adding another dense layer, just operating on a sequence instead of a single vector.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">bidirectional:   h_t = [h→_t , h←_t]      (forward and backward hidden states, concatenated)
+stacked:         layer 2&#39;s input sequence = layer 1&#39;s output sequence, position by position
+</code></pre>
+<p>Bidirectional RNNs require the whole sequence up front (you cannot run the backward pass on words that haven&#39;t happened yet), so they are unsuitable for live, streaming generation — see <a class="wikilink" href="/deep-learning/sequence-to-sequence-models/" data-topic="deep-learning/sequence-to-sequence-models">Sequence-to-Sequence Models</a> for how generation handles this instead.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The same tiny one-unit RNN (<code>Wₓ = 0.5</code>, <code>Wₕ = 0.8</code>, <code>b = 0.1</code>) reading <code>(1, 0, 0)</code> forward, and reading it in reverse for the backward pass:</p>
+<pre><code class="language-text">position          1        2        3
+forward h→      0.5370   0.4851   0.4527
+backward h←     0.6305   0.1778   0.0997
+</code></pre>
+<p>At position 3, the input itself was <code>0</code> and the forward hidden state (0.4527) reflects mostly earlier context — but the backward hidden state is small too (0.0997), since there&#39;s nothing <em>after</em> position 3 to inform it. At position 1, the backward hidden state (0.6305) is large, because reading backward from the end, this position is the <em>last</em> one processed and has absorbed everything in the sequence.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="birnn-stack" data-title="Reading a sequence forward, backward, and both"><p class="bench-fallback"><strong>Interactive bench: Reading a sequence forward, backward, and both.</strong> An editable short sequence. See the forward hidden states, the backward hidden states, and their concatenation at each position, and compare to what a forward-only RNN would have known.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Change the first input and watch how much it affects only the forward states (not the backward ones).</li>
+<li>Change the last input and watch the opposite: it affects mostly the backward states.</li>
+<li>Compare position 2&#39;s concatenated representation using only the forward half versus using both halves.</li>
+</ol>
+<p><strong>What you should notice:</strong> at every position, the forward state only ever reflects what came before it, and the backward state only ever reflects what came after it — concatenating them is literally the only way to give one position&#39;s representation both directions at once.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Named entity recognition, part-of-speech tagging, and other tasks over a whole, already-available sequence</strong> commonly use bidirectional RNNs, since there&#39;s no &quot;future&quot; to be unfair to during inference.</li>
+<li><strong>Encoders in <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">encoder-decoder architectures</a></strong> are very often bidirectional, since the encoder sees the whole input sequence before any output is generated.</li>
+<li><strong>Stacking 2–3 recurrent layers</strong> is common in practice; beyond that, the usual training difficulties of very deep networks (see <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a>) start to apply to the stack as well as to each individual layer&#39;s own depth in time.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Using a bidirectional RNN for live generation.</strong> It needs the whole sequence available before it can run the backward pass at all, so it cannot be used to generate text one token at a time as it&#39;s produced.</li>
+<li><strong>Forgetting stacking and bidirectionality are independent choices.</strong> A network can be bidirectional, stacked, both, or neither — the two ideas combine freely.</li>
+<li><strong>Assuming more stacked layers always help.</strong> Each added layer costs training time and risks the same vanishing-gradient and overfitting issues seen elsewhere in deep networks.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why can't a bidirectional RNN be used for live, streaming text generation?</summary>
+Its backward pass needs the entire sequence available in advance, including positions that, in live generation, haven't been produced yet.
+</details>
+
+<details><summary>2. What does a stacked RNN's second layer actually take as input?</summary>
+The first layer's entire output sequence (one hidden state per position), fed in position by position, just as the first layer took the original input sequence.
+</details>
+
+<details><summary>3. In the worked example, why is the backward hidden state at position 3 so small?</summary>
+There is nothing after position 3 in the sequence, so the backward pass has only just started there and has absorbed almost no context yet.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Bidirectional RNN:</strong> two RNNs, one reading forward and one reading backward, with their hidden states combined at each position.</li>
+<li><strong>Stacked RNN:</strong> multiple RNN layers, each one&#39;s output sequence feeding the next as its input sequence.</li>
+<li><strong>Concatenation:</strong> joining the forward and backward hidden states into one combined vector per position.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/gated-recurrent-units/" data-topic="deep-learning/gated-recurrent-units">Gated Recurrent Units</a> · <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a> · <a class="wikilink" href="/deep-learning/sequence-to-sequence-models/" data-topic="deep-learning/sequence-to-sequence-models">Sequence-to-Sequence Models</a> · <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Encoder-Decoder Architectures with Attention</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/bidirectional-and-stacked-rnns">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/sequence-to-sequence-models/"><small>Read next</small><b>Sequence-to-Sequence Models</b><p>A sequence-to-sequence (seq2seq) model turns one sequence into another, possibly of a different length — a sentence in one language into a sentence in another, say.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/gated-recurrent-units/"><b>Gated Recurrent Units</b><p>A GRU (gated recurrent unit) keeps LSTM&#39;s core idea — gates deciding what to keep and what to update — but drops the separate cell state and merges LSTM&#39;s forget and input gates into a single…</p></a><a class="rc-card" href="/deep-learning/recurrent-neural-networks/"><b>Recurrent Neural Networks</b><p>A recurrent neural network (RNN) reads a sequence one element at a time, carrying a hidden state forward from each step to the next — a running summary of everything seen so far.</p></a><a class="rc-card" href="/deep-learning/sequence-to-sequence-models/"><b>Sequence-to-Sequence Models</b><p>A sequence-to-sequence (seq2seq) model turns one sequence into another, possibly of a different length — a sentence in one language into a sentence in another, say.</p></a><a class="rc-card" href="/deep-learning/encoder-decoder-architectures-with-attention/"><b>Encoder-Decoder Architectures with Attention</b><p>The plain seq2seq decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts.</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/sequence-models/"><b>Sequence Models</b><p>Text, audio and time series are sequences: order matters, and length varies. This district covers the networks built to read one step at a time while keeping a memory of what came before.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/gated-recurrent-units/">← Previous: Gated Recurrent Units</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

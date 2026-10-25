@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expert Systems and Their Limits — AI Base</title>
+<meta name="description" content="An expert system captures the knowledge of human specialists as a set of if-then rules and applies them with an inference engine. In the 1980s they powered a commercial AI boom.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/expert-systems-and-their-limits/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Expert Systems and Their Limits — AI Base">
+<meta property="og:description" content="An expert system captures the knowledge of human specialists as a set of if-then rules and applies them with an inference engine. In the 1980s they powered a commercial AI boom.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/expert-systems-and-their-limits/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Expert Systems and Their Limits","item":"https://ai.saranmahadev.in/fundamentals/expert-systems-and-their-limits/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Expert Systems and Their Limits","description":"An expert system captures the knowledge of human specialists as a set of if-then rules and applies them with an inference engine. In the 1980s they powered a commercial AI boom.","url":"https://ai.saranmahadev.in/fundamentals/expert-systems-and-their-limits/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the two main parts of an expert system?","acceptedAnswer":{"@type":"Answer","text":"A knowledge base of rules and facts, and an inference engine that applies them."}},{"@type":"Question","name":"What is \"brittleness\"?","acceptedAnswer":{"@type":"Answer","text":"Failing badly, or having nothing to say, when a case falls outside the situations the rules were written for."}},{"@type":"Question","name":"Why is knowledge acquisition a bottleneck?","acceptedAnswer":{"@type":"Answer","text":"It depends on experts putting their skill into explicit rules, which is slow, expensive and often incomplete."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · Classic AI</p>
+        <h1 class="doc-title">Expert Systems and Their Limits</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c59pvz6bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="c59pvz6pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c59pvz6bg)"/>
+  <circle cx="309" cy="128" r="166" fill="#a8e2d7" opacity="0.27"/><circle cx="645" cy="131" r="173" fill="#4e7283" opacity="0.37"/><circle cx="78" cy="305" r="74" fill="#4e7283" opacity="0.34"/><circle cx="996" cy="124" r="187" fill="#c3d6b3" opacity="0.30"/><circle cx="1071" cy="6" r="119" fill="#4e7283" opacity="0.51"/><circle cx="672" cy="328" r="109" fill="#e2f5f1" opacity="0.36"/>
+  <path d="M0,420 L0,312 L30,309 L60,307 L90,306 L120,306 L150,307 L180,310 L210,313 L240,317 L270,322 L300,327 L330,332 L360,337 L390,342 L420,345 L450,348 L480,349 L510,350 L540,349 L570,347 L600,343 L630,339 L660,335 L690,330 L720,325 L750,320 L780,315 L810,311 L840,308 L870,306 L900,306 L930,306 L960,308 L990,311 L1020,314 L1050,319 L1080,324 L1110,329 L1140,334 L1170,339 L1200,343 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,377 L60,373 L90,370 L120,367 L150,364 L180,363 L210,362 L240,362 L270,363 L300,365 L330,368 L360,371 L390,374 L420,378 L450,382 L480,385 L510,388 L540,391 L570,393 L600,394 L630,394 L660,393 L690,392 L720,389 L750,386 L780,383 L810,379 L840,376 L870,372 L900,369 L930,366 L960,364 L990,362 L1020,362 L1050,362 L1080,364 L1110,366 L1140,369 L1170,372 L1200,375 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="690" cy="218" rx="191" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-10.3 690 218)"/><ellipse cx="690" cy="218" rx="265" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-4.3 690 218)"/>
+  <circle cx="690" cy="218" r="75" fill="url(#c59pvz6pl)"/>
+  <circle cx="672" cy="297" r="14" fill="#ffffff" opacity="0.69"/><circle cx="590" cy="295" r="12" fill="#ffffff" opacity="0.73"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An <strong>expert system</strong> captures the knowledge of human specialists as a set of if-then <strong>rules</strong> and applies them with an <strong>inference engine</strong>. In the 1980s they powered a commercial AI boom. They also hit hard limits: they were <strong>brittle</strong> outside their rules, expensive to build and update, and the boom ended in the second AI winter.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/logic-and-knowledge-representation/" data-topic="fundamentals/logic-and-knowledge-representation">Logic and Knowledge Representation</a> and <a class="wikilink" href="/fundamentals/rules-vs-learning/" data-topic="fundamentals/rules-vs-learning">Rules vs Learning</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>If rules work so well in narrow domains, why did the rule-writing approach to AI stall?</p>
+<h2 id="intuition-a-very-thorough-checklist">Intuition: a very thorough checklist</h2>
+<p>An expert system is a checklist written by specialists. Interview an expert on how they diagnose a fault, turn the answers into rules, and let a machine apply them tirelessly and consistently. It has two main parts:</p>
+<ul>
+<li>A <strong>knowledge base</strong>: the rules and facts, written down by people.</li>
+<li>An <strong>inference engine</strong>: the general-purpose machinery that applies rules to the facts of a case, often by chaining (see <a class="wikilink" href="/fundamentals/logic-and-knowledge-representation/" data-topic="fundamentals/logic-and-knowledge-representation">Logic and Knowledge Representation</a>).</li>
+</ul>
+<p>The idea has a long history. MYCIN, a 1970s research system, used rules to recommend treatments for blood infections. In 1980, Digital Equipment Corporation put XCON into use, a rule-based system that configured computer orders, and it became the flagship of a wave of commercial expert systems.</p>
+<h2 id="why-they-hit-a-ceiling">Why they hit a ceiling</h2>
+<table>
+<thead>
+<tr>
+<th>Limit</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Knowledge acquisition bottleneck</strong></td>
+<td>Experts find it hard to put their skill into rules, and interviews are slow and expensive.</td>
+</tr>
+<tr>
+<td><strong>Brittleness</strong></td>
+<td>Outside the situations its rules cover, the system does not degrade gracefully. It just has nothing to say, or gives a wrong answer.</td>
+</tr>
+<tr>
+<td><strong>Conflicts</strong></td>
+<td>Rules can contradict each other, and someone must decide which wins.</td>
+</tr>
+<tr>
+<td><strong>Maintenance</strong></td>
+<td>Every change to the world means changing rules, and rules interact in ways that grow hard to predict.</td>
+</tr>
+<tr>
+<td><strong>No learning</strong></td>
+<td>The system never improves from experience.</td>
+</tr>
+</tbody></table>
+<p>By the late 1980s these costs, together with cuts in funding, contributed to the second AI winter (see <a class="wikilink" href="/fundamentals/a-short-history-of-ai/" data-topic="fundamentals/a-short-history-of-ai">A Short History of AI</a>).</p>
+<h2 id="a-worked-example-a-lamp-troubleshooter">A worked example: a lamp troubleshooter</h2>
+<p>The bench has four rules for a lamp that will not work:</p>
+<ol>
+<li>If the lamp is dead <strong>and</strong> the plug is out, plug it in.</li>
+<li>If the lamp is dead <strong>and</strong> the bulb looks broken, replace the bulb.</li>
+<li>If the lamp is dead <strong>and</strong> the switch is loose, replace the switch.</li>
+<li>If the cord looks frayed, unplug it and replace the cord (a fire risk).</li>
+</ol>
+<p>Try three situations:</p>
+<ul>
+<li><em>Dead lamp with the plug out</em>: rule 1 fires. The system works.</li>
+<li><em>Lamp flickers when the washing machine starts</em>: <strong>no rule matches.</strong> Nobody thought of it, so the system is silent.</li>
+<li><em>Dead lamp, plug out and cord frayed</em>: rules 1 <strong>and</strong> 4 both fire with different advice (&quot;plug it in&quot; against &quot;unplug it now&quot;). The rules cannot tell which matters more.</li>
+</ul>
+<p>Fixing either problem needs a person to write a new rule or set a priority.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="lamp-troubleshooter" data-title="A lamp troubleshooter built from rules"><p class="bench-fallback"><strong>Interactive bench: A lamp troubleshooter built from rules.</strong> A rule-based lamp troubleshooter. You tick what you observe, and it fires every matching rule. It falls silent on unfamiliar situations, gives conflicting advice when rules clash, and lets you teach it new rules.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Tick &quot;The lamp does not light&quot; and &quot;The plug is not in the socket&quot;. Read the advice.</li>
+<li>Untick those and tick &quot;It flickers when the washing machine starts&quot;. What happens?</li>
+<li>Tick dead, plug out and frayed cord together. What does the system say?</li>
+<li>Teach it a rule for the flicker case, then test it again. Then think about how many such rules a real product would need.</li>
+</ol>
+<p><strong>What you should notice:</strong> the system is helpful inside its rules and useless outside them. Each gap needs a human to fill it.</p>
+<h2 id="where-they-went">Where they went</h2>
+<p>Rule engines did not disappear: business rules, tax software, configuration tools and safety checks still use them. But for the messy, open-ended problems in perception, language and prediction, <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a> took over, by learning patterns from data instead of waiting for people to write them down. Today&#39;s best systems often mix the two, with a learned model doing the fuzzy work and a few rules guarding the edges.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Thinking rules are obsolete.</strong> They are excellent when cases are few and the reasoning must be checked.</li>
+<li><strong>Confusing &quot;explainable&quot; with &quot;complete&quot;.</strong> The system can explain what it says but not what it lacks.</li>
+<li><strong>Assuming experts can articulate everything they know.</strong> Much expertise is intuition.</li>
+<li><strong>Believing more rules solve everything.</strong> Each addition raises the chance of clashes.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are the two main parts of an expert system?</summary>
+A knowledge base of rules and facts, and an inference engine that applies them.
+</details>
+
+<details><summary>2. What is "brittleness"?</summary>
+Failing badly, or having nothing to say, when a case falls outside the situations the rules were written for.
+</details>
+
+<details><summary>3. Why is knowledge acquisition a bottleneck?</summary>
+It depends on experts putting their skill into explicit rules, which is slow, expensive and often incomplete.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Knowledge base:</strong> the collection of rules and facts written by people.</li>
+<li><strong>Inference engine:</strong> the general machinery that applies the rules to a case.</li>
+<li><strong>Knowledge acquisition bottleneck:</strong> the difficulty of getting experts&#39; skill into explicit rules.</li>
+<li><strong>Brittleness:</strong> failing badly outside the situations the rules cover.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/logic-and-knowledge-representation/" data-topic="fundamentals/logic-and-knowledge-representation">Logic and Knowledge Representation</a> · <a class="wikilink" href="/fundamentals/rules-vs-learning/" data-topic="fundamentals/rules-vs-learning">Rules vs Learning</a> · <a class="wikilink" href="/fundamentals/a-short-history-of-ai/" data-topic="fundamentals/a-short-history-of-ai">A Short History of AI</a> · <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/expert-systems-and-their-limits">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/judging-ai/"><small>Read next</small><b>Judging AI</b><p>Building an AI system is only half the job. The other half is judging it: how do you know it works, whether it will keep working on new cases, and where it is likely to fail?</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/logic-and-knowledge-representation/"><b>Logic and Knowledge Representation</b><p>Classic AI stored what it knew as facts and rules, and used inference to work out new facts from them. Writing knowledge in a form a machine can reason with is called knowledge representation.</p></a><a class="rc-card" href="/fundamentals/rules-vs-learning/"><b>Rules vs Learning</b><p>There are two ways to make a machine behave well: write the rules by hand, or show it examples and let it work the rules out. Hand-written rules are clear but brittle.</p></a><a class="rc-card" href="/fundamentals/a-short-history-of-ai/"><b>A Short History of AI</b><p>AI&#39;s history is a pattern of big promises, real breakthroughs, disappointment and funding cuts, then a new approach and a new wave. The two long slumps are called AI winters.</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a><a class="rc-card" href="/fundamentals/classic-ai/"><b>Classic AI</b><p>Before machine learning took over, AI meant searching, reasoning and planning with hand-built knowledge.</p></a><a class="rc-card" href="/math/logic-and-truth-tables/"><b>Logic and Truth Tables</b><p>Logic deals with statements that are either true or false and the ways of combining them: AND, OR, NOT, XOR and IF … THEN.</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/planning/">← Previous: Planning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

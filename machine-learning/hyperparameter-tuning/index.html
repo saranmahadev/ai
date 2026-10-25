@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hyperparameter Tuning — AI Base</title>
+<meta name="description" content="Parameters are learned; hyperparameters are chosen before training: learning rate, tree depth, penalty strength, number of neighbours.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/hyperparameter-tuning/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Hyperparameter Tuning — AI Base">
+<meta property="og:description" content="Parameters are learned; hyperparameters are chosen before training: learning rate, tree depth, penalty strength, number of neighbours.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/hyperparameter-tuning/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Hyperparameter Tuning","item":"https://ai.saranmahadev.in/machine-learning/hyperparameter-tuning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hyperparameter Tuning","description":"Parameters are learned; hyperparameters are chosen before training: learning rate, tree depth, penalty strength, number of neighbours.","url":"https://ai.saranmahadev.in/machine-learning/hyperparameter-tuning/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between a parameter and a hyperparameter?","acceptedAnswer":{"@type":"Answer","text":"Parameters are learned during training; hyperparameters are set beforehand."}},{"@type":"Question","name":"Why can random search beat grid search for the same budget?","acceptedAnswer":{"@type":"Answer","text":"It tries more distinct values of each setting, so it is likelier to land near the ones that matter."}},{"@type":"Question","name":"Why report performance on a test set after tuning?","acceptedAnswer":{"@type":"Answer","text":"The best validation score is optimistically biased by the selection."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Evaluation</p>
+        <h1 class="doc-title">Hyperparameter Tuning</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ce5hhc5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="ce5hhc5pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ce5hhc5bg)"/>
+  <circle cx="146" cy="262" r="217" fill="#8a6b5c" opacity="0.24"/><circle cx="420" cy="278" r="205" fill="#8a6b5c" opacity="0.39"/><circle cx="1118" cy="397" r="66" fill="#ffd99f" opacity="0.43"/><circle cx="126" cy="260" r="131" fill="#ffd99f" opacity="0.50"/><circle cx="809" cy="95" r="96" fill="#8a6b5c" opacity="0.25"/><circle cx="880" cy="99" r="136" fill="#ffd99f" opacity="0.50"/>
+  <path d="M0,420 L0,317 L30,322 L60,327 L90,332 L120,337 L150,341 L180,345 L210,348 L240,349 L270,350 L300,349 L330,347 L360,344 L390,340 L420,335 L450,330 L480,325 L510,320 L540,315 L570,311 L600,308 L630,306 L660,306 L690,306 L720,308 L750,310 L780,314 L810,318 L840,323 L870,328 L900,334 L930,338 L960,343 L990,346 L1020,348 L1050,349 L1080,349 L1110,348 L1140,346 L1170,343 L1200,338 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,382 L30,387 L60,391 L90,393 L120,394 L150,393 L180,391 L210,388 L240,383 L270,379 L300,374 L330,369 L360,365 L390,363 L420,362 L450,363 L480,365 L510,368 L540,373 L570,377 L600,382 L630,387 L660,391 L690,393 L720,394 L750,393 L780,391 L810,388 L840,383 L870,379 L900,374 L930,369 L960,365 L990,363 L1020,362 L1050,363 L1080,365 L1110,368 L1140,373 L1170,377 L1200,382 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="660" cy="208" rx="149" ry="42" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-24.4 660 208)"/><ellipse cx="660" cy="208" rx="206" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-18.4 660 208)"/>
+  <circle cx="660" cy="208" r="58" fill="url(#ce5hhc5pl)"/>
+  <circle cx="787" cy="284" r="12" fill="#ffffff" opacity="0.78"/><circle cx="805" cy="254" r="8" fill="#ffffff" opacity="0.83"/><circle cx="453" cy="157" r="10" fill="#ffffff" opacity="0.73"/><circle cx="593" cy="274" r="16" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Parameters are learned; <strong>hyperparameters</strong> are chosen before training: learning rate, tree depth, penalty strength, number of neighbours. Tuning means trying combinations and keeping the one with the best validation score, within a fixed budget of training runs. How you spend the budget matters.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a>, <a class="wikilink" href="/machine-learning/pruning-and-overfitting/" data-topic="machine-learning/pruning-and-overfitting">Pruning and Overfitting</a> and <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I choose the settings?&quot; There is no formula; you search, and the search itself can overfit the validation data if you are careless.</p>
+<h2 id="intuition-hunting-for-a-peak-with-few-tries">Intuition: hunting for a peak with few tries</h2>
+<p>Imagine validation score as a landscape over the settings. Some settings matter a lot (learning rate: too high or too low ruins training) and others barely (a mild penalty). You have, say, nine training runs. A <strong>grid</strong> tries a neat lattice: 3 values of each of 2 settings, so only 3 distinct values of the setting that matters. <strong>Random search</strong> picks nine random points, so it tries nine distinct values of <em>every</em> setting, and is more likely to land near the peak of the one that matters.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">grid search      try every combination from a fixed list of values per setting
+random search    sample settings at random (often on a log scale for rates and penalties)
+smarter search   Bayesian optimisation, successive halving: spend more on promising settings
+search scale     learning rates and penalties are searched on a log scale: 10⁻⁴ … 1
+</code></pre>
+<p>Each trial is scored by cross-validation or a validation set. The best score found is optimistically biased: having picked the winner among many, its true performance is usually a bit lower, so report the final result on a test set touched only once.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A hidden validation score depends strongly on the learning rate (best near <code>10⁻²·³</code>) and weakly on regularisation; the true best score is 0.950. Best score found with the same number of trials:</p>
+<pre><code class="language-text">trials     grid search     random search (average of 200 draws)
+   9          0.856              0.869   (median 0.893)
+  16          0.907              0.902
+  25          0.856              0.919   (median 0.928)
+</code></pre>
+<p>Random search is ahead at 9 and 25 trials and tied at 16. The grid&#39;s results are lumpy: 25 trials on a 5 × 5 lattice test only five learning rates, and none falls near the peak, whereas 25 random trials try 25 different ones. A single random draw can be unlucky (one seed scored only 0.774 at 9 trials), so the guarantee is about averages, not any one run.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="search-budget" data-title="Spend a tuning budget"><p class="bench-fallback"><strong>Interactive bench: Spend a tuning budget.</strong> A hidden validation-score landscape over learning rate and regularisation; the bench places grid or random trials with a chosen budget and shows the best score found, the best possible, and how many different learning rates were tried.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Use a grid with 9 trials and count the distinct learning rates.</li>
+<li>Switch to random with 9 trials and press <strong>New random draw</strong> several times.</li>
+<li>Raise the budget to 25 for each strategy.</li>
+<li>Compare the best score with the best possible.</li>
+</ol>
+<p><strong>What you should notice:</strong> a grid repeats the same few values of the setting that matters, while random search explores it more richly but varies from draw to draw.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every training pipeline:</strong> learning rate, depth, penalties, batch size.</li>
+<li><strong>Automated tools:</strong> Optuna, Ray Tune and similar libraries.</li>
+<li><strong>Neural network training:</strong> the learning rate is usually the most important hyperparameter to tune.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Tuning on the test set.</strong></li>
+<li><strong>Searching a linear scale</strong> for rates and penalties that need a log scale.</li>
+<li><strong>Too few trials</strong> for too many settings.</li>
+<li><strong>Reporting the best validation score</strong> as if it were unbiased.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the difference between a parameter and a hyperparameter?</summary>
+Parameters are learned during training; hyperparameters are set beforehand.
+</details>
+
+<details><summary>2. Why can random search beat grid search for the same budget?</summary>
+It tries more distinct values of each setting, so it is likelier to land near the ones that matter.
+</details>
+
+<details><summary>3. Why report performance on a test set after tuning?</summary>
+The best validation score is optimistically biased by the selection.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Hyperparameter:</strong> a setting chosen before training.</li>
+<li><strong>Grid search:</strong> trying every combination of listed values.</li>
+<li><strong>Random search:</strong> sampling settings at random.</li>
+<li><strong>Search budget:</strong> the number of training runs you can afford.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a> · <a class="wikilink" href="/machine-learning/pruning-and-overfitting/" data-topic="machine-learning/pruning-and-overfitting">Pruning and Overfitting</a> · <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a> · <a class="wikilink" href="/machine-learning/ridge-and-lasso/" data-topic="machine-learning/ridge-and-lasso">Ridge and Lasso</a> · <a class="wikilink" href="/math/common-test-mistakes/" data-topic="math/common-test-mistakes">Common Test Mistakes</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/hyperparameter-tuning">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/unsupervised-learning/"><small>Read next</small><b>Unsupervised Learning</b><p>When no answers are given, a model can still find structure: groups of similar points, the true number of dimensions in the data, or the odd ones out.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/cross-validation/"><b>Cross-Validation</b><p>One train/validation split gives one score, and that score depends on which points happened to land where.</p></a><a class="rc-card" href="/machine-learning/pruning-and-overfitting/"><b>Pruning and Overfitting</b><p>Left alone, a tree keeps splitting until every leaf is pure, which means it memorises noise.</p></a><a class="rc-card" href="/math/learning-rate/"><b>Learning Rate</b><p>The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.</p></a><a class="rc-card" href="/machine-learning/ridge-and-lasso/"><b>Ridge and Lasso</b><p>When there are many features and little data, a linear model can fit noise with huge, contradictory weights. Regularisation adds a penalty on the weights so the model prefers small ones.</p></a><a class="rc-card" href="/math/common-test-mistakes/"><b>Common Test Mistakes</b><p>Statistical tests are easy to misuse.</p></a><a class="rc-card" href="/machine-learning/evaluation/"><b>Evaluation</b><p>A model is only as good as the evidence for it.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/cross-validation/">← Previous: Cross-Validation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

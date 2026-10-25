@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generalization — AI Base</title>
+<meta name="description" content="Generalization is a model&#39;s ability to do well on examples it has never seen. A model that merely memorises its training examples, noise and all, scores perfectly on them and poorly on anything new.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/generalization/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Generalization — AI Base">
+<meta property="og:description" content="Generalization is a model&#39;s ability to do well on examples it has never seen. A model that merely memorises its training examples, noise and all, scores perfectly on them and poorly on anything new.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/generalization/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Generalization","item":"https://ai.saranmahadev.in/fundamentals/generalization/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Generalization","description":"Generalization is a model's ability to do well on examples it has never seen. A model that merely memorises its training examples, noise and all, scores perfectly on them and poorly on anything new.","url":"https://ai.saranmahadev.in/fundamentals/generalization/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"A model scores 99% on training data and 70% on new data. What has happened?","acceptedAnswer":{"@type":"Answer","text":"It has overfit: it memorised training quirks rather than learning the general pattern."}},{"@type":"Question","name":"Why keep a test set separate?","acceptedAnswer":{"@type":"Answer","text":"So that you measure performance on examples the model has never seen, which is what real use looks like."}},{"@type":"Question","name":"What is underfitting?","acceptedAnswer":{"@type":"Answer","text":"A model too simple to capture the real pattern, so it does poorly on both training and new data."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · Judging AI</p>
+        <h1 class="doc-title">Generalization</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1kj1sptbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="c1kj1sptpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1kj1sptbg)"/>
+  <circle cx="812" cy="320" r="74" fill="#4e7283" opacity="0.56"/><circle cx="620" cy="99" r="205" fill="#a8e2d7" opacity="0.32"/><circle cx="590" cy="252" r="94" fill="#4e7283" opacity="0.59"/><circle cx="512" cy="356" r="229" fill="#e2f5f1" opacity="0.44"/><circle cx="879" cy="96" r="213" fill="#4e7283" opacity="0.48"/><circle cx="993" cy="308" r="185" fill="#c3d6b3" opacity="0.35"/>
+  <path d="M0,420 L0,333 L30,340 L60,345 L90,348 L120,350 L150,349 L180,346 L210,341 L240,336 L270,329 L300,322 L330,316 L360,311 L390,307 L420,306 L450,306 L480,309 L510,314 L540,320 L570,326 L600,333 L630,340 L660,345 L690,348 L720,350 L750,349 L780,346 L810,341 L840,336 L870,329 L900,322 L930,316 L960,311 L990,307 L1020,306 L1050,306 L1080,309 L1110,314 L1140,320 L1170,326 L1200,333 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,391 L30,393 L60,394 L90,393 L120,391 L150,387 L180,383 L210,378 L240,373 L270,369 L300,365 L330,363 L360,362 L390,363 L420,365 L450,369 L480,373 L510,378 L540,383 L570,387 L600,391 L630,393 L660,394 L690,393 L720,391 L750,387 L780,383 L810,378 L840,373 L870,369 L900,365 L930,363 L960,362 L990,363 L1020,365 L1050,369 L1080,373 L1110,378 L1140,383 L1170,387 L1200,391 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="749" cy="227" rx="262" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(20.5 749 227)"/><ellipse cx="749" cy="227" rx="362" ry="101" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(26.5 749 227)"/>
+  <circle cx="749" cy="227" r="103" fill="url(#c1kj1sptpl)"/>
+  <circle cx="948" cy="315" r="12" fill="#ffffff" opacity="0.76"/><circle cx="346" cy="168" r="13" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Generalization</strong> is a model&#39;s ability to do well on examples it has never seen. A model that merely memorises its training examples, noise and all, scores perfectly on them and poorly on anything new. This gap between training and new data is called <strong>overfitting</strong>, and it is why we always test on data held back from training.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/training-vs-inference/" data-topic="fundamentals/training-vs-inference">Training vs Inference</a> and <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>A model gets everything right on its training data. Can you trust it? Not yet. What matters is what happens next time.</p>
+<h2 id="intuition-the-student-who-memorised-the-answers">Intuition: the student who memorised the answers</h2>
+<p>A student memorises last year&#39;s exam answers word for word and scores full marks on last year&#39;s paper. On this year&#39;s paper, with new questions, they struggle. A different student learned the <em>ideas</em>, and does well on both. Only the second student <strong>generalised</strong>.</p>
+<p>To catch the difference you test on questions the model <strong>has not seen</strong>:</p>
+<ul>
+<li><strong>Training set</strong>: the examples the model learns from.</li>
+<li><strong>Test set</strong>: examples held back, used only to judge the finished model.</li>
+</ul>
+<p>If training accuracy is high and test accuracy is low, the model has overfit. If both are low, it has <strong>underfit</strong>: it is too simple to capture the pattern.</p>
+<h2 id="a-worked-example-noisy-points-on-a-diagonal">A worked example: noisy points on a diagonal</h2>
+<p>The bench&#39;s true pattern is a diagonal line: points above it are &quot;orange&quot;, points below are &quot;purple&quot;. But 12% of labels are wrong (noise), as real data often is, so no model can score above about 88%.</p>
+<p>A model called <em>k</em>-nearest neighbours labels a new point by the majority vote of its <em>k</em> closest training examples. With <em>k = 1</em> it copies the single nearest example, which memorises every noisy label. Larger <em>k</em> averages more neighbours:</p>
+<table>
+<thead>
+<tr>
+<th>k (with 120 examples)</th>
+<th>Accuracy on training data</th>
+<th>Accuracy on new data</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1 (pure memorising)</td>
+<td><strong>100%</strong></td>
+<td><strong>75%</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td>87%</td>
+<td>87%</td>
+</tr>
+<tr>
+<td>15</td>
+<td>84%</td>
+<td>84%</td>
+</tr>
+<tr>
+<td>31</td>
+<td>82%</td>
+<td>83%</td>
+</tr>
+</tbody></table>
+<p>The memoriser aces its own examples and fails on new ones. A gentler model scores slightly lower on the training set and much better on new data, close to the noise ceiling. Too much smoothing (very large k) would start to lose the real pattern, which is underfitting.</p>
+<p>More data helps too. With only 20 examples and <em>k = 1</em>, the test accuracy is about 72%; with 120 examples it is 75%, and with more smoothing it can reach the ceiling.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="memoriser-vs-rule" data-title="Memorising vs learning the pattern"><p class="bench-fallback"><strong>Interactive bench: Memorising vs learning the pattern.</strong> Noisy points around a diagonal boundary, with a nearest-neighbour model whose smoothing you control. The page shows accuracy on the training examples and on new examples, and the model's decision regions.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set <em>k</em> to 1 with all 120 examples. What are the training and new-data accuracies? Look at the decision regions: do they follow the diagonal?</li>
+<li>Raise <em>k</em> to 5, then 15. What happens to the gap between the two accuracies?</li>
+<li>Push <em>k</em> to 31. Does new-data accuracy keep improving?</li>
+<li>Cut the training examples to 20 and repeat. How does having less data change the story?</li>
+</ol>
+<p><strong>What you should notice:</strong> high training accuracy alone means little. The number that matters is accuracy on unseen data, and it peaks when the model is complicated enough to catch the pattern but not so flexible that it copies the noise.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<p>Overfitting and generalization are central to <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a> and <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>, where huge models can memorise huge datasets. Tools such as validation sets, regularisation and early stopping exist to fight it. The concern returns in <a class="wikilink" href="/llms/llms/" data-topic="llms/llms">LLMs</a>, where a model&#39;s ability to handle new questions matters more than its ability to repeat text it has seen.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Testing on training data.</strong> It says nothing about new cases.</li>
+<li><strong>Tuning against the test set.</strong> If you keep adjusting the model until the test score looks good, the test set stops being unseen.</li>
+<li><strong>Assuming a complex model is a better one.</strong> Extra flexibility fits noise as well as signal.</li>
+<li><strong>Assuming the world stays the same.</strong> New data may differ from anything in training (see <a class="wikilink" href="/fundamentals/where-ai-goes-wrong/" data-topic="fundamentals/where-ai-goes-wrong">Where AI Goes Wrong</a>).</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. A model scores 99% on training data and 70% on new data. What has happened?</summary>
+It has overfit: it memorised training quirks rather than learning the general pattern.
+</details>
+
+<details><summary>2. Why keep a test set separate?</summary>
+So that you measure performance on examples the model has never seen, which is what real use looks like.
+</details>
+
+<details><summary>3. What is underfitting?</summary>
+A model too simple to capture the real pattern, so it does poorly on both training and new data.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Training set:</strong> the examples a model learns from.</li>
+<li><strong>Test set:</strong> examples held back to judge the finished model.</li>
+<li><strong>Overfitting:</strong> fitting the quirks and noise of the training data, so new data goes badly.</li>
+<li><strong>Underfitting:</strong> being too simple to capture the real pattern.</li>
+<li><strong>Noise:</strong> random errors or variation in data that hides the true pattern.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/training-vs-inference/" data-topic="fundamentals/training-vs-inference">Training vs Inference</a> · <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a> · <a class="wikilink" href="/fundamentals/where-ai-goes-wrong/" data-topic="fundamentals/where-ai-goes-wrong">Where AI Goes Wrong</a> · <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a> · <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/generalization">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/where-ai-goes-wrong/"><small>Read next</small><b>Where AI Goes Wrong</b><p>AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/training-vs-inference/"><b>Training vs Inference</b><p>Training is when a model&#39;s parameters are adjusted using examples. Inference is when the finished, frozen model is used to make predictions on new inputs.</p></a><a class="rc-card" href="/fundamentals/measuring-performance/"><b>Measuring Performance</b><p>To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/llms/llms/"><b>LLMs</b><p>A large language model is, mechanically, nothing more than the decoder-only transformer and the decoding, conditioning and evaluation machinery already covered on Transformers and Generative AI.</p></a><a class="rc-card" href="/fundamentals/where-ai-goes-wrong/"><b>Where AI Goes Wrong</b><p>AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/measuring-performance/">← Previous: Measuring Performance</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

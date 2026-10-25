@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attention Masks: Padding and Causal Masking — AI Base</title>
+<meta name="description" content="Plain attention lets every position look at every other position.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/attention-masks-padding-and-causal-masking/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Attention Masks: Padding and Causal Masking — AI Base">
+<meta property="og:description" content="Plain attention lets every position look at every other position.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/attention-masks-padding-and-causal-masking/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Attention Masks: Padding and Causal Masking","item":"https://ai.saranmahadev.in/transformers/attention-masks-padding-and-causal-masking/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Attention Masks: Padding and Causal Masking","description":"Plain attention lets every position look at every other position.","url":"https://ai.saranmahadev.in/transformers/attention-masks-padding-and-causal-masking/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What value does a masked-out attention score get set to, and why that value specifically?","acceptedAnswer":{"@type":"Answer","text":"Negative infinity, so that after the softmax its weight is exactly zero — no finite negative value gives that exact guarantee."}},{"@type":"Question","name":"In the worked example, why were columns 2 and 3 blocked for every single query, including queries 2 and 3 themselves?","acceptedAnswer":{"@type":"Answer","text":"Because positions 2 and 3 are padding, and the padding mask blocks every query — real or padding — from attending to a padding position."}},{"@type":"Question","name":"What's the structural difference between how a padding mask and a causal mask block positions?","acceptedAnswer":{"@type":"Answer","text":"A padding mask blocks entire columns (no one may attend to a padding position); a causal mask blocks an upper triangle (no one may attend to a later position)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Embeddings and Masking</p>
+        <h1 class="doc-title">Attention Masks: Padding and Causal Masking</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cucrt0jbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="cucrt0jpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cucrt0jbg)"/>
+  <circle cx="149" cy="231" r="148" fill="#c5cacf" opacity="0.29"/><circle cx="437" cy="68" r="99" fill="#c5cacf" opacity="0.54"/><circle cx="277" cy="30" r="137" fill="#4f669f" opacity="0.37"/><circle cx="205" cy="259" r="70" fill="#c5cacf" opacity="0.48"/><circle cx="571" cy="399" r="127" fill="#abd0ff" opacity="0.58"/><circle cx="106" cy="54" r="75" fill="#c5cacf" opacity="0.32"/><circle cx="331" cy="387" r="171" fill="#c5cacf" opacity="0.50"/>
+  <path d="M0,420 L0,350 L30,349 L60,346 L90,342 L120,336 L150,329 L180,322 L210,316 L240,311 L270,307 L300,306 L330,306 L360,309 L390,314 L420,319 L450,326 L480,333 L510,339 L540,345 L570,348 L600,350 L630,349 L660,346 L690,342 L720,336 L750,329 L780,322 L810,316 L840,311 L870,307 L900,306 L930,306 L960,309 L990,314 L1020,319 L1050,326 L1080,333 L1110,339 L1140,345 L1170,348 L1200,350 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,392 L60,390 L90,389 L120,387 L150,384 L180,382 L210,380 L240,377 L270,375 L300,372 L330,370 L360,368 L390,366 L420,365 L450,363 L480,363 L510,362 L540,362 L570,362 L600,363 L630,364 L660,366 L690,367 L720,369 L750,372 L780,374 L810,376 L840,379 L870,381 L900,384 L930,386 L960,388 L990,390 L1020,391 L1050,393 L1080,393 L1110,394 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="947" cy="127" rx="203" ry="57" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-16.2 947 127)"/><ellipse cx="947" cy="127" rx="280" ry="78" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-10.2 947 127)"/>
+  <circle cx="947" cy="127" r="79" fill="url(#cucrt0jpl)"/>
+  <circle cx="845" cy="42" r="19" fill="#ffffff" opacity="0.80"/><circle cx="1214" cy="170" r="19" fill="#ffffff" opacity="0.69"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Plain attention lets every position look at every other position. Two very ordinary situations need to take some of that away: a batch of sequences padded to the same length, where the padding isn&#39;t real data, and a model generating text one token at a time, which must never peek at tokens that haven&#39;t been produced yet. Both are handled the same way — by masking.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Encoder-Decoder Architectures with Attention</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does attention stop a position from looking at positions it shouldn&#39;t?&quot; By setting the attention score for a forbidden position to negative infinity before the softmax — guaranteeing its weight comes out to exactly zero, no matter how the rest of the scores land.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Picture the attention weights for one query as a row of numbers that has to sum to 1. A mask is a simple yes/no veto applied before that row is computed: wherever the mask says &quot;no,&quot; that position&#39;s raw score gets knocked down to negative infinity, so after the softmax its share of the attention is exactly zero — not small, not negligible, exactly zero. <strong>Padding masks</strong> veto positions that are only there to make a batch rectangular, not real tokens. <strong>Causal masks</strong> veto every position that comes <em>after</em> the current one, so a model generating text left to right can never use information it wouldn&#39;t actually have yet at that point in generation.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">masked score(i, j) = score(i, j)   if position j is allowed for query i
+                    = −∞            otherwise
+
+causal mask:   allowed(i, j) = (j ≤ i)                — only look backward or at yourself
+padding mask:  allowed(i, j) = (j &lt; valid_length)     — never attend to padding positions
+combined:      allowed(i, j) = causal(i, j) AND padding(i, j)
+</code></pre>
+<p>Both masks can be applied together — a decoder processing a padded batch needs both the causal restriction and the padding restriction at once.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A sequence of length 4, where only the first 2 positions are real tokens (the rest is padding):</p>
+<pre><code class="language-text">causal mask (1 = allowed, 0 = blocked):
+  1 0 0 0
+  1 1 0 0
+  1 1 1 0
+  1 1 1 1
+
+padding mask (valid length 2):  [1, 1, 0, 0]
+
+combined mask (causal AND padding):
+  1 0 0 0
+  1 1 0 0
+  1 1 0 0
+  1 1 0 0
+</code></pre>
+<p>Every row, including the padding positions&#39; own rows, loses access to columns 2 and 3 — no query, real or padding, is ever allowed to attend to a padding position. The causal structure is still visible in the first two columns: query 0 can only see position 0, query 1 can see positions 0 and 1.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="attention-masks" data-title="Building and combining attention masks"><p class="bench-fallback"><strong>Interactive bench: Building and combining attention masks.</strong> Set a sequence's valid length and toggle causal masking on and off, and see the resulting allowed/blocked attention pattern as a grid.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Turn off causal masking and look at the padding mask alone — every real position attends to every other real position.</li>
+<li>Turn causal masking back on and watch the upper-right triangle close off.</li>
+<li>Shrink the valid length and watch more columns (not rows) get blocked.</li>
+</ol>
+<p><strong>What you should notice:</strong> padding masking blocks whole <em>columns</em> (nobody may attend to a padding position), while causal masking blocks a <em>triangle</em> (nobody may attend to a later position) — the two patterns compose by simple intersection.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is what distinguishes <a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">encoder-only</a> from <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">decoder-only</a> transformers</strong>: an encoder uses only padding masking (every real position sees every other), a decoder adds the causal mask on top.</li>
+<li><strong>It makes batched training possible at all</strong>: without padding masks, shorter sequences packed into the same batch as longer ones would leak attention onto meaningless padding tokens.</li>
+<li><strong>The same −∞-before-softmax trick reappears in <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention</a></strong>, which is really just a different, fixed mask pattern applied to the same mechanism.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Masking after the softmax instead of before.</strong> Zeroing out weights after the softmax breaks the guarantee that the remaining weights still sum to 1; the mask has to be applied to the scores, before normalization.</li>
+<li><strong>Forgetting padding masking in an encoder.</strong> Without it, real tokens&#39; attention weights get diluted by padding positions that carry no actual information.</li>
+<li><strong>Assuming causal masking alone handles padding.</strong> The two serve different purposes and are usually both needed together when training a decoder on padded batches.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What value does a masked-out attention score get set to, and why that value specifically?</summary>
+Negative infinity, so that after the softmax its weight is exactly zero — no finite negative value gives that exact guarantee.
+</details>
+
+<details><summary>2. In the worked example, why were columns 2 and 3 blocked for every single query, including queries 2 and 3 themselves?</summary>
+Because positions 2 and 3 are padding, and the padding mask blocks every query — real or padding — from attending to a padding position.
+</details>
+
+<details><summary>3. What's the structural difference between how a padding mask and a causal mask block positions?</summary>
+A padding mask blocks entire columns (no one may attend to a padding position); a causal mask blocks an upper triangle (no one may attend to a later position).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Padding mask:</strong> blocks every query from attending to positions that are only padding, not real tokens.</li>
+<li><strong>Causal mask:</strong> blocks every query from attending to positions later than itself in the sequence.</li>
+<li><strong>Masked score:</strong> an attention score set to negative infinity before the softmax, guaranteeing zero attention weight.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/encoder-decoder-architectures-with-attention/" data-topic="deep-learning/encoder-decoder-architectures-with-attention">Encoder-Decoder Architectures with Attention</a> · <a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-Only Architectures</a> · <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">Decoder-Only Architectures</a> · <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/attention-masks-padding-and-causal-masking">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/the-transformer-block/"><small>Read next</small><b>The Transformer Block</b><p>Attention on its own is only half of a transformer layer.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/encoder-decoder-architectures-with-attention/"><b>Encoder-Decoder Architectures with Attention</b><p>The plain seq2seq decoder sees the entire input sequence through exactly one fixed context vector, chosen once before decoding even starts.</p></a><a class="rc-card" href="/transformers/encoder-only-architectures/"><b>Encoder-Only Architectures</b><p>The masking topic introduced two patterns: padding masks and causal masks.</p></a><a class="rc-card" href="/transformers/decoder-only-architectures/"><b>Decoder-Only Architectures</b><p>The previous topic&#39;s bidirectional attention works because the whole input is available at once.</p></a><a class="rc-card" href="/transformers/sparse-and-local-windowed-attention/"><b>Sparse and Local (Windowed) Attention</b><p>KV-caching fixes redundant recomputation, but the underlying attention computation itself still scales with the square of sequence length.</p></a><a class="rc-card" href="/transformers/embeddings-and-masking/"><b>Embeddings and Masking</b><p>A token id is just an index.</p></a><a class="rc-card" href="/transformers/alibi-and-length-extrapolation/"><b>ALiBi and Length Extrapolation</b><p>RoPE builds relative position into attention through rotation.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/weight-tying/">← Previous: Weight Tying</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

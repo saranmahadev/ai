@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measuring Performance — AI Base</title>
+<meta name="description" content="To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/measuring-performance/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Measuring Performance — AI Base">
+<meta property="og:description" content="To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/measuring-performance/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Measuring Performance","item":"https://ai.saranmahadev.in/fundamentals/measuring-performance/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Measuring Performance","description":"To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.","url":"https://ai.saranmahadev.in/fundamentals/measuring-performance/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"A detector flags 50 cases; 30 are real. What is its precision?","acceptedAnswer":{"@type":"Answer","text":"30 ÷ 50 = 60%."}},{"@type":"Question","name":"There are 200 real cases and the detector catches 150. What is its recall?","acceptedAnswer":{"@type":"Answer","text":"150 ÷ 200 = 75%."}},{"@type":"Question","name":"Why can a useless system have high accuracy?","acceptedAnswer":{"@type":"Answer","text":"If nearly every case belongs to one class, always predicting that class is right almost every time, though it never finds the rare cases that matter."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · Judging AI</p>
+        <h1 class="doc-title">Measuring Performance</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ck7k2imbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="ck7k2impl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ck7k2imbg)"/>
+  <circle cx="1027" cy="384" r="108" fill="#4e7283" opacity="0.35"/><circle cx="1109" cy="209" r="125" fill="#a8e2d7" opacity="0.40"/><circle cx="837" cy="175" r="139" fill="#e2f5f1" opacity="0.46"/><circle cx="994" cy="222" r="178" fill="#e2f5f1" opacity="0.59"/><circle cx="252" cy="75" r="151" fill="#e2f5f1" opacity="0.52"/><circle cx="1181" cy="86" r="158" fill="#a8e2d7" opacity="0.48"/>
+  <path d="M0,420 L0,313 L30,319 L60,326 L90,333 L120,339 L150,344 L180,348 L210,350 L240,349 L270,346 L300,342 L330,336 L360,330 L390,323 L420,316 L450,311 L480,307 L510,306 L540,306 L570,309 L600,313 L630,319 L660,326 L690,333 L720,339 L750,344 L780,348 L810,350 L840,349 L870,346 L900,342 L930,336 L960,330 L990,323 L1020,316 L1050,311 L1080,307 L1110,306 L1140,306 L1170,309 L1200,313 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,366 L30,369 L60,373 L90,376 L120,380 L150,384 L180,387 L210,390 L240,392 L270,393 L300,394 L330,394 L360,392 L390,390 L420,388 L450,385 L480,381 L510,377 L540,374 L570,370 L600,367 L630,365 L660,363 L690,362 L720,362 L750,363 L780,365 L810,367 L840,370 L870,374 L900,378 L930,381 L960,385 L990,388 L1020,391 L1050,393 L1080,394 L1110,394 L1140,393 L1170,392 L1200,390 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="653" cy="252" rx="153" ry="43" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-3.6 653 252)"/><ellipse cx="653" cy="252" rx="212" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(2.4 653 252)"/>
+  <circle cx="653" cy="252" r="60" fill="url(#ck7k2impl)"/>
+  <circle cx="654" cy="325" r="17" fill="#ffffff" opacity="0.78"/><circle cx="819" cy="203" r="14" fill="#ffffff" opacity="0.86"/><circle cx="427" cy="252" r="9" fill="#ffffff" opacity="0.67"/><circle cx="706" cy="334" r="10" fill="#ffffff" opacity="0.65"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>To judge an AI system you have to <strong>count its hits, misses and false alarms</strong>, not just its overall accuracy. When the thing you are looking for is rare, a system that does nothing at all can score 99% accuracy while catching none of it.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/types-of-tasks/" data-topic="fundamentals/types-of-tasks">Types of Tasks</a> and <a class="wikilink" href="/fundamentals/training-vs-inference/" data-topic="fundamentals/training-vs-inference">Training vs Inference</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;It is 99% accurate&quot; sounds like a guarantee. What does it actually tell you, and what does it hide?</p>
+<h2 id="intuition-four-kinds-of-outcome">Intuition: four kinds of outcome</h2>
+<p>Imagine a detector that flags cases as &quot;real&quot; or &quot;not real&quot;. Each case ends in one of four ways:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Truly real</th>
+<th>Truly not real</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Flagged</strong></td>
+<td><strong>True positive</strong>: a hit</td>
+<td><strong>False positive</strong>: a false alarm</td>
+</tr>
+<tr>
+<td><strong>Not flagged</strong></td>
+<td><strong>False negative</strong>: a miss</td>
+<td><strong>True negative</strong>: correctly ignored</td>
+</tr>
+</tbody></table>
+<p>This table is called a <strong>confusion matrix</strong>. Three numbers come from it:</p>
+<pre><code class="language-text">accuracy  = (hits + correct ignores) / all cases      how often it is right overall
+recall    = hits / (hits + misses)                    how many real cases it catches
+precision = hits / (hits + false alarms)              how many of its alarms are real
+</code></pre>
+<p>They answer different questions, and the right one depends on what the mistakes cost. A cancer screening test wants high recall (do not miss real cases). A spam filter wants high precision (do not bury real mail).</p>
+<h2 id="a-worked-example-10-000-cases-1-real">A worked example: 10,000 cases, 1% real</h2>
+<p>100 cases are real and 9,900 are not. Compare three detectors:</p>
+<table>
+<thead>
+<tr>
+<th>Detector</th>
+<th>Hits</th>
+<th>Misses</th>
+<th>False alarms</th>
+<th>Accuracy</th>
+<th>Recall</th>
+<th>Precision</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Lazy</strong>: always says &quot;no&quot;</td>
+<td>0</td>
+<td>100</td>
+<td>0</td>
+<td><strong>99%</strong></td>
+<td>0%</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><strong>Careful</strong>: catches 80%, 5% false alarms</td>
+<td>80</td>
+<td>20</td>
+<td>495</td>
+<td>94.9%</td>
+<td>80%</td>
+<td>13.9%</td>
+</tr>
+<tr>
+<td><strong>Jumpy</strong>: catches 95%, 20% false alarms</td>
+<td>95</td>
+<td>5</td>
+<td>1,980</td>
+<td>80.2%</td>
+<td>95%</td>
+<td>4.6%</td>
+</tr>
+</tbody></table>
+<p>By accuracy, the lazy detector wins and the careful one looks worse. But the lazy detector is useless, since it finds nothing, and the careful one finds four in five real cases.</p>
+<p>Notice the careful detector&#39;s <strong>precision of 13.9%</strong>: most of its alarms are false. That is the same effect as in <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a>, where a good test on a rare condition still produces mostly false alarms. The rarer the real cases, the worse precision gets.</p>
+<p>If the real cases were common (50%), the same careful detector would have an accuracy of 87.5% and a precision of 94%, while the lazy detector would score 50%, and accuracy would be a fair guide again.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="accuracy-trap" data-title="The 99% accurate system that catches nothing"><p class="bench-fallback"><strong>Interactive bench: The 99% accurate system that catches nothing.</strong> Ten thousand cases with an adjustable share of real ones. Three detectors (lazy, careful, jumpy) are compared on accuracy, recall and precision, with bars for the chosen detector.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at 1% real cases. Which detector has the highest accuracy? Which has the highest recall?</li>
+<li>Slide the share of real cases up towards 50%. When does the lazy detector stop looking good?</li>
+<li>Watch the careful detector&#39;s precision as the real cases get rarer. Why does it fall?</li>
+<li>Choose the jumpy detector. In what situation would you still prefer it?</li>
+</ol>
+<p><strong>What you should notice:</strong> accuracy rewards the majority. Whenever one outcome is rare, you must look at recall and precision as well, and decide which mistake costs more.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<p>These measures return in <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a> with more detail (thresholds, curves, and more careful measures) and they matter for every deployed classifier. They also link to <a class="wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a>: you should measure on cases the system has never seen.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Trusting accuracy on lopsided data.</strong> Rare fraud, disease or defects are where it misleads most.</li>
+<li><strong>Treating all errors alike.</strong> A missed fraud and a blocked honest customer have different costs.</li>
+<li><strong>Measuring on the training data.</strong> That flatters the system (see <a class="wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a>).</li>
+<li><strong>Quoting one number.</strong> Accuracy, recall and precision together tell the story.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. A detector flags 50 cases; 30 are real. What is its precision?</summary>
+30 ÷ 50 = 60%.
+</details>
+
+<details><summary>2. There are 200 real cases and the detector catches 150. What is its recall?</summary>
+150 ÷ 200 = 75%.
+</details>
+
+<details><summary>3. Why can a useless system have high accuracy?</summary>
+If nearly every case belongs to one class, always predicting that class is right almost every time, though it never finds the rare cases that matter.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Confusion matrix:</strong> the table of hits, misses, false alarms and correct ignores.</li>
+<li><strong>Accuracy:</strong> the share of all cases handled correctly.</li>
+<li><strong>Recall:</strong> the share of real cases the system catches.</li>
+<li><strong>Precision:</strong> the share of the system&#39;s alarms that are real.</li>
+<li><strong>Base rate:</strong> how common the thing you are looking for is.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/types-of-tasks/" data-topic="fundamentals/types-of-tasks">Types of Tasks</a> · <a class="wikilink" href="/fundamentals/training-vs-inference/" data-topic="fundamentals/training-vs-inference">Training vs Inference</a> · <a class="wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a> · <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/measuring-performance">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/generalization/"><small>Read next</small><b>Generalization</b><p>Generalization is a model&#39;s ability to do well on examples it has never seen. A model that merely memorises its training examples, noise and all, scores perfectly on them and poorly on anything new.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/types-of-tasks/"><b>Types of Tasks</b><p>Most AI problems fall into a few kinds: classify (pick a category), predict a number, group similar things without labels, generate new content, or choose actions over time.</p></a><a class="rc-card" href="/fundamentals/training-vs-inference/"><b>Training vs Inference</b><p>Training is when a model&#39;s parameters are adjusted using examples. Inference is when the finished, frozen model is used to make predictions on new inputs.</p></a><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a><a class="rc-card" href="/fundamentals/generalization/"><b>Generalization</b><p>Generalization is a model&#39;s ability to do well on examples it has never seen. A model that merely memorises its training examples, noise and all, scores perfectly on them and poorly on anything new.</p></a><a class="rc-card" href="/fundamentals/judging-ai/"><b>Judging AI</b><p>Building an AI system is only half the job. The other half is judging it: how do you know it works, whether it will keep working on new cases, and where it is likely to fail?</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/judging-ai/">← Previous: Judging AI</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

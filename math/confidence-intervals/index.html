@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confidence Intervals — AI Base</title>
+<meta name="description" content="A confidence interval is a range built from a sample that expresses how uncertain an estimate is: &quot;the average is 52, give or take about 2&quot;.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/confidence-intervals/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Confidence Intervals — AI Base">
+<meta property="og:description" content="A confidence interval is a range built from a sample that expresses how uncertain an estimate is: &quot;the average is 52, give or take about 2&quot;.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/confidence-intervals/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Confidence Intervals","item":"https://ai.saranmahadev.in/math/confidence-intervals/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Confidence Intervals","description":"A confidence interval is a range built from a sample that expresses how uncertain an estimate is: \"the average is 52, give or take about 2\".","url":"https://ai.saranmahadev.in/math/confidence-intervals/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Mean 20, standard deviation 5, n = 25. What is the 95% interval?","acceptedAnswer":{"@type":"Answer","text":"SE = 1, so 20 ± 1.96: [18.04, 21.96]."}},{"@type":"Question","name":"What happens to the interval width if n quadruples?","acceptedAnswer":{"@type":"Answer","text":"It halves."}},{"@type":"Question","name":"Which is wider, a 90% or 99% interval?","acceptedAnswer":{"@type":"Answer","text":"99%."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Statistics</p>
+        <h1 class="doc-title">Confidence Intervals</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c6u9x4rbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c6u9x4rpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c6u9x4rbg)"/>
+  <circle cx="738" cy="67" r="208" fill="#68599a" opacity="0.28"/><circle cx="804" cy="165" r="189" fill="#cebff9" opacity="0.38"/><circle cx="828" cy="56" r="158" fill="#68599a" opacity="0.25"/><circle cx="912" cy="101" r="184" fill="#ddbecb" opacity="0.25"/><circle cx="10" cy="230" r="187" fill="#eee9fd" opacity="0.55"/><circle cx="1007" cy="231" r="115" fill="#eee9fd" opacity="0.43"/>
+  <path d="M0,420 L0,318 L30,312 L60,308 L90,306 L120,306 L150,308 L180,312 L210,317 L240,324 L270,331 L300,337 L330,343 L360,347 L390,349 L420,349 L450,347 L480,343 L510,338 L540,331 L570,324 L600,318 L630,312 L660,308 L690,306 L720,306 L750,308 L780,312 L810,317 L840,324 L870,331 L900,337 L930,343 L960,347 L990,349 L1020,349 L1050,347 L1080,343 L1110,338 L1140,331 L1170,324 L1200,318 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,370 L30,373 L60,375 L90,378 L120,380 L150,383 L180,385 L210,387 L240,389 L270,391 L300,392 L330,393 L360,394 L390,394 L420,394 L450,393 L480,392 L510,391 L540,390 L570,388 L600,386 L630,383 L660,381 L690,378 L720,376 L750,373 L780,371 L810,369 L840,367 L870,365 L900,364 L930,363 L960,362 L990,362 L1020,362 L1050,363 L1080,364 L1110,365 L1140,366 L1170,368 L1200,370 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="898" cy="158" rx="221" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-9.5 898 158)"/><ellipse cx="898" cy="158" rx="305" ry="85" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-3.5 898 158)"/>
+  <circle cx="898" cy="158" r="87" fill="url(#c6u9x4rpl)"/>
+  <circle cx="1090" cy="52" r="9" fill="#ffffff" opacity="0.73"/><circle cx="1106" cy="241" r="8" fill="#ffffff" opacity="0.66"/><circle cx="1122" cy="175" r="10" fill="#ffffff" opacity="0.66"/><circle cx="615" cy="89" r="18" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>confidence interval</strong> is a range built from a sample that expresses how uncertain an estimate is: &quot;the average is 52, give or take about 2&quot;. A 95% interval is produced by a procedure that, over many repeated samples, captures the true value about 95% of the time.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/central-limit-theorem/" data-topic="math/central-limit-theorem">Central Limit Theorem</a>, <a class="wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a> and <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How precise is this estimate?&quot; A model that scores 91% on 100 test examples is not the same as one scoring 91% on 100,000: the interval makes the difference visible.</p>
+<h2 id="intuition-the-sample-mean-has-a-bell-around-the-truth">Intuition: the sample mean has a bell around the truth</h2>
+<p>By the central limit theorem, a sample mean <code>x̄</code> is roughly normal around the true mean <code>μ</code>, with standard error <code>σ / √n</code>. About 95% of the time <code>x̄</code> lands within <code>1.96</code> standard errors of <code>μ</code>. Turn that around: <code>μ</code> is within <code>1.96</code> standard errors of <code>x̄</code> about 95% of the time.</p>
+<pre><code class="language-text">95% confidence interval for a mean:   x̄ ± 1.96 · (s / √n)
+90%: multiplier 1.645          99%: multiplier 2.576
+</code></pre>
+<p>(For small samples the multiplier comes from the t-distribution and is a bit larger.)</p>
+<h2 id="how-to-read-it">How to read it</h2>
+<p>A 95% interval does <strong>not</strong> mean &quot;there is a 95% chance the truth is in this particular interval&quot;. The truth is fixed; the <em>procedure</em> captures it in 95% of repeated experiments. A wider interval comes from a smaller sample, more variable data, or a higher confidence level.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A sample of <code>n = 100</code> has mean <code>52</code> and standard deviation <code>10</code>.</p>
+<pre><code class="language-text">standard error = 10 / √100 = 1
+95% interval   = 52 ± 1.96 × 1 = [50.04, 53.96]
+</code></pre>
+<p>Quadruple the data (<code>n = 400</code>): the standard error halves to <code>0.5</code> and the interval to <code>52 ± 0.98</code>. For a classifier that gets 91 of 100 right, the standard error of the accuracy is <code>√(0.91 × 0.09 / 100) = 0.0286</code>, so the 95% interval is about <code>0.91 ± 0.056</code>, roughly 85% to 97%: wide enough that two models scoring 91% and 93% are not clearly different.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="ci-capture" data-title="Do 95% of intervals capture the truth?"><p class="bench-fallback"><strong>Interactive bench: Do 95% of intervals capture the truth?.</strong> The bench draws 100 confidence intervals from repeated samples of a population with a known mean; sliders set the sample size and the confidence level, and intervals that miss the true value are marked, with the observed coverage shown.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>At 95%, count the intervals that miss the truth.</li>
+<li>Raise the confidence to 99%: what happens to widths and misses?</li>
+<li>Increase the sample size and watch the widths shrink.</li>
+<li>Draw a new set of 100 and see the coverage vary.</li>
+</ol>
+<p><strong>What you should notice:</strong> roughly the stated fraction of intervals capture the truth, more confidence means wider intervals, and more data means narrower ones.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Error bars on accuracy</strong> and other evaluation metrics.</li>
+<li><strong>A/B tests:</strong> the interval for the difference between two versions.</li>
+<li><strong>Uncertainty in predictions</strong> (prediction intervals) and in learned parameters.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Misreading 95% as the probability that the truth is in this interval.</strong></li>
+<li><strong>Overlapping intervals</strong> do not by themselves prove two things are the same.</li>
+<li><strong>Ignoring the assumptions</strong> (independent, roughly bell-shaped means).</li>
+<li><strong>Forgetting that small samples need wider intervals.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Mean 20, standard deviation 5, n = 25. What is the 95% interval?</summary>
+SE = 1, so 20 ± 1.96: [18.04, 21.96].
+</details>
+
+<details><summary>2. What happens to the interval width if n quadruples?</summary>
+It halves.
+</details>
+
+<details><summary>3. Which is wider, a 90% or 99% interval?</summary>
+99%.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Confidence interval:</strong> a range from a procedure that captures the truth a stated share of the time.</li>
+<li><strong>Confidence level:</strong> that share, such as 95%.</li>
+<li><strong>Standard error:</strong> the standard deviation of an estimate.</li>
+<li><strong>Margin of error:</strong> half the width of the interval.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/central-limit-theorem/" data-topic="math/central-limit-theorem">Central Limit Theorem</a> · <a class="wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a> · <a class="wikilink" href="/math/hypothesis-testing-and-p-values/" data-topic="math/hypothesis-testing-and-p-values">Hypothesis Testing and P-values</a> · <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/confidence-intervals">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/hypothesis-testing-and-p-values/"><small>Read next</small><b>Hypothesis Testing and P-values</b><p>A hypothesis test asks whether a result could plausibly be due to chance alone.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/central-limit-theorem/"><b>Central Limit Theorem</b><p>The central limit theorem says that the average (or sum) of many independent random values follows a bell curve, whatever shape the individual values have. Its spread shrinks as σ / √n.</p></a><a class="rc-card" href="/math/estimation-and-bias/"><b>Estimation and Bias</b><p>An estimator is a recipe for guessing an unknown quantity from data, such as using the sample mean to estimate the population mean.</p></a><a class="rc-card" href="/math/continuous-distributions/"><b>Continuous Distributions</b><p>A continuous random variable can take any value in a range, so no single value has positive probability.</p></a><a class="rc-card" href="/math/hypothesis-testing-and-p-values/"><b>Hypothesis Testing and P-values</b><p>A hypothesis test asks whether a result could plausibly be due to chance alone.</p></a><a class="rc-card" href="/fundamentals/measuring-performance/"><b>Measuring Performance</b><p>To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.</p></a><a class="rc-card" href="/math/statistics/"><b>Statistics</b><p>Probability reasons from a known chance process to what data it will produce. Statistics runs the other way: it starts from data and reasons back to what produced it.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/maximum-likelihood/">← Previous: Maximum Likelihood</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

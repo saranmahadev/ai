@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spiking Neural Networks — AI Base</title>
+<meta name="description" content="Every network so far on this planet, and every one on Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/spiking-neural-networks/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Spiking Neural Networks — AI Base">
+<meta property="og:description" content="Every network so far on this planet, and every one on Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/spiking-neural-networks/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Spiking Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/spiking-neural-networks/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Spiking Neural Networks","description":"Every network so far on this planet, and every one on Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.","url":"https://ai.saranmahadev.in/neural-networks/spiking-neural-networks/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the two things that happen to a LIF neuron's membrane potential every time step?","acceptedAnswer":{"@type":"Answer","text":"It is reduced slightly by the leak term, and increased by whatever input it is receiving."}},{"@type":"Question","name":"In the worked example, why does the neuron spike every 4 steps rather than, say, every 3 or every 5?","acceptedAnswer":{"@type":"Answer","text":"With leak 0.1, threshold 1 and input 0.3, it takes exactly 3 steps of accumulation to cross the threshold on the 4th; this specific period comes directly from those three numbers."}},{"@type":"Question","name":"What happens to a weak, constant input that never reaches threshold?","acceptedAnswer":{"@type":"Answer","text":"The potential rises until the leak exactly balances the input and then stays below threshold forever — the neuron never spikes."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Spiking and Neuromorphic Computing</p>
+        <h1 class="doc-title">Spiking Neural Networks</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1uarfvgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="c1uarfvgpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1uarfvgbg)"/>
+  <circle cx="225" cy="147" r="223" fill="#50736a" opacity="0.35"/><circle cx="931" cy="222" r="163" fill="#e3f6e5" opacity="0.37"/><circle cx="818" cy="111" r="69" fill="#50736a" opacity="0.52"/><circle cx="307" cy="148" r="77" fill="#c5d79b" opacity="0.40"/><circle cx="353" cy="146" r="215" fill="#50736a" opacity="0.57"/><circle cx="60" cy="242" r="160" fill="#ace3b3" opacity="0.32"/><circle cx="73" cy="216" r="147" fill="#e3f6e5" opacity="0.27"/>
+  <path d="M0,420 L0,306 L30,306 L60,307 L90,309 L120,311 L150,313 L180,316 L210,319 L240,322 L270,326 L300,329 L330,333 L360,336 L390,339 L420,342 L450,344 L480,346 L510,348 L540,349 L570,350 L600,350 L630,349 L660,348 L690,346 L720,344 L750,342 L780,339 L810,336 L840,333 L870,329 L900,326 L930,323 L960,319 L990,316 L1020,313 L1050,311 L1080,309 L1110,307 L1140,306 L1170,306 L1200,306 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,365 L60,367 L90,370 L120,374 L150,378 L180,381 L210,385 L240,388 L270,391 L300,393 L330,394 L360,394 L390,393 L420,392 L450,390 L480,387 L510,383 L540,380 L570,376 L600,372 L630,369 L660,366 L690,364 L720,363 L750,362 L780,362 L810,364 L840,366 L870,368 L900,371 L930,375 L960,379 L990,383 L1020,386 L1050,389 L1080,391 L1110,393 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="901" cy="195" rx="174" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(3.8 901 195)"/><ellipse cx="901" cy="195" rx="240" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(9.8 901 195)"/>
+  <circle cx="901" cy="195" r="68" fill="url(#c1uarfvgpl)"/>
+  <circle cx="752" cy="107" r="11" fill="#ffffff" opacity="0.64"/><circle cx="843" cy="132" r="15" fill="#ffffff" opacity="0.66"/><circle cx="1104" cy="218" r="7" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every network so far on this planet, and every one on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>, communicates with continuous numbers — an activation, a probability, a weight. A real neuron communicates with something much simpler: it stays quiet, accumulating input, and then fires a single, brief, identical spike. A spiking neural network takes that literally.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/the-biological-neuron/" data-topic="neural-networks/the-biological-neuron">The Biological Neuron</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What does a neuron model look like if it only ever outputs a spike or nothing, never a continuous value?&quot; The <strong>leaky integrate-and-fire (LIF)</strong> neuron is the simplest standard answer: it integrates (accumulates) incoming input into a membrane potential, leaks a fraction of that potential away each time step, and fires a spike — then resets to zero — the instant the potential crosses a threshold.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Picture a leaky bucket being filled by a hose. Input current is the water flowing in; the leak is a small hole letting some drain out continuously. If the inflow is steady and bigger than the leak, the water level rises — a little slower each step, since a higher level also means more pressure pushing water out the leak. Once the water reaches the rim, the bucket &quot;spikes&quot;: it empties instantly (resets to zero) and starts filling again. A steady inflow produces spikes at a steady rate; this is the entire mechanism — no weights are learned yet, just one neuron&#39;s response to input.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">v(t+1) = v(t) + dt · (−leak · v(t) + input)
+if v(t+1) ≥ threshold:  spike, then v(t+1) ← reset
+else:                    no spike, v(t+1) stands
+</code></pre>
+<p><code>leak</code> controls how much of the current potential drains away each step; <code>threshold</code> is the firing point; <code>reset</code> is almost always <code>0</code>. Unlike <a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">an ordinary artificial neuron</a> on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>, there is no activation function turning a weighted sum into a single number in one shot — the potential accumulates <em>over time</em>, and the only output at any instant is &quot;spike&quot; or &quot;no spike.&quot;</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A LIF neuron with <code>leak = 0.1</code>, <code>threshold = 1</code>, <code>reset = 0</code>, receiving a constant input of <code>0.3</code> every time step, starting at <code>v = 0</code>:</p>
+<pre><code class="language-text">t=1: v = 0.000 → 0.300          t=5: v = 0.000 → 0.300
+t=2: v = 0.300 → 0.570          t=6: v = 0.300 → 0.570
+t=3: v = 0.570 → 0.813          t=7: v = 0.570 → 0.813
+t=4: v = 0.813 → SPIKE, reset   t=8: v = 0.813 → SPIKE, reset
+</code></pre>
+<p>With this constant input, the neuron spikes exactly every 4 time steps, forever: three steps of rising potential, then a spike and reset, on repeat. A steady input produces a steady, periodic train of spikes — the rate of that train is itself a signal, covered next in <a class="wikilink" href="/neural-networks/rate-and-temporal-coding/" data-topic="neural-networks/rate-and-temporal-coding">Rate and Temporal Coding</a>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="lif-spike" data-title="A leaky bucket that fires when it's full"><p class="bench-fallback"><strong>Interactive bench: A leaky bucket that fires when it's full.</strong> Set a constant input current for a leaky integrate-and-fire neuron and watch its membrane potential rise, spike, and reset, over and over.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set a small input and watch the neuron spike slowly, or not at all if the input is too weak to ever reach threshold.</li>
+<li>Increase the input and watch the spike rate increase.</li>
+<li>Increase the leak and see how much stronger an input needs to be to produce the same spike rate.</li>
+</ol>
+<p><strong>What you should notice:</strong> below some input strength the leak always wins and the neuron never spikes at all — there is a genuine threshold effect, not just a slow fade into firing.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the standard building block for spiking neural networks</strong>, used in neuroscience modelling and in neuromorphic hardware (see <a class="wikilink" href="/neural-networks/neuromorphic-hardware/" data-topic="neural-networks/neuromorphic-hardware">Neuromorphic Hardware</a>) built to run exactly this kind of unit efficiently.</li>
+<li><strong>It trades continuous activations for discrete, sparse events</strong> — a neuron that never spikes consumes essentially no energy, which is the whole appeal for low-power hardware.</li>
+<li><strong>Training a spiking network is a genuinely different problem</strong> from training the networks on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>, precisely because a spike is not a differentiable function of the input — specialised training methods exist, but are outside the scope of this topic.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting a spiking neuron&#39;s output to be a number like an activation.</strong> At any instant, the only output is binary — spiked or not — not a continuous value.</li>
+<li><strong>Forgetting the leak term.</strong> Without it, any positive input eventually causes a spike no matter how small; the leak is what creates a genuine minimum-input threshold for firing at all.</li>
+<li><strong>Assuming spike timing is irrelevant.</strong> Exactly when spikes occur, not just how many, carries information and drives learning — see <a class="wikilink" href="/neural-networks/rate-and-temporal-coding/" data-topic="neural-networks/rate-and-temporal-coding">Rate and Temporal Coding</a> and <a class="wikilink" href="/neural-networks/spike-timing-dependent-plasticity/" data-topic="neural-networks/spike-timing-dependent-plasticity">Spike-Timing-Dependent Plasticity</a>.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are the two things that happen to a LIF neuron's membrane potential every time step?</summary>
+It is reduced slightly by the leak term, and increased by whatever input it is receiving.
+</details>
+
+<details><summary>2. In the worked example, why does the neuron spike every 4 steps rather than, say, every 3 or every 5?</summary>
+With leak 0.1, threshold 1 and input 0.3, it takes exactly 3 steps of accumulation to cross the threshold on the 4th; this specific period comes directly from those three numbers.
+</details>
+
+<details><summary>3. What happens to a weak, constant input that never reaches threshold?</summary>
+The potential rises until the leak exactly balances the input and then stays below threshold forever — the neuron never spikes.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Membrane potential:</strong> the accumulated value a spiking neuron tracks over time, analogous to a real neuron&#39;s voltage.</li>
+<li><strong>Leaky integrate-and-fire (LIF):</strong> a spiking neuron model that accumulates input, leaks a fraction away each step, and fires when a threshold is crossed.</li>
+<li><strong>Spike:</strong> a discrete, all-or-nothing firing event, followed by a reset of the membrane potential.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/the-biological-neuron/" data-topic="neural-networks/the-biological-neuron">The Biological Neuron</a> · <a class="wikilink" href="/neural-networks/rate-and-temporal-coding/" data-topic="neural-networks/rate-and-temporal-coding">Rate and Temporal Coding</a> · <a class="wikilink" href="/neural-networks/neuromorphic-hardware/" data-topic="neural-networks/neuromorphic-hardware">Neuromorphic Hardware</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/spiking-neural-networks">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/rate-and-temporal-coding/"><small>Read next</small><b>Rate and Temporal Coding</b><p>A spike itself carries almost no information — it is the same all-or-nothing event every time.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/neural-networks/the-biological-neuron/"><b>The Biological Neuron</b><p>A real neuron is a cell: dendrites collect incoming signals from other neurons, the cell body sums them up, and if that sum crosses a threshold, the neuron fires a brief electrical spike down its…</p></a><a class="rc-card" href="/deep-learning/the-artificial-neuron-and-activation-functions/"><b>The Artificial Neuron and Activation Functions</b><p>An artificial neuron is a dot product plus a bias, passed through a non-linear activation function: a = f(w · x + b).</p></a><a class="rc-card" href="/neural-networks/rate-and-temporal-coding/"><b>Rate and Temporal Coding</b><p>A spike itself carries almost no information — it is the same all-or-nothing event every time.</p></a><a class="rc-card" href="/neural-networks/neuromorphic-hardware/"><b>Neuromorphic Hardware</b><p>A GPU evaluates every unit in a layer on every clock cycle, whether or not that unit has anything new to say.</p></a><a class="rc-card" href="/neural-networks/spike-timing-dependent-plasticity/"><b>Spike-Timing-Dependent Plasticity</b><p>Hebb&#39;s rule says neurons that fire together wire together, but says nothing about order.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/spiking-and-neuromorphic-computing/">← Previous: Spiking and Neuromorphic Computing</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

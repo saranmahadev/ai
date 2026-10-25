@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A History of LLM Families (GPT, BERT, T5, Llama) — AI Base</title>
+<meta name="description" content="Every architectural choice this road has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/a-history-of-llm-families-gpt-bert-t5-llama/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="A History of LLM Families (GPT, BERT, T5, Llama) — AI Base">
+<meta property="og:description" content="Every architectural choice this road has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/a-history-of-llm-families-gpt-bert-t5-llama/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"A History of LLM Families (GPT, BERT, T5, Llama)","item":"https://ai.saranmahadev.in/llms/a-history-of-llm-families-gpt-bert-t5-llama/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"A History of LLM Families (GPT, BERT, T5, Llama)","description":"Every architectural choice this road has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family.","url":"https://ai.saranmahadev.in/llms/a-history-of-llm-families-gpt-bert-t5-llama/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What architectural choice did BERT establish, and how does that differ from GPT-2's?","acceptedAnswer":{"@type":"Answer","text":"BERT used encoder-only masked-language-model pretraining; GPT-2 used decoder-only causal language modeling, predicting the next token rather than filling in masked ones."}},{"@type":"Question","name":"In the worked example, why is Llama 2 70B smaller than GPT-3 despite being released three years later?","acceptedAnswer":{"@type":"Answer","text":"It reflects a deliberate shift toward compute-optimal (and often overtrained, cheaper-to-serve) scaling philosophy, training a smaller model on relatively more data rather than simply maximizing parameter count."}},{"@type":"Question","name":"What did GPT-3 demonstrate that GPT-2 hadn't, at a smaller scale?","acceptedAnswer":{"@type":"Answer","text":"That scaling a decoder-only model further unlocked genuinely useful few-shot, in-context learning capabilities, without any additional training specific to those tasks."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · The LLM Landscape</p>
+        <h1 class="doc-title">A History of LLM Families (GPT, BERT, T5, Llama)</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cqd0zmvbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="cqd0zmvpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cqd0zmvbg)"/>
+  <circle cx="632" cy="30" r="223" fill="#8a5f5e" opacity="0.30"/><circle cx="861" cy="155" r="79" fill="#ffc38f" opacity="0.57"/><circle cx="229" cy="300" r="63" fill="#ffc7a2" opacity="0.46"/><circle cx="662" cy="318" r="135" fill="#ffece0" opacity="0.45"/><circle cx="841" cy="134" r="115" fill="#ffc7a2" opacity="0.39"/><circle cx="239" cy="74" r="85" fill="#ffece0" opacity="0.51"/><circle cx="261" cy="302" r="70" fill="#ffece0" opacity="0.44"/>
+  <path d="M0,420 L0,311 L30,317 L60,323 L90,330 L120,337 L150,342 L180,347 L210,349 L240,349 L270,348 L300,344 L330,339 L360,332 L390,325 L420,319 L450,313 L480,309 L510,306 L540,306 L570,307 L600,311 L630,317 L660,323 L690,330 L720,337 L750,342 L780,347 L810,349 L840,349 L870,348 L900,344 L930,339 L960,332 L990,325 L1020,319 L1050,313 L1080,309 L1110,306 L1140,306 L1170,307 L1200,311 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,384 L30,388 L60,391 L90,393 L120,394 L150,393 L180,390 L210,387 L240,382 L270,377 L300,372 L330,368 L360,365 L390,363 L420,362 L450,363 L480,366 L510,369 L540,374 L570,379 L600,384 L630,388 L660,391 L690,393 L720,394 L750,393 L780,390 L810,387 L840,382 L870,377 L900,372 L930,368 L960,365 L990,363 L1020,362 L1050,363 L1080,366 L1110,369 L1140,374 L1170,379 L1200,384 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="988" cy="285" rx="223" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-21.6 988 285)"/><ellipse cx="988" cy="285" rx="309" ry="86" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-15.6 988 285)"/>
+  <circle cx="988" cy="285" r="88" fill="url(#cqd0zmvpl)"/>
+  <circle cx="1122" cy="209" r="11" fill="#ffffff" opacity="0.60"/><circle cx="1217" cy="213" r="11" fill="#ffffff" opacity="0.90"/><circle cx="839" cy="178" r="13" fill="#ffffff" opacity="0.79"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every architectural choice this road has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family. Tracing those choices through a handful of landmark models turns an abstract menu of options into an actual history.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/architectural-families/" data-topic="transformers/architectural-families">Choosing an Architecture Family for a Task</a>, <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do today&#39;s major LLM families trace back to the architectural decisions covered earlier on this road?&quot; A small number of landmark models mark the major turns: <strong>BERT</strong> (2018) established encoder-only masked-language-model pretraining; <strong>GPT-2</strong> (2019) showed decoder-only causal language modeling could scale into genuinely fluent, general-purpose generation; <strong>T5</strong> (2019) unified many NLP tasks under one encoder-decoder, text-to-text framing; <strong>GPT-3</strong> (2020) showed that scaling a decoder-only model further unlocked few-shot, in-context capabilities; <strong>Llama 2</strong> (2023) combined a decoder-only architecture with RoPE and other efficiency refinements, at a far smaller parameter count than GPT-3, trained on far more tokens.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Looking at a family tree of cars — the first mass-produced model, the first with a specific safety feature everyone later adopted, the first widely available at a dramatically lower price — tells a clearer story about how the industry got to today&#39;s vehicles than reading a list of abstract engineering principles ever could. Tracing a handful of actual LLMs, in order, through the specific architectural and scaling choices that defined each one, does the same for this road&#39;s more abstract coverage of tokenization, architecture and scaling.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">BERT-base (2018):    110M params,   encoder-only
+GPT-2 (2019):         1.5B params,  decoder-only
+T5-11B (2019):        11B params,   encoder-decoder
+GPT-3 (2020):        175B params,   decoder-only
+Llama 2 70B (2023):   70B params,   decoder-only
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Parameter counts across these five landmark models, spanning five years:</p>
+<pre><code class="language-text">2018  BERT-base      1.10 × 10⁸
+2019  GPT-2          1.50 × 10⁹
+2019  T5-11B         1.10 × 10¹⁰
+2020  GPT-3          1.75 × 10¹¹
+2023  Llama 2 70B    7.00 × 10¹⁰
+</code></pre>
+<p>From BERT-base to GPT-3, parameter count grew by a factor of roughly 1,591× in just two years. Notably, Llama 2 70B (2023) is <em>smaller</em> than GPT-3 (2020) despite coming three years later — a direct, concrete instance of <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">the Chinchilla-era shift toward training smaller models on relatively more data</a>, rather than simply scaling parameter count ever upward.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="llm-family-timeline" data-title="From millions to hundreds of billions"><p class="bench-fallback"><strong>Interactive bench: From millions to hundreds of billions.</strong> Step through major LLM families in order and watch parameter count and architecture family evolve.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through from BERT-base to GPT-3 and watch parameter count climb.</li>
+<li>Step to Llama 2 70B and notice it&#39;s smaller than GPT-3, not larger.</li>
+<li>Compare each model&#39;s architecture family against what you&#39;ve already covered on this road.</li>
+</ol>
+<p><strong>What you should notice:</strong> parameter count doesn&#39;t climb monotonically across this history — Llama 2&#39;s smaller size than GPT-3 despite being newer reflects a real, deliberate shift in scaling philosophy, not a step backward.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Each family in this timeline is covered architecturally on <a class="wikilink" href="/transformers/architectural-families/" data-topic="transformers/architectural-families">Choosing an Architecture Family for a Task</a></strong> on the Transformers planet — this note is specifically about the historical sequence, not re-deriving the architectures themselves.</li>
+<li><strong>The shift from GPT-3-era scaling to Llama-era scaling is a direct, real-world instance of <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">compute-optimal scaling</a> changing how the field allocates training budgets.</strong></li>
+<li><strong>Later model families (not covered in this small sample) continue evolving along axes this road has covered</strong>: mixture-of-experts routing, longer context windows, multimodal input — each an extension of mechanisms already derived earlier.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming parameter count always increases over time.</strong> The worked example&#39;s own numbers show this isn&#39;t true — Llama 2 70B is smaller than the three-years-older GPT-3.</li>
+<li><strong>Treating this timeline as exhaustive.</strong> It&#39;s a small, illustrative sample of landmark models, not a complete history of every significant LLM family.</li>
+<li><strong>Confusing a model family&#39;s <em>architecture</em> with its <em>training recipe</em>.</strong> Two models can share an architecture family (decoder-only) while differing enormously in data, scale, and alignment training — the architecture alone doesn&#39;t determine the model&#39;s capabilities.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What architectural choice did BERT establish, and how does that differ from GPT-2's?</summary>
+BERT used encoder-only masked-language-model pretraining; GPT-2 used decoder-only causal language modeling, predicting the next token rather than filling in masked ones.
+</details>
+
+<details><summary>2. In the worked example, why is Llama 2 70B smaller than GPT-3 despite being released three years later?</summary>
+It reflects a deliberate shift toward compute-optimal (and often overtrained, cheaper-to-serve) scaling philosophy, training a smaller model on relatively more data rather than simply maximizing parameter count.
+</details>
+
+<details><summary>3. What did GPT-3 demonstrate that GPT-2 hadn't, at a smaller scale?</summary>
+That scaling a decoder-only model further unlocked genuinely useful few-shot, in-context learning capabilities, without any additional training specific to those tasks.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Model family:</strong> a lineage of models sharing a common architectural approach and naming convention.</li>
+<li><strong>Landmark model:</strong> a model whose release marked a significant architectural or capability turning point.</li>
+<li><strong>Scaling philosophy:</strong> the deliberate choices about how much to invest in parameter count versus training data for a given compute budget.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/architectural-families/" data-topic="transformers/architectural-families">Choosing an Architecture Family for a Task</a> · <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a> · <a class="wikilink" href="/llms/open-weight-vs-closed-models/" data-topic="llms/open-weight-vs-closed-models">Open-Weight vs. Closed Models</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/a-history-of-llm-families-gpt-bert-t5-llama">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/open-weight-vs-closed-models/"><small>Read next</small><b>Open-Weight vs. Closed Models</b><p>Two LLMs with similar benchmark scores can offer radically different things to the people using them, depending on whether the weights themselves are published or only an API sits in front of them.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/architectural-families/"><b>Architectural Families</b><p>The same transformer block supports three very different overall shapes, depending on which direction information is allowed to flow.</p></a><a class="rc-card" href="/llms/compute-optimal-scaling-chinchilla/"><b>Compute-Optimal Scaling (Chinchilla)</b><p>Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data?</p></a><a class="rc-card" href="/llms/open-weight-vs-closed-models/"><b>Open-Weight vs. Closed Models</b><p>Two LLMs with similar benchmark scores can offer radically different things to the people using them, depending on whether the weights themselves are published or only an API sits in front of them.</p></a><a class="rc-card" href="/llms/the-bitter-lesson-scale-vs-hand-engineering/"><b>The Bitter Lesson: Scale vs. Hand-Engineering</b><p>Across decades of AI research, a pattern keeps repeating: a simple, general method paired with more computation eventually beats an elaborately hand-engineered, domain-specific one — not…</p></a><a class="rc-card" href="/llms/the-llm-landscape/"><b>The LLM Landscape</b><p>Outside the technical mechanics, LLMs exist inside a fast-moving ecosystem of model families, release decisions, licenses and governance frameworks that shape who can actually build on what.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/the-llm-landscape/">← Previous: The LLM Landscape</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

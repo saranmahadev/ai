@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classifier-Free Guidance — AI Base</title>
+<meta name="description" content="Classifier Guidance works, but it needs a second model — a classifier trained specifically to work on noisy, partially-denoised samples.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/classifier-free-guidance/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Classifier-Free Guidance — AI Base">
+<meta property="og:description" content="Classifier Guidance works, but it needs a second model — a classifier trained specifically to work on noisy, partially-denoised samples.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/classifier-free-guidance/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Classifier-Free Guidance","item":"https://ai.saranmahadev.in/generative-ai/classifier-free-guidance/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Classifier-Free Guidance","description":"Classifier Guidance works, but it needs a second model — a classifier trained specifically to work on noisy, partially-denoised samples.","url":"https://ai.saranmahadev.in/generative-ai/classifier-free-guidance/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key difference between classifier-free guidance and classifier guidance?","acceptedAnswer":{"@type":"Answer","text":"Classifier-free guidance needs only one model, trained to produce both conditional and unconditional scores; classifier guidance needs a second, separately trained classifier that can evaluate noisy samples."}},{"@type":"Question","name":"In the worked example, what guidance scale reproduces plain conditional generation exactly?","acceptedAnswer":{"@type":"Answer","text":"g = 1 — at that scale, the CFG formula reduces to exactly the conditional score, with no extrapolation."}},{"@type":"Question","name":"Why would a practitioner deliberately choose a guidance scale greater than 1, knowing it overshoots?","acceptedAnswer":{"@type":"Answer","text":"Because the overshoot produces output that adheres more strongly and unambiguously to the condition (e.g. a text prompt), which is often worth the trade-off against sample diversity and realism, up to a point."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Conditioning and Guidance</p>
+        <h1 class="doc-title">Classifier-Free Guidance</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cu92te1bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="cu92te1pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cu92te1bg)"/>
+  <circle cx="472" cy="127" r="162" fill="#ffbeba" opacity="0.41"/><circle cx="705" cy="132" r="120" fill="#ffbfe0" opacity="0.45"/><circle cx="764" cy="6" r="103" fill="#8a5989" opacity="0.35"/><circle cx="1047" cy="169" r="227" fill="#ffbeba" opacity="0.54"/><circle cx="1067" cy="321" r="69" fill="#ffbeba" opacity="0.48"/><circle cx="851" cy="351" r="196" fill="#ffbeba" opacity="0.47"/>
+  <path d="M0,420 L0,334 L30,328 L60,321 L90,315 L120,310 L150,307 L180,306 L210,307 L240,310 L270,315 L300,321 L330,328 L360,334 L390,341 L420,345 L450,349 L480,350 L510,349 L540,345 L570,341 L600,334 L630,328 L660,321 L690,315 L720,310 L750,307 L780,306 L810,307 L840,310 L870,315 L900,321 L930,328 L960,334 L990,341 L1020,345 L1050,349 L1080,350 L1110,349 L1140,345 L1170,341 L1200,334 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,365 L60,363 L90,362 L120,362 L150,363 L180,364 L210,367 L240,370 L270,373 L300,377 L330,381 L360,384 L390,387 L420,390 L450,392 L480,394 L510,394 L540,394 L570,392 L600,390 L630,387 L660,384 L690,380 L720,377 L750,373 L780,370 L810,367 L840,364 L870,363 L900,362 L930,362 L960,363 L990,365 L1020,368 L1050,371 L1080,374 L1110,378 L1140,382 L1170,385 L1200,388 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="644" cy="190" rx="186" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(5.7 644 190)"/><ellipse cx="644" cy="190" rx="257" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(11.7 644 190)"/>
+  <circle cx="644" cy="190" r="73" fill="url(#cu92te1pl)"/>
+  <circle cx="781" cy="109" r="13" fill="#ffffff" opacity="0.73"/><circle cx="724" cy="256" r="8" fill="#ffffff" opacity="0.83"/><circle cx="337" cy="184" r="18" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/generative-ai/classifier-guidance/" data-topic="generative-ai/classifier-guidance">Classifier Guidance</a> works, but it needs a second model — a classifier trained specifically to work on noisy, partially-denoised samples. This note covers the technique that replaced it almost everywhere: getting the same steering effect from one model alone.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/classifier-guidance/" data-topic="generative-ai/classifier-guidance">Classifier Guidance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can you guide generation toward a condition without training a separate classifier at all?&quot; <strong>Classifier-free guidance (CFG)</strong> trains a single model to produce both an <em>unconditional</em> score (ignoring the condition) and a <em>conditional</em> score (using it), typically by randomly dropping the condition during training some fraction of the time. At sampling time, the two scores are combined by extrapolating <em>past</em> the conditional score, away from the unconditional one — which pushes samples more strongly toward the condition than simply using the conditional score on its own would.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine knowing both what someone would say about a photo with no hint of what it&#39;s of, and what they&#39;d say once told &quot;it&#39;s a cat.&quot; The <em>difference</em> between those two answers is exactly the part attributable to &quot;cat.&quot; Classifier-free guidance doesn&#39;t just take the &quot;told it&#39;s a cat&quot; answer — it takes that difference and adds <em>more than one copy of it</em> on top of the unconditional answer, deliberately overshooting past what simply conditioning on &quot;cat&quot; would give you, to produce something even more unmistakably cat-like.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">uncond score:  ∇x log p(x)          (no condition used)
+cond score:    ∇x log p(x | y)      (condition y used)
+
+CFG score:  uncond + g · (cond − uncond)
+  g = 0:  pure unconditional generation
+  g = 1:  exactly the plain conditional score — no extrapolation
+  g &gt; 1:  overshoots past the conditional direction (typical production values: 2–8)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The same two-cluster toy setup as <a class="wikilink" href="/generative-ai/classifier-guidance/" data-topic="generative-ai/classifier-guidance">Classifier Guidance</a>, with the &quot;condition&quot; now being an entire target distribution centered at <code>(2, 0)</code> rather than a classifier&#39;s opinion. Starting from the origin (where the unconditional score is exactly zero):</p>
+<pre><code class="language-text">g = 0:  score (0.000, 0.000)  →  step lands at (0.000, 0.000)   (pure unconditional)
+g = 1:  score (2.000, 0.000)  →  step lands at (1.000, 0.000)   (plain conditional)
+g = 2:  score (4.000, 0.000)  →  step lands at (2.000, 0.000)   (right at the cluster center)
+g = 4:  score (8.000, 0.000)  →  step lands at (4.000, 0.000)   (overshoots past it)
+</code></pre>
+<p>At <code>g = 1</code>, the result exactly matches what plain conditioning (ignoring the unconditional score entirely) would give. At <code>g = 2</code>, the extrapolation already lands beyond where a single conditional step would — and by <code>g = 4</code>, the step has overshot the cluster&#39;s own center by a factor of two, which is the real, documented trade-off CFG makes: stronger adherence to the condition, at the cost of sometimes pushing past what the data distribution itself would naturally produce.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="cfg-extrapolate" data-title="Classifier-free guidance overshoots on purpose"><p class="bench-fallback"><strong>Interactive bench: Classifier-free guidance overshoots on purpose.</strong> Adjust a CFG guidance scale and watch a toy denoising step move past where plain conditioning would land.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set guidance scale to 1 and confirm it matches plain conditional generation.</li>
+<li>Raise it toward 2 and watch the step land right at the target cluster&#39;s center.</li>
+<li>Push it to 4 and notice the step overshoots well past the cluster.</li>
+</ol>
+<p><strong>What you should notice:</strong> guidance scale 1 is not &quot;no guidance&quot; — it&#39;s exactly what conditioning alone gives you; guidance only starts extrapolating <em>past</em> that once the scale exceeds 1.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Classifier-free guidance is the standard conditioning method in modern <a class="wikilink" href="/generative-ai/text-to-image-pipelines/" data-topic="generative-ai/text-to-image-pipelines">text-to-image models</a></strong>, specifically because it needs no separate classifier and trains naturally alongside the main model.</li>
+<li><strong>Typical production guidance scales (often 5–8) are well past g=1</strong>, confirming that real systems deliberately overshoot the plain conditional direction to get sharper adherence to a text prompt.</li>
+<li><strong>Too high a scale is a known failure mode</strong> — oversaturated colors, exaggerated or distorted features — directly caused by extrapolating too far past the conditional score.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Thinking g=1 means &quot;no guidance.&quot;</strong> g=0 means no guidance (purely unconditional); g=1 means ordinary conditioning, with no extrapolation at all.</li>
+<li><strong>Assuming higher guidance scale is strictly better.</strong> It trades diversity and realism for stronger condition-adherence — past a point, output quality visibly degrades.</li>
+<li><strong>Forgetting this needs the model trained to produce both scores.</strong> CFG only works because the model was trained (typically by randomly dropping the condition during training) to represent the unconditional distribution as well as the conditional one — it&#39;s not a free property of any conditional model.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key difference between classifier-free guidance and classifier guidance?</summary>
+Classifier-free guidance needs only one model, trained to produce both conditional and unconditional scores; classifier guidance needs a second, separately trained classifier that can evaluate noisy samples.
+</details>
+
+<details><summary>2. In the worked example, what guidance scale reproduces plain conditional generation exactly?</summary>
+g = 1 — at that scale, the CFG formula reduces to exactly the conditional score, with no extrapolation.
+</details>
+
+<details><summary>3. Why would a practitioner deliberately choose a guidance scale greater than 1, knowing it overshoots?</summary>
+Because the overshoot produces output that adheres more strongly and unambiguously to the condition (e.g. a text prompt), which is often worth the trade-off against sample diversity and realism, up to a point.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Classifier-free guidance (CFG):</strong> steering a single model&#39;s generation by extrapolating past its conditional score, away from its unconditional score.</li>
+<li><strong>Guidance scale:</strong> how far past the conditional score to extrapolate; g=1 is no extrapolation, g=0 is no guidance at all.</li>
+<li><strong>Condition dropping:</strong> randomly training without the condition some fraction of the time, so one model learns both the conditional and unconditional distributions.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/classifier-guidance/" data-topic="generative-ai/classifier-guidance">Classifier Guidance</a> · <a class="wikilink" href="/generative-ai/text-to-image-pipelines/" data-topic="generative-ai/text-to-image-pipelines">Text-to-Image Pipelines</a> · <a class="wikilink" href="/generative-ai/cross-attention-conditioning-for-generation/" data-topic="generative-ai/cross-attention-conditioning-for-generation">Cross-Attention Conditioning for Generation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/classifier-free-guidance">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/cross-attention-conditioning-for-generation/"><small>Read next</small><b>Cross-Attention Conditioning for Generation</b><p>Guidance (as in Classifier-Free Guidance) steers generation toward a condition through the score itself; this note covers a completely different way a condition enters a generative model —…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/classifier-guidance/"><b>Classifier Guidance</b><p>A diffusion model learns to denoise toward its training data in general — nothing in that process knows you specifically want a dog, or a red one.</p></a><a class="rc-card" href="/generative-ai/text-to-image-pipelines/"><b>Text-to-Image Pipelines</b><p>Every mechanism on the previous district&#39;s road — guidance, cross-attention conditioning — exists to answer one practical question: given a sentence of text, how do you actually get a picture out…</p></a><a class="rc-card" href="/generative-ai/cross-attention-conditioning-for-generation/"><b>Cross-Attention Conditioning for Generation</b><p>Guidance (as in Classifier-Free Guidance) steers generation toward a condition through the score itself; this note covers a completely different way a condition enters a generative model —…</p></a><a class="rc-card" href="/generative-ai/conditioning-and-guidance/"><b>Conditioning and Guidance</b><p>Decoding controls how output is assembled token by token; this district covers a different lever — how a generative model&#39;s output is pushed toward a specific condition, image, or structure during…</p></a><a class="rc-card" href="/generative-ai/controlnet-style-structural-conditioning/"><b>ControlNet-Style Structural Conditioning</b><p>Guidance and cross-attention both steer generation toward a concept — a class, a prompt — expressed as a direction or an attended-to embedding. Neither one forces an exact structure.</p></a><a class="rc-card" href="/generative-ai/diversity-and-mode-collapse-in-generation/"><b>Diversity and Mode Collapse in Generation</b><p>A generative model can score well on fidelity — every individual sample looks great — while quietly producing almost the same thing every time.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/classifier-guidance/">← Previous: Classifier Guidance</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

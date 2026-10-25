@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Benchmarks and Task Suites — AI Base</title>
+<meta name="description" content="A question-answering benchmark checks one generated string against one reference string, and either matches or doesn&#39;t.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/agent-benchmarks-and-task-suites/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Agent Benchmarks and Task Suites — AI Base">
+<meta property="og:description" content="A question-answering benchmark checks one generated string against one reference string, and either matches or doesn&#39;t.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/agent-benchmarks-and-task-suites/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Agent Benchmarks and Task Suites","item":"https://ai.saranmahadev.in/agents/agent-benchmarks-and-task-suites/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Agent Benchmarks and Task Suites","description":"A question-answering benchmark checks one generated string against one reference string, and either matches or doesn't.","url":"https://ai.saranmahadev.in/agents/agent-benchmarks-and-task-suites/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does text-match grading score only 1 of the 4 runs correct in the worked example?","acceptedAnswer":{"@type":"Answer","text":"All four runs reach the identical correct cart state, but only one of them happens to phrase its final message exactly like the fixed reference string — text-match grading only credits that one."}},{"@type":"Question","name":"What does an agent benchmark need that a standard one-shot benchmark doesn't?","acceptedAnswer":{"@type":"Answer","text":"A live environment with checkable state (a sandbox, a browser, a shopping cart) that the benchmark can inspect after the agent finishes, rather than a single fixed reference answer to compare text against."}},{"@type":"Question","name":"What real risk do agent benchmarks share with standard LLM benchmarks?","acceptedAnswer":{"@type":"Answer","text":"Contamination — once a task suite's tasks and their solutions become part of training data or public discussion, scores on it stop reliably measuring genuine capability."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Evaluating Agents</p>
+        <h1 class="doc-title">Agent Benchmarks and Task Suites</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1e8e445bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1e8e445pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1e8e445bg)"/>
+  <circle cx="353" cy="153" r="142" fill="#e7bdc8" opacity="0.37"/><circle cx="1192" cy="130" r="93" fill="#e7bdc8" opacity="0.52"/><circle cx="1121" cy="399" r="159" fill="#dcbef5" opacity="0.50"/><circle cx="85" cy="214" r="112" fill="#f3e9fc" opacity="0.37"/><circle cx="808" cy="188" r="97" fill="#f3e9fc" opacity="0.28"/><circle cx="31" cy="257" r="95" fill="#f3e9fc" opacity="0.28"/><circle cx="284" cy="238" r="65" fill="#e7bdc8" opacity="0.34"/>
+  <path d="M0,420 L0,328 L30,333 L60,338 L90,342 L120,346 L150,348 L180,349 L210,349 L240,348 L270,346 L300,343 L330,339 L360,334 L390,329 L420,324 L450,319 L480,314 L510,310 L540,308 L570,306 L600,306 L630,306 L660,308 L690,311 L720,315 L750,320 L780,325 L810,330 L840,335 L870,340 L900,344 L930,347 L960,349 L990,350 L1020,349 L1050,348 L1080,345 L1110,341 L1140,337 L1170,332 L1200,327 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,388 L30,386 L60,384 L90,382 L120,379 L150,377 L180,374 L210,372 L240,369 L270,367 L300,366 L330,364 L360,363 L390,362 L420,362 L450,362 L480,362 L510,363 L540,364 L570,366 L600,368 L630,370 L660,372 L690,374 L720,377 L750,379 L780,382 L810,384 L840,387 L870,389 L900,390 L930,392 L960,393 L990,394 L1020,394 L1050,394 L1080,394 L1110,393 L1140,392 L1170,390 L1200,388 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="684" cy="152" rx="179" ry="50" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.2 684 152)"/><ellipse cx="684" cy="152" rx="247" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.2 684 152)"/>
+  <circle cx="684" cy="152" r="70" fill="url(#c1e8e445pl)"/>
+  <circle cx="678" cy="77" r="8" fill="#ffffff" opacity="0.80"/><circle cx="768" cy="235" r="18" fill="#ffffff" opacity="0.64"/><circle cx="828" cy="206" r="13" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A question-answering benchmark checks one generated string against one reference string, and either matches or doesn&#39;t. An agent benchmark gives a goal and a live environment instead — and since many different action sequences, and many different final messages, can all reach the identical correct outcome, grading by matching text against a fixed reference string badly undercounts success that actually happened.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/anatomy-of-an-agent-architecture/" data-topic="agents/anatomy-of-an-agent-architecture">Anatomy of an Agent Architecture</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What does it mean for a benchmark to test <em>agentic</em> capability, rather than just one-shot generation?&quot; A standard benchmark checks a single generated output against a single expected one. An agent benchmark instead drops the agent into an <strong>environment</strong> — a browser, a sandboxed filesystem, a shopping cart — gives it a goal, and lets it take as many actions as it needs. Grading has to check the environment&#39;s resulting <em>state</em> (did the cart actually end up with the right items?), not just whether the agent&#39;s final message happens to match some fixed reference text, because agentic tasks have many valid paths and many valid phrasings that all reach the same correct state.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Grading a cooking exam by checking whether the student&#39;s written description of the dish matches a reference sentence word-for-word would fail plenty of students who cooked the dish perfectly but described it differently. Grading by tasting the actual dish — checking the real outcome — catches every one of them.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">text-match grading:   correct if final_message == reference_text
+state-check grading:  correct if environment_state == expected_state
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four agent runs on the same &quot;add 2 items to the cart&quot; task, each ending with different wording but the identical correct cart state:</p>
+<pre><code class="language-text">run 1: &quot;Done! Added 2 items.&quot;                    → cart = 2 (expected 2)
+run 2: &quot;I added two items to your cart.&quot;          → cart = 2 (expected 2)
+run 3: &quot;Added 2 items to cart.&quot;  (= reference)    → cart = 2 (expected 2)
+run 4: &quot;Your cart now has 2 items in it.&quot;         → cart = 2 (expected 2)
+
+text-match grading:   1 of 4 correct   (only run 3 matches the reference string exactly)
+state-check grading:  4 of 4 correct   (every run actually reached the correct cart state)
+</code></pre>
+<p>All four runs are genuinely successful — the cart has the right items in every case. Text-match grading would report a 25% success rate purely because of wording differences that have nothing to do with whether the task was actually accomplished.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="grading-method-accuracy" data-title="Grading a run by its words, or by its result"><p class="bench-fallback"><strong>Interactive bench: Grading a run by its words, or by its result.</strong> Compare grading four agent runs by exact text match against grading them by their actual environment state.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Check text-match grading&#39;s score and notice which single run it credits.</li>
+<li>Switch to state-check grading and see all four runs credited.</li>
+<li>Imagine a fifth run whose final message matches the reference text exactly but whose cart ended up with the wrong item count — which grading method would wrongly call it a success?</li>
+</ol>
+<p><strong>What you should notice:</strong> the four runs are identically successful by the task&#39;s real goal — only the grading <em>method</em> differs, which is exactly why agent benchmarks are built around environments with checkable state, not fixed reference strings.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Agent benchmarks (web-browsing, coding, tool-use task suites) are built specifically around checkable environment state</strong>, for exactly the reason this worked example shows — free-form final messages can&#39;t be matched against one fixed string.</li>
+<li><strong><a class="wikilink" href="/agents/success-rate-metrics-and-their-blind-spots/" data-topic="agents/success-rate-metrics-and-their-blind-spots">Success-Rate Metrics and Their Blind Spots</a>, the next topic, covers what even a correctly state-checked success rate still hides</strong> about how an agent actually performed.</li>
+<li><strong><a class="wikilink" href="/agents/code-execution-agents/" data-topic="agents/code-execution-agents">Code-Execution Agents</a> and <a class="wikilink" href="/agents/web-browsing-agents/" data-topic="agents/web-browsing-agents">Web-Browsing Agents</a>, already covered, are exactly the kinds of environments these benchmarks run agents inside</strong> — a task suite is a curated collection of goals set in one or more of these environments.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Grading agentic tasks with exact-match string comparison.</strong> The worked example&#39;s 1-of-4 score shows this directly undercounts genuine success — the fix is to check environment state, not phrasing.</li>
+<li><strong>Assuming a single task suite covers every environment an agent might need to handle.</strong> A benchmark built entirely around web-browsing tasks says nothing reliable about an agent&#39;s coding or tool-use competence.</li>
+<li><strong>Treating a benchmark&#39;s held-out tasks as permanently held out.</strong> Once a task suite&#39;s tasks (and their solutions) appear in training data or public discussion, scores on it stop measuring genuine capability — the same contamination risk already covered for LLM benchmarks.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does text-match grading score only 1 of the 4 runs correct in the worked example?</summary>
+All four runs reach the identical correct cart state, but only one of them happens to phrase its final message exactly like the fixed reference string — text-match grading only credits that one.
+</details>
+
+<details><summary>2. What does an agent benchmark need that a standard one-shot benchmark doesn't?</summary>
+A live environment with checkable state (a sandbox, a browser, a shopping cart) that the benchmark can inspect after the agent finishes, rather than a single fixed reference answer to compare text against.
+</details>
+
+<details><summary>3. What real risk do agent benchmarks share with standard LLM benchmarks?</summary>
+Contamination — once a task suite's tasks and their solutions become part of training data or public discussion, scores on it stop reliably measuring genuine capability.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Agent benchmark:</strong> a task suite that drops an agent into a live environment with a goal, rather than checking one generated output against one reference.</li>
+<li><strong>State-check grading:</strong> verifying success by inspecting the environment&#39;s resulting state rather than matching generated text.</li>
+<li><strong>Task suite:</strong> a curated collection of benchmark tasks, often spanning several environments (browsing, coding, tool use).</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/success-rate-metrics-and-their-blind-spots/" data-topic="agents/success-rate-metrics-and-their-blind-spots">Success-Rate Metrics and Their Blind Spots</a> · <a class="wikilink" href="/agents/code-execution-agents/" data-topic="agents/code-execution-agents">Code-Execution Agents</a> · <a class="wikilink" href="/agents/web-browsing-agents/" data-topic="agents/web-browsing-agents">Web-Browsing Agents</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/agent-benchmarks-and-task-suites">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/success-rate-metrics-and-their-blind-spots/"><small>Read next</small><b>Success-Rate Metrics and Their Blind Spots</b><p>Two agents can share the exact same success rate and still be nowhere near equally good.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/anatomy-of-an-agent-architecture/"><b>Anatomy of an Agent Architecture</b><p>Every agent architecture this road covers, however different the application, is built from the same five named pieces: something that perceives the current request, something that remembers…</p></a><a class="rc-card" href="/agents/success-rate-metrics-and-their-blind-spots/"><b>Success-Rate Metrics and Their Blind Spots</b><p>Two agents can share the exact same success rate and still be nowhere near equally good.</p></a><a class="rc-card" href="/agents/code-execution-agents/"><b>Code-Execution Agents</b><p>Running code one snippet at a time from a clean slate means every new snippet has to re-establish everything the previous ones already set up — reload the data, redefine the variables — before it…</p></a><a class="rc-card" href="/agents/web-browsing-agents/"><b>Web-Browsing Agents</b><p>A web page an agent is clicking through doesn&#39;t hold still: an ad can load, a banner can appear, a list can re-sort, all between the moment the agent decides what to click and the moment the click…</p></a><a class="rc-card" href="/agents/evaluating-agents/"><b>Evaluating Agents</b><p>Scoring a single generated answer is one problem; scoring a hundred-step trajectory of actions, any one of which could be the reason the whole task failed, is a different and harder one.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/evaluating-agents/">← Previous: Evaluating Agents</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

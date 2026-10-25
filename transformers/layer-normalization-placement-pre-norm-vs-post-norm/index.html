@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layer Normalization Placement: Pre-Norm vs Post-Norm — AI Base</title>
+<meta name="description" content="The residual connection guarantees a direct path for the input to reach the output.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/layer-normalization-placement-pre-norm-vs-post-norm/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Layer Normalization Placement: Pre-Norm vs Post-Norm — AI Base">
+<meta property="og:description" content="The residual connection guarantees a direct path for the input to reach the output.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/layer-normalization-placement-pre-norm-vs-post-norm/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Layer Normalization Placement: Pre-Norm vs Post-Norm","item":"https://ai.saranmahadev.in/transformers/layer-normalization-placement-pre-norm-vs-post-norm/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Layer Normalization Placement: Pre-Norm vs Post-Norm","description":"The residual connection guarantees a direct path for the input to reach the output.","url":"https://ai.saranmahadev.in/transformers/layer-normalization-placement-pre-norm-vs-post-norm/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key structural difference between pre-norm and post-norm placement?","acceptedAnswer":{"@type":"Answer","text":"Pre-norm normalizes a copy of the input before the sublayer, leaving the residual stream itself untouched; post-norm normalizes the sum of the input and the sublayer's output, rescaling the residual stream at every layer."}},{"@type":"Question","name":"In the worked example, why did post-norm's residual stream norm stay exactly 2.00 at every layer?","acceptedAnswer":{"@type":"Answer","text":"Because layer normalization is applied to the full residual sum at every step, resetting its scale to a fixed value (√d for this dimension) regardless of what came before."}},{"@type":"Question","name":"Why does pre-norm tend to train more reliably at very large depth?","acceptedAnswer":{"@type":"Answer","text":"Its residual path is never normalized, giving gradients an unbroken, unscaled route back through every layer — removing the repeated rescaling that can destabilize training in deep post-norm stacks."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · The Transformer Block</p>
+        <h1 class="doc-title">Layer Normalization Placement: Pre-Norm vs Post-Norm</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cb91hg0bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="cb91hg0pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cb91hg0bg)"/>
+  <circle cx="1096" cy="164" r="159" fill="#4f669f" opacity="0.30"/><circle cx="355" cy="149" r="118" fill="#c5cacf" opacity="0.30"/><circle cx="389" cy="403" r="96" fill="#4f669f" opacity="0.43"/><circle cx="843" cy="416" r="189" fill="#c5cacf" opacity="0.32"/><circle cx="452" cy="216" r="101" fill="#e2efff" opacity="0.40"/>
+  <path d="M0,420 L0,347 L30,349 L60,350 L90,349 L120,347 L150,344 L180,340 L210,335 L240,330 L270,325 L300,320 L330,316 L360,312 L390,309 L420,306 L450,306 L480,306 L510,308 L540,310 L570,314 L600,318 L630,323 L660,328 L690,333 L720,338 L750,342 L780,346 L810,348 L840,349 L870,349 L900,348 L930,346 L960,343 L990,339 L1020,334 L1050,329 L1080,324 L1110,319 L1140,314 L1170,310 L1200,308 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,367 L30,364 L60,362 L90,362 L120,364 L150,367 L180,371 L210,375 L240,380 L270,385 L300,389 L330,392 L360,394 L390,394 L420,392 L450,389 L480,385 L510,381 L540,376 L570,371 L600,367 L630,364 L660,362 L690,362 L720,364 L750,367 L780,371 L810,375 L840,380 L870,385 L900,389 L930,392 L960,394 L990,394 L1020,392 L1050,389 L1080,385 L1110,381 L1140,376 L1170,371 L1200,367 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="800" cy="140" rx="193" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(15.7 800 140)"/><ellipse cx="800" cy="140" rx="267" ry="75" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(21.7 800 140)"/>
+  <circle cx="800" cy="140" r="76" fill="url(#cb91hg0pl)"/>
+  <circle cx="509" cy="187" r="7" fill="#ffffff" opacity="0.65"/><circle cx="479" cy="149" r="16" fill="#ffffff" opacity="0.62"/><circle cx="579" cy="119" r="18" fill="#ffffff" opacity="0.83"/><circle cx="1117" cy="125" r="11" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">The residual connection</a> guarantees a direct path for the input to reach the output. Where exactly normalization sits relative to that path — inside it or outside it — changes how the whole stack behaves as it gets deep, and it&#39;s one of the most consequential small decisions in a transformer&#39;s design.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">Residual Connections in Transformers</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Should layer normalization be applied to the residual stream itself, or only to what feeds into each sublayer?&quot; The original transformer paper normalized <em>after</em> adding the residual — <strong>post-norm</strong>. Almost every modern large transformer normalizes <em>before</em> each sublayer instead, leaving the residual stream itself untouched — <strong>pre-norm</strong>. The choice changes whether the running sum of residual contributions keeps growing with depth, or gets reset to a fixed scale at every single layer.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Post-norm treats each block as &quot;do the sublayer, add it to the input, then clean up the result&quot; — the normalization step smooths over whatever scale the addition produced, every single layer. Pre-norm treats each block as &quot;clean up a copy of the input before feeding it to the sublayer, but leave the real running total alone&quot; — the residual stream accumulates contributions from every layer, unnormalized, growing (or shrinking) as it goes. Pre-norm&#39;s unbroken, untouched residual path turns out to make very deep stacks dramatically easier to train from a cold start; post-norm&#39;s constant rescaling can make early training unstable unless handled carefully (commonly with a learning-rate warmup).</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">post-norm:  x_{i+1} = LayerNorm(x_i + Sublayer(x_i))
+pre-norm:   x_{i+1} = x_i + Sublayer(LayerNorm(x_i))
+</code></pre>
+<p>In pre-norm, the term <code>x_i</code> on the right is completely unnormalized — it&#39;s the same residual stream from <a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">Residual Connections in Transformers</a>, carried forward untouched. In post-norm, that same sum is passed through normalization before becoming the next layer&#39;s input.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>An 8-layer stack of small random linear sublayers, starting from <code>x = [1, 0.5, -0.3, 0.8]</code> (norm ≈ 1.41), tracking the residual stream&#39;s norm after each layer:</p>
+<pre><code class="language-text">layer   post-norm ‖x‖   pre-norm ‖x‖
+  0        1.41            1.41
+  1        2.00            1.97
+  2        2.00            2.50
+  3        2.00            2.52
+  4        2.00            3.36
+  5        2.00            4.24
+  6        2.00            4.71
+  7        2.00            4.93
+  8        2.00            5.81
+</code></pre>
+<p>Post-norm&#39;s residual stream locks to a constant norm (2.00, matching <code>√d</code> for this 4-dimensional example) at <em>every</em> layer, by construction — each layer&#39;s normalization resets the scale. Pre-norm&#39;s residual stream instead keeps growing, more than quadrupling from layer 1 to layer 8, because nothing ever rescales the accumulating sum.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="prenorm-postnorm" data-title="Does the residual stream stay put, or grow?"><p class="bench-fallback"><strong>Interactive bench: Does the residual stream stay put, or grow?.</strong> Stack several layers with pre-norm or post-norm placement and watch the residual stream's magnitude either stay fixed (post-norm) or grow with depth (pre-norm).</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the residual stream norm after each layer under both schemes.</li>
+<li>Add more layers and watch pre-norm&#39;s norm keep climbing while post-norm&#39;s stays flat.</li>
+<li>Increase each layer&#39;s weight scale and see pre-norm&#39;s growth accelerate.</li>
+</ol>
+<p><strong>What you should notice:</strong> post-norm&#39;s norm is identical at every single layer, independent of the number of layers or their weights — that fixed-point behaviour is exactly what the normalization step inside the residual path enforces.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Pre-norm became the default for very deep, large-scale transformers</strong> precisely because its untouched residual path trains more reliably without careful warmup scheduling — a practical consequence of the growth pattern shown above.</li>
+<li><strong>The growing residual-stream norm under pre-norm is a well-documented, expected property</strong> of large pre-norm models, not a bug — it&#39;s part of why the final output of a very deep pre-norm transformer often needs one last normalization step before being used.</li>
+<li><strong><a class="wikilink" href="/transformers/rmsnorm-vs-layernorm/" data-topic="transformers/rmsnorm-vs-layernorm">the next topic</a> asks a related but different question</strong> — not where normalization sits, but which normalization function is used at all.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming post-norm is simply &quot;worse.&quot;</strong> It can train perfectly well with the right learning-rate warmup; pre-norm&#39;s advantage is specifically in robustness at very large depth without that careful tuning.</li>
+<li><strong>Confusing this with residual connections themselves.</strong> Both schemes keep the residual connection from <a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">Residual Connections in Transformers</a> — the only difference is where normalization sits relative to it.</li>
+<li><strong>Expecting pre-norm&#39;s growing norm to cause instability.</strong> It&#39;s an expected, stable growth pattern (not explosive), and real models account for it in their final output normalization.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key structural difference between pre-norm and post-norm placement?</summary>
+Pre-norm normalizes a copy of the input before the sublayer, leaving the residual stream itself untouched; post-norm normalizes the sum of the input and the sublayer's output, rescaling the residual stream at every layer.
+</details>
+
+<details><summary>2. In the worked example, why did post-norm's residual stream norm stay exactly 2.00 at every layer?</summary>
+Because layer normalization is applied to the full residual sum at every step, resetting its scale to a fixed value (√d for this dimension) regardless of what came before.
+</details>
+
+<details><summary>3. Why does pre-norm tend to train more reliably at very large depth?</summary>
+Its residual path is never normalized, giving gradients an unbroken, unscaled route back through every layer — removing the repeated rescaling that can destabilize training in deep post-norm stacks.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Post-norm:</strong> normalizing the sum of a sublayer&#39;s input and output, after they&#39;re added together.</li>
+<li><strong>Pre-norm:</strong> normalizing only the copy of the input fed into a sublayer, leaving the residual stream itself unnormalized.</li>
+<li><strong>Residual stream:</strong> the running sum of contributions carried forward through a stack of residual-connected layers.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">Residual Connections in Transformers</a> · <a class="wikilink" href="/transformers/rmsnorm-vs-layernorm/" data-topic="transformers/rmsnorm-vs-layernorm">RMSNorm vs LayerNorm</a> · <a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">Assembling One Transformer Block</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/layer-normalization-placement-pre-norm-vs-post-norm">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/rmsnorm-vs-layernorm/"><small>Read next</small><b>RMSNorm vs LayerNorm</b><p>The previous topic was about where normalization sits.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/residual-connections-in-transformers/"><b>Residual Connections in Transformers</b><p>Stack enough layers on top of each other, and a signal passed through all of them — unless something stops it — tends to either vanish or blow up.</p></a><a class="rc-card" href="/transformers/rmsnorm-vs-layernorm/"><b>RMSNorm vs LayerNorm</b><p>The previous topic was about where normalization sits.</p></a><a class="rc-card" href="/transformers/assembling-one-transformer-block/"><b>Assembling One Transformer Block</b><p>Every piece needed is now on the table: attention itself, residual connections, normalization placement, and the feed-forward sublayer.</p></a><a class="rc-card" href="/transformers/the-transformer-block/"><b>The Transformer Block</b><p>Attention on its own is only half of a transformer layer.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/residual-connections-in-transformers/">← Previous: Residual Connections in Transformers</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

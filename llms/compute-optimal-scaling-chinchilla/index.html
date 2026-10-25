@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compute-Optimal Scaling (Chinchilla) — AI Base</title>
+<meta name="description" content="Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data?">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/compute-optimal-scaling-chinchilla/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Compute-Optimal Scaling (Chinchilla) — AI Base">
+<meta property="og:description" content="Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data?">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/compute-optimal-scaling-chinchilla/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Compute-Optimal Scaling (Chinchilla)","item":"https://ai.saranmahadev.in/llms/compute-optimal-scaling-chinchilla/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Compute-Optimal Scaling (Chinchilla)","description":"Given a fixed training budget, there's a real choice buried inside it: spend it on a bigger model, or on more training data?","url":"https://ai.saranmahadev.in/llms/compute-optimal-scaling-chinchilla/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What question does compute-optimal scaling actually answer?","acceptedAnswer":{"@type":"Answer","text":"Given a fixed training compute budget, how that budget should be split between model size (parameters) and training data (tokens) to minimize loss."}},{"@type":"Question","name":"In the worked example, what happened to the optimal model size and data size when compute grew by 100×?","acceptedAnswer":{"@type":"Answer","text":"Both grew by almost exactly 10× — matching the square root of the compute increase, since the toy loss surface's exponents treated model size and data symmetrically."}},{"@type":"Question","name":"What was the Chinchilla paper's key finding about earlier large models?","acceptedAnswer":{"@type":"Answer","text":"That several of them had been trained too large relative to the amount of data they were given, for their actual compute budget — the same compute would have gone further with a smaller model trained on more tokens."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Scaling, Capacity and Emergence</p>
+        <h1 class="doc-title">Compute-Optimal Scaling (Chinchilla)</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1n2k1m8bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1n2k1m8pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1n2k1m8bg)"/>
+  <circle cx="106" cy="42" r="135" fill="#ffc38f" opacity="0.48"/><circle cx="930" cy="210" r="225" fill="#ffc7a2" opacity="0.58"/><circle cx="277" cy="226" r="130" fill="#ffc7a2" opacity="0.54"/><circle cx="587" cy="13" r="113" fill="#ffc7a2" opacity="0.23"/><circle cx="1171" cy="277" r="157" fill="#ffc38f" opacity="0.53"/><circle cx="782" cy="250" r="229" fill="#ffc38f" opacity="0.38"/>
+  <path d="M0,420 L0,307 L30,310 L60,315 L90,321 L120,328 L150,335 L180,341 L210,346 L240,349 L270,350 L300,348 L330,345 L360,340 L390,334 L420,327 L450,320 L480,314 L510,310 L540,307 L570,306 L600,307 L630,310 L660,315 L690,321 L720,328 L750,335 L780,341 L810,346 L840,349 L870,350 L900,348 L930,345 L960,340 L990,334 L1020,327 L1050,320 L1080,314 L1110,310 L1140,307 L1170,306 L1200,307 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,393 L90,392 L120,390 L150,387 L180,384 L210,380 L240,376 L270,373 L300,369 L330,366 L360,364 L390,363 L420,362 L450,362 L480,363 L510,365 L540,368 L570,371 L600,375 L630,378 L660,382 L690,386 L720,389 L750,391 L780,393 L810,394 L840,394 L870,393 L900,391 L930,389 L960,386 L990,383 L1020,379 L1050,375 L1080,372 L1110,368 L1140,366 L1170,364 L1200,362 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="795" cy="279" rx="224" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(5.0 795 279)"/><ellipse cx="795" cy="279" rx="309" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(11.0 795 279)"/>
+  <circle cx="795" cy="279" r="88" fill="url(#c1n2k1m8pl)"/>
+  <circle cx="576" cy="212" r="18" fill="#ffffff" opacity="0.75"/><circle cx="540" cy="185" r="10" fill="#ffffff" opacity="0.85"/><circle cx="909" cy="400" r="12" fill="#ffffff" opacity="0.86"/><circle cx="504" cy="361" r="9" fill="#ffffff" opacity="0.63"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data? Get this split wrong and you leave real performance on the table, for free, with no extra compute spent.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Given a fixed compute budget, what&#39;s the best way to split it between model size and training data?&quot; A loss surface like <code>L(N, D) = E + A/N^α + B/D^β</code> — an irreducible floor plus two separately-shrinking terms, one for model size <code>N</code>, one for training tokens <code>D</code> — can be minimized subject to a fixed total compute <code>C ≈ 6ND</code> (the standard FLOPs-per-token-per-parameter approximation for training). The Chinchilla paper&#39;s finding, confirmed by exactly this kind of minimization, was that earlier large models had been <strong>too big for their training data</strong> — compute would have been better spent on more tokens, holding the same budget fixed.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Given a fixed amount of money to spend on either a bigger kitchen or more cooking lessons, spending it all on the kitchen while barely practicing wastes the kitchen&#39;s potential; spending it all on lessons with a tiny kitchen hits a different ceiling. There&#39;s a genuine optimal split for any given budget — and the striking finding behind Chinchilla-style scaling is that, for a loss function shaped this way, that split tends to grow model size and training data at <em>roughly the same rate</em> as the budget grows, not favoring one lopsidedly over the other.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">L(N, D) = E + A/Nᵅ + B/Dᵝ        (E: irreducible loss floor)
+compute constraint: C ≈ 6 · N · D
+
+compute-optimal (N*, D*) = argmin L(N, D)  subject to  C = 6ND
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Minimizing a toy loss surface (<code>α = β = 0.5</code>, so model size and data are symmetric) across three compute budgets, two orders of magnitude apart each:</p>
+<pre><code class="language-text">C = 10¹⁸:  N* ≈ 4.07×10⁸   D* ≈ 4.09×10⁸   loss ≈ 1.540
+C = 10²⁰:  N* ≈ 4.07×10⁹   D* ≈ 4.09×10⁹   loss ≈ 1.513
+C = 10²²:  N* ≈ 4.07×10¹⁰  D* ≈ 4.09×10¹⁰  loss ≈ 1.504
+</code></pre>
+<p>Going from <code>C = 10¹⁸</code> to <code>C = 10²⁰</code> — a 100× increase in compute — the optimal model size <em>and</em> the optimal data size both grow by almost exactly 10×, matching <code>100^0.5 = 10</code> from the symmetric exponents. Model size and data aren&#39;t competing for the extra budget; at the optimum, they grow together.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="chinchilla-optimal" data-title="Splitting a compute budget in two"><p class="bench-fallback"><strong>Interactive bench: Splitting a compute budget in two.</strong> Adjust a compute budget and watch the optimal model size and training-token count grow together.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set a small compute budget and note the optimal N and D.</li>
+<li>Raise it by two orders of magnitude and compare the growth factor for each.</li>
+<li>Check that N and D grow by roughly the same factor.</li>
+</ol>
+<p><strong>What you should notice:</strong> at every compute budget tested, the optimal split keeps model size and data size close to each other — this toy loss surface&#39;s symmetric exponents are exactly why neither one dominates the optimal allocation.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>The actual Chinchilla paper (Hoffmann et al., 2022) found several earlier large models had been trained with roughly this kind of imbalance</strong> — too many parameters relative to the training tokens they&#39;d been given, for their actual compute budget.</li>
+<li><strong>This result changed how major labs allocate training budgets</strong>, generally shifting toward relatively smaller models trained on relatively more data, compared to the scaling philosophy that preceded it.</li>
+<li><strong><a class="wikilink" href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/" data-topic="llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes">real deployments often deliberately deviate from this optimum</a></strong> — a model meant to be served cheaply might be trained smaller and &quot;overtrained&quot; on more data than the compute-optimal split would suggest, trading training efficiency for inference efficiency.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming &quot;optimal&quot; means &quot;best possible model.&quot;</strong> Compute-optimal means best use of a <em>fixed training budget</em> — a model trained compute-optimally with a small budget can still be much worse than a larger-budget model trained sub-optimally.</li>
+<li><strong>Treating the exponents α and β as universal constants.</strong> They&#39;re empirically fit to a specific architecture, data distribution, and training setup — different setups can shift exactly where the optimal split falls.</li>
+<li><strong>Forgetting the compute constraint itself is an approximation.</strong> <code>C ≈ 6ND</code> is a standard rule of thumb for transformer training FLOPs, not an exact accounting of every computational cost involved.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What question does compute-optimal scaling actually answer?</summary>
+Given a fixed training compute budget, how that budget should be split between model size (parameters) and training data (tokens) to minimize loss.
+</details>
+
+<details><summary>2. In the worked example, what happened to the optimal model size and data size when compute grew by 100×?</summary>
+Both grew by almost exactly 10× — matching the square root of the compute increase, since the toy loss surface's exponents treated model size and data symmetrically.
+</details>
+
+<details><summary>3. What was the Chinchilla paper's key finding about earlier large models?</summary>
+That several of them had been trained too large relative to the amount of data they were given, for their actual compute budget — the same compute would have gone further with a smaller model trained on more tokens.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Compute-optimal scaling:</strong> the split of a fixed compute budget between model size and training data that minimizes loss.</li>
+<li><strong>Scaling law:</strong> an empirical power-law relationship between loss and model size, data, or compute.</li>
+<li><strong>FLOPs:</strong> floating-point operations, the unit used to measure and budget training compute.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a> · <a class="wikilink" href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/" data-topic="llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes">Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</a> · <a class="wikilink" href="/llms/emergent-abilities-and-capability-jumps/" data-topic="llms/emergent-abilities-and-capability-jumps">Emergent Abilities and Capability Jumps</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/compute-optimal-scaling-chinchilla">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/"><small>Read next</small><b>Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</b><p>The compute-optimal split in Compute-Optimal Scaling (Chinchilla) assumes you can always get as much data as the optimum wants, and that training cost is the only cost that matters.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/causal-language-modeling-as-a-pretraining-objective/"><b>Causal Language Modeling as a Pretraining Objective</b><p>With a curated corpus in hand, there&#39;s still a question of what, exactly, a model is being trained to do with it.</p></a><a class="rc-card" href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/"><b>Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</b><p>The compute-optimal split in Compute-Optimal Scaling (Chinchilla) assumes you can always get as much data as the optimum wants, and that training cost is the only cost that matters.</p></a><a class="rc-card" href="/llms/emergent-abilities-and-capability-jumps/"><b>Emergent Abilities and Capability Jumps</b><p>Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.</p></a><a class="rc-card" href="/llms/scaling-capacity-and-emergence/"><b>Scaling, Capacity and Emergence</b><p>Make an LLM bigger, train it on more data, or give it more compute, and its capability doesn&#39;t grow in some simple, uniform way — it follows surprisingly predictable curves overall, punctuated by…</p></a><a class="rc-card" href="/llms/the-bitter-lesson-scale-vs-hand-engineering/"><b>The Bitter Lesson: Scale vs. Hand-Engineering</b><p>Across decades of AI research, a pattern keeps repeating: a simple, general method paired with more computation eventually beats an elaborately hand-engineered, domain-specific one — not…</p></a><a class="rc-card" href="/llms/supervised-fine-tuning-sft/"><b>Supervised Fine-Tuning (SFT)</b><p>A pretrained model is extremely good at continuing text in whatever style it appears in — but &quot;the internet&quot; doesn&#39;t naturally produce the specific pattern of a helpful assistant replying to a…</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/scaling-capacity-and-emergence/">← Previous: Scaling, Capacity and Emergence</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

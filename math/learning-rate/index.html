@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Rate — AI Base</title>
+<meta name="description" content="The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/learning-rate/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Learning Rate — AI Base">
+<meta property="og:description" content="The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/learning-rate/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Learning Rate","item":"https://ai.saranmahadev.in/math/learning-rate/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Learning Rate","description":"The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.","url":"https://ai.saranmahadev.in/math/learning-rate/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"On f = w², what is the update factor for η = 0.25?","acceptedAnswer":{"@type":"Answer","text":"1 − 0.5 = 0.5."}},{"@type":"Question","name":"For which η does gradient descent on w² diverge?","acceptedAnswer":{"@type":"Answer","text":"η > 1."}},{"@type":"Question","name":"Why does the steepest direction limit the rate?","acceptedAnswer":{"@type":"Answer","text":"Stability requires η < 2 divided by the largest curvature."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Optimization</p>
+        <h1 class="doc-title">Learning Rate</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1m7544jbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1m7544jpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1m7544jbg)"/>
+  <circle cx="1034" cy="107" r="136" fill="#68599a" opacity="0.61"/><circle cx="96" cy="408" r="215" fill="#cebff9" opacity="0.44"/><circle cx="337" cy="369" r="210" fill="#ddbecb" opacity="0.46"/><circle cx="196" cy="324" r="218" fill="#68599a" opacity="0.60"/><circle cx="635" cy="145" r="198" fill="#cebff9" opacity="0.52"/><circle cx="665" cy="386" r="82" fill="#eee9fd" opacity="0.31"/><circle cx="543" cy="124" r="158" fill="#cebff9" opacity="0.39"/>
+  <path d="M0,420 L0,334 L30,327 L60,320 L90,314 L120,310 L150,307 L180,306 L210,307 L240,310 L270,315 L300,321 L330,328 L360,335 L390,341 L420,346 L450,349 L480,350 L510,348 L540,345 L570,340 L600,334 L630,327 L660,320 L690,314 L720,310 L750,307 L780,306 L810,307 L840,310 L870,315 L900,321 L930,328 L960,335 L990,341 L1020,346 L1050,349 L1080,350 L1110,348 L1140,345 L1170,340 L1200,334 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,363 L60,366 L90,370 L120,374 L150,379 L180,384 L210,388 L240,392 L270,394 L300,394 L330,393 L360,390 L390,386 L420,382 L450,377 L480,372 L510,368 L540,364 L570,362 L600,362 L630,363 L660,366 L690,370 L720,374 L750,379 L780,384 L810,388 L840,392 L870,394 L900,394 L930,393 L960,390 L990,386 L1020,382 L1050,377 L1080,372 L1110,368 L1140,364 L1170,362 L1200,362 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="763" cy="224" rx="190" ry="53" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(12.1 763 224)"/><ellipse cx="763" cy="224" rx="262" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(18.1 763 224)"/>
+  <circle cx="763" cy="224" r="74" fill="url(#c1m7544jpl)"/>
+  <circle cx="821" cy="294" r="17" fill="#ffffff" opacity="0.79"/><circle cx="665" cy="156" r="11" fill="#ffffff" opacity="0.76"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>learning rate</strong> <code>η</code> sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up. Choosing it well is one of the most important practical decisions in training a model.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> and <a class="wikilink" href="/math/higher-derivatives-and-curvature/" data-topic="math/higher-derivatives-and-curvature">Higher Derivatives and Curvature</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How far should I step each time?&quot; The gradient gives a direction and a local slope, but says nothing about how far the slope stays valid.</p>
+<h2 id="intuition-a-walker-on-a-curved-bowl">Intuition: a walker on a curved bowl</h2>
+<p>On <code>f(w) = w²</code> the update is <code>w ← w − η · 2w = (1 − 2η) w</code>. Each step multiplies <code>w</code> by the factor <code>1 − 2η</code>. What happens depends on that factor:</p>
+<pre><code class="language-text">η = 0.1:   factor 0.8    steady approach to 0
+η = 0.5:   factor 0      lands on the minimum in one step
+η = 0.9:   factor −0.8   jumps across the minimum, but still shrinks
+η = 1.0:   factor −1     bounces between +w and −w forever
+η = 1.1:   factor −1.2   bounces and grows: diverges
+</code></pre>
+<p>So the safe range is <code>0 &lt; η &lt; 1</code> here. In general, for curvature <code>λ</code> (the second derivative), stability needs <code>η &lt; 2/λ</code>.</p>
+<h2 id="curved-and-stretched-landscapes">Curved and stretched landscapes</h2>
+<p>Real losses curve differently in different directions. For <code>f(x, y) = x² + 10y²</code>, the <code>y</code> direction has curvature <code>20</code> and the <code>x</code> direction <code>2</code>. Stability requires <code>η &lt; 2/20 = 0.1</code>, set by the <em>steepest</em> curvature. But then progress along the flat <code>x</code> direction is slow: its factor is <code>1 − 2η ≥ 0.8</code>. This tug-of-war is why plain gradient descent zig-zags in narrow valleys, and why schedules and smarter optimisers exist (see <a class="wikilink" href="/math/momentum-and-adam/" data-topic="math/momentum-and-adam">Momentum and Adam</a>).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Start at <code>w = 4</code> on <code>f(w) = w²</code> and run 5 steps:</p>
+<pre><code class="language-text">η = 0.1:  4 → 3.2 → 2.56 → 2.05 → 1.64 → 1.31      slow but steady
+η = 0.5:  4 → 0                                    perfect in one step
+η = 1.1:  4 → −4.8 → 5.76 → −6.91 → 8.29 → −9.95    diverging
+</code></pre>
+<p>Common practice is to start with a moderate rate and <strong>decay</strong> it, taking large steps early and small careful steps near the minimum.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="lr-race" data-title="Too small, just right, too big"><p class="bench-fallback"><strong>Interactive bench: Too small, just right, too big.</strong> A slider sets the learning rate for gradient descent on a parabola; the bench plots the path of the parameter over 20 steps and reports whether it converges, oscillates or diverges.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at 0.1 and count steps until w is near zero.</li>
+<li>Try 0.5, then 0.9, then 1.0.</li>
+<li>Push above 1 and watch it diverge.</li>
+<li>Use the bowl with two curvatures and find the largest safe rate.</li>
+</ol>
+<p><strong>What you should notice:</strong> there is a sweet spot, a stable range above which steps overshoot more than they correct, and a limit set by the steepest direction.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Hyperparameter tuning</strong> almost always includes the learning rate.</li>
+<li><strong>Schedules</strong> such as warm-up and decay change it during training.</li>
+<li><strong>Loss spikes and NaNs</strong> often mean the rate is too high.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Using one rate for everything</strong> without checking the curve of the loss.</li>
+<li><strong>A rate so small</strong> that training seems stuck.</li>
+<li><strong>Ignoring divergence signs:</strong> a rapidly growing loss.</li>
+<li><strong>Comparing rates across different scales</strong> of features or loss.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. On f = w², what is the update factor for η = 0.25?</summary>
+1 − 0.5 = 0.5.
+</details>
+
+<details><summary>2. For which η does gradient descent on w² diverge?</summary>
+η > 1.
+</details>
+
+<details><summary>3. Why does the steepest direction limit the rate?</summary>
+Stability requires η < 2 divided by the largest curvature.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Learning rate:</strong> the step-size multiplier η.</li>
+<li><strong>Divergence:</strong> the loss growing instead of shrinking.</li>
+<li><strong>Oscillation:</strong> bouncing across a minimum.</li>
+<li><strong>Learning-rate schedule:</strong> changing η over training.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> · <a class="wikilink" href="/math/higher-derivatives-and-curvature/" data-topic="math/higher-derivatives-and-curvature">Higher Derivatives and Curvature</a> · <a class="wikilink" href="/math/hessian/" data-topic="math/hessian">Hessian</a> · <a class="wikilink" href="/math/momentum-and-adam/" data-topic="math/momentum-and-adam">Momentum and Adam</a> · <a class="wikilink" href="/math/sequences-and-series/" data-topic="math/sequences-and-series">Sequences and Series</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/learning-rate">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/convex-vs-non-convex/"><small>Read next</small><b>Convex vs Non-Convex</b><p>A function is convex if it is bowl-shaped: the straight line between any two points on its graph never dips below the graph.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/higher-derivatives-and-curvature/"><b>Higher Derivatives and Curvature</b><p>The second derivative is the derivative of the derivative: it says how the slope itself is changing. Positive means the curve bends upward like a bowl, negative means it bends downward like a hill.</p></a><a class="rc-card" href="/math/momentum-and-adam/"><b>Momentum and Adam</b><p>Momentum lets a walker keep some of its previous velocity, so it speeds up along steady slopes and smooths out zig-zags.</p></a><a class="rc-card" href="/math/hessian/"><b>Hessian</b><p>The Hessian is the matrix of all second partial derivatives of a function.</p></a><a class="rc-card" href="/math/sequences-and-series/"><b>Sequences and Series</b><p>A sequence is an ordered list of numbers that follows a rule, and a series is what you get by adding its terms.</p></a><a class="rc-card" href="/math/optimization/"><b>Optimization</b><p>Optimization is the art of finding the best values: the parameters that make a model&#39;s error as small as possible.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/gradient-descent/">← Previous: Gradient Descent</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

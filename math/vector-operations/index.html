@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vector Operations — AI Base</title>
+<meta name="description" content="Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/vector-operations/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Vector Operations — AI Base">
+<meta property="og:description" content="Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/vector-operations/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Vector Operations","item":"https://ai.saranmahadev.in/math/vector-operations/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Vector Operations","description":"Vectors can be added, subtracted and scaled, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.","url":"https://ai.saranmahadev.in/math/vector-operations/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is (3, −1) + (2, 5)?","acceptedAnswer":{"@type":"Answer","text":"(5, 4)."}},{"@type":"Question","name":"What is 3 · (1, −2)?","acceptedAnswer":{"@type":"Answer","text":"(3, −6)."}},{"@type":"Question","name":"What is (5, 5) − (2, 1)?","acceptedAnswer":{"@type":"Answer","text":"(3, 4)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Linear Algebra</p>
+        <h1 class="doc-title">Vector Operations</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cfoznagbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cfoznagpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cfoznagbg)"/>
+  <circle cx="508" cy="316" r="210" fill="#eee9fd" opacity="0.39"/><circle cx="480" cy="243" r="82" fill="#ddbecb" opacity="0.27"/><circle cx="1059" cy="271" r="160" fill="#eee9fd" opacity="0.41"/><circle cx="1092" cy="63" r="209" fill="#eee9fd" opacity="0.38"/><circle cx="754" cy="266" r="128" fill="#68599a" opacity="0.44"/><circle cx="426" cy="44" r="97" fill="#ddbecb" opacity="0.45"/>
+  <path d="M0,420 L0,319 L30,313 L60,309 L90,306 L120,306 L150,307 L180,311 L210,316 L240,323 L270,329 L300,336 L330,342 L360,346 L390,349 L420,350 L450,348 L480,344 L510,339 L540,333 L570,326 L600,319 L630,313 L660,309 L690,306 L720,306 L750,307 L780,311 L810,316 L840,323 L870,329 L900,336 L930,342 L960,346 L990,349 L1020,350 L1050,348 L1080,344 L1110,339 L1140,333 L1170,326 L1200,319 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,372 L30,370 L60,368 L90,366 L120,365 L150,363 L180,363 L210,362 L240,362 L270,362 L300,363 L330,364 L360,366 L390,367 L420,369 L450,372 L480,374 L510,376 L540,379 L570,381 L600,384 L630,386 L660,388 L690,390 L720,391 L750,393 L780,393 L810,394 L840,394 L870,394 L900,393 L930,392 L960,390 L990,389 L1020,387 L1050,384 L1080,382 L1110,380 L1140,377 L1170,375 L1200,372 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="965" cy="195" rx="218" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-10.0 965 195)"/><ellipse cx="965" cy="195" rx="302" ry="84" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-4.0 965 195)"/>
+  <circle cx="965" cy="195" r="86" fill="url(#cfoznagpl)"/>
+  <circle cx="677" cy="243" r="17" fill="#ffffff" opacity="0.72"/><circle cx="1229" cy="149" r="19" fill="#ffffff" opacity="0.68"/><circle cx="907" cy="83" r="14" fill="#ffffff" opacity="0.88"/><circle cx="1220" cy="126" r="16" fill="#ffffff" opacity="0.69"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Vectors can be <strong>added</strong>, <strong>subtracted</strong> and <strong>scaled</strong>, all component by component. These three moves are the foundation of everything in linear algebra: every model computation is built from them.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/scalars-and-vectors/" data-topic="math/scalars-and-vectors">Scalars and Vectors</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I combine vectors?&quot; To average two houses, to move a data point, or to update a model&#39;s weights, you add and scale vectors.</p>
+<h2 id="intuition-arrows-end-to-end">Intuition: arrows end to end</h2>
+<p><strong>Adding</strong> vectors places one arrow&#39;s tail at the other&#39;s tip; the sum is the arrow from the start to the end. Equivalently, add matching components:</p>
+<pre><code class="language-text">(1, 2) + (3, 1) = (1 + 3, 2 + 1) = (4, 3)
+</code></pre>
+<p><strong>Subtracting</strong> gives the arrow from one tip to the other: <code>b − a</code> points from <code>a</code> to <code>b</code>.</p>
+<pre><code class="language-text">(4, 3) − (1, 2) = (3, 1)
+</code></pre>
+<p><strong>Scaling</strong> multiplies every component by a number, stretching or shrinking (and flipping for negatives):</p>
+<pre><code class="language-text">2 · (1, 2) = (2, 4)         −1 · (1, 2) = (−1, −2)       0.5 · (4, 6) = (2, 3)
+</code></pre>
+<h2 id="rules">Rules</h2>
+<pre><code class="language-text">a + b = b + a                       order does not matter
+(a + b) + c = a + (b + c)
+c (a + b) = c a + c b               scaling distributes over adding
+</code></pre>
+<p>Vectors must have the <strong>same dimension</strong> to be added. A related operation, <strong>element-wise (Hadamard) product</strong>, multiplies matching components: <code>(1, 2) ⊙ (3, 4) = (3, 8)</code>. It is different from the dot product (<a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a>).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two houses <code>a = (90, 3, 12)</code> and <code>b = (120, 4, 5)</code>. Their average is a vector too:</p>
+<pre><code class="language-text">(a + b) / 2 = (210, 7, 17) / 2 = (105, 3.5, 8.5)
+</code></pre>
+<p>To move a data point <code>p = (2, 5)</code> by <code>(−1, 3)</code>: <code>p + (−1, 3) = (1, 8)</code>.</p>
+<p>The <strong>learning step</strong> in model training is exactly this: <code>new weights = old weights − step × gradient</code>, a scaled vector subtracted from a vector. With <code>w = (0.5, −1)</code>, gradient <code>g = (2, −4)</code> and step <code>0.1</code>: <code>w − 0.1 g = (0.5 − 0.2, −1 + 0.4) = (0.3, −0.6)</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="vector-ops" data-title="Add, subtract and scale arrows"><p class="bench-fallback"><strong>Interactive bench: Add, subtract and scale arrows.</strong> Two arrows a and b can be dragged or set with sliders; the bench draws their sum, difference, and a scaled copy, with components listed.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Drag <code>a</code> and <code>b</code> and watch <code>a + b</code> complete the parallelogram.</li>
+<li>Turn on the difference and see which way it points.</li>
+<li>Scale <code>a</code> by 2, then by −1.</li>
+<li>Make <code>a + b</code> equal the zero vector.</li>
+</ol>
+<p><strong>What you should notice:</strong> addition is arrows end to end, scaling stretches along the same line, and subtraction points from one tip to the other.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Gradient descent</strong> subtracts a scaled gradient from the weights.</li>
+<li><strong>Embedding arithmetic:</strong> directions such as &quot;king − man + woman&quot; are vector sums.</li>
+<li><strong>Averaging</strong> examples or predictions is adding and scaling.</li>
+<li><strong>Residual connections</strong> in networks add vectors.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Adding vectors of different dimension.</strong></li>
+<li><strong>Confusing scaling with adding.</strong> <code>2v</code> is not <code>v + 2</code>.</li>
+<li><strong>Forgetting to scale every component.</strong></li>
+<li><strong>Treating the element-wise product as the dot product.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is (3, −1) + (2, 5)?</summary>
+(5, 4).
+</details>
+
+<details><summary>2. What is 3 · (1, −2)?</summary>
+(3, −6).
+</details>
+
+<details><summary>3. What is (5, 5) − (2, 1)?</summary>
+(3, 4).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Vector addition:</strong> adding matching components.</li>
+<li><strong>Scalar multiplication:</strong> multiplying every component by a number.</li>
+<li><strong>Difference vector:</strong> the arrow from one point to another.</li>
+<li><strong>Element-wise product:</strong> multiplying matching components.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/scalars-and-vectors/" data-topic="math/scalars-and-vectors">Scalars and Vectors</a> · <a class="wikilink" href="/math/linear-combinations-and-span/" data-topic="math/linear-combinations-and-span">Linear Combinations and Span</a> · <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/vector-operations">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/linear-combinations-and-span/"><small>Read next</small><b>Linear Combinations and Span</b><p>A linear combination of vectors is a sum of scaled copies: c₁v₁ + c₂v₂ + …. The span of some vectors is the set of every point you can reach that way.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/scalars-and-vectors/"><b>Scalars and Vectors</b><p>A scalar is a single number, and a vector is an ordered list of numbers.</p></a><a class="rc-card" href="/math/dot-product/"><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p></a><a class="rc-card" href="/math/linear-combinations-and-span/"><b>Linear Combinations and Span</b><p>A linear combination of vectors is a sum of scaled copies: c₁v₁ + c₂v₂ + …. The span of some vectors is the set of every point you can reach that way.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/linear-algebra/"><b>Linear Algebra</b><p>Linear algebra is the maths of lists of numbers (vectors) and grids of numbers (matrices), and of the simple operations that combine them.</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/scalars-and-vectors/">← Previous: Scalars and Vectors</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

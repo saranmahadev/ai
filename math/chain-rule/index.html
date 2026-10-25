@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chain Rule — AI Base</title>
+<meta name="description" content="The chain rule finds the derivative of a function built from other functions: d/dx f(g(x)) = f′(g(x)) · g′(x). Rates multiply along the chain, like gears turning one another.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/chain-rule/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Chain Rule — AI Base">
+<meta property="og:description" content="The chain rule finds the derivative of a function built from other functions: d/dx f(g(x)) = f′(g(x)) · g′(x). Rates multiply along the chain, like gears turning one another.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/chain-rule/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Chain Rule","item":"https://ai.saranmahadev.in/math/chain-rule/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Chain Rule","description":"The chain rule finds the derivative of a function built from other functions: d/dx f(g(x)) = f′(g(x)) · g′(x). Rates multiply along the chain, like gears turning one another.","url":"https://ai.saranmahadev.in/math/chain-rule/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Differentiate (2x + 5)³.","acceptedAnswer":{"@type":"Answer","text":"3(2x + 5)² · 2 = 6(2x + 5)²."}},{"@type":"Question","name":"Differentiate e^(x²).","acceptedAnswer":{"@type":"Answer","text":"e^(x²) · 2x."}},{"@type":"Question","name":"If dy/du = 4 and du/dx = 0.5, what is dy/dx?","acceptedAnswer":{"@type":"Answer","text":"2."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Calculus</p>
+        <h1 class="doc-title">Chain Rule</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1tdpmckbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1tdpmckpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1tdpmckbg)"/>
+  <circle cx="1149" cy="336" r="78" fill="#68599a" opacity="0.38"/><circle cx="496" cy="86" r="97" fill="#cebff9" opacity="0.26"/><circle cx="475" cy="116" r="139" fill="#68599a" opacity="0.45"/><circle cx="1145" cy="90" r="174" fill="#eee9fd" opacity="0.42"/><circle cx="982" cy="210" r="146" fill="#ddbecb" opacity="0.53"/><circle cx="809" cy="176" r="186" fill="#eee9fd" opacity="0.52"/>
+  <path d="M0,420 L0,321 L30,316 L60,312 L90,309 L120,307 L150,306 L180,306 L210,307 L240,310 L270,313 L300,318 L330,322 L360,328 L390,333 L420,337 L450,342 L480,345 L510,348 L540,349 L570,350 L600,349 L630,346 L660,343 L690,339 L720,334 L750,329 L780,324 L810,319 L840,315 L870,311 L900,308 L930,306 L960,306 L990,306 L1020,308 L1050,311 L1080,315 L1110,319 L1140,324 L1170,329 L1200,334 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,379 L30,376 L60,374 L90,372 L120,369 L150,367 L180,366 L210,364 L240,363 L270,362 L300,362 L330,362 L360,363 L390,363 L420,365 L450,366 L480,368 L510,370 L540,372 L570,375 L600,377 L630,380 L660,382 L690,384 L720,387 L750,389 L780,390 L810,392 L840,393 L870,394 L900,394 L930,394 L960,393 L990,393 L1020,391 L1050,390 L1080,388 L1110,386 L1140,384 L1170,381 L1200,379 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="888" cy="268" rx="195" ry="55" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(10.3 888 268)"/><ellipse cx="888" cy="268" rx="270" ry="76" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(16.3 888 268)"/>
+  <circle cx="888" cy="268" r="77" fill="url(#c1tdpmckpl)"/>
+  <circle cx="975" cy="197" r="18" fill="#ffffff" opacity="0.77"/><circle cx="866" cy="156" r="19" fill="#ffffff" opacity="0.65"/><circle cx="1168" cy="295" r="18" fill="#ffffff" opacity="0.70"/><circle cx="1066" cy="316" r="10" fill="#ffffff" opacity="0.63"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>chain rule</strong> finds the derivative of a function built from other functions: <code>d/dx f(g(x)) = f′(g(x)) · g′(x)</code>. Rates multiply along the chain, like gears turning one another. It is the rule behind backpropagation, since a network is a long chain of functions.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/derivative-rules/" data-topic="math/derivative-rules">Derivative Rules</a> and <a class="wikilink" href="/math/composition-and-inverses/" data-topic="math/composition-and-inverses">Composition and Inverses</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If <code>y</code> depends on <code>u</code>, and <code>u</code> depends on <code>x</code>, how does <code>y</code> respond to <code>x</code>?&quot; A network&#39;s loss depends on its output, which depends on the layer before it, which depends on the weights.</p>
+<h2 id="intuition-gears">Intuition: gears</h2>
+<p>Gear A turns 3 times for each turn of a handle; gear B turns 2 times for each turn of gear A. One turn of the handle turns B <code>3 × 2 = 6</code> times. Rates of change along a chain <strong>multiply</strong>:</p>
+<pre><code class="language-text">dy/dx = (dy/du) · (du/dx)
+</code></pre>
+<h2 id="the-rule">The rule</h2>
+<pre><code class="language-text">h(x) = f(g(x))       h′(x) = f′(g(x)) · g′(x)
+                             ↑ outer derivative,        ↑ inner derivative
+                               evaluated at the inner value
+</code></pre>
+<p>Steps: name the inner function <code>u = g(x)</code>, differentiate the outer function with respect to <code>u</code>, differentiate the inner one with respect to <code>x</code>, and multiply.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Differentiate <code>h(x) = (3x + 1)²</code>. Inner <code>u = 3x + 1</code> (so <code>du/dx = 3</code>), outer <code>u²</code> (so <code>d/du = 2u</code>):</p>
+<pre><code class="language-text">h′(x) = 2u · 3 = 2(3x + 1) · 3 = 6(3x + 1) = 18x + 6
+at x = 1:  18 + 6 = 24
+</code></pre>
+<p>Check by expanding: <code>(3x + 1)² = 9x² + 6x + 1</code>, whose derivative is <code>18x + 6</code> ✓.</p>
+<p>Another: <code>sin(x²)</code>. Inner <code>x²</code> (derivative <code>2x</code>), outer <code>sin</code> (derivative <code>cos</code>):</p>
+<pre><code class="language-text">d/dx sin(x²) = cos(x²) · 2x
+at x = 1:  cos 1 · 2 = 0.5403 × 2 = 1.0806
+</code></pre>
+<p>And <code>e^(2x)</code>: outer <code>eᵘ</code>, inner <code>2x</code>, so the derivative is <code>e^(2x) · 2</code>.</p>
+<p>For longer chains, keep multiplying: <code>f(g(h(x)))</code> has derivative <code>f′(g(h(x))) · g′(h(x)) · h′(x)</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="gear-chain" data-title="Rates multiply along a chain"><p class="bench-fallback"><strong>Interactive bench: Rates multiply along a chain.</strong> Choose an inner and an outer function and an input; the bench shows the value at each stage, the derivative of each, their product, and a numerical check of the total.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Pick inner 3x + 1 and outer u², and read the two derivatives.</li>
+<li>Compare their product with the numerical derivative of the whole chain.</li>
+<li>Change the input: which derivative changes?</li>
+<li>Try sin as the outer function.</li>
+</ol>
+<p><strong>What you should notice:</strong> the outer derivative is evaluated at the <em>inner value</em>, and the two factors multiply to give the chain&#39;s slope.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Backpropagation</strong> applies the chain rule layer by layer (see <a class="wikilink" href="/math/automatic-differentiation/" data-topic="math/automatic-differentiation">Automatic Differentiation</a>).</li>
+<li><strong>Vanishing gradients:</strong> a product of many small factors (like sigmoid slopes) shrinks toward zero.</li>
+<li><strong>Exploding gradients:</strong> a product of large factors grows quickly.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting the inner derivative</strong> (a very common slip).</li>
+<li><strong>Evaluating the outer derivative at <code>x</code> instead of <code>g(x)</code>.</strong></li>
+<li><strong>Adding the two derivatives</strong> instead of multiplying.</li>
+<li><strong>Applying it to a product</strong> (that needs the product rule as well).</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Differentiate (2x + 5)³.</summary>
+3(2x + 5)² · 2 = 6(2x + 5)².
+</details>
+
+<details><summary>2. Differentiate e^(x²).</summary>
+e^(x²) · 2x.
+</details>
+
+<details><summary>3. If dy/du = 4 and du/dx = 0.5, what is dy/dx?</summary>
+2.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Chain rule:</strong> the derivative of a composition is a product of derivatives.</li>
+<li><strong>Inner / outer function:</strong> the function applied first / last.</li>
+<li><strong>Composite function:</strong> a function built by chaining others.</li>
+<li><strong>Backpropagation:</strong> the chain rule applied through a network.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/derivative-rules/" data-topic="math/derivative-rules">Derivative Rules</a> · <a class="wikilink" href="/math/composition-and-inverses/" data-topic="math/composition-and-inverses">Composition and Inverses</a> · <a class="wikilink" href="/math/derivatives-of-exp-log-and-sigmoid/" data-topic="math/derivatives-of-exp-log-and-sigmoid">Derivatives of Exp, Log and Sigmoid</a> · <a class="wikilink" href="/math/automatic-differentiation/" data-topic="math/automatic-differentiation">Automatic Differentiation</a> · <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/chain-rule">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/derivatives-of-exp-log-and-sigmoid/"><small>Read next</small><b>Derivatives of Exp, Log and Sigmoid</b><p>Three families of functions carry most of machine learning: the exponential eˣ, the natural logarithm ln x, and the sigmoid σ(x).</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/derivative-rules/"><b>Derivative Rules</b><p>You do not compute a derivative from the limit every time.</p></a><a class="rc-card" href="/math/composition-and-inverses/"><b>Composition and Inverses</b><p>Composition feeds the output of one function into another: g(f(x)). An inverse undoes a function: f⁻¹(f(x)) = x.</p></a><a class="rc-card" href="/math/automatic-differentiation/"><b>Automatic Differentiation</b><p>Automatic differentiation (autodiff) is how software computes exact derivatives: it records each operation in a computational graph, then applies the chain rule backwards through that graph.</p></a><a class="rc-card" href="/math/derivatives-of-exp-log-and-sigmoid/"><b>Derivatives of Exp, Log and Sigmoid</b><p>Three families of functions carry most of machine learning: the exponential eˣ, the natural logarithm ln x, and the sigmoid σ(x).</p></a><a class="rc-card" href="/math/backpropagation-by-hand/"><b>Backpropagation by Hand</b><p>Backpropagation computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs.</p></a><a class="rc-card" href="/math/calculus/"><b>Calculus</b><p>Calculus is the maths of change. It answers &quot;how fast is this quantity changing right now?&quot; (differentiation) and &quot;how much has it accumulated?&quot; (integration).</p></a></div></section>
+        <p class="doc-prev"><a href="/math/derivative-rules/">← Previous: Derivative Rules</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

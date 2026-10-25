@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Error Attribution Across a Trajectory — AI Base</title>
+<meta name="description" content="A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything…">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/error-attribution-across-a-trajectory/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Error Attribution Across a Trajectory — AI Base">
+<meta property="og:description" content="A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything…">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/error-attribution-across-a-trajectory/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Error Attribution Across a Trajectory","item":"https://ai.saranmahadev.in/agents/error-attribution-across-a-trajectory/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Error Attribution Across a Trajectory","description":"A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything…","url":"https://ai.saranmahadev.in/agents/error-attribution-across-a-trajectory/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does binary search need only 4 checks regardless of whether the culprit is step 2 or step 15?","acceptedAnswer":{"@type":"Answer","text":"Each check halves the range of steps still being searched, so the number of checks needed depends only on the trajectory's total length (⌈log₂(n)⌉), not on where within that length the culprit happens to be."}},{"@type":"Question","name":"What assumption does binary search's correctness depend on here?","acceptedAnswer":{"@type":"Answer","text":"That the failure condition is monotonic — once a step breaks, every step after it stays broken too — so checking a single midpoint reliably tells you which half the culprit is in."}},{"@type":"Question","name":"Why would the gap between linear scan and binary search matter more on a longer trajectory?","acceptedAnswer":{"@type":"Answer","text":"Linear scan's cost grows directly with the culprit's position (up to the full trajectory length), while binary search's cost grows only logarithmically — the longer the trajectory, the larger the gap between the two becomes."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Reflection and Self-Improvement</p>
+        <h1 class="doc-title">Error Attribution Across a Trajectory</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cyj5mhjbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="cyj5mhjpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cyj5mhjbg)"/>
+  <circle cx="97" cy="315" r="199" fill="#f3e9fc" opacity="0.24"/><circle cx="1082" cy="388" r="63" fill="#f3e9fc" opacity="0.44"/><circle cx="263" cy="283" r="189" fill="#725998" opacity="0.47"/><circle cx="1114" cy="22" r="116" fill="#725998" opacity="0.58"/><circle cx="164" cy="284" r="102" fill="#f3e9fc" opacity="0.59"/>
+  <path d="M0,420 L0,313 L30,310 L60,308 L90,307 L120,306 L150,306 L180,306 L210,306 L240,308 L270,309 L300,311 L330,314 L360,317 L390,320 L420,323 L450,327 L480,330 L510,334 L540,337 L570,340 L600,343 L630,345 L660,347 L690,348 L720,349 L750,350 L780,349 L810,349 L840,348 L870,346 L900,344 L930,341 L960,338 L990,335 L1020,332 L1050,328 L1080,325 L1110,322 L1140,318 L1170,315 L1200,313 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,366 L60,369 L90,372 L120,376 L150,380 L180,383 L210,387 L240,390 L270,392 L300,393 L330,394 L360,394 L390,393 L420,391 L450,388 L480,385 L510,381 L540,377 L570,374 L600,370 L630,367 L660,365 L690,363 L720,362 L750,362 L780,363 L810,365 L840,367 L870,370 L900,374 L930,377 L960,381 L990,385 L1020,388 L1050,391 L1080,393 L1110,394 L1140,394 L1170,393 L1200,392 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="973" cy="289" rx="264" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-23.6 973 289)"/><ellipse cx="973" cy="289" rx="364" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-17.6 973 289)"/>
+  <circle cx="973" cy="289" r="103" fill="url(#cyj5mhjpl)"/>
+  <circle cx="687" cy="380" r="9" fill="#ffffff" opacity="0.88"/><circle cx="674" cy="361" r="12" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything noticed. Error attribution is the problem of finding <em>which</em> earlier step actually broke, not just noticing that the end result did.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/plan-and-execute-agents/" data-topic="agents/plan-and-execute-agents">Plan-and-Execute Agents</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Once a trajectory has failed, how do you efficiently find which step actually caused it?&quot; A trajectory is a sequence of steps, each depending on the ones before it. If a failure only surfaces at the end, the obvious approach — scanning forward from step one, checking each step until something looks wrong — works, but costs one check per step up to and including the culprit. A faster approach treats &quot;is everything still valid up to step i?&quot; as a question whose answer flips from true to false exactly once, at the culprit, and finds that flip with a binary search instead of a linear scan.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Searching for the one blown fuse in a long row of them by testing each one in order, left to right, works — but testing the middle one first, then repeatedly halving whichever half still contains the blown fuse, finds it in far fewer tests once the row gets long. The same halving trick applies to a trajectory: check the midpoint step, and the half that broke tells you where to keep looking.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">linear forward scan:  checks = culprit_index                     (check steps 1, 2, 3, ... until the culprit)
+binary search:         checks = ⌈log₂(n)⌉                         (n = total trajectory length)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 16-step trajectory where the actual culprit is step 11 — everything before it is valid, everything from it onward is not:</p>
+<pre><code class="language-text">n = 16, culprit = step 11
+
+linear forward scan:  checks steps 1, 2, 3, ..., 11 → found in 11 checks
+binary search:         checks 4 steps total → found in 4 checks
+
+⌈log₂(16)⌉ = 4
+</code></pre>
+<p>The linear scan needs exactly as many checks as the culprit&#39;s position — if the culprit were step 2, it would only take 2 checks, but if it were step 15, it would take 15. Binary search needs the same 4 checks (⌈log₂(16)⌉) no matter where the culprit actually is, because each check halves the remaining range regardless of which half the culprit turns out to be in.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="error-attribution-search" data-title="Finding the one step that broke it"><p class="bench-fallback"><strong>Interactive bench: Finding the one step that broke it.</strong> Compare a linear forward scan against a binary search for the step that broke a 16-step trajectory.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Run the linear scan and count how many of the 16 steps get checked before step 11 is found.</li>
+<li>Switch to binary search and see the much smaller set of checked steps.</li>
+<li>Imagine the culprit were step 2 instead of step 11 — would binary search&#39;s check count change?</li>
+</ol>
+<p><strong>What you should notice:</strong> binary search&#39;s advantage grows with trajectory length — the gap between 11 checks and 4 checks here would be far larger on a 1000-step trajectory, where linear scanning could need up to 1000 checks but binary search would still need only 10.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This generalizes the per-step check in <a class="wikilink" href="/agents/self-critique-loops-in-agents/" data-topic="agents/self-critique-loops-in-agents">Self-Critique Loops in Agents</a></strong> to the case where nothing caught the error at the time it happened, and it has to be found after the fact instead.</li>
+<li><strong>Binary search here requires the failure condition to be monotonic</strong> — once a step is broken, every later step built on it is too — the same assumption <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a> relies on when deciding how far back a plan needs to be revised.</li>
+<li><strong><a class="wikilink" href="/agents/trajectory-level-evaluation/" data-topic="agents/trajectory-level-evaluation">Trajectory-Level Evaluation</a>, covered later, is the broader problem this is one tool for</strong>: judging not just whether a trajectory succeeded, but which parts of it were actually responsible for the outcome.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming the step where the failure is noticed is the step that caused it.</strong> The worked example&#39;s failure doesn&#39;t surface until the trajectory&#39;s final check, five steps after the actual culprit — blaming the last step would be wrong.</li>
+<li><strong>Using binary search when the failure condition isn&#39;t monotonic.</strong> If a later step could coincidentally &quot;fix&quot; an earlier error back to a valid-looking state, the binary search&#39;s halving logic no longer reliably converges on the true culprit.</li>
+<li><strong>Paying for a linear scan&#39;s worst case on a long trajectory without needing to.</strong> The cost gap between the two approaches only grows as trajectories get longer — a long-running agent is exactly where this matters most.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does binary search need only 4 checks regardless of whether the culprit is step 2 or step 15?</summary>
+Each check halves the range of steps still being searched, so the number of checks needed depends only on the trajectory's total length (⌈log₂(n)⌉), not on where within that length the culprit happens to be.
+</details>
+
+<details><summary>2. What assumption does binary search's correctness depend on here?</summary>
+That the failure condition is monotonic — once a step breaks, every step after it stays broken too — so checking a single midpoint reliably tells you which half the culprit is in.
+</details>
+
+<details><summary>3. Why would the gap between linear scan and binary search matter more on a longer trajectory?</summary>
+Linear scan's cost grows directly with the culprit's position (up to the full trajectory length), while binary search's cost grows only logarithmically — the longer the trajectory, the larger the gap between the two becomes.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Error attribution:</strong> identifying which specific step in a trajectory actually caused an observed failure.</li>
+<li><strong>Linear forward scan:</strong> checking a trajectory&#39;s steps in order until the broken one is found.</li>
+<li><strong>Monotonic failure:</strong> a condition that, once false, stays false for every later step.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/self-critique-loops-in-agents/" data-topic="agents/self-critique-loops-in-agents">Self-Critique Loops in Agents</a> · <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a> · <a class="wikilink" href="/agents/trajectory-level-evaluation/" data-topic="agents/trajectory-level-evaluation">Trajectory-Level Evaluation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/error-attribution-across-a-trajectory">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/learning-from-feedback-without-weight-updates/"><small>Read next</small><b>Learning from Feedback Without Weight Updates</b><p>An agent that gets told &quot;that approach was wrong, try this instead&quot; and then keeps making the identical mistake on the next attempt hasn&#39;t actually used the feedback it was given.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/plan-and-execute-agents/"><b>Plan-and-Execute Agents</b><p>Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop.</p></a><a class="rc-card" href="/agents/self-critique-loops-in-agents/"><b>Self-Critique Loops in Agents</b><p>An arithmetic mistake made at step two of a four-step calculation doesn&#39;t stay contained to step two — every later step builds on the wrong number, and the final answer comes out wrong even though…</p></a><a class="rc-card" href="/agents/re-planning-on-failure/"><b>Re-Planning on Failure</b><p>A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5.</p></a><a class="rc-card" href="/agents/trajectory-level-evaluation/"><b>Trajectory-Level Evaluation</b><p>An agent that takes a forbidden or dangerous action partway through its run, then happens to land on the correct final answer anyway, passes any grader that only checks the final answer.</p></a><a class="rc-card" href="/agents/open-loop-vs-closed-loop-behavior/"><b>Open-Loop vs. Closed-Loop Behavior</b><p>An agent that fires off four actions in a row and reports &quot;done&quot; might be lying — not out of any intent to deceive, but because it never actually checked whether any of those four actions worked.</p></a><a class="rc-card" href="/agents/reflection-and-self-improvement/"><b>Reflection and Self-Improvement</b><p>An agent that never looks back at its own work repeats the same mistake at every step that triggers it.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/self-critique-loops-in-agents/">← Previous: Self-Critique Loops in Agents</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

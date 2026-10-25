@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deep Belief Networks — AI Base</title>
+<meta name="description" content="A single RBM learns one layer of structure in data.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/deep-belief-networks/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Deep Belief Networks — AI Base">
+<meta property="og:description" content="A single RBM learns one layer of structure in data.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/deep-belief-networks/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Deep Belief Networks","item":"https://ai.saranmahadev.in/neural-networks/deep-belief-networks/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Deep Belief Networks","description":"A single RBM learns one layer of structure in data.","url":"https://ai.saranmahadev.in/neural-networks/deep-belief-networks/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does \"greedy\" mean in the context of training a deep belief network?","acceptedAnswer":{"@type":"Answer","text":"Each layer is trained to completion, using only the layer below it as data, before the next layer is trained at all — earlier layers are frozen once trained."}},{"@type":"Question","name":"In the worked example, what was used as the \"data\" for training the second RBM?","acceptedAnswer":{"@type":"Answer","text":"The hidden-layer activations (h₁) that the first, already-trained RBM produced for each original data pattern — not the raw patterns themselves."}},{"@type":"Question","name":"Why are deep belief networks mostly of historical interest today?","acceptedAnswer":{"@type":"Answer","text":"Better weight initialization, normalization and optimizers made direct end-to-end backpropagation of deep networks practical, removing the main reason layer-wise pretraining was needed."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Layer-Wise and Unsupervised Pretraining</p>
+        <h1 class="doc-title">Deep Belief Networks</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c180mp6fbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="c180mp6fpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c180mp6fbg)"/>
+  <circle cx="1071" cy="345" r="79" fill="#50736a" opacity="0.51"/><circle cx="477" cy="14" r="91" fill="#c5d79b" opacity="0.30"/><circle cx="682" cy="387" r="229" fill="#50736a" opacity="0.58"/><circle cx="456" cy="380" r="188" fill="#c5d79b" opacity="0.43"/><circle cx="35" cy="298" r="224" fill="#c5d79b" opacity="0.29"/>
+  <path d="M0,420 L0,332 L30,338 L60,344 L90,347 L120,349 L150,349 L180,347 L210,343 L240,337 L270,330 L300,324 L330,317 L360,312 L390,308 L420,306 L450,306 L480,308 L510,312 L540,318 L570,325 L600,332 L630,338 L660,344 L690,347 L720,349 L750,349 L780,347 L810,343 L840,337 L870,330 L900,324 L930,317 L960,312 L990,308 L1020,306 L1050,306 L1080,308 L1110,312 L1140,318 L1170,325 L1200,332 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,371 L30,368 L60,365 L90,363 L120,362 L150,362 L180,363 L210,364 L240,366 L270,369 L300,372 L330,376 L360,380 L390,383 L420,387 L450,390 L480,392 L510,393 L540,394 L570,394 L600,393 L630,391 L660,388 L690,385 L720,381 L750,377 L780,374 L810,370 L840,367 L870,365 L900,363 L930,362 L960,362 L990,363 L1020,365 L1050,367 L1080,370 L1110,374 L1140,377 L1170,381 L1200,385 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="780" cy="136" rx="177" ry="50" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(5.3 780 136)"/><ellipse cx="780" cy="136" rx="245" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(11.3 780 136)"/>
+  <circle cx="780" cy="136" r="69" fill="url(#c180mp6fpl)"/>
+  <circle cx="876" cy="237" r="17" fill="#ffffff" opacity="0.67"/><circle cx="500" cy="114" r="9" fill="#ffffff" opacity="0.78"/><circle cx="673" cy="44" r="17" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A single RBM learns one layer of structure in data. A deep belief network (DBN) learns several layers, by training one RBM at a time and feeding each one&#39;s output forward as the next one&#39;s input — the training trick that, in 2006, reopened deep networks as a practical idea.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/contrastive-divergence/" data-topic="neural-networks/contrastive-divergence">Contrastive Divergence</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can a deep, many-layer network be trained before backpropagation of very deep nets was practical?&quot; By training it one layer at a time: train an RBM on the raw data with contrastive divergence, freeze it, then treat its hidden-layer activations as &quot;data&quot; for a second RBM, train that one, freeze it, and repeat. Each layer is trained <strong>greedily</strong> — only looking at the layer below it, never adjusting earlier layers once they&#39;re frozen.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Think of it like learning a language by first mastering individual letters, then — once that&#39;s solid and no longer touched — learning how letters combine into words, then — once <em>that&#39;s</em> solid — how words combine into sentences. Each stage builds a more abstract representation of the one below it, and each stage is trained completely independently, with no instruction yet about what the final task will be (there are no labels anywhere in this process).</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">1. Train RBM₁ on raw data v, via contrastive divergence. Freeze W₁.
+2. Compute h₁ = P(hidden | v, W₁) for every data point — this is layer 2&#39;s &quot;data&quot;.
+3. Train RBM₂ on {h₁}, via contrastive divergence. Freeze W₂.
+4. Repeat: compute h₂ from h₁ via W₂, train RBM₃ on {h₂}, and so on.
+</code></pre>
+<p>The resulting stack of weights <code>W₁, W₂, …</code> can then optionally be fine-tuned end to end with a small amount of labelled data and backpropagation — but the bulk of the representation is already in place before a single label is used.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four small binary patterns, <code>[1,1,0,0], [1,0,1,0], [0,0,1,1], [0,1,0,1]</code>, with no labels attached. Train a 4-visible, 3-hidden RBM₁ on them with contrastive divergence; freeze it. Compute the hidden-layer representation of the first pattern, <code>v = [1, 1, 0, 0]</code>:</p>
+<pre><code class="language-text">h₁ = P(hidden | v, W₁) ≈ [0.004, 0.002, 1.000]
+</code></pre>
+<p>Now use all four patterns&#39; <code>h₁</code> representations as the &quot;data&quot; for a second RBM, 3-visible (matching <code>h₁</code>&#39;s size), 2-hidden. Train it independently with contrastive divergence; freeze it. Pushing the same pattern&#39;s <code>h₁</code> through this second layer:</p>
+<pre><code class="language-text">h₂ = P(hidden | h₁, W₂) ≈ [0.979, 0.286]
+</code></pre>
+<p>Four raw input dimensions became a 3-number code, which became a 2-number code — and at no point in either training stage did the network see a label, or get told anything about the other layer being trained before or after it.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="dbn-stack" data-title="Stacking RBMs, one frozen layer at a time"><p class="bench-fallback"><strong>Interactive bench: Stacking RBMs, one frozen layer at a time.</strong> Train a small RBM on raw data, freeze it, then train a second RBM on the first one's hidden activations, and watch a chosen pattern's representation change at each layer.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Train the first layer and watch its hidden representation of each pattern settle.</li>
+<li>Train the second layer on those representations and watch its own hidden representation settle.</li>
+<li>Compare the raw pattern, the layer-1 code, and the layer-2 code for the same input.</li>
+</ol>
+<p><strong>What you should notice:</strong> each layer is trained to completion before the next layer ever sees any data, and once a layer is frozen nothing afterwards changes its weights — this is what &quot;greedy, layer-wise&quot; means in practice.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It was the breakthrough that made training deep networks feasible in 2006</strong>, at a time when backpropagating through many layers from a random start tended to fail (see <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>) — layer-wise pretraining gave each layer a reasonable starting point before any end-to-end fine-tuning.</li>
+<li><strong><a class="wikilink" href="/neural-networks/stacked-autoencoders-before-end-to-end-training/" data-topic="neural-networks/stacked-autoencoders-before-end-to-end-training">Stacked autoencoders</a>, covered next, apply the exact same greedy idea</strong> with a different building block.</li>
+<li><strong>Modern deep networks no longer need this trick</strong> — better initialization, normalization and optimizers (covered throughout <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>) made direct end-to-end training practical, which is why DBNs are now of mostly historical and conceptual interest; see <a class="wikilink" href="/neural-networks/choosing-classical-vs-modern-approaches/" data-topic="neural-networks/choosing-classical-vs-modern-approaches">Choosing Classical vs Modern Approaches</a>.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming &quot;deep belief network&quot; means any deep network.</strong> It specifically means one built this way — by stacking RBMs trained greedily, layer by layer.</li>
+<li><strong>Expecting fine-tuning to be required.</strong> It is optional; the greedily-trained stack already produces usable representations on its own, with fine-tuning as an optional final improvement.</li>
+<li><strong>Forgetting earlier layers are frozen.</strong> Training layer 2 never adjusts layer 1&#39;s weights — if it did, this would just be ordinary joint training, not the greedy procedure that gave DBNs their name.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does "greedy" mean in the context of training a deep belief network?</summary>
+Each layer is trained to completion, using only the layer below it as data, before the next layer is trained at all — earlier layers are frozen once trained.
+</details>
+
+<details><summary>2. In the worked example, what was used as the "data" for training the second RBM?</summary>
+The hidden-layer activations (h₁) that the first, already-trained RBM produced for each original data pattern — not the raw patterns themselves.
+</details>
+
+<details><summary>3. Why are deep belief networks mostly of historical interest today?</summary>
+Better weight initialization, normalization and optimizers made direct end-to-end backpropagation of deep networks practical, removing the main reason layer-wise pretraining was needed.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Greedy layer-wise training:</strong> training one layer fully before introducing the next, never revisiting earlier layers.</li>
+<li><strong>Deep belief network:</strong> a stack of RBMs trained this way, each one&#39;s hidden layer feeding the next as data.</li>
+<li><strong>Fine-tuning:</strong> an optional final stage adjusting the whole, already-pretrained stack together, typically with labelled data and backpropagation.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/contrastive-divergence/" data-topic="neural-networks/contrastive-divergence">Contrastive Divergence</a> · <a class="wikilink" href="/neural-networks/restricted-boltzmann-machines/" data-topic="neural-networks/restricted-boltzmann-machines">Restricted Boltzmann Machines</a> · <a class="wikilink" href="/neural-networks/stacked-autoencoders-before-end-to-end-training/" data-topic="neural-networks/stacked-autoencoders-before-end-to-end-training">Stacked Autoencoders Before End-to-End Training</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/deep-belief-networks">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/stacked-autoencoders-before-end-to-end-training/"><small>Read next</small><b>Stacked Autoencoders Before End-to-End Training</b><p>The previous topic stacked RBMs, each trained by contrastive divergence.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/contrastive-divergence/"><b>Contrastive Divergence</b><p>The previous topic walked through a single CD-1 cycle by hand.</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/neural-networks/stacked-autoencoders-before-end-to-end-training/"><b>Stacked Autoencoders Before End-to-End Training</b><p>The previous topic stacked RBMs, each trained by contrastive divergence.</p></a><a class="rc-card" href="/neural-networks/choosing-classical-vs-modern-approaches/"><b>Choosing Classical vs Modern Approaches</b><p>Every topic on this planet solves a real problem, but almost none of them is anyone&#39;s first choice for a brand-new project today.</p></a><a class="rc-card" href="/neural-networks/restricted-boltzmann-machines/"><b>Restricted Boltzmann Machines</b><p>A general Boltzmann machine connects every unit to every other unit, which makes exact training intractable past a handful of units.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/contrastive-divergence/">← Previous: Contrastive Divergence</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

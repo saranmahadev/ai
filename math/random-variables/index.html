@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random Variables — AI Base</title>
+<meta name="description" content="A random variable is a number whose value depends on chance: the total of two dice, the number of heads in ten flips, a model&#39;s error on the next example.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/random-variables/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Random Variables — AI Base">
+<meta property="og:description" content="A random variable is a number whose value depends on chance: the total of two dice, the number of heads in ten flips, a model&#39;s error on the next example.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/random-variables/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Random Variables","item":"https://ai.saranmahadev.in/math/random-variables/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Random Variables","description":"A random variable is a number whose value depends on chance: the total of two dice, the number of heads in ten flips, a model's error on the next example.","url":"https://ai.saranmahadev.in/math/random-variables/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is P(X = 2) for the sum of two dice?","acceptedAnswer":{"@type":"Answer","text":"1/36."}},{"@type":"Question","name":"Is the number of emails received today discrete or continuous?","acceptedAnswer":{"@type":"Answer","text":"Discrete."}},{"@type":"Question","name":"Do the probabilities of all values of a discrete variable add to 1?","acceptedAnswer":{"@type":"Answer","text":"Yes."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Probability</p>
+        <h1 class="doc-title">Random Variables</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cod59tfbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cod59tfpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cod59tfbg)"/>
+  <circle cx="511" cy="191" r="156" fill="#eee9fd" opacity="0.57"/><circle cx="674" cy="136" r="78" fill="#ddbecb" opacity="0.48"/><circle cx="851" cy="33" r="153" fill="#eee9fd" opacity="0.59"/><circle cx="446" cy="168" r="168" fill="#eee9fd" opacity="0.48"/><circle cx="199" cy="387" r="174" fill="#ddbecb" opacity="0.57"/><circle cx="885" cy="23" r="65" fill="#68599a" opacity="0.44"/><circle cx="325" cy="16" r="68" fill="#eee9fd" opacity="0.44"/>
+  <path d="M0,420 L0,315 L30,312 L60,310 L90,308 L120,307 L150,306 L180,306 L210,306 L240,307 L270,308 L300,310 L330,312 L360,314 L390,317 L420,321 L450,324 L480,327 L510,331 L540,334 L570,337 L600,340 L630,343 L660,345 L690,347 L720,348 L750,349 L780,350 L810,349 L840,349 L870,347 L900,346 L930,343 L960,341 L990,338 L1020,335 L1050,331 L1080,328 L1110,324 L1140,321 L1170,318 L1200,315 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,379 L60,376 L90,372 L120,369 L150,366 L180,364 L210,362 L240,362 L270,362 L300,364 L330,366 L360,368 L390,372 L420,375 L450,379 L480,383 L510,386 L540,389 L570,392 L600,393 L630,394 L660,394 L690,393 L720,391 L750,388 L780,385 L810,382 L840,378 L870,374 L900,371 L930,368 L960,365 L990,363 L1020,362 L1050,362 L1080,363 L1110,364 L1140,367 L1170,370 L1200,373 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="942" cy="182" rx="185" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(18.9 942 182)"/><ellipse cx="942" cy="182" rx="256" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(24.9 942 182)"/>
+  <circle cx="942" cy="182" r="73" fill="url(#cod59tfpl)"/>
+  <circle cx="656" cy="178" r="16" fill="#ffffff" opacity="0.63"/><circle cx="1169" cy="153" r="10" fill="#ffffff" opacity="0.68"/><circle cx="853" cy="244" r="13" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>random variable</strong> is a number whose value depends on chance: the total of two dice, the number of heads in ten flips, a model&#39;s error on the next example. It turns outcomes into numbers, so we can average them, measure their spread and describe them with a <strong>distribution</strong>.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/events-and-sample-spaces/" data-topic="math/events-and-sample-spaces">Events and Sample Spaces</a> and <a class="wikilink" href="/math/functions/" data-topic="math/functions">Functions</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I describe an uncertain quantity as a number?&quot; Outcomes like &quot;heads&quot; are not numbers. A random variable assigns each outcome a number so that maths can take over.</p>
+<h2 id="intuition-a-rule-that-reads-off-a-number">Intuition: a rule that reads off a number</h2>
+<p>Roll two dice. The outcome is a pair like <code>(3, 5)</code>. Let <code>X</code> be the sum. Then <code>X</code> is a rule that maps each pair to a number: <code>X(3, 5) = 8</code>. Before the roll, <code>X</code> is uncertain; after it, it has a value.</p>
+<p>A random variable is either:</p>
+<ul>
+<li><strong>Discrete:</strong> takes separate values (counts, dice sums, labels 0/1).</li>
+<li><strong>Continuous:</strong> takes any value in a range (height, time, a model&#39;s weight).</li>
+</ul>
+<h2 id="distributions">Distributions</h2>
+<p>For a discrete variable, the <strong>probability mass function</strong> (PMF) lists <code>P(X = x)</code> for every value. The probabilities add to 1. For a continuous variable, a <strong>density</strong> describes it instead (see <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a>).</p>
+<h2 id="a-worked-example-the-sum-of-two-dice">A worked example: the sum of two dice</h2>
+<pre><code class="language-text">x         2     3     4     5     6     7     8     9    10    11    12
+P(X = x)  1/36  2/36  3/36  4/36  5/36  6/36  5/36  4/36  3/36  2/36  1/36
+</code></pre>
+<p>The pattern is <code>P(X = k) = (6 − |k − 7|) / 36</code>. The probabilities add to <code>36/36 = 1</code> ✓. Then <code>P(X ≥ 10) = (3 + 2 + 1)/36 = 1/6</code>.</p>
+<p>Simulating shows the pattern: after many rolls, the fraction of times each total appears approaches its probability. That is the idea behind the <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a>.</p>
+<p>Another random variable: <code>Y</code> = &quot;number of spam emails among the next 5&quot;, with each independent and 40% likely to be spam. <code>Y</code> takes values 0 to 5 and follows a binomial distribution (see <a class="wikilink" href="/math/discrete-distributions/" data-topic="math/discrete-distributions">Discrete Distributions</a>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="simulate-tally" data-title="Roll it and tally it"><p class="bench-fallback"><strong>Interactive bench: Roll it and tally it.</strong> Roll two dice many times; a histogram of the totals grows next to the exact probabilities so you can see the simulated frequencies approach them.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Roll once, then ten times, then a thousand times.</li>
+<li>Compare the bars with the exact probabilities.</li>
+<li>Switch to one die and to the number of heads in ten flips.</li>
+<li>Reset and see that a new run looks different.</li>
+</ol>
+<p><strong>What you should notice:</strong> small runs are ragged, and large runs settle onto the theoretical shape.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Model outputs</strong> (a score, a predicted class) are random variables when inputs are uncertain.</li>
+<li><strong>Errors and noise</strong> are modelled as random variables.</li>
+<li><strong>Sampling from a model</strong> draws a value from its distribution.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing the random variable with its value.</strong></li>
+<li><strong>Assuming all values are equally likely.</strong></li>
+<li><strong>Forgetting that probabilities must sum to 1.</strong></li>
+<li><strong>Treating a continuous variable as if <code>P(X = x)</code> were positive.</strong> For continuous variables it is 0.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is P(X = 2) for the sum of two dice?</summary>
+1/36.
+</details>
+
+<details><summary>2. Is the number of emails received today discrete or continuous?</summary>
+Discrete.
+</details>
+
+<details><summary>3. Do the probabilities of all values of a discrete variable add to 1?</summary>
+Yes.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Random variable:</strong> a number determined by chance.</li>
+<li><strong>Discrete / continuous:</strong> separate values / any value in a range.</li>
+<li><strong>PMF:</strong> the list of probabilities for a discrete variable.</li>
+<li><strong>Distribution:</strong> the pattern of how likely each value is.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/events-and-sample-spaces/" data-topic="math/events-and-sample-spaces">Events and Sample Spaces</a> · <a class="wikilink" href="/math/expectation/" data-topic="math/expectation">Expectation</a> · <a class="wikilink" href="/math/discrete-distributions/" data-topic="math/discrete-distributions">Discrete Distributions</a> · <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> · <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/random-variables">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/expectation/"><small>Read next</small><b>Expectation</b><p>The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/events-and-sample-spaces/"><b>Events and Sample Spaces</b><p>A sample space is the set of all outcomes that could happen, and an event is any collection of those outcomes.</p></a><a class="rc-card" href="/math/functions/"><b>Functions</b><p>A function is a rule that takes an input and gives back exactly one output.</p></a><a class="rc-card" href="/math/continuous-distributions/"><b>Continuous Distributions</b><p>A continuous random variable can take any value in a range, so no single value has positive probability.</p></a><a class="rc-card" href="/math/law-of-large-numbers/"><b>Law of Large Numbers</b><p>The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.</p></a><a class="rc-card" href="/math/discrete-distributions/"><b>Discrete Distributions</b><p>A few discrete distributions describe most counting situations.</p></a><a class="rc-card" href="/math/expectation/"><b>Expectation</b><p>The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/bayes-theorem/">← Previous: Bayes Theorem</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

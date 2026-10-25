@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code-Execution Agents — AI Base</title>
+<meta name="description" content="Running code one snippet at a time from a clean slate means every new snippet has to re-establish everything the previous ones already set up — reload the data, redefine the variables — before it…">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/code-execution-agents/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Code-Execution Agents — AI Base">
+<meta property="og:description" content="Running code one snippet at a time from a clean slate means every new snippet has to re-establish everything the previous ones already set up — reload the data, redefine the variables — before it…">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/code-execution-agents/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Code-Execution Agents","item":"https://ai.saranmahadev.in/agents/code-execution-agents/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Code-Execution Agents","description":"Running code one snippet at a time from a clean slate means every new snippet has to re-establish everything the previous ones already set up — reload the data, redefine the variables — before it…","url":"https://ai.saranmahadev.in/agents/code-execution-agents/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the stateless total (10) more than double the stateful total (4) at n=4, rather than just doubling?","acceptedAnswer":{"@type":"Answer","text":"The stateless total grows as a triangular number (1+2+3+4), because step n has to resend all n prior steps' code, not just its own — the gap compounds with every added step rather than staying a fixed multiple."}},{"@type":"Question","name":"What's the key difference between a stateful and a stateless code-execution environment?","acceptedAnswer":{"@type":"Answer","text":"A stateful environment keeps variables, loaded data and other setup alive between calls; a stateless one starts fresh each call, so anything from a previous step has to be re-established before new work can happen."}},{"@type":"Question","name":"Does a longer pipeline make the stateless-vs-stateful gap better or worse?","acceptedAnswer":{"@type":"Answer","text":"Worse — the ratio between the two totals grows with the number of steps, since the stateless total scales roughly with the square of step count while the stateful total scales linearly."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Agent Environments and Action Spaces</p>
+        <h1 class="doc-title">Code-Execution Agents</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cvydd7fbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="cvydd7fpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cvydd7fbg)"/>
+  <circle cx="563" cy="282" r="144" fill="#dcbef5" opacity="0.31"/><circle cx="349" cy="392" r="178" fill="#dcbef5" opacity="0.47"/><circle cx="50" cy="338" r="220" fill="#725998" opacity="0.61"/><circle cx="707" cy="187" r="117" fill="#e7bdc8" opacity="0.58"/><circle cx="98" cy="130" r="196" fill="#e7bdc8" opacity="0.35"/>
+  <path d="M0,420 L0,309 L30,307 L60,306 L90,306 L120,307 L150,310 L180,313 L210,318 L240,323 L270,328 L300,333 L330,338 L360,342 L390,345 L420,348 L450,349 L480,350 L510,349 L540,346 L570,343 L600,339 L630,334 L660,329 L690,324 L720,319 L750,315 L780,311 L810,308 L840,306 L870,306 L900,306 L930,308 L960,311 L990,315 L1020,319 L1050,324 L1080,329 L1110,334 L1140,339 L1170,343 L1200,346 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,369 L30,372 L60,376 L90,379 L120,383 L150,386 L180,389 L210,392 L240,393 L270,394 L300,394 L330,393 L360,391 L390,388 L420,385 L450,382 L480,378 L510,374 L540,371 L570,368 L600,365 L630,363 L660,362 L690,362 L720,363 L750,364 L780,367 L810,370 L840,373 L870,377 L900,381 L930,384 L960,387 L990,390 L1020,392 L1050,394 L1080,394 L1110,394 L1140,392 L1170,390 L1200,387 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="628" cy="257" rx="189" ry="53" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-5.7 628 257)"/><ellipse cx="628" cy="257" rx="262" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(0.3 628 257)"/>
+  <circle cx="628" cy="257" r="74" fill="url(#cvydd7fpl)"/>
+  <circle cx="431" cy="246" r="8" fill="#ffffff" opacity="0.73"/><circle cx="550" cy="172" r="8" fill="#ffffff" opacity="0.69"/><circle cx="369" cy="290" r="14" fill="#ffffff" opacity="0.64"/><circle cx="510" cy="345" r="15" fill="#ffffff" opacity="0.62"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Running code one snippet at a time from a clean slate means every new snippet has to re-establish everything the previous ones already set up — reload the data, redefine the variables — before it can do anything new. A persistent execution environment, the kind a notebook or REPL gives you, remembers what came before, so each new snippet only has to add its own piece.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/code-as-a-tool-calling-interface/" data-topic="agents/code-as-a-tool-calling-interface">Code as a Tool-Calling Interface</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What does an agent need from the <em>environment</em> it executes code in, beyond the ability to run code at all?&quot; <a class="wikilink" href="/agents/code-as-a-tool-calling-interface/" data-topic="agents/code-as-a-tool-calling-interface">Code as a Tool-Calling Interface</a> covered writing code as the action itself, instead of calling one structured tool per primitive step. This topic is about what that code runs <em>inside</em>: a <strong>stateful</strong> execution environment (variables, loaded data and open connections persist between calls) versus a <strong>stateless</strong> one (every call starts from nothing and must re-establish its own setup).</p>
+<h2 id="intuition">Intuition</h2>
+<p>A chef working at the same station all day keeps their knives, prepped ingredients and pans exactly where they left them between dishes. A chef forced to tear down and rebuild their entire station from scratch before each dish wastes most of their time on setup that was already done minutes earlier — every dish after the first pays the same fixed cost all over again.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">stateful (persistent) total code volume over n steps:    n × (code per step)
+stateless (resend-everything) total over n steps:  n(n+1)/2 × (code per step)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A four-step data pipeline (load, filter, aggregate, format), where each step depends on the previous one&#39;s result:</p>
+<pre><code class="language-text">stateful total:   4 units of code  (each step sends only its own new code)
+stateless total:  10 units of code  (step n must resend all n prior steps&#39; code)
+ratio:            2.5× more code sent and re-executed, stateless vs. stateful
+</code></pre>
+<p>The stateless total isn&#39;t just &quot;a bit more&quot; — it grows as a triangular number (1+2+3+4 = 10), so the gap between the two widens as the pipeline gets longer, not just a fixed multiple of it.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="code-execution-state" data-title="Remembering between steps, or starting over"><p class="bench-fallback"><strong>Interactive bench: Remembering between steps, or starting over.</strong> Slide the number of pipeline steps and compare total code volume between a stateful and a stateless execution environment.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>At 4 steps, confirm the stateless total is 10 and the ratio is 2.5×.</li>
+<li>Slide the step count up to 8 and watch the ratio keep growing.</li>
+<li>Imagine a pipeline with 20 steps — would you expect the ratio to be larger or smaller than at 8?</li>
+</ol>
+<p><strong>What you should notice:</strong> the ratio itself grows with pipeline length — a stateless environment doesn&#39;t cost &quot;some fixed amount more,&quot; it costs proportionally more the longer the task runs, which matters a great deal for a long-running agent.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This extends <a class="wikilink" href="/agents/code-as-a-tool-calling-interface/" data-topic="agents/code-as-a-tool-calling-interface">Code as a Tool-Calling Interface</a></strong>, which covered choosing code as the action representation at all; this topic is specifically about what persists across the calls that representation produces.</li>
+<li><strong><a class="wikilink" href="/agents/shared-state-across-a-multi-step-task/" data-topic="agents/shared-state-across-a-multi-step-task">Shared State Across a Multi-Step Task</a>, already covered in the memory district, is the general version of this same problem</strong> — a code-execution sandbox&#39;s persistent variables are one concrete mechanism for carrying state between steps, alongside a blackboard or shared document.</li>
+<li><strong><a class="wikilink" href="/agents/hybrid-code-and-gui-action-spaces/" data-topic="agents/hybrid-code-and-gui-action-spaces">Hybrid Code-and-GUI Action Spaces</a>, the next topic, has to decide when code execution (with its own state model) is the right tool at all</strong>, versus clicking through an interface instead.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Resetting the execution environment between every tool call &quot;to be safe.&quot;</strong> The worked example shows this isn&#39;t free — it multiplies the code volume sent and re-executed, and that multiplier grows with task length.</li>
+<li><strong>Assuming persistent state is strictly better with no downsides.</strong> A long-running sandbox accumulates stale variables and side effects across unrelated tasks if it&#39;s never reset — the right lifetime for persistent state is the task, not forever.</li>
+<li><strong>Confusing &quot;stateful execution&quot; with &quot;stateful conversation.&quot;</strong> The code environment&#39;s variables and the agent&#39;s own memory of what it&#39;s doing are two different kinds of state, often with different lifetimes.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does the stateless total (10) more than double the stateful total (4) at n=4, rather than just doubling?</summary>
+The stateless total grows as a triangular number (1+2+3+4), because step n has to resend all n prior steps' code, not just its own — the gap compounds with every added step rather than staying a fixed multiple.
+</details>
+
+<details><summary>2. What's the key difference between a stateful and a stateless code-execution environment?</summary>
+A stateful environment keeps variables, loaded data and other setup alive between calls; a stateless one starts fresh each call, so anything from a previous step has to be re-established before new work can happen.
+</details>
+
+<details><summary>3. Does a longer pipeline make the stateless-vs-stateful gap better or worse?</summary>
+Worse — the ratio between the two totals grows with the number of steps, since the stateless total scales roughly with the square of step count while the stateful total scales linearly.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Stateful (persistent) execution:</strong> a code environment whose variables and setup persist across separate calls.</li>
+<li><strong>Stateless execution:</strong> a code environment that starts fresh each call, with nothing carried over from before.</li>
+<li><strong>Triangular growth:</strong> a quantity that grows as 1+2+3+...+n, compounding faster than a fixed multiple of n.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/code-as-a-tool-calling-interface/" data-topic="agents/code-as-a-tool-calling-interface">Code as a Tool-Calling Interface</a> · <a class="wikilink" href="/agents/shared-state-across-a-multi-step-task/" data-topic="agents/shared-state-across-a-multi-step-task">Shared State Across a Multi-Step Task</a> · <a class="wikilink" href="/agents/hybrid-code-and-gui-action-spaces/" data-topic="agents/hybrid-code-and-gui-action-spaces">Hybrid Code-and-GUI Action Spaces</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/code-execution-agents">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/hybrid-code-and-gui-action-spaces/"><small>Read next</small><b>Hybrid Code-and-GUI Action Spaces</b><p>A script can rename fifty files in one call; clicking through a file manager to do the same thing takes fifty clicks.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/code-as-a-tool-calling-interface/"><b>Code as a Tool-Calling Interface</b><p>Applying a discount to 200 items one tool call at a time costs 200 separate round trips, each one a full request and response.</p></a><a class="rc-card" href="/agents/shared-state-across-a-multi-step-task/"><b>Shared State Across a Multi-Step Task</b><p>A five-step task that needs today&#39;s date can fetch it five separate times, once per step — or fetch it once and write it somewhere every later step can just read.</p></a><a class="rc-card" href="/agents/hybrid-code-and-gui-action-spaces/"><b>Hybrid Code-and-GUI Action Spaces</b><p>A script can rename fifty files in one call; clicking through a file manager to do the same thing takes fifty clicks.</p></a><a class="rc-card" href="/agents/agent-environments-and-action-spaces/"><b>Agent Environments and Action Spaces</b><p>What an agent can actually do depends entirely on what it&#39;s acting inside — clicking around a web page needs a different action space than running shell commands in a terminal.</p></a><a class="rc-card" href="/agents/agent-benchmarks-and-task-suites/"><b>Agent Benchmarks and Task Suites</b><p>A question-answering benchmark checks one generated string against one reference string, and either matches or doesn&#39;t.</p></a><a class="rc-card" href="/agents/sandboxing-and-isolation/"><b>Sandboxing and Isolation</b><p>A code-execution agent running generated code with full access to the host machine can reach every file on it — including ones that have nothing to do with its task.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/computer-use-agents-and-gui-grounding/">← Previous: Computer-Use Agents and GUI Grounding</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distributional Metrics (FID, Inception Score and CLIP Score) — AI Base</title>
+<meta name="description" content="BLEU and ROUGE work by comparing a generation directly against one specific reference.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Distributional Metrics (FID, Inception Score and CLIP Score) — AI Base">
+<meta property="og:description" content="BLEU and ROUGE work by comparing a generation directly against one specific reference.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Distributional Metrics (FID, Inception Score and CLIP Score)","item":"https://ai.saranmahadev.in/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Distributional Metrics (FID, Inception Score and CLIP Score)","description":"BLEU and ROUGE work by comparing a generation directly against one specific reference.","url":"https://ai.saranmahadev.in/generative-ai/distributional-metrics-fid-inception-score-and-clip-score/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can't BLEU-style, single-reference comparison work for most image generation tasks?","acceptedAnswer":{"@type":"Answer","text":"There's usually no single \"correct\" reference image a generated image needs to match — many very different images could all be equally valid, so comparing to one specific reference doesn't make sense."}},{"@type":"Question","name":"In the worked example, why was the distance so much larger for the \"shifted distribution\" set despite its internal spread looking similar to the \"close match\" set?","acceptedAnswer":{"@type":"Answer","text":"The mean term in the distance dominated — the shifted set's average position was far from the real data's average position, even though both generated sets had comparable variance among their own points."}},{"@type":"Question","name":"What does CLIP score measure that FID does not?","acceptedAnswer":{"@type":"Answer","text":"How well a specific generated image matches its specific text prompt (via embedding similarity), rather than how statistically similar a whole set of generated images is to a whole set of real images."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Evaluating Generative Models</p>
+        <h1 class="doc-title">Distributional Metrics (FID, Inception Score and CLIP Score)</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cpznrx1bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="cpznrx1pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cpznrx1bg)"/>
+  <circle cx="386" cy="368" r="119" fill="#ffe9f4" opacity="0.59"/><circle cx="707" cy="368" r="195" fill="#ffbfe0" opacity="0.51"/><circle cx="164" cy="245" r="223" fill="#8a5989" opacity="0.46"/><circle cx="95" cy="5" r="93" fill="#ffbfe0" opacity="0.30"/><circle cx="399" cy="242" r="211" fill="#ffe9f4" opacity="0.52"/><circle cx="1020" cy="188" r="156" fill="#ffbfe0" opacity="0.40"/>
+  <path d="M0,420 L0,347 L30,344 L60,338 L90,332 L120,325 L150,318 L180,312 L210,308 L240,306 L270,306 L300,308 L330,312 L360,317 L390,324 L420,330 L450,337 L480,343 L510,347 L540,349 L570,349 L600,347 L630,344 L660,338 L690,332 L720,325 L750,318 L780,312 L810,308 L840,306 L870,306 L900,308 L930,312 L960,317 L990,324 L1020,330 L1050,337 L1080,343 L1110,347 L1140,349 L1170,349 L1200,347 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,366 L30,363 L60,362 L90,362 L120,364 L150,367 L180,371 L210,376 L240,381 L270,386 L300,390 L330,393 L360,394 L390,394 L420,392 L450,389 L480,385 L510,380 L540,375 L570,370 L600,366 L630,363 L660,362 L690,362 L720,364 L750,367 L780,371 L810,376 L840,381 L870,386 L900,390 L930,393 L960,394 L990,394 L1020,392 L1050,389 L1080,385 L1110,380 L1140,375 L1170,370 L1200,366 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="745" cy="138" rx="247" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-11.1 745 138)"/><ellipse cx="745" cy="138" rx="341" ry="95" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-5.1 745 138)"/>
+  <circle cx="745" cy="138" r="97" fill="url(#cpznrx1pl)"/>
+  <circle cx="682" cy="257" r="13" fill="#ffffff" opacity="0.77"/><circle cx="367" cy="195" r="12" fill="#ffffff" opacity="0.89"/><circle cx="398" cy="60" r="19" fill="#ffffff" opacity="0.84"/><circle cx="1037" cy="166" r="12" fill="#ffffff" opacity="0.61"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>BLEU and ROUGE work by comparing a generation directly against <em>one specific</em> reference. Images, audio and video usually don&#39;t have one &quot;correct&quot; reference to compare against at all — a generated photo of a cat doesn&#39;t need to match any particular real photo, just be a <em>plausible</em> one. This note covers metrics built for exactly that situation: comparing whole distributions, not individual outputs.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/n-gram-overlap-metrics-bleu-and-rouge/" data-topic="generative-ai/n-gram-overlap-metrics-bleu-and-rouge">n-gram Overlap Metrics (BLEU and ROUGE)</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you score a generative model when there&#39;s no single correct output to compare against?&quot; <strong>Distributional metrics</strong> compare the <em>statistics</em> of a set of generated samples against the statistics of real data, rather than matching individual outputs one to one. The <strong>Fréchet distance</strong> (the core of FID, &quot;Fréchet Inception Distance&quot;) measures how far apart two distributions&#39; means and (co)variances are. <strong>CLIP score</strong> takes a completely different approach for text-conditioned generation: measuring the cosine similarity between a generated image&#39;s embedding and its prompt&#39;s embedding directly, via the same kind of shared embedding space from <a class="wikilink" href="/generative-ai/any-to-any-generative-models/" data-topic="generative-ai/any-to-any-generative-models">Any-to-Any Generative Models</a>.</p>
+<h2 id="intuition">Intuition</h2>
+<p>You can&#39;t check whether a generated photo of a cat &quot;matches&quot; reality by comparing it pixel-for-pixel against any single real cat photo — there&#39;s no one right answer. What you <em>can</em> check is whether a whole batch of generated cat photos, as a group, has roughly the same statistical &quot;shape&quot; (how varied they are, what the average features look like) as a batch of real cat photos. That&#39;s the Fréchet-distance idea: compare two clouds of points by their center and spread, not point by point.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">Fréchet distance (diagonal-covariance simplification), between real features R and generated features G:
+  d = ‖mean(R) − mean(G)‖² + Σᵢ [ var(R)ᵢ + var(G)ᵢ − 2·√(var(R)ᵢ · var(G)ᵢ) ]
+  → 0 only when both the means and the variances match exactly, dimension by dimension
+
+CLIP score: cosine(embed(generated image), embed(prompt))
+  → high when the image and its prompt land near each other in a shared embedding space
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Four small 2D &quot;real&quot; feature points clustered near <code>(1, 2)</code>, compared against two different generated sets:</p>
+<pre><code class="language-text">real features:         (1, 2), (1.2, 2.1), (0.9, 1.9), (1.1, 2.05)
+
+close match:            (1.05, 1.95), (1.15, 2.08), (0.95, 1.92), (1.0, 2.0)
+  distributional distance: 0.0024    ← very close
+
+shifted distribution:   (5, 5), (5.2, 5.1), (4.8, 4.9), (5.1, 5.05)
+  distributional distance: 24.8019   ← very far
+</code></pre>
+<p>Both generated sets have roughly the same <em>internal spread</em> as the real set (each has similar variance among its own four points) — the huge difference between the two scores comes almost entirely from the <em>mean</em> term, since the &quot;shifted distribution&quot; set sits in a completely different region of feature space than the real data, despite looking internally just as consistent as the close match.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="fid-distributional" data-title="How far apart are two feature distributions?"><p class="bench-fallback"><strong>Interactive bench: How far apart are two feature distributions?.</strong> Compare two generated feature sets against the same real feature set using a Fréchet-distance-style metric.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the &quot;close match&quot; generated set&#39;s distance against the real set.</li>
+<li>Switch to the &quot;shifted distribution&quot; set and watch the distance grow sharply.</li>
+<li>Notice both generated sets have a similar internal spread — the difference is almost entirely about where their mean sits.</li>
+</ol>
+<p><strong>What you should notice:</strong> a distributional metric can&#39;t tell you anything about any <em>individual</em> generated sample&#39;s quality — it&#39;s purely a statement about the whole set&#39;s statistics compared to the whole real set&#39;s statistics.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>FID (using real neural network features, not toy 2D points, and full covariance matrices, not just the diagonal) is the standard image-generation benchmark metric</strong>, reported by nearly every major image-generation paper.</li>
+<li><strong>Inception Score</strong> is a related, older distributional metric that instead measures how confidently and diversely a pretrained classifier labels the generated images — two complementary ways of asking &quot;do these look like real, varied examples of something?&quot;</li>
+<li><strong>CLIP score directly checks text-image alignment</strong>, answering a different question entirely from FID: not &quot;do generated images look realistic as a group,&quot; but &quot;does <em>this</em> generated image actually match <em>this</em> prompt?&quot;</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Using a distributional metric to judge a single generated sample.</strong> These metrics are only meaningful computed over a reasonably large set of samples — a &quot;distance&quot; computed from one generated image and one real image doesn&#39;t mean what FID normally means.</li>
+<li><strong>Assuming a low distributional distance guarantees individually high-quality samples.</strong> A generator that reproduces the right overall statistics while still occasionally producing broken individual samples can still score well, since the metric only sees aggregate statistics.</li>
+<li><strong>Forgetting CLIP score and FID measure different things.</strong> A generated image can match its prompt extremely well (high CLIP score) while still looking statistically different from real images overall (worse FID), or vice versa.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why can't BLEU-style, single-reference comparison work for most image generation tasks?</summary>
+There's usually no single "correct" reference image a generated image needs to match — many very different images could all be equally valid, so comparing to one specific reference doesn't make sense.
+</details>
+
+<details><summary>2. In the worked example, why was the distance so much larger for the "shifted distribution" set despite its internal spread looking similar to the "close match" set?</summary>
+The mean term in the distance dominated — the shifted set's average position was far from the real data's average position, even though both generated sets had comparable variance among their own points.
+</details>
+
+<details><summary>3. What does CLIP score measure that FID does not?</summary>
+How well a specific generated image matches its specific text prompt (via embedding similarity), rather than how statistically similar a whole set of generated images is to a whole set of real images.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Distributional metric:</strong> a score comparing the statistics of a set of generated samples to a set of real samples, rather than comparing individual outputs.</li>
+<li><strong>Fréchet distance:</strong> a measure of how far apart two distributions&#39; means and (co)variances are.</li>
+<li><strong>CLIP score:</strong> the cosine similarity between a generated image&#39;s embedding and its prompt&#39;s embedding in a shared space.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/n-gram-overlap-metrics-bleu-and-rouge/" data-topic="generative-ai/n-gram-overlap-metrics-bleu-and-rouge">n-gram Overlap Metrics (BLEU and ROUGE)</a> · <a class="wikilink" href="/generative-ai/diversity-and-mode-collapse-in-generation/" data-topic="generative-ai/diversity-and-mode-collapse-in-generation">Diversity and Mode Collapse in Generation</a> · <a class="wikilink" href="/generative-ai/any-to-any-generative-models/" data-topic="generative-ai/any-to-any-generative-models">Any-to-Any Generative Models</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/distributional-metrics-fid-inception-score-and-clip-score">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/diversity-and-mode-collapse-in-generation/"><small>Read next</small><b>Diversity and Mode Collapse in Generation</b><p>A generative model can score well on fidelity — every individual sample looks great — while quietly producing almost the same thing every time.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/n-gram-overlap-metrics-bleu-and-rouge/"><b>n-gram Overlap Metrics (BLEU and ROUGE)</b><p>Perplexity measures how well a model predicts text it&#39;s shown; it says nothing about a model&#39;s own generated output compared to a correct answer.</p></a><a class="rc-card" href="/generative-ai/any-to-any-generative-models/"><b>Any-to-Any Generative Models</b><p>a unified vocabulary lets text and image tokens share one generation mechanism.</p></a><a class="rc-card" href="/generative-ai/diversity-and-mode-collapse-in-generation/"><b>Diversity and Mode Collapse in Generation</b><p>A generative model can score well on fidelity — every individual sample looks great — while quietly producing almost the same thing every time.</p></a><a class="rc-card" href="/generative-ai/super-resolution-and-upscaling/"><b>Super-Resolution and Upscaling</b><p>A low-resolution image has fewer pixels than you want — every upscaling method has to invent the missing ones somehow.</p></a><a class="rc-card" href="/generative-ai/evaluating-generative-models/"><b>Evaluating Generative Models</b><p>A classifier has a right answer to check against; a generated poem or image usually doesn&#39;t.</p></a><a class="rc-card" href="/generative-ai/human-evaluation-of-generated-content/"><b>Human Evaluation of Generated Content</b><p>Every metric so far on this planet is automatic — computed from numbers, with no judgment involved.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/n-gram-overlap-metrics-bleu-and-rouge/">← Previous: n-gram Overlap Metrics (BLEU and ROUGE)</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

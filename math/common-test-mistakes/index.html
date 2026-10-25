@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Common Test Mistakes — AI Base</title>
+<meta name="description" content="Statistical tests are easy to misuse.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/common-test-mistakes/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Common Test Mistakes — AI Base">
+<meta property="og:description" content="Statistical tests are easy to misuse.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/common-test-mistakes/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Common Test Mistakes","item":"https://ai.saranmahadev.in/math/common-test-mistakes/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Common Test Mistakes","description":"Statistical tests are easy to misuse.","url":"https://ai.saranmahadev.in/math/common-test-mistakes/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Ten independent null tests at α = 0.05. Chance of at least one false positive?","acceptedAnswer":{"@type":"Answer","text":"1 − 0.95¹⁰ ≈ 40%."}},{"@type":"Question","name":"What is the Bonferroni threshold for 5 tests at α = 0.05?","acceptedAnswer":{"@type":"Answer","text":"0.01."}},{"@type":"Question","name":"What is p-hacking?","acceptedAnswer":{"@type":"Answer","text":"Trying analyses until a significant result appears, then reporting it."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Statistics</p>
+        <h1 class="doc-title">Common Test Mistakes</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1sd4it5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1sd4it5pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1sd4it5bg)"/>
+  <circle cx="1145" cy="251" r="64" fill="#cebff9" opacity="0.53"/><circle cx="803" cy="49" r="110" fill="#eee9fd" opacity="0.50"/><circle cx="1128" cy="355" r="126" fill="#ddbecb" opacity="0.40"/><circle cx="1122" cy="173" r="112" fill="#cebff9" opacity="0.53"/><circle cx="118" cy="264" r="228" fill="#cebff9" opacity="0.50"/><circle cx="509" cy="16" r="119" fill="#68599a" opacity="0.43"/><circle cx="6" cy="290" r="83" fill="#ddbecb" opacity="0.54"/>
+  <path d="M0,420 L0,339 L30,344 L60,348 L90,350 L120,349 L150,346 L180,342 L210,336 L240,329 L270,323 L300,316 L330,311 L360,307 L390,306 L420,306 L450,309 L480,313 L510,319 L540,326 L570,333 L600,339 L630,344 L660,348 L690,350 L720,349 L750,346 L780,342 L810,336 L840,329 L870,323 L900,316 L930,311 L960,307 L990,306 L1020,306 L1050,309 L1080,313 L1110,319 L1140,326 L1170,333 L1200,339 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,378 L30,373 L60,369 L90,365 L120,363 L150,362 L180,363 L210,365 L240,368 L270,373 L300,378 L330,383 L360,387 L390,391 L420,393 L450,394 L480,393 L510,391 L540,388 L570,383 L600,378 L630,373 L660,369 L690,365 L720,363 L750,362 L780,363 L810,365 L840,368 L870,373 L900,378 L930,383 L960,387 L990,391 L1020,393 L1050,394 L1080,393 L1110,391 L1140,388 L1170,383 L1200,378 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="888" cy="217" rx="163" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(9.3 888 217)"/><ellipse cx="888" cy="217" rx="225" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(15.3 888 217)"/>
+  <circle cx="888" cy="217" r="64" fill="url(#c1sd4it5pl)"/>
+  <circle cx="870" cy="144" r="9" fill="#ffffff" opacity="0.82"/><circle cx="723" cy="140" r="14" fill="#ffffff" opacity="0.65"/><circle cx="681" cy="172" r="9" fill="#ffffff" opacity="0.66"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Statistical tests are easy to misuse. Running many tests and reporting the winners, trying analyses until one works (<strong>p-hacking</strong>), and stopping an experiment when it looks good all produce &quot;significant&quot; findings that are really chance. Knowing the traps is what keeps evaluations honest.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/hypothesis-testing-and-p-values/" data-topic="math/hypothesis-testing-and-p-values">Hypothesis Testing and P-values</a> and <a class="wikilink" href="/math/independence/" data-topic="math/independence">Independence</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I avoid fooling myself?&quot; With enough tries, luck will always produce something that looks like a discovery.</p>
+<h2 id="multiple-comparisons">Multiple comparisons</h2>
+<p>A 5% significance level means a true-null test has a 5% chance of a false alarm. Run <code>m</code> independent tests where nothing is going on:</p>
+<pre><code class="language-text">P(at least one false positive) = 1 − (1 − 0.05)ᵐ
+m = 1:   5.0%        m = 10:  40.1%        m = 20:  64.2%        m = 100:  99.4%
+</code></pre>
+<p>Test 20 jelly-bean colours for a link to acne and you should expect about one &quot;significant&quot; colour by chance alone. A simple fix is the <strong>Bonferroni correction</strong>: require <code>p &lt; α / m</code> for each test (0.05 / 20 = 0.0025).</p>
+<h2 id="other-common-traps">Other common traps</h2>
+<ul>
+<li><strong>p-hacking:</strong> trying different variables, subgroups, exclusions or cut-offs until p &lt; 0.05 and reporting only that.</li>
+<li><strong>Peeking:</strong> checking results repeatedly and stopping as soon as p dips below 0.05 inflates false positives.</li>
+<li><strong>Base-rate neglect:</strong> if few hypotheses are true, most &quot;significant&quot; findings are false (the same logic as <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a>).</li>
+<li><strong>Confusing absence of evidence with evidence of absence:</strong> a non-significant result on small data may just mean low <strong>power</strong>, the chance of detecting a real effect.</li>
+<li><strong>Using the test set repeatedly</strong> while tuning a model: it stops being independent data.</li>
+</ul>
+<h2 id="a-worked-example">A worked example</h2>
+<p>You compare a new model with the old one on 20 different data slices, testing each at <code>α = 0.05</code>. Suppose the models are actually identical.</p>
+<pre><code class="language-text">expected false positives = 20 × 0.05 = 1
+P(at least one &quot;significant&quot; slice) = 1 − 0.95²⁰ = 0.642
+</code></pre>
+<p>If you report only the slice where the new model &quot;wins significantly&quot;, you have a 64% chance of a fake headline. With the Bonferroni threshold <code>0.0025</code>, the chance of a false positive across all 20 drops to about <code>1 − 0.9975²⁰ ≈ 4.9%</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="jelly-bean" data-title="Twenty tests on pure noise"><p class="bench-fallback"><strong>Interactive bench: Twenty tests on pure noise.</strong> Choose how many tests to run on random data with no real effect; the bench draws p-values, marks those below 0.05, and shows how often at least one appears over many repetitions, with and without the Bonferroni correction.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Run 20 tests. How many &quot;discoveries&quot; appear?</li>
+<li>Run it several times and see how often at least one shows up.</li>
+<li>Turn on Bonferroni and repeat.</li>
+<li>Increase the number of tests to 100.</li>
+</ol>
+<p><strong>What you should notice:</strong> with many tests, false positives are practically guaranteed, and a stricter threshold restores control.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Benchmark chasing:</strong> picking the best of many runs or seeds.</li>
+<li><strong>Hyperparameter search</strong> on a fixed validation set.</li>
+<li><strong>Subgroup analyses</strong> in fairness audits.</li>
+<li><strong>Leaderboards:</strong> repeated submissions overfit to the test set.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Reporting only significant results.</strong></li>
+<li><strong>Not counting the tests you tried.</strong></li>
+<li><strong>Peeking and stopping early.</strong></li>
+<li><strong>Ignoring power</strong> on small samples.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Ten independent null tests at α = 0.05. Chance of at least one false positive?</summary>
+1 − 0.95¹⁰ ≈ 40%.
+</details>
+
+<details><summary>2. What is the Bonferroni threshold for 5 tests at α = 0.05?</summary>
+0.01.
+</details>
+
+<details><summary>3. What is p-hacking?</summary>
+Trying analyses until a significant result appears, then reporting it.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Multiple comparisons problem:</strong> false positives multiplying with the number of tests.</li>
+<li><strong>Bonferroni correction:</strong> dividing α by the number of tests.</li>
+<li><strong>p-hacking:</strong> analysing until a result is significant.</li>
+<li><strong>Power:</strong> the chance of detecting a real effect.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/hypothesis-testing-and-p-values/" data-topic="math/hypothesis-testing-and-p-values">Hypothesis Testing and P-values</a> · <a class="wikilink" href="/math/independence/" data-topic="math/independence">Independence</a> · <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a> · <a class="wikilink" href="/math/overfitting-in-statistics/" data-topic="math/overfitting-in-statistics">Overfitting in Statistics</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/common-test-mistakes">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/bayesian-vs-frequentist/"><small>Read next</small><b>Bayesian vs Frequentist</b><p>Statisticians have two philosophies. Frequentists treat probability as a long-run frequency and parameters as fixed but unknown numbers, so they ask how data would behave over repeated experiments.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/hypothesis-testing-and-p-values/"><b>Hypothesis Testing and P-values</b><p>A hypothesis test asks whether a result could plausibly be due to chance alone.</p></a><a class="rc-card" href="/math/independence/"><b>Independence</b><p>Two events are independent when knowing one happened tells you nothing about the other: P(A | B) = P(A). Equivalently, the probability of both is the product: P(A and B) = P(A) · P(B).</p></a><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/fundamentals/generalization/"><b>Generalization</b><p>Generalization is a model&#39;s ability to do well on examples it has never seen. A model that merely memorises its training examples, noise and all, scores perfectly on them and poorly on anything new.</p></a><a class="rc-card" href="/math/overfitting-in-statistics/"><b>Overfitting in Statistics</b><p>Overfitting happens when a model fits the quirks and noise of its training data instead of the underlying pattern, so it does well on the data it saw and badly on new data.</p></a><a class="rc-card" href="/math/statistics/"><b>Statistics</b><p>Probability reasons from a known chance process to what data it will produce. Statistics runs the other way: it starts from data and reasons back to what produced it.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/hypothesis-testing-and-p-values/">← Previous: Hypothesis Testing and P-values</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

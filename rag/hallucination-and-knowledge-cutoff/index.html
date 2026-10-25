@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hallucination and Knowledge Cutoff — AI Base</title>
+<meta name="description" content="Every model has a training cutoff — a date after which nothing happened in its training data. Ask it about something before that date, and it usually answers confidently and correctly.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/hallucination-and-knowledge-cutoff/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Hallucination and Knowledge Cutoff — AI Base">
+<meta property="og:description" content="Every model has a training cutoff — a date after which nothing happened in its training data. Ask it about something before that date, and it usually answers confidently and correctly.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/hallucination-and-knowledge-cutoff/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Hallucination and Knowledge Cutoff","item":"https://ai.saranmahadev.in/rag/hallucination-and-knowledge-cutoff/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hallucination and Knowledge Cutoff","description":"Every model has a training cutoff — a date after which nothing happened in its training data. Ask it about something before that date, and it usually answers confidently and correctly.","url":"https://ai.saranmahadev.in/rag/hallucination-and-knowledge-cutoff/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does confidence 1 day after the cutoff (92%) look almost as high as confidence 1 day before it (95%)?","acceptedAnswer":{"@type":"Answer","text":"The decay function only starts applying once an event is past the cutoff, and the exponential decay is still very close to its starting value just one day in — the drop accelerates over the following weeks rather than happening instantly."}},{"@type":"Question","name":"Does a model's confidence in an unretrieved answer ever reach exactly zero for events far past its cutoff?","acceptedAnswer":{"@type":"Answer","text":"No — the worked example's confidence floor is 5%, reflecting that models are built to produce fluent completions and rarely default to flat refusal, however far past their knowledge the question falls."}},{"@type":"Question","name":"What's the direct fix retrieval offers for this specific problem?","acceptedAnswer":{"@type":"Answer","text":"Giving the model a current document about the event at answer-time, so it can ground its response in real information instead of relying on its own decaying, unretrieved confidence."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Why Retrieval and Grounding</p>
+        <h1 class="doc-title">Hallucination and Knowledge Cutoff</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1qtsho0bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1qtsho0pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1qtsho0bg)"/>
+  <circle cx="1099" cy="15" r="63" fill="#97e1e6" opacity="0.57"/><circle cx="637" cy="127" r="179" fill="#b7d5be" opacity="0.58"/><circle cx="97" cy="266" r="74" fill="#b7d5be" opacity="0.58"/><circle cx="257" cy="312" r="168" fill="#b7d5be" opacity="0.50"/><circle cx="391" cy="190" r="129" fill="#dcf5f7" opacity="0.23"/><circle cx="198" cy="72" r="108" fill="#dcf5f7" opacity="0.22"/>
+  <path d="M0,420 L0,319 L30,323 L60,326 L90,330 L120,333 L150,336 L180,339 L210,342 L240,344 L270,346 L300,348 L330,349 L360,350 L390,350 L420,349 L450,348 L480,346 L510,344 L540,342 L570,339 L600,336 L630,332 L660,329 L690,326 L720,322 L750,319 L780,316 L810,313 L840,311 L870,309 L900,307 L930,306 L960,306 L990,306 L1020,306 L1050,307 L1080,309 L1110,311 L1140,314 L1170,316 L1200,319 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,364 L90,367 L120,372 L150,377 L180,382 L210,386 L240,390 L270,393 L300,394 L330,394 L360,392 L390,389 L420,384 L450,379 L480,374 L510,370 L540,366 L570,363 L600,362 L630,362 L660,364 L690,367 L720,372 L750,377 L780,382 L810,386 L840,390 L870,393 L900,394 L930,394 L960,392 L990,389 L1020,384 L1050,379 L1080,374 L1110,370 L1140,366 L1170,363 L1200,362 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="966" cy="131" rx="163" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-11.5 966 131)"/><ellipse cx="966" cy="131" rx="226" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-5.5 966 131)"/>
+  <circle cx="966" cy="131" r="64" fill="url(#c1qtsho0pl)"/>
+  <circle cx="755" cy="151" r="14" fill="#ffffff" opacity="0.89"/><circle cx="942" cy="212" r="13" fill="#ffffff" opacity="0.64"/><circle cx="911" cy="211" r="8" fill="#ffffff" opacity="0.62"/><circle cx="1197" cy="165" r="18" fill="#ffffff" opacity="0.86"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every model has a training cutoff — a date after which nothing happened in its training data. Ask it about something before that date, and it usually answers confidently and correctly. Ask it about something after, and it doesn&#39;t say &quot;I don&#39;t know&quot; by default — it often produces a fluent, plausible-sounding answer anyway, wrong in a way that&#39;s hard to tell apart from being right.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/parametric-vs-non-parametric-knowledge/" data-topic="rag/parametric-vs-non-parametric-knowledge">Parametric vs. Non-Parametric Knowledge</a>, <a class="wikilink" href="/generative-ai/hallucination-and-factuality/" data-topic="generative-ai/hallucination-and-factuality">Hallucination and Factuality</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What actually happens when a model is asked about something past its training cutoff?&quot; <a class="wikilink" href="/generative-ai/hallucination-and-factuality/" data-topic="generative-ai/hallucination-and-factuality">Hallucination</a> in general covers any confident-but-wrong output; this topic is about one specific, very common cause of it — a knowledge gap the model has no way of knowing it has. The model&#39;s confidence in its own unretrieved answer stays high right up to the cutoff, then decays the further past it a question falls, but it never hits zero: a language model is built to produce fluent text, and &quot;I genuinely don&#39;t know&quot; isn&#39;t the default completion for most questions.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Asking someone who left on a long expedition about recent news gets you confident answers about everything up to the day they left, and increasingly uncertain, outdated, or simply wrong guesses about anything after — but they usually don&#39;t just say &quot;I don&#39;t know,&quot; because people (and models) are built to keep the conversation going, not to flag the exact edge of their own knowledge.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">confidence(event, cutoff) = 0.95                              if event is before cutoff
+                           = max(0.05, 0.95 · e^(−days_past/30))  if event is after cutoff
+</code></pre>
+<p>An illustrative decay — the exact shape varies by model and topic, but the direction (confident, then decaying, never literally zero) is the real pattern.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Confidence in an unretrieved answer, at various distances from a training cutoff of January 1, 2024:</p>
+<pre><code class="language-text">365 days before cutoff:  95% confident
+ 30 days before cutoff:  95% confident
+  1 day  before cutoff:  95% confident
+  1 day  after  cutoff:  92% confident
+ 30 days after  cutoff:  35% confident
+180 days after  cutoff:   5% confident (floor)
+365 days after  cutoff:   5% confident (floor)
+</code></pre>
+<p>Confidence doesn&#39;t fall off a cliff exactly at the cutoff — it stays high for a short while (recent pre-cutoff training data is sparse too) and then drops sharply over the following weeks, settling at a low floor rather than zero. A model asked about something 180 days past its cutoff isn&#39;t refusing to answer; it&#39;s guessing with 5% of the confidence it would have for something it actually knows.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="knowledge-cutoff-confidence" data-title="Confident up to a point, then guessing"><p class="bench-fallback"><strong>Interactive bench: Confident up to a point, then guessing.</strong> Slide an event's date relative to a training cutoff and watch confidence decay past it.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide to well before the cutoff and note confidence stays flat and high.</li>
+<li>Cross the cutoff and watch confidence start falling within the first month.</li>
+<li>Slide far past the cutoff and notice confidence never reaches exactly zero.</li>
+</ol>
+<p><strong>What you should notice:</strong> there&#39;s no sharp &quot;I don&#39;t know&quot; boundary at the cutoff — confidence degrades gradually, which is exactly why a hallucinated answer about a post-cutoff event can sound just as fluent as a correct one.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is a specific, dateable instance of the broader <a class="wikilink" href="/generative-ai/hallucination-and-factuality/" data-topic="generative-ai/hallucination-and-factuality">hallucination</a> problem</strong> covered on the Generative AI planet — knowledge cutoff is one concrete, predictable cause among several.</li>
+<li><strong>Retrieval directly addresses this gap</strong> by giving the model current documents to answer from instead of relying on its own decaying confidence — the motivation behind everything else on this planet.</li>
+<li><strong><a class="wikilink" href="/rag/rag-vs-fine-tuning-vs-long-context/" data-topic="rag/rag-vs-fine-tuning-vs-long-context">RAG vs. Fine-Tuning vs. Long-Context</a> treats &quot;freshness&quot; as one of the dimensions that decides whether retrieval is the right fix for a given knowledge gap.</strong></li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a model will say &quot;I don&#39;t know&quot; when asked about something past its cutoff.</strong> The worked example&#39;s confidence floor (5%, not 0%) reflects that models keep answering fluently well past the point where they should be uncertain.</li>
+<li><strong>Treating the cutoff date as a hard boundary.</strong> Confidence starts sliding within days of the cutoff, not exactly at midnight on the cutoff date — training data near the cutoff is often sparse too.</li>
+<li><strong>Confusing knowledge cutoff with the model simply not knowing a fact that was always obscure.</strong> Cutoff-related hallucination is specifically about events that didn&#39;t exist yet during training, not facts the training data merely omitted.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does confidence 1 day after the cutoff (92%) look almost as high as confidence 1 day before it (95%)?</summary>
+The decay function only starts applying once an event is past the cutoff, and the exponential decay is still very close to its starting value just one day in — the drop accelerates over the following weeks rather than happening instantly.
+</details>
+
+<details><summary>2. Does a model's confidence in an unretrieved answer ever reach exactly zero for events far past its cutoff?</summary>
+No — the worked example's confidence floor is 5%, reflecting that models are built to produce fluent completions and rarely default to flat refusal, however far past their knowledge the question falls.
+</details>
+
+<details><summary>3. What's the direct fix retrieval offers for this specific problem?</summary>
+Giving the model a current document about the event at answer-time, so it can ground its response in real information instead of relying on its own decaying, unretrieved confidence.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Training cutoff:</strong> the date after which no data existed in a model&#39;s training set.</li>
+<li><strong>Hallucination:</strong> a model producing a confident, fluent answer that is factually wrong.</li>
+<li><strong>Confidence decay:</strong> the gradual drop in reliability of a model&#39;s unretrieved answers as a question moves further past its training cutoff.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/hallucination-and-factuality/" data-topic="generative-ai/hallucination-and-factuality">Hallucination and Factuality</a> · <a class="wikilink" href="/rag/parametric-vs-non-parametric-knowledge/" data-topic="rag/parametric-vs-non-parametric-knowledge">Parametric vs. Non-Parametric Knowledge</a> · <a class="wikilink" href="/rag/rag-vs-fine-tuning-vs-long-context/" data-topic="rag/rag-vs-fine-tuning-vs-long-context">RAG vs. Fine-Tuning vs. Long-Context</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/hallucination-and-knowledge-cutoff">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/rag-vs-fine-tuning-vs-long-context/"><small>Read next</small><b>RAG vs. Fine-Tuning vs. Long-Context</b><p>A model that doesn&#39;t know something, or doesn&#39;t behave the way you want, has more than one fix available.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/parametric-vs-non-parametric-knowledge/"><b>Parametric vs. Non-Parametric Knowledge</b><p>A language model&#39;s &quot;knowledge&quot; isn&#39;t stored the way a database stores facts.</p></a><a class="rc-card" href="/generative-ai/hallucination-and-factuality/"><b>Hallucination and Factuality</b><p>Nothing in how a language model generates text requires what it says to be true — it only requires the next token to be a plausible continuation.</p></a><a class="rc-card" href="/rag/rag-vs-fine-tuning-vs-long-context/"><b>RAG vs. Fine-Tuning vs. Long-Context</b><p>A model that doesn&#39;t know something, or doesn&#39;t behave the way you want, has more than one fix available.</p></a><a class="rc-card" href="/rag/why-retrieval-and-grounding/"><b>Why Retrieval and Grounding</b><p>A model&#39;s weights are a fixed snapshot of what it learned during training — they can&#39;t be updated with this morning&#39;s news or a document it&#39;s never seen.</p></a><a class="rc-card" href="/rag/metadata-extraction-and-enrichment/"><b>Metadata Extraction and Enrichment</b><p>A chunk&#39;s text alone often can&#39;t say whether it&#39;s still true.</p></a><a class="rc-card" href="/rag/self-rag-and-reflective-retrieval/"><b>Self-RAG and Reflective Retrieval</b><p>Every query in a basic RAG pipeline gets retrieved for, whether it needs it or not — &quot;what is 2 + 2&quot; triggers the exact same search-then-generate routine as a question about a company&#39;s…</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/parametric-vs-non-parametric-knowledge/">← Previous: Parametric vs. Non-Parametric Knowledge</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

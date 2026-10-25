@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Deep Networks Learn — AI Base</title>
+<meta name="description" content="Looking at what individual units respond to across a whole trained network reveals a consistent pattern: early layers learn simple, generic detectors (edges, colours, basic textures); later layers…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/what-deep-networks-learn/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="What Deep Networks Learn — AI Base">
+<meta property="og:description" content="Looking at what individual units respond to across a whole trained network reveals a consistent pattern: early layers learn simple, generic detectors (edges, colours, basic textures); later layers…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/what-deep-networks-learn/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"What Deep Networks Learn","item":"https://ai.saranmahadev.in/deep-learning/what-deep-networks-learn/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"What Deep Networks Learn","description":"Looking at what individual units respond to across a whole trained network reveals a consistent pattern: early layers learn simple, generic detectors (edges, colours, basic textures); later layers…","url":"https://ai.saranmahadev.in/deep-learning/what-deep-networks-learn/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do early CNN layers tend to learn generic features like edges, while later layers learn task-specific ones?","acceptedAnswer":{"@type":"Answer","text":"Early layers see only raw pixels and can only build simple, local, broadly applicable detectors; later layers build on top of earlier layers' already-detected patterns, allowing more specific, complex combinations."}},{"@type":"Question","name":"In the worked example, why didn't either individual edge map detect the corner alone?","acceptedAnswer":{"@type":"Answer","text":"Each map only encodes one kind of edge (horizontal or vertical) and lights up along an entire row or column; only requiring both to be active at once isolates the single point where they intersect."}},{"@type":"Question","name":"Why does this hierarchy matter for transfer learning?","acceptedAnswer":{"@type":"Answer","text":"Early, generic layers tend to transfer well to new, related tasks, while later, more task-specific layers often need to be retrained or fine-tuned for a new task."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Representation Learning</p>
+        <h1 class="doc-title">What Deep Networks Learn</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1631488bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1631488pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1631488bg)"/>
+  <circle cx="559" cy="379" r="203" fill="#ffe6e6" opacity="0.48"/><circle cx="6" cy="241" r="113" fill="#ffe6e6" opacity="0.26"/><circle cx="527" cy="369" r="116" fill="#8a546c" opacity="0.39"/><circle cx="962" cy="268" r="166" fill="#ffe6e6" opacity="0.36"/><circle cx="422" cy="307" r="151" fill="#8a546c" opacity="0.36"/><circle cx="740" cy="415" r="168" fill="#ffe6e6" opacity="0.61"/><circle cx="979" cy="393" r="215" fill="#ffe6e6" opacity="0.36"/>
+  <path d="M0,420 L0,349 L30,349 L60,350 L90,349 L120,348 L150,347 L180,345 L210,343 L240,340 L270,338 L300,334 L330,331 L360,328 L390,324 L420,321 L450,318 L480,315 L510,312 L540,310 L570,308 L600,307 L630,306 L660,306 L690,306 L720,307 L750,308 L780,310 L810,312 L840,315 L870,318 L900,321 L930,324 L960,328 L990,331 L1020,334 L1050,338 L1080,341 L1110,343 L1140,345 L1170,347 L1200,349 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,366 L60,364 L90,363 L120,362 L150,362 L180,362 L210,362 L240,363 L270,364 L300,366 L330,367 L360,369 L390,372 L420,374 L450,377 L480,379 L510,382 L540,384 L570,386 L600,388 L630,390 L660,392 L690,393 L720,394 L750,394 L780,394 L810,394 L840,393 L870,392 L900,390 L930,389 L960,387 L990,384 L1020,382 L1050,379 L1080,377 L1110,374 L1140,372 L1170,370 L1200,368 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="868" cy="176" rx="216" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(18.0 868 176)"/><ellipse cx="868" cy="176" rx="299" ry="84" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(24.0 868 176)"/>
+  <circle cx="868" cy="176" r="85" fill="url(#c1631488pl)"/>
+  <circle cx="657" cy="113" r="8" fill="#ffffff" opacity="0.83"/><circle cx="983" cy="92" r="19" fill="#ffffff" opacity="0.62"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Looking at <a class="wikilink" href="/deep-learning/feature-visualization/" data-topic="deep-learning/feature-visualization">what individual units respond to</a> across a whole trained network reveals a consistent pattern: early layers learn simple, generic detectors (edges, colours, basic textures); later layers combine those into increasingly complex, often task-specific patterns (parts, then whole objects). Depth, in practice, tends to build a <strong>hierarchy</strong> of features — each layer&#39;s output becoming raw material for the next layer to combine.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/feature-visualization/" data-topic="deep-learning/feature-visualization">Feature Visualization</a> and <a class="wikilink" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps">Why Depth Helps</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If early and late layers are both &#39;just&#39; convolutions or dense layers, why do they end up learning such different kinds of things?&quot; Because each layer&#39;s input is the <em>previous</em> layer&#39;s output — early layers see raw pixels and can only learn simple local patterns, while later layers see the combinations earlier layers already found, and can build on top of them.</p>
+<h2 id="intuition-letters-then-words-then-sentences">Intuition: letters, then words, then sentences</h2>
+<p>An early layer is like learning individual letters: a small, fixed set of simple shapes that recur constantly across every possible word. A middle layer is like learning common letter combinations — &quot;th,&quot; &quot;ing&quot; — built <em>from</em> letters but more specific than any single letter alone. A later layer is like learning whole words and phrases, built from everything before it. No layer &quot;decides&quot; to specialise this way; it emerges because each layer can only combine what it&#39;s handed, and what it&#39;s handed gets progressively richer with depth.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">early layers:   detect simple, generic, local patterns (edges, colours, textures)
+                — tend to be reusable across many different tasks
+
+later layers:   detect complex, often task-specific combinations
+                — built by composing earlier layers&#39; outputs, progressively less reusable
+</code></pre>
+<p>This hierarchy is exactly why <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">transfer learning</a> tends to freeze early layers and adapt later ones: early, generic features transfer well to new tasks; later, specific ones often need to be relearned.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two small hand-built filters, a horizontal-edge detector and a vertical-edge detector, run (with ReLU) over a toy &quot;corner&quot; image:</p>
+<pre><code class="language-text">horizontal-edge feature map:      vertical-edge feature map:
+0 0 0 0                           0 0 0 0
+0 1 2 2                           0 1 0 0
+0 0 0 0                           0 2 0 0
+0 0 0 0                           0 2 0 0
+</code></pre>
+<p>Neither map alone marks the corner precisely — the horizontal map lights up along a whole row, the vertical map along a whole column. But combine them with a simple <strong>&quot;both must be active&quot;</strong> rule (the elementwise minimum of the two, after ReLU):</p>
+<pre><code class="language-text">combined (&quot;corner&quot;) feature map:
+0 0 0 0
+0 1 0 0
+0 0 0 0
+0 0 0 0
+</code></pre>
+<p>Exactly one position survives: the single spot where <em>both</em> a horizontal and a vertical edge are present — the actual corner. Neither original filter detected &quot;corner&quot; on its own; the combination, built from both, does.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="feature-hierarchy" data-title="Combining two edge detectors into a corner detector"><p class="bench-fallback"><strong>Interactive bench: Combining two edge detectors into a corner detector.</strong> Two edge-detecting feature maps and a combined &quot;both must be active&quot; map. See how the combined map isolates the corner that neither individual map detects alone.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at each edge map alone and note how neither pinpoints the corner by itself.</li>
+<li>Look at the combined map and see exactly one cell survive.</li>
+<li>Switch to a different toy shape and see what the combined map picks out instead.</li>
+</ol>
+<p><strong>What you should notice:</strong> this tiny example is the same principle, in miniature, behind why depth builds a feature hierarchy — a later &quot;layer&quot; (the combination step) detects something neither earlier &quot;layer&quot; (the individual edge maps) could detect alone, purely by composing them.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Visualizing trained CNN filters</strong> (Zeiler and Fergus&#39;s and others&#39; well-known work) consistently finds this same pattern: edges and colours early, parts and textures in the middle, whole objects or object parts later.</li>
+<li><strong>This hierarchy is exactly why transfer learning works at all</strong> (see <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a>) — the early, generic layers of a network trained on one large dataset are useful raw material for almost any related task.</li>
+<li><strong>Language models show an analogous pattern</strong>, with early layers tending to capture more surface-level patterns and later layers capturing more abstract, task-relevant structure.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming every layer in every trained network neatly fits this story.</strong> It is a strong, well-documented tendency, not an exact law that holds precisely for every layer of every architecture.</li>
+<li><strong>Thinking &quot;generic&quot; means &quot;useless.&quot;</strong> Generic early features are exactly what makes transfer learning possible — their lack of task-specificity is their strength for reuse.</li>
+<li><strong>Forgetting composition, not just depth itself, is doing the work.</strong> It is specifically the fact that later layers operate on earlier layers&#39; <em>outputs</em> (not raw input again) that builds the hierarchy.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why do early CNN layers tend to learn generic features like edges, while later layers learn task-specific ones?</summary>
+Early layers see only raw pixels and can only build simple, local, broadly applicable detectors; later layers build on top of earlier layers' already-detected patterns, allowing more specific, complex combinations.
+</details>
+
+<details><summary>2. In the worked example, why didn't either individual edge map detect the corner alone?</summary>
+Each map only encodes one kind of edge (horizontal or vertical) and lights up along an entire row or column; only requiring both to be active at once isolates the single point where they intersect.
+</details>
+
+<details><summary>3. Why does this hierarchy matter for transfer learning?</summary>
+Early, generic layers tend to transfer well to new, related tasks, while later, more task-specific layers often need to be retrained or fine-tuned for a new task.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Feature hierarchy:</strong> the tendency for depth to progress from simple, generic features to complex, task-specific ones.</li>
+<li><strong>Composition (of features):</strong> building a new detector by combining the outputs of earlier, simpler detectors.</li>
+<li><strong>Generic vs. task-specific features:</strong> reusable low-level patterns versus patterns specialised to one particular task.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/feature-visualization/" data-topic="deep-learning/feature-visualization">Feature Visualization</a> · <a class="wikilink" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps">Why Depth Helps</a> · <a class="wikilink" href="/deep-learning/transfer-learning-and-fine-tuning/" data-topic="deep-learning/transfer-learning-and-fine-tuning">Transfer Learning and Fine-Tuning</a> · <a class="wikilink" href="/deep-learning/self-supervised-learning/" data-topic="deep-learning/self-supervised-learning">Self-Supervised Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/what-deep-networks-learn">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/self-supervised-learning/"><small>Read next</small><b>Self-Supervised Learning</b><p>Autoencoders showed one way to train without human labels: reconstruct the input itself.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/feature-visualization/"><b>Feature Visualization</b><p>A trained network is millions of numbers that produced a correct answer — but which numbers mattered, and what pattern was each hidden unit actually responding to?</p></a><a class="rc-card" href="/deep-learning/why-depth-helps/"><b>Why Depth Helps</b><p>Universal Approximation showed one wide hidden layer can represent almost anything.</p></a><a class="rc-card" href="/deep-learning/transfer-learning-and-fine-tuning/"><b>Transfer Learning and Fine-Tuning</b><p>A network trained on one large task has already learned a great deal of generally useful structure — edges and textures for vision, grammar and common phrasing for language.</p></a><a class="rc-card" href="/deep-learning/self-supervised-learning/"><b>Self-Supervised Learning</b><p>Autoencoders showed one way to train without human labels: reconstruct the input itself.</p></a><a class="rc-card" href="/deep-learning/filters-feature-maps-and-channels/"><b>Filters, Feature Maps and Channels</b><p>A convolutional layer rarely uses just one filter.</p></a><a class="rc-card" href="/deep-learning/representation-learning/"><b>Representation Learning</b><p>A trained network&#39;s real product is not just its predictions but the representations its hidden layers learned along the way.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/feature-visualization/">← Previous: Feature Visualization</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Object Detection and Segmentation — AI Base</title>
+<meta name="description" content="Plain image classification answers one question per image: &quot;what is the main thing here?&quot; Object detection asks a richer question — &quot;what objects are here, and where, exactly?&quot; — answered with a…">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/object-detection-and-segmentation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Object Detection and Segmentation — AI Base">
+<meta property="og:description" content="Plain image classification answers one question per image: &quot;what is the main thing here?&quot; Object detection asks a richer question — &quot;what objects are here, and where, exactly?&quot; — answered with a…">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/object-detection-and-segmentation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Object Detection and Segmentation","item":"https://ai.saranmahadev.in/deep-learning/object-detection-and-segmentation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Object Detection and Segmentation","description":"Plain image classification answers one question per image: \"what is the main thing here?\" Object detection asks a richer question — \"what objects are here, and where, exactly?\" — answered with a…","url":"https://ai.saranmahadev.in/deep-learning/object-detection-and-segmentation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What extra information does object detection provide beyond plain classification?","acceptedAnswer":{"@type":"Answer","text":"The location (a bounding box) of each detected object, not just a single label for the whole image."}},{"@type":"Question","name":"In the worked example, why is the union area 20 and not 24 (12 + 12)?","acceptedAnswer":{"@type":"Answer","text":"The overlap area of 4 is counted once in each box's area, so it must be subtracted once to avoid double-counting it in the union."}},{"@type":"Question","name":"What does segmentation provide that detection does not?","acceptedAnswer":{"@type":"Answer","text":"A label for every individual pixel, giving an object's exact outline rather than just a rectangular box around it."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Convolutional Neural Networks</p>
+        <h1 class="doc-title">Object Detection and Segmentation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1jqskwmbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="c1jqskwmpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1jqskwmbg)"/>
+  <circle cx="594" cy="94" r="114" fill="#ffb6b6" opacity="0.49"/><circle cx="929" cy="182" r="114" fill="#ffb89d" opacity="0.35"/><circle cx="6" cy="353" r="87" fill="#ffb89d" opacity="0.37"/><circle cx="1092" cy="188" r="210" fill="#ffb6b6" opacity="0.44"/><circle cx="334" cy="210" r="222" fill="#8a546c" opacity="0.41"/>
+  <path d="M0,420 L0,341 L30,338 L60,335 L90,331 L120,328 L150,324 L180,321 L210,318 L240,315 L270,312 L300,310 L330,308 L360,307 L390,306 L420,306 L450,306 L480,307 L510,308 L540,310 L570,312 L600,315 L630,317 L660,321 L690,324 L720,327 L750,331 L780,334 L810,337 L840,340 L870,343 L900,345 L930,347 L960,348 L990,349 L1020,350 L1050,349 L1080,349 L1110,347 L1140,345 L1170,343 L1200,341 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,388 L30,390 L60,392 L90,393 L120,394 L150,394 L180,394 L210,394 L240,393 L270,392 L300,390 L330,388 L360,386 L390,384 L420,382 L450,379 L480,377 L510,374 L540,372 L570,370 L600,368 L630,366 L660,364 L690,363 L720,362 L750,362 L780,362 L810,362 L840,363 L870,364 L900,366 L930,368 L960,370 L990,372 L1020,374 L1050,377 L1080,379 L1110,382 L1140,384 L1170,386 L1200,388 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="996" cy="159" rx="212" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(16.4 996 159)"/><ellipse cx="996" cy="159" rx="293" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(22.4 996 159)"/>
+  <circle cx="996" cy="159" r="83" fill="url(#c1jqskwmpl)"/>
+  <circle cx="722" cy="86" r="14" fill="#ffffff" opacity="0.65"/><circle cx="832" cy="248" r="8" fill="#ffffff" opacity="0.86"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Plain image classification answers one question per image: &quot;what is the main thing here?&quot; <strong>Object detection</strong> asks a richer question — &quot;what objects are here, and where, exactly?&quot; — answered with a box around each one. <strong>Segmentation</strong> goes further still: a label for <em>every pixel</em>, so an object&#39;s exact outline, not just a box around it, is known.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/receptive-fields-and-depth/" data-topic="deep-learning/receptive-fields-and-depth">Receptive Fields and Depth</a> and <a class="wikilink" href="/deep-learning/filters-feature-maps-and-channels/" data-topic="deep-learning/filters-feature-maps-and-channels">Filters, Feature Maps and Channels</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Classifying a whole image tells me what&#39;s in it, but not where — how does a network localise things, not just name them?&quot; By predicting coordinates (a box, or a per-pixel label) alongside — or instead of — a single class label for the whole image.</p>
+<h2 id="intuition-naming-boxing-and-outlining">Intuition: naming, boxing, and outlining</h2>
+<p>Imagine three increasingly detailed answers to &quot;what&#39;s in this photo?&quot;: <em>classification</em> says &quot;a dog&quot; (one label for the whole image); <em>detection</em> says &quot;a dog, here&quot; and draws a rectangle around it (a label plus a location, possibly for several objects at once); <em>segmentation</em> says, for every single pixel, &quot;this one is dog, this one is grass, this one is sky&quot; — the full outline, not just a box.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">bounding box:          (x1, y1, x2, y2) — the box&#39;s top-left and bottom-right corners
+Intersection over Union (IoU):  how well a predicted box matches a true box
+
+IoU = (area of overlap) / (area of union)
+</code></pre>
+<p>IoU is the standard way to score a predicted box against the correct one: 1.0 means a perfect match, 0 means no overlap at all. It is also used to decide, during training and evaluation, whether a predicted box counts as a correct detection of a given object.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two boxes, <code>A = (1, 1, 5, 4)</code> and <code>B = (3, 2, 7, 5)</code>:</p>
+<pre><code class="language-text">overlap region:   x from max(1,3)=3 to min(5,7)=5   →  width 2
+                  y from max(1,2)=2 to min(4,5)=4   →  height 2
+                  overlap area = 2 × 2 = 4
+
+area A = (5−1)(4−1) = 12        area B = (7−3)(5−2) = 12
+union = 12 + 12 − 4 = 20
+
+IoU = 4 / 20 = 0.2
+</code></pre>
+<p>An IoU of 0.2 is a poor match — most detection benchmarks require an IoU of 0.5 or higher to count a prediction as correct — even though the two boxes clearly overlap somewhat.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="iou-box" data-title="How well do two boxes overlap?"><p class="bench-fallback"><strong>Interactive bench: How well do two boxes overlap?.</strong> Two adjustable rectangles on a grid. See the overlap region highlighted, and the computed IoU, as you move either box's corners.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the two boxes until they fully coincide and watch IoU reach 1.0.</li>
+<li>Pull them apart until they no longer touch and watch IoU reach exactly 0.</li>
+<li>Find roughly where IoU crosses the common 0.5 &quot;counts as correct&quot; threshold.</li>
+</ol>
+<p><strong>What you should notice:</strong> IoU drops off quickly once boxes stop being nearly identical — even boxes that clearly overlap a human eye would call &quot;close&quot; often score well under 0.5.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Self-driving perception, photo organisation, and medical imaging</strong> all rely on detection or segmentation rather than plain classification, since knowing <em>where</em> something is matters as much as what it is.</li>
+<li><strong>Non-maximum suppression</strong>, a step not covered in depth here, removes near-duplicate predicted boxes for the same object, using IoU to decide which overlap enough to be &quot;the same&quot; detection.</li>
+<li><strong>Segmentation models</strong> typically reuse a classification backbone&#39;s convolutional layers (see <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a>), replacing the final classification layer with one that outputs a label for every pixel.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating a 0.5 IoU threshold as universal.</strong> Different benchmarks and applications use different thresholds depending on how precise a match is required.</li>
+<li><strong>Confusing detection with segmentation.</strong> A detector&#39;s output is a handful of boxes; a segmenter&#39;s output is a full-resolution map, one label per pixel.</li>
+<li><strong>Forgetting IoU only scores one predicted box against one true box.</strong> A real image can have many objects, and matching predictions to the right ground-truth boxes is a separate step.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What extra information does object detection provide beyond plain classification?</summary>
+The location (a bounding box) of each detected object, not just a single label for the whole image.
+</details>
+
+<details><summary>2. In the worked example, why is the union area 20 and not 24 (12 + 12)?</summary>
+The overlap area of 4 is counted once in each box's area, so it must be subtracted once to avoid double-counting it in the union.
+</details>
+
+<details><summary>3. What does segmentation provide that detection does not?</summary>
+A label for every individual pixel, giving an object's exact outline rather than just a rectangular box around it.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Bounding box:</strong> a rectangle, usually given by two corner coordinates, marking where a detected object is.</li>
+<li><strong>Intersection over Union (IoU):</strong> the overlap area between two boxes divided by their combined (union) area.</li>
+<li><strong>Segmentation:</strong> labelling every pixel of an image, rather than the image as a whole.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/receptive-fields-and-depth/" data-topic="deep-learning/receptive-fields-and-depth">Receptive Fields and Depth</a> · <a class="wikilink" href="/deep-learning/filters-feature-maps-and-channels/" data-topic="deep-learning/filters-feature-maps-and-channels">Filters, Feature Maps and Channels</a> · <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> · <a class="wikilink" href="/deep-learning/image-classification-end-to-end/" data-topic="deep-learning/image-classification-end-to-end">Image Classification End to End</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/object-detection-and-segmentation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/image-classification-end-to-end/"><small>Read next</small><b>Image Classification End to End</b><p>Every idea in this district — convolution, channels, padding and pooling, depth, residual connections, receptive fields — exists to serve one standard pipeline: convolve, pool, repeat, flatten,…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/receptive-fields-and-depth/"><b>Receptive Fields and Depth</b><p>A single output unit in a convolutional network does not &quot;see&quot; the whole input image — it only depends on some region of it, called its receptive field.</p></a><a class="rc-card" href="/deep-learning/filters-feature-maps-and-channels/"><b>Filters, Feature Maps and Channels</b><p>A convolutional layer rarely uses just one filter.</p></a><a class="rc-card" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/"><b>CNN Architectures: From LeNet to ResNet</b><p>Convolutional architectures did not arrive all at once.</p></a><a class="rc-card" href="/deep-learning/image-classification-end-to-end/"><b>Image Classification End to End</b><p>Every idea in this district — convolution, channels, padding and pooling, depth, residual connections, receptive fields — exists to serve one standard pipeline: convolve, pool, repeat, flatten,…</p></a><a class="rc-card" href="/deep-learning/convolutional-neural-networks/"><b>Convolutional Neural Networks</b><p>A photograph has structure a plain feedforward network ignores: a cat&#39;s ear looks the same whether it is in the top-left or bottom-right corner.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/receptive-fields-and-depth/">← Previous: Receptive Fields and Depth</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes — AI Base</title>
+<meta name="description" content="The compute-optimal split in Compute-Optimal Scaling (Chinchilla) assumes you can always get as much data as the optimum wants, and that training cost is the only cost that matters.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes — AI Base">
+<meta property="og:description" content="The compute-optimal split in Compute-Optimal Scaling (Chinchilla) assumes you can always get as much data as the optimum wants, and that training cost is the only cost that matters.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes","item":"https://ai.saranmahadev.in/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes","description":"The compute-optimal split in Compute-Optimal Scaling (Chinchilla) assumes you can always get as much data as the optimum wants, and that training cost is the only cost that matters.","url":"https://ai.saranmahadev.in/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key difference between the data-constrained and overtrained regimes?","acceptedAnswer":{"@type":"Answer","text":"Data-constrained training hits a real ceiling on available data, leaving only model size free to grow; overtraining is a deliberate choice to fix a small model size and train it on far more tokens than compute-optimal would allocate, to make it cheaper to serve later."}},{"@type":"Question","name":"In the worked example, what happened to loss improvement as the free variable grew far past its balanced value in either regime?","acceptedAnswer":{"@type":"Answer","text":"Improvement kept happening but shrank sharply — a 64× increase in model size (data-constrained) or a 1000× increase in data (overtrained) each bought only a small further loss reduction."}},{"@type":"Question","name":"Why might a lab deliberately choose to overtrain a smaller model, even knowing it's compute-inefficient to do so?","acceptedAnswer":{"@type":"Answer","text":"Because a smaller model is cheaper to run at inference time, and if that model will be served to enough users over its lifetime, the savings in total inference cost can outweigh the extra training compute spent getting it there."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Scaling, Capacity and Emergence</p>
+        <h1 class="doc-title">Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1wqi3rcbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1wqi3rcpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1wqi3rcbg)"/>
+  <circle cx="63" cy="25" r="74" fill="#8a5f5e" opacity="0.35"/><circle cx="720" cy="134" r="83" fill="#8a5f5e" opacity="0.30"/><circle cx="945" cy="316" r="78" fill="#8a5f5e" opacity="0.29"/><circle cx="899" cy="219" r="122" fill="#8a5f5e" opacity="0.30"/><circle cx="416" cy="166" r="192" fill="#ffc7a2" opacity="0.55"/>
+  <path d="M0,420 L0,336 L30,333 L60,330 L90,326 L120,323 L150,319 L180,316 L210,313 L240,311 L270,309 L300,307 L330,306 L360,306 L390,306 L420,306 L450,307 L480,309 L510,311 L540,313 L570,316 L600,319 L630,322 L660,326 L690,329 L720,332 L750,336 L780,339 L810,342 L840,344 L870,346 L900,348 L930,349 L960,350 L990,350 L1020,349 L1050,348 L1080,346 L1110,344 L1140,342 L1170,339 L1200,336 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,368 L30,366 L60,364 L90,362 L120,362 L150,363 L180,364 L210,366 L240,369 L270,372 L300,376 L330,380 L360,383 L390,387 L420,390 L450,392 L480,393 L510,394 L540,394 L570,393 L600,391 L630,388 L660,385 L690,381 L720,378 L750,374 L780,370 L810,367 L840,365 L870,363 L900,362 L930,362 L960,363 L990,365 L1020,367 L1050,370 L1080,374 L1110,377 L1140,381 L1170,385 L1200,388 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="903" cy="151" rx="247" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(9.4 903 151)"/><ellipse cx="903" cy="151" rx="342" ry="96" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(15.4 903 151)"/>
+  <circle cx="903" cy="151" r="97" fill="url(#c1wqi3rcpl)"/>
+  <circle cx="591" cy="168" r="8" fill="#ffffff" opacity="0.64"/><circle cx="1124" cy="90" r="8" fill="#ffffff" opacity="0.77"/><circle cx="943" cy="278" r="12" fill="#ffffff" opacity="0.90"/><circle cx="1266" cy="178" r="18" fill="#ffffff" opacity="0.62"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The compute-optimal split in <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a> assumes you can always get as much data as the optimum wants, and that training cost is the only cost that matters. Neither assumption holds once you actually have to deploy the model.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What happens when you can&#39;t (or don&#39;t want to) follow the compute-optimal split?&quot; Two real deviations show up constantly in practice. <strong>Data-constrained</strong> training hits a ceiling on real data before compute runs out — there&#39;s often only so much high-quality text available, so extra compute can&#39;t buy more of it, only more passes over what exists (with diminishing, eventually negative, returns). <strong>Overtraining</strong> goes the other way deliberately: training a <em>smaller</em> model (cheaper to serve at inference time) on <em>far more</em> tokens than the compute-optimal split would allocate it, accepting worse training efficiency in exchange for a model that&#39;s cheaper to run for the rest of its life.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Data-constrained training is like being told to study a single, short book as deeply as you possibly can — past a point, re-reading it for the tenth time teaches you less than the first five readings did, because you&#39;ve already extracted most of what&#39;s there. Overtraining is a completely different choice: deliberately hiring someone less naturally talented (a smaller model) but giving them vastly more practice than a &quot;balanced&quot; training plan would call for, specifically because they&#39;re cheaper to keep employed afterward (cheaper to run inference on) even though their training took more effort per unit of improvement.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">data-constrained: D fixed at Dmax (limited real data); only N can still grow
+  → loss keeps improving as N grows, but with sharply diminishing returns
+    once N is no longer well-matched to the fixed, capped D
+
+overtrained: N fixed at a small Nsmall (chosen for cheap inference);
+  D grows far past what compute-optimal would allocate at that N
+  → loss keeps improving slowly as D grows, well past the point
+    compute-optimal scaling would have called D &quot;enough&quot;
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p><strong>Data-constrained</strong>, with D capped at 4×10⁹ tokens while N grows:</p>
+<pre><code class="language-text">N = 1×10⁹:   loss 1.5190
+N = 4×10⁹:   loss 1.5126     (compute-optimal match for this D)
+N = 1.6×10¹⁰: loss 1.5095    (16× the model, barely better)
+N = 6.4×10¹⁰: loss 1.5079    (64× the model, barely better still)
+</code></pre>
+<p><strong>Overtrained</strong>, with N fixed at a small 1×10⁹ while D grows far past what compute-optimal would want:</p>
+<pre><code class="language-text">D = 1×10⁹:    loss 1.5253
+D = 1×10¹⁰:   loss 1.5166
+D = 1×10¹¹:   loss 1.5139
+D = 1×10¹²:   loss 1.5130    (1000× the data, loss barely moved)
+</code></pre>
+<p>In both regimes, pushing the free variable far past its &quot;balanced&quot; counterpart buys steadily shrinking improvements — but overtraining is still a <em>deliberate, worthwhile</em> trade when the resulting smaller model will be served to enough users that cheaper inference outweighs the diminished training efficiency.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="data-constrained-scaling" data-title="When one side of the budget is stuck"><p class="bench-fallback"><strong>Interactive bench: When one side of the budget is stuck.</strong> Compare growing model size against a fixed data cap, or growing training tokens against a fixed small model, and watch returns diminish either way.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>In the data-constrained regime, grow model size far past the data cap and watch returns shrink.</li>
+<li>Switch to the overtrained regime and grow tokens far past what a small model would normally need.</li>
+<li>Compare how much loss improvement either regime buys for a 10× increase in its free variable.</li>
+</ol>
+<p><strong>What you should notice:</strong> both regimes show the same basic pattern — once one side of the N/D pair is held fixed, pushing the other side yields steadily smaller gains, exactly the diminishing-returns signature of a power-law term that&#39;s no longer the bottleneck.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Open-weight models released for wide public use are commonly deliberately overtrained</strong>: a smaller model trained on far more tokens than compute-optimal, because millions of inference requests over its lifetime dwarf the one-time training cost.</li>
+<li><strong>Data-constrained scaling is an active concern for high-quality, limited-supply domains</strong> (specialized scientific text, certain languages) where <a class="wikilink" href="/llms/synthetic-data-for-pretraining/" data-topic="llms/synthetic-data-for-pretraining">synthetic data</a> is sometimes proposed as a (risky) way to extend an otherwise-exhausted supply.</li>
+<li><strong>Both regimes are departures from, not refutations of, Chinchilla-style scaling</strong> — they&#39;re informed choices about which cost (training compute vs. inference cost vs. data availability) actually matters most for a given deployment.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating compute-optimal as the only &quot;correct&quot; choice.</strong> Real deployments routinely and reasonably deviate from it — overtraining a small model is a deliberate trade favoring cheap inference, not a mistake.</li>
+<li><strong>Assuming data-constrained training can always be fixed by adding synthetic data.</strong> As <a class="wikilink" href="/llms/synthetic-data-for-pretraining/" data-topic="llms/synthetic-data-for-pretraining">covered elsewhere on this planet</a>, recursive reliance on model-generated data to beat a real data ceiling carries its own serious risk.</li>
+<li><strong>Expecting diminishing returns to mean zero returns.</strong> Both worked-example curves keep improving, just by less and less — pushing past the point of good returns isn&#39;t pointless, only less efficient.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key difference between the data-constrained and overtrained regimes?</summary>
+Data-constrained training hits a real ceiling on available data, leaving only model size free to grow; overtraining is a deliberate choice to fix a small model size and train it on far more tokens than compute-optimal would allocate, to make it cheaper to serve later.
+</details>
+
+<details><summary>2. In the worked example, what happened to loss improvement as the free variable grew far past its balanced value in either regime?</summary>
+Improvement kept happening but shrank sharply — a 64× increase in model size (data-constrained) or a 1000× increase in data (overtrained) each bought only a small further loss reduction.
+</details>
+
+<details><summary>3. Why might a lab deliberately choose to overtrain a smaller model, even knowing it's compute-inefficient to do so?</summary>
+Because a smaller model is cheaper to run at inference time, and if that model will be served to enough users over its lifetime, the savings in total inference cost can outweigh the extra training compute spent getting it there.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Data-constrained regime:</strong> training where available high-quality data, not compute, is the limiting factor.</li>
+<li><strong>Overtraining:</strong> deliberately training a smaller model on more tokens than compute-optimal scaling would allocate, to reduce inference cost.</li>
+<li><strong>Diminishing returns:</strong> steadily shrinking improvement per additional unit of the variable being increased.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a> · <a class="wikilink" href="/llms/synthetic-data-for-pretraining/" data-topic="llms/synthetic-data-for-pretraining">Synthetic Data for Pretraining</a> · <a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/emergent-abilities-and-capability-jumps/"><small>Read next</small><b>Emergent Abilities and Capability Jumps</b><p>Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/compute-optimal-scaling-chinchilla/"><b>Compute-Optimal Scaling (Chinchilla)</b><p>Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data?</p></a><a class="rc-card" href="/llms/synthetic-data-for-pretraining/"><b>Synthetic Data for Pretraining</b><p>When real data for a domain or language is scarce, a tempting fix is to generate more of it — have a model write the text you wish you had more of.</p></a><a class="rc-card" href="/llms/cost-and-latency-of-llm-apis/"><b>Cost and Latency of LLM APIs</b><p>A request to an LLM API has two separate costs that don&#39;t move together: how much it costs in money, and how long it takes to come back.</p></a><a class="rc-card" href="/llms/scaling-capacity-and-emergence/"><b>Scaling, Capacity and Emergence</b><p>Make an LLM bigger, train it on more data, or give it more compute, and its capability doesn&#39;t grow in some simple, uniform way — it follows surprisingly predictable curves overall, punctuated by…</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/compute-optimal-scaling-chinchilla/">← Previous: Compute-Optimal Scaling (Chinchilla)</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompting and In-Context Learning — AI Base</title>
+<meta name="description" content="None of the decoding controls so far change what the model &quot;knows&quot; — they only change how its existing distribution gets turned into tokens.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/prompting-and-in-context-learning/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Prompting and In-Context Learning — AI Base">
+<meta property="og:description" content="None of the decoding controls so far change what the model &quot;knows&quot; — they only change how its existing distribution gets turned into tokens.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/prompting-and-in-context-learning/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Prompting and In-Context Learning","item":"https://ai.saranmahadev.in/generative-ai/prompting-and-in-context-learning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Prompting and In-Context Learning","description":"None of the decoding controls so far change what the model \"knows\" — they only change how its existing distribution gets turned into tokens.","url":"https://ai.saranmahadev.in/generative-ai/prompting-and-in-context-learning/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the simplified copy-completion rule in this note actually do?","acceptedAnswer":{"@type":"Answer","text":"It looks backward from the final token for the most recent earlier occurrence of that same token, and returns whatever token immediately followed it back then."}},{"@type":"Question","name":"Why did the copy rule fail on the doubling-function prompt?","acceptedAnswer":{"@type":"Answer","text":"Because the rule only knows how to repeat a pattern that already occurred verbatim — it found the earlier \"4\" and copied what followed it, which doesn't correspond to applying the doubling rule to that same \"4\" the second time."}},{"@type":"Question","name":"Does in-context learning update a model's weights?","acceptedAnswer":{"@type":"Answer","text":"No — it only changes what's in the input context for that one generation; the model's parameters are completely unchanged."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Decoding and Prompting</p>
+        <h1 class="doc-title">Prompting and In-Context Learning</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c76uxs9bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c76uxs9pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c76uxs9bg)"/>
+  <circle cx="320" cy="134" r="80" fill="#ffe9f4" opacity="0.33"/><circle cx="284" cy="325" r="162" fill="#ffbeba" opacity="0.56"/><circle cx="1158" cy="189" r="115" fill="#ffe9f4" opacity="0.40"/><circle cx="982" cy="117" r="178" fill="#ffbfe0" opacity="0.50"/><circle cx="398" cy="340" r="101" fill="#ffbfe0" opacity="0.46"/><circle cx="1138" cy="252" r="219" fill="#ffbfe0" opacity="0.59"/><circle cx="762" cy="165" r="93" fill="#8a5989" opacity="0.33"/>
+  <path d="M0,420 L0,308 L30,306 L60,306 L90,306 L120,306 L150,307 L180,308 L210,310 L240,313 L270,315 L300,318 L330,321 L360,325 L390,328 L420,332 L450,335 L480,338 L510,341 L540,344 L570,346 L600,347 L630,349 L660,349 L690,350 L720,349 L750,348 L780,347 L810,345 L840,343 L870,340 L900,337 L930,334 L960,330 L990,327 L1020,324 L1050,320 L1080,317 L1110,314 L1140,312 L1170,309 L1200,308 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,390 L90,386 L120,381 L150,376 L180,372 L210,367 L240,364 L270,362 L300,362 L330,363 L360,366 L390,370 L420,375 L450,380 L480,384 L510,389 L540,392 L570,394 L600,394 L630,393 L660,390 L690,386 L720,381 L750,376 L780,372 L810,367 L840,364 L870,362 L900,362 L930,363 L960,366 L990,370 L1020,375 L1050,380 L1080,384 L1110,389 L1140,392 L1170,394 L1200,394 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="771" cy="242" rx="160" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-16.8 771 242)"/><ellipse cx="771" cy="242" rx="222" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-10.8 771 242)"/>
+  <circle cx="771" cy="242" r="63" fill="url(#c76uxs9pl)"/>
+  <circle cx="1028" cy="257" r="17" fill="#ffffff" opacity="0.71"/><circle cx="919" cy="206" r="16" fill="#ffffff" opacity="0.70"/><circle cx="714" cy="331" r="18" fill="#ffffff" opacity="0.88"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>None of the decoding controls so far change what the model &quot;knows&quot; — they only change how its existing distribution gets turned into tokens. This note covers a different lever entirely: changing the <em>input</em>, with no retraining, to change what that distribution looks like in the first place.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">Decoder-Only Architectures</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How can a model perform a task it was never specifically trained on, with no weight updates at all?&quot; <strong>Prompting</strong> is simply choosing what text to put in front of a model before it starts generating. <strong>In-context learning</strong> is the specific, striking version of this: giving the model a few examples of a pattern <em>inside the prompt itself</em>, after which it continues the pattern on a new, unseen case — purely by reading the context, not by learning in the usual sense.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A plausible mechanical story behind this (confirmed by looking inside real transformer attention patterns) is a <strong>copying</strong> operation: somewhere in a sequence, find an earlier position where the <em>current</em> token last appeared, and look at whatever token came right after it back then — then guess that again. If a prompt reads &quot;dog → bark, cat → meow, bird → chirp, dog → &quot;, a model doing exactly this copying trick finds the earlier &quot;dog&quot;, looks at what followed it, and answers &quot;bark&quot; — not because it looked anything up, but because the pattern was right there in the context to copy from.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">induction-style copy completion:
+  given tokens t₁, t₂, ..., tₙ (tₙ is the token to complete after)
+  find the largest i &lt; n such that tᵢ = tₙ
+  return tᵢ₊₁ as the completion (or: no completion, if no such i exists)
+</code></pre>
+<p>This is a simplified model of one real, measured mechanism (&quot;induction heads&quot;) behind in-context learning — not the whole story of how it works, but enough to see why more examples in context make a difference.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A prompt that repeats one earlier token at the very end:</p>
+<pre><code class="language-text">dog · bark · cat · meow · bird · chirp · dog → ?
+</code></pre>
+<p>Scanning backward from the final &quot;dog&quot;, the only earlier occurrence of &quot;dog&quot; is at the very start, immediately followed by &quot;bark&quot; — so the completion is &quot;bark&quot;, recovered correctly by copying, with nothing about dogs or barking &quot;known&quot; ahead of time.</p>
+<pre><code class="language-text">completion:  bark
+</code></pre>
+<p>This copying trick isn&#39;t magic, though — it only works when the <em>pattern itself</em> is a repetition the model can find. A prompt built around a function instead of a repeated token, like &quot;2 → 4, 3 → 6, 5 → 10, 4 → ?&quot; (doubling), finds the earlier &quot;4&quot; from the very first pair and copies whatever followed <em>that</em> occurrence — &quot;3&quot; — which is not the doubled value at all:</p>
+<pre><code class="language-text">prompt:  2 · 4 · 3 · 6 · 5 · 10 · 4 → ?
+copy completion:  3   (wrong — 4 doubled is 8)
+</code></pre>
+<p>Copying solves &quot;find the pattern that already repeated here&quot;; it does not, by itself, solve &quot;apply a general rule to a new input.&quot;</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="induction-copy" data-title="Completing by copying, not by knowing"><p class="bench-fallback"><strong>Interactive bench: Completing by copying, not by knowing.</strong> Pick a prompt and watch a copy-based completion find (or fail to find) an earlier matching token to copy from.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Try the dog/cat/bird prompt and confirm the completion correctly copies &quot;bark&quot;.</li>
+<li>Try the prompt that never repeats a token at all, and see what happens when there&#39;s nothing to copy from.</li>
+<li>Compare this to what <a class="wikilink" href="/generative-ai/few-shot-and-zero-shot-generation/" data-topic="generative-ai/few-shot-and-zero-shot-generation">more examples in the prompt</a> would do to the chance of finding a match at all.</li>
+</ol>
+<p><strong>What you should notice:</strong> the completion only succeeds when the exact token at the end genuinely reappeared earlier in the prompt — it&#39;s pattern-matching against the prompt&#39;s own content, not recalling a fact.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>&quot;Prompt engineering&quot; as a skill is largely about shaping context so the right pattern is available to be found or copied</strong>, rather than about phrasing a request more politely.</li>
+<li><strong>Induction heads were identified by directly inspecting attention patterns in trained transformers</strong> — a rare case where a mechanistic hypothesis about <em>why</em> a capability works was checked against the actual weights, not just behavior.</li>
+<li><strong>It explains why example <em>order and format</em> in a prompt matters</strong>: the pattern has to be literally present and consistent for a copying mechanism to latch onto it.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming in-context learning means the model is truly learning a general rule.</strong> The worked example&#39;s doubling-function failure shows the copying mechanism specifically solves repetition, not arbitrary function learning — real models combine this with other mechanisms, but the gap is real.</li>
+<li><strong>Treating prompting and fine-tuning as the same lever at different strengths.</strong> Prompting changes what&#39;s visible in context for one generation; it leaves the model&#39;s weights completely untouched, unlike <a class="wikilink" href="/generative-ai/parameter-efficient-adaptation-for-generation/" data-topic="generative-ai/parameter-efficient-adaptation-for-generation">fine-tuning</a>.</li>
+<li><strong>Forgetting the pattern has to appear <em>before</em> the point it&#39;s needed.</strong> A copying mechanism can only look backward in the context it&#39;s already seen.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does the simplified copy-completion rule in this note actually do?</summary>
+It looks backward from the final token for the most recent earlier occurrence of that same token, and returns whatever token immediately followed it back then.
+</details>
+
+<details><summary>2. Why did the copy rule fail on the doubling-function prompt?</summary>
+Because the rule only knows how to repeat a pattern that already occurred verbatim — it found the earlier "4" and copied what followed it, which doesn't correspond to applying the doubling rule to that same "4" the second time.
+</details>
+
+<details><summary>3. Does in-context learning update a model's weights?</summary>
+No — it only changes what's in the input context for that one generation; the model's parameters are completely unchanged.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Prompting:</strong> choosing the input text given to a model to shape its output, with no change to its weights.</li>
+<li><strong>In-context learning:</strong> a model performing a task demonstrated by examples placed directly in its input, without any training step.</li>
+<li><strong>Induction head:</strong> a simplified name for an attention mechanism that copies whatever token followed an earlier occurrence of the current token.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/few-shot-and-zero-shot-generation/" data-topic="generative-ai/few-shot-and-zero-shot-generation">Few-Shot and Zero-Shot Generation</a> · <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">Decoder-Only Architectures</a> · <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/prompting-and-in-context-learning">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/few-shot-and-zero-shot-generation/"><small>Read next</small><b>Few-Shot and Zero-Shot Generation</b><p>The copying mechanism in Prompting and In-Context Learning only works when the pattern it needs is actually present in the prompt — which raises a direct, practical question: how many examples…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/decoder-only-architectures/"><b>Decoder-Only Architectures</b><p>The previous topic&#39;s bidirectional attention works because the whole input is available at once.</p></a><a class="rc-card" href="/generative-ai/few-shot-and-zero-shot-generation/"><b>Few-Shot and Zero-Shot Generation</b><p>The copying mechanism in Prompting and In-Context Learning only works when the pattern it needs is actually present in the prompt — which raises a direct, practical question: how many examples…</p></a><a class="rc-card" href="/generative-ai/parameter-efficient-adaptation-for-generation/"><b>Parameter-Efficient Adaptation for Generation</b><p>Adapting a huge generative model to a specific style, domain, or speaker (as in Voice Cloning and Speaker Adaptation) by retraining all of its weights would mean storing and updating a full new…</p></a><a class="rc-card" href="/generative-ai/self-consistency-and-best-of-n-sampling/"><b>Self-Consistency and Best-of-N Sampling</b><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.</p></a><a class="rc-card" href="/generative-ai/decoding-and-prompting/"><b>Decoding and Prompting</b><p>A trained language model outputs a probability distribution over the next token, not a finished sentence.</p></a><a class="rc-card" href="/llms/chain-of-thought-prompting/"><b>Chain-of-Thought Prompting</b><p>Ask a model for a multi-step answer directly, and it has to get everything right in one uninterrupted guess.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/self-consistency-and-best-of-n-sampling/">← Previous: Self-Consistency and Best-of-N Sampling</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swarm and Peer-to-Peer Coordination — AI Base</title>
+<meta name="description" content="Remove the supervisor from a star topology and every specialist loses its only connection to the rest of the system at once.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/swarm-and-peer-to-peer-coordination/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Swarm and Peer-to-Peer Coordination — AI Base">
+<meta property="og:description" content="Remove the supervisor from a star topology and every specialist loses its only connection to the rest of the system at once.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/swarm-and-peer-to-peer-coordination/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Swarm and Peer-to-Peer Coordination","item":"https://ai.saranmahadev.in/agents/swarm-and-peer-to-peer-coordination/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Swarm and Peer-to-Peer Coordination","description":"Remove the supervisor from a star topology and every specialist loses its only connection to the rest of the system at once.","url":"https://ai.saranmahadev.in/agents/swarm-and-peer-to-peer-coordination/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the star lose all 4 links when the supervisor fails, but the mesh only loses 3 when one peer fails?","acceptedAnswer":{"@type":"Answer","text":"Every one of the star's 4 links passes through the single supervisor, so losing it removes all of them at once; the mesh's 6 links are spread across different pairs, so losing one peer only removes that peer's own links, leaving the other agents' links to each other intact."}},{"@type":"Question","name":"What's the real cost a swarm pays for its resilience to single-agent failure?","acceptedAnswer":{"@type":"Answer","text":"A much larger number of connections to maintain — a full mesh needs n(n−1)/2 links for n agents, growing quadratically, compared to a star's n links growing linearly."}},{"@type":"Question","name":"Does removing the central supervisor eliminate coordination problems?","acceptedAnswer":{"@type":"Answer","text":"No — it removes the single point of failure, but agents still need to agree on shared state consistently, and with no central hub enforcing that consistency, coordination failures like inconsistent reads and writes can become more likely, not less."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Multi-Agent Systems</p>
+        <h1 class="doc-title">Swarm and Peer-to-Peer Coordination</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1rsfoumbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1rsfoumpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1rsfoumbg)"/>
+  <circle cx="854" cy="296" r="226" fill="#725998" opacity="0.26"/><circle cx="167" cy="392" r="211" fill="#725998" opacity="0.57"/><circle cx="1192" cy="192" r="144" fill="#dcbef5" opacity="0.57"/><circle cx="51" cy="388" r="149" fill="#725998" opacity="0.50"/><circle cx="492" cy="27" r="148" fill="#dcbef5" opacity="0.33"/><circle cx="539" cy="225" r="139" fill="#f3e9fc" opacity="0.58"/>
+  <path d="M0,420 L0,317 L30,322 L60,327 L90,332 L120,337 L150,341 L180,345 L210,348 L240,349 L270,350 L300,349 L330,347 L360,344 L390,340 L420,335 L450,330 L480,325 L510,320 L540,315 L570,312 L600,308 L630,306 L660,306 L690,306 L720,308 L750,310 L780,314 L810,318 L840,323 L870,328 L900,333 L930,338 L960,342 L990,346 L1020,348 L1050,349 L1080,349 L1110,348 L1140,346 L1170,343 L1200,338 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,393 L90,392 L120,390 L150,388 L180,386 L210,384 L240,382 L270,379 L300,377 L330,374 L360,372 L390,370 L420,368 L450,366 L480,364 L510,363 L540,362 L570,362 L600,362 L630,362 L660,363 L690,364 L720,366 L750,368 L780,370 L810,372 L840,374 L870,377 L900,379 L930,382 L960,384 L990,386 L1020,388 L1050,390 L1080,392 L1110,393 L1140,394 L1170,394 L1200,394 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="695" cy="143" rx="187" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-12.7 695 143)"/><ellipse cx="695" cy="143" rx="258" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-6.7 695 143)"/>
+  <circle cx="695" cy="143" r="73" fill="url(#c1rsfoumpl)"/>
+  <circle cx="824" cy="197" r="13" fill="#ffffff" opacity="0.70"/><circle cx="756" cy="217" r="13" fill="#ffffff" opacity="0.64"/><circle cx="523" cy="204" r="13" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Remove the supervisor from a star topology and every specialist loses its only connection to the rest of the system at once. A swarm avoids that single point of failure by connecting agents directly to each other, with no central hub — at the cost of needing far more connections to manage as the group grows.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/supervisor-orchestrator-patterns/" data-topic="agents/supervisor-orchestrator-patterns">Supervisor/Orchestrator Patterns</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What&#39;s the alternative to routing every piece of coordination through one central agent?&quot; A swarm (peer-to-peer) system connects agents directly to each other through shared state, with no central router deciding who talks to whom. Any agent can read or write what another has produced. The trade is connections: a full peer mesh of n agents needs n(n−1)/2 links, compared to a star&#39;s n — but no single agent&#39;s failure disconnects the rest of the group from each other.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A team that only ever communicates through one project manager loses all internal coordination the instant that manager is unavailable — nobody else knows who&#39;s doing what. A team that also talks directly to each other keeps functioning even if one member drops out; the remaining members were never dependent on routing everything through a single point.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">star:  n links (supervisor to each specialist); hub fails → 0 links remain among specialists
+mesh:  n(n−1)/2 links (every pair of agents); one peer fails → remaining (n−1) agents keep all (n−1)(n−2)/2 links among themselves
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>4 agents, comparing what survives when one participant fails under each topology:</p>
+<pre><code class="language-text">star (supervisor pattern):
+  before:  4 links (supervisor ↔ each specialist)
+  supervisor fails → 0 links remain: every specialist loses its only connection
+
+peer mesh (swarm):
+  before:  4×3/2 = 6 links (every pair of the 4 agents)
+  one peer fails → the remaining 3 agents keep all 3×2/2 = 3 links among themselves
+</code></pre>
+<p>The star&#39;s 4 links all pass through one agent, so losing that agent loses all of them at once. The mesh&#39;s 6 links are spread across every pair, so losing any single peer only removes that peer&#39;s own 3 links — the other 3 agents keep coordinating with each other exactly as before.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="swarm-mesh-resilience" data-title="One hub going down, or one peer going down"><p class="bench-fallback"><strong>Interactive bench: One hub going down, or one peer going down.</strong> Compare a peer mesh's connectivity before and after one agent fails, against a star topology's single point of failure.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the topology to star and watch what happens to the link count after a failure.</li>
+<li>Switch to mesh and compare how many links the survivors keep among themselves.</li>
+<li>Slide the agent count up on the mesh — how fast does the link count grow compared to the star&#39;s?</li>
+</ol>
+<p><strong>What you should notice:</strong> the mesh&#39;s resilience to any one agent failing comes at a real, growing cost — the number of connections to manage climbs quadratically with agent count, while the star&#39;s climbs only linearly.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the direct alternative to <a class="wikilink" href="/agents/supervisor-orchestrator-patterns/" data-topic="agents/supervisor-orchestrator-patterns">supervisor/orchestrator patterns</a></strong>: no central hub, trading simplicity and fewer connections for resilience against any single agent&#39;s failure.</li>
+<li><strong>A swarm&#39;s shared state is exactly <a class="wikilink" href="/agents/shared-state-across-a-multi-step-task/" data-topic="agents/shared-state-across-a-multi-step-task">a blackboard</a></strong>, now read and written by multiple independent agents instead of multiple steps of one task.</li>
+<li><strong><a class="wikilink" href="/agents/coordination-failures-and-deadlock/" data-topic="agents/coordination-failures-and-deadlock">Coordination Failures and Deadlock</a> covers what specifically goes wrong when several agents read and write that shared state inconsistently</strong> — a risk the mesh&#39;s lack of central coordination makes more likely, not less.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Choosing a swarm for its resilience without budgeting for its connection cost.</strong> The worked example&#39;s 6-vs-4 link count is already more at just 4 agents — that gap only widens, and at a large enough agent count a full mesh&#39;s connections become impractical to maintain.</li>
+<li><strong>Assuming &quot;no central hub&quot; means &quot;no coordination problems.&quot;</strong> Removing the supervisor removes the single point of failure, but doesn&#39;t remove the need for agents to agree on shared state consistently — if anything, it makes that problem harder, since there&#39;s no one place enforcing consistency.</li>
+<li><strong>Using a full mesh when a partial one would do.</strong> Not every pair of agents actually needs a direct link — a sparser peer topology can keep most of the resilience benefit without paying for every single pairwise connection.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the star lose all 4 links when the supervisor fails, but the mesh only loses 3 when one peer fails?</summary>
+Every one of the star's 4 links passes through the single supervisor, so losing it removes all of them at once; the mesh's 6 links are spread across different pairs, so losing one peer only removes that peer's own links, leaving the other agents' links to each other intact.
+</details>
+
+<details><summary>2. What's the real cost a swarm pays for its resilience to single-agent failure?</summary>
+A much larger number of connections to maintain — a full mesh needs n(n−1)/2 links for n agents, growing quadratically, compared to a star's n links growing linearly.
+</details>
+
+<details><summary>3. Does removing the central supervisor eliminate coordination problems?</summary>
+No — it removes the single point of failure, but agents still need to agree on shared state consistently, and with no central hub enforcing that consistency, coordination failures like inconsistent reads and writes can become more likely, not less.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Swarm (peer-to-peer):</strong> a multi-agent system where agents coordinate directly through shared state, with no central router.</li>
+<li><strong>Full mesh:</strong> a topology where every pair of agents has a direct link.</li>
+<li><strong>Single point of failure:</strong> a component whose failure disconnects every participant that depended solely on it — present in a star, absent in a mesh.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/supervisor-orchestrator-patterns/" data-topic="agents/supervisor-orchestrator-patterns">Supervisor/Orchestrator Patterns</a> · <a class="wikilink" href="/agents/shared-state-across-a-multi-step-task/" data-topic="agents/shared-state-across-a-multi-step-task">Shared State Across a Multi-Step Task</a> · <a class="wikilink" href="/agents/coordination-failures-and-deadlock/" data-topic="agents/coordination-failures-and-deadlock">Coordination Failures and Deadlock</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/swarm-and-peer-to-peer-coordination">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/debate-and-adversarial-multi-agent-setups/"><small>Read next</small><b>Debate and Adversarial Multi-Agent Setups</b><p>A single agent that states a claim has no one checking its arithmetic.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/supervisor-orchestrator-patterns/"><b>Supervisor-Orchestrator Patterns</b><p>A supervisor agent never does the specialized work itself — it decides which specialist should handle a piece of a task, hands it off, and collects the result.</p></a><a class="rc-card" href="/agents/shared-state-across-a-multi-step-task/"><b>Shared State Across a Multi-Step Task</b><p>A five-step task that needs today&#39;s date can fetch it five separate times, once per step — or fetch it once and write it somewhere every later step can just read.</p></a><a class="rc-card" href="/agents/coordination-failures-and-deadlock/"><b>Coordination Failures and Deadlock</b><p>Two agents, each waiting on a result only the other can produce, aren&#39;t making progress — they&#39;re stuck in a circular wait.</p></a><a class="rc-card" href="/agents/multi-agent-systems/"><b>Multi-Agent Systems</b><p>One agent can only hold one line of thought at a time.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/pipeline-and-sequential-handoff/">← Previous: Pipeline and Sequential Handoff</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

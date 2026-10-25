@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evaluator-Optimizer Loops — AI Base</title>
+<meta name="description" content="A first draft critiqued once gets noticeably better; critiqued a second time, it gets better still, but by less than the first round did.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/evaluator-optimizer-loops/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Evaluator-Optimizer Loops — AI Base">
+<meta property="og:description" content="A first draft critiqued once gets noticeably better; critiqued a second time, it gets better still, but by less than the first round did.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/evaluator-optimizer-loops/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Evaluator-Optimizer Loops","item":"https://ai.saranmahadev.in/agents/evaluator-optimizer-loops/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Evaluator-Optimizer Loops","description":"A first draft critiqued once gets noticeably better; critiqued a second time, it gets better still, but by less than the first round did.","url":"https://ai.saranmahadev.in/agents/evaluator-optimizer-loops/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does round 1 add 25 percentage points but round 4 adds only about 3?","acceptedAnswer":{"@type":"Answer","text":"Each round closes half of whatever quality gap was still remaining after the previous round — the gap itself keeps shrinking, so each round's absolute gain shrinks along with it, even though the loop keeps making progress."}},{"@type":"Question","name":"What two roles does an evaluator-optimizer loop need?","acceptedAnswer":{"@type":"Answer","text":"An optimizer that generates or revises a candidate, and an evaluator that judges the candidate and returns specific feedback for the optimizer's next revision."}},{"@type":"Question","name":"Why would an unlimited number of rounds be a bad default?","acceptedAnswer":{"@type":"Answer","text":"Returns diminish every round, so at some point another round's compute cost exceeds the quality gain it buys — a loop without a stopping rule keeps paying for smaller and smaller improvements indefinitely."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Workflow Patterns Before Autonomy</p>
+        <h1 class="doc-title">Evaluator-Optimizer Loops</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c194l0hfbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c194l0hfpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c194l0hfbg)"/>
+  <circle cx="623" cy="349" r="141" fill="#725998" opacity="0.26"/><circle cx="549" cy="173" r="196" fill="#e7bdc8" opacity="0.57"/><circle cx="1082" cy="303" r="220" fill="#f3e9fc" opacity="0.23"/><circle cx="591" cy="362" r="221" fill="#e7bdc8" opacity="0.28"/><circle cx="775" cy="420" r="190" fill="#725998" opacity="0.53"/>
+  <path d="M0,420 L0,320 L30,317 L60,314 L90,311 L120,309 L150,308 L180,306 L210,306 L240,306 L270,306 L300,307 L330,309 L360,310 L390,313 L420,316 L450,319 L480,322 L510,325 L540,329 L570,332 L600,335 L630,339 L660,341 L690,344 L720,346 L750,348 L780,349 L810,349 L840,350 L870,349 L900,348 L930,347 L960,345 L990,342 L1020,340 L1050,337 L1080,333 L1110,330 L1140,327 L1170,323 L1200,320 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,365 L30,364 L60,363 L90,362 L120,362 L150,362 L180,363 L210,363 L240,365 L270,366 L300,368 L330,370 L360,372 L390,375 L420,377 L450,380 L480,382 L510,385 L540,387 L570,389 L600,391 L630,392 L660,393 L690,394 L720,394 L750,394 L780,393 L810,393 L840,391 L870,390 L900,388 L930,386 L960,384 L990,381 L1020,379 L1050,376 L1080,374 L1110,371 L1140,369 L1170,367 L1200,365 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="973" cy="237" rx="165" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-1.3 973 237)"/><ellipse cx="973" cy="237" rx="227" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(4.7 973 237)"/>
+  <circle cx="973" cy="237" r="65" fill="url(#c194l0hfpl)"/>
+  <circle cx="848" cy="281" r="16" fill="#ffffff" opacity="0.73"/><circle cx="951" cy="305" r="18" fill="#ffffff" opacity="0.80"/><circle cx="827" cy="288" r="18" fill="#ffffff" opacity="0.79"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A first draft critiqued once gets noticeably better; critiqued a second time, it gets better still, but by less than the first round did. An evaluator-optimizer loop makes that generate-critique-improve cycle explicit: one call generates or revises, a second call evaluates the result and says what&#39;s still wrong, and the first call revises again — repeating until the evaluator is satisfied or a round limit is reached.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/prompt-chaining/" data-topic="agents/prompt-chaining">Prompt Chaining</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you turn a single generation into something that improves itself with feedback?&quot; An evaluator-optimizer loop pairs two roles: an <strong>optimizer</strong> that generates or revises a candidate, and an <strong>evaluator</strong> that judges the candidate and returns specific feedback. The optimizer&#39;s next revision responds directly to that feedback, and the two alternate for a fixed number of rounds or until the evaluator passes the result — the same generate-critique-improve cycle as <a class="wikilink" href="/llms/self-refinement-and-iterative-critique/" data-topic="llms/self-refinement-and-iterative-critique">self-refinement</a>, already covered on the LLMs planet, used here as a workflow pattern rather than a reasoning technique.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A writer who hands a draft to an editor, gets back specific notes (&quot;the ending doesn&#39;t land, the second paragraph repeats the first&quot;), and revises accordingly improves faster than one revising blind — and the editor&#39;s second round of notes is usually shorter than the first, because most of the big problems already got fixed.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">loop:    generate → evaluate → feedback → revise → evaluate → feedback → revise → ...
+quality after round r = 1 − 0.5^(r+1)        (the self-refinement curve from the LLMs planet)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Quality after each evaluator-optimizer round, reusing the exact self-refinement curve already verified on the LLMs planet:</p>
+<pre><code class="language-text">round 0 (first draft):  50.00%
+round 1:                75.00%
+round 2:                87.50%
+round 3:                93.75%
+round 4:                96.88%
+</code></pre>
+<p>Each round closes half of the remaining gap to a perfect result — round 1 closes half of the 50% that round 0 left open, round 2 closes half of what round 1 left open, and so on. The gains keep shrinking even as they keep coming, which is exactly why a loop like this needs a stopping rule rather than running forever.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="evaluator-optimizer-loop" data-title="Generate, critique, improve, repeat"><p class="bench-fallback"><strong>Interactive bench: Generate, critique, improve, repeat.</strong> Step through evaluator-optimizer rounds and watch quality climb with diminishing returns.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through all four rounds and watch the quality bar climb each time.</li>
+<li>Notice how much smaller the jump from round 3 to round 4 is than the jump from round 0 to round 1.</li>
+<li>Imagine the evaluator has a fixed quality bar it requires before passing a result — at what round would it likely stop this loop?</li>
+</ol>
+<p><strong>What you should notice:</strong> the loop&#39;s gains shrink round over round in exactly the same shape as the self-refinement curve on the LLMs planet — it&#39;s the identical mechanism, just run inside a workflow with an explicit evaluator role instead of a single model critiquing its own output.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is <a class="wikilink" href="/llms/self-refinement-and-iterative-critique/" data-topic="llms/self-refinement-and-iterative-critique">self-refinement</a> from the LLMs planet, used as a workflow pattern.</strong> The underlying curve — each round closing half the remaining gap — is the exact same mechanism; what&#39;s new here is treating it as a structured loop with its own stopping condition, alongside the other workflow patterns on this road.</li>
+<li><strong><a class="wikilink" href="/agents/verifier-guided-agent-loops/" data-topic="agents/verifier-guided-agent-loops">Verifier-Guided Agent Loops</a> generalizes this same evaluator role</strong> into a check that runs continuously inside an autonomous agent, rather than a fixed number of workflow rounds.</li>
+<li><strong><a class="wikilink" href="/agents/reflection-and-self-improvement/" data-topic="agents/reflection-and-self-improvement">Reflection and self-improvement</a>, the next district, covers the agent-level version of this same critique-and-revise cycle</strong> happening across an agent&#39;s own trajectory rather than inside a fixed workflow.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Running the loop for a fixed large number of rounds regardless of returns.</strong> The worked example shows round 4 adds only about 3 percentage points over round 3 — past some point, another round costs more compute than the quality gain is worth.</li>
+<li><strong>Giving the evaluator no specific feedback to act on.</strong> A pass/fail verdict with no explanation of <em>what&#39;s</em> wrong gives the optimizer nothing concrete to revise — the loop depends on the evaluator&#39;s feedback being specific enough to act on.</li>
+<li><strong>Confusing this with the agent&#39;s own self-correction.</strong> The loop here has a fixed workflow structure with two defined roles; an agent reflecting mid-trajectory (the next district) is doing something related but less structured, with no fixed round count decided in advance.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does round 1 add 25 percentage points but round 4 adds only about 3?</summary>
+Each round closes half of whatever quality gap was still remaining after the previous round — the gap itself keeps shrinking, so each round's absolute gain shrinks along with it, even though the loop keeps making progress.
+</details>
+
+<details><summary>2. What two roles does an evaluator-optimizer loop need?</summary>
+An optimizer that generates or revises a candidate, and an evaluator that judges the candidate and returns specific feedback for the optimizer's next revision.
+</details>
+
+<details><summary>3. Why would an unlimited number of rounds be a bad default?</summary>
+Returns diminish every round, so at some point another round's compute cost exceeds the quality gain it buys — a loop without a stopping rule keeps paying for smaller and smaller improvements indefinitely.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Evaluator-optimizer loop:</strong> a workflow pairing a generating/revising call with an evaluating call that gives feedback, repeated until a stopping condition.</li>
+<li><strong>Optimizer:</strong> the role that generates or revises a candidate based on feedback.</li>
+<li><strong>Evaluator:</strong> the role that judges a candidate and returns specific, actionable feedback.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/self-refinement-and-iterative-critique/" data-topic="llms/self-refinement-and-iterative-critique">Self-Refinement and Iterative Critique</a> · <a class="wikilink" href="/agents/verifier-guided-agent-loops/" data-topic="agents/verifier-guided-agent-loops">Verifier-Guided Agent Loops</a> · <a class="wikilink" href="/agents/reflection-and-self-improvement/" data-topic="agents/reflection-and-self-improvement">Reflection and Self-Improvement</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/evaluator-optimizer-loops">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/planning-and-task-decomposition/"><small>Read next</small><b>Planning and Task Decomposition</b><p>A genuinely open-ended goal can&#39;t be handled by a fixed workflow written in advance — nobody knows the steps until the agent starts looking at the specific situation.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/prompt-chaining/"><b>Prompt Chaining</b><p>Splitting a task into a fixed sequence of calls — outline, then draft, then polish — lets each step check the previous one&#39;s work before building on it.</p></a><a class="rc-card" href="/llms/self-refinement-and-iterative-critique/"><b>Self-Refinement and Iterative Critique</b><p>Exploring several reasoning branches at once, as in Tree-of-Thought and Search-Based Reasoning, is one way to improve on a single first attempt.</p></a><a class="rc-card" href="/agents/verifier-guided-agent-loops/"><b>Verifier-Guided Agent Loops</b><p>An agent that runs six actions in sequence, one of which is subtly wrong, finds out it failed only once all six are done — by which point the bad action has already fed into whatever came after it.</p></a><a class="rc-card" href="/agents/reflection-and-self-improvement/"><b>Reflection and Self-Improvement</b><p>An agent that never looks back at its own work repeats the same mistake at every step that triggers it.</p></a><a class="rc-card" href="/agents/workflow-patterns-before-autonomy/"><b>Workflow Patterns Before Autonomy</b><p>Not every multi-step task needs a fully autonomous agent deciding what to do next.</p></a><a class="rc-card" href="/agents/self-critique-loops-in-agents/"><b>Self-Critique Loops in Agents</b><p>An arithmetic mistake made at step two of a four-step calculation doesn&#39;t stay contained to step two — every later step builds on the wrong number, and the final answer comes out wrong even though…</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/orchestrator-workers/">← Previous: Orchestrator-Workers</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

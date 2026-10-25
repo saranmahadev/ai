@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>k-Nearest Neighbours — AI Base</title>
+<meta name="description" content="k-nearest neighbours (kNN) classifies a new point by finding the k training points closest to it and letting them vote. There is no training step: the model is the data.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/k-nearest-neighbours/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="k-Nearest Neighbours — AI Base">
+<meta property="og:description" content="k-nearest neighbours (kNN) classifies a new point by finding the k training points closest to it and letting them vote. There is no training step: the model is the data.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/k-nearest-neighbours/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"k-Nearest Neighbours","item":"https://ai.saranmahadev.in/machine-learning/k-nearest-neighbours/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"k-Nearest Neighbours","description":"k-nearest neighbours (kNN) classifies a new point by finding the k training points closest to it and letting them vote. There is no training step: the model is the data.","url":"https://ai.saranmahadev.in/machine-learning/k-nearest-neighbours/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the training accuracy of 1-NN when there are no duplicate points with different labels?","acceptedAnswer":{"@type":"Answer","text":"100%, since each point's nearest neighbour is itself."}},{"@type":"Question","name":"What happens to the decision boundary as k grows?","acceptedAnswer":{"@type":"Answer","text":"It gets smoother, and eventually too smooth, ignoring real structure."}},{"@type":"Question","name":"Why does kNN suffer in very high dimensions?","acceptedAnswer":{"@type":"Answer","text":"Distances become nearly equal, so \"nearest\" carries little information."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Instance and Probability Methods</p>
+        <h1 class="doc-title">k-Nearest Neighbours</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cew32kvbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="cew32kvpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cew32kvbg)"/>
+  <circle cx="808" cy="330" r="230" fill="#fff2de" opacity="0.26"/><circle cx="140" cy="296" r="101" fill="#fff2de" opacity="0.33"/><circle cx="309" cy="223" r="146" fill="#ffd08d" opacity="0.58"/><circle cx="368" cy="78" r="205" fill="#ffd99f" opacity="0.29"/><circle cx="41" cy="85" r="220" fill="#fff2de" opacity="0.46"/>
+  <path d="M0,420 L0,349 L30,350 L60,349 L90,346 L120,343 L150,339 L180,335 L210,330 L240,324 L270,319 L300,315 L330,311 L360,308 L390,306 L420,306 L450,306 L480,308 L510,311 L540,314 L570,319 L600,324 L630,329 L660,334 L690,339 L720,343 L750,346 L780,348 L810,350 L840,349 L870,348 L900,346 L930,342 L960,338 L990,333 L1020,328 L1050,323 L1080,318 L1110,314 L1140,310 L1170,307 L1200,306 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,393 L60,392 L90,391 L120,389 L150,387 L180,385 L210,383 L240,381 L270,378 L300,376 L330,373 L360,371 L390,369 L420,367 L450,365 L480,364 L510,363 L540,362 L570,362 L600,362 L630,363 L660,364 L690,365 L720,367 L750,369 L780,371 L810,373 L840,375 L870,378 L900,380 L930,383 L960,385 L990,387 L1020,389 L1050,391 L1080,392 L1110,393 L1140,394 L1170,394 L1200,394 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="979" cy="193" rx="247" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-10.7 979 193)"/><ellipse cx="979" cy="193" rx="341" ry="96" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-4.7 979 193)"/>
+  <circle cx="979" cy="193" r="97" fill="url(#cew32kvpl)"/>
+  <circle cx="775" cy="307" r="15" fill="#ffffff" opacity="0.81"/><circle cx="1135" cy="267" r="10" fill="#ffffff" opacity="0.65"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>k-nearest neighbours</strong> (kNN) classifies a new point by finding the <code>k</code> training points closest to it and letting them vote. There is no training step: the model <em>is</em> the data. It shows the central trade-off of machine learning in one knob, <code>k</code>: small <code>k</code> memorises noise, large <code>k</code> blurs real structure.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a>, <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a> and <a class="wikilink" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets">Train, Validation and Test Sets</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What do similar examples say?&quot; If the three houses most like yours sold for about the same price, that is a reasonable guess for yours.</p>
+<h2 id="intuition-ask-the-neighbours">Intuition: ask the neighbours</h2>
+<p>To label a new point, measure its distance to every training point, keep the <code>k</code> nearest, and take a majority vote (or average, for a number). With <code>k = 1</code> the point copies its single nearest neighbour, so the boundary wraps tightly around every training point, including noisy ones. With a large <code>k</code> the vote covers a wide area, so the boundary becomes smooth, and eventually so smooth that it ignores real detail.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">distance      usually Euclidean, on scaled features
+prediction    classification: majority label among the k nearest
+              regression:     average value of the k nearest
+k             small → flexible, noisy      large → smooth, stiff
+</code></pre>
+<p>kNN is <strong>lazy</strong>: fitting costs nothing, but every prediction compares against all stored points. It inherits the curse of dimensionality (<a class="wikilink" href="/machine-learning/the-curse-of-dimensionality/" data-topic="machine-learning/the-curse-of-dimensionality">The Curse of Dimensionality</a>) and needs scaled features (<a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a>). Choose <code>k</code> on validation data; odd <code>k</code> avoids ties in two-class problems.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>One hundred and sixty noisy points in two interleaving half-moons (bench data), 80 to train on and 80 held out:</p>
+<pre><code class="language-text">k =  1    training accuracy 100%    held-out accuracy 88%
+k =  5    training accuracy  97%    held-out accuracy 86%
+k = 15    training accuracy  96%    held-out accuracy 89%
+k = 41    training accuracy  81%    held-out accuracy 70%
+</code></pre>
+<p>With <code>k = 1</code> every training point is its own nearest neighbour, so training accuracy is 100% while held-out accuracy is lower: memorisation. At <code>k = 41</code> both scores fall, because the vote spans almost half the data and the moons&#39; shape is lost: underfitting. The best held-out score is in the middle. The gaps between the mid-range values are small with only 80 test points, so treat differences of a few points as noise.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="knn-regions" data-title="Neighbours vote"><p class="bench-fallback"><strong>Interactive bench: Neighbours vote.</strong> Two noisy half-moons are coloured by a k-nearest-neighbour vote; a slider changes k and the bench shows the decision regions and the training and held-out accuracy.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set k = 1 and look at the boundary around isolated points.</li>
+<li>Raise k to about 15.</li>
+<li>Push k to 41.</li>
+<li>Compare training and held-out accuracy at each.</li>
+</ol>
+<p><strong>What you should notice:</strong> the boundary is jagged at small k and smooth at large k, training accuracy only falls as k grows, and held-out accuracy peaks in between.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Recommendations and search:</strong> &quot;items nearest to this one&quot; (see <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a>).</li>
+<li><strong>Baselines and anomaly detection:</strong> far from all neighbours means unusual.</li>
+<li><strong>Retrieval systems</strong> use fast approximate nearest-neighbour search over embeddings.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Unscaled features,</strong> where one column decides everything.</li>
+<li><strong>Too many irrelevant features,</strong> which drown out the useful ones.</li>
+<li><strong>Slow predictions</strong> on large datasets without an index.</li>
+<li><strong>Reporting k = 1 training accuracy</strong> (always 100%, so meaningless).</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the training accuracy of 1-NN when there are no duplicate points with different labels?</summary>
+100%, since each point's nearest neighbour is itself.
+</details>
+
+<details><summary>2. What happens to the decision boundary as k grows?</summary>
+It gets smoother, and eventually too smooth, ignoring real structure.
+</details>
+
+<details><summary>3. Why does kNN suffer in very high dimensions?</summary>
+Distances become nearly equal, so "nearest" carries little information.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Nearest neighbour:</strong> the training point closest to a query.</li>
+<li><strong>k:</strong> the number of neighbours that vote.</li>
+<li><strong>Lazy learner:</strong> a method that stores the data and computes only at prediction time.</li>
+<li><strong>Decision region:</strong> the area of input space assigned to a class.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a> · <a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a> · <a class="wikilink" href="/machine-learning/the-curse-of-dimensionality/" data-topic="machine-learning/the-curse-of-dimensionality">The Curse of Dimensionality</a> · <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a> · <a class="wikilink" href="/machine-learning/naive-bayes/" data-topic="machine-learning/naive-bayes">Naive Bayes</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/k-nearest-neighbours">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/naive-bayes/"><small>Read next</small><b>Naive Bayes</b><p>Naive Bayes classifies by asking, for each class, how well the observed features fit it, then combining the answers with Bayes&#39; rule.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/scaling-and-normalisation/"><b>Scaling and Normalisation</b><p>Features measured in different units can have wildly different sizes: age in tens, income in tens of thousands.</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a><a class="rc-card" href="/machine-learning/train-validation-and-test-sets/"><b>Train, Validation and Test Sets</b><p>To know whether a model works you must measure it on data it has not learned from.</p></a><a class="rc-card" href="/machine-learning/the-curse-of-dimensionality/"><b>The Curse of Dimensionality</b><p>Every feature you add is a new dimension, and high-dimensional space behaves strangely: it is enormous, data points end up far from everything, and &quot;nearest&quot; stops meaning much.</p></a><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/machine-learning/naive-bayes/"><b>Naive Bayes</b><p>Naive Bayes classifies by asking, for each class, how well the observed features fit it, then combining the answers with Bayes&#39; rule.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/instance-and-probability-methods/">← Previous: Instance and Probability Methods</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

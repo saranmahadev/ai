@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Derivatives of Exp, Log and Sigmoid — AI Base</title>
+<meta name="description" content="Three families of functions carry most of machine learning: the exponential eˣ, the natural logarithm ln x, and the sigmoid σ(x).">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/derivatives-of-exp-log-and-sigmoid/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Derivatives of Exp, Log and Sigmoid — AI Base">
+<meta property="og:description" content="Three families of functions carry most of machine learning: the exponential eˣ, the natural logarithm ln x, and the sigmoid σ(x).">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/derivatives-of-exp-log-and-sigmoid/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Derivatives of Exp, Log and Sigmoid","item":"https://ai.saranmahadev.in/math/derivatives-of-exp-log-and-sigmoid/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Derivatives of Exp, Log and Sigmoid","description":"Three families of functions carry most of machine learning: the exponential eˣ, the natural logarithm ln x, and the sigmoid σ(x).","url":"https://ai.saranmahadev.in/math/derivatives-of-exp-log-and-sigmoid/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is d/dx of e^(3x)?","acceptedAnswer":{"@type":"Answer","text":"3e^(3x)."}},{"@type":"Question","name":"What is σ′ when σ = 0.9?","acceptedAnswer":{"@type":"Answer","text":"0.9 × 0.1 = 0.09."}},{"@type":"Question","name":"What is the slope of ln x at x = 4?","acceptedAnswer":{"@type":"Answer","text":"1/4 = 0.25."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Calculus</p>
+        <h1 class="doc-title">Derivatives of Exp, Log and Sigmoid</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cn9k4lkbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cn9k4lkpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cn9k4lkbg)"/>
+  <circle cx="3" cy="189" r="193" fill="#cebff9" opacity="0.23"/><circle cx="385" cy="160" r="129" fill="#eee9fd" opacity="0.45"/><circle cx="53" cy="283" r="122" fill="#eee9fd" opacity="0.22"/><circle cx="816" cy="177" r="87" fill="#cebff9" opacity="0.55"/><circle cx="887" cy="234" r="134" fill="#eee9fd" opacity="0.27"/>
+  <path d="M0,420 L0,306 L30,306 L60,307 L90,309 L120,312 L150,316 L180,321 L210,326 L240,331 L270,336 L300,341 L330,345 L360,347 L390,349 L420,350 L450,349 L480,347 L510,344 L540,340 L570,336 L600,331 L630,326 L660,321 L690,316 L720,312 L750,309 L780,307 L810,306 L840,306 L870,307 L900,310 L930,314 L960,318 L990,323 L1020,328 L1050,333 L1080,338 L1110,342 L1140,346 L1170,348 L1200,349 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,393 L60,394 L90,394 L120,393 L150,391 L180,388 L210,385 L240,382 L270,378 L300,374 L330,371 L360,368 L390,365 L420,363 L450,362 L480,362 L510,363 L540,364 L570,367 L600,370 L630,373 L660,377 L690,381 L720,384 L750,387 L780,390 L810,392 L840,394 L870,394 L900,394 L930,392 L960,390 L990,387 L1020,384 L1050,380 L1080,377 L1110,373 L1140,370 L1170,367 L1200,364 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="633" cy="126" rx="153" ry="43" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(7.5 633 126)"/><ellipse cx="633" cy="126" rx="211" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(13.5 633 126)"/>
+  <circle cx="633" cy="126" r="60" fill="url(#cn9k4lkpl)"/>
+  <circle cx="551" cy="46" r="12" fill="#ffffff" opacity="0.69"/><circle cx="444" cy="136" r="8" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Three families of functions carry most of machine learning: the exponential <code>eˣ</code>, the natural logarithm <code>ln x</code>, and the sigmoid <code>σ(x)</code>. Their derivatives are unusually neat: <code>eˣ</code> is its own derivative, <code>ln x</code> has slope <code>1/x</code>, and the sigmoid&#39;s slope is built from its own value.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/derivative-rules/" data-topic="math/derivative-rules">Derivative Rules</a>, <a class="wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a> and <a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What are the slopes of the functions I keep meeting in models?&quot; Loss functions use logs, softmax uses exponentials, and activations use sigmoids and tanh, so their derivatives are computed constantly.</p>
+<h2 id="the-results">The results</h2>
+<pre><code class="language-text">d/dx eˣ         = eˣ
+d/dx e^(kx)     = k · e^(kx)                  (chain rule)
+d/dx ln x       = 1 / x
+d/dx aˣ         = aˣ · ln a
+d/dx σ(x)       = σ(x) · (1 − σ(x))           σ(x) = 1 / (1 + e⁻ˣ)
+d/dx tanh x     = 1 − tanh² x
+</code></pre>
+<p>Why is <code>eˣ</code> special? It is the function whose slope at every point equals its height, the natural pattern of &quot;growth proportional to the current size&quot; (see <a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a>). <code>ln x</code> is its inverse, so its slope is the reciprocal: <code>1/x</code>, steep near 0 and flattening as <code>x</code> grows.</p>
+<h2 id="the-sigmoid-s-slope">The sigmoid&#39;s slope</h2>
+<p>Using the chain rule on <code>σ(x) = (1 + e⁻ˣ)⁻¹</code> gives the tidy identity <code>σ′ = σ(1 − σ)</code>. The slope is largest at <code>x = 0</code> (where <code>σ = 0.5</code>) and vanishes at both ends.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<pre><code class="language-text">σ′(0) = 0.5 × 0.5                    = 0.25        the steepest point
+σ′(2) = 0.8808 × (1 − 0.8808)        ≈ 0.1050
+σ′(6) = 0.99753 × 0.00247            ≈ 0.0025      nearly flat
+</code></pre>
+<p>Slope of <code>ln x</code> at <code>x = 2</code>: <code>1/2 = 0.5</code>. At <code>x = 0.1</code>: <code>10</code>, very steep.</p>
+<p>A log-loss example: the loss <code>−ln p</code> for a predicted probability <code>p</code> has slope <code>−1/p</code>. At <code>p = 0.9</code> the slope is <code>−1.11</code> (gentle); at <code>p = 0.01</code> it is <code>−100</code> (steep), so the model is pushed hard when it is confidently wrong.</p>
+<p><strong>Vanishing gradients:</strong> stacking many sigmoid layers multiplies slopes each at most 0.25, so after 10 layers the signal may shrink by <code>0.25¹⁰ ≈ 10⁻⁶</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="derivative-twin" data-title="A function and its derivative"><p class="bench-fallback"><strong>Interactive bench: A function and its derivative.</strong> Choose e to the x, ln x, sigmoid or tanh; the bench draws the function and its derivative together, with a marker that shows the tangent slope at the chosen input.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>On e^x, compare the height and the slope at several points.</li>
+<li>On the sigmoid, find where the slope is largest.</li>
+<li>Slide toward the ends of the sigmoid and read the slope.</li>
+<li>On ln x, slide toward 0 and see the slope grow.</li>
+</ol>
+<p><strong>What you should notice:</strong> e^x has slope equal to its height, the sigmoid is steepest in the middle and flat at the ends, and ln x flattens as it grows.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Softmax and cross-entropy</strong> combine <code>eˣ</code> and <code>ln</code> (see <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a>).</li>
+<li><strong>Logistic regression</strong> trains through the sigmoid (see <a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">Logistic Regression and the Sigmoid</a>).</li>
+<li><strong>Vanishing gradients</strong> in deep sigmoid or tanh networks.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Differentiating <code>e^(2x)</code> as <code>e^(2x)</code>.</strong> Remember the factor 2.</li>
+<li><strong>Writing <code>d/dx ln x = ln x</code></strong> or mixing with <code>eˣ</code>.</li>
+<li><strong>Forgetting <code>ln</code> is undefined for zero and negatives.</strong></li>
+<li><strong>Overlooking the sigmoid&#39;s flat tails</strong> when picking an activation.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is d/dx of e^(3x)?</summary>
+3e^(3x).
+</details>
+
+<details><summary>2. What is σ′ when σ = 0.9?</summary>
+0.9 × 0.1 = 0.09.
+</details>
+
+<details><summary>3. What is the slope of ln x at x = 4?</summary>
+1/4 = 0.25.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Natural exponential:</strong> <code>eˣ</code>, equal to its own derivative.</li>
+<li><strong>Natural logarithm:</strong> <code>ln x</code>, the inverse of <code>eˣ</code>.</li>
+<li><strong>Sigmoid:</strong> <code>1 / (1 + e⁻ˣ)</code>, with slope <code>σ(1 − σ)</code>.</li>
+<li><strong>Vanishing gradient:</strong> slopes shrinking toward zero through many layers.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a> · <a class="wikilink" href="/math/functions-ai-loves/" data-topic="math/functions-ai-loves">Functions AI Loves</a> · <a class="wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a> · <a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">Logistic Regression and the Sigmoid</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/derivatives-of-exp-log-and-sigmoid">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/higher-derivatives-and-curvature/"><small>Read next</small><b>Higher Derivatives and Curvature</b><p>The second derivative is the derivative of the derivative: it says how the slope itself is changing. Positive means the curve bends upward like a bowl, negative means it bends downward like a hill.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/derivative-rules/"><b>Derivative Rules</b><p>You do not compute a derivative from the limit every time.</p></a><a class="rc-card" href="/math/chain-rule/"><b>Chain Rule</b><p>The chain rule finds the derivative of a function built from other functions: d/dx f(g(x)) = f′(g(x)) · g′(x). Rates multiply along the chain, like gears turning one another.</p></a><a class="rc-card" href="/math/exponential-and-logarithmic-functions/"><b>Exponential and Logarithmic Functions</b><p>An exponential function f(t) = a·bᵗ multiplies by the same factor every step, so it grows (or decays) faster and faster. Its inverse, the logarithmic function, grows slower and slower.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/math/logistic-regression-and-the-sigmoid/"><b>Logistic Regression and the Sigmoid</b><p>Logistic regression answers yes/no questions with a probability.</p></a><a class="rc-card" href="/math/functions-ai-loves/"><b>Functions AI Loves</b><p>A few specific functions turn up in almost every neural network: the sigmoid, tanh, ReLU, its leaky variant and softplus.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/chain-rule/">← Previous: Chain Rule</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

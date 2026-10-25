@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deployment and Monitoring — AI Base</title>
+<meta name="description" content="Shipping a model is the start of its life, not the end. The world changes, so a deployed model must be watched.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/deployment-and-monitoring/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Deployment and Monitoring — AI Base">
+<meta property="og:description" content="Shipping a model is the start of its life, not the end. The world changes, so a deployed model must be watched.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/deployment-and-monitoring/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Deployment and Monitoring","item":"https://ai.saranmahadev.in/machine-learning/deployment-and-monitoring/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Deployment and Monitoring","description":"Shipping a model is the start of its life, not the end. The world changes, so a deployed model must be watched.","url":"https://ai.saranmahadev.in/machine-learning/deployment-and-monitoring/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why monitor inputs as well as accuracy?","acceptedAnswer":{"@type":"Answer","text":"Input statistics are available at once, while true labels arrive late."}},{"@type":"Question","name":"What does a drift alert prove?","acceptedAnswer":{"@type":"Answer","text":"Only that the inputs changed; performance must be confirmed with outcomes."}},{"@type":"Question","name":"What happens to detection speed if the threshold is raised?","acceptedAnswer":{"@type":"Answer","text":"Detection is slower or misses small drifts, in exchange for fewer false alarms."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Machine Learning in Practice</p>
+        <h1 class="doc-title">Deployment and Monitoring</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1dx5uujbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1dx5uujpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1dx5uujbg)"/>
+  <circle cx="989" cy="109" r="155" fill="#8a6b5c" opacity="0.37"/><circle cx="839" cy="265" r="89" fill="#ffd99f" opacity="0.27"/><circle cx="906" cy="113" r="88" fill="#ffd99f" opacity="0.57"/><circle cx="1143" cy="88" r="169" fill="#fff2de" opacity="0.51"/><circle cx="949" cy="188" r="102" fill="#ffd99f" opacity="0.54"/><circle cx="982" cy="196" r="186" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,307 L30,309 L60,311 L90,313 L120,316 L150,319 L180,322 L210,325 L240,329 L270,332 L300,336 L330,339 L360,342 L390,344 L420,346 L450,348 L480,349 L510,349 L540,350 L570,349 L600,348 L630,347 L660,345 L690,342 L720,339 L750,336 L780,333 L810,330 L840,326 L870,323 L900,320 L930,316 L960,314 L990,311 L1020,309 L1050,307 L1080,306 L1110,306 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,386 L30,388 L60,390 L90,391 L120,392 L150,393 L180,394 L210,394 L240,394 L270,393 L300,392 L330,391 L360,389 L390,387 L420,385 L450,383 L480,380 L510,378 L540,375 L570,373 L600,370 L630,368 L660,366 L690,365 L720,364 L750,363 L780,362 L810,362 L840,362 L870,363 L900,364 L930,365 L960,367 L990,369 L1020,371 L1050,373 L1080,376 L1110,378 L1140,381 L1170,383 L1200,386 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="839" cy="219" rx="224" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(15.5 839 219)"/><ellipse cx="839" cy="219" rx="310" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(21.5 839 219)"/>
+  <circle cx="839" cy="219" r="88" fill="url(#c1dx5uujpl)"/>
+  <circle cx="552" cy="215" r="14" fill="#ffffff" opacity="0.66"/><circle cx="854" cy="325" r="13" fill="#ffffff" opacity="0.77"/><circle cx="737" cy="319" r="14" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Shipping a model is the start of its life, not the end. The world changes, so a deployed model must be watched. Its <strong>inputs</strong> can be checked immediately (are they still like the training data?), while its <strong>accuracy</strong> can only be measured once the true outcomes arrive, often weeks later. Monitoring the inputs gives an early warning that the labels cannot.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/distribution-shift/" data-topic="machine-learning/distribution-shift">Distribution Shift</a> and <a class="wikilink" href="/machine-learning/precision-recall-and-f1/" data-topic="machine-learning/precision-recall-and-f1">Precision, Recall and F1</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How will I know the model has stopped working?&quot; Models fail silently: they keep returning confident predictions long after they have become wrong.</p>
+<h2 id="intuition-smoke-alarm-and-post-mortem">Intuition: smoke alarm and post-mortem</h2>
+<p>An input monitor is a smoke alarm: cheap, instant, but it only says something changed, not that the model is wrong. Accuracy from labelled outcomes is the post-mortem: definitive, but it arrives late. A healthy setup uses both: alert on input drift right away, confirm with outcomes when they arrive, and retrain if the damage is real.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">input drift       summary statistics of features drift from the training values
+                  (mean, spread, category shares, missing rate)
+drift test        compare today&#39;s batch with the training data: z-score of the mean,
+                  population stability index, Kolmogorov–Smirnov test
+label delay       true outcomes arrive days or weeks after the prediction
+performance drift accuracy or another metric measured on outcomes decays
+responses         alert → investigate → retrain, roll back, or route to a human
+</code></pre>
+<p>A daily batch of <code>n</code> examples has a mean whose standard error is <code>σ/√n</code>, so a shift of a few standard errors can be flagged even when it is far too small to notice by eye. Set the threshold to balance false alarms against slow detection (<a class="wikilink" href="/machine-learning/precision-recall-and-f1/" data-topic="machine-learning/precision-recall-and-f1">Precision, Recall and F1</a>).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A classifier separates two groups centred at −1 and +1 (spread 0.8); each day it scores 200 cases. On day 40 every input shifts by 1.0. Accuracy was 88.9% before. With an alert when the daily mean moves more than 3 standard errors, and true labels arriving 14 days late:</p>
+<pre><code class="language-text">                                  sudden shift of 1.0      gradual shift (over 30 days)
+input alert fires on day               40                          46
+accuracy drop visible in labels        54                          67
+accuracy at day 120                    75.0%                       75.0%
+</code></pre>
+<p>With a sudden shift the input alert fires on the first affected day, two weeks before the labelled accuracy reveals the fall (day 54). With a gradual shift it fires on day 46 and the labels confirm on day 67, three weeks later. A small shift (0.3) still trips the alert on day 42, but its effect on accuracy is tiny; not every alert deserves a retrain. Without the input monitor the damage would go unseen for the whole label delay.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="drift-monitor" data-title="Notice the drift"><p class="bench-fallback"><strong>Interactive bench: Notice the drift.</strong> A deployed classifier's daily accuracy over 120 days with an input change on day 40, either sudden or gradual; sliders set the size of the shift and the alert threshold, and the bench shows the day the input monitor fires and the day the drop becomes visible in delayed labels.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Use a sudden shift of 1.0 and note the two days.</li>
+<li>Switch to a gradual shift.</li>
+<li>Reduce the shift to 0.3 and watch the accuracy and the alert.</li>
+<li>Raise the alert threshold to 5 and see whether detection is delayed.</li>
+</ol>
+<p><strong>What you should notice:</strong> input monitoring reacts within days while labelled accuracy lags by the label delay, and a stricter threshold trades earlier warnings for fewer false alarms.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>MLOps platforms:</strong> dashboards for drift, latency, errors and business metrics.</li>
+<li><strong>Fraud and credit models,</strong> whose labels arrive months later.</li>
+<li><strong>Language-model applications:</strong> tracking user feedback and output quality.</li>
+<li><strong>Safety nets:</strong> fallback rules and human review when confidence drops.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Monitoring only accuracy,</strong> which arrives too late.</li>
+<li><strong>Alert fatigue</strong> from thresholds that fire constantly.</li>
+<li><strong>Retraining automatically on drifted data</strong> without checking labels.</li>
+<li><strong>No rollback plan</strong> for a bad model.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why monitor inputs as well as accuracy?</summary>
+Input statistics are available at once, while true labels arrive late.
+</details>
+
+<details><summary>2. What does a drift alert prove?</summary>
+Only that the inputs changed; performance must be confirmed with outcomes.
+</details>
+
+<details><summary>3. What happens to detection speed if the threshold is raised?</summary>
+Detection is slower or misses small drifts, in exchange for fewer false alarms.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Input (covariate) drift:</strong> feature distributions moving away from training.</li>
+<li><strong>Label delay:</strong> the lag before true outcomes are known.</li>
+<li><strong>Performance drift:</strong> decay in a metric measured on outcomes.</li>
+<li><strong>Rollback:</strong> returning to a previous model version.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/distribution-shift/" data-topic="machine-learning/distribution-shift">Distribution Shift</a> · <a class="wikilink" href="/machine-learning/anomaly-detection/" data-topic="machine-learning/anomaly-detection">Anomaly Detection</a> · <a class="wikilink" href="/machine-learning/precision-recall-and-f1/" data-topic="machine-learning/precision-recall-and-f1">Precision, Recall and F1</a> · <a class="wikilink" href="/machine-learning/the-ml-workflow/" data-topic="machine-learning/the-ml-workflow">The ML Workflow</a> · <a class="wikilink" href="/fundamentals/where-ai-goes-wrong/" data-topic="fundamentals/where-ai-goes-wrong">Where AI Goes Wrong</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/deployment-and-monitoring">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/capstone-classifier-end-to-end/"><small>Read next</small><b>Capstone Classifier End to End</b><p>This capstone builds a small classifier from start to finish and brings the whole planet together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/distribution-shift/"><b>Distribution Shift</b><p>A model is trained on yesterday&#39;s data and used on tomorrow&#39;s.</p></a><a class="rc-card" href="/machine-learning/precision-recall-and-f1/"><b>Precision, Recall and F1</b><p>Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision).</p></a><a class="rc-card" href="/machine-learning/anomaly-detection/"><b>Anomaly Detection</b><p>Anomaly detection looks for the rare points that do not fit: a fraudulent payment, a failing machine, a corrupt record.</p></a><a class="rc-card" href="/machine-learning/the-ml-workflow/"><b>The ML Workflow</b><p>Building a model is a sequence of steps, and the order matters as much as the choices.</p></a><a class="rc-card" href="/fundamentals/where-ai-goes-wrong/"><b>Where AI Goes Wrong</b><p>AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…</p></a><a class="rc-card" href="/machine-learning/machine-learning-in-practice/"><b>Machine Learning in Practice</b><p>Knowing the algorithms is half the craft.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/pipelines-and-leakage/">← Previous: Pipelines and Leakage</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

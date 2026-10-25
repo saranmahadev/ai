@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radial Basis Function Networks — AI Base</title>
+<meta name="description" content="An ordinary artificial neuron on Deep Learning responds to a direction — a weighted sum, a dot product between input and weight vector.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/radial-basis-function-networks/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Radial Basis Function Networks — AI Base">
+<meta property="og:description" content="An ordinary artificial neuron on Deep Learning responds to a direction — a weighted sum, a dot product between input and weight vector.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/radial-basis-function-networks/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Radial Basis Function Networks","item":"https://ai.saranmahadev.in/neural-networks/radial-basis-function-networks/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Radial Basis Function Networks","description":"An ordinary artificial neuron on Deep Learning responds to a direction — a weighted sum, a dot product between input and weight vector.","url":"https://ai.saranmahadev.in/neural-networks/radial-basis-function-networks/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does an RBF unit respond to, as opposed to an ordinary artificial neuron?","acceptedAnswer":{"@type":"Answer","text":"Closeness (distance) to a fixed centre, rather than alignment (a dot product) with a weight direction."}},{"@type":"Question","name":"Why can the RBF network's output weights be solved for directly, without gradient descent?","acceptedAnswer":{"@type":"Answer","text":"Because the output is a linear combination of the (fixed, nonlinear) hidden-layer responses — linear in the weights being fit, which makes it an ordinary least-squares problem."}},{"@type":"Question","name":"In the worked example, why could two RBF units solve XOR when a single linear unit cannot?","acceptedAnswer":{"@type":"Answer","text":"Each RBF unit's response is already a nonlinear function of distance to its centre, giving the output layer nonlinear features to combine linearly — unlike a single linear unit, which can only combine the raw inputs linearly."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Alternative Architectures</p>
+        <h1 class="doc-title">Radial Basis Function Networks</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cjfka2vbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="cjfka2vpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cjfka2vbg)"/>
+  <circle cx="286" cy="333" r="205" fill="#c5d79b" opacity="0.36"/><circle cx="260" cy="388" r="104" fill="#ace3b3" opacity="0.34"/><circle cx="387" cy="155" r="128" fill="#e3f6e5" opacity="0.33"/><circle cx="846" cy="404" r="222" fill="#c5d79b" opacity="0.40"/><circle cx="711" cy="102" r="147" fill="#c5d79b" opacity="0.34"/>
+  <path d="M0,420 L0,307 L30,309 L60,310 L90,313 L120,316 L150,319 L180,322 L210,325 L240,329 L270,332 L300,335 L330,339 L360,341 L390,344 L420,346 L450,348 L480,349 L510,349 L540,350 L570,349 L600,348 L630,347 L660,345 L690,342 L720,340 L750,337 L780,333 L810,330 L840,326 L870,323 L900,320 L930,317 L960,314 L990,311 L1020,309 L1050,308 L1080,306 L1110,306 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,371 L30,368 L60,365 L90,363 L120,362 L150,362 L180,363 L210,364 L240,367 L270,370 L300,373 L330,377 L360,380 L390,384 L420,387 L450,390 L480,392 L510,394 L540,394 L570,394 L600,392 L630,390 L660,387 L690,384 L720,381 L750,377 L780,373 L810,370 L840,367 L870,364 L900,363 L930,362 L960,362 L990,363 L1020,365 L1050,368 L1080,371 L1110,374 L1140,378 L1170,382 L1200,385 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="682" cy="131" rx="191" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(13.9 682 131)"/><ellipse cx="682" cy="131" rx="265" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(19.9 682 131)"/>
+  <circle cx="682" cy="131" r="75" fill="url(#cjfka2vpl)"/>
+  <circle cx="940" cy="105" r="14" fill="#ffffff" opacity="0.66"/><circle cx="887" cy="50" r="9" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An ordinary artificial neuron on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a> responds to a <em>direction</em> — a weighted sum, a dot product between input and weight vector. A radial basis function (RBF) unit responds to a <em>distance</em> instead: how close the input is to the unit&#39;s own centre. That one change makes a hard problem like XOR solvable without any iterative training at all.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">The Artificial Neuron and Activation Functions</a>, <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What if a hidden unit measured closeness to a point, instead of alignment with a direction?&quot; An RBF network&#39;s hidden layer does exactly that — each unit has a centre, and fires strongest when the input is near that centre, fading smoothly as the input moves away. Once that hidden layer is fixed, the output layer is just a linear combination of those closeness scores, which can be <strong>solved for directly</strong> with linear algebra instead of trained iteratively.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Instead of neurons that ask &quot;does this input point in roughly the direction I care about?&quot;, imagine neurons that each ask &quot;how close is this input to <em>my</em> particular spot?&quot; A unit centred near the data you want it to recognise lights up strongly; move far enough away and it fades to near zero. With enough well-placed centres, any function can be approximated as a weighted sum of these localized &quot;bumps&quot; — and because the bumps themselves aren&#39;t being trained (just placed), finding the best weights for combining them is an ordinary least-squares problem.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>The standard RBF unit uses a Gaussian:</p>
+<pre><code class="language-text">φ(x) = exp(−‖x − c‖² / (2σ²))
+</code></pre>
+<p><code>c</code> is the unit&#39;s centre, <code>σ</code> controls how quickly its response fades with distance. The network&#39;s output is a linear combination of several such units&#39; responses:</p>
+<pre><code class="language-text">y(x) = Σᵢ wᵢ · φᵢ(x) + b
+</code></pre>
+<p>Because <code>y</code> is <em>linear</em> in the weights <code>w</code> (even though each <code>φᵢ</code> is a nonlinear function of <code>x</code>), fitting <code>w</code> to a set of training examples is an ordinary linear least-squares problem — the same kind of calculation as <a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a> — once the centres and widths are chosen.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two RBF units, centred at <code>c₁ = [0, 0]</code> and <code>c₂ = [1, 1]</code>, with <code>σ = 0.5</code>, fit to the four XOR points — exactly the function <a class="wikilink" href="/machine-learning/the-perceptron/" data-topic="machine-learning/the-perceptron">a single linear unit</a> cannot represent:</p>
+<pre><code class="language-text">input    φ₁(x)    φ₂(x)    target
+[0,0]    1.000    0.018      0
+[0,1]    0.135    0.135      1
+[1,0]    0.135    0.135      1
+[1,1]    0.018    1.000      0
+</code></pre>
+<p>Solving the linear least-squares fit <code>y = w₁φ₁ + w₂φ₂ + b</code> for these four points gives <code>w₁ ≈ −1.338</code>, <code>w₂ ≈ −1.338</code>, <code>b ≈ 1.362</code>, and plugging back in:</p>
+<pre><code class="language-text">predictions: 0.000, 1.000, 1.000, 0.000  — an exact fit
+</code></pre>
+<p>No gradient descent, no iteration — two well-placed Gaussian bumps turned XOR into a problem a single linear solve could finish exactly.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rbf-xor" data-title="Solving XOR with two Gaussian bumps"><p class="bench-fallback"><strong>Interactive bench: Solving XOR with two Gaussian bumps.</strong> Place two RBF centres and set their width, then solve the linear output layer exactly and see how well the resulting function fits the XOR points.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move the two centres and watch how well the fit holds up as they drift away from the two XOR &quot;corners.&quot;</li>
+<li>Shrink the width σ and see the function become sharply peaked rather than smooth.</li>
+<li>Try fitting with only one centre and see the least-squares solution fail to separate the four points.</li>
+</ol>
+<p><strong>What you should notice:</strong> the hidden layer never trains at all in this bench — only its centres and width are chosen by hand, and the entire fitting happens in the one linear solve for the output weights.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is a direct example of solving instead of iterating</strong>: once the nonlinear part of the model (the centres) is fixed, the rest is exactly the kind of problem <a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a> already solves in closed form.</li>
+<li><strong>It foreshadows <a class="wikilink" href="/neural-networks/extreme-learning-machines/" data-topic="neural-networks/extreme-learning-machines">Extreme Learning Machines</a></strong>, covered later in this district, which pushes the same idea further: make <em>all</em> of the hidden layer&#39;s parameters fixed (not just placed by hand) and solve for the output weights alone.</li>
+<li><strong>Kernel methods on <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a></strong>, particularly kernel-based <a class="wikilink" href="/machine-learning/support-vector-machines/" data-topic="machine-learning/support-vector-machines">SVMs</a>, use a mathematically related idea — measuring similarity via a kernel function rather than a raw dot product.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming more centres always help.</strong> Too many centres can overfit, just as adding too many features can elsewhere on <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a>.</li>
+<li><strong>Placing centres badly.</strong> If no centre sits near a region of the input space, the network has very little signal to work with there — the width and placement of centres matter as much as the number of them.</li>
+<li><strong>Forgetting the output layer is still linear.</strong> Fitting it is cheap and exact, but it can still only combine the fixed hidden responses — it cannot invent new nonlinear structure the chosen centres didn&#39;t already provide.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does an RBF unit respond to, as opposed to an ordinary artificial neuron?</summary>
+Closeness (distance) to a fixed centre, rather than alignment (a dot product) with a weight direction.
+</details>
+
+<details><summary>2. Why can the RBF network's output weights be solved for directly, without gradient descent?</summary>
+Because the output is a linear combination of the (fixed, nonlinear) hidden-layer responses — linear in the weights being fit, which makes it an ordinary least-squares problem.
+</details>
+
+<details><summary>3. In the worked example, why could two RBF units solve XOR when a single linear unit cannot?</summary>
+Each RBF unit's response is already a nonlinear function of distance to its centre, giving the output layer nonlinear features to combine linearly — unlike a single linear unit, which can only combine the raw inputs linearly.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Centre:</strong> the fixed point in input space an RBF unit measures distance from.</li>
+<li><strong>Width (σ):</strong> how quickly an RBF unit&#39;s response fades as the input moves away from its centre.</li>
+<li><strong>Closed-form solution:</strong> a solution obtained by direct computation (here, linear least squares), rather than iterative optimization.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">The Artificial Neuron and Activation Functions</a> · <a class="wikilink" href="/math/least-squares/" data-topic="math/least-squares">Least Squares</a> · <a class="wikilink" href="/neural-networks/extreme-learning-machines/" data-topic="neural-networks/extreme-learning-machines">Extreme Learning Machines</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/radial-basis-function-networks">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/reservoir-computing-and-liquid-state-machines/"><small>Read next</small><b>Reservoir Computing and Liquid State Machines</b><p>The previous topic fixed the hidden layer&#39;s placement and solved for the output.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/deep-learning/the-artificial-neuron-and-activation-functions/"><b>The Artificial Neuron and Activation Functions</b><p>An artificial neuron is a dot product plus a bias, passed through a non-linear activation function: a = f(w · x + b).</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a><a class="rc-card" href="/math/least-squares/"><b>Least Squares</b><p>When a system of equations has more equations than unknowns, it usually has no exact solution. Least squares finds the values that come closest, by minimising the total squared error.</p></a><a class="rc-card" href="/machine-learning/the-perceptron/"><b>The Perceptron</b><p>The perceptron is the oldest learning machine: compute a weighted sum of the inputs, answer &quot;yes&quot; if it is positive and &quot;no&quot; otherwise, and after every mistake nudge the weights so that mistake is…</p></a><a class="rc-card" href="/neural-networks/extreme-learning-machines/"><b>Extreme Learning Machines</b><p>Radial Basis Function Networks fixed a few, deliberately-placed Gaussian centres.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/alternative-architectures/">← Previous: Alternative Architectures</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

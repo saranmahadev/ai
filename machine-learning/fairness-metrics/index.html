@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fairness Metrics — AI Base</title>
+<meta name="description" content="Once you measure a model&#39;s results for different groups, you must decide what &quot;fair&quot; means.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/fairness-metrics/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Fairness Metrics — AI Base">
+<meta property="og:description" content="Once you measure a model&#39;s results for different groups, you must decide what &quot;fair&quot; means.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/fairness-metrics/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Fairness Metrics","item":"https://ai.saranmahadev.in/machine-learning/fairness-metrics/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Fairness Metrics","description":"Once you measure a model's results for different groups, you must decide what \"fair\" means.","url":"https://ai.saranmahadev.in/machine-learning/fairness-metrics/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does demographic parity require?","acceptedAnswer":{"@type":"Answer","text":"The same share of each group receives the positive decision."}},{"@type":"Question","name":"Why can't all fairness measures hold when base rates differ?","acceptedAnswer":{"@type":"Answer","text":"Their definitions constrain the same counts in incompatible ways, so satisfying one forces a gap in another."}},{"@type":"Question","name":"Who decides which fairness measure to use?","acceptedAnswer":{"@type":"Answer","text":"It is a value judgement that depends on context and stakeholders, not a purely technical choice."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Bias, Fairness and Failure</p>
+        <h1 class="doc-title">Fairness Metrics</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1q3hypbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c1q3hyppl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1q3hypbg)"/>
+  <circle cx="106" cy="0" r="228" fill="#8a6b5c" opacity="0.44"/><circle cx="593" cy="109" r="174" fill="#ffd08d" opacity="0.47"/><circle cx="163" cy="204" r="139" fill="#fff2de" opacity="0.41"/><circle cx="1045" cy="5" r="93" fill="#ffd99f" opacity="0.55"/><circle cx="451" cy="259" r="215" fill="#8a6b5c" opacity="0.55"/><circle cx="998" cy="70" r="181" fill="#ffd99f" opacity="0.32"/><circle cx="898" cy="56" r="119" fill="#ffd08d" opacity="0.39"/>
+  <path d="M0,420 L0,307 L30,310 L60,315 L90,321 L120,328 L150,335 L180,341 L210,346 L240,349 L270,350 L300,348 L330,345 L360,340 L390,334 L420,327 L450,320 L480,314 L510,310 L540,307 L570,306 L600,307 L630,310 L660,315 L690,321 L720,328 L750,335 L780,341 L810,346 L840,349 L870,350 L900,348 L930,345 L960,340 L990,334 L1020,327 L1050,320 L1080,314 L1110,310 L1140,307 L1170,306 L1200,307 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,386 L30,382 L60,377 L90,372 L120,368 L150,364 L180,362 L210,362 L240,363 L270,366 L300,370 L330,374 L360,379 L390,384 L420,388 L450,392 L480,394 L510,394 L540,393 L570,390 L600,386 L630,382 L660,377 L690,372 L720,368 L750,364 L780,362 L810,362 L840,363 L870,366 L900,370 L930,374 L960,379 L990,384 L1020,388 L1050,392 L1080,394 L1110,394 L1140,393 L1170,390 L1200,386 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="673" cy="243" rx="155" ry="43" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-0.1 673 243)"/><ellipse cx="673" cy="243" rx="214" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(5.9 673 243)"/>
+  <circle cx="673" cy="243" r="61" fill="url(#c1q3hyppl)"/>
+  <circle cx="863" cy="273" r="8" fill="#ffffff" opacity="0.81"/><circle cx="566" cy="318" r="8" fill="#ffffff" opacity="0.61"/><circle cx="906" cy="260" r="10" fill="#ffffff" opacity="0.61"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Once you measure a model&#39;s results for different groups, you must decide what &quot;fair&quot; means. There are several reasonable definitions, such as equal selection rates, equal true positive rates, or equal precision, and when the groups differ in how common the outcome is, they <strong>cannot all be satisfied at once</strong>. Choosing among them is a values decision, not a technical one.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/precision-recall-and-f1/" data-topic="machine-learning/precision-recall-and-f1">Precision, Recall and F1</a>, <a class="wikilink" href="/machine-learning/bias-in-data/" data-topic="machine-learning/bias-in-data">Bias in Data</a> and <a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Is the model treating groups equally?&quot; The honest answer is &quot;equal in which sense?&quot;, because the natural measures disagree.</p>
+<h2 id="intuition-three-tests-for-the-same-treatment">Intuition: three tests for &quot;the same treatment&quot;</h2>
+<p>Suppose a model approves loans and there are two groups. You could ask: do both groups get approved at the same rate? (<strong>demographic parity</strong>) Among people who would repay, are both groups approved equally often? (<strong>equal opportunity</strong>, equal true positive rates) Of the people approved, does the same share repay in both groups? (<strong>predictive parity</strong>, equal precision). If one group has more repayers than the other, fixing one of these breaks another.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">demographic parity     selection rate equal across groups           P(flagged | group)
+equal opportunity      true positive rate equal                      P(flagged | positive, group)
+equalised odds         true and false positive rates both equal
+predictive parity      precision equal                               P(positive | flagged, group)
+calibration            a score of 0.7 means 70% for every group
+</code></pre>
+<p>When base rates differ (the groups have different shares of positives), a non-perfect model cannot satisfy calibration/predictive parity and equalised odds together. Metrics also depend on what counts as the &quot;positive&quot; outcome and on who the reference group is; none of them proves fairness alone.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>One score model for two groups with identical score behaviour (positives around 1.5, negatives around 0, spread 1), but group A has 40% positives and group B has 20%. Expected results per 1,000 people (&quot;caught&quot; is the true positive rate, &quot;false alarms&quot; the false positive rate):</p>
+<pre><code class="language-text">single threshold 0.75            selected    caught (TPR)    false alarms (FPR)    precision
+group A (40% positive)            44.5%           77.3%           22.7%                69.5%
+group B (20% positive)            33.6%           77.3%           22.7%                46.0%
+</code></pre>
+<p>The model treats individuals identically (same score, same threshold), and both true and false positive rates match, so equalised odds holds. But group A is selected far more often (44.5% against 33.6%) and flagged people are much more likely to be true positives in A (69.5%) than in B (46.0%). To equalise selection rates, lower B&#39;s threshold to 0.41:</p>
+<pre><code class="language-text">group B at threshold 0.41:   selected 44.5%   true positive rate 86.2%   false positive rate 34.1%   precision 38.7%
+</code></pre>
+<p>Now the selection rates match, but B&#39;s true positive rate is 8.9 points higher, its false positive rate is 11.4 points higher, and precision has dropped to 38.7%. Each fix trades away another measure.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="fairness-metrics" data-title="Two groups, one score"><p class="bench-fallback"><strong>Interactive bench: Two groups, one score.</strong> Two groups have different shares of positives and one score; separate thresholds for each group change the selection rate, true and false positive rates and precision, with the gaps between the groups shown for three fairness measures.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With the same threshold, read the three gaps.</li>
+<li>Untick the same-threshold box and lower B&#39;s threshold until the selection gap is zero.</li>
+<li>Note what happens to the true positive rate and precision gaps.</li>
+<li>Raise the share of positives in B to 40% and see the gaps close.</li>
+</ol>
+<p><strong>What you should notice:</strong> you can drive one gap to zero, but only at the cost of another, and the gaps vanish only when the groups&#39; base rates are equal.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Lending, hiring, admissions and criminal-justice risk scores.</strong></li>
+<li><strong>Regulation and audits:</strong> many laws require reporting group outcomes.</li>
+<li><strong>Content moderation and health triage.</strong></li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Picking the metric that flatters the model.</strong></li>
+<li><strong>Treating one metric as a certificate of fairness.</strong></li>
+<li><strong>Ignoring the base-rate difference</strong> that makes the metrics conflict.</li>
+<li><strong>Forgetting people are not their group:</strong> metrics describe averages, not individual cases.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does demographic parity require?</summary>
+The same share of each group receives the positive decision.
+</details>
+
+<details><summary>2. Why can't all fairness measures hold when base rates differ?</summary>
+Their definitions constrain the same counts in incompatible ways, so satisfying one forces a gap in another.
+</details>
+
+<details><summary>3. Who decides which fairness measure to use?</summary>
+It is a value judgement that depends on context and stakeholders, not a purely technical choice.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Demographic parity:</strong> equal selection rates across groups.</li>
+<li><strong>Equal opportunity:</strong> equal true positive rates across groups.</li>
+<li><strong>Predictive parity:</strong> equal precision across groups.</li>
+<li><strong>Base rate:</strong> how common the positive outcome is in a group.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/precision-recall-and-f1/" data-topic="machine-learning/precision-recall-and-f1">Precision, Recall and F1</a> · <a class="wikilink" href="/machine-learning/bias-in-data/" data-topic="machine-learning/bias-in-data">Bias in Data</a> · <a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a> · <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/fundamentals/where-ai-goes-wrong/" data-topic="fundamentals/where-ai-goes-wrong">Where AI Goes Wrong</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/fairness-metrics">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/distribution-shift/"><small>Read next</small><b>Distribution Shift</b><p>A model is trained on yesterday&#39;s data and used on tomorrow&#39;s.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/precision-recall-and-f1/"><b>Precision, Recall and F1</b><p>Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision).</p></a><a class="rc-card" href="/machine-learning/bias-in-data/"><b>Bias in Data</b><p>A model learns whatever its data shows.</p></a><a class="rc-card" href="/math/conditional-probability/"><b>Conditional Probability</b><p>Conditional probability is the probability of an event given that another has happened: P(A | B), read &quot;the probability of A given B&quot;.</p></a><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/fundamentals/where-ai-goes-wrong/"><b>Where AI Goes Wrong</b><p>AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…</p></a><a class="rc-card" href="/machine-learning/bias-fairness-and-failure/"><b>Bias, Fairness and Failure</b><p>Getting a good number on a test set is not the same as being trustworthy.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/bias-in-data/">← Previous: Bias in Data</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

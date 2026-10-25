@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Turn Conversation State and Memory — AI Base</title>
+<meta name="description" content="A conversation isn&#39;t one request — it&#39;s many, each one needing the context of everything said before.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/multi-turn-conversation-state-and-memory/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Multi-Turn Conversation State and Memory — AI Base">
+<meta property="og:description" content="A conversation isn&#39;t one request — it&#39;s many, each one needing the context of everything said before.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/multi-turn-conversation-state-and-memory/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Multi-Turn Conversation State and Memory","item":"https://ai.saranmahadev.in/llms/multi-turn-conversation-state-and-memory/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Multi-Turn Conversation State and Memory","description":"A conversation isn't one request — it's many, each one needing the context of everything said before.","url":"https://ai.saranmahadev.in/llms/multi-turn-conversation-state-and-memory/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key difference in how full replay's and summarization's token cost grow with conversation length?","acceptedAnswer":{"@type":"Answer","text":"Full replay's token cost grows linearly without bound as the conversation continues; summarization's token cost grows at first but then flattens out once it reaches the summary budget plus one turn's worth of tokens."}},{"@type":"Question","name":"In the worked example, at roughly what point did summarization's token cost stop growing?","acceptedAnswer":{"@type":"Answer","text":"Around turn 5, where it reached about 650 tokens and stayed there for every later turn checked."}},{"@type":"Question","name":"What does summarization trade away to keep context size bounded?","acceptedAnswer":{"@type":"Answer","text":"Fine-grained detail from older turns, which get compressed into a summary rather than kept verbatim — information not captured in the summary may no longer be recoverable."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Context, Memory and Long-Range Behavior</p>
+        <h1 class="doc-title">Multi-Turn Conversation State and Memory</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1s0kk0sbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1s0kk0spl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1s0kk0sbg)"/>
+  <circle cx="435" cy="387" r="66" fill="#ffc7a2" opacity="0.61"/><circle cx="580" cy="189" r="135" fill="#8a5f5e" opacity="0.46"/><circle cx="233" cy="330" r="83" fill="#ffc7a2" opacity="0.38"/><circle cx="112" cy="399" r="63" fill="#ffc7a2" opacity="0.59"/><circle cx="648" cy="214" r="108" fill="#ffc38f" opacity="0.54"/><circle cx="613" cy="38" r="111" fill="#ffc7a2" opacity="0.52"/><circle cx="1183" cy="125" r="227" fill="#ffc38f" opacity="0.46"/>
+  <path d="M0,420 L0,332 L30,335 L60,338 L90,341 L120,344 L150,346 L180,348 L210,349 L240,349 L270,350 L300,349 L330,348 L360,347 L390,345 L420,343 L450,340 L480,337 L510,334 L540,330 L570,327 L600,323 L630,320 L660,317 L690,314 L720,312 L750,309 L780,308 L810,306 L840,306 L870,306 L900,306 L930,307 L960,308 L990,310 L1020,313 L1050,315 L1080,318 L1110,321 L1140,325 L1170,328 L1200,332 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,362 L60,362 L90,363 L120,366 L150,370 L180,374 L210,379 L240,384 L270,388 L300,392 L330,394 L360,394 L390,393 L420,390 L450,386 L480,382 L510,377 L540,372 L570,368 L600,364 L630,362 L660,362 L690,363 L720,366 L750,370 L780,374 L810,379 L840,384 L870,388 L900,392 L930,394 L960,394 L990,393 L1020,390 L1050,386 L1080,382 L1110,377 L1140,372 L1170,368 L1200,364 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="680" cy="217" rx="189" ry="53" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(22.1 680 217)"/><ellipse cx="680" cy="217" rx="261" ry="73" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(28.1 680 217)"/>
+  <circle cx="680" cy="217" r="74" fill="url(#c1s0kk0spl)"/>
+  <circle cx="906" cy="276" r="10" fill="#ffffff" opacity="0.68"/><circle cx="491" cy="138" r="17" fill="#ffffff" opacity="0.86"/><circle cx="643" cy="306" r="10" fill="#ffffff" opacity="0.79"/><circle cx="382" cy="208" r="11" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A conversation isn&#39;t one request — it&#39;s many, each one needing the context of everything said before. The naive way to handle that, replaying the entire conversation every single turn, runs straight into both the <a class="wikilink" href="/llms/long-context-transformers/" data-topic="llms/long-context-transformers">compute cost</a> and the <a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">retrieval reliability</a> problems already covered, except now they get worse with every single message.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">Context Rot and Lost-in-the-Middle Effects</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you keep a long conversation coherent without the context growing forever?&quot; The simplest approach, <strong>full replay</strong>, resends the entire conversation history with every new turn — context length (and cost) grows linearly, without bound, as the conversation continues. <strong>Summarization-based memory</strong> instead periodically compresses older turns into a bounded summary, keeping only the summary plus the most recent turns in full — trading some detail from older turns for a context size that stops growing.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Replaying a conversation&#39;s full transcript every single time you want to respond is like re-reading an entire group chat from message one before typing every new reply — technically possible, but the amount you have to re-read just keeps growing, turn after turn, forever. Keeping a running mental summary of &quot;here&#39;s roughly what&#39;s been discussed so far&quot; plus the last few messages verbatim is how people actually manage long conversations — bounded effort per turn, at the cost of losing some of the fine detail from early on.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">full replay: context size at turn t = t × tokens_per_turn
+  → grows linearly, without bound
+
+summarized: context size at turn t = min(t × tokens_per_turn,
+                                           summary_budget + tokens_per_turn)
+  → grows linearly at first, then stays flat once the summary
+    budget plus one turn&#39;s worth of tokens is reached
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Token cost at several points in a growing conversation, at 150 tokens per turn and a 500-token summary budget:</p>
+<pre><code class="language-text">turn  1:  full replay 150 tokens     summarized ~150 tokens
+turn  5:  full replay 750 tokens     summarized ~650 tokens
+turn 10:  full replay 1,500 tokens   summarized ~650 tokens
+turn 20:  full replay 3,000 tokens   summarized ~650 tokens
+turn 40:  full replay 6,000 tokens   summarized ~650 tokens
+</code></pre>
+<p>Full replay&#39;s token cost keeps climbing without limit — by turn 40, it&#39;s 6,000 tokens and still growing with every message. The summarized approach caps out at 650 tokens (the summary budget plus one turn) by around turn 5, and stays there no matter how much longer the conversation continues.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="conversation-memory-cost" data-title="One grows forever, one doesn't"><p class="bench-fallback"><strong>Interactive bench: One grows forever, one doesn't.</strong> Slide through turn numbers and compare full-history replay's token cost against a bounded, summarized approach's.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the two approaches&#39; token cost at an early turn.</li>
+<li>Move to a later turn and watch the gap widen.</li>
+<li>Notice where the summarized line flattens out and stays flat.</li>
+</ol>
+<p><strong>What you should notice:</strong> the summarized approach isn&#39;t cheaper from the very first turn — it only pulls ahead once the conversation gets long enough that full replay&#39;s unbounded growth starts to matter.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Production chat systems routinely use some form of summarization or sliding-window truncation</strong> once a conversation grows past a manageable size, precisely to avoid both <a class="wikilink" href="/llms/long-context-transformers/" data-topic="llms/long-context-transformers">unbounded compute cost</a> and <a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">degraded retrieval reliability</a> from an ever-growing context.</li>
+<li><strong>Summarization necessarily loses information</strong> — older turns are compressed, not preserved verbatim, so a detail from early in a very long conversation may no longer be recoverable from the summary alone.</li>
+<li><strong>This is a different concern from <a class="wikilink" href="/llms/kv-cache-reuse-across-sessions/" data-topic="llms/kv-cache-reuse-across-sessions">KV-cache reuse</a></strong>: caching avoids recomputing a prefix that&#39;s already been seen; summarization avoids ever having to <em>include</em> the full prefix in the first place.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming summarization has no cost.</strong> Compressing older turns can lose exactly the kind of specific detail that later becomes relevant again — the trade-off is real, not free.</li>
+<li><strong>Expecting full replay to be impractical from turn one.</strong> As the worked example shows, it&#39;s perfectly fine (and even cheaper) for short conversations — the problem is specifically its unbounded growth over a long conversation.</li>
+<li><strong>Confusing conversation memory with <a class="wikilink" href="/llms/kv-cache-reuse-across-sessions/" data-topic="llms/kv-cache-reuse-across-sessions">cross-session KV-cache reuse</a>.</strong> One is about how much context content gets included at all; the other is about whether already-seen content&#39;s computation can be skipped — they solve different parts of the same broader cost problem.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key difference in how full replay's and summarization's token cost grow with conversation length?</summary>
+Full replay's token cost grows linearly without bound as the conversation continues; summarization's token cost grows at first but then flattens out once it reaches the summary budget plus one turn's worth of tokens.
+</details>
+
+<details><summary>2. In the worked example, at roughly what point did summarization's token cost stop growing?</summary>
+Around turn 5, where it reached about 650 tokens and stayed there for every later turn checked.
+</details>
+
+<details><summary>3. What does summarization trade away to keep context size bounded?</summary>
+Fine-grained detail from older turns, which get compressed into a summary rather than kept verbatim — information not captured in the summary may no longer be recoverable.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Full replay:</strong> resending a conversation&#39;s entire history with every new turn.</li>
+<li><strong>Summarization-based memory:</strong> compressing older turns into a bounded summary, keeping only recent turns in full.</li>
+<li><strong>Summary budget:</strong> the fixed token allowance set aside for a conversation&#39;s compressed history.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">Context Rot and Lost-in-the-Middle Effects</a> · <a class="wikilink" href="/llms/kv-cache-reuse-across-sessions/" data-topic="llms/kv-cache-reuse-across-sessions">KV-Cache Reuse Across Sessions</a> · <a class="wikilink" href="/llms/long-context-transformers/" data-topic="llms/long-context-transformers">Long-Context Transformers</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/multi-turn-conversation-state-and-memory">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/kv-cache-reuse-across-sessions/"><small>Read next</small><b>KV-Cache Reuse Across Sessions</b><p>KV-caching already avoids recomputing a sequence&#39;s earlier positions while generating one response.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/long-context-transformers/"><b>Long-Context Transformers</b><p>Every mechanism this road has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more…</p></a><a class="rc-card" href="/llms/context-rot-and-lost-in-the-middle-effects/"><b>Context Rot and Lost-in-the-Middle Effects</b><p>Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem:…</p></a><a class="rc-card" href="/llms/kv-cache-reuse-across-sessions/"><b>KV-Cache Reuse Across Sessions</b><p>KV-caching already avoids recomputing a sequence&#39;s earlier positions while generating one response.</p></a><a class="rc-card" href="/llms/context-memory-and-long-range-behavior/"><b>Context, Memory and Long-Range Behavior</b><p>A single forward pass has a fixed context window, but real use involves far more text than fits in one, conversations that span many turns, and sessions that return days later expecting to be…</p></a><a class="rc-card" href="/rag/context-window-budgeting-for-rag/"><b>Context-Window Budgeting for RAG</b><p>Retrieved chunks don&#39;t get the entire context window to themselves — a running conversation&#39;s own history is sitting in there too, and the two are competing for the exact same limited space.</p></a><a class="rc-card" href="/agents/short-term-vs-long-term-agent-memory/"><b>Short-Term vs. Long-Term Agent Memory</b><p>Everything an agent reads during one run — the request, the tool results so far, its own earlier reasoning — disappears the moment that run ends, unless something deliberately writes it somewhere…</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/context-rot-and-lost-in-the-middle-effects/">← Previous: Context Rot and Lost-in-the-Middle Effects</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

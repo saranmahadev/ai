@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Few-Shot and Zero-Shot Generation — AI Base</title>
+<meta name="description" content="The copying mechanism in Prompting and In-Context Learning only works when the pattern it needs is actually present in the prompt — which raises a direct, practical question: how many examples…">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/few-shot-and-zero-shot-generation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Few-Shot and Zero-Shot Generation — AI Base">
+<meta property="og:description" content="The copying mechanism in Prompting and In-Context Learning only works when the pattern it needs is actually present in the prompt — which raises a direct, practical question: how many examples…">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/few-shot-and-zero-shot-generation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Few-Shot and Zero-Shot Generation","item":"https://ai.saranmahadev.in/generative-ai/few-shot-and-zero-shot-generation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Few-Shot and Zero-Shot Generation","description":"The copying mechanism in Prompting and In-Context Learning only works when the pattern it needs is actually present in the prompt — which raises a direct, practical question: how many examples…","url":"https://ai.saranmahadev.in/generative-ai/few-shot-and-zero-shot-generation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does zero-shot prompting have nothing for the copying mechanism from the previous note to use?","acceptedAnswer":{"@type":"Answer","text":"Because there are no worked examples in the prompt, so there is no earlier occurrence of a matching pattern for the mechanism to find and copy from."}},{"@type":"Question","name":"In the worked example, roughly how much does the match rate improve from k=5 to k=8 shots, compared to k=0 to k=1?","acceptedAnswer":{"@type":"Answer","text":"From k=0 to k=1 the rate jumps 20 percentage points (0% to 20%); from k=5 to k=8 it only rises about 16 points (67.2% to 83.2%) despite adding three more examples instead of one — clearly diminishing returns."}},{"@type":"Question","name":"What's a direct, non-accuracy cost of adding more few-shot examples?","acceptedAnswer":{"@type":"Answer","text":"Every example adds input tokens the model must process (and that are usually billed), independent of whether those extra examples actually improve accuracy."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Decoding and Prompting</p>
+        <h1 class="doc-title">Few-Shot and Zero-Shot Generation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1kgpvmibg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c1kgpvmipl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1kgpvmibg)"/>
+  <circle cx="431" cy="113" r="230" fill="#8a5989" opacity="0.37"/><circle cx="1067" cy="170" r="206" fill="#8a5989" opacity="0.50"/><circle cx="561" cy="43" r="148" fill="#8a5989" opacity="0.32"/><circle cx="771" cy="418" r="168" fill="#8a5989" opacity="0.50"/><circle cx="574" cy="189" r="204" fill="#8a5989" opacity="0.57"/><circle cx="389" cy="303" r="84" fill="#ffe9f4" opacity="0.27"/><circle cx="506" cy="62" r="151" fill="#ffbfe0" opacity="0.60"/>
+  <path d="M0,420 L0,315 L30,320 L60,325 L90,330 L120,335 L150,340 L180,344 L210,347 L240,349 L270,350 L300,349 L330,348 L360,345 L390,341 L420,337 L450,332 L480,327 L510,322 L540,317 L570,313 L600,309 L630,307 L660,306 L690,306 L720,307 L750,309 L780,313 L810,317 L840,321 L870,327 L900,332 L930,337 L960,341 L990,345 L1020,347 L1050,349 L1080,350 L1110,349 L1140,347 L1170,344 L1200,340 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,389 L30,385 L60,380 L90,375 L120,371 L150,367 L180,364 L210,362 L240,362 L270,364 L300,367 L330,371 L360,376 L390,381 L420,385 L450,389 L480,392 L510,394 L540,394 L570,392 L600,389 L630,385 L660,380 L690,375 L720,371 L750,367 L780,364 L810,362 L840,362 L870,364 L900,367 L930,371 L960,376 L990,381 L1020,385 L1050,389 L1080,392 L1110,394 L1140,394 L1170,392 L1200,389 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="861" cy="244" rx="214" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(20.9 861 244)"/><ellipse cx="861" cy="244" rx="296" ry="83" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(26.9 861 244)"/>
+  <circle cx="861" cy="244" r="84" fill="url(#c1kgpvmipl)"/>
+  <circle cx="596" cy="314" r="14" fill="#ffffff" opacity="0.86"/><circle cx="1199" cy="257" r="13" fill="#ffffff" opacity="0.64"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The copying mechanism in <a class="wikilink" href="/generative-ai/prompting-and-in-context-learning/" data-topic="generative-ai/prompting-and-in-context-learning">Prompting and In-Context Learning</a> only works when the pattern it needs is actually present in the prompt — which raises a direct, practical question: how many examples does a prompt need before that pattern reliably shows up?</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/prompting-and-in-context-learning/" data-topic="generative-ai/prompting-and-in-context-learning">Prompting and In-Context Learning</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does a prompt need zero, one, or many examples to work?&quot; <strong>Zero-shot</strong> means asking for a task with no examples at all, relying entirely on an instruction. <strong>Few-shot</strong> means including a handful of worked examples in the prompt before the real question. Whether few-shot helps — and how many examples are enough — depends on whether a model&#39;s in-context mechanisms (like the copying trick from the previous note) actually get a chance to find a matching pattern; more examples simply raise the odds that one of them matches.</p>
+<h2 id="intuition">Intuition</h2>
+<p>If a copying-style mechanism needs the <em>current</em> situation to have occurred once already somewhere earlier in the prompt, then zero examples means there is nothing to match against at all — the model is guessing blind. Each additional example is another independent roll of the dice for &quot;does one of these happen to match what I&#39;m asked about now?&quot; More shots don&#39;t make the model smarter; they make it more likely the exact pattern needed is already sitting somewhere in the context.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">zero-shot:  prompt = instruction only, no worked examples
+k-shot:     prompt = instruction + k worked examples, then the real query
+
+if each example independently has probability q of matching
+the query&#39;s category:
+  P(at least one of k examples matches) = 1 − (1 − q)ᵏ
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy setup with 5 possible categories, where a prompt includes k random example pairs before a query from one of the same 5 categories. The chance that at least one of the k examples happens to share the query&#39;s category (<code>q = 1/5</code>, so <code>1 − q = 0.8</code>):</p>
+<pre><code class="language-text">k = 0:  1 − 0.8⁰ = 0.000   (0.0% — zero-shot, nothing to match)
+k = 1:  1 − 0.8¹ = 0.200   (20.0% match rate)
+k = 2:  1 − 0.8² = 0.360   (36.0% match rate)
+k = 3:  1 − 0.8³ = 0.488   (48.8% match rate)
+k = 5:  1 − 0.8⁵ = 0.672   (67.2% match rate)
+k = 8:  1 − 0.8⁸ = 0.832   (83.2% match rate)
+</code></pre>
+<p>Simulating 5,000 random prompts at each k matches this formula closely (k=3 simulated at 49.5%, k=8 at 83.6%, both within simulation noise of the exact values above) — confirming that the benefit of more shots here is entirely about the growing odds of a usable match existing in the prompt at all, with sharply diminishing returns as k grows past a handful.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="fewshot-matchrate" data-title="Shots in the prompt vs. chance of a match to copy"><p class="bench-fallback"><strong>Interactive bench: Shots in the prompt vs. chance of a match to copy.</strong> Adjust the number of example shots in a toy prompt and watch the chance of a usable match rise toward its theoretical curve.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set shots to 0 and confirm the match rate is exactly zero.</li>
+<li>Raise shots to 3 and compare the simulated rate to the formula&#39;s prediction.</li>
+<li>Keep raising shots past 5 and notice how much the rate&#39;s growth slows down.</li>
+</ol>
+<p><strong>What you should notice:</strong> the match rate rises quickly at first and then flattens — going from 0 to 1 shot gains 20 percentage points, but going from 5 to 8 shots gains only about 16 more, even though it&#39;s three more examples.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Zero-shot performance is a common benchmark baseline</strong>, specifically because it isolates what a model can do from instructions alone, with no chance for in-context pattern-matching to help.</li>
+<li><strong>Few-shot prompting became a headline result for large language models</strong> precisely because performance on many tasks jumped sharply from a handful of in-context examples, with no training at all.</li>
+<li><strong>Beyond a task-specific pattern match, more shots also cost more input tokens</strong> — every example in the prompt is tokens the model has to process and (on most APIs) tokens you pay for, so few-shot has a real, direct cost unrelated to accuracy.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming more shots always helps, without limit.</strong> This worked example&#39;s own curve shows sharply diminishing returns; very long prompts can also push useful context out of a model&#39;s effective attention span.</li>
+<li><strong>Treating zero-shot failure as proof a model &quot;can&#39;t&quot; do a task.</strong> It may only mean the task needs a demonstrated pattern to follow — the same model might do fine with just one or two well-chosen examples.</li>
+<li><strong>Picking unrepresentative examples.</strong> A few-shot prompt whose examples don&#39;t resemble the real query&#39;s pattern can actively mislead a model, since in-context mechanisms are matching against whatever pattern the examples actually show, not the one you intended.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does zero-shot prompting have nothing for the copying mechanism from the previous note to use?</summary>
+Because there are no worked examples in the prompt, so there is no earlier occurrence of a matching pattern for the mechanism to find and copy from.
+</details>
+
+<details><summary>2. In the worked example, roughly how much does the match rate improve from k=5 to k=8 shots, compared to k=0 to k=1?</summary>
+From k=0 to k=1 the rate jumps 20 percentage points (0% to 20%); from k=5 to k=8 it only rises about 16 points (67.2% to 83.2%) despite adding three more examples instead of one — clearly diminishing returns.
+</details>
+
+<details><summary>3. What's a direct, non-accuracy cost of adding more few-shot examples?</summary>
+Every example adds input tokens the model must process (and that are usually billed), independent of whether those extra examples actually improve accuracy.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Zero-shot:</strong> prompting a model to perform a task with no worked examples, instruction only.</li>
+<li><strong>Few-shot:</strong> including a small number of worked examples of a task directly in the prompt.</li>
+<li><strong>Diminishing returns:</strong> each additional example improving performance by less than the one before it.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/prompting-and-in-context-learning/" data-topic="generative-ai/prompting-and-in-context-learning">Prompting and In-Context Learning</a> · <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a> · <a class="wikilink" href="/generative-ai/parameter-efficient-adaptation-for-generation/" data-topic="generative-ai/parameter-efficient-adaptation-for-generation">Parameter-Efficient Adaptation for Generation</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/few-shot-and-zero-shot-generation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/conditioning-and-guidance/"><small>Read next</small><b>Conditioning and Guidance</b><p>Decoding controls how output is assembled token by token; this district covers a different lever — how a generative model&#39;s output is pushed toward a specific condition, image, or structure during…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/prompting-and-in-context-learning/"><b>Prompting and In-Context Learning</b><p>None of the decoding controls so far change what the model &quot;knows&quot; — they only change how its existing distribution gets turned into tokens.</p></a><a class="rc-card" href="/generative-ai/self-consistency-and-best-of-n-sampling/"><b>Self-Consistency and Best-of-N Sampling</b><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.</p></a><a class="rc-card" href="/generative-ai/parameter-efficient-adaptation-for-generation/"><b>Parameter-Efficient Adaptation for Generation</b><p>Adapting a huge generative model to a specific style, domain, or speaker (as in Voice Cloning and Speaker Adaptation) by retraining all of its weights would mean storing and updating a full new…</p></a><a class="rc-card" href="/generative-ai/decoding-and-prompting/"><b>Decoding and Prompting</b><p>A trained language model outputs a probability distribution over the next token, not a finished sentence.</p></a><a class="rc-card" href="/generative-ai/repetition-and-length-control/"><b>Repetition and Length Control</b><p>Left alone, a decoding loop can get stuck: once a model starts favoring a short cycle of tokens, each repetition can make that same cycle even more likely next time.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/prompting-and-in-context-learning/">← Previous: Prompting and In-Context Learning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

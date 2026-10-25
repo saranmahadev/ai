@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bias and Representational Harm in Generation — AI Base</title>
+<meta name="description" content="A model&#39;s embeddings encode whatever statistical patterns were in its training data — including patterns nobody deliberately put there.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/bias-and-representational-harm-in-generation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Bias and Representational Harm in Generation — AI Base">
+<meta property="og:description" content="A model&#39;s embeddings encode whatever statistical patterns were in its training data — including patterns nobody deliberately put there.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/bias-and-representational-harm-in-generation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Bias and Representational Harm in Generation","item":"https://ai.saranmahadev.in/generative-ai/bias-and-representational-harm-in-generation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bias and Representational Harm in Generation","description":"A model's embeddings encode whatever statistical patterns were in its training data — including patterns nobody deliberately put there.","url":"https://ai.saranmahadev.in/generative-ai/bias-and-representational-harm-in-generation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a WEAT-style test actually measure?","acceptedAnswer":{"@type":"Answer","text":"The gap between how strongly one group's embeddings associate with a target concept versus how strongly another group's embeddings associate with the same concept, aggregated across multiple related words rather than any single pair."}},{"@type":"Question","name":"In the worked example, why is the flip between \"career\" and \"family\" significant?","acceptedAnswer":{"@type":"Answer","text":"It shows the association isn't a one-off coincidence for a single concept — the same two groups show a large, opposite-direction gap for a second, related concept, which is much stronger evidence of a systematic encoded pattern."}},{"@type":"Question","name":"Does a measured association prove something true about any individual the attribute set represents?","acceptedAnswer":{"@type":"Answer","text":"No — it reveals a statistical pattern present in the training data the embeddings were derived from, not a fact about any individual person or group member."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Risks and Responsible Generation</p>
+        <h1 class="doc-title">Bias and Representational Harm in Generation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cg1llv8bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="cg1llv8pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cg1llv8bg)"/>
+  <circle cx="500" cy="152" r="115" fill="#ffe9f4" opacity="0.42"/><circle cx="155" cy="199" r="187" fill="#ffe9f4" opacity="0.51"/><circle cx="627" cy="178" r="146" fill="#ffbeba" opacity="0.26"/><circle cx="119" cy="177" r="83" fill="#ffbeba" opacity="0.28"/><circle cx="351" cy="127" r="131" fill="#ffbfe0" opacity="0.29"/><circle cx="7" cy="251" r="214" fill="#8a5989" opacity="0.27"/><circle cx="435" cy="75" r="132" fill="#ffe9f4" opacity="0.23"/>
+  <path d="M0,420 L0,310 L30,308 L60,307 L90,306 L120,306 L150,306 L180,306 L210,308 L240,309 L270,311 L300,314 L330,317 L360,320 L390,323 L420,327 L450,330 L480,333 L510,337 L540,340 L570,342 L600,345 L630,347 L660,348 L690,349 L720,350 L750,349 L780,349 L810,348 L840,346 L870,344 L900,341 L930,338 L960,335 L990,332 L1020,329 L1050,325 L1080,322 L1110,318 L1140,315 L1170,313 L1200,310 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,385 L30,380 L60,375 L90,371 L120,367 L150,364 L180,362 L210,362 L240,364 L270,367 L300,371 L330,376 L360,381 L390,385 L420,389 L450,392 L480,394 L510,394 L540,392 L570,389 L600,385 L630,380 L660,375 L690,371 L720,367 L750,364 L780,362 L810,362 L840,364 L870,367 L900,371 L930,376 L960,381 L990,385 L1020,389 L1050,392 L1080,394 L1110,394 L1140,392 L1170,389 L1200,385 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="881" cy="216" rx="166" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-18.1 881 216)"/><ellipse cx="881" cy="216" rx="229" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-12.1 881 216)"/>
+  <circle cx="881" cy="216" r="65" fill="url(#cg1llv8pl)"/>
+  <circle cx="740" cy="141" r="8" fill="#ffffff" opacity="0.81"/><circle cx="1153" cy="215" r="9" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A model&#39;s embeddings encode whatever statistical patterns were in its training data — including patterns nobody deliberately put there. This note covers a direct way to measure one specific kind: whether words associated with a social group sit systematically closer to some concepts than others, in a way that reflects stereotype rather than meaning.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/any-to-any-generative-models/" data-topic="generative-ai/any-to-any-generative-models">Any-to-Any Generative Models</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you measure whether a model&#39;s representations encode a stereotyped association?&quot; A <strong>word embedding association test (WEAT-style)</strong> measures the gap between how strongly one group&#39;s embeddings associate with a target concept versus how strongly another group&#39;s embeddings associate with that same concept. A consistent, sizeable gap — male-coded terms sitting systematically closer to &quot;career,&quot; female-coded terms systematically closer to &quot;family,&quot; say — reveals a learned statistical association that mirrors a social stereotype, independent of whether that association reflects anything true about any individual.</p>
+<h2 id="intuition">Intuition</h2>
+<p>If you measured the average distance from &quot;doctor&quot; to a set of male names versus a set of female names in some embedding space, and found a consistent gap, that gap wouldn&#39;t mean anything about actual doctors — it would mean the training data the embeddings came from contained that pattern often enough for the model to encode it as a statistical regularity. The test doesn&#39;t diagnose any individual word&#39;s meaning; it measures a <em>systematic</em> gap across a whole set of related words, which is much harder to dismiss as coincidence.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">mean association of an attribute set A with target concept T:
+  meanAssoc(A, T) = (1/|A|) · Σ cosine(a, T)   for a in A
+
+WEAT-style differential:
+  meanAssoc(A₁, T) − meanAssoc(A₂, T)
+  → a large, consistent gap across target concepts indicates a learned association
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Toy embeddings for two attribute groups (male-coded, female-coded) and two target concepts (career, family):</p>
+<pre><code class="language-text">male-coded   vs. career:  0.6999        female-coded vs. career:  −0.6255
+male-coded   vs. family: −0.6255        female-coded vs. family:   0.6999
+
+differential (male-career minus female-career):  1.3254
+</code></pre>
+<p>Male-coded embeddings associate strongly and positively with &quot;career&quot; while female-coded embeddings associate strongly and <em>negatively</em> with it — and the pattern flips exactly for &quot;family.&quot; The two groups aren&#39;t just slightly different; they&#39;re near-mirror images of each other across both target concepts, exactly the kind of systematic, large gap the test is built to surface.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="bias-association-test" data-title="Which group associates more with which concept?"><p class="bench-fallback"><strong>Interactive bench: Which group associates more with which concept?.</strong> Switch between target concepts and compare how strongly two attribute-coded groups associate with each one.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the association gap for &quot;career.&quot;</li>
+<li>Switch to &quot;family&quot; and watch the gap reverse direction.</li>
+<li>Consider what a gap of exactly 0 at both concepts would mean.</li>
+</ol>
+<p><strong>What you should notice:</strong> the gap isn&#39;t just present for one concept — it shows up consistently, in opposite directions, for both concepts tested, which is what makes it a <em>systematic</em> association rather than noise from one arbitrary pair of words.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>The real WEAT methodology (Caliskan et al., 2017) used this exact approach on word embeddings trained on ordinary web text</strong>, and found measurable associations mirroring known social stereotypes, confirming such biases get encoded without anyone deliberately introducing them.</li>
+<li><strong>This generalizes to generative models directly</strong>: a text-to-image model&#39;s generated outputs for occupation prompts, or a language model&#39;s completions for different demographic framings, can show the same kind of systematic, measurable skew.</li>
+<li><strong>It&#39;s a different question from <a class="wikilink" href="/machine-learning/fairness-metrics/" data-topic="machine-learning/fairness-metrics">classification fairness</a></strong>: that&#39;s about a specific decision&#39;s outcomes across groups; this is about whether a model&#39;s underlying representations encode a stereotyped association in the first place, which can manifest in generation even without any formal decision being made at all.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating any single word pair&#39;s association as proof of bias.</strong> Individual associations can be noisy; the test&#39;s real signal is a <em>systematic</em> gap holding across multiple related words and concepts, as in the worked example.</li>
+<li><strong>Assuming measuring bias is the same as fixing it.</strong> This kind of test diagnoses whether an association exists; removing or correcting it is a separate, genuinely difficult problem — measurement and mitigation are not the same step.</li>
+<li><strong>Forgetting the test measures statistical association in representations, not intent.</strong> No one has to deliberately encode a stereotype for it to appear — it&#39;s a direct consequence of what patterns were present, and how often, in the training data.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does a WEAT-style test actually measure?</summary>
+The gap between how strongly one group's embeddings associate with a target concept versus how strongly another group's embeddings associate with the same concept, aggregated across multiple related words rather than any single pair.
+</details>
+
+<details><summary>2. In the worked example, why is the flip between "career" and "family" significant?</summary>
+It shows the association isn't a one-off coincidence for a single concept — the same two groups show a large, opposite-direction gap for a second, related concept, which is much stronger evidence of a systematic encoded pattern.
+</details>
+
+<details><summary>3. Does a measured association prove something true about any individual the attribute set represents?</summary>
+No — it reveals a statistical pattern present in the training data the embeddings were derived from, not a fact about any individual person or group member.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>WEAT (word embedding association test):</strong> a method for measuring systematic association gaps between attribute-coded groups and target concepts in embeddings.</li>
+<li><strong>Representational harm:</strong> harm arising from how a group is represented (stereotyped, underrepresented, or misrepresented) rather than from a specific denied outcome.</li>
+<li><strong>Differential association:</strong> the gap between two groups&#39; mean association with the same target concept.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/any-to-any-generative-models/" data-topic="generative-ai/any-to-any-generative-models">Any-to-Any Generative Models</a> · <a class="wikilink" href="/generative-ai/hallucination-and-factuality/" data-topic="generative-ai/hallucination-and-factuality">Hallucination and Factuality</a> · <a class="wikilink" href="/generative-ai/content-safety-and-red-teaming/" data-topic="generative-ai/content-safety-and-red-teaming">Content Safety and Red-Teaming</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/bias-and-representational-harm-in-generation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/copyright-and-training-data-provenance/"><small>Read next</small><b>Copyright and Training Data Provenance</b><p>A generative model&#39;s training data came from somewhere — and the question of whether that content was licensed, consented to, or even known about by the people who created it is one that…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/any-to-any-generative-models/"><b>Any-to-Any Generative Models</b><p>a unified vocabulary lets text and image tokens share one generation mechanism.</p></a><a class="rc-card" href="/machine-learning/fairness-metrics/"><b>Fairness Metrics</b><p>Once you measure a model&#39;s results for different groups, you must decide what &quot;fair&quot; means.</p></a><a class="rc-card" href="/generative-ai/hallucination-and-factuality/"><b>Hallucination and Factuality</b><p>Nothing in how a language model generates text requires what it says to be true — it only requires the next token to be a plausible continuation.</p></a><a class="rc-card" href="/generative-ai/content-safety-and-red-teaming/"><b>Content Safety and Red-Teaming</b><p>A watermark is a signal engineered to survive detection.</p></a><a class="rc-card" href="/generative-ai/risks-and-responsible-generation/"><b>Risks and Responsible Generation</b><p>Generative models fail in ways discriminative models mostly don&#39;t: confidently wrong output, reproduced training data, content nobody consented to be trained on, and output that&#39;s hard to tell…</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/hallucination-and-factuality/">← Previous: Hallucination and Factuality</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

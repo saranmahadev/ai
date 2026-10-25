@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Production Agent Architecture — AI Base</title>
+<meta name="description" content="Every topic on this road so far has zoomed into one piece of an agent — planning, a tool call, a memory lookup.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/production-agent-architecture/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Production Agent Architecture — AI Base">
+<meta property="og:description" content="Every topic on this road so far has zoomed into one piece of an agent — planning, a tool call, a memory lookup.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/production-agent-architecture/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Production Agent Architecture","item":"https://ai.saranmahadev.in/agents/production-agent-architecture/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Production Agent Architecture","description":"Every topic on this road so far has zoomed into one piece of an agent — planning, a tool call, a memory lookup.","url":"https://ai.saranmahadev.in/agents/production-agent-architecture/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the reason stage dominate the loop's total latency?","acceptedAnswer":{"@type":"Answer","text":"It's a full LLM call generating a decision about what to do next, which — like any LLM generation — is far slower than reading current state, executing a tool call, or checking a result against an expectation."}},{"@type":"Question","name":"Does the worked example's \"reasoning dominates\" conclusion always hold?","acceptedAnswer":{"@type":"Answer","text":"No — it holds for a typical fast tool call. A tool that itself takes several seconds (a slow API, a long search) could make the act stage dominate instead."}},{"@type":"Question","name":"What's the minimum four stages this topic's loop repeats each iteration?","acceptedAnswer":{"@type":"Answer","text":"Observe the current state, reason about what to do next, act by calling a tool, and verify the result — repeated every iteration until the task is done."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Agents in Practice</p>
+        <h1 class="doc-title">Production Agent Architecture</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c107r186bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c107r186pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c107r186bg)"/>
+  <circle cx="1083" cy="161" r="135" fill="#725998" opacity="0.29"/><circle cx="205" cy="332" r="146" fill="#f3e9fc" opacity="0.49"/><circle cx="995" cy="115" r="62" fill="#e7bdc8" opacity="0.22"/><circle cx="180" cy="39" r="109" fill="#e7bdc8" opacity="0.44"/><circle cx="463" cy="367" r="171" fill="#e7bdc8" opacity="0.47"/><circle cx="73" cy="163" r="201" fill="#f3e9fc" opacity="0.38"/>
+  <path d="M0,420 L0,350 L30,349 L60,346 L90,341 L120,335 L150,329 L180,322 L210,316 L240,310 L270,307 L300,306 L330,306 L360,309 L390,314 L420,320 L450,326 L480,333 L510,340 L540,345 L570,348 L600,350 L630,349 L660,346 L690,341 L720,335 L750,329 L780,322 L810,316 L840,310 L870,307 L900,306 L930,306 L960,309 L990,314 L1020,320 L1050,326 L1080,333 L1110,340 L1140,345 L1170,348 L1200,350 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,376 L60,371 L90,367 L120,364 L150,362 L180,362 L210,363 L240,366 L270,370 L300,375 L330,380 L360,385 L390,389 L420,392 L450,394 L480,394 L510,393 L540,390 L570,386 L600,381 L630,376 L660,371 L690,367 L720,364 L750,362 L780,362 L810,363 L840,366 L870,370 L900,375 L930,380 L960,385 L990,389 L1020,392 L1050,394 L1080,394 L1110,393 L1140,390 L1170,386 L1200,381 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="760" cy="221" rx="161" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(16.8 760 221)"/><ellipse cx="760" cy="221" rx="222" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(22.8 760 221)"/>
+  <circle cx="760" cy="221" r="63" fill="url(#c107r186pl)"/>
+  <circle cx="498" cy="244" r="19" fill="#ffffff" opacity="0.77"/><circle cx="884" cy="169" r="17" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Every topic on this road so far has zoomed into one piece of an agent — planning, a tool call, a memory lookup. Running the whole thing means those pieces fit into one repeating loop, and the time each stage of that loop takes adds up into a single number a real request actually waits on.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/anatomy-of-an-agent-architecture/" data-topic="agents/anatomy-of-an-agent-architecture">Anatomy of an Agent Architecture</a>, <a class="wikilink" href="/agents/observability-and-tracing-for-agent-runs/" data-topic="agents/observability-and-tracing-for-agent-runs">Observability and Tracing for Agent Runs</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do the pieces this planet covered separately fit into one running loop?&quot; A production agent loop repeats four stages every iteration: <strong>observe</strong> the current state of the environment, <strong>reason</strong> about what to do next (typically an LLM call), <strong>act</strong> by calling a tool, and <strong>verify</strong> the result before deciding whether to continue. Each stage is individually fast or slow for different reasons, and — just like a RAG pipeline&#39;s latency is dominated by generation — one stage usually dominates an agent loop&#39;s latency too.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A single round of a kitchen line check isn&#39;t one task — it&#39;s look at the ticket (observe), decide what to cook next (reason), actually cook it (act), and taste it before it goes out (verify). The chef&#39;s actual thinking is usually the slowest part of that cycle, not reading the ticket or plating the dish.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">one loop iteration = observe + reason + act + verify
+total = sequentialTotal([observe, reason, act, verify])
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>One iteration&#39;s latency, broken down by stage:</p>
+<pre><code class="language-text">observe (read current state):      5ms  ( 0.2%)
+reason  (LLM call, decide action): 1800ms ( 88.9%)
+act     (execute tool call):       200ms  ( 9.9%)
+verify  (check the result):        20ms  ( 1.0%)
+total:                             2025ms
+</code></pre>
+<p>The reason stage — a single LLM call deciding what to do next — dominates the iteration by a wide margin, the same way generation dominates a RAG pipeline&#39;s latency. Observing, acting and verifying together add up to barely more than 11% of the total; a user waiting on this loop is mostly waiting on the model to think, not on the tool it eventually calls.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="agent-loop-latency" data-title="One loop iteration, four stages"><p class="bench-fallback"><strong>Interactive bench: One loop iteration, four stages.</strong> See where one agent-loop iteration's latency actually goes, and how that changes as the reasoning call gets slower or faster.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the default breakdown and note how small observe, act and verify are compared to reason.</li>
+<li>Slide the reason stage&#39;s latency down toward 200ms — watch its share of the total shrink.</li>
+<li>Imagine a tool call (act) that takes 5 seconds instead of 200ms — would reasoning still dominate?</li>
+</ol>
+<p><strong>What you should notice:</strong> which stage dominates isn&#39;t fixed — it depends on both how slow the reasoning call is and how slow the specific tool being called happens to be; the worked example&#39;s &quot;reasoning dominates&quot; conclusion holds for a typical fast tool call, not universally.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>The reason stage is exactly one augmented-LLM call, <a class="wikilink" href="/agents/the-augmented-llm/" data-topic="agents/the-augmented-llm">already covered</a> on this road</strong> — this topic is about where it sits in a repeating loop, not a new mechanism.</li>
+<li><strong><a class="wikilink" href="/agents/observability-and-tracing-for-agent-runs/" data-topic="agents/observability-and-tracing-for-agent-runs">Observability and Tracing for Agent Runs</a> is what makes this stage-by-stage breakdown visible in the first place</strong> — without tracing, you&#39;d only see the loop&#39;s total time, not which stage spent it.</li>
+<li><strong><a class="wikilink" href="/agents/cost-and-latency-of-agent-loops/" data-topic="agents/cost-and-latency-of-agent-loops">Cost and Latency of Agent Loops</a> takes this same four-stage shape and adds up what happens across many iterations</strong>, not just one.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Optimizing the act or verify stage first.</strong> The worked example shows they&#39;re a small fraction of the total — the reason stage is almost always the bigger lever, the same way generation dominates a RAG pipeline.</li>
+<li><strong>Assuming every iteration&#39;s reason stage costs the same.</strong> A growing transcript (more context to reason over) tends to make later iterations&#39; reason stage slower than earlier ones, not constant.</li>
+<li><strong>Treating the loop&#39;s four stages as fixed for every tool.</strong> A tool that itself takes several seconds (a web search, a long-running computation) can flip which stage actually dominates.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the reason stage dominate the loop's total latency?</summary>
+It's a full LLM call generating a decision about what to do next, which — like any LLM generation — is far slower than reading current state, executing a tool call, or checking a result against an expectation.
+</details>
+
+<details><summary>2. Does the worked example's "reasoning dominates" conclusion always hold?</summary>
+No — it holds for a typical fast tool call. A tool that itself takes several seconds (a slow API, a long search) could make the act stage dominate instead.
+</details>
+
+<details><summary>3. What's the minimum four stages this topic's loop repeats each iteration?</summary>
+Observe the current state, reason about what to do next, act by calling a tool, and verify the result — repeated every iteration until the task is done.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Production agent loop:</strong> the repeating observe-reason-act-verify cycle a running agent executes each iteration.</li>
+<li><strong>Reason stage:</strong> the LLM call deciding what to do next, typically the loop&#39;s dominant latency cost.</li>
+<li><strong>Stage breakdown:</strong> how a loop iteration&#39;s total latency divides among its constituent stages.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/observability-and-tracing-for-agent-runs/" data-topic="agents/observability-and-tracing-for-agent-runs">Observability and Tracing for Agent Runs</a> · <a class="wikilink" href="/agents/cost-and-latency-of-agent-loops/" data-topic="agents/cost-and-latency-of-agent-loops">Cost and Latency of Agent Loops</a> · <a class="wikilink" href="/agents/the-augmented-llm/" data-topic="agents/the-augmented-llm">The Augmented LLM</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/production-agent-architecture">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/cost-and-latency-of-agent-loops/"><small>Read next</small><b>Cost and Latency of Agent Loops</b><p>A single LLM call&#39;s cost and latency already has its own math, covered on the LLMs planet.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/anatomy-of-an-agent-architecture/"><b>Anatomy of an Agent Architecture</b><p>Every agent architecture this road covers, however different the application, is built from the same five named pieces: something that perceives the current request, something that remembers…</p></a><a class="rc-card" href="/agents/observability-and-tracing-for-agent-runs/"><b>Observability and Tracing for Agent Runs</b><p>When an agent&#39;s final answer is wrong, the final answer alone almost never says why.</p></a><a class="rc-card" href="/agents/the-augmented-llm/"><b>The Augmented LLM</b><p>A bare model call can only ever draw on what was baked into its weights during training.</p></a><a class="rc-card" href="/agents/cost-and-latency-of-agent-loops/"><b>Cost and Latency of Agent Loops</b><p>A single LLM call&#39;s cost and latency already has its own math, covered on the LLMs planet.</p></a><a class="rc-card" href="/agents/cost-and-reliability-as-joint-metrics/"><b>Cost and Reliability as Joint Metrics</b><p>A 95%-success-rate agent sounds better than an 85%-success-rate one, full stop — until the first one costs ten times as much per attempt.</p></a><a class="rc-card" href="/agents/agents-in-practice/"><b>Agents in Practice</b><p>Everything on this road so far has covered one piece of an agent at a time.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/observability-and-tracing-for-agent-runs/">← Previous: Observability and Tracing for Agent Runs</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

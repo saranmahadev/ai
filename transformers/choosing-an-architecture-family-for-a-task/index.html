@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing an Architecture Family for a Task — AI Base</title>
+<meta name="description" content="Three architecture families, three different attention patterns, three different costs.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/choosing-an-architecture-family-for-a-task/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Choosing an Architecture Family for a Task — AI Base">
+<meta property="og:description" content="Three architecture families, three different attention patterns, three different costs.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/choosing-an-architecture-family-for-a-task/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Choosing an Architecture Family for a Task","item":"https://ai.saranmahadev.in/transformers/choosing-an-architecture-family-for-a-task/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Choosing an Architecture Family for a Task","description":"Three architecture families, three different attention patterns, three different costs.","url":"https://ai.saranmahadev.in/transformers/choosing-an-architecture-family-for-a-task/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the single biggest factor in choosing between the three architecture families?","acceptedAnswer":{"@type":"Answer","text":"Whether the task has a generated output at all, and if so, whether that output is a transformation of a separate input sequence or a continuation of the same one."}},{"@type":"Question","name":"In the worked example, why was encoder-only the cheapest of the three?","acceptedAnswer":{"@type":"Answer","text":"It never generates anything — its entire cost is one bidirectional pass over the input, with no causal self-attention or cross-attention to pay for at all."}},{"@type":"Question","name":"Why might a task that looks like classification still be handled by a decoder-only model in practice?","acceptedAnswer":{"@type":"Answer","text":"A decoder-only model can frame a classification answer as generated text, trading away encoder-only's cost advantage for the flexibility of a single, general-purpose architecture."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Architectural Families</p>
+        <h1 class="doc-title">Choosing an Architecture Family for a Task</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cxmy5o4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="cxmy5o4pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cxmy5o4bg)"/>
+  <circle cx="252" cy="242" r="71" fill="#e2efff" opacity="0.29"/><circle cx="362" cy="270" r="164" fill="#abd0ff" opacity="0.38"/><circle cx="578" cy="81" r="189" fill="#e2efff" opacity="0.58"/><circle cx="14" cy="80" r="199" fill="#abd0ff" opacity="0.45"/><circle cx="1126" cy="101" r="175" fill="#4f669f" opacity="0.54"/><circle cx="952" cy="32" r="221" fill="#4f669f" opacity="0.42"/><circle cx="456" cy="209" r="166" fill="#c5cacf" opacity="0.59"/>
+  <path d="M0,420 L0,350 L30,349 L60,348 L90,347 L120,345 L150,343 L180,340 L210,337 L240,334 L270,330 L300,327 L330,323 L360,320 L390,317 L420,314 L450,312 L480,309 L510,308 L540,306 L570,306 L600,306 L630,306 L660,307 L690,308 L720,310 L750,313 L780,315 L810,318 L840,321 L870,325 L900,328 L930,332 L960,335 L990,338 L1020,341 L1050,344 L1080,346 L1110,348 L1140,349 L1170,349 L1200,350 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,384 L30,379 L60,374 L90,369 L120,366 L150,363 L180,362 L210,363 L240,365 L270,368 L300,372 L330,377 L360,382 L390,387 L420,390 L450,393 L480,394 L510,393 L540,391 L570,388 L600,384 L630,379 L660,374 L690,369 L720,366 L750,363 L780,362 L810,363 L840,365 L870,368 L900,372 L930,377 L960,382 L990,387 L1020,390 L1050,393 L1080,394 L1110,393 L1140,391 L1170,388 L1200,384 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="827" cy="208" rx="211" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-19.8 827 208)"/><ellipse cx="827" cy="208" rx="292" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-13.8 827 208)"/>
+  <circle cx="827" cy="208" r="83" fill="url(#cxmy5o4pl)"/>
+  <circle cx="970" cy="280" r="9" fill="#ffffff" opacity="0.77"/><circle cx="1062" cy="160" r="17" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Three architecture families, three different attention patterns, three different costs. This topic puts a number on that difference for a single concrete input/output shape, and turns the earlier topics&#39; structural differences into an actual decision.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-Only Architectures</a>, <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">Decoder-Only Architectures</a>, <a class="wikilink" href="/transformers/encoder-decoder-architectures-as-a-pattern/" data-topic="transformers/encoder-decoder-architectures-as-a-pattern">Encoder-Decoder Architectures as a Pattern</a>, <a class="wikilink" href="/deep-learning/why-attention-replaced-recurrence/" data-topic="deep-learning/why-attention-replaced-recurrence">Why Attention Replaced Recurrence</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Given a task&#39;s input and output shape, which architecture family actually fits, and what does each one cost?&quot; The deciding factor is almost always what the task&#39;s input and output actually look like: a single input with no generated output (classification, understanding) fits encoder-only; one continuous stream the model both reads and extends (open-ended generation, chat) fits decoder-only; two genuinely separate sequences, one transformed into the other (translation, summarization into a fixed target format) fits encoder-decoder.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Encoder-only has nothing to generate — it reads once and produces a judgment, so bidirectional, single-pass attention is exactly what&#39;s needed and nothing is wasted on a decoder it would never use. Decoder-only treats the prompt and the generated continuation as one and the same kind of thing — appropriate when there&#39;s no meaningful boundary between &quot;input&quot; and &quot;output,&quot; just one growing sequence. Encoder-decoder keeps the input and output as two separate sequences on purpose, useful exactly when that separation is real and worth preserving — the output isn&#39;t a continuation of the input, it&#39;s a transformation of it.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>Using the same quadratic attention-cost accounting as <a class="wikilink" href="/deep-learning/why-attention-replaced-recurrence/" data-topic="deep-learning/why-attention-replaced-recurrence">Why Attention Replaced Recurrence</a> (attention pairs ≈ sequence length squared, summed appropriately for causal attention):</p>
+<pre><code class="language-text">encoder-only:    cost ≈ N²                              (one bidirectional pass, N input tokens)
+decoder-only:    cost ≈ Σ_{t=1}^{N+M} t                  (causal self-attention over the whole N+M sequence)
+encoder-decoder: cost ≈ N² + Σ_{t=1}^{M} t + M·N          (encoder + decoder self-attn + cross-attention)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>An input of <code>N = 6</code> tokens and an output of <code>M = 4</code> tokens, compared across all three architectures:</p>
+<pre><code class="language-text">encoder-only (classification, no generation): 6² = 36 attention pairs
+decoder-only (one growing sequence, 6+4=10 tokens total): Σ_{t=1}^{10} t = 55 attention pairs
+encoder-decoder (6 → 4, as a transformation): 6² + Σ_{t=1}^{4} t + 4×6 = 36 + 10 + 24 = 70 attention pairs
+</code></pre>
+<p>At this small scale, encoder-only is cheapest (it never generates anything), encoder-decoder is most expensive (two full stacks plus cross-attention), and decoder-only sits in between — but the real decision almost never comes down to this cost difference alone: it comes down to whether the task actually has an input-only shape, a single growing sequence, or two genuinely separate sequences.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="architecture-choice" data-title="Match the task shape to the architecture"><p class="bench-fallback"><strong>Interactive bench: Match the task shape to the architecture.</strong> Pick a task shape — understanding only, one growing sequence, or two separate sequences — and see which architecture family fits and its attention-pair cost at a chosen input and output length.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Pick each task shape in turn and read which architecture it matches.</li>
+<li>Change the input and output lengths and watch each architecture&#39;s cost scale differently.</li>
+<li>Find input/output lengths where decoder-only and encoder-decoder&#39;s costs are close, and consider what would still make one the better practical choice anyway.</li>
+</ol>
+<p><strong>What you should notice:</strong> cost alone rarely decides the choice — a classification task fed through a decoder-only architecture would work, but it would be paying for a growing causal sequence it doesn&#39;t actually need, since there&#39;s no &quot;generation&quot; involved at all.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Most large language models in current practice are decoder-only</strong>, in part because a single, flexible growing-sequence architecture handles an enormous range of tasks (including ones that look like classification, by framing the answer as generated text) without needing a second stack.</li>
+<li><strong>Encoder-decoder remains the natural fit for genuinely structured sequence-to-sequence tasks</strong> — translation, where a fixed, separate target sequence is really being produced from a fixed, separate source.</li>
+<li><strong>Encoder-only remains the standard choice for pure understanding tasks</strong> — classification, retrieval, and other jobs with no generated output at all.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating the cost formula as the deciding factor.</strong> The task&#39;s actual shape — is there a generated output at all, and if so, is it a transformation of a separate input or a continuation of the same sequence — matters far more than the attention-pair count at any one scale.</li>
+<li><strong>Assuming decoder-only can&#39;t do understanding tasks.</strong> It can, by framing them as generation (producing a label as if it were text), just not with the quadratic savings an encoder-only model gets from never generating anything.</li>
+<li><strong>Forgetting encoder-decoder&#39;s cost includes two full stacks.</strong> The formula above counts only attention pairs, not the two separate sets of feed-forward sublayers each stack also needs.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the single biggest factor in choosing between the three architecture families?</summary>
+Whether the task has a generated output at all, and if so, whether that output is a transformation of a separate input sequence or a continuation of the same one.
+</details>
+
+<details><summary>2. In the worked example, why was encoder-only the cheapest of the three?</summary>
+It never generates anything — its entire cost is one bidirectional pass over the input, with no causal self-attention or cross-attention to pay for at all.
+</details>
+
+<details><summary>3. Why might a task that looks like classification still be handled by a decoder-only model in practice?</summary>
+A decoder-only model can frame a classification answer as generated text, trading away encoder-only's cost advantage for the flexibility of a single, general-purpose architecture.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Task shape:</strong> whether a task has no generated output, one continuous growing sequence, or two separate input/output sequences.</li>
+<li><strong>Attention-pair cost:</strong> the number of query-key comparisons an attention computation makes, used here as a simple proxy for compute cost.</li>
+<li><strong>Sequence-to-sequence task:</strong> a task whose output is a genuine transformation of a separate input, the natural fit for encoder-decoder.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/encoder-only-architectures/" data-topic="transformers/encoder-only-architectures">Encoder-Only Architectures</a> · <a class="wikilink" href="/transformers/decoder-only-architectures/" data-topic="transformers/decoder-only-architectures">Decoder-Only Architectures</a> · <a class="wikilink" href="/transformers/encoder-decoder-architectures-as-a-pattern/" data-topic="transformers/encoder-decoder-architectures-as-a-pattern">Encoder-Decoder Architectures as a Pattern</a> · <a class="wikilink" href="/deep-learning/why-attention-replaced-recurrence/" data-topic="deep-learning/why-attention-replaced-recurrence">Why Attention Replaced Recurrence</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/choosing-an-architecture-family-for-a-task">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/efficient-and-scaled-attention/"><small>Read next</small><b>Efficient and Scaled Attention</b><p>Plain multi-head attention gets expensive fast: its cost grows with the square of sequence length, and its memory traffic during inference grows with every token generated.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/encoder-only-architectures/"><b>Encoder-Only Architectures</b><p>The masking topic introduced two patterns: padding masks and causal masks.</p></a><a class="rc-card" href="/transformers/decoder-only-architectures/"><b>Decoder-Only Architectures</b><p>The previous topic&#39;s bidirectional attention works because the whole input is available at once.</p></a><a class="rc-card" href="/transformers/encoder-decoder-architectures-as-a-pattern/"><b>Encoder-Decoder Architectures as a Pattern</b><p>Encoder-only and decoder-only architectures each use one kind of self-attention throughout.</p></a><a class="rc-card" href="/deep-learning/why-attention-replaced-recurrence/"><b>Why Attention Replaced Recurrence</b><p>Attention started as an addition to RNN-based encoder-decoders.</p></a><a class="rc-card" href="/transformers/architectural-families/"><b>Architectural Families</b><p>The same transformer block supports three very different overall shapes, depending on which direction information is allowed to flow.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/encoder-decoder-architectures-as-a-pattern/">← Previous: Encoder-Decoder Architectures as a Pattern</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

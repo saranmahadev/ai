@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classifier Guidance — AI Base</title>
+<meta name="description" content="A diffusion model learns to denoise toward its training data in general — nothing in that process knows you specifically want a dog, or a red one.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/classifier-guidance/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Classifier Guidance — AI Base">
+<meta property="og:description" content="A diffusion model learns to denoise toward its training data in general — nothing in that process knows you specifically want a dog, or a red one.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/classifier-guidance/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Classifier Guidance","item":"https://ai.saranmahadev.in/generative-ai/classifier-guidance/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Classifier Guidance","description":"A diffusion model learns to denoise toward its training data in general — nothing in that process knows you specifically want a dog, or a red one.","url":"https://ai.saranmahadev.in/generative-ai/classifier-guidance/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What two things get added together to form the classifier-guided score?","acceptedAnswer":{"@type":"Answer","text":"The diffusion model's own unconditional score, and a separately trained classifier's gradient of log-probability for the target class, scaled by a guidance strength."}},{"@type":"Question","name":"In the worked example, why did the point not move at all when guidance scale was 0?","acceptedAnswer":{"@type":"Answer","text":"Because the starting point was exactly equidistant from both data clusters, so the diffusion model's own score there was exactly zero — with no classifier contribution, there was nothing to move toward."}},{"@type":"Question","name":"What does classifier guidance require that classifier-free guidance avoids needing?","acceptedAnswer":{"@type":"Answer","text":"A separate classifier, trained specifically to give useful gradients on partially noised samples."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Conditioning and Guidance</p>
+        <h1 class="doc-title">Classifier Guidance</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c14wnicabg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="c14wnicapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c14wnicabg)"/>
+  <circle cx="254" cy="55" r="105" fill="#ffe9f4" opacity="0.44"/><circle cx="575" cy="132" r="92" fill="#ffe9f4" opacity="0.57"/><circle cx="565" cy="348" r="198" fill="#ffbfe0" opacity="0.33"/><circle cx="576" cy="274" r="188" fill="#ffbeba" opacity="0.23"/><circle cx="479" cy="395" r="188" fill="#ffe9f4" opacity="0.49"/><circle cx="1044" cy="3" r="175" fill="#ffbfe0" opacity="0.62"/><circle cx="1083" cy="410" r="131" fill="#8a5989" opacity="0.46"/>
+  <path d="M0,420 L0,350 L30,349 L60,348 L90,347 L120,345 L150,342 L180,340 L210,337 L240,333 L270,330 L300,327 L330,323 L360,320 L390,317 L420,314 L450,311 L480,309 L510,308 L540,306 L570,306 L600,306 L630,306 L660,307 L690,308 L720,310 L750,313 L780,315 L810,318 L840,322 L870,325 L900,329 L930,332 L960,335 L990,338 L1020,341 L1050,344 L1080,346 L1110,348 L1140,349 L1170,349 L1200,350 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,394 L60,394 L90,394 L120,392 L150,390 L180,388 L210,384 L240,381 L270,377 L300,373 L330,370 L360,367 L390,364 L420,363 L450,362 L480,362 L510,363 L540,365 L570,367 L600,371 L630,374 L660,378 L690,382 L720,385 L750,388 L780,391 L810,393 L840,394 L870,394 L900,393 L930,392 L960,389 L990,387 L1020,383 L1050,379 L1080,376 L1110,372 L1140,369 L1170,366 L1200,364 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="929" cy="279" rx="172" ry="48" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-21.9 929 279)"/><ellipse cx="929" cy="279" rx="237" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-15.9 929 279)"/>
+  <circle cx="929" cy="279" r="67" fill="url(#c14wnicapl)"/>
+  <circle cx="920" cy="200" r="7" fill="#ffffff" opacity="0.84"/><circle cx="1132" cy="222" r="13" fill="#ffffff" opacity="0.66"/><circle cx="928" cy="203" r="11" fill="#ffffff" opacity="0.71"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <a class="wikilink" href="/deep-learning/diffusion-models/" data-topic="deep-learning/diffusion-models">diffusion model</a> learns to denoise toward its training data in general — nothing in that process knows you specifically want a <em>dog</em>, or a <em>red</em> one. This note covers the first practical fix: using a separate classifier&#39;s own gradient to nudge each denoising step toward a chosen class.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/diffusion-models/" data-topic="deep-learning/diffusion-models">Diffusion Models</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you make a diffusion model generate a specific class or concept, using a classifier trained separately from it?&quot; <strong>Classifier guidance</strong> adds the gradient of a classifier&#39;s log-probability for the target class, scaled by a guidance strength, directly onto the diffusion model&#39;s own score (its learned gradient of log-density) at every denoising step. The classifier doesn&#39;t generate anything itself — it only tells the sampling process which direction would make the current (partially denoised) sample more convincingly belong to the target class, and that direction gets added to the ordinary denoising step.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Picture a hiker (the diffusion process) walking generally toward higher ground (higher data density) with no particular peak in mind. A park ranger (the classifier) standing somewhere specific calls out directions toward where they are, and the hiker blends that suggestion into their own sense of which way is uphill. A louder ranger (higher guidance scale) gets listened to more — and if they shout loud enough, the hiker will walk straight toward them even across terrain that isn&#39;t particularly uphill at all.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">unconditional score:      ∇x log p(x)                (the diffusion model&#39;s own gradient)
+classifier gradient:      ∇x log p(y | x)             (a separately trained classifier)
+
+classifier-guided score:  ∇x log p(x) + s · ∇x log p(y | x)
+  s: guidance scale — s = 0 ignores the classifier entirely;
+     larger s pulls samples more strongly toward class y
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Two toy data clusters sit at <code>(−2, 0)</code> and <code>(2, 0)</code>. Starting exactly at the origin <code>(0, 0)</code> — equidistant from both, so the diffusion model&#39;s own score there is exactly zero — a classifier&#39;s gradient (built from a simple sigmoid separating the clusters along the first coordinate) pulls toward cluster 1:</p>
+<pre><code class="language-text">scale  0:  combined score (0.000, 0.000)  →  one step lands at (0.000, 0.000)
+scale  2:  combined score (1.000, 0.000)  →  one step lands at (0.500, 0.000)
+scale  5:  combined score (2.500, 0.000)  →  one step lands at (1.250, 0.000)
+scale 10:  combined score (5.000, 0.000)  →  one step lands at (2.500, 0.000)
+</code></pre>
+<p>With no guidance, the point doesn&#39;t move at all — the diffusion model itself has no preference between the two equally likely clusters here. As guidance scale rises, the single step moves further toward cluster 1, overshooting its center <code>(2, 0)</code> once the scale gets large enough that the classifier&#39;s pull dominates completely.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="classifier-guidance" data-title="Steering a denoising step with a classifier"><p class="bench-fallback"><strong>Interactive bench: Steering a denoising step with a classifier.</strong> Adjust a guidance scale and watch a toy denoising step move toward one cluster, pulled there by a separate classifier's gradient.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set guidance scale to 0 and confirm the point doesn&#39;t move — the diffusion model alone has no preference here.</li>
+<li>Raise the scale and watch the point move toward cluster 1.</li>
+<li>Push the scale high enough to see it overshoot the cluster center.</li>
+</ol>
+<p><strong>What you should notice:</strong> guidance scale directly controls how much the classifier&#39;s opinion outweighs the diffusion model&#39;s own sense of where the data lives — at scale 0 it&#39;s ignored completely, and past a point it dominates entirely.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Classifier guidance was the first widely used technique for controllable diffusion generation</strong>, letting a single unconditional diffusion model be steered by any classifier trained on the same kind of data.</li>
+<li><strong>It requires training (or having) a separate classifier for the target labels</strong> — a real cost that <a class="wikilink" href="/generative-ai/classifier-free-guidance/" data-topic="generative-ai/classifier-free-guidance">classifier-free guidance</a> was specifically designed to remove.</li>
+<li><strong>The same mechanism generalizes past class labels</strong>: any differentiable function of x whose gradient points toward &quot;more of what you want&quot; can be added the same way.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Pushing guidance scale too high.</strong> Past a point, samples start looking distorted or artifact-heavy — the classifier&#39;s gradient can point toward regions a classifier is confident about without those regions being realistic data at all.</li>
+<li><strong>Forgetting the classifier must be applicable to partially noised data.</strong> A classifier trained only on clean images generally needs to be retrained (or adapted) to give useful gradients on the noisy intermediate samples a diffusion process actually works with.</li>
+<li><strong>Assuming guidance changes what the diffusion model learned.</strong> It doesn&#39;t modify the model at all — it only adds an extra term to the sampling step, entirely at generation time.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What two things get added together to form the classifier-guided score?</summary>
+The diffusion model's own unconditional score, and a separately trained classifier's gradient of log-probability for the target class, scaled by a guidance strength.
+</details>
+
+<details><summary>2. In the worked example, why did the point not move at all when guidance scale was 0?</summary>
+Because the starting point was exactly equidistant from both data clusters, so the diffusion model's own score there was exactly zero — with no classifier contribution, there was nothing to move toward.
+</details>
+
+<details><summary>3. What does classifier guidance require that classifier-free guidance avoids needing?</summary>
+A separate classifier, trained specifically to give useful gradients on partially noised samples.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Score:</strong> the gradient of log-density, ∇x log p(x) — the direction a diffusion model nudges a sample toward higher data density.</li>
+<li><strong>Classifier guidance:</strong> adding a scaled classifier gradient to a diffusion model&#39;s score at sampling time, to steer generation toward a chosen class.</li>
+<li><strong>Guidance scale:</strong> the strength with which a guidance signal is blended into the denoising step.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/diffusion-models/" data-topic="deep-learning/diffusion-models">Diffusion Models</a> · <a class="wikilink" href="/generative-ai/classifier-free-guidance/" data-topic="generative-ai/classifier-free-guidance">Classifier-Free Guidance</a> · <a class="wikilink" href="/generative-ai/controlnet-style-structural-conditioning/" data-topic="generative-ai/controlnet-style-structural-conditioning">ControlNet-Style Structural Conditioning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/classifier-guidance">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/classifier-free-guidance/"><small>Read next</small><b>Classifier-Free Guidance</b><p>Classifier Guidance works, but it needs a second model — a classifier trained specifically to work on noisy, partially-denoised samples.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/diffusion-models/"><b>Diffusion Models</b><p>A diffusion model learns to generate by learning the opposite of something easy: gradually turning clean data into pure noise is a simple, fixed process with no learning involved at all; a…</p></a><a class="rc-card" href="/generative-ai/classifier-free-guidance/"><b>Classifier-Free Guidance</b><p>Classifier Guidance works, but it needs a second model — a classifier trained specifically to work on noisy, partially-denoised samples.</p></a><a class="rc-card" href="/generative-ai/controlnet-style-structural-conditioning/"><b>ControlNet-Style Structural Conditioning</b><p>Guidance and cross-attention both steer generation toward a concept — a class, a prompt — expressed as a direction or an attended-to embedding. Neither one forces an exact structure.</p></a><a class="rc-card" href="/generative-ai/conditioning-and-guidance/"><b>Conditioning and Guidance</b><p>Decoding controls how output is assembled token by token; this district covers a different lever — how a generative model&#39;s output is pushed toward a specific condition, image, or structure during…</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/conditioning-and-guidance/">← Previous: Conditioning and Guidance</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

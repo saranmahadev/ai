@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Regression Metrics — AI Base</title>
+<meta name="description" content="For predicting numbers there is no confusion matrix; instead we summarise the size of the errors.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/regression-metrics/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Regression Metrics — AI Base">
+<meta property="og:description" content="For predicting numbers there is no confusion matrix; instead we summarise the size of the errors.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/regression-metrics/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Regression Metrics","item":"https://ai.saranmahadev.in/machine-learning/regression-metrics/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Regression Metrics","description":"For predicting numbers there is no confusion matrix; instead we summarise the size of the errors.","url":"https://ai.saranmahadev.in/machine-learning/regression-metrics/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Errors are 2 and −2. What are MAE and RMSE?","acceptedAnswer":{"@type":"Answer","text":"Both are 2."}},{"@type":"Question","name":"Why is RMSE never smaller than MAE?","acceptedAnswer":{"@type":"Answer","text":"Squaring emphasises large errors, so the root of the mean square is at least the mean absolute value."}},{"@type":"Question","name":"What does R² = 0 mean?","acceptedAnswer":{"@type":"Answer","text":"The model predicts no better than always guessing the average."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Evaluation</p>
+        <h1 class="doc-title">Regression Metrics</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cqipu9xbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="cqipu9xpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cqipu9xbg)"/>
+  <circle cx="1124" cy="22" r="188" fill="#8a6b5c" opacity="0.60"/><circle cx="998" cy="194" r="181" fill="#ffd08d" opacity="0.30"/><circle cx="342" cy="325" r="62" fill="#8a6b5c" opacity="0.27"/><circle cx="1133" cy="359" r="68" fill="#fff2de" opacity="0.33"/><circle cx="367" cy="27" r="201" fill="#8a6b5c" opacity="0.27"/><circle cx="1145" cy="217" r="182" fill="#8a6b5c" opacity="0.28"/>
+  <path d="M0,420 L0,316 L30,311 L60,307 L90,306 L120,306 L150,309 L180,313 L210,319 L240,326 L270,332 L300,339 L330,344 L360,348 L390,349 L420,349 L450,347 L480,342 L510,336 L540,330 L570,323 L600,316 L630,311 L660,307 L690,306 L720,306 L750,309 L780,313 L810,319 L840,326 L870,332 L900,339 L930,344 L960,348 L990,349 L1020,349 L1050,347 L1080,342 L1110,336 L1140,330 L1170,323 L1200,316 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,380 L30,376 L60,372 L90,369 L120,366 L150,364 L180,363 L210,362 L240,362 L270,363 L300,365 L330,368 L360,371 L390,375 L420,379 L450,382 L480,386 L510,389 L540,391 L570,393 L600,394 L630,394 L660,393 L690,391 L720,389 L750,386 L780,382 L810,379 L840,375 L870,371 L900,368 L930,365 L960,363 L990,362 L1020,362 L1050,363 L1080,364 L1110,366 L1140,369 L1170,372 L1200,376 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="676" cy="254" rx="258" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.7 676 254)"/><ellipse cx="676" cy="254" rx="357" ry="100" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.7 676 254)"/>
+  <circle cx="676" cy="254" r="101" fill="url(#cqipu9xpl)"/>
+  <circle cx="869" cy="345" r="8" fill="#ffffff" opacity="0.62"/><circle cx="261" cy="245" r="10" fill="#ffffff" opacity="0.89"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>For predicting numbers there is no confusion matrix; instead we summarise the size of the errors. <strong>MAE</strong> is the average size of a miss, <strong>RMSE</strong> punishes large misses more heavily, and <strong>R²</strong> compares the model with a trivial one that always predicts the average. Which one you choose changes what the model is pushed to do.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/linear-regression-in-practice/" data-topic="machine-learning/linear-regression-in-practice">Linear Regression in Practice</a>, <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a> and <a class="wikilink" href="/math/describing-data/" data-topic="math/describing-data">Describing Data</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How far off are my predictions, typically?&quot; Different summaries answer different versions of that: the typical miss, the miss you should worry about, or the share of variation explained.</p>
+<h2 id="intuition-big-misses-count-extra">Intuition: big misses count extra</h2>
+<p>Suppose your predictions are all off by 1 except one that is off by 10. The average miss is small, but that one error might ruin a decision. Squaring errors before averaging makes the 10 count a hundred times as much as a 1, so RMSE is much larger than MAE whenever a few errors are large.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">error       eᵢ = predictionᵢ − actualᵢ
+MAE         = (1/n) Σ |eᵢ|                    same units as the target, robust to outliers
+MSE         = (1/n) Σ eᵢ²
+RMSE        = √MSE                            same units, dominated by large errors
+R²          = 1 − Σ eᵢ² / Σ (yᵢ − ȳ)²         1 = perfect, 0 = no better than the mean, &lt; 0 = worse
+</code></pre>
+<p>RMSE is always at least as large as MAE. Percentage errors (MAPE) exist but explode near zero actual values. Training on squared error targets the mean; training on absolute error targets the median.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Actual values <code>3, 5, 7, 9</code>; predictions <code>2, 6, 7, 12</code>, so the errors are <code>−1, +1, 0, +3</code>.</p>
+<pre><code class="language-text">MAE  = (1 + 1 + 0 + 3) / 4        = 1.25
+RMSE = √((1 + 1 + 0 + 9) / 4)     = √2.75 = 1.66
+R²   = 1 − 11 / 20                = 0.45          (mean = 6; total variation = 9+1+1+9 = 20)
+</code></pre>
+<p>One error of 3 makes up 82% of the total squared error (9 of 11) but only 60% of the total absolute error (3 of 5), which is why RMSE (1.66) exceeds MAE (1.25). On the bench&#39;s eight predictions, with seven errors of at most 1 in size and one error you can set:</p>
+<pre><code class="language-text">error of  1:   MAE 0.75   RMSE 0.83   R² 0.967
+error of 12:   MAE 2.13   RMSE 4.31   R² 0.116
+</code></pre>
+<p>Growing one error from 1 to 12 nearly triples MAE but multiplies RMSE by over five, and R² collapses from 0.97 to 0.12.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="error-metrics" data-title="Measure regression errors"><p class="bench-fallback"><strong>Interactive bench: Measure regression errors.</strong> Eight predictions plotted against actual values, with a slider for the error on the last prediction; the bench shows MAE, RMSE and R² as that one error grows.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with the error on the last prediction at 1.</li>
+<li>Slide it to 12 and watch all three metrics.</li>
+<li>Slide to −12 and compare.</li>
+<li>Find the error at which R² drops below 0.9.</li>
+</ol>
+<p><strong>What you should notice:</strong> one large error moves RMSE far more than MAE, and R² falls as errors grow relative to the natural spread of the data.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Forecasting and pricing:</strong> MAE for typical error, RMSE when big misses are costly.</li>
+<li><strong>Training losses:</strong> squared error and absolute error give different fits.</li>
+<li><strong>Reporting:</strong> R² summarises fit, but it can look good while errors are large in absolute terms.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Comparing RMSE across targets with different scales.</strong></li>
+<li><strong>Trusting R² alone,</strong> since it depends on the spread of the data.</li>
+<li><strong>Using MAPE when actual values are near zero.</strong></li>
+<li><strong>Ignoring the errors&#39; pattern:</strong> plot residuals.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Errors are 2 and −2. What are MAE and RMSE?</summary>
+Both are 2.
+</details>
+
+<details><summary>2. Why is RMSE never smaller than MAE?</summary>
+Squaring emphasises large errors, so the root of the mean square is at least the mean absolute value.
+</details>
+
+<details><summary>3. What does R² = 0 mean?</summary>
+The model predicts no better than always guessing the average.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>MAE:</strong> mean absolute error.</li>
+<li><strong>RMSE:</strong> root mean squared error.</li>
+<li><strong>R²:</strong> the share of the target&#39;s variation the model explains.</li>
+<li><strong>Residual:</strong> actual minus predicted value.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/linear-regression-in-practice/" data-topic="machine-learning/linear-regression-in-practice">Linear Regression in Practice</a> · <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a> · <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> · <a class="wikilink" href="/math/describing-data/" data-topic="math/describing-data">Describing Data</a> · <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/regression-metrics">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/cross-validation/"><small>Read next</small><b>Cross-Validation</b><p>One train/validation split gives one score, and that score depends on which points happened to land where.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/linear-regression-in-practice/"><b>Linear Regression in Practice</b><p>Linear regression predicts a number as a weighted sum of features plus a constant, with the weights chosen to minimise squared error.</p></a><a class="rc-card" href="/math/loss-functions/"><b>Loss Functions</b><p>A loss function turns &quot;how wrong is the model?&quot; into a single number: small when predictions are good, large when they are bad.</p></a><a class="rc-card" href="/math/describing-data/"><b>Describing Data</b><p>A few numbers can summarise a whole data set: where its centre is (mean, median, mode) and how spread out it is (range, variance, standard deviation, quartiles).</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/fundamentals/measuring-performance/"><b>Measuring Performance</b><p>To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.</p></a><a class="rc-card" href="/machine-learning/evaluation/"><b>Evaluation</b><p>A model is only as good as the evidence for it.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/roc-and-auc/">← Previous: ROC and AUC</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eigenvalues and Eigenvectors — AI Base</title>
+<meta name="description" content="An eigenvector of a matrix is a direction that the matrix only stretches, without turning: A v = λ v. The stretch factor λ is its eigenvalue.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/eigenvalues-and-eigenvectors/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Eigenvalues and Eigenvectors — AI Base">
+<meta property="og:description" content="An eigenvector of a matrix is a direction that the matrix only stretches, without turning: A v = λ v. The stretch factor λ is its eigenvalue.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/eigenvalues-and-eigenvectors/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Eigenvalues and Eigenvectors","item":"https://ai.saranmahadev.in/math/eigenvalues-and-eigenvectors/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Eigenvalues and Eigenvectors","description":"An eigenvector of a matrix is a direction that the matrix only stretches, without turning: A v = λ v. The stretch factor λ is its eigenvalue.","url":"https://ai.saranmahadev.in/math/eigenvalues-and-eigenvectors/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the eigenvalues of [[3, 0], [0, 5]]?","acceptedAnswer":{"@type":"Answer","text":"3 and 5."}},{"@type":"Question","name":"If a 2 × 2 matrix has trace 7 and determinant 10, what are its eigenvalues?","acceptedAnswer":{"@type":"Answer","text":"5 and 2."}},{"@type":"Question","name":"What does λ = −1 do to its eigenvector?","acceptedAnswer":{"@type":"Answer","text":"Flips it to the opposite direction, same length."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Linear Algebra</p>
+        <h1 class="doc-title">Eigenvalues and Eigenvectors</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cmm8dusbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="cmm8duspl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cmm8dusbg)"/>
+  <circle cx="822" cy="7" r="144" fill="#68599a" opacity="0.53"/><circle cx="15" cy="409" r="167" fill="#cebff9" opacity="0.45"/><circle cx="1096" cy="18" r="167" fill="#ddbecb" opacity="0.53"/><circle cx="606" cy="51" r="217" fill="#68599a" opacity="0.42"/><circle cx="83" cy="182" r="66" fill="#cebff9" opacity="0.49"/><circle cx="1032" cy="199" r="226" fill="#eee9fd" opacity="0.38"/>
+  <path d="M0,420 L0,332 L30,339 L60,344 L90,348 L120,349 L150,349 L180,347 L210,342 L240,336 L270,330 L300,323 L330,317 L360,311 L390,307 L420,306 L450,306 L480,309 L510,313 L540,319 L570,325 L600,332 L630,339 L660,344 L690,348 L720,349 L750,349 L780,347 L810,342 L840,336 L870,330 L900,323 L930,317 L960,311 L990,307 L1020,306 L1050,306 L1080,309 L1110,313 L1140,319 L1170,325 L1200,332 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,393 L90,392 L120,390 L150,387 L180,384 L210,380 L240,376 L270,372 L300,369 L330,366 L360,364 L390,363 L420,362 L450,362 L480,363 L510,365 L540,368 L570,371 L600,375 L630,379 L660,382 L690,386 L720,389 L750,391 L780,393 L810,394 L840,394 L870,393 L900,391 L930,389 L960,386 L990,382 L1020,379 L1050,375 L1080,371 L1110,368 L1140,365 L1170,363 L1200,362 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="773" cy="123" rx="217" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(10.1 773 123)"/><ellipse cx="773" cy="123" rx="300" ry="84" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(16.1 773 123)"/>
+  <circle cx="773" cy="123" r="85" fill="url(#cmm8duspl)"/>
+  <circle cx="605" cy="18" r="9" fill="#ffffff" opacity="0.67"/><circle cx="522" cy="208" r="10" fill="#ffffff" opacity="0.70"/><circle cx="854" cy="222" r="19" fill="#ffffff" opacity="0.88"/><circle cx="908" cy="207" r="12" fill="#ffffff" opacity="0.62"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>An <strong>eigenvector</strong> of a matrix is a direction that the matrix only stretches, without turning: <code>A v = λ v</code>. The stretch factor <code>λ</code> is its <strong>eigenvalue</strong>. They reveal the natural axes of a transformation, and they are how we find the most important directions in data.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/matrices-as-transformations/" data-topic="math/matrices-as-transformations">Matrices as Transformations</a>, <a class="wikilink" href="/math/determinant/" data-topic="math/determinant">Determinant</a> and <a class="wikilink" href="/math/polynomials-and-quadratics/" data-topic="math/polynomials-and-quadratics">Polynomials and Quadratics</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Which directions does this transformation leave pointing the same way?&quot; Most vectors get turned by a matrix. A few special ones are only scaled, and those tell you what the matrix is really doing.</p>
+<h2 id="intuition-axes-that-survive-the-warp">Intuition: axes that survive the warp</h2>
+<p>Warp a grid with a matrix. Most arrows swing to new directions. But along certain lines, an arrow stays on the same line, just longer or shorter (or flipped, if <code>λ</code> is negative). Those lines are the eigenvector directions, and how much they stretch is the eigenvalue.</p>
+<pre><code class="language-text">A v = λ v
+λ &gt; 1  stretches       0 &lt; λ &lt; 1  shrinks       λ &lt; 0  flips       λ = 0  crushes to zero
+</code></pre>
+<h2 id="finding-them">Finding them</h2>
+<p>Rewrite <code>A v = λ v</code> as <code>(A − λ I) v = 0</code>. A non-zero <code>v</code> exists only when <code>A − λ I</code> is singular, so its determinant is zero:</p>
+<pre><code class="language-text">det(A − λ I) = 0          the characteristic equation
+</code></pre>
+<p>For a 2 × 2 matrix this is a quadratic in <code>λ</code> (see <a class="wikilink" href="/math/polynomials-and-quadratics/" data-topic="math/polynomials-and-quadratics">Polynomials and Quadratics</a>). Two handy checks:</p>
+<pre><code class="language-text">sum of eigenvalues = trace (sum of the diagonal)
+product of eigenvalues = determinant
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<pre><code class="language-text">A = [2 1]
+    [1 2]
+
+det(A − λI) = (2 − λ)² − 1 = λ² − 4λ + 3 = (λ − 1)(λ − 3) = 0
+eigenvalues:  λ = 3  and  λ = 1
+</code></pre>
+<p>Find the eigenvectors: for <code>λ = 3</code>, <code>(A − 3I) v = 0</code> gives <code>−v₁ + v₂ = 0</code>, so <code>v = (1, 1)</code>. For <code>λ = 1</code>: <code>v₁ + v₂ = 0</code>, so <code>v = (1, −1)</code>.</p>
+<pre><code class="language-text">A (1, 1)  = (2 + 1, 1 + 2) = (3, 3) = 3 · (1, 1)     ✓
+A (1, −1) = (2 − 1, 1 − 2) = (1, −1) = 1 · (1, −1)   ✓
+</code></pre>
+<p>Checks: trace <code>2 + 2 = 4 = 3 + 1</code> ✓ and determinant <code>4 − 1 = 3 = 3 × 1</code> ✓. This matrix stretches by 3 along the diagonal and leaves the anti-diagonal alone.</p>
+<p><strong>Symmetric matrices</strong> (equal to their transpose) always have real eigenvalues and perpendicular eigenvectors, as here (<code>(1, 1) · (1, −1) = 0</code>). Covariance matrices are symmetric, which is why PCA works.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="eigen-finder" data-title="Find the directions that only stretch"><p class="bench-fallback"><strong>Interactive bench: Find the directions that only stretch.</strong> A 2 by 2 matrix set by sliders acts on a test arrow whose angle you rotate; the bench shows the arrow and its image, the angle between them, and marks the eigenvector directions with their eigenvalues.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Rotate the test arrow and watch the image swing around.</li>
+<li>Find the angles where the arrow and its image line up.</li>
+<li>Compare the stretch there with the eigenvalues reported.</li>
+<li>Choose a rotation matrix. Do any real directions survive?</li>
+</ol>
+<p><strong>What you should notice:</strong> the arrow and its image line up only at the eigenvector directions, and the stretch there equals the eigenvalue.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>PCA</strong> uses eigenvectors of the covariance matrix (see <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a>).</li>
+<li><strong>PageRank</strong> ranks web pages by an eigenvector.</li>
+<li><strong>Stability of training:</strong> the eigenvalues of the Hessian describe curvature (see <a class="wikilink" href="/math/hessian/" data-topic="math/hessian">Hessian</a>).</li>
+<li><strong>Repeated multiplication</strong> grows or shrinks along eigenvectors, explaining exploding and vanishing signals.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming every matrix has real eigenvalues.</strong> Rotations do not.</li>
+<li><strong>Forgetting eigenvectors are only defined up to scaling.</strong></li>
+<li><strong>Confusing eigenvalues with the matrix entries.</strong></li>
+<li><strong>Computing by hand for large matrices.</strong> Use numerical routines.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are the eigenvalues of [[3, 0], [0, 5]]?</summary>
+3 and 5.
+</details>
+
+<details><summary>2. If a 2 × 2 matrix has trace 7 and determinant 10, what are its eigenvalues?</summary>
+5 and 2.
+</details>
+
+<details><summary>3. What does λ = −1 do to its eigenvector?</summary>
+Flips it to the opposite direction, same length.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Eigenvector:</strong> a direction only scaled by a matrix.</li>
+<li><strong>Eigenvalue:</strong> the scaling factor along an eigenvector.</li>
+<li><strong>Characteristic equation:</strong> <code>det(A − λI) = 0</code>.</li>
+<li><strong>Trace:</strong> the sum of a matrix&#39;s diagonal entries.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/matrices-as-transformations/" data-topic="math/matrices-as-transformations">Matrices as Transformations</a> · <a class="wikilink" href="/math/determinant/" data-topic="math/determinant">Determinant</a> · <a class="wikilink" href="/math/polynomials-and-quadratics/" data-topic="math/polynomials-and-quadratics">Polynomials and Quadratics</a> · <a class="wikilink" href="/math/svd-and-pca/" data-topic="math/svd-and-pca">SVD and PCA</a> · <a class="wikilink" href="/math/hessian/" data-topic="math/hessian">Hessian</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/eigenvalues-and-eigenvectors">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/svd-and-pca/"><small>Read next</small><b>SVD and PCA</b><p>The singular value decomposition (SVD) breaks any matrix into a rotation, a stretch along perpendicular axes, and another rotation: A = U Σ Vᵀ.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/matrices-as-transformations/"><b>Matrices as Transformations</b><p>A matrix is a grid of numbers, and multiplying a vector by a matrix transforms it: stretching, rotating, flipping or shearing space.</p></a><a class="rc-card" href="/math/determinant/"><b>Determinant</b><p>The determinant of a square matrix is a single number telling you how the transformation scales area (or volume): a determinant of 3 makes shapes three times larger, 0.5 halves them, 0 flattens…</p></a><a class="rc-card" href="/math/polynomials-and-quadratics/"><b>Polynomials and Quadratics</b><p>A polynomial is a sum of powers of x with coefficients: 3x³ − 2x + 5. The simplest curved one is the quadratic, ax² + bx + c, which draws a parabola.</p></a><a class="rc-card" href="/math/svd-and-pca/"><b>SVD and PCA</b><p>The singular value decomposition (SVD) breaks any matrix into a rotation, a stretch along perpendicular axes, and another rotation: A = U Σ Vᵀ.</p></a><a class="rc-card" href="/math/hessian/"><b>Hessian</b><p>The Hessian is the matrix of all second partial derivatives of a function.</p></a><a class="rc-card" href="/math/linear-algebra/"><b>Linear Algebra</b><p>Linear algebra is the maths of lists of numbers (vectors) and grids of numbers (matrices), and of the simple operations that combine them.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/least-squares/">← Previous: Least Squares</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

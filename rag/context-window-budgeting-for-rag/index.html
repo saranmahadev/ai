@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context-Window Budgeting for RAG — AI Base</title>
+<meta name="description" content="Retrieved chunks don&#39;t get the entire context window to themselves — a running conversation&#39;s own history is sitting in there too, and the two are competing for the exact same limited space.">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/context-window-budgeting-for-rag/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Context-Window Budgeting for RAG — AI Base">
+<meta property="og:description" content="Retrieved chunks don&#39;t get the entire context window to themselves — a running conversation&#39;s own history is sitting in there too, and the two are competing for the exact same limited space.">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/context-window-budgeting-for-rag/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Context-Window Budgeting for RAG","item":"https://ai.saranmahadev.in/rag/context-window-budgeting-for-rag/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Context-Window Budgeting for RAG","description":"Retrieved chunks don't get the entire context window to themselves — a running conversation's own history is sitting in there too, and the two are competing for the exact same limited space.","url":"https://ai.saranmahadev.in/rag/context-window-budgeting-for-rag/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the number of chunks that fit drop so sharply as conversation history grows?","acceptedAnswer":{"@type":"Answer","text":"The chunk budget is whatever's left over after conversation history's share is subtracted from the fixed total — as conversation history claims more of that fixed total, proportionally less remains for chunks, each of which still costs the same 150 tokens."}},{"@type":"Question","name":"Does a larger context window eliminate this trade-off entirely?","acceptedAnswer":{"@type":"Answer","text":"It relaxes it by raising the total budget, but doesn't eliminate it — conversation history can still grow to consume a large fraction of any fixed window, and a bigger window introduces its own lost-in-the-middle risk for whatever does fit."}},{"@type":"Question","name":"What are the two things competing for the same context-window budget in this topic?","acceptedAnswer":{"@type":"Answer","text":"Conversation history (the accumulated prior turns of the chat) and newly retrieved chunks (the context fetched for the current question) — both need space from the same fixed total."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Generation with Retrieved Context</p>
+        <h1 class="doc-title">Context-Window Budgeting for RAG</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ca6gmf1bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="ca6gmf1pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ca6gmf1bg)"/>
+  <circle cx="361" cy="51" r="68" fill="#97e1e6" opacity="0.46"/><circle cx="1036" cy="334" r="81" fill="#97e1e6" opacity="0.45"/><circle cx="567" cy="7" r="173" fill="#b7d5be" opacity="0.54"/><circle cx="423" cy="326" r="115" fill="#42718e" opacity="0.51"/><circle cx="317" cy="354" r="160" fill="#dcf5f7" opacity="0.58"/>
+  <path d="M0,420 L0,306 L30,306 L60,306 L90,306 L120,307 L150,309 L180,311 L210,313 L240,316 L270,319 L300,323 L330,326 L360,330 L390,333 L420,336 L450,339 L480,342 L510,344 L540,346 L570,348 L600,349 L630,350 L660,350 L690,349 L720,348 L750,346 L780,344 L810,342 L840,339 L870,336 L900,333 L930,329 L960,326 L990,322 L1020,319 L1050,316 L1080,313 L1110,311 L1140,309 L1170,307 L1200,306 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,387 L60,391 L90,393 L120,394 L150,393 L180,391 L210,388 L240,383 L270,378 L300,373 L330,369 L360,365 L390,363 L420,362 L450,363 L480,365 L510,368 L540,373 L570,378 L600,383 L630,387 L660,391 L690,393 L720,394 L750,393 L780,391 L810,388 L840,383 L870,378 L900,373 L930,369 L960,365 L990,363 L1020,362 L1050,363 L1080,365 L1110,368 L1140,373 L1170,378 L1200,383 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="657" cy="242" rx="250" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(24.4 657 242)"/><ellipse cx="657" cy="242" rx="346" ry="97" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(30.4 657 242)"/>
+  <circle cx="657" cy="242" r="98" fill="url(#ca6gmf1pl)"/>
+  <circle cx="342" cy="251" r="9" fill="#ffffff" opacity="0.71"/><circle cx="432" cy="191" r="16" fill="#ffffff" opacity="0.85"/><circle cx="1002" cy="172" r="15" fill="#ffffff" opacity="0.80"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Retrieved chunks don&#39;t get the entire context window to themselves — a running conversation&#39;s own history is sitting in there too, and the two are competing for the exact same limited space. The longer a conversation runs, the less room is left for the chunks retrieval just worked to find.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/multi-turn-conversation-state-and-memory/" data-topic="llms/multi-turn-conversation-state-and-memory">Multi-Turn Conversation State and Memory</a>, <a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How many retrieved chunks actually fit once the rest of the context is accounted for?&quot; A fixed context-window budget has to be split between conversation history (which grows as a chat continues, exactly as <a class="wikilink" href="/llms/multi-turn-conversation-state-and-memory/" data-topic="llms/multi-turn-conversation-state-and-memory">Multi-Turn Conversation State and Memory</a> already covers) and newly retrieved chunks. Whatever conversation history claims first, chunk budget has to come out of what&#39;s left — there&#39;s no separate pool for each.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Packing a suitcase with a fixed size for both a trip&#39;s clothes and the souvenirs bought along the way means the more clothes already packed, the fewer souvenirs fit by the time you&#39;re deciding what else to bring home — the suitcase doesn&#39;t grow just because there&#39;s more to put in it.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">chunks_that_fit = max(0, floor((budget − conversation_tokens) / tokens_per_chunk))
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 2,000-token context budget, 150 tokens per retrieved chunk, at three points in a growing conversation:</p>
+<pre><code class="language-text">conversation history   200 tokens  →  12 chunks fit
+conversation history   800 tokens  →   8 chunks fit
+conversation history 1,500 tokens  →   3 chunks fit
+</code></pre>
+<p>As the conversation grows from 200 to 1,500 tokens — nearly the whole budget — the number of retrieved chunks that still fit drops from 12 down to just 3. By the time conversation history alone approaches the full budget, there&#39;s barely any room left for retrieval to contribute anything at all.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="context-budget-tradeoff" data-title="Conversation history and retrieved chunks compete for the same space"><p class="bench-fallback"><strong>Interactive bench: Conversation history and retrieved chunks compete for the same space.</strong> Slide conversation history length and watch how many retrieved chunks still fit in a fixed context budget.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with a short conversation and note how many chunks fit.</li>
+<li>Slide conversation length up toward the budget&#39;s limit and watch the chunk count collapse.</li>
+<li>Imagine a long-running support chat — at what point does retrieval stop being able to contribute meaningfully?</li>
+</ol>
+<p><strong>What you should notice:</strong> this isn&#39;t a RAG-specific problem invented from scratch — it&#39;s the same fixed-budget trade-off <a class="wikilink" href="/llms/multi-turn-conversation-state-and-memory/" data-topic="llms/multi-turn-conversation-state-and-memory">Multi-Turn Conversation State and Memory</a> already covers for conversation history alone, with retrieved chunks now added as a second claimant on the same space.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This directly extends <a class="wikilink" href="/llms/multi-turn-conversation-state-and-memory/" data-topic="llms/multi-turn-conversation-state-and-memory">Multi-Turn Conversation State and Memory</a>&#39;s token-growth problem</strong>, adding retrieved chunks as a second consumer of the same fixed budget conversation history was already competing for.</li>
+<li><strong><a class="wikilink" href="/llms/context-window-extension-techniques/" data-topic="llms/context-window-extension-techniques">Context Window Extension Techniques</a> (longer context windows) is one way to relax this trade-off</strong>, though <a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">Context Rot and Lost-in-the-Middle Effects</a> shows a bigger window doesn&#39;t automatically mean every chunk inside it gets used equally well.</li>
+<li><strong>A tighter budget makes <a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a>&#39;s shortlist size an even more consequential choice</strong> — when only a handful of chunks fit at all, which ones make that handful matters more.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating the context budget as infinite because &quot;the context window is huge now.&quot;</strong> Even a large window has a limit, and conversation history alone can consume a meaningful fraction of it in a long-running chat.</li>
+<li><strong>Summarizing conversation history to free up room without considering what gets lost.</strong> The same trade-off <a class="wikilink" href="/llms/multi-turn-conversation-state-and-memory/" data-topic="llms/multi-turn-conversation-state-and-memory">Multi-Turn Conversation State and Memory</a> covers (summarization saves tokens but drops detail) applies doubly here, since the freed room goes toward chunks instead of more conversation detail.</li>
+<li><strong>Keeping chunk count fixed regardless of conversation length, and silently truncating something else when the budget runs out.</strong> Without an explicit allocation rule, running out of room can cut off conversation history, a retrieved chunk, or even part of the question itself in unpredictable ways.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the number of chunks that fit drop so sharply as conversation history grows?</summary>
+The chunk budget is whatever's left over after conversation history's share is subtracted from the fixed total — as conversation history claims more of that fixed total, proportionally less remains for chunks, each of which still costs the same 150 tokens.
+</details>
+
+<details><summary>2. Does a larger context window eliminate this trade-off entirely?</summary>
+It relaxes it by raising the total budget, but doesn't eliminate it — conversation history can still grow to consume a large fraction of any fixed window, and a bigger window introduces its own lost-in-the-middle risk for whatever does fit.
+</details>
+
+<details><summary>3. What are the two things competing for the same context-window budget in this topic?</summary>
+Conversation history (the accumulated prior turns of the chat) and newly retrieved chunks (the context fetched for the current question) — both need space from the same fixed total.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Context budget:</strong> the fixed total token capacity available for a single request&#39;s prompt.</li>
+<li><strong>Token allocation:</strong> how a fixed budget is divided between competing consumers (conversation history, retrieved chunks).</li>
+<li><strong>Budget collapse:</strong> the point at which growing conversation history leaves too little room for retrieved content to contribute meaningfully.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/multi-turn-conversation-state-and-memory/" data-topic="llms/multi-turn-conversation-state-and-memory">Multi-Turn Conversation State and Memory</a> · <a class="wikilink" href="/llms/context-window-extension-techniques/" data-topic="llms/context-window-extension-techniques">Context Window Extension Techniques</a> · <a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/context-window-budgeting-for-rag">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/grounded-generation-and-faithfulness/"><small>Read next</small><b>Grounded Generation and Faithfulness</b><p>Retrieving the right passages doesn&#39;t guarantee the generated answer actually uses them.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/multi-turn-conversation-state-and-memory/"><b>Multi-Turn Conversation State and Memory</b><p>A conversation isn&#39;t one request — it&#39;s many, each one needing the context of everything said before.</p></a><a class="rc-card" href="/llms/cost-and-latency-of-llm-apis/"><b>Cost and Latency of LLM APIs</b><p>A request to an LLM API has two separate costs that don&#39;t move together: how much it costs in money, and how long it takes to come back.</p></a><a class="rc-card" href="/llms/context-window-extension-techniques/"><b>Context Window Extension Techniques</b><p>solving the raw compute cost of attention is only half the problem.</p></a><a class="rc-card" href="/llms/context-rot-and-lost-in-the-middle-effects/"><b>Context Rot and Lost-in-the-Middle Effects</b><p>Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem:…</p></a><a class="rc-card" href="/rag/re-ranking-retrieved-results/"><b>Re-Ranking Retrieved Results</b><p>Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet&#39;s own illustrative units — far too much for a live request.</p></a><a class="rc-card" href="/rag/generation-with-retrieved-context/"><b>Generation with Retrieved Context</b><p>Retrieval only hands a model raw material; what the model does with that material is a separate problem.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/handling-noisy-or-conflicting-retrieved-context/">← Previous: Handling Noisy or Conflicting Retrieved Context</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

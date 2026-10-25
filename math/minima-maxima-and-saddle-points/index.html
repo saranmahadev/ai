@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minima, Maxima and Saddle Points — AI Base</title>
+<meta name="description" content="A minimum is a low point of a function, a maximum a high point, and a saddle point is flat but rises in some directions and falls in others.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/minima-maxima-and-saddle-points/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Minima, Maxima and Saddle Points — AI Base">
+<meta property="og:description" content="A minimum is a low point of a function, a maximum a high point, and a saddle point is flat but rises in some directions and falls in others.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/minima-maxima-and-saddle-points/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Minima, Maxima and Saddle Points","item":"https://ai.saranmahadev.in/math/minima-maxima-and-saddle-points/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Minima, Maxima and Saddle Points","description":"A minimum is a low point of a function, a maximum a high point, and a saddle point is flat but rises in some directions and falls in others.","url":"https://ai.saranmahadev.in/math/minima-maxima-and-saddle-points/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"f(x) = x² − 4x. Where is the minimum?","acceptedAnswer":{"@type":"Answer","text":"f′ = 2x − 4 = 0 at x = 2, and f″ = 2 > 0, so it is a minimum (f = −4)."}},{"@type":"Question","name":"Hessian eigenvalues 5 and −2: what kind of point?","acceptedAnswer":{"@type":"Answer","text":"A saddle."}},{"@type":"Question","name":"Is a local minimum always the global minimum?","acceptedAnswer":{"@type":"Answer","text":"No."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Optimization</p>
+        <h1 class="doc-title">Minima, Maxima and Saddle Points</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="caldi44bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="caldi44pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#caldi44bg)"/>
+  <circle cx="628" cy="33" r="62" fill="#68599a" opacity="0.28"/><circle cx="1116" cy="305" r="127" fill="#cebff9" opacity="0.41"/><circle cx="246" cy="173" r="170" fill="#68599a" opacity="0.62"/><circle cx="188" cy="340" r="129" fill="#cebff9" opacity="0.44"/><circle cx="1200" cy="49" r="152" fill="#68599a" opacity="0.41"/>
+  <path d="M0,420 L0,311 L30,314 L60,319 L90,324 L120,329 L150,334 L180,339 L210,343 L240,346 L270,348 L300,350 L330,349 L360,348 L390,346 L420,342 L450,338 L480,333 L510,328 L540,323 L570,318 L600,314 L630,310 L660,307 L690,306 L720,306 L750,307 L780,309 L810,312 L840,316 L870,320 L900,326 L930,331 L960,336 L990,340 L1020,344 L1050,347 L1080,349 L1110,350 L1140,349 L1170,347 L1200,345 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,376 L30,371 L60,367 L90,364 L120,362 L150,362 L180,364 L210,367 L240,371 L270,375 L300,380 L330,385 L360,389 L390,392 L420,394 L450,394 L480,392 L510,389 L540,385 L570,381 L600,376 L630,371 L660,367 L690,364 L720,362 L750,362 L780,364 L810,367 L840,371 L870,375 L900,380 L930,385 L960,389 L990,392 L1020,394 L1050,394 L1080,392 L1110,389 L1140,385 L1170,381 L1200,376 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="681" cy="164" rx="215" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-12.0 681 164)"/><ellipse cx="681" cy="164" rx="298" ry="83" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-6.0 681 164)"/>
+  <circle cx="681" cy="164" r="84" fill="url(#caldi44pl)"/>
+  <circle cx="948" cy="88" r="10" fill="#ffffff" opacity="0.61"/><circle cx="393" cy="90" r="12" fill="#ffffff" opacity="0.73"/><circle cx="644" cy="268" r="17" fill="#ffffff" opacity="0.64"/><circle cx="706" cy="52" r="8" fill="#ffffff" opacity="0.89"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>minimum</strong> is a low point of a function, a <strong>maximum</strong> a high point, and a <strong>saddle point</strong> is flat but rises in some directions and falls in others. Flat spots, where the derivative is zero, are candidates for all three, and telling them apart is a job for the second derivative.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/derivatives/" data-topic="math/derivatives">Derivatives</a>, <a class="wikilink" href="/math/higher-derivatives-and-curvature/" data-topic="math/higher-derivatives-and-curvature">Higher Derivatives and Curvature</a> and <a class="wikilink" href="/math/hessian/" data-topic="math/hessian">Hessian</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Where is the best value, and how do I know a flat spot really is the bottom?&quot; Training aims for a minimum of the loss, but flat spots come in several kinds.</p>
+<h2 id="intuition-hills-valleys-and-mountain-passes">Intuition: hills, valleys and mountain passes</h2>
+<p>Walk over a landscape. At the bottom of a valley every direction climbs (a <strong>minimum</strong>); on a summit every direction falls (a <strong>maximum</strong>); on a mountain pass you climb one way and descend the other (a <strong>saddle</strong>). All three have zero slope.</p>
+<ul>
+<li><strong>Local</strong> minimum: the lowest point in its neighbourhood.</li>
+<li><strong>Global</strong> minimum: the lowest point everywhere.</li>
+</ul>
+<p>A landscape can have many local minima, and only one (or a few) of them is global.</p>
+<h2 id="finding-and-classifying-them">Finding and classifying them</h2>
+<p><strong>Step 1:</strong> solve <code>f′(x) = 0</code> (for many variables, <code>∇f = 0</code>). <strong>Step 2:</strong> look at the curvature.</p>
+<pre><code class="language-text">f″(x) &gt; 0    local minimum
+f″(x) &lt; 0    local maximum
+f″(x) = 0    inconclusive (may be an inflection, like x³ at 0)
+many variables: eigenvalues of the Hessian
+   all &gt; 0 → minimum, all &lt; 0 → maximum, mixed signs → saddle
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Take <code>f(x) = x⁴ − 2x²</code>.</p>
+<pre><code class="language-text">f′(x) = 4x³ − 4x = 4x(x² − 1) = 0   →   x = −1, 0, 1
+f″(x) = 12x² − 4
+f″(0)  = −4  → local maximum,   f(0)  = 0
+f″(±1) =  8  → local minima,    f(±1) = −1     (both are global minima)
+</code></pre>
+<p>For <code>f(x) = x³</code>: <code>f′(0) = 0</code> and <code>f″(0) = 0</code>, and the curve keeps rising through zero: a flat <strong>inflection</strong>, neither minimum nor maximum. In two variables <code>f = x² − y²</code> has a saddle at the origin (Hessian eigenvalues 2 and −2).</p>
+<p>In the huge loss landscapes of neural networks, saddle points are far more common than bad local minima, because every direction would have to curve upward for a true minimum.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="critical-points" data-title="Find and classify the flat spots"><p class="bench-fallback"><strong>Interactive bench: Find and classify the flat spots.</strong> Choose a curve; the bench marks where the slope is zero, labels each flat spot as a minimum, maximum or inflection, notes which is the global minimum, and lets you slide a marker to read the slope and curvature.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>On the quartic, find the two valleys and the hill between them.</li>
+<li>Compare their heights: which is the global minimum?</li>
+<li>Switch to x³ and look at the flat spot at zero.</li>
+<li>Slide the marker to a valley bottom and read the curvature.</li>
+</ol>
+<p><strong>What you should notice:</strong> every flat spot has zero slope, but only the curvature (and the shape around it) tells you what kind it is.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Training</strong> searches for a (hopefully good) minimum of the loss.</li>
+<li><strong>Saddle points</strong> slow optimisers with their long, flat stretches.</li>
+<li><strong>Local minima</strong> may be acceptable if their loss is low enough.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming zero slope means minimum.</strong></li>
+<li><strong>Confusing local with global.</strong></li>
+<li><strong>Trusting <code>f″ = 0</code> as &quot;flat forever&quot;.</strong> Check nearby.</li>
+<li><strong>Overlooking the boundary</strong> where the function may have its smallest value.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. f(x) = x² − 4x. Where is the minimum?</summary>
+f′ = 2x − 4 = 0 at x = 2, and f″ = 2 > 0, so it is a minimum (f = −4).
+</details>
+
+<details><summary>2. Hessian eigenvalues 5 and −2: what kind of point?</summary>
+A saddle.
+</details>
+
+<details><summary>3. Is a local minimum always the global minimum?</summary>
+No.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Critical point:</strong> where the gradient is zero.</li>
+<li><strong>Local / global minimum:</strong> lowest nearby / lowest overall.</li>
+<li><strong>Saddle point:</strong> a flat spot that is a minimum in some directions and a maximum in others.</li>
+<li><strong>Inflection point:</strong> where curvature changes sign.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/higher-derivatives-and-curvature/" data-topic="math/higher-derivatives-and-curvature">Higher Derivatives and Curvature</a> · <a class="wikilink" href="/math/hessian/" data-topic="math/hessian">Hessian</a> · <a class="wikilink" href="/math/convex-vs-non-convex/" data-topic="math/convex-vs-non-convex">Convex vs Non-Convex</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/minima-maxima-and-saddle-points">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/gradient-descent/"><small>Read next</small><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/derivatives/"><b>Derivatives</b><p>The derivative tells you how fast a function&#39;s output is changing at one particular input: the slope of the curve at a point.</p></a><a class="rc-card" href="/math/higher-derivatives-and-curvature/"><b>Higher Derivatives and Curvature</b><p>The second derivative is the derivative of the derivative: it says how the slope itself is changing. Positive means the curve bends upward like a bowl, negative means it bends downward like a hill.</p></a><a class="rc-card" href="/math/hessian/"><b>Hessian</b><p>The Hessian is the matrix of all second partial derivatives of a function.</p></a><a class="rc-card" href="/math/convex-vs-non-convex/"><b>Convex vs Non-Convex</b><p>A function is convex if it is bowl-shaped: the straight line between any two points on its graph never dips below the graph.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/equations-and-solving/"><b>Equations and Solving</b><p>An equation says two expressions are equal, and solving it means finding the value of the unknown that makes the statement true.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/loss-functions/">← Previous: Loss Functions</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

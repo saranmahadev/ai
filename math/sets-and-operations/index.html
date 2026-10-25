@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sets and Operations — AI Base</title>
+<meta name="description" content="A set is a collection of distinct things, and a few operations (union, intersection, difference, complement) combine sets.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/sets-and-operations/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Sets and Operations — AI Base">
+<meta property="og:description" content="A set is a collection of distinct things, and a few operations (union, intersection, difference, complement) combine sets.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/sets-and-operations/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Sets and Operations","item":"https://ai.saranmahadev.in/math/sets-and-operations/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sets and Operations","description":"A set is a collection of distinct things, and a few operations (union, intersection, difference, complement) combine sets.","url":"https://ai.saranmahadev.in/math/sets-and-operations/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"If |A| = 10, |B| = 8 and |A ∩ B| = 3, what is |A ∪ B|?","acceptedAnswer":{"@type":"Answer","text":"15."}},{"@type":"Question","name":"How many subsets does {a, b, c} have?","acceptedAnswer":{"@type":"Answer","text":"2³ = 8."}},{"@type":"Question","name":"What is A \\ A?","acceptedAnswer":{"@type":"Answer","text":"The empty set."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Sets, Logic and Counting</p>
+        <h1 class="doc-title">Sets and Operations</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1edbunlbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1edbunlpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1edbunlbg)"/>
+  <circle cx="932" cy="27" r="164" fill="#68599a" opacity="0.61"/><circle cx="826" cy="397" r="187" fill="#ddbecb" opacity="0.23"/><circle cx="201" cy="137" r="62" fill="#cebff9" opacity="0.29"/><circle cx="1006" cy="75" r="178" fill="#68599a" opacity="0.41"/><circle cx="482" cy="301" r="106" fill="#eee9fd" opacity="0.52"/><circle cx="872" cy="375" r="221" fill="#ddbecb" opacity="0.48"/><circle cx="547" cy="332" r="108" fill="#68599a" opacity="0.51"/>
+  <path d="M0,420 L0,343 L30,338 L60,332 L90,325 L120,318 L150,312 L180,308 L210,306 L240,306 L270,308 L300,312 L330,317 L360,324 L390,331 L420,337 L450,343 L480,347 L510,349 L540,349 L570,347 L600,343 L630,338 L660,332 L690,325 L720,318 L750,312 L780,308 L810,306 L840,306 L870,308 L900,312 L930,317 L960,324 L990,331 L1020,337 L1050,343 L1080,347 L1110,349 L1140,349 L1170,347 L1200,343 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,362 L60,362 L90,362 L120,362 L150,363 L180,364 L210,366 L240,368 L270,370 L300,372 L330,374 L360,377 L390,379 L420,382 L450,384 L480,386 L510,388 L540,390 L570,392 L600,393 L630,394 L660,394 L690,394 L720,394 L750,393 L780,392 L810,390 L840,388 L870,386 L900,384 L930,382 L960,379 L990,377 L1020,374 L1050,372 L1080,370 L1110,368 L1140,366 L1170,364 L1200,363 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="785" cy="125" rx="204" ry="57" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(20.5 785 125)"/><ellipse cx="785" cy="125" rx="281" ry="79" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(26.5 785 125)"/>
+  <circle cx="785" cy="125" r="80" fill="url(#c1edbunlpl)"/>
+  <circle cx="896" cy="45" r="14" fill="#ffffff" opacity="0.65"/><circle cx="478" cy="70" r="10" fill="#ffffff" opacity="0.77"/><circle cx="930" cy="60" r="18" fill="#ffffff" opacity="0.60"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>set</strong> is a collection of distinct things, and a few operations (union, intersection, difference, complement) combine sets. Sets are how probability describes events and how data scientists describe groups: the emails that are spam, the users who clicked.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/numbers-and-their-kinds/" data-topic="math/numbers-and-their-kinds">Numbers and Their Kinds</a> and <a class="wikilink" href="/math/reading-math-notation/" data-topic="math/reading-math-notation">Reading Math Notation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do I describe a group and combine groups precisely?&quot; &quot;Emails that are spam and contain a link&quot; is an intersection, and the fraction of them is a probability.</p>
+<h2 id="intuition-circles-that-overlap">Intuition: circles that overlap</h2>
+<p>Draw a set as a circle with its members inside. Two sets that share members overlap in a <strong>Venn diagram</strong>.</p>
+<pre><code class="language-text">A = {1, 2, 3, 4}       B = {3, 4, 5}
+</code></pre>
+<p>A set has no order and no repeats: <code>{1, 2, 3}</code> and <code>{3, 2, 1, 1}</code> are the same set.</p>
+<h2 id="operations">Operations</h2>
+<pre><code class="language-text">x ∈ A         x is an element of A          A ⊂ B      A is a subset of B
+A ∪ B         union: in A or B (or both)    A ∩ B      intersection: in both
+A \ B         difference: in A but not B    Aᶜ         complement: everything not in A
+|A|           size (number of elements)     ∅          the empty set
+</code></pre>
+<p>The size of a union corrects for double counting:</p>
+<pre><code class="language-text">|A ∪ B| = |A| + |B| − |A ∩ B|
+</code></pre>
+<p>A set with <code>n</code> elements has <code>2ⁿ</code> subsets (each element is in or out).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>With <code>A = {1, 2, 3, 4}</code> and <code>B = {3, 4, 5}</code>, and everything drawn from <code>{1, …, 6}</code>:</p>
+<pre><code class="language-text">A ∪ B = {1, 2, 3, 4, 5}        |A ∪ B| = 5
+A ∩ B = {3, 4}                 |A ∩ B| = 2
+A \ B = {1, 2}
+Aᶜ    = {5, 6}
+check: 4 + 3 − 2 = 5 ✓
+</code></pre>
+<p>For a two-group survey: 40 people like tea, 30 like coffee, 15 like both. People liking at least one: <code>40 + 30 − 15 = 55</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="set-venn" data-title="Sets and their overlaps"><p class="bench-fallback"><strong>Interactive bench: Sets and their overlaps.</strong> Twelve numbers can each be placed in set A, set B, both or neither; a Venn diagram shows the union, intersection, difference or complement of your choice and checks the size formula.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Put some numbers in A and some in B, including a few in both.</li>
+<li>Switch between union, intersection, difference and complement.</li>
+<li>Read the sizes and check |A ∪ B| = |A| + |B| − |A ∩ B|.</li>
+<li>Try making A a subset of B.</li>
+</ol>
+<p><strong>What you should notice:</strong> the overlap is counted twice in |A| + |B|, so it must be subtracted once.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Events in probability</strong> are sets of outcomes (see <a class="wikilink" href="/math/events-and-sample-spaces/" data-topic="math/events-and-sample-spaces">Events and Sample Spaces</a>).</li>
+<li><strong>Vocabularies and label sets</strong> are sets of tokens or classes.</li>
+<li><strong>Set overlap metrics</strong> such as intersection-over-union (IoU) score object detectors.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Counting the overlap twice</strong> when adding sizes.</li>
+<li><strong>Confusing ∈ and ⊂.</strong> <code>3 ∈ A</code> for an element, <code>A ⊂ B</code> for a set.</li>
+<li><strong>Treating a set as ordered.</strong> Sets have no order.</li>
+<li><strong>Forgetting the universe.</strong> A complement depends on what &quot;everything&quot; is.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. If |A| = 10, |B| = 8 and |A ∩ B| = 3, what is |A ∪ B|?</summary>
+15.
+</details>
+
+<details><summary>2. How many subsets does {a, b, c} have?</summary>
+2³ = 8.
+</details>
+
+<details><summary>3. What is A \ A?</summary>
+The empty set.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Set:</strong> a collection of distinct elements.</li>
+<li><strong>Union / intersection:</strong> elements in either / in both sets.</li>
+<li><strong>Complement:</strong> elements not in the set.</li>
+<li><strong>Subset:</strong> a set contained within another.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/logic-and-truth-tables/" data-topic="math/logic-and-truth-tables">Logic and Truth Tables</a> · <a class="wikilink" href="/math/counting-rules/" data-topic="math/counting-rules">Counting Rules</a> · <a class="wikilink" href="/math/events-and-sample-spaces/" data-topic="math/events-and-sample-spaces">Events and Sample Spaces</a> · <a class="wikilink" href="/math/probability-rules/" data-topic="math/probability-rules">Probability Rules</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/sets-and-operations">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/logic-and-truth-tables/"><small>Read next</small><b>Logic and Truth Tables</b><p>Logic deals with statements that are either true or false and the ways of combining them: AND, OR, NOT, XOR and IF … THEN.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/numbers-and-their-kinds/"><b>Numbers and Their Kinds</b><p>Numbers come in nested families: natural numbers for counting, integers that add negatives, rational numbers that are fractions, and real numbers that fill the whole number line.</p></a><a class="rc-card" href="/math/reading-math-notation/"><b>Reading Math Notation</b><p>Maths is written in a compact shorthand: Greek letters for quantities, a few symbols for operations and relations, and conventions such as subscripts and hats.</p></a><a class="rc-card" href="/math/events-and-sample-spaces/"><b>Events and Sample Spaces</b><p>A sample space is the set of all outcomes that could happen, and an event is any collection of those outcomes.</p></a><a class="rc-card" href="/math/logic-and-truth-tables/"><b>Logic and Truth Tables</b><p>Logic deals with statements that are either true or false and the ways of combining them: AND, OR, NOT, XOR and IF … THEN.</p></a><a class="rc-card" href="/math/counting-rules/"><b>Counting Rules</b><p>Counting answers &quot;how many ways can this happen?&quot; without listing them all.</p></a><a class="rc-card" href="/math/probability-rules/"><b>Probability Rules</b><p>Every probability, however it is produced, obeys a short list of rules: it lies between 0 and 1, the whole sample space has probability 1, the probability of &quot;not A&quot; is 1 − P(A), and for &quot;A or B&quot;…</p></a></div></section>
+        <p class="doc-prev"><a href="/math/sets-logic-and-counting/">← Previous: Sets, Logic and Counting</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

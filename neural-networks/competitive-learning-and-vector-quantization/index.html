@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Competitive Learning and Vector Quantization — AI Base</title>
+<meta name="description" content="The previous topic&#39;s update rule has two parts: find the winner, then update the winner and its neighbours.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/competitive-learning-and-vector-quantization/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Competitive Learning and Vector Quantization — AI Base">
+<meta property="og:description" content="The previous topic&#39;s update rule has two parts: find the winner, then update the winner and its neighbours.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/competitive-learning-and-vector-quantization/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Competitive Learning and Vector Quantization","item":"https://ai.saranmahadev.in/neural-networks/competitive-learning-and-vector-quantization/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Competitive Learning and Vector Quantization","description":"The previous topic's update rule has two parts: find the winner, then update the winner and its neighbours.","url":"https://ai.saranmahadev.in/neural-networks/competitive-learning-and-vector-quantization/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does competitive learning's update differ from the self-organizing map's update on the same input?","acceptedAnswer":{"@type":"Answer","text":"Only the single winning unit updates; a SOM also updates the winner's grid neighbours by a smaller amount."}},{"@type":"Question","name":"What is vector quantization, in terms of codebook vectors?","acceptedAnswer":{"@type":"Answer","text":"Representing each data point by the index of its nearest codebook vector, instead of the point's full coordinates — a form of lossy compression."}},{"@type":"Question","name":"How does competitive learning's update timing differ from k-means?","acceptedAnswer":{"@type":"Answer","text":"It updates one codebook vector immediately after each single input; k-means instead recomputes each centroid as the average of all its currently assigned points, in a separate batch step."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Self-Organization and Competitive Learning</p>
+        <h1 class="doc-title">Competitive Learning and Vector Quantization</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cumk40rbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="cumk40rpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cumk40rbg)"/>
+  <circle cx="639" cy="48" r="140" fill="#ace3b3" opacity="0.40"/><circle cx="494" cy="238" r="102" fill="#ace3b3" opacity="0.58"/><circle cx="207" cy="408" r="136" fill="#ace3b3" opacity="0.44"/><circle cx="369" cy="178" r="99" fill="#50736a" opacity="0.29"/><circle cx="658" cy="331" r="134" fill="#ace3b3" opacity="0.34"/><circle cx="888" cy="282" r="227" fill="#e3f6e5" opacity="0.34"/>
+  <path d="M0,420 L0,344 L30,340 L60,336 L90,331 L120,325 L150,320 L180,316 L210,312 L240,309 L270,307 L300,306 L330,306 L360,307 L390,310 L420,314 L450,318 L480,323 L510,328 L540,333 L570,338 L600,342 L630,346 L660,348 L690,349 L720,349 L750,348 L780,346 L810,343 L840,339 L870,334 L900,329 L930,324 L960,319 L990,314 L1020,311 L1050,308 L1080,306 L1110,306 L1140,306 L1170,308 L1200,311 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,390 L30,392 L60,394 L90,394 L120,394 L150,392 L180,390 L210,387 L240,384 L270,380 L300,377 L330,373 L360,369 L390,367 L420,364 L450,363 L480,362 L510,362 L540,363 L570,365 L600,368 L630,371 L660,374 L690,378 L720,382 L750,385 L780,389 L810,391 L840,393 L870,394 L900,394 L930,393 L960,392 L990,389 L1020,386 L1050,383 L1080,379 L1110,375 L1140,372 L1170,368 L1200,366 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="935" cy="218" rx="205" ry="57" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-2.4 935 218)"/><ellipse cx="935" cy="218" rx="284" ry="79" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(3.6 935 218)"/>
+  <circle cx="935" cy="218" r="80" fill="url(#cumk40rpl)"/>
+  <circle cx="1109" cy="162" r="12" fill="#ffffff" opacity="0.69"/><circle cx="698" cy="291" r="9" fill="#ffffff" opacity="0.63"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/neural-networks/self-organizing-maps/" data-topic="neural-networks/self-organizing-maps">The previous topic&#39;s</a> update rule has two parts: find the winner, then update the winner <em>and its neighbours</em>. Strip away the neighbours entirely — update only the single winning unit — and what&#39;s left is plain competitive learning, which is exactly the online learning rule behind vector quantization and a close cousin of k-means clustering.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/self-organizing-maps/" data-topic="neural-networks/self-organizing-maps">Self-Organizing Maps</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What does self-organization reduce to without any neighbourhood structure at all?&quot; Competitive learning: for each input, find the single closest codebook vector (the winner) and move only that vector toward the input. Nothing else updates. The result is a small set of <strong>codebook vectors</strong> (also called prototypes), each one responsible for a region of the input space — the same idea as <a class="wikilink" href="/neural-networks/self-organizing-maps/" data-topic="neural-networks/self-organizing-maps">Self-Organizing Maps</a>, minus the grid.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine a handful of &quot;representative&quot; points scattered in the data space, each trying to claim the inputs nearest to it. Every time a new input arrives, exactly one representative — whichever is currently closest — gets to update: it nudges itself slightly toward that input, making it an even better match for similar future inputs. Over many inputs, each representative ends up sitting near the centre of whichever cluster of data keeps winning it.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>For codebook vectors <code>w₁, …, wₖ</code> and an input <code>x</code>:</p>
+<pre><code class="language-text">winner = argmin_i ‖wᵢ − x‖
+w_winner ← w_winner + η · (x − w_winner)
+all other wᵢ: unchanged
+</code></pre>
+<p>This is literally <a class="wikilink" href="/neural-networks/self-organizing-maps/" data-topic="neural-networks/self-organizing-maps">the SOM update rule</a> with the neighbourhood function reduced to &quot;1 for the winner, 0 for everyone else.&quot; Representing data this way — replacing each point with its nearest codebook vector&#39;s index — is called <strong>vector quantization</strong>: a form of lossy compression where only the codebook, and which entry each point was closest to, needs to be stored.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>The same four codebook vectors and input as <a class="wikilink" href="/neural-networks/self-organizing-maps/" data-topic="neural-networks/self-organizing-maps">the previous topic</a>, <code>w₀=[0.1,0.1], w₁=[0.4,0.6], w₂=[0.8,0.2], w₃=[0.9,0.9]</code>, input <code>x=[0.5,0.5]</code>, <code>η=0.5</code>:</p>
+<pre><code class="language-text">winner = unit 1 (closest, same as before)
+w₁ ← [0.4,0.6] + 0.5 × ([0.5,0.5] − [0.4,0.6]) = [0.450, 0.550]
+w₀, w₂, w₃: unchanged
+</code></pre>
+<p>Compare this to the SOM update on the same input: there, units 0 and 2 also moved a little because they were within the neighbourhood radius. Here, with no neighbourhood at all, they stay exactly where they were.</p>
+<p>Running two codebook vectors, started close together at <code>[0.5,0.5]</code> and <code>[0.51,0.49]</code>, through 200 points drawn from two well-separated clusters (centred near <code>[0.2,0.2]</code> and <code>[0.8,0.8]</code>), one competitive-learning update per point:</p>
+<pre><code class="language-text">codebook after one pass ≈ [0.197, 0.188]  and  [0.788, 0.808]
+</code></pre>
+<p>The two codebook vectors split apart and settled almost exactly on the two cluster centres — competitive learning found the clusters using only local, one-winner-at-a-time updates, with no notion of &quot;cluster&quot; ever computed explicitly.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="vq-codebook" data-title="Codebook vectors claim their clusters"><p class="bench-fallback"><strong>Interactive bench: Codebook vectors claim their clusters.</strong> Feed a small codebook of vectors a stream of points from two clusters, one at a time, and watch each codebook vector settle on the cluster it keeps winning.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through single updates and see which codebook vector wins each point.</li>
+<li>Run a full pass over the data and watch both codebook vectors converge to the two cluster centres.</li>
+<li>Compare starting the codebook vectors far apart against starting them close together, as in the worked example.</li>
+</ol>
+<p><strong>What you should notice:</strong> convergence does not require knowing in advance how many clusters there are to be &quot;right&quot; about — it requires having at least as many codebook vectors as real clusters, and each one ends up representing whichever region of data it keeps winning.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is an online, one-point-at-a-time version of <a class="wikilink" href="/machine-learning/k-means-clustering/" data-topic="machine-learning/k-means-clustering">k-means</a></strong> on <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a>: k-means updates each centroid using the <em>average</em> of all its currently assigned points in a batch step, while competitive learning nudges one codebook vector a little with every single point.</li>
+<li><strong>Vector quantization compresses data</strong> by storing only codebook indices instead of full vectors — used historically in signal and image compression, and the same underlying idea behind representing data with a fixed, learned set of prototypes.</li>
+<li><strong>It is the mechanism self-organizing maps build on</strong>, adding only the neighbourhood term covered in <a class="wikilink" href="/neural-networks/self-organizing-maps/" data-topic="neural-networks/self-organizing-maps">Self-Organizing Maps</a>.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting every codebook vector to end up used.</strong> With too many codebook vectors, or a poor initialization, some can end up &quot;dead&quot; — never winning any input, and never moving from their starting position.</li>
+<li><strong>Confusing this with k-means&#39;s batch update.</strong> Competitive learning updates immediately after each single point; k-means recomputes each centroid as the mean of its assigned points only after a full pass (or large batch).</li>
+<li><strong>Assuming the winner is always the &quot;right&quot; cluster.</strong> Early in training, before the codebook vectors have separated, the winner for a given point can be essentially arbitrary — this is why convergence needs many points, not just one.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. How does competitive learning's update differ from the self-organizing map's update on the same input?</summary>
+Only the single winning unit updates; a SOM also updates the winner's grid neighbours by a smaller amount.
+</details>
+
+<details><summary>2. What is vector quantization, in terms of codebook vectors?</summary>
+Representing each data point by the index of its nearest codebook vector, instead of the point's full coordinates — a form of lossy compression.
+</details>
+
+<details><summary>3. How does competitive learning's update timing differ from k-means?</summary>
+It updates one codebook vector immediately after each single input; k-means instead recomputes each centroid as the average of all its currently assigned points, in a separate batch step.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Codebook vector (prototype):</strong> one of a fixed set of representative vectors, each claiming the inputs nearest to it.</li>
+<li><strong>Winner-take-all:</strong> an update rule where only the single best-matching unit changes on each input.</li>
+<li><strong>Vector quantization:</strong> representing data by the index of its nearest codebook vector.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/self-organizing-maps/" data-topic="neural-networks/self-organizing-maps">Self-Organizing Maps</a> · <a class="wikilink" href="/machine-learning/k-means-clustering/" data-topic="machine-learning/k-means-clustering">K-Means Clustering</a> · <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/competitive-learning-and-vector-quantization">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/spiking-and-neuromorphic-computing/"><small>Read next</small><b>Spiking and Neuromorphic Computing</b><p>A real neuron doesn&#39;t output a continuous number — it stays silent, then fires a brief, discrete spike.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/self-organizing-maps/"><b>Self-Organizing Maps</b><p>Give a grid of units nothing but unlabelled data points, and a rule that says &quot;move the unit closest to each point a little closer, and drag its neighbours along too&quot; — and the grid gradually…</p></a><a class="rc-card" href="/machine-learning/k-means-clustering/"><b>k-Means Clustering</b><p>k-means groups unlabelled points into k clusters by repeating two steps: assign every point to its nearest centre, then move each centre to the average of its points.</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a><a class="rc-card" href="/neural-networks/hebbian-learning/"><b>Hebbian Learning</b><p>&quot;Cells that fire together wire together.&quot; Hebbian learning strengthens the connection between two neurons in direct proportion to how often they&#39;re active at the same time — no error signal, no…</p></a><a class="rc-card" href="/neural-networks/self-organization-and-competitive-learning/"><b>Self-Organization and Competitive Learning</b><p>No labels, no reconstruction target, no energy function — just units competing to be the one that responds to each input, and the winner (and its neighbours) adjusting to respond even better next…</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/self-organizing-maps/">← Previous: Self-Organizing Maps</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

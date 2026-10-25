@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantization — AI Base</title>
+<meta name="description" content="A weight stored as a 32-bit float can represent an enormous range of values with high precision — far more precision than most trained weights actually need.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/quantization/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Quantization — AI Base">
+<meta property="og:description" content="A weight stored as a 32-bit float can represent an enormous range of values with high precision — far more precision than most trained weights actually need.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/quantization/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Quantization","item":"https://ai.saranmahadev.in/deep-learning/quantization/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Quantization","description":"A weight stored as a 32-bit float can represent an enormous range of values with high precision — far more precision than most trained weights actually need.","url":"https://ai.saranmahadev.in/deep-learning/quantization/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the maximum possible rounding error introduced by quantizing to a given scale?","acceptedAnswer":{"@type":"Answer","text":"Half the scale (half the spacing between adjacent quantized levels)."}},{"@type":"Question","name":"Why does widening the chosen value range increase quantization error, even with the same bit-width?","acceptedAnswer":{"@type":"Answer","text":"The same number of levels must now be spread over a wider range, so the scale (spacing between levels) grows, and so does the maximum possible rounding error."}},{"@type":"Question","name":"In the worked example, why did two of the five weights have exactly zero error?","acceptedAnswer":{"@type":"Answer","text":"Those particular weight values happened to land exactly on one of the 256 quantization levels, so rounding introduced no change at all."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Efficiency and Deployment</p>
+        <h1 class="doc-title">Quantization</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cfs82skbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cfs82skpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cfs82skbg)"/>
+  <circle cx="901" cy="311" r="81" fill="#8a546c" opacity="0.45"/><circle cx="150" cy="46" r="186" fill="#ffe6e6" opacity="0.61"/><circle cx="513" cy="90" r="60" fill="#ffb6b6" opacity="0.47"/><circle cx="242" cy="157" r="122" fill="#ffe6e6" opacity="0.53"/><circle cx="1172" cy="333" r="176" fill="#8a546c" opacity="0.29"/><circle cx="794" cy="18" r="186" fill="#ffb6b6" opacity="0.60"/><circle cx="558" cy="264" r="178" fill="#8a546c" opacity="0.32"/>
+  <path d="M0,420 L0,308 L30,310 L60,313 L90,315 L120,318 L150,322 L180,325 L210,328 L240,332 L270,335 L300,338 L330,341 L360,344 L390,346 L420,348 L450,349 L480,349 L510,350 L540,349 L570,348 L600,347 L630,345 L660,343 L690,340 L720,337 L750,334 L780,330 L810,327 L840,323 L870,320 L900,317 L930,314 L960,312 L990,309 L1020,308 L1050,306 L1080,306 L1110,306 L1140,306 L1170,307 L1200,308 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,386 L30,383 L60,381 L90,378 L120,376 L150,373 L180,371 L210,369 L240,367 L270,365 L300,364 L330,363 L360,362 L390,362 L420,362 L450,363 L480,364 L510,365 L540,366 L570,368 L600,370 L630,373 L660,375 L690,378 L720,380 L750,383 L780,385 L810,387 L840,389 L870,391 L900,392 L930,393 L960,394 L990,394 L1020,394 L1050,393 L1080,392 L1110,391 L1140,390 L1170,388 L1200,386 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="698" cy="168" rx="263" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.4 698 168)"/><ellipse cx="698" cy="168" rx="364" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.4 698 168)"/>
+  <circle cx="698" cy="168" r="103" fill="url(#cfs82skpl)"/>
+  <circle cx="404" cy="277" r="7" fill="#ffffff" opacity="0.70"/><circle cx="667" cy="70" r="10" fill="#ffffff" opacity="0.89"/><circle cx="1065" cy="177" r="16" fill="#ffffff" opacity="0.65"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A weight stored as a 32-bit float can represent an enormous range of values with high precision — far more precision than most trained weights actually need. <strong>Quantization</strong> stores (and often computes) the same weights using far fewer bits — commonly 8 — accepting a small, bounded rounding error in exchange for a model that is smaller and faster.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a> and <a class="wikilink" href="/deep-learning/model-pruning/" data-topic="deep-learning/model-pruning">Model Pruning</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Do weights really need 32 bits of precision each?&quot; Usually not — rounding each weight to one of a much smaller number of evenly-spaced levels loses only a small, predictable amount of accuracy, while shrinking the model&#39;s size by a large, fixed factor.</p>
+<h2 id="intuition-a-ruler-with-fewer-markings">Intuition: a ruler with fewer markings</h2>
+<p>A ruler with millimetre markings is far more precise than one with only centimetre markings, but for most everyday measurements, the coarser ruler is still good enough — you just round to the nearest mark. Quantization rounds every weight to the nearest of a fixed, small set of evenly-spaced levels (say, 256 of them for 8-bit quantization), instead of keeping each weight&#39;s full floating-point precision.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">range [min, max],  b bits  →  2^b evenly-spaced levels
+
+scale = (max − min) / (2^b − 1)
+
+quantize:    q = round((x − min) / scale)        (an integer, 0 to 2^b − 1)
+dequantize:  x̂ = min + q · scale                   (the approximate value actually used)
+
+maximum possible rounding error = scale / 2
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Five weights, quantized to 8 bits (256 levels) over the range <code>[−1, 1]</code>:</p>
+<pre><code class="language-text">scale = (1 − (−1)) / 255 ≈ 0.007843
+
+weight     −0.800   0.300   0.950   −0.200   0.600
+quantized   q=25    q=166   q=249    q=102    q=204
+dequantized −0.8039  0.3020  0.9529  −0.2000  0.6000
+error       0.00392  0.00196 0.00294  0.00000  0.00000
+</code></pre>
+<p>Every weight&#39;s error is well under the theoretical maximum of <code>scale / 2 ≈ 0.00392</code>, and most are far smaller — a tiny rounding cost in exchange for storing each weight in 8 bits instead of 32, a 4× reduction in storage for the weights alone.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="quantize-weights" data-title="Rounding weights to a fixed set of levels"><p class="bench-fallback"><strong>Interactive bench: Rounding weights to a fixed set of levels.</strong> Adjustable weights, a bit-width slider, and the chosen value range. See each weight's quantized integer code, its dequantized approximation, and the resulting rounding error.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Lower the bit-width from 8 toward 2 or 3 and watch the rounding error grow sharply.</li>
+<li>Widen the value range without changing the bit-width and watch the error grow too, even though the bit-width didn&#39;t change.</li>
+<li>Narrow the range to just barely cover the actual weights and watch the error shrink.</li>
+</ol>
+<p><strong>What you should notice:</strong> error depends on both the bit-width <em>and</em> how tightly the chosen range actually fits the weights being quantized — a wider range than necessary wastes precision on values that never occur.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>8-bit (and even 4-bit) quantization</strong> is now routine for deploying large models efficiently, especially combined with <a class="wikilink" href="/deep-learning/model-pruning/" data-topic="deep-learning/model-pruning">Model Pruning</a> and <a class="wikilink" href="/deep-learning/knowledge-distillation/" data-topic="deep-learning/knowledge-distillation">Knowledge Distillation</a>.</li>
+<li><strong>Quantization-aware training</strong>, not covered in full detail here, trains a model while simulating quantization&#39;s rounding effects, so the model learns weights that are more robust to that rounding than a model quantized only after training.</li>
+<li><strong>Different parts of a model are often quantized to different precisions</strong> — some layers more sensitive to rounding than others — rather than applying one fixed bit-width everywhere.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Choosing too wide a value range.</strong> It wastes available precision on values that never actually occur, increasing error for no benefit.</li>
+<li><strong>Assuming quantization is free.</strong> There is a real, bounded accuracy cost; very aggressive quantization (very few bits) can noticeably hurt a model&#39;s outputs if not done carefully.</li>
+<li><strong>Forgetting that quantizing after training (&quot;post-training quantization&quot;) and training with quantization in mind are different strategies</strong> with different accuracy trade-offs.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the maximum possible rounding error introduced by quantizing to a given scale?</summary>
+Half the scale (half the spacing between adjacent quantized levels).
+</details>
+
+<details><summary>2. Why does widening the chosen value range increase quantization error, even with the same bit-width?</summary>
+The same number of levels must now be spread over a wider range, so the scale (spacing between levels) grows, and so does the maximum possible rounding error.
+</details>
+
+<details><summary>3. In the worked example, why did two of the five weights have exactly zero error?</summary>
+Those particular weight values happened to land exactly on one of the 256 quantization levels, so rounding introduced no change at all.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Quantization:</strong> representing values with a smaller, fixed set of discrete levels instead of full floating-point precision.</li>
+<li><strong>Scale:</strong> the spacing between adjacent quantization levels, determined by the value range and bit-width.</li>
+<li><strong>Dequantization:</strong> converting a quantized integer code back into its approximate real value.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a> · <a class="wikilink" href="/deep-learning/model-pruning/" data-topic="deep-learning/model-pruning">Model Pruning</a> · <a class="wikilink" href="/deep-learning/knowledge-distillation/" data-topic="deep-learning/knowledge-distillation">Knowledge Distillation</a> · <a class="wikilink" href="/deep-learning/edge-and-on-device-deep-learning/" data-topic="deep-learning/edge-and-on-device-deep-learning">Edge and On-Device Deep Learning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/quantization">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/knowledge-distillation/"><small>Read next</small><b>Knowledge Distillation</b><p>A large, accurate teacher network&#39;s final prediction is one number per class — but its full output, before being squashed into near-certainty, carries far more information: how confident it was,…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/floating-point/"><b>Floating Point</b><p>Computers store real numbers in floating point: a fixed number of significant binary digits and an exponent.</p></a><a class="rc-card" href="/deep-learning/model-pruning/"><b>Model Pruning</b><p>A trained network rarely needs every single weight it ended up with.</p></a><a class="rc-card" href="/deep-learning/knowledge-distillation/"><b>Knowledge Distillation</b><p>A large, accurate teacher network&#39;s final prediction is one number per class — but its full output, before being squashed into near-certainty, carries far more information: how confident it was,…</p></a><a class="rc-card" href="/deep-learning/edge-and-on-device-deep-learning/"><b>Edge and On-Device Deep Learning</b><p>Running a model on a phone, a smartwatch, or a tiny embedded chip is a different problem from running it on a server: memory, compute, power and network connectivity are all far more constrained,…</p></a><a class="rc-card" href="/deep-learning/efficiency-and-deployment/"><b>Efficiency and Deployment</b><p>A network that trains well is not automatically one you can afford to run.</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/model-pruning/">← Previous: Model Pruning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vanishing and Exploding Gradients — AI Base</title>
+<meta name="description" content="Training a network means pushing a gradient signal backward through every layer by the chain rule.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/vanishing-and-exploding-gradients/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Vanishing and Exploding Gradients — AI Base">
+<meta property="og:description" content="Training a network means pushing a gradient signal backward through every layer by the chain rule.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/vanishing-and-exploding-gradients/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Vanishing and Exploding Gradients","item":"https://ai.saranmahadev.in/deep-learning/vanishing-and-exploding-gradients/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Vanishing and Exploding Gradients","description":"Training a network means pushing a gradient signal backward through every layer by the chain rule.","url":"https://ai.saranmahadev.in/deep-learning/vanishing-and-exploding-gradients/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why is 0.25 the best case, not a typical case, for a sigmoid-activated layer's gradient factor?","acceptedAnswer":{"@type":"Answer","text":"0.25 is the maximum of the sigmoid derivative, reached only when the unit's input is exactly 0; away from that point the factor is even smaller."}},{"@type":"Question","name":"Why doesn't ReLU have this shrinkage problem from its activation?","acceptedAnswer":{"@type":"Answer","text":"Its derivative is exactly 1 for any active unit, so it neither shrinks nor grows the gradient passing through, by itself."}},{"@type":"Question","name":"What single property of the per-layer factor decides whether a deep network's gradient vanishes or explodes?","acceptedAnswer":{"@type":"Answer","text":"Whether it is below, at, or above exactly 1 — multiplied over many layers, that small difference becomes an exponential effect."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Training Deep Networks</p>
+        <h1 class="doc-title">Vanishing and Exploding Gradients</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cun54d4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="cun54d4pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cun54d4bg)"/>
+  <circle cx="134" cy="163" r="132" fill="#ffb6b6" opacity="0.55"/><circle cx="805" cy="185" r="135" fill="#ffb6b6" opacity="0.38"/><circle cx="96" cy="148" r="179" fill="#ffb89d" opacity="0.33"/><circle cx="350" cy="131" r="164" fill="#ffb89d" opacity="0.38"/><circle cx="1173" cy="20" r="81" fill="#ffb6b6" opacity="0.59"/>
+  <path d="M0,420 L0,335 L30,328 L60,321 L90,315 L120,310 L150,307 L180,306 L210,306 L240,309 L270,314 L300,320 L330,327 L360,334 L390,340 L420,345 L450,348 L480,350 L510,349 L540,346 L570,341 L600,335 L630,328 L660,321 L690,315 L720,310 L750,307 L780,306 L810,306 L840,309 L870,314 L900,320 L930,327 L960,334 L990,340 L1020,345 L1050,348 L1080,350 L1110,349 L1140,346 L1170,341 L1200,335 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,364 L60,365 L90,366 L120,368 L150,370 L180,373 L210,375 L240,378 L270,380 L300,383 L330,385 L360,387 L390,389 L420,391 L450,392 L480,393 L510,394 L540,394 L570,394 L600,393 L630,392 L660,391 L690,390 L720,388 L750,386 L780,383 L810,381 L840,378 L870,376 L900,373 L930,371 L960,369 L990,367 L1020,365 L1050,364 L1080,363 L1110,362 L1140,362 L1170,362 L1200,363 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="786" cy="232" rx="248" ry="69" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-14.5 786 232)"/><ellipse cx="786" cy="232" rx="343" ry="96" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-8.5 786 232)"/>
+  <circle cx="786" cy="232" r="97" fill="url(#cun54d4pl)"/>
+  <circle cx="978" cy="327" r="17" fill="#ffffff" opacity="0.73"/><circle cx="1090" cy="213" r="14" fill="#ffffff" opacity="0.90"/><circle cx="1038" cy="322" r="19" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Training a network means pushing a gradient signal backward through every layer by the chain rule. In a deep network that gradient is a product of many per-layer factors — and a product of many numbers each a little below 1 shrinks toward zero, while a product of many numbers each a little above 1 grows without bound. These are <strong>vanishing</strong> and <strong>exploding</strong> gradients.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a> and <a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">The Artificial Neuron and Activation Functions</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why does a very deep network sometimes just... stop learning, with early layers barely changing at all?&quot; Because the gradient reaching those early layers has been multiplied by one small factor per layer on the way back, and small numbers multiplied together shrink fast.</p>
+<h2 id="intuition-the-same-compounding-run-backward">Intuition: the same compounding, run backward</h2>
+<p><a class="wikilink" href="/deep-learning/weight-initialization/" data-topic="deep-learning/weight-initialization">Weight Initialization</a> showed a <em>forward</em> signal compounding layer by layer. The gradient flowing <em>backward</em> during training compounds the same way, through the chain rule: the gradient reaching layer 1 is (roughly) the gradient at the output times one factor per layer in between, multiplied together. If every factor is comfortably below 1, by the tenth or twentieth layer that product is indistinguishable from zero — the earliest layers get essentially no training signal.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">∂Loss/∂(layer 1)  ≈  ∂Loss/∂(output)  ×  factor_L × factor_(L−1) × ⋯ × factor_1
+
+each factor ≈ (that layer&#39;s weight scale) × (that layer&#39;s activation derivative)
+</code></pre>
+<p>A sigmoid unit&#39;s derivative <code>σ(z)(1 − σ(z))</code> is at most 0.25, reached only at <code>z = 0</code>; everywhere else it is smaller. A ReLU unit&#39;s derivative is exactly 1 wherever the unit is active, and exactly 0 where it is not.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Even in the <em>best possible case</em> — every sigmoid unit sitting exactly at its peak derivative of 0.25, and every weight scaled to exactly cancel its own contribution — the activation alone shrinks the gradient by a factor of 0.25 per layer:</p>
+<pre><code class="language-text">layers (L)        1       5            10              20
+0.25ᴸ           0.25   0.000977   0.00000095     0.0000000000009
+</code></pre>
+<p>By 10 layers, the best-case sigmoid gradient has shrunk to about one millionth of its starting size; by 20 layers it is effectively zero in ordinary floating point. A ReLU unit&#39;s derivative of exactly 1 contributes no shrinkage at all from the activation itself — which is one reason ReLU replaced sigmoid as the default for hidden layers in deep networks.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="gradient-chain" data-title="A gradient's size after L layers"><p class="bench-fallback"><strong>Interactive bench: A gradient's size after L layers.</strong> A per-layer factor slider and a depth slider. The chart shows the factor raised to the depth, on a log scale, with reference marks at the sigmoid's best-case factor of 0.25 and ReLU's factor of 1.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the factor to 0.25 (sigmoid&#39;s best case) and increase depth from 1 to 20. Watch the gradient size collapse.</li>
+<li>Set the factor to 1 (ReLU, best case) and increase depth. Nothing shrinks or grows.</li>
+<li>Push the factor just above 1 (say 1.1) and increase depth — watch the gradient explode instead.</li>
+</ol>
+<p><strong>What you should notice:</strong> the surviving gradient depends almost entirely on whether the factor is below, at, or above exactly 1 — and the effect is exponential in depth, so even a tiny deviation from 1 becomes dramatic after enough layers.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Why ReLU became the default hidden-layer activation</strong> in deep networks — see <a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">The Artificial Neuron and Activation Functions</a>.</li>
+<li><strong>Why recurrent networks (see <a class="wikilink" href="/deep-learning/recurrent-neural-networks/" data-topic="deep-learning/recurrent-neural-networks">Recurrent Neural Networks</a>) are especially prone to this</strong> — a sequence of length <code>T</code> is, for gradients, exactly as deep as <code>T</code> layers.</li>
+<li><strong>Why <a class="wikilink" href="/deep-learning/residual-and-skip-connections/" data-topic="deep-learning/residual-and-skip-connections">Residual and Skip Connections</a> and <a class="wikilink" href="/deep-learning/batch-normalization/" data-topic="deep-learning/batch-normalization">Batch Normalization</a> exist</strong> — both are specifically designed to keep per-layer factors close to 1.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating vanishing and exploding gradients as opposite problems needing opposite fixes.</strong> Both come from the same compounding product; keeping factors near 1 fixes both at once.</li>
+<li><strong>Blaming only the activation function.</strong> Weight scale (see <a class="wikilink" href="/deep-learning/weight-initialization/" data-topic="deep-learning/weight-initialization">Weight Initialization</a>) multiplies into the same factor and can vanish or explode gradients on its own.</li>
+<li><strong>Assuming a loss that is decreasing means every layer is learning.</strong> A network with vanishing gradients in its early layers can still improve slowly using only its later layers.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why is 0.25 the best case, not a typical case, for a sigmoid-activated layer's gradient factor?</summary>
+0.25 is the maximum of the sigmoid derivative, reached only when the unit's input is exactly 0; away from that point the factor is even smaller.
+</details>
+
+<details><summary>2. Why doesn't ReLU have this shrinkage problem from its activation?</summary>
+Its derivative is exactly 1 for any active unit, so it neither shrinks nor grows the gradient passing through, by itself.
+</details>
+
+<details><summary>3. What single property of the per-layer factor decides whether a deep network's gradient vanishes or explodes?</summary>
+Whether it is below, at, or above exactly 1 — multiplied over many layers, that small difference becomes an exponential effect.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Vanishing gradient:</strong> a gradient that shrinks toward zero as it propagates back through many layers.</li>
+<li><strong>Exploding gradient:</strong> a gradient that grows without bound as it propagates back through many layers.</li>
+<li><strong>Chain rule compounding:</strong> the multiplication of many per-layer factors that produces both effects.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a> · <a class="wikilink" href="/deep-learning/weight-initialization/" data-topic="deep-learning/weight-initialization">Weight Initialization</a> · <a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">The Artificial Neuron and Activation Functions</a> · <a class="wikilink" href="/deep-learning/gradient-clipping/" data-topic="deep-learning/gradient-clipping">Gradient Clipping</a> · <a class="wikilink" href="/deep-learning/batch-normalization/" data-topic="deep-learning/batch-normalization">Batch Normalization</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/vanishing-and-exploding-gradients">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/gradient-clipping/"><small>Read next</small><b>Gradient Clipping</b><p>Even with good initialization, one unlucky batch can produce a gradient with an enormous spike in one direction — enough to blow up the weights in a single step.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/backpropagation-by-hand/"><b>Backpropagation by Hand</b><p>Backpropagation computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs.</p></a><a class="rc-card" href="/deep-learning/the-artificial-neuron-and-activation-functions/"><b>The Artificial Neuron and Activation Functions</b><p>An artificial neuron is a dot product plus a bias, passed through a non-linear activation function: a = f(w · x + b).</p></a><a class="rc-card" href="/deep-learning/weight-initialization/"><b>Weight Initialization</b><p>Before a single training step runs, a deep network&#39;s starting weights already decide whether signal can flow through it at all.</p></a><a class="rc-card" href="/deep-learning/recurrent-neural-networks/"><b>Recurrent Neural Networks</b><p>A recurrent neural network (RNN) reads a sequence one element at a time, carrying a hidden state forward from each step to the next — a running summary of everything seen so far.</p></a><a class="rc-card" href="/deep-learning/residual-and-skip-connections/"><b>Residual and Skip Connections</b><p>ResNet&#39;s fix for the degradation problem is almost absurdly simple: instead of a block computing output = F(x), make it compute output = F(x) + x — adding the block&#39;s own input straight back onto…</p></a><a class="rc-card" href="/deep-learning/batch-normalization/"><b>Batch Normalization</b><p>Batch normalization re-centres and re-scales a layer&#39;s activations, using the statistics of the current mini-batch, so every unit sees roughly mean-0, unit-variance inputs no matter how the layers…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/weight-initialization/">← Previous: Weight Initialization</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

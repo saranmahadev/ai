@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gradients — AI Base</title>
+<meta name="description" content="The gradient collects all the partial derivatives of a function into one vector, ∇f = (∂f/∂x, ∂f/∂y, …).">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/gradients/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Gradients — AI Base">
+<meta property="og:description" content="The gradient collects all the partial derivatives of a function into one vector, ∇f = (∂f/∂x, ∂f/∂y, …).">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/gradients/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Gradients","item":"https://ai.saranmahadev.in/math/gradients/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Gradients","description":"The gradient collects all the partial derivatives of a function into one vector, ∇f = (∂f/∂x, ∂f/∂y, …).","url":"https://ai.saranmahadev.in/math/gradients/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is ∇f for f = 3x + 2y?","acceptedAnswer":{"@type":"Answer","text":"(3, 2)."}},{"@type":"Question","name":"For f = x² + y², what is ∇f at (1, −2)?","acceptedAnswer":{"@type":"Answer","text":"(2, −4)."}},{"@type":"Question","name":"Which direction reduces f fastest?","acceptedAnswer":{"@type":"Answer","text":"Opposite the gradient, along −∇f."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Calculus</p>
+        <h1 class="doc-title">Gradients</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1umxriabg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1umxriapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1umxriabg)"/>
+  <circle cx="81" cy="72" r="70" fill="#eee9fd" opacity="0.26"/><circle cx="116" cy="255" r="93" fill="#eee9fd" opacity="0.24"/><circle cx="481" cy="210" r="161" fill="#68599a" opacity="0.43"/><circle cx="254" cy="108" r="165" fill="#ddbecb" opacity="0.61"/><circle cx="777" cy="355" r="184" fill="#ddbecb" opacity="0.30"/><circle cx="661" cy="84" r="145" fill="#ddbecb" opacity="0.44"/>
+  <path d="M0,420 L0,317 L30,321 L60,324 L90,327 L120,331 L150,334 L180,337 L210,340 L240,343 L270,345 L300,347 L330,348 L360,349 L390,350 L420,349 L450,349 L480,347 L510,346 L540,343 L570,341 L600,338 L630,335 L660,331 L690,328 L720,324 L750,321 L780,318 L810,315 L840,312 L870,310 L900,308 L930,307 L960,306 L990,306 L1020,306 L1050,307 L1080,308 L1110,310 L1140,312 L1170,314 L1200,317 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,370 L30,366 L60,363 L90,362 L120,362 L150,364 L180,368 L210,372 L240,377 L270,382 L300,386 L330,390 L360,393 L390,394 L420,394 L450,392 L480,388 L510,384 L540,379 L570,374 L600,370 L630,366 L660,363 L690,362 L720,362 L750,364 L780,368 L810,372 L840,377 L870,382 L900,386 L930,390 L960,393 L990,394 L1020,394 L1050,392 L1080,388 L1110,384 L1140,379 L1170,374 L1200,370 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="709" cy="161" rx="264" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-0.3 709 161)"/><ellipse cx="709" cy="161" rx="365" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(5.7 709 161)"/>
+  <circle cx="709" cy="161" r="103" fill="url(#c1umxriapl)"/>
+  <circle cx="422" cy="206" r="18" fill="#ffffff" opacity="0.65"/><circle cx="464" cy="221" r="8" fill="#ffffff" opacity="0.62"/><circle cx="766" cy="265" r="17" fill="#ffffff" opacity="0.82"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>gradient</strong> collects all the partial derivatives of a function into one vector, <code>∇f = (∂f/∂x, ∂f/∂y, …)</code>. It points in the direction of steepest ascent, and its length tells you how steep that climb is. Going the opposite way is the fastest way down, which is the whole idea of training a model.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/partial-derivatives/" data-topic="math/partial-derivatives">Partial Derivatives</a>, <a class="wikilink" href="/math/scalars-and-vectors/" data-topic="math/scalars-and-vectors">Scalars and Vectors</a> and <a class="wikilink" href="/math/norms-and-distance/" data-topic="math/norms-and-distance">Norms and Distance</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Standing at this point on a surface, which way should I step to climb (or descend) fastest?&quot; With many parameters you cannot try directions one by one; the gradient tells you at once.</p>
+<h2 id="intuition-the-compass-on-a-hillside">Intuition: the compass on a hillside</h2>
+<p>Imagine a hill. At your feet, the gradient is an arrow pointing straight uphill along the steepest line, and it is longer where the slope is steeper. Contour lines (paths at constant height) run perpendicular to it. <strong>Negative</strong> the gradient points straight downhill.</p>
+<pre><code class="language-text">∇f(x, y) = ( ∂f/∂x , ∂f/∂y )
+steepest ascent direction:   ∇f / ‖∇f‖
+steepest descent direction:  −∇f / ‖∇f‖
+slope in that direction:     ‖∇f‖
+</code></pre>
+<p>The gradient is zero at flat spots: minima, maxima and saddle points.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Take the bowl <code>f(x, y) = x² + y²</code>:</p>
+<pre><code class="language-text">∇f = (2x, 2y)
+at (3, 4):  ∇f = (6, 8),   ‖∇f‖ = √(36 + 64) = 10
+</code></pre>
+<p>At <code>(3, 4)</code> the steepest climb points along <code>(6, 8)</code>, away from the bottom at <code>(0, 0)</code>, with slope 10. The steepest <strong>descent</strong> points along <code>(−6, −8)</code>, straight toward the bottom.</p>
+<p>Take a small step of size <code>0.1</code> against the gradient: <code>(3, 4) − 0.1 · (6, 8) = (2.4, 3.2)</code>, and <code>f</code> drops from <code>25</code> to <code>5.76 + 10.24 = 16</code>. That is one step of <strong>gradient descent</strong> (see <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a>).</p>
+<p>The directional slope in any direction <code>u</code> (a unit vector) is <code>∇f · u</code> (a dot product), which is largest when <code>u</code> points along <code>∇f</code>. That is why the gradient is the steepest direction.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="contour-gradient" data-title="Follow the gradient on a contour map"><p class="bench-fallback"><strong>Interactive bench: Follow the gradient on a contour map.</strong> A shaded contour map of a two-variable function; choose a function, drag a point, and see the gradient arrow, the downhill arrow, and the slope, with numbers for both partial derivatives.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Drag the point on the bowl and see the arrow always point away from the centre.</li>
+<li>Check the arrow is perpendicular to the colour bands.</li>
+<li>Switch to the saddle and find where the gradient vanishes.</li>
+<li>Find where the arrow is longest.</li>
+</ol>
+<p><strong>What you should notice:</strong> the gradient is perpendicular to the contour lines, longest where the colour changes fastest, and zero at flat spots.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Gradient descent</strong> steps along <code>−∇L</code> (see <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a>).</li>
+<li><strong>Backpropagation</strong> computes the gradient of the loss for every parameter.</li>
+<li><strong>Saliency maps</strong> show which input pixels most affect a prediction.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing gradient with slope in one direction.</strong> It is a vector.</li>
+<li><strong>Stepping along <code>+∇</code> when minimising.</strong></li>
+<li><strong>Ignoring scale:</strong> the gradient depends on units and on the function&#39;s shape.</li>
+<li><strong>Assuming zero gradient means minimum.</strong> It might be a maximum or saddle.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is ∇f for f = 3x + 2y?</summary>
+(3, 2).
+</details>
+
+<details><summary>2. For f = x² + y², what is ∇f at (1, −2)?</summary>
+(2, −4).
+</details>
+
+<details><summary>3. Which direction reduces f fastest?</summary>
+Opposite the gradient, along −∇f.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Gradient:</strong> the vector of partial derivatives.</li>
+<li><strong>Steepest ascent:</strong> the direction of fastest increase.</li>
+<li><strong>Contour line:</strong> a path of constant function value.</li>
+<li><strong>Critical point:</strong> where the gradient is zero.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/partial-derivatives/" data-topic="math/partial-derivatives">Partial Derivatives</a> · <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a> · <a class="wikilink" href="/math/jacobian/" data-topic="math/jacobian">Jacobian</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> · <a class="wikilink" href="/math/minima-maxima-and-saddle-points/" data-topic="math/minima-maxima-and-saddle-points">Minima, Maxima and Saddle Points</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/gradients">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/jacobian/"><small>Read next</small><b>Jacobian</b><p>The Jacobian is the matrix of all first partial derivatives of a function that takes several inputs and gives several outputs.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/partial-derivatives/"><b>Partial Derivatives</b><p>A partial derivative measures how a function of several variables changes when you nudge one variable and hold the others fixed.</p></a><a class="rc-card" href="/math/scalars-and-vectors/"><b>Scalars and Vectors</b><p>A scalar is a single number, and a vector is an ordered list of numbers.</p></a><a class="rc-card" href="/math/norms-and-distance/"><b>Norms and Distance</b><p>A norm measures the size of a vector, and the distance between two vectors is the norm of their difference.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/dot-product/"><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p></a><a class="rc-card" href="/math/jacobian/"><b>Jacobian</b><p>The Jacobian is the matrix of all first partial derivatives of a function that takes several inputs and gives several outputs.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/partial-derivatives/">← Previous: Partial Derivatives</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

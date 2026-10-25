@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agents vs. Assistants vs. Workflows — AI Base</title>
+<meta name="description" content="&quot;Agent&quot; gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/agents-vs-assistants-vs-workflows/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Agents vs. Assistants vs. Workflows — AI Base">
+<meta property="og:description" content="&quot;Agent&quot; gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/agents-vs-assistants-vs-workflows/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Agents vs. Assistants vs. Workflows","item":"https://ai.saranmahadev.in/agents/agents-vs-assistants-vs-workflows/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Agents vs. Assistants vs. Workflows","description":"\"Agent\" gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one.","url":"https://ai.saranmahadev.in/agents/agents-vs-assistants-vs-workflows/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the workflow score so much higher than the agent on the well-defined task, despite the agent being more capable overall?","acceptedAnswer":{"@type":"Answer","text":"The well-defined task's weights heavily favor predictability, where the workflow scores far higher (0.95 vs. 0.45) — the agent's extra flexibility and autonomy don't make up for being meaningfully less predictable, when predictability is what the task actually needs."}},{"@type":"Question","name":"Why do the workflow and the assistant end up scoring so similarly on the open-ended task?","acceptedAnswer":{"@type":"Answer","text":"Neither is built for genuine adaptability — the workflow is rigid by design, and the assistant can't drive itself through multiple steps at all — so once the task stops being well-defined, their different strengths (reliability vs. simplicity) stop mattering much."}},{"@type":"Question","name":"What's the architectural difference between a workflow and an agent, beyond just \"a workflow is simpler\"?","acceptedAnswer":{"@type":"Answer","text":"A workflow's sequence of steps is fixed by the developer in advance; an agent decides its own next step at run-time based on what's happened so far — the workflow's steps don't change based on intermediate results the way an agent's can."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Foundations of Agentic Systems</p>
+        <h1 class="doc-title">Agents vs. Assistants vs. Workflows</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cbfxxxkbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="cbfxxxkpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cbfxxxkbg)"/>
+  <circle cx="216" cy="8" r="91" fill="#dcbef5" opacity="0.54"/><circle cx="829" cy="91" r="83" fill="#f3e9fc" opacity="0.33"/><circle cx="779" cy="170" r="195" fill="#dcbef5" opacity="0.58"/><circle cx="738" cy="268" r="66" fill="#f3e9fc" opacity="0.53"/><circle cx="257" cy="347" r="114" fill="#dcbef5" opacity="0.54"/><circle cx="947" cy="170" r="209" fill="#725998" opacity="0.44"/>
+  <path d="M0,420 L0,334 L30,330 L60,327 L90,323 L120,320 L150,317 L180,314 L210,311 L240,309 L270,308 L300,306 L330,306 L360,306 L390,306 L420,307 L450,308 L480,310 L510,313 L540,315 L570,318 L600,322 L630,325 L660,328 L690,332 L720,335 L750,338 L780,341 L810,344 L840,346 L870,348 L900,349 L930,349 L960,350 L990,349 L1020,348 L1050,347 L1080,345 L1110,343 L1140,340 L1170,337 L1200,334 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,394 L60,394 L90,394 L120,393 L150,393 L180,391 L210,390 L240,388 L270,386 L300,384 L330,381 L360,379 L390,376 L420,374 L450,371 L480,369 L510,367 L540,365 L570,364 L600,363 L630,362 L660,362 L690,362 L720,363 L750,363 L780,365 L810,366 L840,368 L870,370 L900,372 L930,375 L960,377 L990,380 L1020,382 L1050,385 L1080,387 L1110,389 L1140,391 L1170,392 L1200,393 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="868" cy="209" rx="256" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-21.9 868 209)"/><ellipse cx="868" cy="209" rx="354" ry="99" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-15.9 868 209)"/>
+  <circle cx="868" cy="209" r="100" fill="url(#cbfxxxkpl)"/>
+  <circle cx="828" cy="321" r="9" fill="#ffffff" opacity="0.65"/><circle cx="978" cy="106" r="15" fill="#ffffff" opacity="0.71"/><circle cx="1008" cy="74" r="19" fill="#ffffff" opacity="0.88"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>&quot;Agent&quot; gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one. They&#39;re not the same thing, and picking the wrong one for a task costs real reliability or real flexibility, depending on which way the mismatch goes.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/from-a-single-call-to-a-loop/" data-topic="agents/from-a-single-call-to-a-loop">From a Single Call to a Loop</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What actually tells an assistant, a workflow and an agent apart?&quot; An <strong>assistant</strong> is a single-turn (or simply-turn-taking) conversational call — fast and cheap, but it can&#39;t reliably drive itself through a multi-step task. A <strong>workflow</strong> is a fixed, developer-coded sequence of calls — highly predictable for the specific steps it was built for, but it can&#39;t adapt beyond that script. An <strong>agent</strong> decides its own next step at run-time based on what&#39;s happened so far — flexible enough for open-ended tasks, at the cost of being far less predictable.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A receptionist who answers one question at a time is the assistant. A printed checklist that always runs the same five steps in the same order is the workflow — reliable, as long as the situation matches what the checklist assumed. A problem-solver who improvises a new plan based on whatever they find is the agent — adaptable, but you can&#39;t predict exactly what they&#39;ll do next.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">score(system, weights) = Σ system[dimension] × weights[dimension] / Σ weights[dimension]
+</code></pre>
+<p>Each system scored on predictability, flexibility, cost (higher = cheaper) and autonomy (ability to run without a human driving each step).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three systems, scored 0–1 on four dimensions, under two different task types:</p>
+<pre><code class="language-text">              predictability  flexibility  cost  autonomy
+assistant          0.30          0.40      0.95    0.05
+workflow           0.95          0.20      0.80    0.50
+agent              0.45          0.95      0.30    0.95
+
+well-defined, multi-step task:   workflow 0.815  &gt;  agent 0.520  &gt;  assistant 0.398
+open-ended, novel task:           agent 0.835  &gt;  workflow 0.395  ≈  assistant 0.375
+</code></pre>
+<p>For a well-defined task, the workflow wins decisively — its high predictability is worth the most when the weights favor getting the same, correct steps done reliably. For an open-ended task, the ranking flips entirely: the agent&#39;s flexibility and autonomy make it the clear winner, while the workflow (rigid) and the assistant (can&#39;t drive multiple steps at all) both struggle about equally.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="agent-vs-assistant-vs-workflow" data-title="Different tasks want different structures"><p class="bench-fallback"><strong>Interactive bench: Different tasks want different structures.</strong> Switch the task type and see which of an assistant, a workflow or an agent actually scores best.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Check the well-defined task scenario and note the workflow wins clearly.</li>
+<li>Switch to the open-ended scenario and watch the ranking flip entirely.</li>
+<li>Think of a real task you&#39;d assign to each of the three — would your intuition match these numbers?</li>
+</ol>
+<p><strong>What you should notice:</strong> the workflow and the assistant land close together on the open-ended task — neither is actually built for genuine flexibility, so the gap between &quot;rigid but reliable&quot; and &quot;simple but limited&quot; stops mattering once the task stops being well-defined.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This reuses the exact weighted-scoring mechanism already used for choosing a model</strong> (<a class="wikilink" href="/llms/choosing-a-model-for-a-task/" data-topic="llms/choosing-a-model-for-a-task">Choosing a Model for a Task</a>) <strong>and choosing between RAG, fine-tuning and long-context</strong> (<a class="wikilink" href="/rag/rag-vs-fine-tuning-vs-long-context/" data-topic="rag/rag-vs-fine-tuning-vs-long-context">RAG vs. Fine-Tuning vs. Long-Context</a>) — the same lesson (the right structure depends on the task) recurs at this level too.</li>
+<li><strong><a class="wikilink" href="/agents/workflow-patterns-before-autonomy/" data-topic="agents/workflow-patterns-before-autonomy">Workflow Patterns Before Autonomy</a> is specifically about the structured, workflow side of this choice</strong> — the patterns worth reaching for before deciding a task actually needs full agentic autonomy.</li>
+<li><strong><a class="wikilink" href="/agents/when-planning-hurts-more-than-it-helps/" data-topic="agents/when-planning-hurts-more-than-it-helps">When Planning Hurts More Than It Helps</a> covers the symmetric mistake</strong>: reaching for an agent&#39;s flexibility on a task simple enough that a workflow (or no loop at all) would have done better.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Defaulting to &quot;agent&quot; for every multi-step task.</strong> The worked example shows a workflow beats an agent decisively on a well-defined task — autonomy isn&#39;t free, and it costs predictability a well-defined task doesn&#39;t need to spend.</li>
+<li><strong>Assuming a workflow can handle a task it wasn&#39;t specifically built for.</strong> A workflow&#39;s high predictability only holds for the exact steps it was coded to run — present it with something outside that script and it has no mechanism to adapt.</li>
+<li><strong>Assuming an assistant can be turned into a workflow or agent just by asking it nicely.</strong> The distinction is architectural (does something outside the single call decide and drive the next step), not a matter of prompting the same single call harder.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the workflow score so much higher than the agent on the well-defined task, despite the agent being more capable overall?</summary>
+The well-defined task's weights heavily favor predictability, where the workflow scores far higher (0.95 vs. 0.45) — the agent's extra flexibility and autonomy don't make up for being meaningfully less predictable, when predictability is what the task actually needs.
+</details>
+
+<details><summary>2. Why do the workflow and the assistant end up scoring so similarly on the open-ended task?</summary>
+Neither is built for genuine adaptability — the workflow is rigid by design, and the assistant can't drive itself through multiple steps at all — so once the task stops being well-defined, their different strengths (reliability vs. simplicity) stop mattering much.
+</details>
+
+<details><summary>3. What's the architectural difference between a workflow and an agent, beyond just "a workflow is simpler"?</summary>
+A workflow's sequence of steps is fixed by the developer in advance; an agent decides its own next step at run-time based on what's happened so far — the workflow's steps don't change based on intermediate results the way an agent's can.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Assistant:</strong> a single-turn or simply-turn-taking conversational system with no autonomous multi-step drive.</li>
+<li><strong>Workflow:</strong> a fixed, developer-coded sequence of calls, predictable but inflexible.</li>
+<li><strong>Agent:</strong> a system that decides its own next step at run-time, flexible but less predictable.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/from-a-single-call-to-a-loop/" data-topic="agents/from-a-single-call-to-a-loop">From a Single Call to a Loop</a> · <a class="wikilink" href="/agents/workflow-patterns-before-autonomy/" data-topic="agents/workflow-patterns-before-autonomy">Workflow Patterns Before Autonomy</a> · <a class="wikilink" href="/agents/when-planning-hurts-more-than-it-helps/" data-topic="agents/when-planning-hurts-more-than-it-helps">When Planning Hurts More Than It Helps</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/agents-vs-assistants-vs-workflows">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/the-augmented-llm/"><small>Read next</small><b>The Augmented LLM</b><p>A bare model call can only ever draw on what was baked into its weights during training.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/from-a-single-call-to-a-loop/"><b>From a Single Call to a Loop</b><p>A single call to a model follows exactly one link in a chain of facts, no matter how the chain continues from there.</p></a><a class="rc-card" href="/llms/choosing-a-model-for-a-task/"><b>Choosing a Model for a Task</b><p>There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs.</p></a><a class="rc-card" href="/rag/rag-vs-fine-tuning-vs-long-context/"><b>RAG vs. Fine-Tuning vs. Long-Context</b><p>A model that doesn&#39;t know something, or doesn&#39;t behave the way you want, has more than one fix available.</p></a><a class="rc-card" href="/agents/workflow-patterns-before-autonomy/"><b>Workflow Patterns Before Autonomy</b><p>Not every multi-step task needs a fully autonomous agent deciding what to do next.</p></a><a class="rc-card" href="/agents/when-planning-hurts-more-than-it-helps/"><b>When Planning Hurts More Than It Helps</b><p>Planning ahead only pays off if the plan is still good by the time it&#39;s executed. In a stable environment that barely changes, one upfront plan beats reacting fresh at every single step.</p></a><a class="rc-card" href="/agents/foundations-of-agentic-systems/"><b>Foundations of Agentic Systems</b><p>A single call to a language model, however good, still just returns one response to one prompt.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/from-a-single-call-to-a-loop/">← Previous: From a Single Call to a Loop</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

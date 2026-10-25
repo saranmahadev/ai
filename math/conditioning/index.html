@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conditioning — AI Base</title>
+<meta name="description" content="A problem is ill-conditioned when tiny changes in its input cause huge changes in its answer, no matter how carefully you compute. The condition number measures that sensitivity.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/conditioning/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Conditioning — AI Base">
+<meta property="og:description" content="A problem is ill-conditioned when tiny changes in its input cause huge changes in its answer, no matter how carefully you compute. The condition number measures that sensitivity.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/conditioning/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Conditioning","item":"https://ai.saranmahadev.in/math/conditioning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Conditioning","description":"A problem is ill-conditioned when tiny changes in its input cause huge changes in its answer, no matter how carefully you compute. The condition number measures that sensitivity.","url":"https://ai.saranmahadev.in/math/conditioning/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the condition number of the identity matrix?","acceptedAnswer":{"@type":"Answer","text":"1."}},{"@type":"Question","name":"If κ = 10⁶ and inputs have relative error 10⁻⁸, what is the worst relative error in the answer?","acceptedAnswer":{"@type":"Answer","text":"About 10⁻²."}},{"@type":"Question","name":"Does a better algorithm fix an ill-conditioned problem?","acceptedAnswer":{"@type":"Answer","text":"No; it can only avoid making things worse."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Numerical Computing</p>
+        <h1 class="doc-title">Conditioning</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c145jub6bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c145jub6pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c145jub6bg)"/>
+  <circle cx="40" cy="380" r="88" fill="#ddbecb" opacity="0.42"/><circle cx="537" cy="49" r="197" fill="#ddbecb" opacity="0.40"/><circle cx="188" cy="286" r="106" fill="#68599a" opacity="0.48"/><circle cx="382" cy="174" r="134" fill="#68599a" opacity="0.34"/><circle cx="681" cy="155" r="77" fill="#cebff9" opacity="0.47"/><circle cx="230" cy="262" r="105" fill="#eee9fd" opacity="0.53"/>
+  <path d="M0,420 L0,347 L30,344 L60,340 L90,336 L120,331 L150,325 L180,320 L210,316 L240,312 L270,309 L300,307 L330,306 L360,306 L390,307 L420,310 L450,314 L480,318 L510,323 L540,328 L570,333 L600,338 L630,342 L660,346 L690,348 L720,349 L750,349 L780,348 L810,346 L840,343 L870,339 L900,334 L930,329 L960,324 L990,319 L1020,314 L1050,311 L1080,308 L1110,306 L1140,306 L1170,306 L1200,308 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,393 L30,391 L60,387 L90,383 L120,378 L150,373 L180,368 L210,365 L240,363 L270,362 L300,363 L330,365 L360,369 L390,373 L420,378 L450,383 L480,388 L510,391 L540,393 L570,394 L600,393 L630,391 L660,387 L690,383 L720,378 L750,373 L780,368 L810,365 L840,363 L870,362 L900,363 L930,365 L960,369 L990,373 L1020,378 L1050,383 L1080,388 L1110,391 L1140,393 L1170,394 L1200,393 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="855" cy="249" rx="238" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-23.1 855 249)"/><ellipse cx="855" cy="249" rx="329" ry="92" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-17.1 855 249)"/>
+  <circle cx="855" cy="249" r="93" fill="url(#c145jub6pl)"/>
+  <circle cx="1195" cy="238" r="14" fill="#ffffff" opacity="0.64"/><circle cx="893" cy="111" r="18" fill="#ffffff" opacity="0.81"/><circle cx="824" cy="363" r="15" fill="#ffffff" opacity="0.74"/><circle cx="522" cy="180" r="12" fill="#ffffff" opacity="0.89"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A problem is <strong>ill-conditioned</strong> when tiny changes in its input cause huge changes in its answer, no matter how carefully you compute. The <strong>condition number</strong> measures that sensitivity. It is a property of the problem, not the algorithm, and it explains why some linear systems and some optimisation landscapes are hard.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/solving-linear-systems/" data-topic="math/solving-linear-systems">Solving Linear Systems</a>, <a class="wikilink" href="/math/eigenvalues-and-eigenvectors/" data-topic="math/eigenvalues-and-eigenvectors">Eigenvalues and Eigenvectors</a> and <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If my data is slightly noisy or rounded, how wrong can the answer be?&quot; For a well-conditioned problem, not much. For an ill-conditioned one, wildly.</p>
+<h2 id="intuition-two-lines-that-are-almost-parallel">Intuition: two lines that are almost parallel</h2>
+<p>Two lines that cross at a good angle meet at a point that barely moves if you nudge one line. Two almost-parallel lines meet far away, and a tiny nudge slides the meeting point a long way. Nearly dependent equations behave the same way.</p>
+<h2 id="the-condition-number">The condition number</h2>
+<p>For a matrix <code>A</code> (symmetric, for simplicity), the condition number is the ratio of its largest to smallest eigenvalue magnitude (in general, of largest to smallest singular value):</p>
+<pre><code class="language-text">κ(A) = λ_max / λ_min      relative error in the answer can be up to κ times the relative error in the input
+</code></pre>
+<p><code>κ = 1</code> is perfect (like a rotation). A large <code>κ</code> means the matrix squashes some direction almost flat, so inverting it amplifies noise in that direction. A singular matrix has <code>κ = ∞</code>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Solve <code>x + y = 2</code> and <code>x + 1.0001 y = 2.0001</code>:</p>
+<pre><code class="language-text">A = [1  1     ]     b = [2     ]     →   x = 1,  y = 1
+    [1  1.0001]         [2.0001]
+</code></pre>
+<p>Now change the right-hand side by a hair, <code>2.0001 → 2.0002</code> (a change of 0.005%):</p>
+<pre><code class="language-text">0.0001 y = 0.0002    →   y = 2,   x = 0
+</code></pre>
+<p>The answer moved from <code>(1, 1)</code> to <code>(0, 2)</code>: a 0.005% input change produced a 100% change in the solution. The eigenvalues of <code>A</code> are about <code>2.00005</code> and <code>0.00005</code>, so <code>κ ≈ 40,002</code>, enough to magnify relative errors by up to about forty thousand times, and, on top of rounding in float32 (relative error <code>10⁻⁷</code>), it leaves only about three reliable digits.</p>
+<p>The same idea describes optimisation: a loss landscape with very different curvatures in different directions (large <code>κ</code> of the Hessian) is a long narrow valley where gradient descent zig-zags (see <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a>).</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="near-singular" data-title="Two almost-parallel lines"><p class="bench-fallback"><strong>Interactive bench: Two almost-parallel lines.</strong> A slider sets how close to parallel two lines are and another nudges one of them; the bench draws both intersection points, shows the condition number, and how far the solution moves for a tiny nudge.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Make the lines cross at a good angle and nudge one: how far does the crossing move?</li>
+<li>Make them nearly parallel and nudge again.</li>
+<li>Watch the condition number as the lines approach parallel.</li>
+<li>Compare the size of the nudge with the size of the shift.</li>
+</ol>
+<p><strong>What you should notice:</strong> the nearer to parallel, the larger the condition number and the farther a tiny nudge throws the solution.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Linear regression with correlated features</strong> is ill-conditioned; regularisation (ridge) improves the conditioning.</li>
+<li><strong>Slow optimisation</strong> in narrow valleys.</li>
+<li><strong>Normal equations</strong> square the condition number, which is why stable solvers avoid them.</li>
+<li><strong>Feature scaling</strong> improves conditioning.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Blaming the algorithm</strong> for what is really the problem&#39;s sensitivity.</li>
+<li><strong>Forming <code>AᵀA</code>,</strong> which squares the condition number.</li>
+<li><strong>Trusting a solution</strong> when <code>κ</code> is comparable to <code>1 / (machine epsilon)</code>.</li>
+<li><strong>Ignoring redundant, highly correlated features.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the condition number of the identity matrix?</summary>
+1.
+</details>
+
+<details><summary>2. If κ = 10⁶ and inputs have relative error 10⁻⁸, what is the worst relative error in the answer?</summary>
+About 10⁻².
+</details>
+
+<details><summary>3. Does a better algorithm fix an ill-conditioned problem?</summary>
+No; it can only avoid making things worse.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Condition number (κ):</strong> the ratio of largest to smallest stretch of a matrix.</li>
+<li><strong>Ill-conditioned:</strong> very sensitive to small changes.</li>
+<li><strong>Singular:</strong> having infinite condition number (no inverse).</li>
+<li><strong>Regularisation:</strong> modifying a problem to improve its conditioning.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/solving-linear-systems/" data-topic="math/solving-linear-systems">Solving Linear Systems</a> · <a class="wikilink" href="/math/eigenvalues-and-eigenvectors/" data-topic="math/eigenvalues-and-eigenvectors">Eigenvalues and Eigenvectors</a> · <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a> · <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a> · <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/conditioning">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/random-numbers-and-seeds/"><small>Read next</small><b>Random Numbers and Seeds</b><p>Computers cannot produce true randomness by calculation, so they use pseudo-random number generators: deterministic recipes that produce sequences that look random. The seed is the starting value.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/solving-linear-systems/"><b>Solving Linear Systems</b><p>A linear system is several linear equations that must all hold at once, such as x + y = 5 and x − y = 1.</p></a><a class="rc-card" href="/math/eigenvalues-and-eigenvectors/"><b>Eigenvalues and Eigenvectors</b><p>An eigenvector of a matrix is a direction that the matrix only stretches, without turning: A v = λ v. The stretch factor λ is its eigenvalue.</p></a><a class="rc-card" href="/math/floating-point/"><b>Floating Point</b><p>Computers store real numbers in floating point: a fixed number of significant binary digits and an exponent.</p></a><a class="rc-card" href="/math/learning-rate/"><b>Learning Rate</b><p>The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.</p></a><a class="rc-card" href="/math/regularization-as-a-constraint/"><b>Regularization as a Constraint</b><p>Regularization keeps a model from fitting noise by discouraging large weights: add a penalty such as λ‖w‖² to the loss.</p></a><a class="rc-card" href="/math/transpose-identity-and-inverse/"><b>Transpose, Identity and Inverse</b><p>Three special matrix ideas come up constantly: the transpose (flip rows and columns), the identity (the matrix that does nothing) and the inverse (the matrix that undoes another).</p></a></div></section>
+        <p class="doc-prev"><a href="/math/numerical-stability/">← Previous: Numerical Stability</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

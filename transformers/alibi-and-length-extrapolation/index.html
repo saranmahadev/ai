@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALiBi and Length Extrapolation — AI Base</title>
+<meta name="description" content="RoPE builds relative position into attention through rotation.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/alibi-and-length-extrapolation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="ALiBi and Length Extrapolation — AI Base">
+<meta property="og:description" content="RoPE builds relative position into attention through rotation.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/alibi-and-length-extrapolation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"ALiBi and Length Extrapolation","item":"https://ai.saranmahadev.in/transformers/alibi-and-length-extrapolation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"ALiBi and Length Extrapolation","description":"RoPE builds relative position into attention through rotation.","url":"https://ai.saranmahadev.in/transformers/alibi-and-length-extrapolation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does ALiBi add to a transformer's queries, keys or embeddings?","acceptedAnswer":{"@type":"Answer","text":"Nothing — ALiBi only modifies attention scores directly, by subtracting a distance-proportional bias before the softmax."}},{"@type":"Question","name":"In the worked example, why did the steep-slope head's bias grow so much faster than the shallow-slope head's?","acceptedAnswer":{"@type":"Answer","text":"Because the bias is the slope multiplied by the distance, and a larger slope value scales that penalty up much more steeply as distance increases."}},{"@type":"Question","name":"Why does ALiBi handle sequences longer than anything seen in training, unlike a learned positional table?","acceptedAnswer":{"@type":"Answer","text":"Its bias is a simple formula (slope times distance) defined for any distance at all, with no maximum length built in — unlike a learned table, which has no entry past its trained size."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Positional Information Beyond Sinusoids</p>
+        <h1 class="doc-title">ALiBi and Length Extrapolation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1a1bp7jbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c1a1bp7jpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1a1bp7jbg)"/>
+  <circle cx="519" cy="399" r="223" fill="#abd0ff" opacity="0.36"/><circle cx="806" cy="200" r="88" fill="#4f669f" opacity="0.34"/><circle cx="865" cy="195" r="91" fill="#abd0ff" opacity="0.59"/><circle cx="244" cy="206" r="90" fill="#4f669f" opacity="0.47"/><circle cx="1124" cy="3" r="79" fill="#c5cacf" opacity="0.28"/><circle cx="870" cy="334" r="208" fill="#e2efff" opacity="0.59"/><circle cx="1133" cy="309" r="133" fill="#abd0ff" opacity="0.25"/>
+  <path d="M0,420 L0,307 L30,309 L60,311 L90,313 L120,316 L150,319 L180,323 L210,326 L240,329 L270,333 L300,336 L330,339 L360,342 L390,344 L420,346 L450,348 L480,349 L510,350 L540,350 L570,349 L600,348 L630,346 L660,344 L690,342 L720,339 L750,336 L780,333 L810,329 L840,326 L870,322 L900,319 L930,316 L960,313 L990,311 L1020,309 L1050,307 L1080,306 L1110,306 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,367 L30,369 L60,372 L90,374 L120,377 L150,379 L180,382 L210,384 L240,386 L270,388 L300,390 L330,392 L360,393 L390,394 L420,394 L450,394 L480,394 L510,393 L540,392 L570,390 L600,389 L630,387 L660,384 L690,382 L720,379 L750,377 L780,374 L810,372 L840,370 L870,368 L900,366 L930,364 L960,363 L990,362 L1020,362 L1050,362 L1080,362 L1110,363 L1140,364 L1170,366 L1200,367 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="946" cy="270" rx="263" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-23.9 946 270)"/><ellipse cx="946" cy="270" rx="364" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-17.9 946 270)"/>
+  <circle cx="946" cy="270" r="103" fill="url(#c1a1bp7jpl)"/>
+  <circle cx="689" cy="357" r="13" fill="#ffffff" opacity="0.64"/><circle cx="656" cy="389" r="13" fill="#ffffff" opacity="0.73"/><circle cx="742" cy="353" r="16" fill="#ffffff" opacity="0.77"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">RoPE</a> builds relative position into attention through rotation. ALiBi (Attention with Linear Biases) takes an even more direct route to a related goal: skip rotating anything, and just subtract a penalty from each attention score, proportional to how far apart the two tokens are.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">Relative Position and RoPE</a>, <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can a model trained only on short sequences still behave sensibly on much longer ones it never saw during training?&quot; <a class="wikilink" href="/transformers/learned-positional-embeddings/" data-topic="transformers/learned-positional-embeddings">A learned positional table</a> clearly cannot — there&#39;s no row for a position past its trained maximum. ALiBi&#39;s answer is to make distance penalization the <em>entire</em> mechanism: subtract a bias proportional to distance directly from each attention score, with a different penalty steepness (slope) per head. Because that formula is defined for any distance at all, it keeps producing sensible, well-behaved scores far past any sequence length seen during training — this is <strong>length extrapolation</strong>.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Instead of telling a token &quot;you are at position 47,&quot; or rotating vectors to encode distance mathematically, ALiBi takes the plainest possible approach: just make attention scores naturally prefer nearby tokens, by subtracting more from the score the farther away a token is. Different attention heads use different penalty steepnesses — some heads have a steep penalty and effectively only look at very nearby tokens, while others have a shallow penalty and can still attend fairly broadly. Because &quot;subtract a number proportional to distance&quot; works identically whether the distance is 5 or 5,000, nothing about the mechanism breaks down on sequences far longer than training ever included.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">bias(query_pos, key_pos) = −slope × |query_pos − key_pos|
+masked score = raw attention score + bias       (added before the softmax)
+
+slopes for h heads: slope_i = 2^(−8(i+1)/h),  for i = 0, …, h−1
+</code></pre>
+<p>Each head gets its own fixed, never-trained slope, geometrically spaced from steep (heavily penalizing distance) to shallow (barely penalizing it).</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Eight attention heads&#39; slopes, following the standard geometric spacing:</p>
+<pre><code class="language-text">slopes: 0.500, 0.250, 0.125, 0.0625, 0.0313, 0.0156, 0.00781, 0.00391
+</code></pre>
+<p>The bias applied at a few distances, for the steepest head (slope 0.5) and the shallowest (slope 0.00391):</p>
+<pre><code class="language-text">distance   steep-head bias   shallow-head bias
+   1            −0.500            −0.0039
+   5            −2.500            −0.0195
+  20           −10.000            −0.0781
+ 100           −50.000            −0.3906
+</code></pre>
+<p>The steep head&#39;s penalty grows harsh very quickly — by distance 20, it&#39;s already subtracting 10 points from the raw score, likely pushing that position&#39;s attention weight toward zero after the softmax. The shallow head&#39;s penalty barely registers even at distance 100. Crucially, this same formula computes a sensible bias at distance 2,000, or 20,000, exactly as easily as at distance 5 — there is no &quot;table&quot; to run out of, and no retraining needed to handle a longer sequence than the model ever saw.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="alibi-slopes" data-title="A distance penalty, different per head"><p class="bench-fallback"><strong>Interactive bench: A distance penalty, different per head.</strong> Compare the ALiBi bias at a chosen distance across several attention heads with different slopes, and see how the penalty scales to very long distances.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Compare the bias at a short distance across heads with steep and shallow slopes.</li>
+<li>Push the distance far beyond anything a model would realistically train on and confirm the bias still computes a sensible number.</li>
+<li>Compare how quickly a steep-slope head&#39;s bias grows versus a shallow-slope head&#39;s.</li>
+</ol>
+<p><strong>What you should notice:</strong> the bias formula never runs out of range — unlike a learned positional table, there is no maximum distance beyond which it stops being defined.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is specifically designed for length extrapolation</strong> — running a trained model on sequences longer than anything in its training data, a real, practical need for long-document and long-context use cases.</li>
+<li><strong>It removes positional information from the vectors entirely</strong>, unlike every other scheme on this planet — ALiBi adds nothing to queries, keys or embeddings; it only modifies the attention scores directly, alongside the masks from <a class="wikilink" href="/transformers/attention-masks-padding-and-causal-masking/" data-topic="transformers/attention-masks-padding-and-causal-masking">Attention Masks: Padding and Causal Masking</a>.</li>
+<li><strong>The different slopes across heads give the model a built-in range of &quot;attention spans&quot;</strong> for free, without any slope ever being trained — a structural choice baked into the architecture rather than learned.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing ALiBi&#39;s bias with a mask.</strong> A mask sets a score to negative infinity (fully blocking a position); ALiBi&#39;s bias is a graded, finite penalty that reduces — but doesn&#39;t necessarily eliminate — attention to a distant position.</li>
+<li><strong>Assuming the slopes are trained.</strong> They are fixed by the geometric formula before training ever starts, the same for every model using this scheme at a given head count.</li>
+<li><strong>Expecting arbitrary extrapolation with zero cost.</strong> Length extrapolation under ALiBi is dramatically better than under a fixed-table scheme, but extremely long distances still eventually push attention weights toward negligible, which is in fact the intended, graceful behaviour.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What does ALiBi add to a transformer's queries, keys or embeddings?</summary>
+Nothing — ALiBi only modifies attention scores directly, by subtracting a distance-proportional bias before the softmax.
+</details>
+
+<details><summary>2. In the worked example, why did the steep-slope head's bias grow so much faster than the shallow-slope head's?</summary>
+Because the bias is the slope multiplied by the distance, and a larger slope value scales that penalty up much more steeply as distance increases.
+</details>
+
+<details><summary>3. Why does ALiBi handle sequences longer than anything seen in training, unlike a learned positional table?</summary>
+Its bias is a simple formula (slope times distance) defined for any distance at all, with no maximum length built in — unlike a learned table, which has no entry past its trained size.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Length extrapolation:</strong> a model&#39;s ability to behave sensibly on sequences longer than anything seen during training.</li>
+<li><strong>Slope:</strong> a fixed, per-head constant controlling how steeply ALiBi&#39;s bias penalizes distance.</li>
+<li><strong>Linear bias:</strong> a penalty that grows proportionally with distance, subtracted directly from an attention score.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">Relative Position and RoPE</a> · <a class="wikilink" href="/transformers/learned-positional-embeddings/" data-topic="transformers/learned-positional-embeddings">Learned Positional Embeddings</a> · <a class="wikilink" href="/transformers/attention-masks-padding-and-causal-masking/" data-topic="transformers/attention-masks-padding-and-causal-masking">Attention Masks: Padding and Causal Masking</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/alibi-and-length-extrapolation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/architectural-families/"><small>Read next</small><b>Architectural Families</b><p>The same transformer block supports three very different overall shapes, depending on which direction information is allowed to flow.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/relative-position-and-rope/"><b>Relative Position and RoPE</b><p>Both the sinusoidal encoding and learned positional embeddings tell a token its absolute position — &quot;you are token number 7.&quot; Rotary position embedding (RoPE) asks a different question: instead of…</p></a><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/transformers/learned-positional-embeddings/"><b>Learned Positional Embeddings</b><p>The sinusoidal encoding from Deep Learning computes a position&#39;s vector from a fixed formula — nothing about it is trained.</p></a><a class="rc-card" href="/transformers/attention-masks-padding-and-causal-masking/"><b>Attention Masks: Padding and Causal Masking</b><p>Plain attention lets every position look at every other position.</p></a><a class="rc-card" href="/transformers/positional-information-beyond-sinusoids/"><b>Positional Information Beyond Sinusoids</b><p>The fixed sinusoidal encoding from Deep Learning was the original transformer&#39;s answer to &quot;where is this token in the sequence?&quot; — but it was never the only answer, and modern models mostly use…</p></a><a class="rc-card" href="/transformers/graph-transformers/"><b>Graph Transformers</b><p>A graph neural network restricts every node to messages from its direct neighbours, layer after layer.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/relative-position-and-rope/">← Previous: Relative Position and RoPE</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

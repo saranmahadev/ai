@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logic and Knowledge Representation — AI Base</title>
+<meta name="description" content="Classic AI stored what it knew as facts and rules, and used inference to work out new facts from them. Writing knowledge in a form a machine can reason with is called knowledge representation.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/logic-and-knowledge-representation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Logic and Knowledge Representation — AI Base">
+<meta property="og:description" content="Classic AI stored what it knew as facts and rules, and used inference to work out new facts from them. Writing knowledge in a form a machine can reason with is called knowledge representation.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/logic-and-knowledge-representation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Logic and Knowledge Representation","item":"https://ai.saranmahadev.in/fundamentals/logic-and-knowledge-representation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Logic and Knowledge Representation","description":"Classic AI stored what it knew as facts and rules, and used inference to work out new facts from them. Writing knowledge in a form a machine can reason with is called knowledge representation.","url":"https://ai.saranmahadev.in/fundamentals/logic-and-knowledge-representation/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"From parent(Ann, Bo) and parent(Bo, Cy), what does the grandparent rule conclude?","acceptedAnswer":{"@type":"Answer","text":"grandparent(Ann, Cy)."}},{"@type":"Question","name":"What is forward chaining?","acceptedAnswer":{"@type":"Answer","text":"Repeatedly applying rules to known facts, adding the conclusions, until nothing new can be derived."}},{"@type":"Question","name":"Why can a rule-based system explain its answers?","acceptedAnswer":{"@type":"Answer","text":"Each derived fact traces back to the specific facts and rule that produced it."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · Classic AI</p>
+        <h1 class="doc-title">Logic and Knowledge Representation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c13q5tdpbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="c13q5tdppl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c13q5tdpbg)"/>
+  <circle cx="30" cy="64" r="88" fill="#a8e2d7" opacity="0.28"/><circle cx="1074" cy="137" r="123" fill="#4e7283" opacity="0.23"/><circle cx="842" cy="239" r="149" fill="#e2f5f1" opacity="0.45"/><circle cx="170" cy="173" r="184" fill="#e2f5f1" opacity="0.28"/><circle cx="254" cy="168" r="126" fill="#e2f5f1" opacity="0.47"/><circle cx="25" cy="7" r="86" fill="#a8e2d7" opacity="0.25"/>
+  <path d="M0,420 L0,317 L30,313 L60,310 L90,307 L120,306 L150,306 L180,307 L210,309 L240,312 L270,316 L300,321 L330,326 L360,331 L390,336 L420,341 L450,345 L480,347 L510,349 L540,350 L570,349 L600,347 L630,344 L660,340 L690,336 L720,331 L750,325 L780,320 L810,316 L840,312 L870,309 L900,307 L930,306 L960,306 L990,307 L1020,310 L1050,314 L1080,318 L1110,323 L1140,328 L1170,333 L1200,338 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,383 L30,385 L60,387 L90,389 L120,391 L150,392 L180,393 L210,394 L240,394 L270,394 L300,393 L330,392 L360,391 L390,389 L420,388 L450,385 L480,383 L510,381 L540,378 L570,376 L600,373 L630,371 L660,369 L690,367 L720,365 L750,364 L780,363 L810,362 L840,362 L870,362 L900,363 L930,364 L960,365 L990,367 L1020,368 L1050,371 L1080,373 L1110,375 L1140,378 L1170,380 L1200,383 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="843" cy="145" rx="207" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-24.7 843 145)"/><ellipse cx="843" cy="145" rx="286" ry="80" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-18.7 843 145)"/>
+  <circle cx="843" cy="145" r="81" fill="url(#c13q5tdppl)"/>
+  <circle cx="505" cy="161" r="15" fill="#ffffff" opacity="0.64"/><circle cx="796" cy="67" r="10" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Classic AI stored what it knew as <strong>facts</strong> and <strong>rules</strong>, and used <strong>inference</strong> to work out new facts from them. Writing knowledge in a form a machine can reason with is called <strong>knowledge representation</strong>. It gives exact, explainable answers, as long as every fact and rule was written down by someone.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/state-and-representation/" data-topic="fundamentals/state-and-representation">State and Representation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>If a machine is told a few things about the world, how can it work out things it was never told?</p>
+<h2 id="intuition-reasoning-by-chaining">Intuition: reasoning by chaining</h2>
+<p>Suppose you know two things: &quot;Asha is Bala&#39;s parent&quot; and &quot;Bala is Dev&#39;s parent&quot;. You can conclude &quot;Asha is Dev&#39;s grandparent&quot; without anyone saying so. You applied a <strong>rule</strong>: <em>if X is Y&#39;s parent and Y is Z&#39;s parent, then X is Z&#39;s grandparent.</em></p>
+<p>A logic-based system does the same in a fixed, checkable way:</p>
+<ul>
+<li><strong>Facts</strong> are statements taken to be true: <code>parent(Asha, Bala)</code>.</li>
+<li><strong>Rules</strong> say what follows from what: <code>grandparent(X, Z)</code> if <code>parent(X, Y)</code> and <code>parent(Y, Z)</code>.</li>
+<li><strong>Inference</strong> applies the rules to the facts and adds the conclusions to the knowledge base.</li>
+</ul>
+<p>The simplest kind of step is <em>modus ponens</em>: from &quot;A is true&quot; and &quot;if A then B&quot;, conclude &quot;B&quot;.</p>
+<h2 id="forward-chaining">Forward chaining</h2>
+<p>One way to reason is <strong>forward chaining</strong>: keep applying every rule to the known facts, add whatever new facts result, and repeat until nothing new appears. Each derived fact can point to exactly the facts and rule that produced it, which is why classic systems can <strong>explain</strong> their conclusions.</p>
+<h2 id="facts-as-a-graph">Facts as a graph</h2>
+<p>Facts often take the form <em>thing – relation – thing</em>. Drawn as a network they become a <strong>knowledge graph</strong>:</p>
+<pre><code class="language-text">Dev → works_at → Company
+Company → located_in → India
+India → part_of → Asia
+</code></pre>
+<p>Knowledge graphs still power many search and question-answering systems. The grouping of things into categories (a &quot;car&quot; is a &quot;vehicle&quot;) is called an <strong>ontology</strong>.</p>
+<h2 id="a-worked-example-a-family">A worked example: a family</h2>
+<p>Start with four facts: <code>parent(Asha, Bala)</code>, <code>parent(Asha, Chitra)</code>, <code>parent(Bala, Dev)</code>, <code>parent(Chitra, Esha)</code>. Switch on all four rules on the bench and run inference until nothing new appears:</p>
+<table>
+<thead>
+<tr>
+<th>Round</th>
+<th>New facts</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><code>grandparent(Asha, Dev)</code> and <code>grandparent(Asha, Esha)</code></td>
+<td>the grandparent rule</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>sibling(Bala, Chitra)</code> and <code>sibling(Chitra, Bala)</code></td>
+<td>both children of Asha</td>
+</tr>
+<tr>
+<td>1</td>
+<td>four <code>ancestor</code> facts, one per <code>parent</code> fact</td>
+<td>ancestor rule 1</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>ancestor(Asha, Dev)</code> and <code>ancestor(Asha, Esha)</code></td>
+<td>ancestor rule 2, building on round 1</td>
+</tr>
+</tbody></table>
+<p>Four given facts produced ten derived ones. The last two needed an earlier round to finish first, which is what &quot;chaining&quot; means.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="rule-engine" data-title="Facts, rules and inference"><p class="bench-fallback"><strong>Interactive bench: Facts, rules and inference.</strong> Four facts about parents and four switchable rules. Running inference derives new facts such as grandparent, sibling and ancestor, and each one lists the facts it follows from. You can add new facts.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With only the grandparent rule on, run one round. Which facts appear?</li>
+<li>Switch on all four rules and press <strong>Run until nothing new</strong>. How many rounds did it take, and why was more than one needed?</li>
+<li>Add the fact <code>parent(Dev, Farid)</code> and run again. What new conclusions appear, and which rule produced each one?</li>
+<li>Switch every rule off and run inference. What happens?</li>
+</ol>
+<p><strong>What you should notice:</strong> the system knows <em>nothing</em> that its facts and rules do not imply, and everything it derives comes with a reason. It never guesses.</p>
+<h2 id="strengths-and-limits">Strengths and limits</h2>
+<table>
+<thead>
+<tr>
+<th>Strength</th>
+<th>Limit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Exact and explainable</td>
+<td>Every fact and rule must be written by a person</td>
+</tr>
+<tr>
+<td>Conclusions are guaranteed if the knowledge is right</td>
+<td>One wrong or missing rule can break a chain</td>
+</tr>
+<tr>
+<td>No training data needed</td>
+<td>Struggles with vagueness (&quot;about&quot;, &quot;usually&quot;)</td>
+</tr>
+<tr>
+<td>Easy to audit</td>
+<td>The real world has too many exceptions to list</td>
+</tr>
+</tbody></table>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<p>Facts, rules and knowledge graphs remain in use in search, databases and business rules. The modern alternative is to represent things as learned numbers, <strong>embeddings</strong>, that capture meaning without hand-written rules (see <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a> and <a class="wikilink" href="/llms/llms/" data-topic="llms/llms">LLMs</a>). Some current systems combine the two: a learned model proposes, and a rule or knowledge graph checks.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating the knowledge base as complete.</strong> If a fact is missing, the system cannot tell &quot;false&quot; from &quot;unknown&quot;.</li>
+<li><strong>Rules that clash.</strong> Two rules can lead to opposite conclusions.</li>
+<li><strong>Expecting common sense.</strong> The system knows only what was written.</li>
+<li><strong>Confusing logic with truth.</strong> A valid chain from a wrong fact gives a wrong conclusion.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. From parent(Ann, Bo) and parent(Bo, Cy), what does the grandparent rule conclude?</summary>
+grandparent(Ann, Cy).
+</details>
+
+<details><summary>2. What is forward chaining?</summary>
+Repeatedly applying rules to known facts, adding the conclusions, until nothing new can be derived.
+</details>
+
+<details><summary>3. Why can a rule-based system explain its answers?</summary>
+Each derived fact traces back to the specific facts and rule that produced it.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Fact:</strong> a statement taken to be true.</li>
+<li><strong>Rule:</strong> an if-then statement saying what follows from what.</li>
+<li><strong>Inference:</strong> deriving new facts from known facts and rules.</li>
+<li><strong>Forward chaining:</strong> applying rules repeatedly to known facts until nothing new appears.</li>
+<li><strong>Knowledge graph:</strong> facts stored as things linked by relations.</li>
+<li><strong>Ontology:</strong> a structured description of categories and how they relate.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/state-and-representation/" data-topic="fundamentals/state-and-representation">State and Representation</a> · <a class="wikilink" href="/fundamentals/planning/" data-topic="fundamentals/planning">Planning</a> · <a class="wikilink" href="/fundamentals/expert-systems-and-their-limits/" data-topic="fundamentals/expert-systems-and-their-limits">Expert Systems and Their Limits</a> · <a class="wikilink" href="/fundamentals/rules-vs-learning/" data-topic="fundamentals/rules-vs-learning">Rules vs Learning</a> · <a class="wikilink" href="/math/dot-product/" data-topic="math/dot-product">Dot Product</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/logic-and-knowledge-representation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/planning/"><small>Read next</small><b>Planning</b><p>Planning is finding a sequence of actions that turns the current situation into a goal.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/state-and-representation/"><b>State and Representation</b><p>The state is the agent&#39;s summary of the situation: everything it needs to know to choose a good action, and nothing more.</p></a><a class="rc-card" href="/math/dot-product/"><b>Dot Product</b><p>The dot product multiplies two vectors into one number by multiplying matching components and adding: a · b = a₁b₁ + a₂b₂ + ….</p></a><a class="rc-card" href="/llms/llms/"><b>LLMs</b><p>A large language model is, mechanically, nothing more than the decoder-only transformer and the decoding, conditioning and evaluation machinery already covered on Transformers and Generative AI.</p></a><a class="rc-card" href="/fundamentals/planning/"><b>Planning</b><p>Planning is finding a sequence of actions that turns the current situation into a goal.</p></a><a class="rc-card" href="/fundamentals/expert-systems-and-their-limits/"><b>Expert Systems and Their Limits</b><p>An expert system captures the knowledge of human specialists as a set of if-then rules and applies them with an inference engine. In the 1980s they powered a commercial AI boom.</p></a><a class="rc-card" href="/fundamentals/rules-vs-learning/"><b>Rules vs Learning</b><p>There are two ways to make a machine behave well: write the rules by hand, or show it examples and let it work the rules out. Hand-written rules are clear but brittle.</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/heuristics-and-a-star-search/">← Previous: Heuristics and A-star Search</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

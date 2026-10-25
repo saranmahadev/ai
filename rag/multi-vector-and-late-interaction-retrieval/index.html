@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Vector and Late-Interaction Retrieval — AI Base</title>
+<meta name="description" content="Pooling every token of a document into one vector means a single, strong, exact match can get diluted by everything else in the document — the more unrelated text surrounds it, the weaker its…">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/multi-vector-and-late-interaction-retrieval/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Multi-Vector and Late-Interaction Retrieval — AI Base">
+<meta property="og:description" content="Pooling every token of a document into one vector means a single, strong, exact match can get diluted by everything else in the document — the more unrelated text surrounds it, the weaker its…">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/multi-vector-and-late-interaction-retrieval/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Multi-Vector and Late-Interaction Retrieval","item":"https://ai.saranmahadev.in/rag/multi-vector-and-late-interaction-retrieval/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Multi-Vector and Late-Interaction Retrieval","description":"Pooling every token of a document into one vector means a single, strong, exact match can get diluted by everything else in the document — the more unrelated text surrounds it, the weaker its…","url":"https://ai.saranmahadev.in/rag/multi-vector-and-late-interaction-retrieval/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the pooled single-vector score drop as unrelated tokens are added, while MaxSim doesn't drop the same way?","acceptedAnswer":{"@type":"Answer","text":"Pooling averages every token's vector together, so more unrelated tokens dilute the one strong match's contribution to the average; MaxSim only ever takes each query token's single best match, which stays just as strong regardless of how many weaker tokens are also present."}},{"@type":"Question","name":"Can multi-vector document representations still be precomputed ahead of a query, like a bi-encoder's?","acceptedAnswer":{"@type":"Answer","text":"Yes — each document's token vectors are produced independently of any future query, so they can be computed once and stored, the same precomputation advantage a bi-encoder has."}},{"@type":"Question","name":"What's the main cost of multi-vector retrieval compared to a single pooled vector per document?","acceptedAnswer":{"@type":"Answer","text":"Storing and searching many vectors per document instead of one, which increases both memory use and the complexity of the index needed to search them efficiently."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · Embeddings for Retrieval</p>
+        <h1 class="doc-title">Multi-Vector and Late-Interaction Retrieval</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1e6touwbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1e6touwpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1e6touwbg)"/>
+  <circle cx="447" cy="183" r="225" fill="#42718e" opacity="0.29"/><circle cx="1079" cy="411" r="116" fill="#b7d5be" opacity="0.28"/><circle cx="1034" cy="166" r="76" fill="#b7d5be" opacity="0.39"/><circle cx="952" cy="311" r="96" fill="#dcf5f7" opacity="0.57"/><circle cx="410" cy="87" r="147" fill="#97e1e6" opacity="0.43"/>
+  <path d="M0,420 L0,342 L30,338 L60,333 L90,328 L120,323 L150,318 L180,314 L210,310 L240,308 L270,306 L300,306 L330,306 L360,309 L390,312 L420,316 L450,320 L480,325 L510,330 L540,335 L570,340 L600,344 L630,347 L660,349 L690,350 L720,349 L750,347 L780,345 L810,341 L840,337 L870,332 L900,326 L930,321 L960,317 L990,312 L1020,309 L1050,307 L1080,306 L1110,306 L1140,307 L1170,309 L1200,313 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,392 L30,391 L60,388 L90,385 L120,381 L150,377 L180,374 L210,370 L240,367 L270,365 L300,363 L330,362 L360,362 L390,363 L420,365 L450,367 L480,370 L510,374 L540,377 L570,381 L600,385 L630,388 L660,391 L690,393 L720,394 L750,394 L780,393 L810,392 L840,390 L870,387 L900,383 L930,380 L960,376 L990,372 L1020,369 L1050,366 L1080,364 L1110,363 L1140,362 L1170,362 L1200,364 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="811" cy="147" rx="263" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(24.0 811 147)"/><ellipse cx="811" cy="147" rx="363" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(30.0 811 147)"/>
+  <circle cx="811" cy="147" r="103" fill="url(#c1e6touwpl)"/>
+  <circle cx="1099" cy="140" r="15" fill="#ffffff" opacity="0.68"/><circle cx="530" cy="123" r="16" fill="#ffffff" opacity="0.73"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Pooling every token of a document into one vector means a single, strong, exact match can get diluted by everything else in the document — the more unrelated text surrounds it, the weaker its signal looks in the average. Late-interaction retrieval skips the pooling: it keeps one vector per token, and lets the single best match win, no matter how much else is around it.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a>, <a class="wikilink" href="/rag/cross-encoders-and-re-rankers/" data-topic="rag/cross-encoders-and-re-rankers">Cross-Encoders and Re-Rankers</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Is there a way to get some of a cross-encoder&#39;s precision without giving up a bi-encoder&#39;s precomputability?&quot; <strong>Multi-vector retrieval</strong> (the ColBERT-style approach) keeps a separate embedding for every token in a document instead of pooling them into one — and because each token vector is still produced independently of the query, they can still be precomputed and stored, just like a bi-encoder&#39;s. At query time, <strong>late interaction</strong> scores a document by taking, for each query token, its single best-matching document token (MaxSim), then summing those best-matches across all query tokens.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Judging whether a single paragraph buried inside a long report answers your question by averaging a &quot;relevance score&quot; across the entire report dilutes that one paragraph&#39;s strength proportionally to how long the report is. Instead, scanning specifically for the best-matching sentence for each part of your question — and ignoring how much irrelevant text surrounds it — finds the signal regardless of the surrounding noise.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">MaxSim(query_tokens, doc_tokens) = Σ_q  max_d  cosine_similarity(q, d)
+pooled(query_tokens, doc_tokens) = cosine_similarity(mean(query_tokens), mean(doc_tokens))
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 2-token query (&quot;refund&quot;, &quot;timeline&quot;) against a document containing one strongly matching token, with a varying number of unrelated tokens padded in around it:</p>
+<pre><code class="language-text">0 unrelated tokens:  MaxSim 1.580  pooled 0.914
+7 unrelated tokens:  MaxSim 1.983  pooled 0.714
+</code></pre>
+<p>As unrelated tokens pile up around the one genuinely matching token, the pooled single-vector score drops by about 22% (0.914 → 0.714) — the average gets diluted by everything irrelevant. The MaxSim score doesn&#39;t degrade the same way, because it only ever looks at each query token&#39;s single <em>best</em> match, which the added unrelated tokens can&#39;t weaken.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="multi-vector-maxsim" data-title="A strong match survives being buried; a pooled average doesn't"><p class="bench-fallback"><strong>Interactive bench: A strong match survives being buried; a pooled average doesn't.</strong> Compare late-interaction MaxSim scoring against single-vector pooled scoring as unrelated document tokens pile up.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start at 0 unrelated tokens and note both scores.</li>
+<li>Slide toward 7 unrelated tokens and watch the pooled score fall while MaxSim holds up.</li>
+<li>Imagine a 500-word document with just one sentence that answers the question — which scoring method would find it more reliably?</li>
+</ol>
+<p><strong>What you should notice:</strong> pooling is a bottleneck — however strong one token&#39;s match is, it has to survive being averaged with every other token in the document; MaxSim never averages anything away.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This sits between <a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a> (one precomputed vector, cheap but coarser) and <a class="wikilink" href="/rag/cross-encoders-and-re-rankers/" data-topic="rag/cross-encoders-and-re-rankers">Cross-Encoders and Re-Rankers</a> (no precomputation, finer but expensive)</strong> — multi-vector keeps the precomputability of the first while recovering some of the token-level sensitivity of the second.</li>
+<li><strong>Storing many vectors per document instead of one is exactly why <a class="wikilink" href="/rag/embedding-quantization-for-retrieval/" data-topic="rag/embedding-quantization-for-retrieval">Embedding Quantization for Retrieval</a> matters more here</strong> — multi-vector indexes are naturally larger, making compression more valuable.</li>
+<li><strong><a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a> needs specific support for late-interaction scoring</strong>, since it isn&#39;t a simple nearest-neighbor lookup against a single vector per document.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming multi-vector retrieval is strictly better and should always be used.</strong> It stores and searches many more vectors per document than a bi-encoder, at real memory and compute cost — the worked example&#39;s accuracy gain isn&#39;t free.</li>
+<li><strong>Treating MaxSim as equivalent to a cross-encoder.</strong> It&#39;s still composed of independently precomputed token vectors with no joint processing — it recovers some token-level precision, not full cross-encoder-level interaction.</li>
+<li><strong>Forgetting that MaxSim&#39;s robustness to distractor tokens isn&#39;t unlimited.</strong> It holds up well against unrelated padding, but a document genuinely lacking any strong match for a query token will still score poorly, as it should.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does the pooled single-vector score drop as unrelated tokens are added, while MaxSim doesn't drop the same way?</summary>
+Pooling averages every token's vector together, so more unrelated tokens dilute the one strong match's contribution to the average; MaxSim only ever takes each query token's single best match, which stays just as strong regardless of how many weaker tokens are also present.
+</details>
+
+<details><summary>2. Can multi-vector document representations still be precomputed ahead of a query, like a bi-encoder's?</summary>
+Yes — each document's token vectors are produced independently of any future query, so they can be computed once and stored, the same precomputation advantage a bi-encoder has.
+</details>
+
+<details><summary>3. What's the main cost of multi-vector retrieval compared to a single pooled vector per document?</summary>
+Storing and searching many vectors per document instead of one, which increases both memory use and the complexity of the index needed to search them efficiently.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Multi-vector retrieval:</strong> representing a document as multiple token-level embeddings instead of one pooled vector.</li>
+<li><strong>Late interaction:</strong> comparing query and document representations at the token level at query time, after both were encoded independently.</li>
+<li><strong>MaxSim:</strong> scoring by summing, for each query token, its single highest similarity to any document token.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a> · <a class="wikilink" href="/rag/cross-encoders-and-re-rankers/" data-topic="rag/cross-encoders-and-re-rankers">Cross-Encoders and Re-Rankers</a> · <a class="wikilink" href="/rag/embedding-quantization-for-retrieval/" data-topic="rag/embedding-quantization-for-retrieval">Embedding Quantization for Retrieval</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/multi-vector-and-late-interaction-retrieval">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/embedding-quantization-for-retrieval/"><small>Read next</small><b>Embedding Quantization for Retrieval</b><p>A million documents, each with a 768-dimensional embedding stored as 32-bit floats, is already several gigabytes before any text itself is stored.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/bi-encoders-and-dense-embeddings/"><b>Bi-Encoders and Dense Embeddings</b><p>Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered on the Math planet.</p></a><a class="rc-card" href="/rag/cross-encoders-and-re-rankers/"><b>Cross-Encoders and Re-Rankers</b><p>A bi-encoder&#39;s speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented.</p></a><a class="rc-card" href="/rag/embedding-quantization-for-retrieval/"><b>Embedding Quantization for Retrieval</b><p>A million documents, each with a 768-dimensional embedding stored as 32-bit floats, is already several gigabytes before any text itself is stored.</p></a><a class="rc-card" href="/rag/vector-databases-and-index-management/"><b>Vector Databases and Index Management</b><p>An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest?</p></a><a class="rc-card" href="/rag/embeddings-for-retrieval/"><b>Embeddings for Retrieval</b><p>Turning a chunk of text into a vector is already covered on the Math planet; this district is about the retrieval-specific engineering on top of that: which kind of model produces the vector, how…</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/domain-adapting-embedding-models/">← Previous: Domain-Adapting Embedding Models</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

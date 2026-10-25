@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Constrained and Structured Generation — AI Base</title>
+<meta name="description" content="A model&#39;s raw next-token distribution has no idea your downstream code needs valid JSON, a specific grammar, or a well-formed arithmetic expression — it just assigns probabilities, and the most…">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/constrained-and-structured-generation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Constrained and Structured Generation — AI Base">
+<meta property="og:description" content="A model&#39;s raw next-token distribution has no idea your downstream code needs valid JSON, a specific grammar, or a well-formed arithmetic expression — it just assigns probabilities, and the most…">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/constrained-and-structured-generation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Constrained and Structured Generation","item":"https://ai.saranmahadev.in/generative-ai/constrained-and-structured-generation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Constrained and Structured Generation","description":"A model's raw next-token distribution has no idea your downstream code needs valid JSON, a specific grammar, or a well-formed arithmetic expression — it just assigns probabilities, and the most…","url":"https://ai.saranmahadev.in/generative-ai/constrained-and-structured-generation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does grammar-masked decoding guarantee valid output, rather than just making valid output more likely?","acceptedAnswer":{"@type":"Answer","text":"It sets the logits of every invalid token to −∞ before sampling or taking the argmax, giving them exactly zero probability — an invalid token can never be selected, as opposed to merely being discouraged."}},{"@type":"Question","name":"In the worked example, why did the unconstrained model produce an invalid expression?","acceptedAnswer":{"@type":"Answer","text":"Its raw logits simply favored an operator token as the most likely first token, and nothing stopped that invalid choice from being selected."}},{"@type":"Question","name":"What does grammar masking guarantee, and what does it not guarantee?","acceptedAnswer":{"@type":"Answer","text":"It guarantees the output is syntactically valid according to the grammar; it does not guarantee the output is correct, meaningful, or the best possible completion."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Decoding and Prompting</p>
+        <h1 class="doc-title">Constrained and Structured Generation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cve6l89bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="cve6l89pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cve6l89bg)"/>
+  <circle cx="31" cy="110" r="154" fill="#8a5989" opacity="0.36"/><circle cx="1056" cy="8" r="92" fill="#8a5989" opacity="0.39"/><circle cx="1115" cy="213" r="104" fill="#ffe9f4" opacity="0.53"/><circle cx="66" cy="370" r="128" fill="#ffbfe0" opacity="0.38"/><circle cx="314" cy="46" r="133" fill="#8a5989" opacity="0.38"/>
+  <path d="M0,420 L0,326 L30,319 L60,313 L90,309 L120,306 L150,306 L180,307 L210,311 L240,316 L270,323 L300,330 L330,336 L360,342 L390,346 L420,349 L450,350 L480,348 L510,344 L540,339 L570,332 L600,326 L630,319 L660,313 L690,309 L720,306 L750,306 L780,307 L810,311 L840,316 L870,323 L900,330 L930,336 L960,342 L990,346 L1020,349 L1050,350 L1080,348 L1110,344 L1140,339 L1170,332 L1200,326 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,379 L30,374 L60,369 L90,365 L120,363 L150,362 L180,363 L210,365 L240,368 L270,372 L300,377 L330,382 L360,387 L390,391 L420,393 L450,394 L480,393 L510,391 L540,388 L570,384 L600,379 L630,374 L660,369 L690,365 L720,363 L750,362 L780,363 L810,365 L840,368 L870,372 L900,377 L930,382 L960,387 L990,391 L1020,393 L1050,394 L1080,393 L1110,391 L1140,388 L1170,384 L1200,379 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="826" cy="274" rx="149" ry="42" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(2.0 826 274)"/><ellipse cx="826" cy="274" rx="205" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(8.0 826 274)"/>
+  <circle cx="826" cy="274" r="58" fill="url(#cve6l89pl)"/>
+  <circle cx="885" cy="190" r="15" fill="#ffffff" opacity="0.63"/><circle cx="969" cy="331" r="17" fill="#ffffff" opacity="0.79"/><circle cx="1031" cy="316" r="11" fill="#ffffff" opacity="0.81"/><circle cx="976" cy="217" r="18" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A model&#39;s raw next-token distribution has no idea your downstream code needs valid JSON, a specific grammar, or a well-formed arithmetic expression — it just assigns probabilities, and the most likely token at a given step can easily be an invalid one. This note covers forcing output into a required shape by editing the distribution itself, before a token is ever chosen.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/greedy-and-beam-search-decoding/" data-topic="generative-ai/greedy-and-beam-search-decoding">Greedy and Beam Search Decoding</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you guarantee a model&#39;s output always matches a required structure?&quot; Rather than generating freely and hoping the result parses, <strong>constrained (or grammar-masked) decoding</strong> tracks which tokens are valid at the current position according to some grammar or schema, and sets every other token&#39;s logit to <code>−∞</code> before choosing the next token. An invalid token can then never be selected — not because the model was discouraged from it, but because it was made literally impossible to pick.</p>
+<h2 id="intuition">Intuition</h2>
+<p>It&#39;s the difference between asking someone to write only words from a given list and hoping they comply, versus physically removing every other page from the dictionary in front of them. Prompting a model to &quot;please output valid JSON&quot; is the first approach — it helps, but nothing stops an off-token from slipping through. Grammar masking is the second: whatever the model&#39;s draft impulse was, only the tokens that keep the output valid are ever actually available to pick.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">grammar mask at step t, given parser state s:
+  allowed(s) = the set of tokens valid at state s
+  logit&#39;(i) = logit(i)   if i ∈ allowed(s)
+  logit&#39;(i) = −∞         otherwise
+→ softmax(logit&#39;) assigns exactly 0 probability to every disallowed token
+</code></pre>
+<p>The parser state updates after each token is chosen, the same way a parser would track position while reading — so <code>allowed(s)</code> can change from one step to the next.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy model generating tokens from <code>{1, 2, 3, +, -, *, &lt;eos&gt;}</code>, meant to produce a simple arithmetic expression (a number, then alternating operators and numbers). Its <em>raw</em> logits happen to favor an operator as the very first token — which is invalid, since an expression can&#39;t start with <code>+</code>:</p>
+<pre><code class="language-text">unconstrained (raw argmax at every step):   + 1 + 1 +
+</code></pre>
+<p>That&#39;s not a valid expression: it starts with an operator and ends with one dangling. Applying a grammar mask — at the &quot;need a number&quot; state, only <code>{1, 2, 3}</code> are allowed; at the &quot;need an operator or stop&quot; state, only <code>{+, -, *, &lt;eos&gt;}</code> are allowed — changes what&#39;s even selectable at step one, and every step after:</p>
+<pre><code class="language-text">constrained (grammar-masked at every step):   1 + 1 + 1
+</code></pre>
+<p>Every step still picks whatever is highest-logit <em>among the allowed tokens</em> — the model&#39;s own preferences are respected as much as possible — but the result is guaranteed valid by construction, not by hoping the model cooperates.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="constrained-grammar" data-title="Masking out invalid tokens as you generate"><p class="bench-fallback"><strong>Interactive bench: Masking out invalid tokens as you generate.</strong> Toggle a grammar mask on and off and watch whether the toy model's output is valid arithmetic.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With the mask off, check whether the raw output is valid arithmetic.</li>
+<li>Turn the mask on and compare the new output.</li>
+<li>Notice that the masked output still uses the model&#39;s own logit preferences — just restricted to what&#39;s currently valid.</li>
+</ol>
+<p><strong>What you should notice:</strong> the model&#39;s underlying preferences didn&#39;t change between the two runs — only which tokens it was <em>allowed</em> to express those preferences over.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>&quot;JSON mode&quot; and function-calling features in production LLM APIs are grammar-constrained decoding</strong> applied to a JSON-schema or function-signature grammar, guaranteeing parseable output.</li>
+<li><strong><a class="wikilink" href="/generative-ai/code-generation-and-program-synthesis/" data-topic="generative-ai/code-generation-and-program-synthesis">code generation</a> can use the same idea with a programming language&#39;s actual grammar</strong>, so a model can never emit a syntactically invalid program.</li>
+<li><strong>It composes with sampling</strong>: a grammar mask can be applied before temperature or top-p filtering, so the output is simultaneously varied <em>and</em> guaranteed valid.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a good prompt is a substitute for a grammar mask.</strong> A prompt can only make invalid output less likely; a mask makes it impossible — the difference matters whenever downstream code can&#39;t tolerate a parse failure.</li>
+<li><strong>Forgetting the mask can only enforce syntax, not meaning.</strong> A grammar-masked arithmetic expression is guaranteed well-formed, but nothing stops it from being mathematically meaningless or wrong — syntax validity and correctness are different guarantees.</li>
+<li><strong>Not updating the allowed set as state changes.</strong> A grammar mask has to track parser state and change what&#39;s allowed at every step — a single fixed allowed-token set for the whole generation wouldn&#39;t enforce much of anything.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. How does grammar-masked decoding guarantee valid output, rather than just making valid output more likely?</summary>
+It sets the logits of every invalid token to −∞ before sampling or taking the argmax, giving them exactly zero probability — an invalid token can never be selected, as opposed to merely being discouraged.
+</details>
+
+<details><summary>2. In the worked example, why did the unconstrained model produce an invalid expression?</summary>
+Its raw logits simply favored an operator token as the most likely first token, and nothing stopped that invalid choice from being selected.
+</details>
+
+<details><summary>3. What does grammar masking guarantee, and what does it not guarantee?</summary>
+It guarantees the output is syntactically valid according to the grammar; it does not guarantee the output is correct, meaningful, or the best possible completion.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Grammar (or schema) mask:</strong> setting the logits of every token invalid at the current position to −∞ before sampling.</li>
+<li><strong>Parser state:</strong> the tracked position within a grammar, used to determine which tokens are currently allowed.</li>
+<li><strong>Constrained decoding:</strong> generation that guarantees structural validity by restricting which tokens can ever be chosen.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/greedy-and-beam-search-decoding/" data-topic="generative-ai/greedy-and-beam-search-decoding">Greedy and Beam Search Decoding</a> · <a class="wikilink" href="/generative-ai/code-generation-and-program-synthesis/" data-topic="generative-ai/code-generation-and-program-synthesis">Code Generation and Program Synthesis</a> · <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/constrained-and-structured-generation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/self-consistency-and-best-of-n-sampling/"><small>Read next</small><b>Self-Consistency and Best-of-N Sampling</b><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/greedy-and-beam-search-decoding/"><b>Greedy and Beam Search Decoding</b><p>A trained language model hands back a probability distribution over the next token at every step, not a finished sentence — something has to decide, step after step, which token actually gets…</p></a><a class="rc-card" href="/generative-ai/code-generation-and-program-synthesis/"><b>Code Generation and Program Synthesis</b><p>a grammar mask guarantees generated arithmetic is syntactically valid — but valid syntax and a program that actually does what you want are two different guarantees entirely.</p></a><a class="rc-card" href="/generative-ai/self-consistency-and-best-of-n-sampling/"><b>Self-Consistency and Best-of-N Sampling</b><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.</p></a><a class="rc-card" href="/generative-ai/decoding-and-prompting/"><b>Decoding and Prompting</b><p>A trained language model outputs a probability distribution over the next token, not a finished sentence.</p></a><a class="rc-card" href="/generative-ai/repetition-and-length-control/"><b>Repetition and Length Control</b><p>Left alone, a decoding loop can get stuck: once a model starts favoring a short cycle of tokens, each repetition can make that same cycle even more likely next time.</p></a><a class="rc-card" href="/generative-ai/music-generation/"><b>Music Generation</b><p>Speech has to be intelligible; music, rather famously, has to sound right in a way that&#39;s much harder to pin down — but at least one piece of that is concrete and checkable: whether the notes…</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/repetition-and-length-control/">← Previous: Repetition and Length Control</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transformers Glossary — AI Base</title>
+<meta name="description" content="95 key terms from Transformers, defined in context.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/glossary/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Transformers Glossary — AI Base">
+<meta property="og:description" content="95 key terms from Transformers, defined in context.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/glossary/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Glossary","item":"https://ai.saranmahadev.in/transformers/glossary/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"DefinedTermSet","name":"Transformers Glossary","url":"https://ai.saranmahadev.in/transformers/glossary/","hasDefinedTerm":[{"@type":"DefinedTerm","name":"[CLS] token","description":"a special, learned token prepended to a sequence, whose final output summarizes the whole input for classification."},{"@type":"DefinedTerm","name":"Absolute position","description":"a token's fixed index within the sequence (0, 1, 2, …), as opposed to its position relative to another token."},{"@type":"DefinedTerm","name":"Active parameters","description":"the subset of a model's total parameters actually used to process a given input — can be far smaller than the total in an MoE model."},{"@type":"DefinedTerm","name":"All-reduce","description":"combining (here, summing) partial results computed on different devices into one final result."},{"@type":"DefinedTerm","name":"Associativity","description":"the property that matrix multiplication gives the same result regardless of grouping, which the linear-order trick relies on."},{"@type":"DefinedTerm","name":"Attention-pair cost","description":"the number of query-key comparisons an attention computation makes, used here as a simple proxy for compute cost."},{"@type":"DefinedTerm","name":"Autoregressive","description":"generating output one step at a time, where each new output becomes part of the input for the next step."},{"@type":"DefinedTerm","name":"Autoregressive generation","description":"producing a sequence one token at a time, each depending on everything generated before it."},{"@type":"DefinedTerm","name":"Batching","description":"grouping multiple inference requests together to process in a single pass, amortizing fixed per-batch overhead."},{"@type":"DefinedTerm","name":"Bidirectional attention","description":"attention that allows looking both backward and forward in a sequence, as opposed to causal (backward-only) attention."},{"@type":"DefinedTerm","name":"Causal mask","description":"blocks every query from attending to positions later than itself in the sequence."},{"@type":"DefinedTerm","name":"Causal masking","description":"restricting attention so a position can only see itself and earlier positions, never later ones."},{"@type":"DefinedTerm","name":"Chunk","description":"the portion of a split weight matrix stored and computed on one device."},{"@type":"DefinedTerm","name":"Co-occurrence score","description":"WordPiece's merge criterion, a pair's frequency divided by the product of its two pieces' individual frequencies."},{"@type":"DefinedTerm","name":"Combined sequence","description":"a single sequence built by concatenating vectors from more than one modality."},{"@type":"DefinedTerm","name":"Correction factor","description":"the rescaling term that keeps a running softmax computation consistent as new blocks of data arrive."},{"@type":"DefinedTerm","name":"Cross-attention","description":"attention where queries come from one sequence and keys/values come from a separately computed sequence."},{"@type":"DefinedTerm","name":"Cross-modal attention","description":"attention weights spreading across positions from different modalities within one computation."},{"@type":"DefinedTerm","name":"d_ff","description":"the width of the feed-forward sublayer's hidden layer, conventionally 4 times d_model."},{"@type":"DefinedTerm","name":"d_model","description":"the width of every vector flowing through a transformer's layers."},{"@type":"DefinedTerm","name":"Decoder-only","description":"a transformer architecture using causal masking throughout, suited to generating text one token at a time."},{"@type":"DefinedTerm","name":"Direction-preserving","description":"a transformation that outputs a positive scalar multiple of its input, leaving relative proportions and signs unchanged."},{"@type":"DefinedTerm","name":"Effective receptive field","description":"how far information can travel across multiple stacked layers, even when each individual layer's range is limited."},{"@type":"DefinedTerm","name":"Elementwise multiplication (⊙)","description":"multiplying two vectors position by position, combining the gate and up projections."},{"@type":"DefinedTerm","name":"Embedding scaling","description":"multiplying a looked-up embedding by √d_model before it is combined with positional information."},{"@type":"DefinedTerm","name":"Embedding table","description":"the lookup matrix mapping each vocabulary entry to a vector, sized vocabulary_size × d_model."},{"@type":"DefinedTerm","name":"Encoder-decoder architecture","description":"a transformer combining a bidirectional encoder stack, a causal decoder stack, and cross-attention connecting them."},{"@type":"DefinedTerm","name":"Encoder-only","description":"a transformer architecture using only padding masking, with no causal restriction — every position attends to every other."},{"@type":"DefinedTerm","name":"End-of-word marker","description":"a symbol marking where one word ends, preventing merges across word boundaries."},{"@type":"DefinedTerm","name":"End-to-end","description":"covering every stage from raw input to final output, with no stage skipped or special-cased."},{"@type":"DefinedTerm","name":"Expansion-then-projection","description":"widening a vector to a larger hidden dimension before compressing it back to the original width."},{"@type":"DefinedTerm","name":"Expert","description":"one of several parallel feed-forward sublayers in a mixture-of-experts block."},{"@type":"DefinedTerm","name":"Feature map (φ)","description":"a function applied to queries and keys in place of softmax, chosen to make the linear-order computation valid."},{"@type":"DefinedTerm","name":"FLOPs (floating-point operations)","description":"a measure of computational work, roughly proportional to parameter count for one forward pass through a token."},{"@type":"DefinedTerm","name":"Gate","description":"a projection passed through an activation function, controlling how much of a parallel projection's value passes through."},{"@type":"DefinedTerm","name":"Grouped-query attention (GQA)","description":"sharing one key/value projection per group of heads, a middle ground between standard multi-head attention and MQA."},{"@type":"DefinedTerm","name":"IO-aware","description":"designed around minimizing data movement between slow and fast memory, not just minimizing arithmetic operations."},{"@type":"DefinedTerm","name":"KV cache","description":"stored keys and values for every token generated so far, reused instead of recomputed at each new step."},{"@type":"DefinedTerm","name":"Latency","description":"the total time a single request takes, including both time spent waiting to be batched and time spent being processed."},{"@type":"DefinedTerm","name":"Length extrapolation","description":"a model's ability to behave sensibly on sequences longer than anything seen during training."},{"@type":"DefinedTerm","name":"Linear attention","description":"an attention computation reorganized to scale linearly, rather than quadratically, with sequence length."},{"@type":"DefinedTerm","name":"Linear bias","description":"a penalty that grows proportionally with distance, subtracted directly from an attention score."},{"@type":"DefinedTerm","name":"Local attention","description":"attention restricted to a neighbourhood around each position, instead of the full sequence."},{"@type":"DefinedTerm","name":"Logit","description":"an unnormalized score for one vocabulary entry, before any softmax turns it into a probability."},{"@type":"DefinedTerm","name":"Lossless tokenization","description":"a scheme where the original text can be exactly reconstructed from its tokens, with no ambiguity about spacing."},{"@type":"DefinedTerm","name":"Masked language modeling (MLM)","description":"a training objective that predicts a masked-out token from its surrounding bidirectional context."},{"@type":"DefinedTerm","name":"Masked score","description":"an attention score set to negative infinity before the softmax, guaranteeing zero attention weight."},{"@type":"DefinedTerm","name":"max_length","description":"the largest sequence position a learned positional table has an entry for."},{"@type":"DefinedTerm","name":"Merge","description":"combining the most frequent adjacent symbol pair into one new symbol, BPE's single training step."},{"@type":"DefinedTerm","name":"Message passing","description":"a GNN's mechanism for propagating information only between directly connected nodes."},{"@type":"DefinedTerm","name":"Modality","description":"a type of data (text, image, audio) that can be converted into a token sequence its own way."},{"@type":"DefinedTerm","name":"Multi-query attention (MQA)","description":"sharing a single key/value projection across every attention head."},{"@type":"DefinedTerm","name":"Non-embedding parameters","description":"a model's parameters excluding the embedding table, often reported separately in scaling-law analysis."},{"@type":"DefinedTerm","name":"num_kv_heads","description":"the number of distinct key/value projections, which can be fewer than the number of query heads."},{"@type":"DefinedTerm","name":"Online (running) softmax","description":"computing softmax incrementally over blocks, using a running maximum and sum, instead of requiring the full row at once."},{"@type":"DefinedTerm","name":"Output projection","description":"the matrix mapping a final hidden state to a score (logit) for every vocabulary entry."},{"@type":"DefinedTerm","name":"Padding mask","description":"blocks every query from attending to positions that are only padding, not real tokens."},{"@type":"DefinedTerm","name":"Patch","description":"a fixed-size, non-overlapping square region of an image, flattened into one vector."},{"@type":"DefinedTerm","name":"Patch embedding","description":"a learned linear projection turning a flattened image patch into a model-width vector."},{"@type":"DefinedTerm","name":"Patchifying","description":"cutting an input into fixed-size pieces as a deterministic alternative to learned tokenization."},{"@type":"DefinedTerm","name":"Pipeline","description":"the ordered sequence of stages — tokenization, embedding, transformer blocks, output projection — that turns raw text into a prediction."},{"@type":"DefinedTerm","name":"Position-wise","description":"applied identically and independently to each position in a sequence, with no mixing between positions."},{"@type":"DefinedTerm","name":"Positional table","description":"a trained embedding table indexed by sequence position instead of token id."},{"@type":"DefinedTerm","name":"Post-norm","description":"normalizing the sum of a sublayer's input and output, after they're added together."},{"@type":"DefinedTerm","name":"Pre-norm","description":"normalizing only the copy of the input fed into a sublayer, leaving the residual stream itself unnormalized."},{"@type":"DefinedTerm","name":"Quadratic recomputation","description":"the wasted cost of recomputing every earlier token's key and value at every single generation step, without caching."},{"@type":"DefinedTerm","name":"Relative position","description":"positional information expressed as the distance between two tokens, rather than either token's absolute index."},{"@type":"DefinedTerm","name":"Residual connection","description":"adding a sublayer's input to its output, instead of replacing the input entirely."},{"@type":"DefinedTerm","name":"Residual stream","description":"the running sum of contributions carried forward through a stack of residual-connected layers."},{"@type":"DefinedTerm","name":"RMSNorm","description":"normalization that rescales a vector by its root-mean-square, without subtracting the mean."},{"@type":"DefinedTerm","name":"Root-mean-square","description":"the square root of a vector's mean squared value, √(mean(x²))."},{"@type":"DefinedTerm","name":"Rotary position embedding (RoPE)","description":"a positional scheme that rotates queries and keys so attention scores depend only on relative distance."},{"@type":"DefinedTerm","name":"Rotation angle","description":"the position-proportional angle RoPE uses to rotate a vector's paired dimensions."},{"@type":"DefinedTerm","name":"Router","description":"a small learned network that scores each expert for a given input and selects the top few."},{"@type":"DefinedTerm","name":"Sequence-to-sequence","description":"a task that transforms one complete input sequence into a different output sequence, such as translation."},{"@type":"DefinedTerm","name":"Sequence-to-sequence task","description":"a task whose output is a genuine transformation of a separate input, the natural fit for encoder-decoder."},{"@type":"DefinedTerm","name":"Shortest-path distance","description":"the minimum number of edges connecting two nodes in a graph, computed via breadth-first search."},{"@type":"DefinedTerm","name":"Signal preservation","description":"how much of an original input's information survives after passing through many layers."},{"@type":"DefinedTerm","name":"Slope","description":"a fixed, per-head constant controlling how steeply ALiBi's bias penalizes distance."},{"@type":"DefinedTerm","name":"Stacking","description":"repeating the same block structure many times, with independently trained weights at each depth, to build a full transformer."},{"@type":"DefinedTerm","name":"Structural bias","description":"an attention-score adjustment based on graph structure, used in place of a hard adjacency mask."},{"@type":"DefinedTerm","name":"Sublayer","description":"one of the two main computations inside a transformer block — the attention sublayer or the feed-forward sublayer."},{"@type":"DefinedTerm","name":"Subword token","description":"a vocabulary entry smaller than a whole word but larger than a single character."},{"@type":"DefinedTerm","name":"SwiGLU / GeGLU","description":"gated feed-forward designs using SiLU or GELU, respectively, as the gating activation."},{"@type":"DefinedTerm","name":"Task shape","description":"whether a task has no generated output, one continuous growing sequence, or two separate input/output sequences."},{"@type":"DefinedTerm","name":"Tensor parallelism","description":"splitting a single weight matrix's rows or columns across multiple devices."},{"@type":"DefinedTerm","name":"Throughput","description":"the rate at which requests are processed, typically requests or tokens per second."},{"@type":"DefinedTerm","name":"Tokens per word","description":"how many vocabulary entries, on average, one word decomposes into — falls as vocabulary size grows."},{"@type":"DefinedTerm","name":"Transformer block","description":"the repeated unit of a transformer, containing one attention sublayer and one feed-forward sublayer, each wrapped in normalization and a residual connection."},{"@type":"DefinedTerm","name":"Untrained weights","description":"randomly initialized parameters, used here to verify the pipeline's mechanics rather than to produce a meaningful prediction."},{"@type":"DefinedTerm","name":"Vision Transformer (ViT)","description":"a transformer applied to image patches, using no convolutional layers."},{"@type":"DefinedTerm","name":"Vocabulary size","description":"the total number of distinct entries a tokenizer can produce, set by how many merges (or equivalent) its training ran for."},{"@type":"DefinedTerm","name":"Weight tying","description":"reusing the input embedding table as the output projection instead of training a separate matrix."},{"@type":"DefinedTerm","name":"Whitespace marker (▁)","description":"a visible symbol standing in for a space, letting SentencePiece treat spaces as ordinary, mergeable symbols."},{"@type":"DefinedTerm","name":"Window radius","description":"the fixed distance within which a position may attend to its neighbours under windowed attention."}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <header class="page-head" style="--c:#7db7ff"><span class="orb" style="--c:#7db7ff" aria-hidden="true"></span>
+      <div><p class="kicker">Glossary</p><h2>Transformers Glossary</h2><p class="blurb">95 terms from Transformers.</p></div>
+    </header>
+    <dl class="glossary-list">
+      <div class="glossary-entry"><dt>[CLS] token</dt>
+      <dd>a special, learned token prepended to a sequence, whose final output summarizes the whole input for classification. <a class="glossary-source" href="/transformers/vision-transformers/">from Vision Transformers</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Absolute position</dt>
+      <dd>a token&#39;s fixed index within the sequence (0, 1, 2, …), as opposed to its position relative to another token. <a class="glossary-source" href="/transformers/learned-positional-embeddings/">from Learned Positional Embeddings</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Active parameters</dt>
+      <dd>the subset of a model&#39;s total parameters actually used to process a given input — can be far smaller than the total in an MoE model. <a class="glossary-source" href="/transformers/mixture-of-experts-transformer-blocks/">from Mixture-of-Experts Transformer Blocks</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>All-reduce</dt>
+      <dd>combining (here, summing) partial results computed on different devices into one final result. <a class="glossary-source" href="/transformers/splitting-a-transformer-across-devices/">from Splitting a Transformer Across Devices</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Associativity</dt>
+      <dd>the property that matrix multiplication gives the same result regardless of grouping, which the linear-order trick relies on. <a class="glossary-source" href="/transformers/linear-attention-approximations/">from Linear Attention Approximations</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Attention-pair cost</dt>
+      <dd>the number of query-key comparisons an attention computation makes, used here as a simple proxy for compute cost. <a class="glossary-source" href="/transformers/choosing-an-architecture-family-for-a-task/">from Choosing an Architecture Family for a Task</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Autoregressive</dt>
+      <dd>generating output one step at a time, where each new output becomes part of the input for the next step. <a class="glossary-source" href="/transformers/decoder-only-architectures/">from Decoder-Only Architectures</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Autoregressive generation</dt>
+      <dd>producing a sequence one token at a time, each depending on everything generated before it. <a class="glossary-source" href="/transformers/kv-caching-for-autoregressive-inference/">from KV-Caching for Autoregressive Inference</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Batching</dt>
+      <dd>grouping multiple inference requests together to process in a single pass, amortizing fixed per-batch overhead. <a class="glossary-source" href="/transformers/inference-serving-trade-offs/">from Inference Serving Trade-offs</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Bidirectional attention</dt>
+      <dd>attention that allows looking both backward and forward in a sequence, as opposed to causal (backward-only) attention. <a class="glossary-source" href="/transformers/encoder-only-architectures/">from Encoder-Only Architectures</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Causal mask</dt>
+      <dd>blocks every query from attending to positions later than itself in the sequence. <a class="glossary-source" href="/transformers/attention-masks-padding-and-causal-masking/">from Attention Masks: Padding and Causal Masking</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Causal masking</dt>
+      <dd>restricting attention so a position can only see itself and earlier positions, never later ones. <a class="glossary-source" href="/transformers/decoder-only-architectures/">from Decoder-Only Architectures</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Chunk</dt>
+      <dd>the portion of a split weight matrix stored and computed on one device. <a class="glossary-source" href="/transformers/splitting-a-transformer-across-devices/">from Splitting a Transformer Across Devices</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Co-occurrence score</dt>
+      <dd>WordPiece&#39;s merge criterion, a pair&#39;s frequency divided by the product of its two pieces&#39; individual frequencies. <a class="glossary-source" href="/transformers/wordpiece-and-sentencepiece/">from WordPiece and SentencePiece</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Combined sequence</dt>
+      <dd>a single sequence built by concatenating vectors from more than one modality. <a class="glossary-source" href="/transformers/multimodal-transformers-as-an-architecture-pattern/">from Multimodal Transformers as an Architecture Pattern</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Correction factor</dt>
+      <dd>the rescaling term that keeps a running softmax computation consistent as new blocks of data arrive. <a class="glossary-source" href="/transformers/io-aware-attention-computation/">from IO-Aware Attention Computation</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Cross-attention</dt>
+      <dd>attention where queries come from one sequence and keys/values come from a separately computed sequence. <a class="glossary-source" href="/transformers/encoder-decoder-architectures-as-a-pattern/">from Encoder-Decoder Architectures as a Pattern</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Cross-modal attention</dt>
+      <dd>attention weights spreading across positions from different modalities within one computation. <a class="glossary-source" href="/transformers/multimodal-transformers-as-an-architecture-pattern/">from Multimodal Transformers as an Architecture Pattern</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>d_ff</dt>
+      <dd>the width of the feed-forward sublayer&#39;s hidden layer, conventionally 4 times d_model. <a class="glossary-source" href="/transformers/the-feed-forward-sublayer/">from The Feed-Forward Sublayer</a></dd><dd>the feed-forward sublayer&#39;s hidden width, conventionally 4 times d_model. <a class="glossary-source" href="/transformers/counting-a-transformer-s-parameters-and-flops/">from Counting a Transformer&#39;s Parameters and FLOPs</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>d_model</dt>
+      <dd>the width of every vector flowing through a transformer&#39;s layers. <a class="glossary-source" href="/transformers/token-embeddings-and-embedding-scaling/">from Token Embeddings and Embedding Scaling</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Decoder-only</dt>
+      <dd>a transformer architecture using causal masking throughout, suited to generating text one token at a time. <a class="glossary-source" href="/transformers/decoder-only-architectures/">from Decoder-Only Architectures</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Direction-preserving</dt>
+      <dd>a transformation that outputs a positive scalar multiple of its input, leaving relative proportions and signs unchanged. <a class="glossary-source" href="/transformers/rmsnorm-vs-layernorm/">from RMSNorm vs LayerNorm</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Effective receptive field</dt>
+      <dd>how far information can travel across multiple stacked layers, even when each individual layer&#39;s range is limited. <a class="glossary-source" href="/transformers/sparse-and-local-windowed-attention/">from Sparse and Local (Windowed) Attention</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Elementwise multiplication (⊙)</dt>
+      <dd>multiplying two vectors position by position, combining the gate and up projections. <a class="glossary-source" href="/transformers/modern-feed-forward-variants-swiglu-and-geglu/">from Modern Feed-Forward Variants: SwiGLU and GeGLU</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Embedding scaling</dt>
+      <dd>multiplying a looked-up embedding by √d_model before it is combined with positional information. <a class="glossary-source" href="/transformers/token-embeddings-and-embedding-scaling/">from Token Embeddings and Embedding Scaling</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Embedding table</dt>
+      <dd>the lookup matrix mapping each vocabulary entry to a vector, sized vocabulary_size × d_model. <a class="glossary-source" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/">from Vocabulary Size and Out-of-Vocabulary Trade-offs</a></dd><dd>a vocabulary_size × d_model matrix, one row per token, learned during training. <a class="glossary-source" href="/transformers/token-embeddings-and-embedding-scaling/">from Token Embeddings and Embedding Scaling</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Encoder-decoder architecture</dt>
+      <dd>a transformer combining a bidirectional encoder stack, a causal decoder stack, and cross-attention connecting them. <a class="glossary-source" href="/transformers/encoder-decoder-architectures-as-a-pattern/">from Encoder-Decoder Architectures as a Pattern</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Encoder-only</dt>
+      <dd>a transformer architecture using only padding masking, with no causal restriction — every position attends to every other. <a class="glossary-source" href="/transformers/encoder-only-architectures/">from Encoder-Only Architectures</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>End-of-word marker</dt>
+      <dd>a symbol marking where one word ends, preventing merges across word boundaries. <a class="glossary-source" href="/transformers/byte-pair-encoding/">from Byte Pair Encoding</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>End-to-end</dt>
+      <dd>covering every stage from raw input to final output, with no stage skipped or special-cased. <a class="glossary-source" href="/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/">from Capstone: Assembling a Tiny Transformer from the Ground Up</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Expansion-then-projection</dt>
+      <dd>widening a vector to a larger hidden dimension before compressing it back to the original width. <a class="glossary-source" href="/transformers/the-feed-forward-sublayer/">from The Feed-Forward Sublayer</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Expert</dt>
+      <dd>one of several parallel feed-forward sublayers in a mixture-of-experts block. <a class="glossary-source" href="/transformers/mixture-of-experts-transformer-blocks/">from Mixture-of-Experts Transformer Blocks</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Feature map (φ)</dt>
+      <dd>a function applied to queries and keys in place of softmax, chosen to make the linear-order computation valid. <a class="glossary-source" href="/transformers/linear-attention-approximations/">from Linear Attention Approximations</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>FLOPs (floating-point operations)</dt>
+      <dd>a measure of computational work, roughly proportional to parameter count for one forward pass through a token. <a class="glossary-source" href="/transformers/counting-a-transformer-s-parameters-and-flops/">from Counting a Transformer&#39;s Parameters and FLOPs</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Gate</dt>
+      <dd>a projection passed through an activation function, controlling how much of a parallel projection&#39;s value passes through. <a class="glossary-source" href="/transformers/modern-feed-forward-variants-swiglu-and-geglu/">from Modern Feed-Forward Variants: SwiGLU and GeGLU</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Grouped-query attention (GQA)</dt>
+      <dd>sharing one key/value projection per group of heads, a middle ground between standard multi-head attention and MQA. <a class="glossary-source" href="/transformers/multi-query-and-grouped-query-attention/">from Multi-Query and Grouped-Query Attention</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>IO-aware</dt>
+      <dd>designed around minimizing data movement between slow and fast memory, not just minimizing arithmetic operations. <a class="glossary-source" href="/transformers/io-aware-attention-computation/">from IO-Aware Attention Computation</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>KV cache</dt>
+      <dd>stored keys and values for every token generated so far, reused instead of recomputed at each new step. <a class="glossary-source" href="/transformers/kv-caching-for-autoregressive-inference/">from KV-Caching for Autoregressive Inference</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Latency</dt>
+      <dd>the total time a single request takes, including both time spent waiting to be batched and time spent being processed. <a class="glossary-source" href="/transformers/inference-serving-trade-offs/">from Inference Serving Trade-offs</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Length extrapolation</dt>
+      <dd>a model&#39;s ability to behave sensibly on sequences longer than anything seen during training. <a class="glossary-source" href="/transformers/alibi-and-length-extrapolation/">from ALiBi and Length Extrapolation</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Linear attention</dt>
+      <dd>an attention computation reorganized to scale linearly, rather than quadratically, with sequence length. <a class="glossary-source" href="/transformers/linear-attention-approximations/">from Linear Attention Approximations</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Linear bias</dt>
+      <dd>a penalty that grows proportionally with distance, subtracted directly from an attention score. <a class="glossary-source" href="/transformers/alibi-and-length-extrapolation/">from ALiBi and Length Extrapolation</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Local attention</dt>
+      <dd>attention restricted to a neighbourhood around each position, instead of the full sequence. <a class="glossary-source" href="/transformers/sparse-and-local-windowed-attention/">from Sparse and Local (Windowed) Attention</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Logit</dt>
+      <dd>an unnormalized score for one vocabulary entry, before any softmax turns it into a probability. <a class="glossary-source" href="/transformers/weight-tying/">from Weight Tying</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Lossless tokenization</dt>
+      <dd>a scheme where the original text can be exactly reconstructed from its tokens, with no ambiguity about spacing. <a class="glossary-source" href="/transformers/wordpiece-and-sentencepiece/">from WordPiece and SentencePiece</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Masked language modeling (MLM)</dt>
+      <dd>a training objective that predicts a masked-out token from its surrounding bidirectional context. <a class="glossary-source" href="/transformers/encoder-only-architectures/">from Encoder-Only Architectures</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Masked score</dt>
+      <dd>an attention score set to negative infinity before the softmax, guaranteeing zero attention weight. <a class="glossary-source" href="/transformers/attention-masks-padding-and-causal-masking/">from Attention Masks: Padding and Causal Masking</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>max_length</dt>
+      <dd>the largest sequence position a learned positional table has an entry for. <a class="glossary-source" href="/transformers/learned-positional-embeddings/">from Learned Positional Embeddings</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Merge</dt>
+      <dd>combining the most frequent adjacent symbol pair into one new symbol, BPE&#39;s single training step. <a class="glossary-source" href="/transformers/byte-pair-encoding/">from Byte Pair Encoding</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Message passing</dt>
+      <dd>a GNN&#39;s mechanism for propagating information only between directly connected nodes. <a class="glossary-source" href="/transformers/graph-transformers/">from Graph Transformers</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Modality</dt>
+      <dd>a type of data (text, image, audio) that can be converted into a token sequence its own way. <a class="glossary-source" href="/transformers/tokenizing-beyond-text/">from Tokenizing Beyond Text</a></dd><dd>a type of input data (text, image, audio) with its own front-end producing vectors of a shared width. <a class="glossary-source" href="/transformers/multimodal-transformers-as-an-architecture-pattern/">from Multimodal Transformers as an Architecture Pattern</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Multi-query attention (MQA)</dt>
+      <dd>sharing a single key/value projection across every attention head. <a class="glossary-source" href="/transformers/multi-query-and-grouped-query-attention/">from Multi-Query and Grouped-Query Attention</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Non-embedding parameters</dt>
+      <dd>a model&#39;s parameters excluding the embedding table, often reported separately in scaling-law analysis. <a class="glossary-source" href="/transformers/counting-a-transformer-s-parameters-and-flops/">from Counting a Transformer&#39;s Parameters and FLOPs</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>num_kv_heads</dt>
+      <dd>the number of distinct key/value projections, which can be fewer than the number of query heads. <a class="glossary-source" href="/transformers/multi-query-and-grouped-query-attention/">from Multi-Query and Grouped-Query Attention</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Online (running) softmax</dt>
+      <dd>computing softmax incrementally over blocks, using a running maximum and sum, instead of requiring the full row at once. <a class="glossary-source" href="/transformers/io-aware-attention-computation/">from IO-Aware Attention Computation</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Output projection</dt>
+      <dd>the matrix mapping a final hidden state to a score (logit) for every vocabulary entry. <a class="glossary-source" href="/transformers/weight-tying/">from Weight Tying</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Padding mask</dt>
+      <dd>blocks every query from attending to positions that are only padding, not real tokens. <a class="glossary-source" href="/transformers/attention-masks-padding-and-causal-masking/">from Attention Masks: Padding and Causal Masking</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Patch</dt>
+      <dd>a fixed-size, non-overlapping square region of an image, flattened into one vector. <a class="glossary-source" href="/transformers/tokenizing-beyond-text/">from Tokenizing Beyond Text</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Patch embedding</dt>
+      <dd>a learned linear projection turning a flattened image patch into a model-width vector. <a class="glossary-source" href="/transformers/vision-transformers/">from Vision Transformers</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Patchifying</dt>
+      <dd>cutting an input into fixed-size pieces as a deterministic alternative to learned tokenization. <a class="glossary-source" href="/transformers/tokenizing-beyond-text/">from Tokenizing Beyond Text</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Pipeline</dt>
+      <dd>the ordered sequence of stages — tokenization, embedding, transformer blocks, output projection — that turns raw text into a prediction. <a class="glossary-source" href="/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/">from Capstone: Assembling a Tiny Transformer from the Ground Up</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Position-wise</dt>
+      <dd>applied identically and independently to each position in a sequence, with no mixing between positions. <a class="glossary-source" href="/transformers/the-feed-forward-sublayer/">from The Feed-Forward Sublayer</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Positional table</dt>
+      <dd>a trained embedding table indexed by sequence position instead of token id. <a class="glossary-source" href="/transformers/learned-positional-embeddings/">from Learned Positional Embeddings</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Post-norm</dt>
+      <dd>normalizing the sum of a sublayer&#39;s input and output, after they&#39;re added together. <a class="glossary-source" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/">from Layer Normalization Placement: Pre-Norm vs Post-Norm</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Pre-norm</dt>
+      <dd>normalizing only the copy of the input fed into a sublayer, leaving the residual stream itself unnormalized. <a class="glossary-source" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/">from Layer Normalization Placement: Pre-Norm vs Post-Norm</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Quadratic recomputation</dt>
+      <dd>the wasted cost of recomputing every earlier token&#39;s key and value at every single generation step, without caching. <a class="glossary-source" href="/transformers/kv-caching-for-autoregressive-inference/">from KV-Caching for Autoregressive Inference</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Relative position</dt>
+      <dd>positional information expressed as the distance between two tokens, rather than either token&#39;s absolute index. <a class="glossary-source" href="/transformers/relative-position-and-rope/">from Relative Position and RoPE</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Residual connection</dt>
+      <dd>adding a sublayer&#39;s input to its output, instead of replacing the input entirely. <a class="glossary-source" href="/transformers/residual-connections-in-transformers/">from Residual Connections in Transformers</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Residual stream</dt>
+      <dd>the running sum of contributions carried forward through a stack of residual-connected layers. <a class="glossary-source" href="/transformers/layer-normalization-placement-pre-norm-vs-post-norm/">from Layer Normalization Placement: Pre-Norm vs Post-Norm</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>RMSNorm</dt>
+      <dd>normalization that rescales a vector by its root-mean-square, without subtracting the mean. <a class="glossary-source" href="/transformers/rmsnorm-vs-layernorm/">from RMSNorm vs LayerNorm</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Root-mean-square</dt>
+      <dd>the square root of a vector&#39;s mean squared value, √(mean(x²)). <a class="glossary-source" href="/transformers/rmsnorm-vs-layernorm/">from RMSNorm vs LayerNorm</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Rotary position embedding (RoPE)</dt>
+      <dd>a positional scheme that rotates queries and keys so attention scores depend only on relative distance. <a class="glossary-source" href="/transformers/relative-position-and-rope/">from Relative Position and RoPE</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Rotation angle</dt>
+      <dd>the position-proportional angle RoPE uses to rotate a vector&#39;s paired dimensions. <a class="glossary-source" href="/transformers/relative-position-and-rope/">from Relative Position and RoPE</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Router</dt>
+      <dd>a small learned network that scores each expert for a given input and selects the top few. <a class="glossary-source" href="/transformers/mixture-of-experts-transformer-blocks/">from Mixture-of-Experts Transformer Blocks</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Sequence-to-sequence</dt>
+      <dd>a task that transforms one complete input sequence into a different output sequence, such as translation. <a class="glossary-source" href="/transformers/encoder-decoder-architectures-as-a-pattern/">from Encoder-Decoder Architectures as a Pattern</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Sequence-to-sequence task</dt>
+      <dd>a task whose output is a genuine transformation of a separate input, the natural fit for encoder-decoder. <a class="glossary-source" href="/transformers/choosing-an-architecture-family-for-a-task/">from Choosing an Architecture Family for a Task</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Shortest-path distance</dt>
+      <dd>the minimum number of edges connecting two nodes in a graph, computed via breadth-first search. <a class="glossary-source" href="/transformers/graph-transformers/">from Graph Transformers</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Signal preservation</dt>
+      <dd>how much of an original input&#39;s information survives after passing through many layers. <a class="glossary-source" href="/transformers/residual-connections-in-transformers/">from Residual Connections in Transformers</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Slope</dt>
+      <dd>a fixed, per-head constant controlling how steeply ALiBi&#39;s bias penalizes distance. <a class="glossary-source" href="/transformers/alibi-and-length-extrapolation/">from ALiBi and Length Extrapolation</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Stacking</dt>
+      <dd>repeating the same block structure many times, with independently trained weights at each depth, to build a full transformer. <a class="glossary-source" href="/transformers/assembling-one-transformer-block/">from Assembling One Transformer Block</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Structural bias</dt>
+      <dd>an attention-score adjustment based on graph structure, used in place of a hard adjacency mask. <a class="glossary-source" href="/transformers/graph-transformers/">from Graph Transformers</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Sublayer</dt>
+      <dd>one of the two main computations inside a transformer block — the attention sublayer or the feed-forward sublayer. <a class="glossary-source" href="/transformers/residual-connections-in-transformers/">from Residual Connections in Transformers</a></dd><dd>one of the two main computations (attention or feed-forward) inside a transformer block. <a class="glossary-source" href="/transformers/assembling-one-transformer-block/">from Assembling One Transformer Block</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Subword token</dt>
+      <dd>a vocabulary entry smaller than a whole word but larger than a single character. <a class="glossary-source" href="/transformers/byte-pair-encoding/">from Byte Pair Encoding</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>SwiGLU / GeGLU</dt>
+      <dd>gated feed-forward designs using SiLU or GELU, respectively, as the gating activation. <a class="glossary-source" href="/transformers/modern-feed-forward-variants-swiglu-and-geglu/">from Modern Feed-Forward Variants: SwiGLU and GeGLU</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Task shape</dt>
+      <dd>whether a task has no generated output, one continuous growing sequence, or two separate input/output sequences. <a class="glossary-source" href="/transformers/choosing-an-architecture-family-for-a-task/">from Choosing an Architecture Family for a Task</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Tensor parallelism</dt>
+      <dd>splitting a single weight matrix&#39;s rows or columns across multiple devices. <a class="glossary-source" href="/transformers/splitting-a-transformer-across-devices/">from Splitting a Transformer Across Devices</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Throughput</dt>
+      <dd>the rate at which requests are processed, typically requests or tokens per second. <a class="glossary-source" href="/transformers/inference-serving-trade-offs/">from Inference Serving Trade-offs</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Tokens per word</dt>
+      <dd>how many vocabulary entries, on average, one word decomposes into — falls as vocabulary size grows. <a class="glossary-source" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/">from Vocabulary Size and Out-of-Vocabulary Trade-offs</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Transformer block</dt>
+      <dd>the repeated unit of a transformer, containing one attention sublayer and one feed-forward sublayer, each wrapped in normalization and a residual connection. <a class="glossary-source" href="/transformers/assembling-one-transformer-block/">from Assembling One Transformer Block</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Untrained weights</dt>
+      <dd>randomly initialized parameters, used here to verify the pipeline&#39;s mechanics rather than to produce a meaningful prediction. <a class="glossary-source" href="/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/">from Capstone: Assembling a Tiny Transformer from the Ground Up</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Vision Transformer (ViT)</dt>
+      <dd>a transformer applied to image patches, using no convolutional layers. <a class="glossary-source" href="/transformers/vision-transformers/">from Vision Transformers</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Vocabulary size</dt>
+      <dd>the total number of distinct entries a tokenizer can produce, set by how many merges (or equivalent) its training ran for. <a class="glossary-source" href="/transformers/vocabulary-size-and-out-of-vocabulary-trade-offs/">from Vocabulary Size and Out-of-Vocabulary Trade-offs</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Weight tying</dt>
+      <dd>reusing the input embedding table as the output projection instead of training a separate matrix. <a class="glossary-source" href="/transformers/weight-tying/">from Weight Tying</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Whitespace marker (▁)</dt>
+      <dd>a visible symbol standing in for a space, letting SentencePiece treat spaces as ordinary, mergeable symbols. <a class="glossary-source" href="/transformers/wordpiece-and-sentencepiece/">from WordPiece and SentencePiece</a></dd>
+      </div>
+      <div class="glossary-entry"><dt>Window radius</dt>
+      <dd>the fixed distance within which a position may attend to its neighbours under windowed attention. <a class="glossary-source" href="/transformers/sparse-and-local-windowed-attention/">from Sparse and Local (Windowed) Attention</a></dd>
+      </div></dl></main>
+</body>
+</html>

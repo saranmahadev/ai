@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Training Instabilities in GANs — AI Base</title>
+<meta name="description" content="A GAN&#39;s two networks are not cooperating toward one shared loss the way an ordinary supervised model&#39;s layers do — they are actively working against each other.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/training-instabilities-in-gans/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Training Instabilities in GANs — AI Base">
+<meta property="og:description" content="A GAN&#39;s two networks are not cooperating toward one shared loss the way an ordinary supervised model&#39;s layers do — they are actively working against each other.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/training-instabilities-in-gans/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Training Instabilities in GANs","item":"https://ai.saranmahadev.in/deep-learning/training-instabilities-in-gans/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Training Instabilities in GANs","description":"A GAN's two networks are not cooperating toward one shared loss the way an ordinary supervised model's layers do — they are actively working against each other.","url":"https://ai.saranmahadev.in/deep-learning/training-instabilities-in-gans/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is mode collapse?","acceptedAnswer":{"@type":"Answer","text":"The generator settling on producing a small handful of outputs that reliably fool the discriminator, rather than a diverse range of outputs."}},{"@type":"Question","name":"Why does the original minimax generator loss give a weak gradient exactly when the generator is doing poorly?","acceptedAnswer":{"@type":"Answer","text":"Its gradient, −1/(1−D(fake)), stays small in magnitude when D(fake) is small (the generator being easily caught) — the opposite of where strong training signal is most needed."}},{"@type":"Question","name":"Why is the non-saturating loss preferred in practice?","acceptedAnswer":{"@type":"Answer","text":"Its gradient, −1/D(fake), grows large exactly when D(fake) is small, giving the generator a much stronger training signal precisely when it is losing badly."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Generative Deep Learning</p>
+        <h1 class="doc-title">Training Instabilities in GANs</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="chliqu7bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="chliqu7pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#chliqu7bg)"/>
+  <circle cx="388" cy="405" r="106" fill="#ffb6b6" opacity="0.37"/><circle cx="1137" cy="217" r="140" fill="#ffe6e6" opacity="0.31"/><circle cx="564" cy="364" r="177" fill="#8a546c" opacity="0.36"/><circle cx="465" cy="317" r="217" fill="#ffb6b6" opacity="0.40"/><circle cx="1047" cy="279" r="140" fill="#ffb89d" opacity="0.38"/><circle cx="933" cy="127" r="178" fill="#8a546c" opacity="0.42"/><circle cx="728" cy="254" r="123" fill="#8a546c" opacity="0.33"/>
+  <path d="M0,420 L0,311 L30,308 L60,306 L90,306 L120,308 L150,313 L180,318 L210,325 L240,332 L270,338 L300,344 L330,348 L360,349 L390,349 L420,347 L450,343 L480,337 L510,330 L540,323 L570,317 L600,311 L630,308 L660,306 L690,306 L720,308 L750,313 L780,318 L810,325 L840,332 L870,338 L900,344 L930,348 L960,349 L990,349 L1020,347 L1050,343 L1080,337 L1110,330 L1140,323 L1170,317 L1200,311 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,394 L60,393 L90,392 L120,390 L150,387 L180,384 L210,380 L240,376 L270,372 L300,369 L330,366 L360,364 L390,363 L420,362 L450,362 L480,363 L510,365 L540,368 L570,371 L600,375 L630,379 L660,382 L690,386 L720,389 L750,391 L780,393 L810,394 L840,394 L870,393 L900,391 L930,389 L960,386 L990,382 L1020,379 L1050,375 L1080,371 L1110,368 L1140,365 L1170,363 L1200,362 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="870" cy="138" rx="172" ry="48" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(3.1 870 138)"/><ellipse cx="870" cy="138" rx="238" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(9.1 870 138)"/>
+  <circle cx="870" cy="138" r="67" fill="url(#chliqu7pl)"/>
+  <circle cx="1126" cy="125" r="11" fill="#ffffff" opacity="0.60"/><circle cx="831" cy="64" r="11" fill="#ffffff" opacity="0.64"/><circle cx="753" cy="86" r="14" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <a class="wikilink" href="/deep-learning/generative-adversarial-networks/" data-topic="deep-learning/generative-adversarial-networks">GAN</a>&#39;s two networks are not cooperating toward one shared loss the way an ordinary supervised model&#39;s layers do — they are actively working against each other. That adversarial setup is exactly why GAN training is notoriously harder to keep stable than most other deep learning.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/generative-adversarial-networks/" data-topic="deep-learning/generative-adversarial-networks">Generative Adversarial Networks</a> and <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If the generator and discriminator are both just being trained by gradient descent, why is this specific setup so much harder to get right?&quot; Because each network&#39;s loss landscape keeps shifting underneath it as the <em>other</em> network changes — and a couple of specific failure patterns show up again and again as a result.</p>
+<h2 id="intuition-two-failure-patterns-worth-knowing-by-name">Intuition: two failure patterns worth knowing by name</h2>
+<p><strong>Mode collapse</strong>: the generator discovers a small handful of outputs that reliably fool the current discriminator, and — having no incentive to explore further once those work — keeps producing just those, with little variety. <strong>Vanishing gradients for the generator</strong>: if the discriminator becomes too confident too early (correctly spotting fakes with near-certainty), the generator&#39;s naive loss formula can give it almost no useful gradient to learn from, right when it most needs guidance.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">original minimax generator loss:   log(1 − D(fake))     — saturates (near-zero gradient) when D(fake) is small
+non-saturating generator loss:     −log(D(fake))          — stays large (strong gradient) when D(fake) is small
+</code></pre>
+<p>The non-saturating version is almost universally used in practice for exactly this reason: it gives the generator its <em>strongest</em> signal exactly when it is doing worst (being caught easily), rather than its weakest.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Comparing the gradient (with respect to <code>D(fake)</code>) of both loss formulations when the discriminator is confidently catching the generator&#39;s fakes, <code>D(fake) = 0.01</code>:</p>
+<pre><code class="language-text">original minimax loss gradient:    d/dD[log(1−D)] = −1/(1−D) = −1/0.99 ≈ −1.0101
+non-saturating loss gradient:      d/dD[−log(D)]   = −1/D     = −1/0.01 = −100.0000
+</code></pre>
+<p>At exactly the moment the generator is being caught almost every time — precisely when it most needs a strong push to improve — the original loss&#39;s gradient magnitude is a modest 1.01, while the non-saturating loss&#39;s gradient magnitude is a massive 100. The non-saturating form gives roughly 100 times stronger training signal in this situation.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="saturating-grad" data-title="Saturating vs non-saturating generator gradients"><p class="bench-fallback"><strong>Interactive bench: Saturating vs non-saturating generator gradients.</strong> A slider for D(fake). Compare the gradient magnitude of the original minimax generator loss against the non-saturating version, especially as D(fake) gets small.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Move D(fake) toward 0 (the generator being caught easily) and watch the two gradient magnitudes diverge sharply.</li>
+<li>Move D(fake) toward 1 (the generator fooling the discriminator) and see the two formulas behave more similarly.</li>
+<li>Find roughly where the two gradients cross over in magnitude.</li>
+</ol>
+<p><strong>What you should notice:</strong> the gap between the two formulas is largest exactly where training needs the most help — when the generator is currently losing badly.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>The non-saturating loss is the practical default</strong> in almost every real GAN implementation, specifically to avoid the vanishing-gradient trap shown here.</li>
+<li><strong>Mode collapse detection and mitigation</strong> (tracking output diversity, specialised loss terms, architectural tweaks) is an entire sub-area of GAN research in its own right.</li>
+<li><strong>Alternative training objectives</strong> (Wasserstein GANs and others, not covered in depth here) were developed specifically to make GAN training more stable, reformulating the adversarial game to behave better numerically.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a GAN that trains without crashing is training well.</strong> Stable-looking losses can still hide mode collapse — checking actual output diversity matters, not just the loss curves.</li>
+<li><strong>Using the original (saturating) minimax loss by default.</strong> It is the textbook formula, but the non-saturating version is almost always the practical choice.</li>
+<li><strong>Treating instability as purely a hyperparameter problem.</strong> Some of it is structural to the adversarial setup itself, not something any single learning rate or architecture choice fully eliminates.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is mode collapse?</summary>
+The generator settling on producing a small handful of outputs that reliably fool the discriminator, rather than a diverse range of outputs.
+</details>
+
+<details><summary>2. Why does the original minimax generator loss give a weak gradient exactly when the generator is doing poorly?</summary>
+Its gradient, −1/(1−D(fake)), stays small in magnitude when D(fake) is small (the generator being easily caught) — the opposite of where strong training signal is most needed.
+</details>
+
+<details><summary>3. Why is the non-saturating loss preferred in practice?</summary>
+Its gradient, −1/D(fake), grows large exactly when D(fake) is small, giving the generator a much stronger training signal precisely when it is losing badly.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Mode collapse:</strong> a generator producing a narrow range of outputs rather than diverse ones.</li>
+<li><strong>Saturating gradient:</strong> a gradient that shrinks toward zero in exactly the situation where a strong training signal is most needed.</li>
+<li><strong>Non-saturating loss:</strong> a generator loss formulation chosen specifically to avoid that vanishing-gradient trap.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/generative-adversarial-networks/" data-topic="deep-learning/generative-adversarial-networks">Generative Adversarial Networks</a> · <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> · <a class="wikilink" href="/deep-learning/normalizing-flows/" data-topic="deep-learning/normalizing-flows">Normalizing Flows</a> · <a class="wikilink" href="/deep-learning/diffusion-models/" data-topic="deep-learning/diffusion-models">Diffusion Models</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/training-instabilities-in-gans">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/normalizing-flows/"><small>Read next</small><b>Normalizing Flows</b><p>Neither a VAE nor a GAN can tell you the exact probability their model assigns to a specific data point — a VAE only has an approximation, and a GAN has no likelihood at all.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/generative-adversarial-networks/"><b>Generative Adversarial Networks</b><p>A generative adversarial network (GAN) trains two networks against each other: a generator that turns random noise into fake samples, trying to fool the second network, and a discriminator that…</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/normalizing-flows/"><b>Normalizing Flows</b><p>Neither a VAE nor a GAN can tell you the exact probability their model assigns to a specific data point — a VAE only has an approximation, and a GAN has no likelihood at all.</p></a><a class="rc-card" href="/deep-learning/diffusion-models/"><b>Diffusion Models</b><p>A diffusion model learns to generate by learning the opposite of something easy: gradually turning clean data into pure noise is a simple, fixed process with no learning involved at all; a…</p></a><a class="rc-card" href="/deep-learning/generative-deep-learning/"><b>Generative Deep Learning</b><p>Generative vs Discriminative Models on the Machine Learning planet draws the line; this district walks the deep architectures that learn to generate rather than only recognise, from a bottleneck…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/generative-adversarial-networks/">← Previous: Generative Adversarial Networks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

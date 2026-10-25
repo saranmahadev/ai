@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weight Initialization — AI Base</title>
+<meta name="description" content="Before a single training step runs, a deep network&#39;s starting weights already decide whether signal can flow through it at all.">
+<link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/weight-initialization/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Weight Initialization — AI Base">
+<meta property="og:description" content="Before a single training step runs, a deep network&#39;s starting weights already decide whether signal can flow through it at all.">
+<meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/weight-initialization/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Weight Initialization","item":"https://ai.saranmahadev.in/deep-learning/weight-initialization/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Weight Initialization","description":"Before a single training step runs, a deep network's starting weights already decide whether signal can flow through it at all.","url":"https://ai.saranmahadev.in/deep-learning/weight-initialization/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does an initialization scale of 1 cause explosion in a wide layer, but might be fine in a narrow one?","acceptedAnswer":{"@type":"Answer","text":"The combined output variance scales with the layer's width `n`; a fixed weight variance that is safe for small `n` becomes far too large once `n` is big."}},{"@type":"Question","name":"What does \"1/√n\" scaling achieve?","acceptedAnswer":{"@type":"Answer","text":"It keeps the output variance of a layer close to its input variance, so the signal's scale neither grows nor shrinks much from layer to layer."}},{"@type":"Question","name":"Does good initialization guarantee training will succeed?","acceptedAnswer":{"@type":"Answer","text":"No — it only gives the signal (and later, gradients) a reasonable scale to start from; see Vanishing and Exploding Gradients for what can still go wrong during training."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff8f8f">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/deep-learning/">Deep Learning</a> · Training Deep Networks</p>
+        <h1 class="doc-title">Weight Initialization</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ckq87j3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
+    <radialGradient id="ckq87j3pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ckq87j3bg)"/>
+  <circle cx="19" cy="296" r="75" fill="#ffb89d" opacity="0.44"/><circle cx="312" cy="327" r="75" fill="#ffb6b6" opacity="0.38"/><circle cx="751" cy="216" r="194" fill="#ffb89d" opacity="0.28"/><circle cx="792" cy="313" r="204" fill="#ffb89d" opacity="0.27"/><circle cx="635" cy="257" r="206" fill="#ffb6b6" opacity="0.45"/><circle cx="432" cy="184" r="178" fill="#ffe6e6" opacity="0.58"/>
+  <path d="M0,420 L0,306 L30,308 L60,312 L90,317 L120,323 L150,330 L180,337 L210,343 L240,347 L270,349 L300,349 L330,348 L360,344 L390,338 L420,332 L450,325 L480,318 L510,313 L540,308 L570,306 L600,306 L630,308 L660,312 L690,317 L720,323 L750,330 L780,337 L810,343 L840,347 L870,349 L900,349 L930,348 L960,344 L990,338 L1020,332 L1050,325 L1080,318 L1110,313 L1140,308 L1170,306 L1200,306 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
+  <path d="M0,420 L0,370 L30,368 L60,366 L90,365 L120,363 L150,363 L180,362 L210,362 L240,362 L270,363 L300,364 L330,365 L360,367 L390,369 L420,371 L450,374 L480,376 L510,379 L540,381 L570,384 L600,386 L630,388 L660,390 L690,391 L720,393 L750,393 L780,394 L810,394 L840,394 L870,393 L900,392 L930,391 L960,389 L990,387 L1020,385 L1050,382 L1080,380 L1110,377 L1140,375 L1170,372 L1200,370 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
+  <ellipse cx="775" cy="213" rx="193" ry="54" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(9.6 775 213)"/><ellipse cx="775" cy="213" rx="266" ry="75" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(15.6 775 213)"/>
+  <circle cx="775" cy="213" r="76" fill="url(#ckq87j3pl)"/>
+  <circle cx="880" cy="290" r="19" fill="#ffffff" opacity="0.70"/><circle cx="1087" cy="240" r="8" fill="#ffffff" opacity="0.66"/><circle cx="455" cy="227" r="9" fill="#ffffff" opacity="0.71"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Before a single training step runs, a deep network&#39;s starting weights already decide whether signal can flow through it at all. <strong>Weight initialization</strong> picks the random spread of the starting weights so that a layer&#39;s output has roughly the same scale as its input — too wide a spread and activations blow up with depth; too narrow and they vanish.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> and <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If I just pick random starting weights, does it matter how big they are?&quot; Enormously — the wrong scale, repeated over many layers, turns a reasonable signal into either an overflow or a flat zero before training even begins.</p>
+<h2 id="intuition-compounding-layer-after-layer">Intuition: compounding, layer after layer</h2>
+<p>Each dense layer sums <code>n</code> weighted inputs. If each weight is random with some variance, the sum&#39;s variance scales with <code>n</code> times the weight variance (roughly — the inputs act like independent terms adding up). Get that combined scaling factor even slightly above 1 and, repeated over ten or twenty layers, the signal&#39;s size compounds like interest: it can grow by a factor of a million. Get it even slightly below 1 and the signal compounds toward zero just as fast.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">layer width n, weight variance s²
+output variance  ≈  n · s² · (input variance)
+
+to keep variance roughly constant layer to layer:   s² ≈ 1 / n     (so   s ≈ 1/√n)
+</code></pre>
+<p>This <code>1/√n</code> scaling (the core of Xavier/Glorot-style initialization) is exactly chosen so the &quot;n inputs, each of variance s²&quot; sum neither explodes nor vanishes, on average, for a linear or near-linear layer.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Pass a fixed input through 10 random dense layers of width 100, three different initialization scales, and track the standard deviation of the activations at each layer:</p>
+<pre><code class="language-text">layer            0      1      2      3      4       5        6         7          8           9            10
+scale = 1      0.709  8.054  85.17  828.2  7072.4  58119.0  479674.0  4161386.3  37782995.9  359313411.5  3340833417.7
+scale = 1/√n   0.709  0.805  0.852  0.828  0.707   0.581    0.480     0.416      0.378       0.359        0.334
+scale = 0.1/√n 0.709  0.081  0.009  0.001  0.000   0.000    0.000     0.000      0.000       0.000        0.000
+</code></pre>
+<p>With <code>scale = 1</code> (ten times too large for width 100), the signal&#39;s spread multiplies by roughly 10× per layer and reaches the billions by layer 10 — numbers a computer&#39;s floating point will soon overflow. With <code>scale = 0.1/√n</code> (ten times too small), it collapses to indistinguishable-from-zero by layer 4. Only <code>scale ≈ 1/√n</code> keeps the signal in a usable range the whole way through.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="weight-init-depth" data-title="Signal scale across ten random layers"><p class="bench-fallback"><strong>Interactive bench: Signal scale across ten random layers.</strong> Ten stacked random dense layers of a chosen width. A scale slider multiplies the 1/√n baseline; the chart shows the standard deviation of the activations at each layer on a log scale, so you can watch it explode, stay flat, or vanish.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the scale multiplier to 1 (the &quot;just right&quot; baseline) and watch the line stay roughly flat.</li>
+<li>Push the multiplier up to 10 and watch the signal explode within a few layers.</li>
+<li>Pull it down to 0.1 and watch it vanish instead.</li>
+<li>Try a much wider layer and see how much the baseline scale still keeps things flat.</li>
+</ol>
+<p><strong>What you should notice:</strong> only a narrow band of scale around the <code>1/√n</code> baseline keeps the signal from exploding or vanishing; moving away from it by even a factor of 10 compounds into an enormous or negligible number within ten layers.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Xavier/Glorot initialization</strong> scales by <code>1/√n</code> (fan-in), the baseline in this bench.</li>
+<li><strong>He initialization</strong> uses a similar idea tuned for ReLU networks, which zero out half their inputs on average.</li>
+<li><strong>Why this matters more as networks get deeper:</strong> a shallow network can tolerate a poorly scaled initialization; a hundred-layer network cannot.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Using the same initialization scale regardless of layer width.</strong> A fixed, width-independent variance is &quot;too big&quot; for wide layers and &quot;too small&quot; for narrow ones.</li>
+<li><strong>Blaming training (the optimizer or learning rate) for a problem that started before training began.</strong> A badly initialized deep network can fail to learn no matter how it is trained afterward.</li>
+<li><strong>Forgetting that activation functions change the picture.</strong> ReLU&#39;s zeroing of negative inputs is why He initialization scales differently from the plain linear calculation here.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does an initialization scale of 1 cause explosion in a wide layer, but might be fine in a narrow one?</summary>
+The combined output variance scales with the layer's width `n`; a fixed weight variance that is safe for small `n` becomes far too large once `n` is big.
+</details>
+
+<details><summary>2. What does "1/√n" scaling achieve?</summary>
+It keeps the output variance of a layer close to its input variance, so the signal's scale neither grows nor shrinks much from layer to layer.
+</details>
+
+<details><summary>3. Does good initialization guarantee training will succeed?</summary>
+No — it only gives the signal (and later, gradients) a reasonable scale to start from; see <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> for what can still go wrong during training.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Weight initialization:</strong> the rule for picking a network&#39;s starting weights.</li>
+<li><strong>Fan-in:</strong> the number of inputs feeding into a given unit.</li>
+<li><strong>Xavier (Glorot) initialization:</strong> scaling weights by roughly <code>1/√(fan-in)</code>.</li>
+<li><strong>He initialization:</strong> a variant scaled for ReLU networks.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> · <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> · <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a> · <a class="wikilink" href="/deep-learning/batch-normalization/" data-topic="deep-learning/batch-normalization">Batch Normalization</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/weight-initialization">Open in the interactive site →</a></p>
+        <a class="read-next" href="/deep-learning/vanishing-and-exploding-gradients/"><small>Read next</small><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/the-multilayer-feedforward-network/"><b>The Multilayer Feedforward Network</b><p>A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/batch-normalization/"><b>Batch Normalization</b><p>Batch normalization re-centres and re-scales a layer&#39;s activations, using the statistics of the current mini-batch, so every unit sees roughly mean-0, unit-variance inputs no matter how the layers…</p></a><a class="rc-card" href="/deep-learning/training-deep-networks/"><b>Training Deep Networks</b><p>Gradient descent and backpropagation (see Gradient Descent and Backpropagation by Hand on the Math planet) are the engine; this district covers the practical decisions that decide whether that…</p></a><a class="rc-card" href="/deep-learning/capstone-designing-a-deep-learning-system-end-to-end/"><b>Capstone: Designing a Deep Learning System End to End</b><p>This capstone walks one project through every stage this planet covered: choosing an architecture, initializing and training it soundly, regularising it, checking it honestly, and shrinking it for…</p></a></div></section>
+        <p class="doc-prev"><a href="/deep-learning/training-deep-networks/">← Previous: Training Deep Networks</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

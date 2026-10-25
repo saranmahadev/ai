@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Determinant — AI Base</title>
+<meta name="description" content="The determinant of a square matrix is a single number telling you how the transformation scales area (or volume): a determinant of 3 makes shapes three times larger, 0.5 halves them, 0 flattens…">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/determinant/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Determinant — AI Base">
+<meta property="og:description" content="The determinant of a square matrix is a single number telling you how the transformation scales area (or volume): a determinant of 3 makes shapes three times larger, 0.5 halves them, 0 flattens…">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/determinant/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Determinant","item":"https://ai.saranmahadev.in/math/determinant/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Determinant","description":"The determinant of a square matrix is a single number telling you how the transformation scales area (or volume): a determinant of 3 makes shapes three times larger, 0.5 halves them, 0 flattens…","url":"https://ai.saranmahadev.in/math/determinant/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is det [[3, 1], [2, 4]]?","acceptedAnswer":{"@type":"Answer","text":"12 − 2 = 10."}},{"@type":"Question","name":"Is [[2, 4], [1, 2]] invertible?","acceptedAnswer":{"@type":"Answer","text":"No: 4 − 4 = 0."}},{"@type":"Question","name":"If det A = 5 and det B = 2, what is det(AB)?","acceptedAnswer":{"@type":"Answer","text":"10."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Linear Algebra</p>
+        <h1 class="doc-title">Determinant</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="crh0db4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="crh0db4pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#crh0db4bg)"/>
+  <circle cx="142" cy="76" r="109" fill="#ddbecb" opacity="0.42"/><circle cx="695" cy="309" r="79" fill="#68599a" opacity="0.35"/><circle cx="561" cy="113" r="108" fill="#cebff9" opacity="0.59"/><circle cx="918" cy="15" r="94" fill="#68599a" opacity="0.53"/><circle cx="845" cy="419" r="79" fill="#68599a" opacity="0.55"/>
+  <path d="M0,420 L0,334 L30,330 L60,327 L90,323 L120,320 L150,317 L180,314 L210,312 L240,309 L270,308 L300,306 L330,306 L360,306 L390,306 L420,307 L450,308 L480,310 L510,313 L540,315 L570,318 L600,322 L630,325 L660,328 L690,332 L720,335 L750,338 L780,341 L810,344 L840,346 L870,348 L900,349 L930,349 L960,350 L990,349 L1020,348 L1050,347 L1080,345 L1110,343 L1140,340 L1170,337 L1200,334 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,394 L30,392 L60,389 L90,385 L120,380 L150,375 L180,371 L210,367 L240,364 L270,362 L300,362 L330,364 L360,367 L390,371 L420,376 L450,381 L480,385 L510,389 L540,392 L570,394 L600,394 L630,392 L660,389 L690,385 L720,380 L750,375 L780,371 L810,367 L840,364 L870,362 L900,362 L930,364 L960,367 L990,371 L1020,376 L1050,381 L1080,385 L1110,389 L1140,392 L1170,394 L1200,394 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="930" cy="288" rx="150" ry="42" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(15.5 930 288)"/><ellipse cx="930" cy="288" rx="207" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(21.5 930 288)"/>
+  <circle cx="930" cy="288" r="59" fill="url(#crh0db4pl)"/>
+  <circle cx="892" cy="361" r="12" fill="#ffffff" opacity="0.79"/><circle cx="848" cy="342" r="15" fill="#ffffff" opacity="0.70"/><circle cx="828" cy="347" r="16" fill="#ffffff" opacity="0.65"/><circle cx="910" cy="215" r="7" fill="#ffffff" opacity="0.85"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>determinant</strong> of a square matrix is a single number telling you how the transformation scales area (or volume): a determinant of 3 makes shapes three times larger, 0.5 halves them, 0 flattens them onto a line, and a negative value also flips orientation.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/matrices-as-transformations/" data-topic="math/matrices-as-transformations">Matrices as Transformations</a> and <a class="wikilink" href="/math/transpose-identity-and-inverse/" data-topic="math/transpose-identity-and-inverse">Transpose, Identity and Inverse</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;By how much does this transformation stretch space, and can it be undone?&quot; A determinant of zero means information was destroyed, so no inverse exists.</p>
+<h2 id="intuition-the-fate-of-the-unit-square">Intuition: the fate of the unit square</h2>
+<p>Draw the unit square with corners <code>(0, 0)</code>, <code>(1, 0)</code>, <code>(0, 1)</code>, <code>(1, 1)</code>. Apply a matrix. The square becomes a parallelogram whose sides are the two columns. The <strong>determinant is that parallelogram&#39;s signed area</strong>.</p>
+<pre><code class="language-text">det [ a b ] = a d − b c
+    [ c d ]
+</code></pre>
+<ul>
+<li><code>det &gt; 1</code>: areas grow.  <code>0 &lt; det &lt; 1</code>: areas shrink.</li>
+<li><code>det = 0</code>: the columns line up and the square collapses to a line. There is no way back.</li>
+<li><code>det &lt; 0</code>: the transformation flips orientation (like a mirror image).</li>
+</ul>
+<h2 id="properties">Properties</h2>
+<pre><code class="language-text">det(I) = 1
+det(AB) = det(A) · det(B)         scalings multiply
+det(A⁻¹) = 1 / det(A)
+det(Aᵀ) = det(A)
+A is invertible  ⇔  det(A) ≠ 0
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<pre><code class="language-text">[2 0]   det = 2·3 − 0·0 = 6      stretches x by 2 and y by 3: area × 6
+[0 3]
+
+[1 2]   det = 1·4 − 2·2 = 0      second column is twice the first: the square collapses to a line
+[2 4]
+
+[0 1]   det = 0·0 − 1·1 = −1     swaps the axes: area unchanged, orientation flipped
+[1 0]
+</code></pre>
+<p>Check the product rule: <code>A = [[2,0],[0,3]]</code> (det 6) and <code>B = [[0,1],[1,0]]</code> (det −1). Then <code>AB = [[0,2],[3,0]]</code> with <code>det = 0·0 − 2·3 = −6 = 6 × (−1)</code> ✓.</p>
+<p>Geometrically, <code>[[1, 1], [0, 1]]</code> (a shear) has <code>det = 1</code>: it slants the square but keeps its area.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="area-scaler" data-title="How much does the area change?"><p class="bench-fallback"><strong>Interactive bench: How much does the area change?.</strong> Sliders for a 2 by 2 matrix show the unit square becoming a parallelogram, with the determinant, the new area and the orientation sign displayed.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set a stretch of 2 in x and 3 in y. What is the determinant?</li>
+<li>Move the columns until they line up. What does the square become?</li>
+<li>Swap the two columns and read the sign.</li>
+<li>Find a matrix with determinant 1 that is not the identity.</li>
+</ol>
+<p><strong>What you should notice:</strong> the determinant equals the signed area of the transformed unit square, and it hits zero exactly when the columns line up.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Invertibility</strong> checks: a zero determinant signals a degenerate matrix.</li>
+<li><strong>Normalising flows</strong> track how a transformation changes volume, using determinants.</li>
+<li><strong>Gaussian distributions</strong> involve the determinant of their covariance matrix.</li>
+<li><strong>Diagnosing redundant features:</strong> a near-zero determinant warns of near-dependence.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming the determinant measures length.</strong> It measures area or volume.</li>
+<li><strong>Forgetting the sign.</strong> Negative means a flip, not a smaller area.</li>
+<li><strong>Thinking small determinant is harmless.</strong> It can signal an unstable, nearly non-invertible matrix.</li>
+<li><strong>Applying the 2 × 2 formula to bigger matrices.</strong> Larger ones have their own methods.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is det [[3, 1], [2, 4]]?</summary>
+12 − 2 = 10.
+</details>
+
+<details><summary>2. Is [[2, 4], [1, 2]] invertible?</summary>
+No: 4 − 4 = 0.
+</details>
+
+<details><summary>3. If det A = 5 and det B = 2, what is det(AB)?</summary>
+10.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Determinant:</strong> the signed factor by which a matrix scales area or volume.</li>
+<li><strong>Singular:</strong> a matrix with determinant zero.</li>
+<li><strong>Orientation:</strong> whether a transformation preserves or flips handedness.</li>
+<li><strong>Parallelogram:</strong> the image of the unit square.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/matrices-as-transformations/" data-topic="math/matrices-as-transformations">Matrices as Transformations</a> · <a class="wikilink" href="/math/transpose-identity-and-inverse/" data-topic="math/transpose-identity-and-inverse">Transpose, Identity and Inverse</a> · <a class="wikilink" href="/math/linear-independence-and-basis/" data-topic="math/linear-independence-and-basis">Linear Independence and Basis</a> · <a class="wikilink" href="/math/rank-and-null-space/" data-topic="math/rank-and-null-space">Rank and Null Space</a> · <a class="wikilink" href="/math/eigenvalues-and-eigenvectors/" data-topic="math/eigenvalues-and-eigenvectors">Eigenvalues and Eigenvectors</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/determinant">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/solving-linear-systems/"><small>Read next</small><b>Solving Linear Systems</b><p>A linear system is several linear equations that must all hold at once, such as x + y = 5 and x − y = 1.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/matrices-as-transformations/"><b>Matrices as Transformations</b><p>A matrix is a grid of numbers, and multiplying a vector by a matrix transforms it: stretching, rotating, flipping or shearing space.</p></a><a class="rc-card" href="/math/transpose-identity-and-inverse/"><b>Transpose, Identity and Inverse</b><p>Three special matrix ideas come up constantly: the transpose (flip rows and columns), the identity (the matrix that does nothing) and the inverse (the matrix that undoes another).</p></a><a class="rc-card" href="/math/linear-independence-and-basis/"><b>Linear Independence and Basis</b><p>Vectors are linearly independent if none of them can be built from the others, and a basis is a smallest set of independent vectors that spans a space.</p></a><a class="rc-card" href="/math/rank-and-null-space/"><b>Rank and Null Space</b><p>The rank of a matrix is the number of independent directions it keeps, and its null space is the set of inputs it sends to zero.</p></a><a class="rc-card" href="/math/eigenvalues-and-eigenvectors/"><b>Eigenvalues and Eigenvectors</b><p>An eigenvector of a matrix is a direction that the matrix only stretches, without turning: A v = λ v. The stretch factor λ is its eigenvalue.</p></a><a class="rc-card" href="/math/linear-algebra/"><b>Linear Algebra</b><p>Linear algebra is the maths of lists of numbers (vectors) and grids of numbers (matrices), and of the simple operations that combine them.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/transpose-identity-and-inverse/">← Previous: Transpose, Identity and Inverse</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory Compression and Forgetting — AI Base</title>
+<meta name="description" content="A memory store that keeps every fact and every logged episode forever grows without bound — eventually too large to search efficiently, let alone fit anywhere near a context window.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/memory-compression-and-forgetting/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Memory Compression and Forgetting — AI Base">
+<meta property="og:description" content="A memory store that keeps every fact and every logged episode forever grows without bound — eventually too large to search efficiently, let alone fit anywhere near a context window.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/memory-compression-and-forgetting/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Memory Compression and Forgetting","item":"https://ai.saranmahadev.in/agents/memory-compression-and-forgetting/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Memory Compression and Forgetting","description":"A memory store that keeps every fact and every logged episode forever grows without bound — eventually too large to search efficiently, let alone fit anywhere near a context window.","url":"https://ai.saranmahadev.in/agents/memory-compression-and-forgetting/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the compression ratio keep climbing as turns increase, rather than staying constant?","acceptedAnswer":{"@type":"Answer","text":"The raw store's size grows in direct proportion to the number of turns, while the summary budget is fixed — so the ratio between a growing numerator and a constant denominator keeps increasing."}},{"@type":"Question","name":"What's actually being traded away when a store is compressed?","acceptedAnswer":{"@type":"Answer","text":"Detail from older entries — compression keeps the overall store at a fixed, usable size specifically by giving up the ability to recall older information with full fidelity."}},{"@type":"Question","name":"Is forgetting, in this sense, a failure of the memory system?","acceptedAnswer":{"@type":"Answer","text":"No — it's a deliberate design choice, trading detail for a bounded, usable store size; the alternative (keeping everything forever) isn't actually free, since the worked example shows it growing without bound."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Memory and State Management</p>
+        <h1 class="doc-title">Memory Compression and Forgetting</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1g6y7qabg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c1g6y7qapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1g6y7qabg)"/>
+  <circle cx="649" cy="224" r="70" fill="#725998" opacity="0.47"/><circle cx="830" cy="278" r="106" fill="#e7bdc8" opacity="0.36"/><circle cx="846" cy="175" r="85" fill="#e7bdc8" opacity="0.25"/><circle cx="397" cy="13" r="169" fill="#dcbef5" opacity="0.54"/><circle cx="882" cy="9" r="131" fill="#e7bdc8" opacity="0.57"/><circle cx="163" cy="222" r="154" fill="#e7bdc8" opacity="0.24"/>
+  <path d="M0,420 L0,311 L30,315 L60,319 L90,324 L120,329 L150,335 L180,339 L210,343 L240,346 L270,349 L300,350 L330,349 L360,348 L390,345 L420,342 L450,337 L480,333 L510,327 L540,322 L570,318 L600,313 L630,310 L660,307 L690,306 L720,306 L750,307 L780,309 L810,312 L840,316 L870,321 L900,326 L930,331 L960,336 L990,341 L1020,344 L1050,347 L1080,349 L1110,350 L1140,349 L1170,347 L1200,344 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,376 L60,371 L90,367 L120,364 L150,362 L180,362 L210,364 L240,366 L270,370 L300,375 L330,380 L360,385 L390,389 L420,392 L450,394 L480,394 L510,392 L540,390 L570,386 L600,381 L630,376 L660,371 L690,367 L720,364 L750,362 L780,362 L810,364 L840,366 L870,370 L900,375 L930,380 L960,385 L990,389 L1020,392 L1050,394 L1080,394 L1110,392 L1140,390 L1170,386 L1200,381 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="955" cy="138" rx="232" ry="65" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(23.5 955 138)"/><ellipse cx="955" cy="138" rx="320" ry="90" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(29.5 955 138)"/>
+  <circle cx="955" cy="138" r="91" fill="url(#c1g6y7qapl)"/>
+  <circle cx="1260" cy="151" r="9" fill="#ffffff" opacity="0.70"/><circle cx="1189" cy="182" r="15" fill="#ffffff" opacity="0.80"/><circle cx="1269" cy="86" r="15" fill="#ffffff" opacity="0.62"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A memory store that keeps every fact and every logged episode forever grows without bound — eventually too large to search efficiently, let alone fit anywhere near a context window. Compression keeps the store usable by periodically folding old entries into a smaller summary and, deliberately, forgetting whatever didn&#39;t make the cut.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/episodic-memory-and-experience-logs/" data-topic="agents/episodic-memory-and-experience-logs">Episodic Memory and Experience Logs</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What happens once an agent&#39;s memory store itself gets too large to use?&quot; Left alone, a raw log of everything an agent has ever done grows linearly with how long it&#39;s been running — nothing about an ever-growing store collapses it back down on its own. Memory compression periodically summarizes older entries into a bounded budget, trading detail from the past for a store that stays usable no matter how long the agent keeps running.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A doctor&#39;s chart that keeps every visit&#39;s full notes forever becomes unwieldy after decades of care — a good chart periodically folds older visits into a brief summary (&quot;stable hypertension since 2019, no other chronic conditions&quot;) and keeps only recent visits in full detail. Something is genuinely lost in that folding, but the chart stays usable precisely because it doesn&#39;t try to keep everything.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">raw store size(turns) = turns × tokens_per_turn          — grows without bound
+summarized size        = a fixed cap, regardless of turns
+compression ratio       = raw store size / cap
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A transcript growing at 120 tokens per turn, against a fixed 400-token summary budget:</p>
+<pre><code class="language-text">10 turns:   raw = 1,200 tokens   cap = 400   ratio =  3.0×
+50 turns:   raw = 6,000 tokens   cap = 400   ratio = 15.0×
+200 turns:  raw = 24,000 tokens  cap = 400   ratio = 60.0×
+</code></pre>
+<p>The raw store keeps growing in direct proportion to how long the agent has been running; the summarized version doesn&#39;t grow at all past the first compression. The ratio between them is exactly how much detail compression is discarding to keep the store at a fixed size — a ratio that itself keeps climbing the longer the agent runs.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="memory-compression" data-title="Keeping everything, or keeping a summary"><p class="bench-fallback"><strong>Interactive bench: Keeping everything, or keeping a summary.</strong> Compare raw transcript size against a fixed summarization budget as a conversation grows.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide turns up from 10 to 200 and watch the raw bar grow while the summary bar stays fixed.</li>
+<li>Read off the compression ratio at a few different turn counts.</li>
+<li>Imagine a specific detail from turn 3 (an exact number the user mentioned) is needed again at turn 180 — what has to be true about the summarization step for that detail to still be recoverable?</li>
+</ol>
+<p><strong>What you should notice:</strong> the summary budget staying fixed is exactly what keeps the store usable — but that fixed budget is also exactly why detail from the past gets lost, which is the actual trade compression is making, not a bug in how it&#39;s implemented.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is the same trade-off as <a class="wikilink" href="/llms/multi-turn-conversation-state-and-memory/" data-topic="llms/multi-turn-conversation-state-and-memory">summarization-based conversation memory</a> on the LLMs planet</strong>, applied to an agent&#39;s whole long-term memory store rather than just one conversation&#39;s context.</li>
+<li><strong><a class="wikilink" href="/agents/memory-retrieval-as-agent-time-rag/" data-topic="agents/memory-retrieval-as-agent-time-rag">Memory Retrieval as Agent-Time RAG</a> can only retrieve what the store still has</strong> — a detail compressed away or dropped during forgetting is gone from retrieval too, no matter how relevant it would have been.</li>
+<li><strong><a class="wikilink" href="/agents/memory-compression-and-forgetting/" data-topic="agents/memory-compression-and-forgetting">Forgetting</a> deliberately, bounded by a budget, is different from losing information by accident</strong> — the budget is a design decision about how much of the past to keep, not a failure to keep anything at all.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Never compressing at all.</strong> The worked example&#39;s 60× ratio at 200 turns shows exactly where an uncompressed store ends up — eventually too large to search efficiently or fit in any reasonable context budget.</li>
+<li><strong>Compressing too aggressively and losing details that matter later.</strong> A fixed small budget that discards specifics (exact numbers, names, decisions) can make the store confidently wrong rather than just incomplete, if the summary states a vague approximation as if it were the original fact.</li>
+<li><strong>Assuming compression is lossless.</strong> Folding detail into a summary is a genuine trade, not a free optimization — something always has the possibility of being dropped, which is exactly why what to keep (and for how long) is a real design decision.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the compression ratio keep climbing as turns increase, rather than staying constant?</summary>
+The raw store's size grows in direct proportion to the number of turns, while the summary budget is fixed — so the ratio between a growing numerator and a constant denominator keeps increasing.
+</details>
+
+<details><summary>2. What's actually being traded away when a store is compressed?</summary>
+Detail from older entries — compression keeps the overall store at a fixed, usable size specifically by giving up the ability to recall older information with full fidelity.
+</details>
+
+<details><summary>3. Is forgetting, in this sense, a failure of the memory system?</summary>
+No — it's a deliberate design choice, trading detail for a bounded, usable store size; the alternative (keeping everything forever) isn't actually free, since the worked example shows it growing without bound.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Memory compression:</strong> periodically folding older memory entries into a bounded summary.</li>
+<li><strong>Compression ratio:</strong> the raw store size divided by the fixed summarized size.</li>
+<li><strong>Forgetting (deliberate):</strong> discarding detail on purpose, as the cost of keeping the overall store at a usable, bounded size.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/multi-turn-conversation-state-and-memory/" data-topic="llms/multi-turn-conversation-state-and-memory">Multi-Turn Conversation State and Memory</a> · <a class="wikilink" href="/agents/memory-retrieval-as-agent-time-rag/" data-topic="agents/memory-retrieval-as-agent-time-rag">Memory Retrieval as Agent-Time RAG</a> · <a class="wikilink" href="/agents/shared-state-across-a-multi-step-task/" data-topic="agents/shared-state-across-a-multi-step-task">Shared State Across a Multi-Step Task</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/memory-compression-and-forgetting">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/shared-state-across-a-multi-step-task/"><small>Read next</small><b>Shared State Across a Multi-Step Task</b><p>A five-step task that needs today&#39;s date can fetch it five separate times, once per step — or fetch it once and write it somewhere every later step can just read.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/episodic-memory-and-experience-logs/"><b>Episodic Memory and Experience Logs</b><p>The first time an agent faces a task, it has to actually discover which approach works — try something, see it fail, try something else.</p></a><a class="rc-card" href="/llms/multi-turn-conversation-state-and-memory/"><b>Multi-Turn Conversation State and Memory</b><p>A conversation isn&#39;t one request — it&#39;s many, each one needing the context of everything said before.</p></a><a class="rc-card" href="/agents/memory-retrieval-as-agent-time-rag/"><b>Memory Retrieval as Agent-Time RAG</b><p>An agent with thousands of stored memories can&#39;t dump all of them into context on every step — it needs to pull back only the handful actually relevant to what it&#39;s doing right now.</p></a><a class="rc-card" href="/agents/shared-state-across-a-multi-step-task/"><b>Shared State Across a Multi-Step Task</b><p>A five-step task that needs today&#39;s date can fetch it five separate times, once per step — or fetch it once and write it somewhere every later step can just read.</p></a><a class="rc-card" href="/agents/memory-and-state-management/"><b>Memory and State Management</b><p>An agent running for hundreds of steps can&#39;t keep everything it&#39;s ever seen in its context window — and some of what it learns along the way needs to survive past the current run entirely.</p></a><a class="rc-card" href="/agents/short-term-vs-long-term-agent-memory/"><b>Short-Term vs. Long-Term Agent Memory</b><p>Everything an agent reads during one run — the request, the tool results so far, its own earlier reasoning — disappears the moment that run ends, unless something deliberately writes it somewhere…</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/memory-retrieval-as-agent-time-rag/">← Previous: Memory Retrieval as Agent-Time RAG</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

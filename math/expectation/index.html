@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expectation — AI Base</title>
+<meta name="description" content="The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/expectation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Expectation — AI Base">
+<meta property="og:description" content="The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/expectation/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Expectation","item":"https://ai.saranmahadev.in/math/expectation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Expectation","description":"The expectation (or mean) of a random variable is its long-run average: each value weighted by its probability.","url":"https://ai.saranmahadev.in/math/expectation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is E[X] for X = 0 or 10, each with probability 0.5?","acceptedAnswer":{"@type":"Answer","text":"5."}},{"@type":"Question","name":"If E[X] = 4, what is E[3X + 2]?","acceptedAnswer":{"@type":"Answer","text":"14."}},{"@type":"Question","name":"What is the expected value of one roll of a fair die?","acceptedAnswer":{"@type":"Answer","text":"3.5."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Probability</p>
+        <h1 class="doc-title">Expectation</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c11m0cn9bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c11m0cn9pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c11m0cn9bg)"/>
+  <circle cx="600" cy="16" r="125" fill="#eee9fd" opacity="0.40"/><circle cx="1070" cy="396" r="208" fill="#68599a" opacity="0.50"/><circle cx="63" cy="338" r="103" fill="#cebff9" opacity="0.35"/><circle cx="1070" cy="326" r="222" fill="#eee9fd" opacity="0.30"/><circle cx="993" cy="268" r="88" fill="#cebff9" opacity="0.29"/><circle cx="324" cy="212" r="185" fill="#cebff9" opacity="0.57"/><circle cx="429" cy="129" r="87" fill="#ddbecb" opacity="0.42"/>
+  <path d="M0,420 L0,349 L30,350 L60,349 L90,348 L120,347 L150,345 L180,343 L210,340 L240,337 L270,334 L300,330 L330,327 L360,323 L390,320 L420,317 L450,314 L480,311 L510,309 L540,308 L570,306 L600,306 L630,306 L660,306 L690,307 L720,308 L750,310 L780,313 L810,315 L840,318 L870,322 L900,325 L930,329 L960,332 L990,335 L1020,338 L1050,341 L1080,344 L1110,346 L1140,348 L1170,349 L1200,349 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,375 L30,370 L60,366 L90,364 L120,362 L150,362 L180,364 L210,367 L240,371 L270,376 L300,381 L330,386 L360,390 L390,392 L420,394 L450,394 L480,392 L510,389 L540,385 L570,380 L600,375 L630,370 L660,366 L690,364 L720,362 L750,362 L780,364 L810,367 L840,371 L870,376 L900,381 L930,386 L960,390 L990,392 L1020,394 L1050,394 L1080,392 L1110,389 L1140,385 L1170,380 L1200,375 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="971" cy="129" rx="190" ry="53" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(9.7 971 129)"/><ellipse cx="971" cy="129" rx="263" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(15.7 971 129)"/>
+  <circle cx="971" cy="129" r="75" fill="url(#c11m0cn9pl)"/>
+  <circle cx="776" cy="38" r="10" fill="#ffffff" opacity="0.74"/><circle cx="1040" cy="208" r="7" fill="#ffffff" opacity="0.61"/><circle cx="1001" cy="58" r="9" fill="#ffffff" opacity="0.63"/><circle cx="1054" cy="39" r="9" fill="#ffffff" opacity="0.80"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>The <strong>expectation</strong> (or mean) of a random variable is its long-run average: each value weighted by its probability. It is the balance point of the distribution, and it turns a whole uncertain outcome into one representative number.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/random-variables/" data-topic="math/random-variables">Random Variables</a> and <a class="wikilink" href="/math/sums-and-products/" data-topic="math/sums-and-products">Sums and Products</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If I repeat this many times, what do I get on average?&quot; A casino, an insurer and a model trainer all care about averages over many repetitions.</p>
+<h2 id="intuition-a-balance-point">Intuition: a balance point</h2>
+<p>Put weights on a ruler at each possible value, with weight equal to its probability. The point where the ruler balances is the expectation.</p>
+<pre><code class="language-text">E[X] = Σ x · P(X = x)
+</code></pre>
+<p>A fair die: <code>E[X] = (1 + 2 + 3 + 4 + 5 + 6)/6 = 3.5</code>. You can never roll a 3.5, but over many rolls the average approaches it.</p>
+<h2 id="rules">Rules</h2>
+<p>Expectation is <strong>linear</strong>, which makes it easy to work with:</p>
+<pre><code class="language-text">E[a·X + b] = a·E[X] + b
+E[X + Y]   = E[X] + E[Y]          (always, even if X and Y are dependent)
+</code></pre>
+<p>For a function of <code>X</code>: <code>E[g(X)] = Σ g(x) · P(X = x)</code>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A game pays 10 dollars with probability 0.1 and costs 1 dollar otherwise. The expected gain per play:</p>
+<pre><code class="language-text">E = 0.1 × 10 + 0.9 × (−1) = 1 − 0.9 = +0.10 dollars
+</code></pre>
+<p>Average of many plays approaches +0.10. Two dice: <code>E[X₁ + X₂] = 3.5 + 3.5 = 7</code> (which is also the middle of the distribution in <a class="wikilink" href="/math/random-variables/" data-topic="math/random-variables">Random Variables</a>).</p>
+<p>For a mean-squared-error loss, the quantity being minimised is the expectation of the squared error over the data distribution. A good prediction that minimises squared error is the conditional expectation: the <strong>mean</strong>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="balance-point" data-title="Where does the distribution balance?"><p class="bench-fallback"><strong>Interactive bench: Where does the distribution balance?.</strong> Sliders set the weights of five values on a ruler; the bench shows the probabilities and the balance point, the expectation, and compares it with the most likely value.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with equal weights and find the balance point.</li>
+<li>Move weight to the right end and watch the balance point follow.</li>
+<li>Make one value very likely and compare with the mean.</li>
+<li>Try a two-humped setting: the balance point can lie where nothing happens.</li>
+</ol>
+<p><strong>What you should notice:</strong> the expectation is the weighted average, and it can differ from the most likely value or even fall on a value that never occurs.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Loss functions</strong> are expectations of a per-example loss.</li>
+<li><strong>Reinforcement learning</strong> maximises expected reward.</li>
+<li><strong>Predictions:</strong> the mean minimises squared error.</li>
+<li><strong>Monte Carlo</strong> estimates expectations by averaging samples.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Treating the mean as the most likely value.</strong></li>
+<li><strong>Forgetting to weight by probability.</strong></li>
+<li><strong>Assuming <code>E[X²] = (E[X])²</code>.</strong> They differ by the variance.</li>
+<li><strong>Ignoring heavy tails,</strong> where the mean is dominated by rare huge values.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is E[X] for X = 0 or 10, each with probability 0.5?</summary>
+5.
+</details>
+
+<details><summary>2. If E[X] = 4, what is E[3X + 2]?</summary>
+14.
+</details>
+
+<details><summary>3. What is the expected value of one roll of a fair die?</summary>
+3.5.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Expectation (mean):</strong> the probability-weighted average.</li>
+<li><strong>Linearity of expectation:</strong> <code>E[aX + bY] = aE[X] + bE[Y]</code>.</li>
+<li><strong>Expected value:</strong> another name for the expectation.</li>
+<li><strong>Monte Carlo:</strong> estimating an expectation by averaging samples.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/random-variables/" data-topic="math/random-variables">Random Variables</a> · <a class="wikilink" href="/math/sums-and-products/" data-topic="math/sums-and-products">Sums and Products</a> · <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> · <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a> · <a class="wikilink" href="/math/loss-functions/" data-topic="math/loss-functions">Loss Functions</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/expectation">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/variance-and-standard-deviation/"><small>Read next</small><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/random-variables/"><b>Random Variables</b><p>A random variable is a number whose value depends on chance: the total of two dice, the number of heads in ten flips, a model&#39;s error on the next example.</p></a><a class="rc-card" href="/math/sums-and-products/"><b>Sums and Products</b><p>Summation (Σ) and product (Π) notation write a long repeated addition or multiplication in one short line. They are literally a loop: &quot;for each i from a to b, add (or multiply) this in&quot;.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/math/law-of-large-numbers/"><b>Law of Large Numbers</b><p>The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.</p></a><a class="rc-card" href="/math/loss-functions/"><b>Loss Functions</b><p>A loss function turns &quot;how wrong is the model?&quot; into a single number: small when predictions are good, large when they are bad.</p></a><a class="rc-card" href="/math/integrals/"><b>Integrals</b><p>An integral adds up a quantity that changes continuously: the area under a curve.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/random-variables/">← Previous: Random Variables</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

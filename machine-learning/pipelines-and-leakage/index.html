@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipelines and Leakage — AI Base</title>
+<meta name="description" content="Leakage is when information the model should not have sneaks into training, making test scores look wonderful and real performance poor.">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/pipelines-and-leakage/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Pipelines and Leakage — AI Base">
+<meta property="og:description" content="Leakage is when information the model should not have sneaks into training, making test scores look wonderful and real performance poor.">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/pipelines-and-leakage/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Pipelines and Leakage","item":"https://ai.saranmahadev.in/machine-learning/pipelines-and-leakage/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Pipelines and Leakage","description":"Leakage is when information the model should not have sneaks into training, making test scores look wonderful and real performance poor.","url":"https://ai.saranmahadev.in/machine-learning/pipelines-and-leakage/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why did the leaky pipeline beat chance on random labels?","acceptedAnswer":{"@type":"Answer","text":"Feature selection used the labels of all examples, including those later used for validation, so chance correlations were locked in."}},{"@type":"Question","name":"What does a pipeline ensure?","acceptedAnswer":{"@type":"Answer","text":"Every learned preparation step is refitted on the training fold only."}},{"@type":"Question","name":"Name a warning sign of leakage.","acceptedAnswer":{"@type":"Answer","text":"Suspiciously high accuracy, or a large drop between validation and production."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · Machine Learning in Practice</p>
+        <h1 class="doc-title">Pipelines and Leakage</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c6vbvo3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c6vbvo3pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c6vbvo3bg)"/>
+  <circle cx="833" cy="6" r="94" fill="#8a6b5c" opacity="0.32"/><circle cx="832" cy="88" r="157" fill="#ffd08d" opacity="0.42"/><circle cx="636" cy="348" r="223" fill="#fff2de" opacity="0.52"/><circle cx="14" cy="54" r="87" fill="#ffd08d" opacity="0.30"/><circle cx="383" cy="23" r="203" fill="#ffd08d" opacity="0.48"/><circle cx="593" cy="51" r="215" fill="#ffd08d" opacity="0.26"/><circle cx="509" cy="109" r="228" fill="#fff2de" opacity="0.23"/>
+  <path d="M0,420 L0,347 L30,348 L60,349 L90,350 L120,349 L150,349 L180,347 L210,346 L240,343 L270,341 L300,338 L330,335 L360,331 L390,328 L420,324 L450,321 L480,318 L510,315 L540,312 L570,310 L600,308 L630,307 L660,306 L690,306 L720,306 L750,307 L780,308 L810,310 L840,312 L870,314 L900,317 L930,321 L960,324 L990,327 L1020,331 L1050,334 L1080,337 L1110,340 L1140,343 L1170,345 L1200,347 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,365 L60,367 L90,370 L120,373 L150,377 L180,381 L210,384 L240,388 L270,390 L300,392 L330,394 L360,394 L390,393 L420,392 L450,390 L480,387 L510,384 L540,380 L570,376 L600,373 L630,369 L660,366 L690,364 L720,363 L750,362 L780,362 L810,363 L840,365 L870,368 L900,371 L930,375 L960,378 L990,382 L1020,386 L1050,389 L1080,391 L1110,393 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="944" cy="228" rx="257" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.3 944 228)"/><ellipse cx="944" cy="228" rx="355" ry="99" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.3 944 228)"/>
+  <circle cx="944" cy="228" r="101" fill="url(#c6vbvo3pl)"/>
+  <circle cx="1142" cy="306" r="12" fill="#ffffff" opacity="0.84"/><circle cx="991" cy="340" r="18" fill="#ffffff" opacity="0.86"/><circle cx="1059" cy="117" r="8" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Leakage</strong> is when information the model should not have sneaks into training, making test scores look wonderful and real performance poor. The most surprising kind comes from preparing data before splitting it: choose the &quot;best&quot; features using all the data, and even pure noise will appear predictable. A <strong>pipeline</strong> fixes this by packaging each preparation step so it is refitted inside every training fold.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/the-ml-workflow/" data-topic="machine-learning/the-ml-workflow">The ML Workflow</a>, <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a> and <a class="wikilink" href="/machine-learning/the-curse-of-dimensionality/" data-topic="machine-learning/the-curse-of-dimensionality">The Curse of Dimensionality</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Why did the model collapse in production after scoring so well?&quot; Very often a step, such as scaling, imputing, selecting features or removing outliers, was fitted on data that included the examples it was later tested on.</p>
+<h2 id="intuition-peeking-through-a-side-door">Intuition: peeking through a side door</h2>
+<p>Imagine choosing the ten features most correlated with the label. If you make that choice on all 60 examples and <em>then</em> cross-validate, each validation example already helped pick the features. With hundreds of useless features, some will correlate with the label by chance, and the selection step finds exactly those; cross-validation then rewards the model for a coincidence that was baked in. The fix is simple in principle: everything that learns from data must be learned inside the training fold.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">leakage types    preprocessing fitted on all data · duplicates across splits
+                 · features from the future (a column recorded after the outcome)
+                 · the label hidden in an ID, a timestamp or a proxy
+pipeline         [scale → select features → model] treated as one unit and refitted per fold
+warning signs    accuracy that is too good · a feature with implausible importance
+                 · a big drop between validation and production
+</code></pre>
+<p>Time also leaks: with time-ordered data, train on the past and test on the future, never shuffle.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Sixty examples with a random 50/50 label and 300 features that are pure noise: there is nothing to learn, so honest accuracy is 50%. Pick the top 10 features by correlation with the label, then run 5-fold cross-validation with a nearest-centroid classifier. Average over 20 random datasets:</p>
+<pre><code class="language-text">300 noise features, keep 10:    select on all data first (leaky)   80.1%    select inside each fold (proper)   50.6%
+300 noise features, keep 20:    leaky 85.2%                        proper 50.6%
+1000 noise features, keep 10:   leaky 85.4%                        proper 48.0%
+50 noise features, keep 10:     leaky 68.4%                        proper 46.8%
+</code></pre>
+<p>The leaky pipeline &quot;finds&quot; 80–85% accuracy in nothing but noise, and does better the more useless features it can choose from. The proper pipeline stays at chance, which is the truth. Nothing about the classifier differs, only <em>when</em> the selection was done.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="leak-demo" data-title="A signal in pure noise?"><p class="bench-fallback"><strong>Interactive bench: A signal in pure noise?.</strong> Sixty examples with random labels and hundreds of noise features are cross-validated with feature selection done either on all the data first or inside each training fold; the bench shows the accuracy of each pipeline on twenty random datasets, with sliders for the number of noise features and features kept.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>In the leaky pipeline, read the average accuracy on noise.</li>
+<li>Switch to the proper pipeline.</li>
+<li>Raise the number of noise features to 1000.</li>
+<li>Reduce it to 20 and see the leak shrink.</li>
+</ol>
+<p><strong>What you should notice:</strong> with the leak, accuracy far above 50% appears from nothing, growing with the number of useless features, and correct nesting removes it.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Genomics and other wide data</strong> with thousands of features and few samples.</li>
+<li><strong>Kaggle-style competitions,</strong> where leaks in IDs or timestamps decide leaderboards.</li>
+<li><strong>Production ML,</strong> where a pipeline object guarantees the same steps in training and serving.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Selecting features, scaling or imputing before the split.</strong></li>
+<li><strong>Duplicates and near-duplicates across splits.</strong></li>
+<li><strong>Random splits of time-ordered data.</strong></li>
+<li><strong>Trusting results that seem too good.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why did the leaky pipeline beat chance on random labels?</summary>
+Feature selection used the labels of all examples, including those later used for validation, so chance correlations were locked in.
+</details>
+
+<details><summary>2. What does a pipeline ensure?</summary>
+Every learned preparation step is refitted on the training fold only.
+</details>
+
+<details><summary>3. Name a warning sign of leakage.</summary>
+Suspiciously high accuracy, or a large drop between validation and production.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Data leakage:</strong> information from outside the training data influencing the model.</li>
+<li><strong>Pipeline:</strong> preparation and model steps bundled and refitted together.</li>
+<li><strong>Nested validation:</strong> doing selection inside the training fold.</li>
+<li><strong>Target leakage:</strong> a feature that encodes the outcome.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/machine-learning/the-ml-workflow/" data-topic="machine-learning/the-ml-workflow">The ML Workflow</a> · <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a> · <a class="wikilink" href="/math/common-test-mistakes/" data-topic="math/common-test-mistakes">Common Test Mistakes</a> · <a class="wikilink" href="/machine-learning/the-curse-of-dimensionality/" data-topic="machine-learning/the-curse-of-dimensionality">The Curse of Dimensionality</a> · <a class="wikilink" href="/machine-learning/datasets-features-and-labels/" data-topic="machine-learning/datasets-features-and-labels">Datasets, Features and Labels</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/pipelines-and-leakage">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/deployment-and-monitoring/"><small>Read next</small><b>Deployment and Monitoring</b><p>Shipping a model is the start of its life, not the end. The world changes, so a deployed model must be watched.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/the-ml-workflow/"><b>The ML Workflow</b><p>Building a model is a sequence of steps, and the order matters as much as the choices.</p></a><a class="rc-card" href="/machine-learning/cross-validation/"><b>Cross-Validation</b><p>One train/validation split gives one score, and that score depends on which points happened to land where.</p></a><a class="rc-card" href="/machine-learning/the-curse-of-dimensionality/"><b>The Curse of Dimensionality</b><p>Every feature you add is a new dimension, and high-dimensional space behaves strangely: it is enormous, data points end up far from everything, and &quot;nearest&quot; stops meaning much.</p></a><a class="rc-card" href="/math/common-test-mistakes/"><b>Common Test Mistakes</b><p>Statistical tests are easy to misuse.</p></a><a class="rc-card" href="/machine-learning/datasets-features-and-labels/"><b>Datasets, Features and Labels</b><p>A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).</p></a><a class="rc-card" href="/machine-learning/machine-learning-in-practice/"><b>Machine Learning in Practice</b><p>Knowing the algorithms is half the craft.</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/baselines-and-error-analysis/">← Previous: Baselines and Error Analysis</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

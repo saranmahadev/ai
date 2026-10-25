@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Action-Space Design and Its Failure Modes — AI Base</title>
+<meta name="description" content="Giving an agent one distinct action per object it might ever need to pick seems safe — until the number of objects grows and a correct first guess becomes a lottery ticket.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/action-space-design-and-its-failure-modes/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Action-Space Design and Its Failure Modes — AI Base">
+<meta property="og:description" content="Giving an agent one distinct action per object it might ever need to pick seems safe — until the number of objects grows and a correct first guess becomes a lottery ticket.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/action-space-design-and-its-failure-modes/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Action-Space Design and Its Failure Modes","item":"https://ai.saranmahadev.in/agents/action-space-design-and-its-failure-modes/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Action-Space Design and Its Failure Modes","description":"Giving an agent one distinct action per object it might ever need to pick seems safe — until the number of objects grows and a correct first guess becomes a lottery ticket.","url":"https://ai.saranmahadev.in/agents/action-space-design-and-its-failure-modes/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the enumerated design's success rate fall as k grows, while the coarse design's stays at 0% regardless of k?","acceptedAnswer":{"@type":"Answer","text":"The enumerated design's random first-try success is exactly 1/k, so it necessarily shrinks as more candidates are added; the coarse design can't express which candidate is meant at any k, so it fails uniformly rather than degrading with scale."}},{"@type":"Question","name":"What problem does a parameterized action space solve that the other two don't?","acceptedAnswer":{"@type":"Answer","text":"It keeps the action space itself at a constant size (one action type) regardless of how many candidates exist, while still being able to express a choice among all of them via the parameter — avoiding both the enumerated design's explosion and the coarse design's inability to specify a target."}},{"@type":"Question","name":"Does making an action space parameterized guarantee high success?","acceptedAnswer":{"@type":"Answer","text":"No — it only prevents the action space's own size or shape from being the bottleneck; success still depends on a separate problem, correctly identifying which parameter value (which target) to use."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Agent Environments and Action Spaces</p>
+        <h1 class="doc-title">Action-Space Design and Its Failure Modes</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cep3zfvbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="cep3zfvpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cep3zfvbg)"/>
+  <circle cx="381" cy="210" r="136" fill="#f3e9fc" opacity="0.34"/><circle cx="698" cy="164" r="108" fill="#725998" opacity="0.53"/><circle cx="627" cy="146" r="187" fill="#f3e9fc" opacity="0.47"/><circle cx="376" cy="214" r="222" fill="#725998" opacity="0.41"/><circle cx="527" cy="282" r="172" fill="#dcbef5" opacity="0.34"/>
+  <path d="M0,420 L0,349 L30,347 L60,342 L90,336 L120,330 L150,323 L180,316 L210,311 L240,307 L270,306 L300,306 L330,309 L360,313 L390,319 L420,326 L450,332 L480,339 L510,344 L540,348 L570,350 L600,349 L630,347 L660,342 L690,336 L720,330 L750,323 L780,316 L810,311 L840,307 L870,306 L900,306 L930,309 L960,313 L990,319 L1020,326 L1050,332 L1080,339 L1110,344 L1140,348 L1170,350 L1200,349 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,366 L60,368 L90,371 L120,375 L150,379 L180,382 L210,386 L240,389 L270,391 L300,393 L330,394 L360,394 L390,393 L420,391 L450,389 L480,386 L510,382 L540,379 L570,375 L600,371 L630,368 L660,365 L690,363 L720,362 L750,362 L780,363 L810,364 L840,366 L870,369 L900,373 L930,376 L960,380 L990,384 L1020,387 L1050,390 L1080,392 L1110,393 L1140,394 L1170,394 L1200,392 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="840" cy="263" rx="222" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-3.8 840 263)"/><ellipse cx="840" cy="263" rx="308" ry="86" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(2.2 840 263)"/>
+  <circle cx="840" cy="263" r="87" fill="url(#cep3zfvpl)"/>
+  <circle cx="612" cy="199" r="17" fill="#ffffff" opacity="0.78"/><circle cx="1150" cy="191" r="11" fill="#ffffff" opacity="0.89"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Giving an agent one distinct action per object it might ever need to pick seems safe — until the number of objects grows and a correct first guess becomes a lottery ticket. Giving it one generic &quot;do something&quot; action avoids that explosion but can&#39;t express which object was meant at all. The fix isn&#39;t choosing a side; it&#39;s giving the action a parameter.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments">Kinds of Environments</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does the shape of an agent&#39;s action space itself cause failures, independent of how good its decision-making is?&quot; Two opposite mistakes show up repeatedly: an <strong>enumerated</strong> action space (one distinct action per possible target) that works for small numbers of targets but collapses as they grow, and a <strong>coarse</strong> action space (one generic action with no way to specify a target) that never works no matter how many targets there are. A <strong>parameterized</strong> action — one action type that takes a target as an argument — avoids both failure modes at once.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A vending machine with one button per exact snack works fine with ten snacks and becomes unusable with a thousand — you&#39;d need a thousand buttons, and finding the right one by chance gets harder every time a new snack is added. A vending machine with a single &quot;dispense&quot; button and no way to say <em>which</em> snack never works at all, for any number of snacks. A machine where you type in a snack&#39;s code and press one &quot;dispense&quot; button scales to any number of snacks without adding buttons or losing the ability to pick exactly one.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">enumerated action space:     one action per candidate; space size = k; random first-try success = 1/k
+coarse action space:         one action, no target parameter; space size = 1; success = 0% (can&#39;t express the choice)
+parameterized action space:  one action type + a target parameter; space size = 1; success depends only on picking the right parameter
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Random, uninformed first-try success rate as the number of candidate objects (k) grows, under each design:</p>
+<pre><code class="language-text">k = 5:    enumerated 20.0%     coarse 0%     parameterized 100%*
+k = 10:   enumerated 10.0%     coarse 0%     parameterized 100%*
+k = 50:   enumerated  2.0%     coarse 0%     parameterized 100%*
+k = 200:  enumerated  0.5%     coarse 0%     parameterized 100%*
+
+*assuming the correct target id is identified correctly — a separate perception/selection problem
+</code></pre>
+<p>The enumerated design&#39;s success rate falls directly out of 1/k and craters as k grows — this is the combinatorial-explosion failure mode. The coarse design&#39;s success rate is flatly 0% at every k, because the action simply cannot express which object was meant — this is the expressiveness failure mode. The parameterized design keeps the action space itself at a constant size of 1 regardless of k, pushing the actual difficulty into a separate problem (identifying the right id) that doesn&#39;t force the action space to grow.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="action-space-granularity" data-title="One action per object, one action total, or one parameterized action"><p class="bench-fallback"><strong>Interactive bench: One action per object, one action total, or one parameterized action.</strong> Slide the number of candidate objects and compare success rate across enumerated, coarse and parameterized action-space designs.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>At k=5, compare all three designs&#39; success rates.</li>
+<li>Slide k up to 200 and watch the enumerated design&#39;s success rate approach zero.</li>
+<li>Notice the coarse design never improves and the parameterized design never degrades, regardless of k.</li>
+</ol>
+<p><strong>What you should notice:</strong> two very different-looking failures — one that gets worse with scale, one that&#39;s uniformly broken at every scale — both trace back to the same root cause: the action space&#39;s shape didn&#39;t match the task&#39;s actual structure.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This generalizes the lesson from <a class="wikilink" href="/agents/web-browsing-agents/" data-topic="agents/web-browsing-agents">Web-Browsing Agents</a> and <a class="wikilink" href="/agents/computer-use-agents-and-gui-grounding/" data-topic="agents/computer-use-agents-and-gui-grounding">Computer-Use Agents and GUI Grounding</a></strong>: index-based web actions and raw pixel clicks are both, in effect, enumerated or coarse designs with their own specific failure patterns — naming an element by stable identity is the parameterized fix in both cases.</li>
+<li><strong><a class="wikilink" href="/agents/tool-selection-among-many-candidates/" data-topic="agents/tool-selection-among-many-candidates">Tool Selection Among Many Candidates</a>, covered in the tool-use district, is the enumerated failure mode applied specifically to tool choice</strong> — picking the right one of many near-identical tools degrades the same way as k grows.</li>
+<li><strong><a class="wikilink" href="/agents/hierarchical-task-planning/" data-topic="agents/hierarchical-task-planning">Hierarchical Task Planning</a>&#39;s branching-factor problem is a close relative</strong>: both topics show that how a space (of actions, or of plans) is structured determines how hard search or choice becomes, independent of how capable the chooser is.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Enumerating actions because it seems simpler to implement.</strong> The worked example shows this design choice has a real, quantifiable cost that gets worse exactly as a system scales up — the moment it starts succeeding, it&#39;s also the moment it starts failing more.</li>
+<li><strong>Building a coarse action &quot;to keep things simple&quot; and then wondering why the agent can never do what&#39;s asked.</strong> A generic action with no way to specify a target isn&#39;t a simpler version of the task — it&#39;s a different, unsolvable one.</li>
+<li><strong>Confusing a parameterized action&#39;s success with having solved the whole problem.</strong> Giving the action a parameter doesn&#39;t make picking the right parameter value easy — it just stops the action space itself from being the bottleneck.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does the enumerated design's success rate fall as k grows, while the coarse design's stays at 0% regardless of k?</summary>
+The enumerated design's random first-try success is exactly 1/k, so it necessarily shrinks as more candidates are added; the coarse design can't express which candidate is meant at any k, so it fails uniformly rather than degrading with scale.
+</details>
+
+<details><summary>2. What problem does a parameterized action space solve that the other two don't?</summary>
+It keeps the action space itself at a constant size (one action type) regardless of how many candidates exist, while still being able to express a choice among all of them via the parameter — avoiding both the enumerated design's explosion and the coarse design's inability to specify a target.
+</details>
+
+<details><summary>3. Does making an action space parameterized guarantee high success?</summary>
+No — it only prevents the action space's own size or shape from being the bottleneck; success still depends on a separate problem, correctly identifying which parameter value (which target) to use.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Enumerated action space:</strong> one distinct action per candidate target, whose size grows with the number of candidates.</li>
+<li><strong>Coarse action space:</strong> a generic action with no parameter to specify a target, unable to express which one is meant.</li>
+<li><strong>Parameterized action space:</strong> one action type that takes a target as an argument, keeping the space&#39;s size constant regardless of candidate count.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments">Kinds of Environments</a> · <a class="wikilink" href="/agents/tool-selection-among-many-candidates/" data-topic="agents/tool-selection-among-many-candidates">Tool Selection Among Many Candidates</a> · <a class="wikilink" href="/agents/hierarchical-task-planning/" data-topic="agents/hierarchical-task-planning">Hierarchical Task Planning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/action-space-design-and-its-failure-modes">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/evaluating-agents/"><small>Read next</small><b>Evaluating Agents</b><p>Scoring a single generated answer is one problem; scoring a hundred-step trajectory of actions, any one of which could be the reason the whole task failed, is a different and harder one.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/kinds-of-environments/"><b>Kinds of Environments</b><p>Some AI problems are easy and others are brutal, and much of the difference lies in the environment.</p></a><a class="rc-card" href="/agents/web-browsing-agents/"><b>Web-Browsing Agents</b><p>A web page an agent is clicking through doesn&#39;t hold still: an ad can load, a banner can appear, a list can re-sort, all between the moment the agent decides what to click and the moment the click…</p></a><a class="rc-card" href="/agents/computer-use-agents-and-gui-grounding/"><b>Computer-Use Agents and GUI Grounding</b><p>A web agent that can read a page&#39;s DOM knows exactly where the Submit button is, by name.</p></a><a class="rc-card" href="/agents/tool-selection-among-many-candidates/"><b>Tool Selection Among Many Candidates</b><p>An agent with 40 tools available for one task has exactly one that&#39;s actually correct. Shown all 40 at once with no other signal to go on, picking it by chance alone succeeds 2.5% of the time.</p></a><a class="rc-card" href="/agents/hierarchical-task-planning/"><b>Hierarchical Task Planning</b><p>&quot;Organize a conference&quot; eventually breaks down into 36 individual primitive actions — booking a specific venue, sending a specific email, printing a specific badge.</p></a><a class="rc-card" href="/agents/agent-environments-and-action-spaces/"><b>Agent Environments and Action Spaces</b><p>What an agent can actually do depends entirely on what it&#39;s acting inside — clicking around a web page needs a different action space than running shell commands in a terminal.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/simulated-and-game-environments/">← Previous: Simulated and Game Environments</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

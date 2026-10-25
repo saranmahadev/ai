@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backpropagation by Hand — AI Base</title>
+<meta name="description" content="Backpropagation computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/backpropagation-by-hand/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Backpropagation by Hand — AI Base">
+<meta property="og:description" content="Backpropagation computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/backpropagation-by-hand/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Backpropagation by Hand","item":"https://ai.saranmahadev.in/math/backpropagation-by-hand/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Backpropagation by Hand","description":"Backpropagation computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs.","url":"https://ai.saranmahadev.in/math/backpropagation-by-hand/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is ∂L/∂z for sigmoid plus log loss with ŷ = 0.9, y = 0?","acceptedAnswer":{"@type":"Answer","text":"0.9."}},{"@type":"Question","name":"What does ReLU do to the gradient where its input was negative?","acceptedAnswer":{"@type":"Answer","text":"Blocks it (zero)."}},{"@type":"Question","name":"Which way do we move a weight whose gradient is negative?","acceptedAnswer":{"@type":"Answer","text":"Up (increase it)."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Math in AI</p>
+        <h1 class="doc-title">Backpropagation by Hand</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1u2plhabg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c1u2plhapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1u2plhabg)"/>
+  <circle cx="235" cy="329" r="76" fill="#cebff9" opacity="0.39"/><circle cx="641" cy="31" r="229" fill="#ddbecb" opacity="0.55"/><circle cx="1047" cy="8" r="144" fill="#cebff9" opacity="0.60"/><circle cx="646" cy="338" r="192" fill="#68599a" opacity="0.39"/><circle cx="1000" cy="86" r="93" fill="#ddbecb" opacity="0.37"/><circle cx="876" cy="325" r="140" fill="#ddbecb" opacity="0.24"/>
+  <path d="M0,420 L0,307 L30,306 L60,306 L90,307 L120,310 L150,313 L180,318 L210,323 L240,328 L270,333 L300,338 L330,342 L360,346 L390,348 L420,349 L450,350 L480,348 L510,346 L540,343 L570,339 L600,334 L630,329 L660,324 L690,319 L720,314 L750,311 L780,308 L810,306 L840,306 L870,306 L900,308 L930,311 L960,315 L990,319 L1020,324 L1050,330 L1080,335 L1110,339 L1140,343 L1170,346 L1200,349 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,364 L60,367 L90,371 L120,376 L150,381 L180,386 L210,390 L240,393 L270,394 L300,394 L330,392 L360,389 L390,385 L420,380 L450,375 L480,370 L510,366 L540,363 L570,362 L600,362 L630,364 L660,367 L690,371 L720,376 L750,381 L780,386 L810,390 L840,393 L870,394 L900,394 L930,392 L960,389 L990,385 L1020,380 L1050,375 L1080,370 L1110,366 L1140,363 L1170,362 L1200,362 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="852" cy="120" rx="229" ry="64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(2.8 852 120)"/><ellipse cx="852" cy="120" rx="317" ry="89" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(8.8 852 120)"/>
+  <circle cx="852" cy="120" r="90" fill="url(#c1u2plhapl)"/>
+  <circle cx="894" cy="-17" r="12" fill="#ffffff" opacity="0.84"/><circle cx="834" cy="208" r="14" fill="#ffffff" opacity="0.81"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Backpropagation</strong> computes how the loss changes with every weight in a network by applying the chain rule backwards from the output. Its results are exactly the gradients that gradient descent needs. This topic does it by hand for the tiny network of <a class="wikilink" href="/math/a-forward-pass-by-hand/" data-topic="math/a-forward-pass-by-hand">A Forward Pass by Hand</a>, then takes one learning step.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/a-forward-pass-by-hand/" data-topic="math/a-forward-pass-by-hand">A Forward Pass by Hand</a>, <a class="wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a>, <a class="wikilink" href="/math/automatic-differentiation/" data-topic="math/automatic-differentiation">Automatic Differentiation</a> and <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How does a network know which way to nudge each of its weights?&quot; Every weight influences the loss through a chain of later operations. The chain rule multiplies the sensitivities along that chain.</p>
+<h2 id="the-method">The method</h2>
+<p>Work backwards, keeping track of <code>∂L/∂(value)</code> at each node. Two local facts do most of the work:</p>
+<ul>
+<li>Sigmoid followed by log loss: <code>∂L/∂z₂ = ŷ − y</code> (see <a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">Logistic Regression and the Sigmoid</a>).</li>
+<li>ReLU passes the gradient through where the input was positive and blocks it where it was not.</li>
+</ul>
+<p>For a linear step <code>z = W a + b</code>: <code>∂L/∂W = (∂L/∂z) ⊗ aᵀ</code>, <code>∂L/∂b = ∂L/∂z</code>, and the gradient sent back to <code>a</code> is <code>Wᵀ · ∂L/∂z</code>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Using the forward pass: <code>x = (1, 2)</code>, <code>z₁ = (−1.5, 2.5)</code>, <code>a₁ = (0, 2.5)</code>, <code>z₂ = 1.0</code>, <code>ŷ = 0.7311</code>, and <code>y = 1</code>.</p>
+<p><strong>Output layer:</strong></p>
+<pre><code class="language-text">∂L/∂z₂ = ŷ − y = 0.7311 − 1 = −0.2689
+∂L/∂w₂ = (−0.2689) · a₁ = ( 0 , −0.6724 )
+∂L/∂b₂ = −0.2689
+∂L/∂a₁ = (−0.2689) · w₂ = ( −0.2689 , −0.2152 )
+</code></pre>
+<p><strong>Through the ReLU</strong> (the first unit had a negative <code>z₁</code>, so its gradient is blocked):</p>
+<pre><code class="language-text">∂L/∂z₁ = ( 0 , −0.2152 )
+</code></pre>
+<p><strong>Hidden layer weights:</strong></p>
+<pre><code class="language-text">∂L/∂W₁ = ∂L/∂z₁ ⊗ x  =  [ 0        0      ]
+                         [ −0.2152  −0.4303 ]
+∂L/∂b₁ = ( 0 , −0.2152 )
+</code></pre>
+<p><strong>Check</strong> with a tiny nudge: increasing <code>W₁[2,1]</code> by <code>10⁻⁶</code> changes the loss by <code>−0.215 × 10⁻⁶</code>, matching <code>−0.2152</code> ✓.</p>
+<p><strong>One step</strong> of gradient descent with <code>η = 0.5</code>:</p>
+<pre><code class="language-text">w₂ = (1, 0.8 + 0.5 × 0.6724) = (1, 1.1362)      b₂ = −1 + 0.5 × 0.2689 = −0.8655
+W₁ row 2 = (1 + 0.5×0.2152, 0.5 + 0.5×0.4303) = (1.1076, 0.7152)     b₁ = (0, 0.6076)
+new forward pass: ŷ = 0.9375   loss = 0.0645   (down from 0.3133)
+</code></pre>
+<p>One step took the loss from 0.313 to 0.065. Repeat it many times, on many examples, and you have training.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="gradient-flow" data-title="Trace the gradient backwards"><p class="bench-fallback"><strong>Interactive bench: Trace the gradient backwards.</strong> A stepper walks the tiny network forward, then backwards, then applies one gradient-descent update; each step shows the values or gradients at each node, and a numerical check compares one gradient with a finite-difference estimate.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step forward, then backward, and check the gradients against the numbers above.</li>
+<li>Find where the gradient is blocked by the ReLU.</li>
+<li>Apply the update and compare the loss before and after.</li>
+<li>Change the learning rate and see the effect of the step.</li>
+</ol>
+<p><strong>What you should notice:</strong> the gradient shrinks or is blocked as it flows back, the numerical check agrees, and one update lowers the loss.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Every neural network</strong> is trained by backpropagation.</li>
+<li><strong>Frameworks</strong> automate it with automatic differentiation.</li>
+<li><strong>Vanishing and exploding gradients</strong> are products of these factors across many layers.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting the ReLU mask</strong> in the backward pass.</li>
+<li><strong>Using the wrong forward values</strong> (backprop needs the stored activations).</li>
+<li><strong>Updating with the wrong sign.</strong></li>
+<li><strong>Mixing up <code>Wᵀ</code> and <code>W</code></strong> when passing the gradient back.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is ∂L/∂z for sigmoid plus log loss with ŷ = 0.9, y = 0?</summary>
+0.9.
+</details>
+
+<details><summary>2. What does ReLU do to the gradient where its input was negative?</summary>
+Blocks it (zero).
+</details>
+
+<details><summary>3. Which way do we move a weight whose gradient is negative?</summary>
+Up (increase it).
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Backpropagation:</strong> applying the chain rule backwards through a network.</li>
+<li><strong>Local gradient:</strong> the derivative of one node&#39;s output with respect to its input.</li>
+<li><strong>Gradient check:</strong> comparing an analytic gradient with a numerical estimate.</li>
+<li><strong>Update step:</strong> subtracting the learning rate times the gradient.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a> · <a class="wikilink" href="/math/automatic-differentiation/" data-topic="math/automatic-differentiation">Automatic Differentiation</a> · <a class="wikilink" href="/math/jacobian/" data-topic="math/jacobian">Jacobian</a> · <a class="wikilink" href="/math/a-forward-pass-by-hand/" data-topic="math/a-forward-pass-by-hand">A Forward Pass by Hand</a> · <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/backpropagation-by-hand">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/softmax-and-cross-entropy-in-practice/"><small>Read next</small><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/a-forward-pass-by-hand/"><b>A Forward Pass by Hand</b><p>A forward pass pushes an input through a network layer by layer to produce a prediction. Each layer is the same recipe: multiply by a weight matrix, add a bias, apply an activation function.</p></a><a class="rc-card" href="/math/chain-rule/"><b>Chain Rule</b><p>The chain rule finds the derivative of a function built from other functions: d/dx f(g(x)) = f′(g(x)) · g′(x). Rates multiply along the chain, like gears turning one another.</p></a><a class="rc-card" href="/math/automatic-differentiation/"><b>Automatic Differentiation</b><p>Automatic differentiation (autodiff) is how software computes exact derivatives: it records each operation in a computational graph, then applies the chain rule backwards through that graph.</p></a><a class="rc-card" href="/math/gradient-descent/"><b>Gradient Descent</b><p>Gradient descent finds a minimum by repeatedly stepping downhill: compute the gradient (the uphill direction), move a little the opposite way, and repeat.</p></a><a class="rc-card" href="/math/logistic-regression-and-the-sigmoid/"><b>Logistic Regression and the Sigmoid</b><p>Logistic regression answers yes/no questions with a probability.</p></a><a class="rc-card" href="/math/jacobian/"><b>Jacobian</b><p>The Jacobian is the matrix of all first partial derivatives of a function that takes several inputs and gives several outputs.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/a-forward-pass-by-hand/">← Previous: A Forward Pass by Hand</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

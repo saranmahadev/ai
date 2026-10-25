@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sparse and Local (Windowed) Attention — AI Base</title>
+<meta name="description" content="KV-caching fixes redundant recomputation, but the underlying attention computation itself still scales with the square of sequence length.">
+<link rel="canonical" href="https://ai.saranmahadev.in/transformers/sparse-and-local-windowed-attention/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Sparse and Local (Windowed) Attention — AI Base">
+<meta property="og:description" content="KV-caching fixes redundant recomputation, but the underlying attention computation itself still scales with the square of sequence length.">
+<meta property="og:url" content="https://ai.saranmahadev.in/transformers/sparse-and-local-windowed-attention/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Sparse and Local (Windowed) Attention","item":"https://ai.saranmahadev.in/transformers/sparse-and-local-windowed-attention/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sparse and Local (Windowed) Attention","description":"KV-caching fixes redundant recomputation, but the underlying attention computation itself still scales with the square of sequence length.","url":"https://ai.saranmahadev.in/transformers/sparse-and-local-windowed-attention/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What determines whether a position can attend to another position under windowed attention?","acceptedAnswer":{"@type":"Answer","text":"Whether the distance between them is within the fixed window radius — nothing else about the two positions matters to the mask itself."}},{"@type":"Question","name":"In the worked example, why did the savings become so much larger at n = 1000 than at n = 8?","acceptedAnswer":{"@type":"Answer","text":"Full attention's cost grows with the square of sequence length while windowed attention's cost grows only linearly (for a fixed radius), so the gap between the two widens dramatically as the sequence gets longer."}},{"@type":"Question","name":"How can information travel further than one layer's window radius?","acceptedAnswer":{"@type":"Answer","text":"Across multiple stacked layers — each layer can pass information one window's width further, so depth extends the effective range beyond any single layer's radius."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7db7ff">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/transformers/">Transformers</a> · Efficient and Scaled Attention</p>
+        <h1 class="doc-title">Sparse and Local (Windowed) Attention</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c15c4dfzbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
+    <radialGradient id="c15c4dfzpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c15c4dfzbg)"/>
+  <circle cx="621" cy="69" r="142" fill="#abd0ff" opacity="0.47"/><circle cx="615" cy="215" r="193" fill="#e2efff" opacity="0.27"/><circle cx="1171" cy="331" r="116" fill="#4f669f" opacity="0.27"/><circle cx="952" cy="412" r="82" fill="#abd0ff" opacity="0.37"/><circle cx="675" cy="110" r="213" fill="#abd0ff" opacity="0.43"/><circle cx="1097" cy="380" r="201" fill="#abd0ff" opacity="0.43"/>
+  <path d="M0,420 L0,310 L30,307 L60,306 L90,307 L120,310 L150,315 L180,321 L210,328 L240,335 L270,341 L300,346 L330,349 L360,350 L390,348 L420,345 L450,340 L480,334 L510,327 L540,320 L570,314 L600,310 L630,307 L660,306 L690,307 L720,310 L750,315 L780,321 L810,328 L840,335 L870,341 L900,346 L930,349 L960,350 L990,348 L1020,345 L1050,340 L1080,334 L1110,327 L1140,320 L1170,314 L1200,310 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
+  <path d="M0,420 L0,391 L30,393 L60,394 L90,393 L120,391 L150,387 L180,383 L210,378 L240,373 L270,368 L300,365 L330,363 L360,362 L390,363 L420,365 L450,369 L480,373 L510,378 L540,383 L570,388 L600,391 L630,393 L660,394 L690,393 L720,391 L750,387 L780,383 L810,378 L840,373 L870,368 L900,365 L930,363 L960,362 L990,363 L1020,365 L1050,369 L1080,373 L1110,378 L1140,383 L1170,388 L1200,391 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
+  <ellipse cx="807" cy="266" rx="232" ry="65" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.3 807 266)"/><ellipse cx="807" cy="266" rx="320" ry="90" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.3 807 266)"/>
+  <circle cx="807" cy="266" r="91" fill="url(#c15c4dfzpl)"/>
+  <circle cx="1060" cy="337" r="8" fill="#ffffff" opacity="0.61"/><circle cx="1139" cy="196" r="14" fill="#ffffff" opacity="0.75"/><circle cx="961" cy="368" r="14" fill="#ffffff" opacity="0.74"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/kv-caching-for-autoregressive-inference/" data-topic="transformers/kv-caching-for-autoregressive-inference">KV-caching</a> fixes redundant recomputation, but the underlying attention computation itself still scales with the square of sequence length. Windowed attention attacks that directly, by simply refusing to compute most of those pairs in the first place — each position only attends to a fixed-size neighbourhood around itself.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/attention-masks-padding-and-causal-masking/" data-topic="transformers/attention-masks-padding-and-causal-masking">Attention Masks: Padding and Causal Masking</a>, <a class="wikilink" href="/deep-learning/why-attention-replaced-recurrence/" data-topic="deep-learning/why-attention-replaced-recurrence">Why Attention Replaced Recurrence</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Does every position really need to attend to every other position, or would a fixed-size local neighbourhood capture most of what matters?&quot; Windowed (local) attention restricts each position to attending only within a fixed radius — not the whole sequence — using exactly the same masking mechanism from <a class="wikilink" href="/transformers/attention-masks-padding-and-causal-masking/" data-topic="transformers/attention-masks-padding-and-causal-masking">Attention Masks: Padding and Causal Masking</a>, just with a banded pattern instead of a triangular or all-ones one. The attention computation&#39;s cost drops from scaling with the square of sequence length to scaling only linearly with it.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Most of what a word&#39;s meaning depends on tends to come from nearby words — the sentence it&#39;s in, maybe the one before or after. Full attention computes every pair regardless, including distant ones that, for many tokens, contribute little. Windowed attention makes that assumption explicit: give every position a fixed-size window of neighbours it&#39;s allowed to attend to, and simply never compute anything outside it. The window slides along with the position — position 50&#39;s window is centred on position 50, position 51&#39;s window shifts along with it.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">windowed mask: allowed(i, j) = |i − j| ≤ radius
+
+full attention cost:      ≈ n²
+windowed attention cost:  ≈ n × (2·radius + 1)       (a fixed band width per position)
+</code></pre>
+<p>As <code>radius</code> shrinks relative to the sequence length <code>n</code>, the windowed cost grows linearly in <code>n</code> instead of quadratically — a structural change in how the cost scales, not just a smaller constant factor.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>An 8-position sequence with a window radius of 2 (each position sees up to 2 neighbours on either side):</p>
+<pre><code class="language-text">position 0: [1,1,1,0,0,0,0,0]
+position 1: [1,1,1,1,0,0,0,0]
+position 2: [1,1,1,1,1,0,0,0]
+position 3: [0,1,1,1,1,1,0,0]
+position 4: [0,0,1,1,1,1,1,0]
+position 5: [0,0,0,1,1,1,1,1]
+position 6: [0,0,0,0,1,1,1,1]
+position 7: [0,0,0,0,0,1,1,1]
+
+allowed pairs: 34 of 64 possible — 53.1%
+</code></pre>
+<p>At this small scale the saving is modest. At a realistic scale — <code>n = 1000</code>, <code>radius = 4</code> — the picture changes completely: full attention computes <code>1,000,000</code> pairs; windowed attention computes only <code>8,980</code> — a <strong>111× reduction</strong>, purely from refusing to compute pairs the window excludes.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="windowed-attention" data-title="A sliding neighbourhood instead of the whole sequence"><p class="bench-fallback"><strong>Interactive bench: A sliding neighbourhood instead of the whole sequence.</strong> Set a sequence length and window radius, and compare the number of attention pairs computed against full attention at the same length.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Shrink the window radius and watch the allowed-pairs percentage drop.</li>
+<li>Increase the sequence length at a fixed radius and watch the savings grow dramatically.</li>
+<li>Set the radius equal to half the sequence length and see the windowed and full costs converge.</li>
+</ol>
+<p><strong>What you should notice:</strong> the savings grow with sequence length even at a fixed radius — windowed attention&#39;s advantage over full attention gets <em>more</em> dramatic the longer the sequence, exactly because full attention&#39;s cost grows quadratically while windowed attention&#39;s stays linear.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is one of several practical answers to attention&#39;s quadratic cost</strong>, alongside the different approach taken next in <a class="wikilink" href="/transformers/linear-attention-approximations/" data-topic="transformers/linear-attention-approximations">Linear Attention Approximations</a>.</li>
+<li><strong>It trades some global context for efficiency</strong> — a real cost, since information more than <code>radius</code> positions away can only reach a given position indirectly, through multiple layers, rather than in a single attention computation.</li>
+<li><strong>Stacking several windowed-attention layers lets information still travel further than one window&#39;s radius</strong>, the same way stacking convolutions on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a> expands an effective receptive field beyond a single layer&#39;s kernel size.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming windowed attention can see nothing beyond its radius, ever.</strong> A single layer can&#39;t, but information can still propagate further across multiple stacked layers, each extending the effective reach a little more.</li>
+<li><strong>Picking a radius without considering the task.</strong> A radius too small can genuinely lose information a task depends on; the right radius is task- and data-dependent, not a universal default.</li>
+<li><strong>Confusing this with causal masking.</strong> Windowed masking restricts by distance in both directions (unless explicitly combined with a causal mask); causal masking restricts only by direction.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What determines whether a position can attend to another position under windowed attention?</summary>
+Whether the distance between them is within the fixed window radius — nothing else about the two positions matters to the mask itself.
+</details>
+
+<details><summary>2. In the worked example, why did the savings become so much larger at n = 1000 than at n = 8?</summary>
+Full attention's cost grows with the square of sequence length while windowed attention's cost grows only linearly (for a fixed radius), so the gap between the two widens dramatically as the sequence gets longer.
+</details>
+
+<details><summary>3. How can information travel further than one layer's window radius?</summary>
+Across multiple stacked layers — each layer can pass information one window's width further, so depth extends the effective range beyond any single layer's radius.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Window radius:</strong> the fixed distance within which a position may attend to its neighbours under windowed attention.</li>
+<li><strong>Local attention:</strong> attention restricted to a neighbourhood around each position, instead of the full sequence.</li>
+<li><strong>Effective receptive field:</strong> how far information can travel across multiple stacked layers, even when each individual layer&#39;s range is limited.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/attention-masks-padding-and-causal-masking/" data-topic="transformers/attention-masks-padding-and-causal-masking">Attention Masks: Padding and Causal Masking</a> · <a class="wikilink" href="/deep-learning/why-attention-replaced-recurrence/" data-topic="deep-learning/why-attention-replaced-recurrence">Why Attention Replaced Recurrence</a> · <a class="wikilink" href="/transformers/linear-attention-approximations/" data-topic="transformers/linear-attention-approximations">Linear Attention Approximations</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/sparse-and-local-windowed-attention">Open in the interactive site →</a></p>
+        <a class="read-next" href="/transformers/linear-attention-approximations/"><small>Read next</small><b>Linear Attention Approximations</b><p>Windowed attention cuts cost by refusing to compute most pairs at all.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/kv-caching-for-autoregressive-inference/"><b>KV-Caching for Autoregressive Inference</b><p>Generating text one token at a time means recomputing attention at every single step.</p></a><a class="rc-card" href="/transformers/attention-masks-padding-and-causal-masking/"><b>Attention Masks: Padding and Causal Masking</b><p>Plain attention lets every position look at every other position.</p></a><a class="rc-card" href="/deep-learning/why-attention-replaced-recurrence/"><b>Why Attention Replaced Recurrence</b><p>Attention started as an addition to RNN-based encoder-decoders.</p></a><a class="rc-card" href="/transformers/linear-attention-approximations/"><b>Linear Attention Approximations</b><p>Windowed attention cuts cost by refusing to compute most pairs at all.</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/transformers/efficient-and-scaled-attention/"><b>Efficient and Scaled Attention</b><p>Plain multi-head attention gets expensive fast: its cost grows with the square of sequence length, and its memory traffic during inference grows with every token generated.</p></a></div></section>
+        <p class="doc-prev"><a href="/transformers/kv-caching-for-autoregressive-inference/">← Previous: KV-Caching for Autoregressive Inference</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Refinement and Iterative Critique — AI Base</title>
+<meta name="description" content="Exploring several reasoning branches at once, as in Tree-of-Thought and Search-Based Reasoning, is one way to improve on a single first attempt.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/self-refinement-and-iterative-critique/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Self-Refinement and Iterative Critique — AI Base">
+<meta property="og:description" content="Exploring several reasoning branches at once, as in Tree-of-Thought and Search-Based Reasoning, is one way to improve on a single first attempt.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/self-refinement-and-iterative-critique/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Self-Refinement and Iterative Critique","item":"https://ai.saranmahadev.in/llms/self-refinement-and-iterative-critique/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Self-Refinement and Iterative Critique","description":"Exploring several reasoning branches at once, as in Tree-of-Thought and Search-Based Reasoning, is one way to improve on a single first attempt.","url":"https://ai.saranmahadev.in/llms/self-refinement-and-iterative-critique/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the general shape of quality improvement across self-refinement rounds?","acceptedAnswer":{"@type":"Answer","text":"Large gains in the earliest rounds, with each subsequent round producing a smaller gain than the one before — diminishing returns, not a steady, flat rate of improvement."}},{"@type":"Question","name":"In the worked example, how much did quality improve between round 0 and round 1, versus between round 3 and round 4?","acceptedAnswer":{"@type":"Answer","text":"Round 0 to round 1 gained 0.25 (0.5 to 0.75); round 3 to round 4 gained only about 0.03 (0.9375 to 0.9688) — a much smaller improvement despite being the same kind of critique-and-revise step."}},{"@type":"Question","name":"Why doesn't self-refinement introduce genuinely new information into the answer?","acceptedAnswer":{"@type":"Answer","text":"The critique and the revision both come from the same underlying model's capability — it's a repeated second (and third) look using the same judgment that produced the original draft, not an independent source of new knowledge."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Reasoning</p>
+        <h1 class="doc-title">Self-Refinement and Iterative Critique</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1czfc63bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c1czfc63pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1czfc63bg)"/>
+  <circle cx="818" cy="269" r="151" fill="#ffece0" opacity="0.35"/><circle cx="551" cy="264" r="135" fill="#ffc7a2" opacity="0.55"/><circle cx="703" cy="64" r="132" fill="#ffece0" opacity="0.29"/><circle cx="925" cy="286" r="221" fill="#ffc38f" opacity="0.55"/><circle cx="458" cy="410" r="98" fill="#ffc38f" opacity="0.54"/><circle cx="589" cy="216" r="155" fill="#ffc38f" opacity="0.24"/><circle cx="743" cy="206" r="151" fill="#ffece0" opacity="0.60"/>
+  <path d="M0,420 L0,331 L30,326 L60,321 L90,316 L120,312 L150,309 L180,307 L210,306 L240,306 L270,307 L300,310 L330,313 L360,318 L390,322 L420,328 L450,333 L480,338 L510,342 L540,345 L570,348 L600,349 L630,350 L660,349 L690,346 L720,343 L750,339 L780,334 L810,329 L840,324 L870,319 L900,315 L930,311 L960,308 L990,306 L1020,306 L1050,306 L1080,308 L1110,311 L1140,315 L1170,319 L1200,324 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,369 L30,366 L60,364 L90,363 L120,362 L150,362 L180,364 L210,365 L240,368 L270,371 L300,375 L330,379 L360,382 L390,386 L420,389 L450,391 L480,393 L510,394 L540,394 L570,393 L600,391 L630,389 L660,386 L690,382 L720,379 L750,375 L780,371 L810,368 L840,365 L870,363 L900,362 L930,362 L960,363 L990,364 L1020,366 L1050,369 L1080,373 L1110,376 L1140,380 L1170,384 L1200,387 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="685" cy="155" rx="216" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(4.1 685 155)"/><ellipse cx="685" cy="155" rx="298" ry="83" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(10.1 685 155)"/>
+  <circle cx="685" cy="155" r="85" fill="url(#c1czfc63pl)"/>
+  <circle cx="722" cy="282" r="13" fill="#ffffff" opacity="0.70"/><circle cx="961" cy="200" r="11" fill="#ffffff" opacity="0.90"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Exploring several reasoning branches at once, as in <a class="wikilink" href="/llms/tree-of-thought-and-search-based-reasoning/" data-topic="llms/tree-of-thought-and-search-based-reasoning">Tree-of-Thought and Search-Based Reasoning</a>, is one way to improve on a single first attempt. A different, often cheaper way: keep the same single answer, but have the model check its own work and revise it, more than once if needed.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/tree-of-thought-and-search-based-reasoning/" data-topic="llms/tree-of-thought-and-search-based-reasoning">Tree-of-Thought and Search-Based Reasoning</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Can a model improve its own answer just by reviewing and revising it?&quot; <strong>Self-refinement</strong> has a model critique its own draft response, then produce a revised version addressing that critique, repeated for several rounds. Each round tends to close part of the remaining gap to a genuinely good answer — but with <strong>diminishing returns</strong>: later rounds improve the answer by less than earlier ones did, since the most obvious, easiest-to-catch flaws tend to get fixed first.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A writer who reads their own first draft aloud usually catches the most glaring problems immediately — an awkward sentence, a missing point. A second read-through catches somewhat subtler issues; a third catches fewer still. Each additional pass still helps, but there&#39;s less and less left to catch each time, because the easiest problems to spot were already fixed in the earlier passes.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">quality after round r, starting from quality 0.5 and closing half
+the remaining gap to perfect quality (1.0) each round:
+  quality(r) = 1 − 0.5^(r+1)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Quality tracked across five rounds of critique and revision:</p>
+<pre><code class="language-text">round 0:  quality 0.5000
+round 1:  quality 0.7500
+round 2:  quality 0.8750
+round 3:  quality 0.9375
+round 4:  quality 0.9688
+</code></pre>
+<p>The first round closes half the initial gap (from 0.5 to 0.75 — a gain of 0.25). The fourth round, starting much closer to perfect quality already, only closes the gap from 0.9375 to 0.9688 — a gain of just 0.03. Every round still helps, but each one buys less improvement than the one before it.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="self-refine-rounds" data-title="Each revision closes half the remaining gap"><p class="bench-fallback"><strong>Interactive bench: Each revision closes half the remaining gap.</strong> Step through critique-and-revise rounds and watch quality climb with steadily shrinking gains.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Step through the first couple of rounds and note the size of each gain.</li>
+<li>Keep stepping and watch each subsequent round&#39;s gain shrink.</li>
+<li>Consider how many rounds it would take to meaningfully close the remaining gap at round 4.</li>
+</ol>
+<p><strong>What you should notice:</strong> the <em>shape</em> of the improvement — large gains early, smaller gains later — is the real signature of self-refinement; it&#39;s rarely a flat, steady rate of improvement per round.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Self-refinement composes naturally with <a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">a reward or verifier model</a> deciding when to stop</strong> — rather than running a fixed number of rounds, a verifier can signal once further revision is unlikely to help enough to be worth the extra cost.</li>
+<li><strong>It&#39;s a comparatively cheap technique</strong>: unlike <a class="wikilink" href="/llms/tree-of-thought-and-search-based-reasoning/" data-topic="llms/tree-of-thought-and-search-based-reasoning">exploring several parallel branches</a>, self-refinement follows one answer through several sequential improvements, at roughly the cost of a few extra generation passes rather than a multiplicative search cost.</li>
+<li><strong>It has real limits</strong>: a model&#39;s self-critique is only as good as its own judgment, which can share the same blind spots as whatever produced the original draft — self-refinement doesn&#39;t introduce genuinely new information, only a second (and third, and fourth) look with the same underlying capability.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting unlimited rounds to keep producing meaningful gains.</strong> The worked example&#39;s own numbers show returns shrinking sharply — running many more rounds than a task warrants wastes compute for little benefit.</li>
+<li><strong>Assuming self-critique catches every kind of flaw.</strong> A model&#39;s critique of its own answer draws on the same capabilities (and the same gaps) that produced the original draft — it&#39;s not an independent check from a different source of judgment.</li>
+<li><strong>Treating this as equivalent to exploring multiple independent attempts.</strong> Self-refinement follows one evolving answer sequentially; it&#39;s a different mechanism from (and often cheaper than) generating several independent candidates and picking the best.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the general shape of quality improvement across self-refinement rounds?</summary>
+Large gains in the earliest rounds, with each subsequent round producing a smaller gain than the one before — diminishing returns, not a steady, flat rate of improvement.
+</details>
+
+<details><summary>2. In the worked example, how much did quality improve between round 0 and round 1, versus between round 3 and round 4?</summary>
+Round 0 to round 1 gained 0.25 (0.5 to 0.75); round 3 to round 4 gained only about 0.03 (0.9375 to 0.9688) — a much smaller improvement despite being the same kind of critique-and-revise step.
+</details>
+
+<details><summary>3. Why doesn't self-refinement introduce genuinely new information into the answer?</summary>
+The critique and the revision both come from the same underlying model's capability — it's a repeated second (and third) look using the same judgment that produced the original draft, not an independent source of new knowledge.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Self-refinement:</strong> having a model critique and revise its own answer, repeated across several rounds.</li>
+<li><strong>Diminishing returns:</strong> each additional round producing a smaller improvement than the round before it.</li>
+<li><strong>Critique-revise cycle:</strong> one round of a model generating feedback on its own draft and then producing a revised version.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/tree-of-thought-and-search-based-reasoning/" data-topic="llms/tree-of-thought-and-search-based-reasoning">Tree-of-Thought and Search-Based Reasoning</a> · <a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a> · <a class="wikilink" href="/llms/distilling-reasoning-into-smaller-models/" data-topic="llms/distilling-reasoning-into-smaller-models">Distilling Reasoning into Smaller Models</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/self-refinement-and-iterative-critique">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/distilling-reasoning-into-smaller-models/"><small>Read next</small><b>Distilling Reasoning into Smaller Models</b><p>showing the reasoning, not just the answer, helps a model reach a better result.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/tree-of-thought-and-search-based-reasoning/"><b>Tree-of-Thought and Search-Based Reasoning</b><p>Chain-of-thought commits to one reasoning path and follows it to the end.</p></a><a class="rc-card" href="/llms/reward-modeling/"><b>Reward Modeling</b><p>Judging &quot;which of these two responses is better&quot; is a question most people can answer confidently; assigning an absolute numerical quality score to a single response, consistently, is much harder…</p></a><a class="rc-card" href="/llms/distilling-reasoning-into-smaller-models/"><b>Distilling Reasoning into Smaller Models</b><p>showing the reasoning, not just the answer, helps a model reach a better result.</p></a><a class="rc-card" href="/llms/reasoning/"><b>Reasoning</b><p>An aligned, instruction-following model still has to decide how to actually arrive at an answer — straight to a conclusion, or by working through intermediate steps the way a person solving the…</p></a><a class="rc-card" href="/llms/test-time-compute-scaling/"><b>Test-Time Compute Scaling</b><p>Every technique in this district so far — longer chains, wider search, more refinement rounds, tool calls — shares something in common: none of them change the model&#39;s weights.</p></a><a class="rc-card" href="/agents/evaluator-optimizer-loops/"><b>Evaluator-Optimizer Loops</b><p>A first draft critiqued once gets noticeably better; critiqued a second time, it gets better still, but by less than the first round did.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/tree-of-thought-and-search-based-reasoning/">← Previous: Tree-of-Thought and Search-Based Reasoning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

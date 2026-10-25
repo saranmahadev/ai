@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bayes Theorem — AI Base</title>
+<meta name="description" content="Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/bayes-theorem/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Bayes Theorem — AI Base">
+<meta property="og:description" content="Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/bayes-theorem/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Bayes Theorem","item":"https://ai.saranmahadev.in/math/bayes-theorem/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bayes Theorem","description":"Bayes' theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).","url":"https://ai.saranmahadev.in/math/bayes-theorem/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Prior 1%, sensitivity 90%, false-positive rate 9%: roughly how likely is a positive to be sick?","acceptedAnswer":{"@type":"Answer","text":"About 9%: 9 true positives out of about 98 positives."}},{"@type":"Question","name":"What are prior, likelihood and posterior?","acceptedAnswer":{"@type":"Answer","text":"Belief before evidence, the chance of the evidence under the hypothesis, and belief after evidence."}},{"@type":"Question","name":"If the disease is common, what happens to the chance a positive is truly sick?","acceptedAnswer":{"@type":"Answer","text":"It rises."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Probability</p>
+        <h1 class="doc-title">Bayes Theorem</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c17csv7nbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="c17csv7npl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c17csv7nbg)"/>
+  <circle cx="353" cy="346" r="206" fill="#68599a" opacity="0.33"/><circle cx="618" cy="295" r="118" fill="#cebff9" opacity="0.42"/><circle cx="824" cy="125" r="105" fill="#eee9fd" opacity="0.49"/><circle cx="648" cy="165" r="101" fill="#68599a" opacity="0.38"/><circle cx="664" cy="284" r="144" fill="#68599a" opacity="0.47"/><circle cx="1015" cy="367" r="190" fill="#ddbecb" opacity="0.35"/>
+  <path d="M0,420 L0,334 L30,340 L60,345 L90,348 L120,350 L150,349 L180,346 L210,341 L240,335 L270,328 L300,321 L330,315 L360,310 L390,307 L420,306 L450,307 L480,310 L510,314 L540,320 L570,327 L600,334 L630,340 L660,345 L690,348 L720,350 L750,349 L780,346 L810,341 L840,335 L870,328 L900,321 L930,315 L960,310 L990,307 L1020,306 L1050,307 L1080,310 L1110,314 L1140,320 L1170,327 L1200,334 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,377 L60,374 L90,370 L120,367 L150,365 L180,363 L210,362 L240,362 L270,363 L300,365 L330,367 L360,370 L390,374 L420,378 L450,381 L480,385 L510,388 L540,391 L570,393 L600,394 L630,394 L660,393 L690,392 L720,390 L750,387 L780,383 L810,380 L840,376 L870,372 L900,369 L930,366 L960,364 L990,363 L1020,362 L1050,362 L1080,364 L1110,366 L1140,368 L1170,371 L1200,375 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="916" cy="203" rx="150" ry="42" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(7.3 916 203)"/><ellipse cx="916" cy="203" rx="208" ry="58" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(13.3 916 203)"/>
+  <circle cx="916" cy="203" r="59" fill="url(#c17csv7npl)"/>
+  <circle cx="724" cy="259" r="7" fill="#ffffff" opacity="0.79"/><circle cx="787" cy="244" r="11" fill="#ffffff" opacity="0.79"/><circle cx="911" cy="122" r="15" fill="#ffffff" opacity="0.70"/><circle cx="740" cy="234" r="9" fill="#ffffff" opacity="0.82"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Bayes&#39; theorem</strong> is the rule for updating how likely you think something is after you see new evidence: <code>P(H | E) = P(E | H) · P(H) / P(E)</code>. It explains why a positive result from a good medical test can still mean you are probably healthy, and it is the reasoning behind spam filters and many machine-learning methods.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a> and <a class="wikilink" href="/math/probability-rules/" data-topic="math/probability-rules">Probability Rules</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;Given what I just saw, how likely is the cause?&quot; Tests, filters and sensors report <code>P(evidence | cause)</code>: how often the test is positive <em>for a sick person</em>. What we want is the reverse, <code>P(cause | evidence)</code>: how likely a positive person is <em>sick</em>.</p>
+<h2 id="intuition-count-the-people">Intuition: count the people</h2>
+<p>Imagine 1,000 people. Suppose 1% are sick, the test catches 90% of the sick, and it wrongly flags 9% of the healthy.</p>
+<pre><code class="language-text">sick:     1% of 1,000     = 10      of whom 90% test positive → 9   true positives
+healthy:  990                       of whom  9% test positive → 89  false positives (89.1)
+positives in total: 9 + 89 = 98
+chance a positive is sick = 9 / 98 ≈ 9.2%
+</code></pre>
+<p>Most positives are false alarms, because the healthy crowd is so much larger. The test is good, but the disease is rare.</p>
+<h2 id="the-formula">The formula</h2>
+<p>Start from the multiplication rule <code>P(H and E) = P(E | H) P(H) = P(H | E) P(E)</code> and divide by <code>P(E)</code>:</p>
+<pre><code class="language-text">P(H | E) = P(E | H) · P(H) / P(E)
+P(E)     = P(E | H) · P(H) + P(E | not H) · P(not H)
+</code></pre>
+<p>The pieces have names: <code>P(H)</code> is the <strong>prior</strong> (belief before evidence), <code>P(E | H)</code> the <strong>likelihood</strong>, and <code>P(H | E)</code> the <strong>posterior</strong> (belief after).</p>
+<h2 id="a-worked-example-a-spam-filter">A worked example: a spam filter</h2>
+<p>40% of email is spam. The word &quot;prize&quot; appears in 95% of spam and in 2% of legitimate email. An email contains &quot;prize&quot;. How likely is it spam?</p>
+<pre><code class="language-text">P(E) = 0.95 × 0.4 + 0.02 × 0.6 = 0.38 + 0.012 = 0.392
+P(spam | &quot;prize&quot;) = 0.38 / 0.392 ≈ 0.969
+</code></pre>
+<p>The same word gives 97% here because spam is common (a high prior). For the rare disease above, the same arithmetic gives 9%. <strong>The prior matters as much as the test.</strong></p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="bayes-frequency" data-title="1,000 people, one test"><p class="bench-fallback"><strong>Interactive bench: 1,000 people, one test.</strong> A grid of 1,000 dots coloured by disease status and test result; sliders for how many are sick, how well the test catches them, and how often it flags the healthy show the chance a positive is truly sick.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with the rare disease. Count true and false positives.</li>
+<li>Raise the prior to 30%. What happens to the chance a positive is sick?</li>
+<li>Improve the test&#39;s false-positive rate. Which matters more, catching the sick or not flagging the healthy?</li>
+<li>Try the spam-filter preset.</li>
+</ol>
+<p><strong>What you should notice:</strong> when the condition is rare, false positives from the big healthy group swamp the true positives, unless the false-positive rate is tiny.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Naive Bayes classifiers</strong> multiply likelihoods and priors to classify text.</li>
+<li><strong>Bayesian updating</strong> refines a belief as data arrives, batch by batch.</li>
+<li><strong>Probabilistic reasoning</strong> in diagnosis, robotics and recommendation.</li>
+<li><strong>Reading accuracy claims:</strong> a &quot;99% accurate&quot; detector can still be wrong most times it fires if the target is rare.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Confusing <code>P(E | H)</code> with <code>P(H | E)</code>,</strong> the base-rate fallacy.</li>
+<li><strong>Ignoring the prior.</strong></li>
+<li><strong>Forgetting the false-positive term</strong> in <code>P(E)</code>.</li>
+<li><strong>Applying it with dependent evidence as if independent.</strong></li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Prior 1%, sensitivity 90%, false-positive rate 9%: roughly how likely is a positive to be sick?</summary>
+About 9%: 9 true positives out of about 98 positives.
+</details>
+
+<details><summary>2. What are prior, likelihood and posterior?</summary>
+Belief before evidence, the chance of the evidence under the hypothesis, and belief after evidence.
+</details>
+
+<details><summary>3. If the disease is common, what happens to the chance a positive is truly sick?</summary>
+It rises.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Bayes&#39; theorem:</strong> <code>P(H | E) = P(E | H) P(H) / P(E)</code>.</li>
+<li><strong>Prior:</strong> the probability before seeing evidence.</li>
+<li><strong>Likelihood:</strong> the probability of the evidence given the hypothesis.</li>
+<li><strong>Posterior:</strong> the probability after seeing evidence.</li>
+<li><strong>Base rate:</strong> how common the hypothesis is overall.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a> · <a class="wikilink" href="/math/independence/" data-topic="math/independence">Independence</a> · <a class="wikilink" href="/math/probability-rules/" data-topic="math/probability-rules">Probability Rules</a> · <a class="wikilink" href="/math/bayesian-vs-frequentist/" data-topic="math/bayesian-vs-frequentist">Bayesian vs Frequentist</a> · <a class="wikilink" href="/fundamentals/where-ai-goes-wrong/" data-topic="fundamentals/where-ai-goes-wrong">Where AI Goes Wrong</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/bayes-theorem">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/random-variables/"><small>Read next</small><b>Random Variables</b><p>A random variable is a number whose value depends on chance: the total of two dice, the number of heads in ten flips, a model&#39;s error on the next example.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/conditional-probability/"><b>Conditional Probability</b><p>Conditional probability is the probability of an event given that another has happened: P(A | B), read &quot;the probability of A given B&quot;.</p></a><a class="rc-card" href="/math/probability-rules/"><b>Probability Rules</b><p>Every probability, however it is produced, obeys a short list of rules: it lies between 0 and 1, the whole sample space has probability 1, the probability of &quot;not A&quot; is 1 − P(A), and for &quot;A or B&quot;…</p></a><a class="rc-card" href="/math/independence/"><b>Independence</b><p>Two events are independent when knowing one happened tells you nothing about the other: P(A | B) = P(A). Equivalently, the probability of both is the product: P(A and B) = P(A) · P(B).</p></a><a class="rc-card" href="/math/bayesian-vs-frequentist/"><b>Bayesian vs Frequentist</b><p>Statisticians have two philosophies. Frequentists treat probability as a long-run frequency and parameters as fixed but unknown numbers, so they ask how data would behave over repeated experiments.</p></a><a class="rc-card" href="/fundamentals/where-ai-goes-wrong/"><b>Where AI Goes Wrong</b><p>AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…</p></a><a class="rc-card" href="/fundamentals/rules-vs-learning/"><b>Rules vs Learning</b><p>There are two ways to make a machine behave well: write the rules by hand, or show it examples and let it work the rules out. Hand-written rules are clear but brittle.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/independence/">← Previous: Independence</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

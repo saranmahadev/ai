@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security and Data Leakage in RAG — AI Base</title>
+<meta name="description" content="Retrieval is a search over documents, and search has always needed access control — a public user&#39;s question shouldn&#39;t be able to pull an internal finance document into its retrieved context,…">
+<link rel="canonical" href="https://ai.saranmahadev.in/rag/security-and-data-leakage-in-rag/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Security and Data Leakage in RAG — AI Base">
+<meta property="og:description" content="Retrieval is a search over documents, and search has always needed access control — a public user&#39;s question shouldn&#39;t be able to pull an internal finance document into its retrieved context,…">
+<meta property="og:url" content="https://ai.saranmahadev.in/rag/security-and-data-leakage-in-rag/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Security and Data Leakage in RAG","item":"https://ai.saranmahadev.in/rag/security-and-data-leakage-in-rag/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Security and Data Leakage in RAG","description":"Retrieval is a search over documents, and search has always needed access control — a public user's question shouldn't be able to pull an internal finance document into its retrieved context,…","url":"https://ai.saranmahadev.in/rag/security-and-data-leakage-in-rag/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the finance-team-only chunk appear in unfiltered results at all?","acceptedAnswer":{"@type":"Answer","text":"Unfiltered retrieval ranks purely by similarity to the query, with no check on who's allowed to see each chunk — the internal chunk's content happens to be relevant enough to rank among the top results regardless of permissions."}},{"@type":"Question","name":"Why is filtering by permission before retrieval returns results more reliable than filtering the output afterward?","acceptedAnswer":{"@type":"Answer","text":"Filtering beforehand means the restricted content never enters the model's context at all; filtering only the final output still requires catching every possible way that content could leak into the generated answer, which is far less reliable than preventing exposure in the first place."}},{"@type":"Question","name":"What's a retrieval-specific version of prompt injection?","acceptedAnswer":{"@type":"Answer","text":"A document in the retrieved collection containing text crafted to look like an instruction to the generating model, which could attempt to redirect its behavior when that document is retrieved and placed into context — a variant of the direct-input prompt-injection risk, but arriving through retrieved content instead."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#5fd1d9">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/rag/">RAG</a> · RAG in Practice</p>
+        <h1 class="doc-title">Security and Data Leakage in RAG</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1l1t3gdbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
+    <radialGradient id="c1l1t3gdpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1l1t3gdbg)"/>
+  <circle cx="249" cy="324" r="176" fill="#b7d5be" opacity="0.23"/><circle cx="1050" cy="203" r="103" fill="#97e1e6" opacity="0.44"/><circle cx="88" cy="166" r="97" fill="#dcf5f7" opacity="0.35"/><circle cx="757" cy="182" r="171" fill="#dcf5f7" opacity="0.24"/><circle cx="64" cy="382" r="193" fill="#42718e" opacity="0.28"/><circle cx="510" cy="353" r="205" fill="#97e1e6" opacity="0.26"/><circle cx="885" cy="220" r="141" fill="#dcf5f7" opacity="0.26"/>
+  <path d="M0,420 L0,318 L30,321 L60,324 L90,328 L120,331 L150,334 L180,338 L210,340 L240,343 L270,345 L300,347 L330,348 L360,349 L390,350 L420,349 L450,349 L480,347 L510,345 L540,343 L570,341 L600,338 L630,334 L660,331 L690,328 L720,324 L750,321 L780,318 L810,315 L840,312 L870,310 L900,308 L930,307 L960,306 L990,306 L1020,306 L1050,307 L1080,308 L1110,310 L1140,312 L1170,315 L1200,318 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
+  <path d="M0,420 L0,364 L30,363 L60,362 L90,362 L120,362 L150,363 L180,364 L210,365 L240,367 L270,369 L300,371 L330,373 L360,376 L390,378 L420,381 L450,383 L480,385 L510,387 L540,389 L570,391 L600,392 L630,393 L660,394 L690,394 L720,394 L750,393 L780,392 L810,391 L840,389 L870,387 L900,385 L930,383 L960,380 L990,378 L1020,375 L1050,373 L1080,371 L1110,369 L1140,367 L1170,365 L1200,364 L1200,420 Z" fill="#42718e" opacity="0.5"/>
+  <ellipse cx="629" cy="269" rx="251" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(18.0 629 269)"/><ellipse cx="629" cy="269" rx="347" ry="97" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(24.0 629 269)"/>
+  <circle cx="629" cy="269" r="99" fill="url(#c1l1t3gdpl)"/>
+  <circle cx="958" cy="216" r="13" fill="#ffffff" opacity="0.85"/><circle cx="906" cy="278" r="8" fill="#ffffff" opacity="0.74"/><circle cx="331" cy="280" r="11" fill="#ffffff" opacity="0.68"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Retrieval is a search over documents, and search has always needed access control — a public user&#39;s question shouldn&#39;t be able to pull an internal finance document into its retrieved context, however relevant that document&#39;s content happens to be to the question asked. Relevance and permission are two entirely separate checks, and retrieval has no reason to respect the second one unless it&#39;s explicitly told to.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/rag/metadata-filtering-and-hybrid-indexes/" data-topic="rag/metadata-filtering-and-hybrid-indexes">Metadata Filtering and Hybrid Indexes</a>, <a class="wikilink" href="/llms/adversarial-and-jailbreak-evaluation/" data-topic="llms/adversarial-and-jailbreak-evaluation">Adversarial and Jailbreak Evaluation</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What does retrieval add to the list of ways a system can leak data it shouldn&#39;t?&quot; Retrieval searches across a whole document collection by similarity — and similarity alone has no concept of who&#39;s allowed to see what. Without an explicit permission check applied as a filter (the same <a class="wikilink" href="/rag/metadata-filtering-and-hybrid-indexes/" data-topic="rag/metadata-filtering-and-hybrid-indexes">pre-filtering mechanism</a> already covered for freshness and other metadata), a sufficiently relevant internal document can end up in a public user&#39;s retrieved context, and from there, potentially in the generated answer itself.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A library&#39;s card catalog that ranks books purely by subject relevance, with no concept of which books are in the restricted archive, would just as happily point a general patron toward a sealed, access-controlled document as toward a public one — unless the catalog is specifically told to check access rights before returning anything at all.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">unfiltered retrieval:     ranks by similarity alone, permissions irrelevant to the ranking
+permission-filtered:      only chunks matching the requesting user&#39;s roles are ever retrievable
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three chunks, one restricted to the finance team, retrieved for a public user&#39;s query:</p>
+<pre><code class="language-text">[public]       &quot;Public FAQ: shipping takes 3-5 days.&quot;
+[finance-team] &quot;Internal: Q3 revenue was $4.2M.&quot;
+[public]       &quot;Public FAQ: refunds in 5 days.&quot;
+
+unfiltered top-3: all three chunks returned, including the finance-team-only one
+permission-filtered for a public user: only the two [public] chunks returned
+</code></pre>
+<p>Without a permission filter, the internal revenue figure sits right alongside the two public FAQ entries in the retrieved results, with nothing distinguishing it except metadata the system never actually checked. With filtering applied before retrieval returns anything, the restricted chunk never reaches this user&#39;s results at all.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="permission-filtered-retrieval" data-title="Relevant isn't the same as allowed"><p class="bench-fallback"><strong>Interactive bench: Relevant isn't the same as allowed.</strong> Toggle permission filtering and watch an internal, restricted chunk disappear from a public user's results.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Look at the unfiltered results and note the internal chunk is present.</li>
+<li>Turn on permission filtering and watch it disappear.</li>
+<li>Imagine a query specifically crafted to be unusually similar to the internal document&#39;s wording — would that make the leak more or less likely without filtering?</li>
+</ol>
+<p><strong>What you should notice:</strong> the restricted chunk&#39;s presence in unfiltered results has nothing to do with how relevant it is to the query — it&#39;s present simply because nothing checked whether this user was allowed to see it at all.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This reuses the exact pre-filtering mechanism from <a class="wikilink" href="/rag/metadata-filtering-and-hybrid-indexes/" data-topic="rag/metadata-filtering-and-hybrid-indexes">Metadata Filtering and Hybrid Indexes</a></strong>, applied to access control instead of freshness or any other metadata dimension.</li>
+<li><strong>A retrieved document can also carry a second kind of risk</strong>: a malicious or compromised document instructing the generating model to ignore its instructions — a retrieval-specific variant of the prompt-injection risks <a class="wikilink" href="/llms/adversarial-and-jailbreak-evaluation/" data-topic="llms/adversarial-and-jailbreak-evaluation">Adversarial and Jailbreak Evaluation</a> already covers for direct user input.</li>
+<li><strong><a class="wikilink" href="/llms/guardrails-and-deployment-time-safety-filters/" data-topic="llms/guardrails-and-deployment-time-safety-filters">Guardrails and Deployment-Time Safety Filters</a> covers filtering a model&#39;s output independently of retrieval</strong> — permission filtering at retrieval time and output guardrails are complementary layers, neither a substitute for the other.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a model won&#39;t repeat sensitive content it was never supposed to see, even if it is retrieved.</strong> Once something is in the model&#39;s context, nothing stops it from surfacing in the generated answer — the only reliable fix is keeping it out of the context in the first place.</li>
+<li><strong>Filtering by permission only at the final output stage, after retrieval already happened.</strong> By the time an output filter runs, the sensitive content has already been processed by the model — pre-filtering at retrieval time (as the worked example shows) prevents the exposure earlier and more reliably.</li>
+<li><strong>Treating retrieved documents as inherently trustworthy instructions.</strong> A document injected into a collection (deliberately or not) that contains text resembling an instruction can attempt to redirect the generating model, the same prompt-injection risk that applies to any untrusted text reaching a model&#39;s context.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does the finance-team-only chunk appear in unfiltered results at all?</summary>
+Unfiltered retrieval ranks purely by similarity to the query, with no check on who's allowed to see each chunk — the internal chunk's content happens to be relevant enough to rank among the top results regardless of permissions.
+</details>
+
+<details><summary>2. Why is filtering by permission before retrieval returns results more reliable than filtering the output afterward?</summary>
+Filtering beforehand means the restricted content never enters the model's context at all; filtering only the final output still requires catching every possible way that content could leak into the generated answer, which is far less reliable than preventing exposure in the first place.
+</details>
+
+<details><summary>3. What's a retrieval-specific version of prompt injection?</summary>
+A document in the retrieved collection containing text crafted to look like an instruction to the generating model, which could attempt to redirect its behavior when that document is retrieved and placed into context — a variant of the direct-input prompt-injection risk, but arriving through retrieved content instead.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Data leakage:</strong> unauthorized content reaching a user through a system that wasn&#39;t supposed to grant them access to it.</li>
+<li><strong>Permission filtering:</strong> restricting retrieval to only chunks a given user is authorized to see.</li>
+<li><strong>Prompt injection via retrieved content:</strong> a retrieved document containing text designed to redirect the generating model&#39;s behavior.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/rag/metadata-filtering-and-hybrid-indexes/" data-topic="rag/metadata-filtering-and-hybrid-indexes">Metadata Filtering and Hybrid Indexes</a> · <a class="wikilink" href="/llms/adversarial-and-jailbreak-evaluation/" data-topic="llms/adversarial-and-jailbreak-evaluation">Adversarial and Jailbreak Evaluation</a> · <a class="wikilink" href="/llms/guardrails-and-deployment-time-safety-filters/" data-topic="llms/guardrails-and-deployment-time-safety-filters">Guardrails and Deployment-Time Safety Filters</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/security-and-data-leakage-in-rag">Open in the interactive site →</a></p>
+        <a class="read-next" href="/rag/capstone-a-question-answered-traced-from-query-to-grounded-answer/"><small>Read next</small><b>Capstone: A Question Answered, Traced from Query to Grounded Answer</b><p>Every stage this planet covered separately — retrieving by similarity, re-ranking for accuracy, assembling context sensibly, generating with citations — is usually described one at a time, with…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/metadata-filtering-and-hybrid-indexes/"><b>Metadata Filtering and Hybrid Indexes</b><p>Asking for &quot;the 20 most relevant chunks, but only from documents I have permission to see&quot; sounds like one request — but a vector index has to decide when to apply that permission check.</p></a><a class="rc-card" href="/llms/adversarial-and-jailbreak-evaluation/"><b>Adversarial and Jailbreak Evaluation</b><p>safety evaluation on ordinary, well-behaved inputs only tells you how a model behaves when nobody&#39;s trying to break it.</p></a><a class="rc-card" href="/llms/guardrails-and-deployment-time-safety-filters/"><b>Guardrails and Deployment-Time Safety Filters</b><p>Alignment training shapes what a model tends to do on its own, but a deployed product rarely relies on that alone.</p></a><a class="rc-card" href="/rag/rag-in-practice/"><b>RAG in Practice</b><p>Everything on this road so far has covered one piece of a RAG system at a time.</p></a><a class="rc-card" href="/agents/prompt-injection-in-agent-contexts/"><b>Prompt Injection in Agent Contexts</b><p>A chatbot tricked by hidden text into saying something it shouldn&#39;t is embarrassing.</p></a></div></section>
+        <p class="doc-prev"><a href="/rag/cost-and-latency-of-rag-systems/">← Previous: Cost and Latency of RAG Systems</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

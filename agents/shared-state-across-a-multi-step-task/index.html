@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shared State Across a Multi-Step Task — AI Base</title>
+<meta name="description" content="A five-step task that needs today&#39;s date can fetch it five separate times, once per step — or fetch it once and write it somewhere every later step can just read.">
+<link rel="canonical" href="https://ai.saranmahadev.in/agents/shared-state-across-a-multi-step-task/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Shared State Across a Multi-Step Task — AI Base">
+<meta property="og:description" content="A five-step task that needs today&#39;s date can fetch it five separate times, once per step — or fetch it once and write it somewhere every later step can just read.">
+<meta property="og:url" content="https://ai.saranmahadev.in/agents/shared-state-across-a-multi-step-task/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Shared State Across a Multi-Step Task","item":"https://ai.saranmahadev.in/agents/shared-state-across-a-multi-step-task/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Shared State Across a Multi-Step Task","description":"A five-step task that needs today's date can fetch it five separate times, once per step — or fetch it once and write it somewhere every later step can just read.","url":"https://ai.saranmahadev.in/agents/shared-state-across-a-multi-step-task/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why is five separate fetches wasteful when the shared-blackboard version only needs one?","acceptedAnswer":{"@type":"Answer","text":"Today's date doesn't change across the five steps of the task, so every one of the five independent fetches returns the identical value — the blackboard removes exactly that repeated, redundant work."}},{"@type":"Question","name":"What distinguishes shared state here from long-term memory?","acceptedAnswer":{"@type":"Answer","text":"Shared state is scoped to a single task's run and disappears once that run ends, unless separately persisted — long-term memory is specifically about writing something to storage that a later, different run can still read."}},{"@type":"Question","name":"When would re-fetching a value on every step actually be the right choice?","acceptedAnswer":{"@type":"Answer","text":"When the value can genuinely change during the task — a cached value trusted for the whole run would then go stale, so the redundant-looking re-fetch is actually necessary freshness checking rather than waste."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#c99bf0">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/agents/">Agents</a> · Memory and State Management</p>
+        <h1 class="doc-title">Shared State Across a Multi-Step Task</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c10hzlqabg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
+    <radialGradient id="c10hzlqapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c10hzlqabg)"/>
+  <circle cx="1158" cy="75" r="191" fill="#e7bdc8" opacity="0.41"/><circle cx="152" cy="336" r="62" fill="#725998" opacity="0.43"/><circle cx="1194" cy="126" r="154" fill="#f3e9fc" opacity="0.61"/><circle cx="726" cy="356" r="209" fill="#725998" opacity="0.31"/><circle cx="1167" cy="93" r="135" fill="#725998" opacity="0.57"/><circle cx="280" cy="96" r="170" fill="#725998" opacity="0.60"/>
+  <path d="M0,420 L0,320 L30,316 L60,312 L90,309 L120,307 L150,306 L180,306 L210,307 L240,310 L270,314 L300,318 L330,323 L360,328 L390,333 L420,338 L450,342 L480,346 L510,348 L540,349 L570,349 L600,348 L630,346 L660,343 L690,339 L720,334 L750,329 L780,324 L810,319 L840,314 L870,311 L900,308 L930,306 L960,306 L990,306 L1020,308 L1050,311 L1080,315 L1110,320 L1140,325 L1170,330 L1200,335 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
+  <path d="M0,420 L0,372 L30,377 L60,382 L90,387 L120,391 L150,393 L180,394 L210,393 L240,391 L270,388 L300,384 L330,379 L360,374 L390,369 L420,365 L450,363 L480,362 L510,363 L540,365 L570,368 L600,372 L630,377 L660,382 L690,387 L720,391 L750,393 L780,394 L810,393 L840,391 L870,388 L900,384 L930,379 L960,374 L990,369 L1020,365 L1050,363 L1080,362 L1110,363 L1140,365 L1170,368 L1200,372 L1200,420 Z" fill="#725998" opacity="0.5"/>
+  <ellipse cx="786" cy="156" rx="160" ry="45" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-16.2 786 156)"/><ellipse cx="786" cy="156" rx="221" ry="62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-10.2 786 156)"/>
+  <circle cx="786" cy="156" r="63" fill="url(#c10hzlqapl)"/>
+  <circle cx="752" cy="231" r="14" fill="#ffffff" opacity="0.73"/><circle cx="597" cy="145" r="14" fill="#ffffff" opacity="0.66"/><circle cx="569" cy="209" r="13" fill="#ffffff" opacity="0.83"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A five-step task that needs today&#39;s date can fetch it five separate times, once per step — or fetch it once and write it somewhere every later step can just read. That shared somewhere, a <strong>blackboard</strong>, is what lets a long task&#39;s steps build on each other instead of each starting from nothing.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/agents/memory-compression-and-forgetting/" data-topic="agents/memory-compression-and-forgetting">Memory Compression and Forgetting</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do the different steps of one long task share information with each other?&quot; Without shared state, each step only has whatever&#39;s in its own immediate context — anything another step already figured out or fetched has to be rediscovered or re-fetched from scratch. With a shared blackboard, any step can write a value once and every later step can read it back, without needing to know which earlier step produced it.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A relay team where each runner has to independently figure out the race conditions from scratch wastes effort every single leg; a team with a shared whiteboard at the exchange zone — wind direction, the competition&#39;s pace — lets every runner benefit from what the earlier ones already learned, without needing to ask them directly.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">no shared state:    each step fetches the needed value independently     → n fetches for n steps
+shared blackboard:   first step fetches and writes it once; later steps read it → 1 fetch total
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A 5-step research task where every step needs to know today&#39;s date:</p>
+<pre><code class="language-text">no shared state:
+  step 1: fetches today&#39;s date itself
+  step 2: fetches today&#39;s date itself
+  step 3: fetches today&#39;s date itself
+  step 4: fetches today&#39;s date itself
+  step 5: fetches today&#39;s date itself
+  total external calls: 5
+
+shared blackboard:
+  step 1: fetches today&#39;s date, writes it to shared state
+  steps 2-5: read today&#39;s date from shared state
+  total external calls: 1
+</code></pre>
+<p>Every one of the five calls in the first case returns exactly the same value — the repetition buys nothing, since the date hasn&#39;t changed between steps 1 and 5. The shared blackboard removes exactly that redundancy, at the cost of needing somewhere both to write to and to read consistently from across steps.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="shared-state-blackboard" data-title="Fetching it again, or reading it off the blackboard"><p class="bench-fallback"><strong>Interactive bench: Fetching it again, or reading it off the blackboard.</strong> Compare external calls needed for a piece of shared context, with and without a shared blackboard.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Slide the step count up with shared state off and watch external calls climb one-for-one.</li>
+<li>Turn shared state on and see the total drop to 1 regardless of step count.</li>
+<li>Imagine two steps run in parallel (as in <a class="wikilink" href="/agents/parallelization-sectioning-and-voting/" data-topic="agents/parallelization-sectioning-and-voting">sectioning</a>) and both need to write to the same blackboard entry — what has to be true about how writes are handled to avoid one step&#39;s write silently overwriting the other&#39;s?</li>
+</ol>
+<p><strong>What you should notice:</strong> the saving here isn&#39;t from any step doing less work on its own problem — it&#39;s from not repeating a fetch whose answer was already available from an earlier step in the same task.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>This is <a class="wikilink" href="/agents/memory-compression-and-forgetting/" data-topic="agents/memory-compression-and-forgetting">memory</a> at the scale of a single task rather than across sessions</strong> — a shared blackboard is a short-lived, task-scoped store, built and torn down within one run rather than persisted long-term.</li>
+<li><strong><a class="wikilink" href="/agents/coordination-failures-and-deadlock/" data-topic="agents/coordination-failures-and-deadlock">Coordination Failures and Deadlock</a> covers what goes wrong when shared state is read or written inconsistently</strong> by multiple agents or steps working on it at once.</li>
+<li><strong><a class="wikilink" href="/agents/supervisor-orchestrator-patterns/" data-topic="agents/supervisor-orchestrator-patterns">Supervisor/Orchestrator Patterns</a>&#39;s orchestrator often owns exactly this shared state</strong>, handing each worker only the piece of it that worker&#39;s step actually needs.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Re-fetching a value every step &quot;to be safe.&quot;</strong> The worked example shows this costs real external calls for no benefit when the value genuinely hasn&#39;t changed — the safety concern is valid only when the value actually <em>can</em> change mid-task.</li>
+<li><strong>Sharing state that does change mid-task without any staleness check.</strong> A blackboard entry written once and trusted forever can go stale if the underlying value changes after it was written — shared state removes redundant fetches, not the need to know when a cached value is no longer valid.</li>
+<li><strong>Using a shared blackboard as a substitute for episodic or long-term memory.</strong> A blackboard is scoped to one task&#39;s run; nothing on it survives the task ending unless it&#39;s separately written to the kind of persistent store covered by <a class="wikilink" href="/agents/short-term-vs-long-term-agent-memory/" data-topic="agents/short-term-vs-long-term-agent-memory">Short-Term vs. Long-Term Agent Memory</a>.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why is five separate fetches wasteful when the shared-blackboard version only needs one?</summary>
+Today's date doesn't change across the five steps of the task, so every one of the five independent fetches returns the identical value — the blackboard removes exactly that repeated, redundant work.
+</details>
+
+<details><summary>2. What distinguishes shared state here from long-term memory?</summary>
+Shared state is scoped to a single task's run and disappears once that run ends, unless separately persisted — long-term memory is specifically about writing something to storage that a later, different run can still read.
+</details>
+
+<details><summary>3. When would re-fetching a value on every step actually be the right choice?</summary>
+When the value can genuinely change during the task — a cached value trusted for the whole run would then go stale, so the redundant-looking re-fetch is actually necessary freshness checking rather than waste.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Shared state (blackboard):</strong> a store any step of a task can write to and any other step can read from, scoped to that one task&#39;s run.</li>
+<li><strong>Redundant fetch:</strong> re-retrieving a value another step already obtained, when nothing about that value has changed.</li>
+<li><strong>Staleness:</strong> a cached shared value no longer matching the current true value, because something changed after it was written.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/agents/memory-compression-and-forgetting/" data-topic="agents/memory-compression-and-forgetting">Memory Compression and Forgetting</a> · <a class="wikilink" href="/agents/coordination-failures-and-deadlock/" data-topic="agents/coordination-failures-and-deadlock">Coordination Failures and Deadlock</a> · <a class="wikilink" href="/agents/supervisor-orchestrator-patterns/" data-topic="agents/supervisor-orchestrator-patterns">Supervisor/Orchestrator Patterns</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/shared-state-across-a-multi-step-task">Open in the interactive site →</a></p>
+        <a class="read-next" href="/agents/multi-agent-systems/"><small>Read next</small><b>Multi-Agent Systems</b><p>One agent can only hold one line of thought at a time.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/memory-compression-and-forgetting/"><b>Memory Compression and Forgetting</b><p>A memory store that keeps every fact and every logged episode forever grows without bound — eventually too large to search efficiently, let alone fit anywhere near a context window.</p></a><a class="rc-card" href="/agents/parallelization-sectioning-and-voting/"><b>Parallelization: Sectioning and Voting</b><p>Running three independent pieces of a task one after another wastes time that didn&#39;t need to be spent sequentially at all — none of the three pieces needed the others to finish first.</p></a><a class="rc-card" href="/agents/coordination-failures-and-deadlock/"><b>Coordination Failures and Deadlock</b><p>Two agents, each waiting on a result only the other can produce, aren&#39;t making progress — they&#39;re stuck in a circular wait.</p></a><a class="rc-card" href="/agents/supervisor-orchestrator-patterns/"><b>Supervisor-Orchestrator Patterns</b><p>A supervisor agent never does the specialized work itself — it decides which specialist should handle a piece of a task, hands it off, and collects the result.</p></a><a class="rc-card" href="/agents/short-term-vs-long-term-agent-memory/"><b>Short-Term vs. Long-Term Agent Memory</b><p>Everything an agent reads during one run — the request, the tool results so far, its own earlier reasoning — disappears the moment that run ends, unless something deliberately writes it somewhere…</p></a><a class="rc-card" href="/agents/memory-and-state-management/"><b>Memory and State Management</b><p>An agent running for hundreds of steps can&#39;t keep everything it&#39;s ever seen in its context window — and some of what it learns along the way needs to survive past the current run entirely.</p></a></div></section>
+        <p class="doc-prev"><a href="/agents/memory-compression-and-forgetting/">← Previous: Memory Compression and Forgetting</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

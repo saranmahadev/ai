@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repetition and Length Control — AI Base</title>
+<meta name="description" content="Left alone, a decoding loop can get stuck: once a model starts favoring a short cycle of tokens, each repetition can make that same cycle even more likely next time.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/repetition-and-length-control/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Repetition and Length Control — AI Base">
+<meta property="og:description" content="Left alone, a decoding loop can get stuck: once a model starts favoring a short cycle of tokens, each repetition can make that same cycle even more likely next time.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/repetition-and-length-control/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Repetition and Length Control","item":"https://ai.saranmahadev.in/generative-ai/repetition-and-length-control/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Repetition and Length Control","description":"Left alone, a decoding loop can get stuck: once a model starts favoring a short cycle of tokens, each repetition can make that same cycle even more likely next time.","url":"https://ai.saranmahadev.in/generative-ai/repetition-and-length-control/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does a repetition penalty eventually break a loop that a flat (count-independent) penalty might not?","acceptedAnswer":{"@type":"Answer","text":"Because the penalty compounds with each repeat (it scales by the count of prior occurrences), so a token that keeps reappearing gets progressively more expensive, until even the end-of-sequence token becomes more attractive."}},{"@type":"Question","name":"What's the difference between what a repetition penalty and a length bias each act on?","acceptedAnswer":{"@type":"Answer","text":"A repetition penalty adjusts the logits of tokens that have already appeared; a length bias adjusts only the end-of-sequence token's logit, based purely on how many tokens have been generated so far."}},{"@type":"Question","name":"In the worked example, how many tokens did it take for a repetition penalty of 2.5 to break the loop?","acceptedAnswer":{"@type":"Answer","text":"Six tokens: \"cat sat again sat again <eos>\" — the loop ran through one full cycle before the penalty made <eos> more attractive than continuing."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Decoding and Prompting</p>
+        <h1 class="doc-title">Repetition and Length Control</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cad0kvcbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="cad0kvcpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cad0kvcbg)"/>
+  <circle cx="737" cy="245" r="123" fill="#ffe9f4" opacity="0.58"/><circle cx="430" cy="78" r="211" fill="#8a5989" opacity="0.41"/><circle cx="444" cy="263" r="120" fill="#ffbfe0" opacity="0.31"/><circle cx="1195" cy="41" r="213" fill="#ffbfe0" opacity="0.35"/><circle cx="1151" cy="227" r="101" fill="#ffbeba" opacity="0.34"/><circle cx="426" cy="215" r="199" fill="#ffbeba" opacity="0.37"/>
+  <path d="M0,420 L0,336 L30,342 L60,346 L90,349 L120,350 L150,348 L180,344 L210,339 L240,333 L270,326 L300,319 L330,313 L360,309 L390,306 L420,306 L450,307 L480,311 L510,316 L540,322 L570,329 L600,336 L630,342 L660,346 L690,349 L720,350 L750,348 L780,344 L810,339 L840,333 L870,326 L900,319 L930,313 L960,309 L990,306 L1020,306 L1050,307 L1080,311 L1110,316 L1140,322 L1170,329 L1200,336 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,381 L30,377 L60,373 L90,370 L120,367 L150,365 L180,363 L210,362 L240,362 L270,363 L300,365 L330,367 L360,370 L390,374 L420,378 L450,381 L480,385 L510,388 L540,391 L570,393 L600,394 L630,394 L660,393 L690,392 L720,390 L750,387 L780,383 L810,380 L840,376 L870,372 L900,369 L930,366 L960,364 L990,363 L1020,362 L1050,362 L1080,364 L1110,366 L1140,368 L1170,372 L1200,375 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="659" cy="157" rx="242" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-20.4 659 157)"/><ellipse cx="659" cy="157" rx="334" ry="94" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-14.4 659 157)"/>
+  <circle cx="659" cy="157" r="95" fill="url(#cad0kvcpl)"/>
+  <circle cx="615" cy="277" r="15" fill="#ffffff" opacity="0.86"/><circle cx="748" cy="38" r="14" fill="#ffffff" opacity="0.87"/><circle cx="1032" cy="196" r="9" fill="#ffffff" opacity="0.86"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>Left alone, a decoding loop can get stuck: once a model starts favoring a short cycle of tokens, each repetition can make that same cycle even more likely next time. This note covers two practical levers for taming generation length and repetition directly at decoding time.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/temperature-and-nucleus-top-p-sampling/" data-topic="generative-ai/temperature-and-nucleus-top-p-sampling">Temperature and Nucleus (Top-p) Sampling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you stop a model from looping forever, and how do you control how long its output runs?&quot; A <strong>repetition penalty</strong> reduces the logit of any token in proportion to how many times it has already appeared, making an already-used token progressively less attractive. A <strong>length bias</strong> directly nudges the end-of-sequence token&#39;s logit — suppressing it before a minimum length, boosting it past a target length — without touching any other token&#39;s score.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Repetition penalty is like a conversation where repeating yourself gets harder to justify each time — the first repeat barely registers, but by the fifth time you&#39;re saying the same thing, it&#39;s clearly time to say something else. A length bias is a separate, blunter lever: it doesn&#39;t care what&#39;s being said, only how long the model has been talking, nudging it to wrap up (or keep going) purely based on position.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">repetition penalty (applied per distinct token, count = times seen so far):
+  logit&#39; = logit × penaltyᶜᵒᵘⁿᵗ      if logit &lt; 0
+  logit&#39; = logit / penaltyᶜᵒᵘⁿᵗ      if logit ≥ 0
+  (penalty = 1 is a no-op; larger penalty punishes repeats harder,
+   and the exponent means the second repeat is punished more than the first)
+
+length bias (on the &lt;eos&gt; logit only):
+  logit&#39;(&lt;eos&gt;) = logit(&lt;eos&gt;) − bias    if step &lt; minLen
+  logit&#39;(&lt;eos&gt;) = logit(&lt;eos&gt;) + bias    if step ≥ softCapLen
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy model over <code>{the, cat, sat, again, &lt;eos&gt;}</code> whose transitions form a loop: <code>cat → sat → again → sat → again → ...</code>. With no repetition penalty, greedy decoding loops for the full 20-step budget:</p>
+<pre><code class="language-text">no penalty:   cat sat again sat again sat again sat again sat again ... (hits the length limit)
+</code></pre>
+<p>With a repetition penalty of 2.5, the &quot;sat&quot; / &quot;again&quot; cycle gets progressively more expensive each time either token reappears. By the third repeat of the cycle, the (still unpenalized) <code>&lt;eos&gt;</code> logit of 0.50 finally beats the heavily-penalized &quot;sat&quot; logit of 0.45:</p>
+<pre><code class="language-text">penalty 2.5:  cat sat again sat again &lt;eos&gt;     (6 tokens — the loop breaks on its own)
+</code></pre>
+<p>Separately, a length bias can force an early stop regardless of what the content-token logits say. Boosting <code>&lt;eos&gt;</code> by 3 once the sequence reaches 2 tokens overrides the model&#39;s preference for continuing:</p>
+<pre><code class="language-text">soft cap at step 2, bias 3:  cat sat &lt;eos&gt;      (3 tokens — stopped well before the natural loop)
+</code></pre>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="repetition-length-control" data-title="Breaking a loop, and stopping on time"><p class="bench-fallback"><strong>Interactive bench: Breaking a loop, and stopping on time.</strong> Adjust a repetition penalty and a soft length cap and watch a looping toy model's generated sequence change.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>With no repetition penalty, confirm the model loops for the full 20-token budget.</li>
+<li>Raise the penalty until the loop breaks on its own, and watch how many repeats it takes.</li>
+<li>Set the penalty back to 1 and lower the soft length cap instead — notice this stops generation immediately, with no regard for whether the content &quot;wanted&quot; to continue.</li>
+</ol>
+<p><strong>What you should notice:</strong> the two controls solve different problems — repetition penalty makes the model <em>want</em> to stop by making the loop itself unattractive, while a length bias can force a stop regardless of what the model wants.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Chat APIs commonly expose both as separate parameters</strong> (often named <code>repetition_penalty</code> or <code>frequency_penalty</code>, and <code>max_tokens</code> or a length-based stop condition), because they address different failure modes.</li>
+<li><strong>Open-ended generation without any repetition control is a classic early-GPT-era failure mode</strong> — tight loops of a few repeated phrases were common before penalties like this became standard practice.</li>
+<li><strong><a class="wikilink" href="/generative-ai/few-shot-and-zero-shot-generation/" data-topic="generative-ai/few-shot-and-zero-shot-generation">task-oriented prompts</a> often rely on length control to keep an answer concise</strong> rather than letting the model keep elaborating past the point of being useful.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Setting the repetition penalty too high.</strong> Past a point it can push the model away from words that legitimately need to repeat (like &quot;the&quot; in ordinary prose), producing stilted text.</li>
+<li><strong>Expecting a length bias to produce exactly the target length.</strong> It shifts the odds toward stopping; the content-token logits can still occasionally win out, especially with a small bias.</li>
+<li><strong>Applying repetition penalty to every past token equally regardless of count.</strong> The worked example&#39;s penalty grows with each repeat specifically so that a single earlier use barely matters, while persistent looping is punished hard — a flat, count-independent penalty behaves quite differently.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why does a repetition penalty eventually break a loop that a flat (count-independent) penalty might not?</summary>
+Because the penalty compounds with each repeat (it scales by the count of prior occurrences), so a token that keeps reappearing gets progressively more expensive, until even the end-of-sequence token becomes more attractive.
+</details>
+
+<details><summary>2. What's the difference between what a repetition penalty and a length bias each act on?</summary>
+A repetition penalty adjusts the logits of tokens that have already appeared; a length bias adjusts only the end-of-sequence token's logit, based purely on how many tokens have been generated so far.
+</details>
+
+<details><summary>3. In the worked example, how many tokens did it take for a repetition penalty of 2.5 to break the loop?</summary>
+Six tokens: "cat sat again sat again &lt;eos&gt;" — the loop ran through one full cycle before the penalty made &lt;eos&gt; more attractive than continuing.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Repetition penalty:</strong> a logit adjustment that makes an already-generated token progressively less likely to be generated again.</li>
+<li><strong>Length bias:</strong> a direct adjustment to the end-of-sequence token&#39;s logit, used to encourage stopping earlier or later.</li>
+<li><strong>Soft cap:</strong> a length past which generation is nudged (but not forced) to stop, as opposed to a hard limit that cuts generation off outright.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/temperature-and-nucleus-top-p-sampling/" data-topic="generative-ai/temperature-and-nucleus-top-p-sampling">Temperature and Nucleus (Top-p) Sampling</a> · <a class="wikilink" href="/generative-ai/constrained-and-structured-generation/" data-topic="generative-ai/constrained-and-structured-generation">Constrained and Structured Generation</a> · <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/repetition-and-length-control">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/constrained-and-structured-generation/"><small>Read next</small><b>Constrained and Structured Generation</b><p>A model&#39;s raw next-token distribution has no idea your downstream code needs valid JSON, a specific grammar, or a well-formed arithmetic expression — it just assigns probabilities, and the most…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/temperature-and-nucleus-top-p-sampling/"><b>Temperature and Nucleus (Top-p) Sampling</b><p>Greedy and beam search both chase the highest-probability sequence, which makes open-ended text feel flat and repetitive — real writing isn&#39;t always the most predictable continuation.</p></a><a class="rc-card" href="/generative-ai/few-shot-and-zero-shot-generation/"><b>Few-Shot and Zero-Shot Generation</b><p>The copying mechanism in Prompting and In-Context Learning only works when the pattern it needs is actually present in the prompt — which raises a direct, practical question: how many examples…</p></a><a class="rc-card" href="/generative-ai/constrained-and-structured-generation/"><b>Constrained and Structured Generation</b><p>A model&#39;s raw next-token distribution has no idea your downstream code needs valid JSON, a specific grammar, or a well-formed arithmetic expression — it just assigns probabilities, and the most…</p></a><a class="rc-card" href="/generative-ai/self-consistency-and-best-of-n-sampling/"><b>Self-Consistency and Best-of-N Sampling</b><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.</p></a><a class="rc-card" href="/generative-ai/decoding-and-prompting/"><b>Decoding and Prompting</b><p>A trained language model outputs a probability distribution over the next token, not a finished sentence.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/temperature-and-nucleus-top-p-sampling/">← Previous: Temperature and Nucleus (Top-p) Sampling</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

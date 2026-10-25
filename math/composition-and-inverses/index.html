@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Composition and Inverses — AI Base</title>
+<meta name="description" content="Composition feeds the output of one function into another: g(f(x)). An inverse undoes a function: f⁻¹(f(x)) = x.">
+<link rel="canonical" href="https://ai.saranmahadev.in/math/composition-and-inverses/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Composition and Inverses — AI Base">
+<meta property="og:description" content="Composition feeds the output of one function into another: g(f(x)). An inverse undoes a function: f⁻¹(f(x)) = x.">
+<meta property="og:url" content="https://ai.saranmahadev.in/math/composition-and-inverses/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Composition and Inverses","item":"https://ai.saranmahadev.in/math/composition-and-inverses/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Composition and Inverses","description":"Composition feeds the output of one function into another: g(f(x)). An inverse undoes a function: f⁻¹(f(x)) = x.","url":"https://ai.saranmahadev.in/math/composition-and-inverses/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"If f(x) = x + 1 and g(x) = 3x, what is g(f(2))?","acceptedAnswer":{"@type":"Answer","text":"g(3) = 9."}},{"@type":"Question","name":"What is the inverse of f(x) = 5x?","acceptedAnswer":{"@type":"Answer","text":"f⁻¹(x) = x / 5."}},{"@type":"Question","name":"Why does x² lack an inverse on all reals?","acceptedAnswer":{"@type":"Answer","text":"Two inputs (3 and −3) give the same output."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#b39cf5">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/math/">Math</a> · Algebra and Functions</p>
+        <h1 class="doc-title">Composition and Inverses</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ctgnknlbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
+    <radialGradient id="ctgnknlpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#ctgnknlbg)"/>
+  <circle cx="177" cy="377" r="182" fill="#68599a" opacity="0.57"/><circle cx="540" cy="167" r="208" fill="#ddbecb" opacity="0.51"/><circle cx="76" cy="307" r="151" fill="#ddbecb" opacity="0.45"/><circle cx="503" cy="354" r="107" fill="#cebff9" opacity="0.52"/><circle cx="525" cy="58" r="204" fill="#ddbecb" opacity="0.39"/><circle cx="616" cy="1" r="79" fill="#68599a" opacity="0.22"/><circle cx="1065" cy="303" r="149" fill="#eee9fd" opacity="0.35"/>
+  <path d="M0,420 L0,350 L30,349 L60,347 L90,342 L120,336 L150,330 L180,323 L210,316 L240,311 L270,307 L300,306 L330,306 L360,309 L390,313 L420,319 L450,326 L480,332 L510,339 L540,344 L570,348 L600,350 L630,349 L660,347 L690,342 L720,336 L750,330 L780,323 L810,316 L840,311 L870,307 L900,306 L930,306 L960,309 L990,313 L1020,319 L1050,326 L1080,332 L1110,339 L1140,344 L1170,348 L1200,350 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
+  <path d="M0,420 L0,379 L30,381 L60,384 L90,386 L120,388 L150,390 L180,391 L210,393 L240,393 L270,394 L300,394 L330,394 L360,393 L390,392 L420,390 L450,389 L480,387 L510,384 L540,382 L570,380 L600,377 L630,375 L660,372 L690,370 L720,368 L750,366 L780,365 L810,363 L840,363 L870,362 L900,362 L930,362 L960,363 L990,364 L1020,366 L1050,367 L1080,369 L1110,372 L1140,374 L1170,376 L1200,379 L1200,420 Z" fill="#68599a" opacity="0.5"/>
+  <ellipse cx="811" cy="159" rx="184" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(21.7 811 159)"/><ellipse cx="811" cy="159" rx="254" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(27.7 811 159)"/>
+  <circle cx="811" cy="159" r="72" fill="url(#ctgnknlpl)"/>
+  <circle cx="819" cy="71" r="12" fill="#ffffff" opacity="0.88"/><circle cx="1016" cy="188" r="16" fill="#ffffff" opacity="0.87"/><circle cx="856" cy="245" r="14" fill="#ffffff" opacity="0.62"/><circle cx="1010" cy="181" r="18" fill="#ffffff" opacity="0.70"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Composition</strong> feeds the output of one function into another: <code>g(f(x))</code>. An <strong>inverse</strong> undoes a function: <code>f⁻¹(f(x)) = x</code>. A neural network is a long composition, and many tricks in machine learning are inverse operations.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/math/functions/" data-topic="math/functions">Functions</a> and <a class="wikilink" href="/math/equations-and-solving/" data-topic="math/equations-and-solving">Equations and Solving</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What happens if I chain two rules, and can I run a rule backwards?&quot; Every deep network chains layer after layer, and every logarithm undoes an exponential.</p>
+<h2 id="intuition-two-machines-in-a-row">Intuition: two machines in a row</h2>
+<p>Put machine <code>f</code> next to machine <code>g</code> and feed the chute of the first into the slot of the second. The combined machine is <code>g ∘ f</code>, read &quot;g after f&quot;:</p>
+<pre><code class="language-text">(g ∘ f)(x) = g(f(x))
+</code></pre>
+<p><strong>Order matters.</strong> Putting on socks then shoes is not the same as shoes then socks.</p>
+<p>An <strong>inverse</strong> is a machine that runs backwards. If <code>f</code> doubles and adds 3, the inverse subtracts 3 and halves. It exists only when every output comes from a single input (the function is one-to-one); otherwise going back is ambiguous.</p>
+<h2 id="finding-an-inverse">Finding an inverse</h2>
+<p>Swap the roles of input and output and solve:</p>
+<pre><code class="language-text">y = 2x + 3
+x = 2y + 3       (swap)
+y = (x − 3) / 2  (solve for y)     so f⁻¹(x) = (x − 3) / 2
+</code></pre>
+<p>The graphs of <code>f</code> and <code>f⁻¹</code> are mirror images across the line <code>y = x</code>.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Let <code>f(x) = 2x + 3</code> and <code>g(x) = x²</code>.</p>
+<pre><code class="language-text">g(f(2)) = g(7)  = 49
+f(g(2)) = f(4)  = 11          different: order matters
+
+f⁻¹(7) = (7 − 3)/2 = 2        and f(2) = 7 ✓
+</code></pre>
+<p><code>g(x) = x²</code> has no inverse on all reals (both 3 and −3 give 9), but restricting to <code>x ≥ 0</code> gives the inverse <code>√x</code>. Exponential and logarithm are inverses: <code>ln(eˣ) = x</code> and <code>e^(ln x) = x</code>.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="compose-invert" data-title="Chain functions and undo them"><p class="bench-fallback"><strong>Interactive bench: Chain functions and undo them.</strong> Choose two functions f and g, move an input slider to see it flow through f then g, swap the order, and turn on the inverse to see the graph mirrored across y = x.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Push a value through f then g. Swap the order and compare.</li>
+<li>Turn on the inverse and check that it returns your input.</li>
+<li>Try <code>x²</code> and see why its inverse needs a restriction.</li>
+<li>Find an f and g whose order does not matter.</li>
+</ol>
+<p><strong>What you should notice:</strong> composition is not commutative, and the inverse&#39;s graph is the original reflected across the diagonal.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>A deep network</strong> is <code>f₃(f₂(f₁(x)))</code>, layer after layer.</li>
+<li><strong>The chain rule</strong> differentiates compositions (see <a class="wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a>).</li>
+<li><strong>Log and exp</strong>, and <strong>normalise and un-normalise</strong>, are inverse pairs.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Reading <code>g(f(x))</code> as <code>g(x)·f(x)</code>.</strong> It is application, not multiplication.</li>
+<li><strong>Assuming order does not matter.</strong></li>
+<li><strong>Writing <code>f⁻¹(x)</code> as <code>1/f(x)</code>.</strong> The inverse is a different function.</li>
+<li><strong>Ignoring domain restrictions</strong> when inverting.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. If f(x) = x + 1 and g(x) = 3x, what is g(f(2))?</summary>
+g(3) = 9.
+</details>
+
+<details><summary>2. What is the inverse of f(x) = 5x?</summary>
+f⁻¹(x) = x / 5.
+</details>
+
+<details><summary>3. Why does x² lack an inverse on all reals?</summary>
+Two inputs (3 and −3) give the same output.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Composition:</strong> applying one function after another, <code>g(f(x))</code>.</li>
+<li><strong>Inverse function:</strong> the function that undoes another.</li>
+<li><strong>One-to-one:</strong> each output comes from a single input.</li>
+<li><strong>Reflection across y = x:</strong> how an inverse&#39;s graph relates to the original.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/math/functions/" data-topic="math/functions">Functions</a> · <a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a> · <a class="wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a> · <a class="wikilink" href="/math/a-forward-pass-by-hand/" data-topic="math/a-forward-pass-by-hand">A Forward Pass by Hand</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/composition-and-inverses">Open in the interactive site →</a></p>
+        <a class="read-next" href="/math/functions-ai-loves/"><small>Read next</small><b>Functions AI Loves</b><p>A few specific functions turn up in almost every neural network: the sigmoid, tanh, ReLU, its leaky variant and softplus.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/functions/"><b>Functions</b><p>A function is a rule that takes an input and gives back exactly one output.</p></a><a class="rc-card" href="/math/equations-and-solving/"><b>Equations and Solving</b><p>An equation says two expressions are equal, and solving it means finding the value of the unknown that makes the statement true.</p></a><a class="rc-card" href="/math/chain-rule/"><b>Chain Rule</b><p>The chain rule finds the derivative of a function built from other functions: d/dx f(g(x)) = f′(g(x)) · g′(x). Rates multiply along the chain, like gears turning one another.</p></a><a class="rc-card" href="/math/exponential-and-logarithmic-functions/"><b>Exponential and Logarithmic Functions</b><p>An exponential function f(t) = a·bᵗ multiplies by the same factor every step, so it grows (or decays) faster and faster. Its inverse, the logarithmic function, grows slower and slower.</p></a><a class="rc-card" href="/math/a-forward-pass-by-hand/"><b>A Forward Pass by Hand</b><p>A forward pass pushes an input through a network layer by layer to produce a prediction. Each layer is the same recipe: multiply by a weight matrix, add a bias, apply an activation function.</p></a><a class="rc-card" href="/math/algebra-and-functions/"><b>Algebra and Functions</b><p>Algebra is arithmetic with unknowns, and a function is a rule that turns inputs into outputs.</p></a></div></section>
+        <p class="doc-prev"><a href="/math/exponential-and-logarithmic-functions/">← Previous: Exponential and Logarithmic Functions</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

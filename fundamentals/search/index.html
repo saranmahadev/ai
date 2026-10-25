@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search — AI Base</title>
+<meta name="description" content="Search is how a machine finds a path or a plan by exploring possibilities systematically.">
+<link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/search/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Search — AI Base">
+<meta property="og:description" content="Search is how a machine finds a path or a plan by exploring possibilities systematically.">
+<meta property="og:url" content="https://ai.saranmahadev.in/fundamentals/search/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Search","item":"https://ai.saranmahadev.in/fundamentals/search/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Search","description":"Search is how a machine finds a path or a plan by exploring possibilities systematically.","url":"https://ai.saranmahadev.in/fundamentals/search/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the four ingredients of a search problem?","acceptedAnswer":{"@type":"Answer","text":"A starting state, the available actions, a goal test, and a cost for each step."}},{"@type":"Question","name":"Which of BFS and DFS is guaranteed to find the fewest steps?","acceptedAnswer":{"@type":"Answer","text":"BFS, when every step costs the same."}},{"@type":"Question","name":"If each state has 10 actions, roughly how many sequences of 4 actions are there?","acceptedAnswer":{"@type":"Answer","text":"10⁴ = 10,000."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#79d3c1">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/fundamentals/">AI Fundamentals</a> · Classic AI</p>
+        <h1 class="doc-title">Search</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c1j0itopbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2f5f1"/><stop offset="1" stop-color="#a8e2d7"/></linearGradient>
+    <radialGradient id="c1j0itoppl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#79d3c1"/><stop offset="1" stop-color="#4e7283"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c1j0itopbg)"/>
+  <circle cx="1142" cy="63" r="164" fill="#e2f5f1" opacity="0.62"/><circle cx="943" cy="346" r="99" fill="#a8e2d7" opacity="0.52"/><circle cx="343" cy="274" r="74" fill="#c3d6b3" opacity="0.58"/><circle cx="156" cy="81" r="210" fill="#4e7283" opacity="0.52"/><circle cx="1061" cy="403" r="200" fill="#a8e2d7" opacity="0.32"/><circle cx="237" cy="235" r="150" fill="#4e7283" opacity="0.42"/><circle cx="72" cy="135" r="190" fill="#a8e2d7" opacity="0.34"/>
+  <path d="M0,420 L0,339 L30,342 L60,344 L90,346 L120,348 L150,349 L180,350 L210,350 L240,349 L270,348 L300,347 L330,345 L360,342 L390,339 L420,336 L450,333 L480,330 L510,326 L540,323 L570,320 L600,316 L630,314 L660,311 L690,309 L720,307 L750,306 L780,306 L810,306 L840,306 L870,307 L900,309 L930,311 L960,313 L990,316 L1020,319 L1050,322 L1080,326 L1110,329 L1140,332 L1170,336 L1200,339 L1200,420 Z" fill="#a8e2d7" opacity="0.35"/>
+  <path d="M0,420 L0,377 L30,374 L60,372 L90,370 L120,368 L150,366 L180,364 L210,363 L240,362 L270,362 L300,362 L330,362 L360,363 L390,364 L420,366 L450,368 L480,370 L510,372 L540,374 L570,377 L600,379 L630,382 L660,384 L690,386 L720,388 L750,390 L780,392 L810,393 L840,394 L870,394 L900,394 L930,394 L960,393 L990,392 L1020,390 L1050,388 L1080,386 L1110,384 L1140,382 L1170,379 L1200,377 L1200,420 Z" fill="#4e7283" opacity="0.5"/>
+  <ellipse cx="661" cy="237" rx="240" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-23.0 661 237)"/><ellipse cx="661" cy="237" rx="332" ry="93" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-17.0 661 237)"/>
+  <circle cx="661" cy="237" r="94" fill="url(#c1j0itoppl)"/>
+  <circle cx="687" cy="372" r="7" fill="#ffffff" opacity="0.75"/><circle cx="395" cy="237" r="15" fill="#ffffff" opacity="0.63"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><strong>Search</strong> is how a machine finds a path or a plan by exploring possibilities systematically. It describes the problem as <strong>states</strong> joined by <strong>actions</strong>, and then hunts through them for one that reaches the goal. Two basic strategies, breadth-first and depth-first, explore in very different ways.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/state-and-representation/" data-topic="fundamentals/state-and-representation">State and Representation</a> and <a class="wikilink" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments">Kinds of Environments</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>How does a machine find a route through a maze, a solution to a puzzle, or a move in a game, when nobody has told it the answer?</p>
+<h2 id="intuition-a-maze-and-a-ball-of-string">Intuition: a maze and a ball of string</h2>
+<p>Imagine standing at a maze entrance. You can try every option methodically and keep track of where you have been. That is search. To describe a search problem you need four things:</p>
+<ul>
+<li>a <strong>starting state</strong> (where you are),</li>
+<li>the <strong>actions</strong> available from each state (which ways you can step),</li>
+<li>a <strong>goal test</strong> (are we there yet?), and</li>
+<li>a <strong>cost</strong> for each step (here, every step costs 1).</li>
+</ul>
+<p>A solution is a sequence of actions from the start to a goal state. Because every state links to others, the possibilities form a tree or a web, and search is a way of walking it.</p>
+<h2 id="two-ways-to-explore">Two ways to explore</h2>
+<p>Both strategies keep a list of states waiting to be explored, called the <strong>frontier</strong>. They differ in which one they take next.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Breadth-first search (BFS)</th>
+<th>Depth-first search (DFS)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Takes next</td>
+<td>the <strong>oldest</strong> state on the frontier (a queue)</td>
+<td>the <strong>newest</strong> state (a stack)</td>
+</tr>
+<tr>
+<td>Explores</td>
+<td>in rings: everything one step away, then two, then three</td>
+<td>one route as deep as it goes, then backs up</td>
+</tr>
+<tr>
+<td>Shortest path?</td>
+<td><strong>Yes</strong>, when every step costs the same</td>
+<td><strong>No</strong>, it takes the first path it stumbles on</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>large: the frontier can be wide</td>
+<td>small: only the current route is kept</td>
+</tr>
+</tbody></table>
+<h2 id="a-worked-example-a-wall-with-a-gap">A worked example: a wall with a gap</h2>
+<p>The bench grid is 16 cells wide and 10 tall. Start is on the left, the goal is on the right, and a wall between them has one gap near the bottom.</p>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Cells explored</th>
+<th>Path length</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BFS</td>
+<td>135</td>
+<td><strong>21</strong> steps (the shortest)</td>
+</tr>
+<tr>
+<td>DFS</td>
+<td>69</td>
+<td>41 steps (valid but twice as long)</td>
+</tr>
+</tbody></table>
+<p>BFS pays by exploring almost the whole grid, but it guarantees the shortest path. DFS explores less, yet the path it returns wanders.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="maze-search" data-title="Searching for a path"><p class="bench-fallback"><strong>Interactive bench: Searching for a path.</strong> A grid maze with a start and a goal. Breadth-first or depth-first search spreads across it step by step, and you can draw walls to change the problem. Counters show cells explored, frontier size and path length.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Choose <strong>Wall with a gap</strong> and step through BFS. Describe the shape of the explored region.</li>
+<li>Switch to DFS on the same maze. How does the region differ, and how long is the path it finds?</li>
+<li>Draw a wall that completely blocks the goal. What does each algorithm do?</li>
+<li>Try <strong>Zig-zag walls</strong>. Which algorithm&#39;s path length is closest to the shortest?</li>
+</ol>
+<p><strong>What you should notice:</strong> BFS spreads evenly like a ripple. DFS dives. The one that explores less is not the one that finds the best answer.</p>
+<h2 id="the-real-problem-too-many-possibilities">The real problem: too many possibilities</h2>
+<p>Grids are friendly. Real problems explode. If each state has <em>b</em> possible actions and the solution is <em>d</em> steps away, the number of possibilities grows like <em>bᵈ</em>. Chess has around 35 legal moves in a typical position, so looking just 10 moves ahead means about 35¹⁰, which is roughly 2.8 quadrillion positions. Systematic search alone cannot cope, which is why the next topic is about searching more cleverly.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<p>Search underlies route finding, puzzle solving, game-playing programs and many planning systems. In <a class="wikilink" href="/fundamentals/planning/" data-topic="fundamentals/planning">Planning</a> each state is an arrangement of the world and each action a legal move. Learned systems often <em>combine</em> search with learning, as in game-playing programs that use a trained model to decide which branches deserve attention.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Forgetting where you have been.</strong> Without a record of visited states, a search can loop forever.</li>
+<li><strong>Assuming DFS finds the best path.</strong> It finds <em>a</em> path.</li>
+<li><strong>Assuming BFS is always affordable.</strong> It can run out of memory on large problems.</li>
+<li><strong>Ignoring step costs.</strong> BFS is shortest only when all steps cost the same.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What are the four ingredients of a search problem?</summary>
+A starting state, the available actions, a goal test, and a cost for each step.
+</details>
+
+<details><summary>2. Which of BFS and DFS is guaranteed to find the fewest steps?</summary>
+BFS, when every step costs the same.
+</details>
+
+<details><summary>3. If each state has 10 actions, roughly how many sequences of 4 actions are there?</summary>
+10⁴ = 10,000.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>State space:</strong> all the states a problem can be in, joined by actions.</li>
+<li><strong>Frontier:</strong> the states discovered but not yet explored.</li>
+<li><strong>Goal test:</strong> the check that says a state is a solution.</li>
+<li><strong>Breadth-first search:</strong> exploring the nearest states first, in rings.</li>
+<li><strong>Depth-first search:</strong> following one route as deep as possible before backing up.</li>
+<li><strong>Branching factor:</strong> the number of actions available from a typical state.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/state-and-representation/" data-topic="fundamentals/state-and-representation">State and Representation</a> · <a class="wikilink" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments">Kinds of Environments</a> · <a class="wikilink" href="/fundamentals/heuristics-and-a-star-search/" data-topic="fundamentals/heuristics-and-a-star-search">Heuristics and A-star Search</a> · <a class="wikilink" href="/fundamentals/planning/" data-topic="fundamentals/planning">Planning</a> · <a class="wikilink" href="/math/optimization/" data-topic="math/optimization">Optimization</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/search">Open in the interactive site →</a></p>
+        <a class="read-next" href="/fundamentals/heuristics-and-a-star-search/"><small>Read next</small><b>Heuristics and A-star Search</b><p>A heuristic is an informed guess about how far you still are from the goal.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/state-and-representation/"><b>State and Representation</b><p>The state is the agent&#39;s summary of the situation: everything it needs to know to choose a good action, and nothing more.</p></a><a class="rc-card" href="/fundamentals/kinds-of-environments/"><b>Kinds of Environments</b><p>Some AI problems are easy and others are brutal, and much of the difference lies in the environment.</p></a><a class="rc-card" href="/fundamentals/planning/"><b>Planning</b><p>Planning is finding a sequence of actions that turns the current situation into a goal.</p></a><a class="rc-card" href="/fundamentals/heuristics-and-a-star-search/"><b>Heuristics and A-star Search</b><p>A heuristic is an informed guess about how far you still are from the goal.</p></a><a class="rc-card" href="/math/optimization/"><b>Optimization</b><p>Optimization is the art of finding the best values: the parameters that make a model&#39;s error as small as possible.</p></a><a class="rc-card" href="/fundamentals/classic-ai/"><b>Classic AI</b><p>Before machine learning took over, AI meant searching, reasoning and planning with hand-built knowledge.</p></a></div></section>
+        <p class="doc-prev"><a href="/fundamentals/classic-ai/">← Previous: Classic AI</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context Window Extension Techniques — AI Base</title>
+<meta name="description" content="solving the raw compute cost of attention is only half the problem.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/context-window-extension-techniques/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Context Window Extension Techniques — AI Base">
+<meta property="og:description" content="solving the raw compute cost of attention is only half the problem.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/context-window-extension-techniques/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Context Window Extension Techniques","item":"https://ai.saranmahadev.in/llms/context-window-extension-techniques/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Context Window Extension Techniques","description":"solving the raw compute cost of attention is only half the problem.","url":"https://ai.saranmahadev.in/llms/context-window-extension-techniques/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the key difference between extrapolation and interpolation for extending context length?","acceptedAnswer":{"@type":"Answer","text":"Extrapolation uses raw position indices directly, even beyond what the model trained on; interpolation rescales longer sequences' positions down so they fit back within the model's originally trained range."}},{"@type":"Question","name":"In the worked example, why was the extrapolated rotation angle considered risky?","acceptedAnswer":{"@type":"Answer","text":"It reached roughly double the maximum angle the model ever encountered during training, putting the model in a regime it has no trained experience with."}},{"@type":"Question","name":"What does position interpolation trade away to stay within the trained range?","acceptedAnswer":{"@type":"Answer","text":"Positional precision — tokens that are genuinely far apart in the real sequence get compressed into rotation angles that make them seem closer together than they actually are."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · Context, Memory and Long-Range Behavior</p>
+        <h1 class="doc-title">Context Window Extension Techniques</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c105fot8bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c105fot8pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c105fot8bg)"/>
+  <circle cx="1160" cy="367" r="97" fill="#ffece0" opacity="0.31"/><circle cx="133" cy="176" r="152" fill="#ffece0" opacity="0.26"/><circle cx="354" cy="414" r="170" fill="#ffc7a2" opacity="0.51"/><circle cx="557" cy="115" r="111" fill="#ffc38f" opacity="0.46"/><circle cx="920" cy="196" r="221" fill="#ffc38f" opacity="0.30"/><circle cx="1022" cy="31" r="131" fill="#8a5f5e" opacity="0.27"/>
+  <path d="M0,420 L0,306 L30,306 L60,307 L90,310 L120,313 L150,317 L180,322 L210,327 L240,332 L270,337 L300,342 L330,345 L360,348 L390,349 L420,350 L450,349 L480,347 L510,343 L540,339 L570,335 L600,330 L630,324 L660,319 L690,315 L720,311 L750,308 L780,306 L810,306 L840,306 L870,308 L900,311 L930,314 L960,319 L990,324 L1020,329 L1050,334 L1080,339 L1110,343 L1140,346 L1170,348 L1200,350 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,362 L30,362 L60,364 L90,367 L120,371 L150,376 L180,381 L210,386 L240,390 L270,393 L300,394 L330,394 L360,392 L390,389 L420,385 L450,380 L480,375 L510,370 L540,366 L570,363 L600,362 L630,362 L660,364 L690,367 L720,371 L750,376 L780,381 L810,386 L840,390 L870,393 L900,394 L930,394 L960,392 L990,389 L1020,385 L1050,380 L1080,375 L1110,370 L1140,366 L1170,363 L1200,362 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="878" cy="261" rx="200" ry="56" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-9.2 878 261)"/><ellipse cx="878" cy="261" rx="276" ry="77" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-3.2 878 261)"/>
+  <circle cx="878" cy="261" r="78" fill="url(#c105fot8pl)"/>
+  <circle cx="935" cy="186" r="11" fill="#ffffff" opacity="0.89"/><circle cx="1002" cy="162" r="10" fill="#ffffff" opacity="0.72"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/llms/long-context-transformers/" data-topic="llms/long-context-transformers">solving the raw compute cost</a> of attention is only half the problem. A model trained with positions only ever reaching up to some maximum also has to handle positions it never saw during training at all — and simply feeding it longer sequences doesn&#39;t automatically go well.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/llms/long-context-transformers/" data-topic="llms/long-context-transformers">Long-Context Transformers</a>, <a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">Relative Position and RoPE</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How do you let a model handle sequences longer than whatever it was trained on?&quot; <a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">RoPE</a> encodes position as a rotation whose angle grows with position — a model trained with positions up to some maximum <code>TRAINED_MAX</code> has only ever seen rotation angles up to a corresponding maximum. <strong>Extrapolation</strong> simply uses raw position indices beyond that range, producing rotation angles the model never encountered during training. <strong>Position interpolation</strong> instead rescales the longer sequence&#39;s positions down so they fit back within the range the model actually trained on — trading some precision in position for staying within familiar territory.</p>
+<h2 id="intuition">Intuition</h2>
+<p>A musician trained on a piano with 88 keys has calibrated their sense of pitch across exactly that range. Hand them a hypothetical 176-key instrument and ask them to play the same piece using the raw, unfamiliar upper keys (extrapolation), and their trained intuition about pitch relationships may not transfer cleanly to a register they&#39;ve never practiced in. Alternatively, have them play the same piece but with every note compressed down into the 88 keys they know well (interpolation) — they lose some of the instrument&#39;s true range, but every note they play lands somewhere they have real, practiced intuition about.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">extrapolation: use raw positions 0, 1, 2, ..., up to the new, longer
+  sequence length — directly, with no rescaling
+
+interpolation: rescale positions by TRAINED_MAX / NEW_LENGTH, so the
+  longest position in the new sequence maps to TRAINED_MAX instead
+  of exceeding it
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A model trained with a maximum context of 2048 tokens, now handling a 4096-token document:</p>
+<pre><code class="language-text">trained max relative distance seen during training:  2047
+document length: 4096
+
+extrapolated max relative distance in this document:  4095   — exceeds the trained range
+interpolated max relative distance (scale factor 0.5): 2047.5 — stays within the trained range
+</code></pre>
+<p>Looking directly at the rotation angle this produces, for one representative frequency:</p>
+<pre><code class="language-text">trained max angle (position 2047):       1.0235 radians
+extrapolated max angle (position 4095):  2.0475 radians   — roughly double, never seen in training
+interpolated max angle (position 2047.5): 1.0237 radians  — essentially matches the trained max
+</code></pre>
+<p>Extrapolation produces a rotation angle at the far end of the document that the model&#39;s training simply never covered. Interpolation, by rescaling, keeps the maximum angle almost exactly at the edge of what training did cover — at the cost of effectively compressing how far apart distant tokens &quot;feel&quot; to the model, relative to their true distance.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="context-extension-rope" data-title="Staying inside the angles the model actually learned"><p class="bench-fallback"><strong>Interactive bench: Staying inside the angles the model actually learned.</strong> Adjust a document's length and compare the maximum rotation angle reached under extrapolation versus interpolation.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set the document length close to the trained maximum and compare the three angles.</li>
+<li>Increase the document length and watch the extrapolated angle pull further away from the trained range.</li>
+<li>Confirm the interpolated angle stays close to the trained maximum regardless of document length.</li>
+</ol>
+<p><strong>What you should notice:</strong> interpolation&#39;s advantage isn&#39;t that it&#39;s somehow &quot;more accurate&quot; about true position — it&#39;s that it trades positional precision for staying within rotation angles the model has actual trained experience with.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Position interpolation (and related methods like NTK-aware scaling and YaRN) are widely used to extend an already-trained model&#39;s usable context length</strong> without retraining it entirely from scratch on much longer sequences.</li>
+<li><strong>Simple extrapolation without any rescaling tends to degrade noticeably past a model&#39;s trained context length</strong>, which is exactly why these rescaling techniques were developed in the first place.</li>
+<li><strong>Models can also be explicitly fine-tuned on longer sequences afterward</strong>, which directly extends what counts as &quot;trained range&quot; rather than working around a fixed one.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming interpolation is free.</strong> Compressing positions means two tokens that are genuinely far apart can end up producing an attention pattern similar to tokens that are actually closer together — a real, if often acceptable, cost.</li>
+<li><strong>Expecting raw extrapolation to fail completely rather than degrade gracefully.</strong> In practice, performance often degrades progressively past the trained range rather than breaking outright — but it does measurably degrade.</li>
+<li><strong>Treating context extension as solving the same problem as <a class="wikilink" href="/llms/long-context-transformers/" data-topic="llms/long-context-transformers">reducing attention&#39;s raw compute cost</a>.</strong> They&#39;re separate concerns — one is about whether the model&#39;s positional understanding generalizes past its training range, the other is about whether the computation itself is affordable at that length at all.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What's the key difference between extrapolation and interpolation for extending context length?</summary>
+Extrapolation uses raw position indices directly, even beyond what the model trained on; interpolation rescales longer sequences' positions down so they fit back within the model's originally trained range.
+</details>
+
+<details><summary>2. In the worked example, why was the extrapolated rotation angle considered risky?</summary>
+It reached roughly double the maximum angle the model ever encountered during training, putting the model in a regime it has no trained experience with.
+</details>
+
+<details><summary>3. What does position interpolation trade away to stay within the trained range?</summary>
+Positional precision — tokens that are genuinely far apart in the real sequence get compressed into rotation angles that make them seem closer together than they actually are.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Extrapolation:</strong> using position indices beyond what a model was trained on, without rescaling.</li>
+<li><strong>Position interpolation:</strong> rescaling a longer sequence&#39;s positions to fit within a model&#39;s originally trained range.</li>
+<li><strong>Trained range:</strong> the span of positions (and corresponding rotation angles, under RoPE) a model actually encountered during training.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/llms/long-context-transformers/" data-topic="llms/long-context-transformers">Long-Context Transformers</a> · <a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">Relative Position and RoPE</a> · <a class="wikilink" href="/llms/context-rot-and-lost-in-the-middle-effects/" data-topic="llms/context-rot-and-lost-in-the-middle-effects">Context Rot and Lost-in-the-Middle Effects</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/context-window-extension-techniques">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/context-rot-and-lost-in-the-middle-effects/"><small>Read next</small><b>Context Rot and Lost-in-the-Middle Effects</b><p>Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem:…</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/long-context-transformers/"><b>Long-Context Transformers</b><p>Every mechanism this road has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more…</p></a><a class="rc-card" href="/transformers/relative-position-and-rope/"><b>Relative Position and RoPE</b><p>Both the sinusoidal encoding and learned positional embeddings tell a token its absolute position — &quot;you are token number 7.&quot; Rotary position embedding (RoPE) asks a different question: instead of…</p></a><a class="rc-card" href="/llms/context-rot-and-lost-in-the-middle-effects/"><b>Context Rot and Lost-in-the-Middle Effects</b><p>Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem:…</p></a><a class="rc-card" href="/llms/context-memory-and-long-range-behavior/"><b>Context, Memory and Long-Range Behavior</b><p>A single forward pass has a fixed context window, but real use involves far more text than fits in one, conversations that span many turns, and sessions that return days later expecting to be…</p></a><a class="rc-card" href="/rag/context-window-budgeting-for-rag/"><b>Context-Window Budgeting for RAG</b><p>Retrieved chunks don&#39;t get the entire context window to themselves — a running conversation&#39;s own history is sitting in there too, and the two are competing for the exact same limited space.</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/long-context-transformers/">← Previous: Long-Context Transformers</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

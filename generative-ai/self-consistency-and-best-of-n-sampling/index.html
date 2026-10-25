@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Consistency and Best-of-N Sampling — AI Base</title>
+<meta name="description" content="A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.">
+<link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/self-consistency-and-best-of-n-sampling/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Self-Consistency and Best-of-N Sampling — AI Base">
+<meta property="og:description" content="A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.">
+<meta property="og:url" content="https://ai.saranmahadev.in/generative-ai/self-consistency-and-best-of-n-sampling/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Self-Consistency and Best-of-N Sampling","item":"https://ai.saranmahadev.in/generative-ai/self-consistency-and-best-of-n-sampling/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Self-Consistency and Best-of-N Sampling","description":"A single sampled answer is a coin flip against the model's own uncertainty — if it's right 50% of the time per try, one sample is right about half the time, full stop.","url":"https://ai.saranmahadev.in/generative-ai/self-consistency-and-best-of-n-sampling/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can a majority vote over several samples beat the per-sample accuracy of the model generating them?","acceptedAnswer":{"@type":"Answer","text":"Because the model's incorrect answers tend to scatter across several different wrong options, while its correct answers all land on the same value — so the correct answer is more likely to be the most frequent one, even if it's not the most frequent on every individual sample."}},{"@type":"Question","name":"In the worked example, roughly how much did going from N=1 to N=9 reduce the error rate?","acceptedAnswer":{"@type":"Answer","text":"From about 51% wrong to about 16% wrong — a reduction of roughly two thirds."}},{"@type":"Question","name":"What's the real cost of self-consistency or best-of-N sampling?","acceptedAnswer":{"@type":"Answer","text":"It requires N times the inference compute of generating a single answer, since N independent samples have to be generated and then combined."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ff9ccf">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/generative-ai/">Generative AI</a> · Decoding and Prompting</p>
+        <h1 class="doc-title">Self-Consistency and Best-of-N Sampling</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cx2s1cdbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9f4"/><stop offset="1" stop-color="#ffbfe0"/></linearGradient>
+    <radialGradient id="cx2s1cdpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff9ccf"/><stop offset="1" stop-color="#8a5989"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cx2s1cdbg)"/>
+  <circle cx="1076" cy="318" r="139" fill="#ffbeba" opacity="0.54"/><circle cx="678" cy="101" r="66" fill="#ffbfe0" opacity="0.52"/><circle cx="1005" cy="333" r="172" fill="#ffbeba" opacity="0.55"/><circle cx="31" cy="288" r="113" fill="#ffbfe0" opacity="0.61"/><circle cx="533" cy="247" r="193" fill="#ffe9f4" opacity="0.29"/><circle cx="951" cy="91" r="156" fill="#ffbeba" opacity="0.57"/>
+  <path d="M0,420 L0,310 L30,312 L60,315 L90,318 L120,321 L150,324 L180,328 L210,331 L240,334 L270,338 L300,340 L330,343 L360,345 L390,347 L420,348 L450,349 L480,350 L510,349 L540,349 L570,347 L600,345 L630,343 L660,341 L690,338 L720,334 L750,331 L780,328 L810,324 L840,321 L870,318 L900,315 L930,312 L960,310 L990,308 L1020,307 L1050,306 L1080,306 L1110,306 L1140,307 L1170,308 L1200,310 L1200,420 Z" fill="#ffbfe0" opacity="0.35"/>
+  <path d="M0,420 L0,378 L30,382 L60,386 L90,389 L120,391 L150,393 L180,394 L210,394 L240,393 L270,391 L300,389 L330,386 L360,382 L390,379 L420,375 L450,371 L480,368 L510,366 L540,364 L570,362 L600,362 L630,363 L660,364 L690,366 L720,369 L750,372 L780,376 L810,380 L840,383 L870,387 L900,390 L930,392 L960,393 L990,394 L1020,394 L1050,393 L1080,391 L1110,388 L1140,385 L1170,381 L1200,378 L1200,420 Z" fill="#8a5989" opacity="0.5"/>
+  <ellipse cx="955" cy="250" rx="254" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-20.0 955 250)"/><ellipse cx="955" cy="250" rx="352" ry="98" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-14.0 955 250)"/>
+  <circle cx="955" cy="250" r="100" fill="url(#cx2s1cdpl)"/>
+  <circle cx="556" cy="253" r="9" fill="#ffffff" opacity="0.61"/><circle cx="757" cy="330" r="13" fill="#ffffff" opacity="0.69"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop. This note covers the simple fix: ask more than once, and combine the answers.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/temperature-and-nucleus-top-p-sampling/" data-topic="generative-ai/temperature-and-nucleus-top-p-sampling">Temperature and Nucleus (Top-p) Sampling</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;If one sampled answer is unreliable, can asking several times help?&quot; <strong>Best-of-N sampling</strong> generates N independent candidate answers and keeps the single best one by some scoring rule. <strong>Self-consistency</strong> is a specific, scoring-free version of that idea for tasks with a discrete final answer: generate N candidates and take whichever answer appears most often — a majority (or plurality) vote. It works whenever the model&#39;s mistakes are more scattered across wrong answers than its correct answers are, which is a weaker requirement than &quot;the model is always right.&quot;</p>
+<h2 id="intuition">Intuition</h2>
+<p>Ask one person a trivia question and they might guess wrong. Ask the same question to a room of people who each have an <em>independent</em> shot at the right answer, and even if no individual is reliable, the most common answer in the room is usually right — their individual mistakes tend to scatter across different wrong answers, while people who know the right answer all converge on the same one. Self-consistency is running that room-of-guessers trick with one model, sampled multiple times.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">best-of-N: generate candidates c₁, ..., c_N independently;
+           keep argmax score(cᵢ) by some scoring rule
+
+self-consistency: generate candidates c₁, ..., c_N independently;
+                   tally identical final answers;
+                   keep the answer with the highest tally (majority/plurality vote)
+</code></pre>
+<h2 id="a-worked-example">A worked example</h2>
+<p>A toy model answering a fixed question, where it samples the correct answer &quot;4&quot; about half the time, and splits the rest of its probability across three wrong answers:</p>
+<pre><code class="language-text">P(answer):  4 → 0.50   (correct)
+            3 → 0.25
+            5 → 0.15
+           22 → 0.10
+</code></pre>
+<p>With a single sample, accuracy is exactly the probability of sampling the correct answer: about 49% over 2,000 simulated trials (matching the 0.50 probability, within simulation noise). Taking a majority vote over several independent samples does much better, because the wrong answers are split three ways while the correct answer isn&#39;t split at all:</p>
+<pre><code class="language-text">N =  1:  49.0% correct
+N =  3:  72.3% correct
+N =  5:  74.8% correct
+N =  9:  84.1% correct
+N = 15:  89.3% correct
+</code></pre>
+<p>Going from one sample to nine roughly cuts the error rate by two thirds (51% wrong → 16% wrong), without changing the underlying model at all — only how many times it&#39;s asked and how the answers are combined.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="self-consistency-vote" data-title="One sample vs. a vote over many"><p class="bench-fallback"><strong>Interactive bench: One sample vs. a vote over many.</strong> Compare the accuracy of a single sampled answer against a majority vote over several samples, at different sample counts.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Set N to 1 and note the accuracy is close to the model&#39;s raw per-sample correctness rate.</li>
+<li>Raise N and watch accuracy climb well past that rate.</li>
+<li>Compare the jump from N=1 to N=3 against the jump from N=9 to N=15 — notice the gains shrink as N grows.</li>
+</ol>
+<p><strong>What you should notice:</strong> accuracy keeps improving with more samples, but with diminishing returns — the biggest single jump comes from going from one sample to just a few.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Math and reasoning benchmarks routinely report &quot;self-consistency@N&quot; scores</strong> alongside single-sample accuracy, since the gap can be large for exactly the reason shown here.</li>
+<li><strong>It costs N times the inference compute</strong> of a single sample, which is the real trade-off being made — accuracy for cost, not accuracy for free.</li>
+<li><strong><a class="wikilink" href="/generative-ai/prompting-and-in-context-learning/" data-topic="generative-ai/prompting-and-in-context-learning">chain-of-thought prompting</a> and self-consistency are often used together</strong>: sample several different reasoning paths, then vote on the final answers they arrive at, rather than voting on the reasoning text itself.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting self-consistency to help when the model&#39;s wrong answers all agree with each other.</strong> The method relies on correct answers being more consistent across samples than incorrect ones; if the model has one specific, confidently wrong answer it always converges on, voting won&#39;t fix it.</li>
+<li><strong>Using it on tasks without a clean final answer to tally.</strong> Self-consistency needs a discrete answer to vote over; for open-ended generation, a scored best-of-N (not a vote) is the applicable version.</li>
+<li><strong>Forgetting the N samples must be independent.</strong> Voting over N samples that are all small variations of the same single draw doesn&#39;t capture the same independent-error-scattering effect.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. Why can a majority vote over several samples beat the per-sample accuracy of the model generating them?</summary>
+Because the model's incorrect answers tend to scatter across several different wrong options, while its correct answers all land on the same value — so the correct answer is more likely to be the most frequent one, even if it's not the most frequent on every individual sample.
+</details>
+
+<details><summary>2. In the worked example, roughly how much did going from N=1 to N=9 reduce the error rate?</summary>
+From about 51% wrong to about 16% wrong — a reduction of roughly two thirds.
+</details>
+
+<details><summary>3. What's the real cost of self-consistency or best-of-N sampling?</summary>
+It requires N times the inference compute of generating a single answer, since N independent samples have to be generated and then combined.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Best-of-N sampling:</strong> generating N candidates and keeping the one with the highest score under some rule.</li>
+<li><strong>Self-consistency:</strong> best-of-N with a majority (or plurality) vote over final answers, used for tasks with a discrete answer.</li>
+<li><strong>Majority vote:</strong> keeping whichever sampled answer occurs most often among the generated candidates.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/generative-ai/temperature-and-nucleus-top-p-sampling/" data-topic="generative-ai/temperature-and-nucleus-top-p-sampling">Temperature and Nucleus (Top-p) Sampling</a> · <a class="wikilink" href="/generative-ai/prompting-and-in-context-learning/" data-topic="generative-ai/prompting-and-in-context-learning">Prompting and In-Context Learning</a> · <a class="wikilink" href="/generative-ai/human-evaluation-of-generated-content/" data-topic="generative-ai/human-evaluation-of-generated-content">Human Evaluation of Generated Content</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/self-consistency-and-best-of-n-sampling">Open in the interactive site →</a></p>
+        <a class="read-next" href="/generative-ai/prompting-and-in-context-learning/"><small>Read next</small><b>Prompting and In-Context Learning</b><p>None of the decoding controls so far change what the model &quot;knows&quot; — they only change how its existing distribution gets turned into tokens.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/temperature-and-nucleus-top-p-sampling/"><b>Temperature and Nucleus (Top-p) Sampling</b><p>Greedy and beam search both chase the highest-probability sequence, which makes open-ended text feel flat and repetitive — real writing isn&#39;t always the most predictable continuation.</p></a><a class="rc-card" href="/generative-ai/prompting-and-in-context-learning/"><b>Prompting and In-Context Learning</b><p>None of the decoding controls so far change what the model &quot;knows&quot; — they only change how its existing distribution gets turned into tokens.</p></a><a class="rc-card" href="/generative-ai/human-evaluation-of-generated-content/"><b>Human Evaluation of Generated Content</b><p>Every metric so far on this planet is automatic — computed from numbers, with no judgment involved.</p></a><a class="rc-card" href="/generative-ai/decoding-and-prompting/"><b>Decoding and Prompting</b><p>A trained language model outputs a probability distribution over the next token, not a finished sentence.</p></a><a class="rc-card" href="/generative-ai/greedy-and-beam-search-decoding/"><b>Greedy and Beam Search Decoding</b><p>A trained language model hands back a probability distribution over the next token at every step, not a finished sentence — something has to decide, step after step, which token actually gets…</p></a><a class="rc-card" href="/generative-ai/repetition-and-length-control/"><b>Repetition and Length Control</b><p>Left alone, a decoding loop can get stuck: once a model starts favoring a short cycle of tokens, each repetition can make that same cycle even more likely next time.</p></a></div></section>
+        <p class="doc-prev"><a href="/generative-ai/constrained-and-structured-generation/">← Previous: Constrained and Structured Generation</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

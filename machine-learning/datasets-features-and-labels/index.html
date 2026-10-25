@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datasets, Features and Labels — AI Base</title>
+<meta name="description" content="A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).">
+<link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/datasets-features-and-labels/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Datasets, Features and Labels — AI Base">
+<meta property="og:description" content="A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).">
+<meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/datasets-features-and-labels/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Datasets, Features and Labels","item":"https://ai.saranmahadev.in/machine-learning/datasets-features-and-labels/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Datasets, Features and Labels","description":"A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).","url":"https://ai.saranmahadev.in/machine-learning/datasets-features-and-labels/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"If X has 500 examples and 8 features, what is its shape?","acceptedAnswer":{"@type":"Answer","text":"(500, 8)."}},{"@type":"Question","name":"Why is \"agent's final quote\" a bad feature for predicting sale price?","acceptedAnswer":{"@type":"Answer","text":"It is only known after the sale, so it will not exist when you need a prediction (leakage)."}},{"@type":"Question","name":"What is a label?","acceptedAnswer":{"@type":"Answer","text":"The answer the model is trained to predict."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffc46b">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/machine-learning/">Machine Learning</a> · The Learning Problem</p>
+        <h1 class="doc-title">Datasets, Features and Labels</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c10052p1bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
+    <radialGradient id="c10052p1pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c10052p1bg)"/>
+  <circle cx="608" cy="357" r="184" fill="#ffd08d" opacity="0.23"/><circle cx="1184" cy="142" r="227" fill="#ffd08d" opacity="0.57"/><circle cx="693" cy="363" r="66" fill="#fff2de" opacity="0.55"/><circle cx="1084" cy="104" r="105" fill="#ffd08d" opacity="0.47"/><circle cx="658" cy="160" r="140" fill="#fff2de" opacity="0.46"/><circle cx="292" cy="88" r="125" fill="#fff2de" opacity="0.49"/><circle cx="721" cy="249" r="120" fill="#ffd99f" opacity="0.47"/>
+  <path d="M0,420 L0,307 L30,308 L60,310 L90,312 L120,315 L150,318 L180,321 L210,324 L240,328 L270,331 L300,334 L330,338 L360,341 L390,343 L420,345 L450,347 L480,349 L510,349 L540,350 L570,349 L600,348 L630,347 L660,345 L690,343 L720,340 L750,338 L780,334 L810,331 L840,328 L870,324 L900,321 L930,318 L960,315 L990,312 L1020,310 L1050,308 L1080,307 L1110,306 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
+  <path d="M0,420 L0,367 L30,365 L60,364 L90,363 L120,362 L150,362 L180,362 L210,363 L240,363 L270,365 L300,366 L330,368 L360,370 L390,372 L420,375 L450,377 L480,380 L510,382 L540,385 L570,387 L600,389 L630,391 L660,392 L690,393 L720,394 L750,394 L780,394 L810,393 L840,393 L870,391 L900,390 L930,388 L960,386 L990,384 L1020,381 L1050,379 L1080,376 L1110,374 L1140,371 L1170,369 L1200,367 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
+  <ellipse cx="672" cy="204" rx="219" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-12.8 672 204)"/><ellipse cx="672" cy="204" rx="303" ry="85" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-6.8 672 204)"/>
+  <circle cx="672" cy="204" r="86" fill="url(#c10052p1pl)"/>
+  <circle cx="825" cy="277" r="18" fill="#ffffff" opacity="0.69"/><circle cx="400" cy="199" r="14" fill="#ffffff" opacity="0.87"/><circle cx="736" cy="285" r="8" fill="#ffffff" opacity="0.69"/><circle cx="394" cy="220" r="9" fill="#ffffff" opacity="0.78"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A <strong>dataset</strong> is a table: each row is an example, each column a measurement. The columns the model reads are <strong>features</strong>; the column it should predict is the <strong>label</strong> (or target). Choosing which columns count as features, and keeping the answer out of them, is the first real decision in a project.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/what-is-machine-learning/" data-topic="machine-learning/what-is-machine-learning">What Is Machine Learning</a>, <a class="wikilink" href="/fundamentals/features-and-labels/" data-topic="fundamentals/features-and-labels">Features and Labels</a> and <a class="wikilink" href="/math/tensors-and-shapes/" data-topic="math/tensors-and-shapes">Tensors and Shapes</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What exactly do I feed the model, and what do I ask it to predict?&quot; A model can only use what it is shown, and it will happily use anything that predicts the label, even something unavailable at prediction time.</p>
+<h2 id="intuition-what-would-i-know-on-the-day">Intuition: what would I know on the day?</h2>
+<p>Imagine predicting a house&#39;s sale price. On the day you need the prediction, you know size, bedrooms and age. You do not know the agent&#39;s final quote, because that comes after the sale. If a model is trained with a column that will not exist at prediction time, it looks brilliant in testing and fails in use. This mistake is called <strong>leakage</strong>.</p>
+<h2 id="definitions">Definitions</h2>
+<pre><code class="language-text">example      one row: one house, one email, one image
+features x   the inputs, often a vector       x = (size, bedrooms, age)
+label y      the answer to predict            y = price
+dataset      n examples                       X has shape (n, d),  y has shape (n,)
+</code></pre>
+<p><code>X</code> is a matrix with <code>n</code> rows and <code>d</code> feature columns; <code>y</code> is a vector of <code>n</code> labels.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Three houses, with two features and a label.</p>
+<pre><code class="language-text">size (m²)   bedrooms   price (thousands)
+   60          2            170
+   80          3            220
+  100          3            260
+</code></pre>
+<p>Here <code>X</code> has shape <code>(3, 2)</code> and <code>y</code> has shape <code>(3,)</code>. A simple model <code>price = 50 + 2 × size</code> predicts 170, 210 and 250: right for the first, 10 too low for the second and third. Now add a column &quot;agent&#39;s final quote&quot;: 171, 219, 262. A model can read that column and be almost exactly right, but on the day you must predict, that number does not exist. The model&#39;s apparent accuracy is an illusion of leakage.</p>
+<p>A quieter trap is an identifier column such as a listing number. If numbers happen to rise with price in the training data, a model may use it, and it means nothing.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="feature-roles" data-title="Pick the features, predict the price"><p class="bench-fallback"><strong>Interactive bench: Pick the features, predict the price.</strong> Tick which columns of a house dataset the model may use, then see its error on training homes and on unseen homes; including the agent's final quote makes the error suspiciously small.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Use size and bedrooms and note both errors.</li>
+<li>Add age.</li>
+<li>Tick the agent&#39;s final quote and watch the error collapse.</li>
+<li>Add the listing number and see whether it helps on unseen homes.</li>
+</ol>
+<p><strong>What you should notice:</strong> the leaking column gives an unrealistically small error, while a meaningless column adds nothing on unseen homes.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Tabular models</strong> (loans, churn, prices) live or die by feature choice.</li>
+<li><strong>Deep learning</strong> learns features from raw pixels or text, but leakage still applies to the label and the split.</li>
+<li><strong>Medical and fraud models</strong> are especially prone to leakage from data recorded after the outcome.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Leakage:</strong> features only known after the outcome.</li>
+<li><strong>Identifiers as features:</strong> row numbers and IDs carry no real signal.</li>
+<li><strong>Mixing up X and y</strong> when reshaping or splitting.</li>
+<li><strong>Ignoring units and missing values</strong> (see <a class="wikilink" href="/machine-learning/missing-values-and-cleaning/" data-topic="machine-learning/missing-values-and-cleaning">Missing Values and Cleaning</a>).</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. If X has 500 examples and 8 features, what is its shape?</summary>
+(500, 8).
+</details>
+
+<details><summary>2. Why is "agent's final quote" a bad feature for predicting sale price?</summary>
+It is only known after the sale, so it will not exist when you need a prediction (leakage).
+</details>
+
+<details><summary>3. What is a label?</summary>
+The answer the model is trained to predict.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Feature:</strong> an input column the model reads.</li>
+<li><strong>Label (target):</strong> the value the model predicts.</li>
+<li><strong>Example:</strong> one row of the dataset.</li>
+<li><strong>Leakage:</strong> using information at training time that will not exist at prediction time.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/fundamentals/features-and-labels/" data-topic="fundamentals/features-and-labels">Features and Labels</a> · <a class="wikilink" href="/machine-learning/what-is-machine-learning/" data-topic="machine-learning/what-is-machine-learning">What Is Machine Learning</a> · <a class="wikilink" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets">Train, Validation and Test Sets</a> · <a class="wikilink" href="/machine-learning/missing-values-and-cleaning/" data-topic="machine-learning/missing-values-and-cleaning">Missing Values and Cleaning</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/datasets-features-and-labels">Open in the interactive site →</a></p>
+        <a class="read-next" href="/machine-learning/train-validation-and-test-sets/"><small>Read next</small><b>Train, Validation and Test Sets</b><p>To know whether a model works you must measure it on data it has not learned from.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/what-is-machine-learning/"><b>What Is Machine Learning</b><p>Machine learning is building a program by showing it examples instead of writing its rules.</p></a><a class="rc-card" href="/fundamentals/features-and-labels/"><b>Features and Labels</b><p>Features are the measurable facts a model looks at, and a label is the answer it is asked to predict.</p></a><a class="rc-card" href="/math/tensors-and-shapes/"><b>Tensors and Shapes</b><p>A tensor is a grid of numbers with any number of dimensions: a scalar is 0-dimensional, a vector 1-dimensional, a matrix 2-dimensional, and a stack of images 4-dimensional.</p></a><a class="rc-card" href="/machine-learning/missing-values-and-cleaning/"><b>Missing Values and Cleaning</b><p>Real datasets have holes, typos, duplicates and impossible values.</p></a><a class="rc-card" href="/machine-learning/train-validation-and-test-sets/"><b>Train, Validation and Test Sets</b><p>To know whether a model works you must measure it on data it has not learned from.</p></a><a class="rc-card" href="/machine-learning/the-learning-problem/"><b>The Learning Problem</b><p>This district frames the whole subject: what it means for a program to learn from examples, the kinds of feedback a learner can have, how a dataset is laid out, why data must be split before…</p></a></div></section>
+        <p class="doc-prev"><a href="/machine-learning/kinds-of-learning/">← Previous: Kinds of Learning</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

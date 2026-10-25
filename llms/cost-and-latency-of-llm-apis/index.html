@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cost and Latency of LLM APIs — AI Base</title>
+<meta name="description" content="A request to an LLM API has two separate costs that don&#39;t move together: how much it costs in money, and how long it takes to come back.">
+<link rel="canonical" href="https://ai.saranmahadev.in/llms/cost-and-latency-of-llm-apis/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Cost and Latency of LLM APIs — AI Base">
+<meta property="og:description" content="A request to an LLM API has two separate costs that don&#39;t move together: how much it costs in money, and how long it takes to come back.">
+<meta property="og:url" content="https://ai.saranmahadev.in/llms/cost-and-latency-of-llm-apis/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Cost and Latency of LLM APIs","item":"https://ai.saranmahadev.in/llms/cost-and-latency-of-llm-apis/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Cost and Latency of LLM APIs","description":"A request to an LLM API has two separate costs that don't move together: how much it costs in money, and how long it takes to come back.","url":"https://ai.saranmahadev.in/llms/cost-and-latency-of-llm-apis/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does multiplying input tokens 80× multiply cost by nearly 6× but latency by only 1.6×?","acceptedAnswer":{"@type":"Answer","text":"Cost adds input and output token costs roughly linearly, so an 80× bigger input term still moves the total noticeably; latency's input (prefill) term is tiny per token compared to its output (decode) term, which stayed fixed at 150 tokens in both cases, so the big input increase barely shows up in the total."}},{"@type":"Question","name":"If a product wants to reduce latency specifically, which lever matters most: shortening the prompt, or shortening the expected reply?","acceptedAnswer":{"@type":"Answer","text":"Shortening the expected reply (output tokens) — the worked example shows output length is what latency is dominated by, while input length (prompt) barely affects it."}},{"@type":"Question","name":"Why are input tokens processed faster per-token than output tokens are generated?","acceptedAnswer":{"@type":"Answer","text":"Input tokens can be processed largely in parallel during prefill, since the whole input is available at once; output tokens must be generated sequentially, each one depending on every token generated before it."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#ffa970">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/llms/">LLMs</a> · LLMs in Practice</p>
+        <h1 class="doc-title">Cost and Latency of LLM APIs</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="c16iq3iwbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
+    <radialGradient id="c16iq3iwpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#c16iq3iwbg)"/>
+  <circle cx="844" cy="23" r="206" fill="#ffc7a2" opacity="0.39"/><circle cx="561" cy="386" r="172" fill="#8a5f5e" opacity="0.55"/><circle cx="955" cy="378" r="136" fill="#ffc38f" opacity="0.59"/><circle cx="527" cy="120" r="174" fill="#ffece0" opacity="0.50"/><circle cx="299" cy="124" r="107" fill="#ffece0" opacity="0.47"/>
+  <path d="M0,420 L0,332 L30,335 L60,339 L90,341 L120,344 L150,346 L180,348 L210,349 L240,349 L270,350 L300,349 L330,348 L360,347 L390,345 L420,342 L450,340 L480,337 L510,333 L540,330 L570,326 L600,323 L630,320 L660,317 L690,314 L720,311 L750,309 L780,308 L810,306 L840,306 L870,306 L900,306 L930,307 L960,309 L990,311 L1020,313 L1050,316 L1080,319 L1110,322 L1140,325 L1170,329 L1200,332 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
+  <path d="M0,420 L0,385 L30,381 L60,377 L90,374 L120,370 L150,367 L180,365 L210,363 L240,362 L270,362 L300,363 L330,365 L360,367 L390,370 L420,374 L450,377 L480,381 L510,385 L540,388 L570,391 L600,393 L630,394 L660,394 L690,393 L720,392 L750,390 L780,387 L810,383 L840,380 L870,376 L900,372 L930,369 L960,366 L990,364 L1020,363 L1050,362 L1080,362 L1110,364 L1140,365 L1170,368 L1200,371 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
+  <ellipse cx="961" cy="153" rx="171" ry="48" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(19.3 961 153)"/><ellipse cx="961" cy="153" rx="236" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(25.3 961 153)"/>
+  <circle cx="961" cy="153" r="67" fill="url(#c16iq3iwpl)"/>
+  <circle cx="741" cy="154" r="9" fill="#ffffff" opacity="0.66"/><circle cx="832" cy="78" r="12" fill="#ffffff" opacity="0.79"/><circle cx="1019" cy="87" r="18" fill="#ffffff" opacity="0.62"/><circle cx="700" cy="134" r="11" fill="#ffffff" opacity="0.67"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A request to an LLM API has two separate costs that don&#39;t move together: how much it costs in money, and how long it takes to come back. Understanding what drives each one separately — not just &quot;bigger request, more expensive&quot; — is what lets a product actually control both.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/transformers/kv-caching-for-autoregressive-inference/" data-topic="transformers/kv-caching-for-autoregressive-inference">KV-Caching for Autoregressive Inference</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;What actually determines how much an LLM API request costs, and how long it takes?&quot; Cost is priced per token, input and output, and simply adds up: more tokens in either direction means more money, roughly linearly. Latency is different: a request&#39;s input tokens are processed largely in parallel (quick), but output tokens are generated one at a time, each waiting on the last (slow) — so latency is dominated by how many tokens come <em>out</em>, almost independent of how many went in.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Reading a long letter takes a fixed, short glance per page — a human (or a model&#39;s prefill step) can skim input quickly because it&#39;s all there at once. Writing a reply, though, has to happen one word at a time, in order, each one waiting for the last. A very long letter to read barely slows down how fast you can start replying; a very long reply to write takes however long it takes, word by word.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<pre><code class="language-text">cost(request)    = (input_tokens × price_in + output_tokens × price_out) / 1000
+latency(request) = fixed_overhead + input_tokens × prefill_per_token + output_tokens × decode_per_token
+</code></pre>
+<p>with <code>prefill_per_token ≪ decode_per_token</code> — input tokens are processed far faster per token than output tokens are generated.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Illustrative pricing (price_in $0.003/1K tokens, price_out $0.015/1K tokens) and timing (prefill 0.0005s/token, decode 0.02s/token, 0.1s fixed overhead):</p>
+<pre><code class="language-text">short input (50 in, 150 out):   cost = $0.00240   latency = 3.125s
+long input  (4000 in, 150 out):  cost = $0.01425   latency = 5.100s
+</code></pre>
+<p>Multiplying the input length 80× (50 → 4000 tokens) multiplies cost nearly 6× — but latency only grows from 3.125s to 5.1s, a 1.6× increase. Cost tracks total tokens almost linearly; latency barely notices input length and is dominated by the 150 output tokens both requests share.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="api-cost-latency" data-title="Cost scales with tokens, latency with output length"><p class="bench-fallback"><strong>Interactive bench: Cost scales with tokens, latency with output length.</strong> Slide input and output token counts and watch cost and latency respond very differently.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Hold output tokens fixed and slide input tokens from 50 to 8000; watch cost climb steadily while latency barely moves.</li>
+<li>Hold input tokens fixed and slide output tokens up instead; watch latency climb sharply this time.</li>
+<li>Find a combination where cost and latency move by roughly the same proportion — notice how narrow that range is.</li>
+</ol>
+<p><strong>What you should notice:</strong> cost and latency are driven by different things (total tokens vs. output length specifically) — a request can be expensive but fast, or cheap but slow, depending on the input/output split.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>Output-token latency being sequential is a direct consequence of decode-time attention (<a class="wikilink" href="/transformers/kv-caching-for-autoregressive-inference/" data-topic="transformers/kv-caching-for-autoregressive-inference">KV-Caching for Autoregressive Inference</a>)</strong>: each new token&#39;s generation depends on every previous one, which is exactly why it can&#39;t be parallelized the way prefill can.</li>
+<li><strong><a class="wikilink" href="/llms/system-prompts-and-prompt-templates/" data-topic="llms/system-prompts-and-prompt-templates">System Prompts and Prompt Templates</a> adds to the input-token count on every single request</strong> — mostly a cost lever (since input is cheap per-token but adds up at volume), much less a latency one.</li>
+<li><strong>Picking a smaller or larger model (<a class="wikilink" href="/llms/choosing-a-model-for-a-task/" data-topic="llms/choosing-a-model-for-a-task">Choosing a Model for a Task</a>) changes both price-per-token and decode speed</strong>, so the same cost/latency trade-off shows up again one level up, at the model-selection stage.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Assuming a longer prompt makes a request noticeably slower.</strong> The worked example shows an 80× input increase barely moves latency — the real latency lever is output length.</li>
+<li><strong>Assuming cost and latency always move together.</strong> They&#39;re driven by different factors (total tokens vs. output length specifically), so optimizing one doesn&#39;t automatically optimize the other.</li>
+<li><strong>Ignoring the fixed overhead term.</strong> Even a tiny request pays the fixed_overhead cost; for very short exchanges, that overhead can dominate the total latency.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. In the worked example, why does multiplying input tokens 80× multiply cost by nearly 6× but latency by only 1.6×?</summary>
+Cost adds input and output token costs roughly linearly, so an 80× bigger input term still moves the total noticeably; latency's input (prefill) term is tiny per token compared to its output (decode) term, which stayed fixed at 150 tokens in both cases, so the big input increase barely shows up in the total.
+</details>
+
+<details><summary>2. If a product wants to reduce latency specifically, which lever matters most: shortening the prompt, or shortening the expected reply?</summary>
+Shortening the expected reply (output tokens) — the worked example shows output length is what latency is dominated by, while input length (prompt) barely affects it.
+</details>
+
+<details><summary>3. Why are input tokens processed faster per-token than output tokens are generated?</summary>
+Input tokens can be processed largely in parallel during prefill, since the whole input is available at once; output tokens must be generated sequentially, each one depending on every token generated before it.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Prefill:</strong> processing a request&#39;s input tokens, done largely in parallel and so relatively fast per token.</li>
+<li><strong>Decode:</strong> generating a request&#39;s output tokens one at a time, each depending on all previous ones, so comparatively slow per token.</li>
+<li><strong>Per-token pricing:</strong> charging separately, and usually at different rates, for input and output tokens.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/transformers/kv-caching-for-autoregressive-inference/" data-topic="transformers/kv-caching-for-autoregressive-inference">KV-Caching for Autoregressive Inference</a> · <a class="wikilink" href="/llms/system-prompts-and-prompt-templates/" data-topic="llms/system-prompts-and-prompt-templates">System Prompts and Prompt Templates</a> · <a class="wikilink" href="/llms/choosing-a-model-for-a-task/" data-topic="llms/choosing-a-model-for-a-task">Choosing a Model for a Task</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/cost-and-latency-of-llm-apis">Open in the interactive site →</a></p>
+        <a class="read-next" href="/llms/choosing-a-model-for-a-task/"><small>Read next</small><b>Choosing a Model for a Task</b><p>There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/kv-caching-for-autoregressive-inference/"><b>KV-Caching for Autoregressive Inference</b><p>Generating text one token at a time means recomputing attention at every single step.</p></a><a class="rc-card" href="/llms/system-prompts-and-prompt-templates/"><b>System Prompts and Prompt Templates</b><p>Every request to a deployed LLM usually carries more than the user&#39;s own words: a system prompt sets the assistant&#39;s persona and rules, and a template arranges the system prompt, conversation…</p></a><a class="rc-card" href="/llms/choosing-a-model-for-a-task/"><b>Choosing a Model for a Task</b><p>There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs.</p></a><a class="rc-card" href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/"><b>Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</b><p>The compute-optimal split in Compute-Optimal Scaling (Chinchilla) assumes you can always get as much data as the optimum wants, and that training cost is the only cost that matters.</p></a><a class="rc-card" href="/llms/kv-cache-reuse-across-sessions/"><b>KV-Cache Reuse Across Sessions</b><p>KV-caching already avoids recomputing a sequence&#39;s earlier positions while generating one response.</p></a><a class="rc-card" href="/llms/llms-in-practice/"><b>LLMs in Practice</b><p>The last stretch of this planet&#39;s road: adapting a model to a specific task, prompting and serving it as part of a real product, the practical failure modes of each, and a capstone that traces the…</p></a></div></section>
+        <p class="doc-prev"><a href="/llms/model-merging-and-weight-averaging/">← Previous: Model Merging and Weight Averaging</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>

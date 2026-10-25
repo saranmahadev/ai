@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content-Addressable Memory and Capacity — AI Base</title>
+<meta name="description" content="A Hopfield network&#39;s memory is not free: pack in too many patterns and recall starts failing, often all at once rather than gradually.">
+<link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/content-addressable-memory-and-capacity/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AI Base">
+<meta property="og:title" content="Content-Addressable Memory and Capacity — AI Base">
+<meta property="og:description" content="A Hopfield network&#39;s memory is not free: pack in too many patterns and recall starts failing, often all at once rather than gradually.">
+<meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/content-addressable-memory-and-capacity/">
+<meta property="og:image" content="https://ai.saranmahadev.in/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":3,"name":"Content-Addressable Memory and Capacity","item":"https://ai.saranmahadev.in/neural-networks/content-addressable-memory-and-capacity/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Content-Addressable Memory and Capacity","description":"A Hopfield network's memory is not free: pack in too many patterns and recall starts failing, often all at once rather than gradually.","url":"https://ai.saranmahadev.in/neural-networks/content-addressable-memory-and-capacity/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the classical rule-of-thumb capacity for a Hopfield network of N units storing random patterns?","acceptedAnswer":{"@type":"Answer","text":"Roughly `0.138 N` patterns."}},{"@type":"Question","name":"Does recall degrade gradually or sharply as the pattern count crosses this threshold?","acceptedAnswer":{"@type":"Answer","text":"Sharply — the worked example's success rate falls from 100% to 50% between `K=6` and `K=8` for `N=50`, close to the predicted `K_max ≈ 6.9`."}},{"@type":"Question","name":"What eventually fixes this capacity limitation within the Hopfield family?","acceptedAnswer":{"@type":"Answer","text":"The continuous, modern Hopfield network used in Modern Hopfield Networks and Attention, whose capacity scales exponentially rather than linearly in `N`."}}]}</script>
+</head>
+<body class="reading" data-theme="light">
+<header class="hud">
+  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
+  <nav class="clay-pill" aria-label="Main">
+    <a href="/explore/">Explore</a>
+    <a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main id="view">
+    <article class="doc topic" style="--c:#7fd48a">
+      <header class="doc-head">
+        <p class="doc-kicker"><a href="/neural-networks/">Neural Networks</a> · Energy-Based Networks</p>
+        <h1 class="doc-title">Content-Addressable Memory and Capacity</h1>
+        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>4 min read</span></div></div>
+      </header>
+      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cimxyq5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
+    <radialGradient id="cimxyq5pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#cimxyq5bg)"/>
+  <circle cx="67" cy="77" r="127" fill="#e3f6e5" opacity="0.42"/><circle cx="1097" cy="383" r="173" fill="#e3f6e5" opacity="0.36"/><circle cx="595" cy="95" r="100" fill="#50736a" opacity="0.41"/><circle cx="218" cy="364" r="189" fill="#c5d79b" opacity="0.47"/><circle cx="676" cy="280" r="198" fill="#c5d79b" opacity="0.22"/>
+  <path d="M0,420 L0,306 L30,308 L60,312 L90,317 L120,324 L150,330 L180,337 L210,343 L240,347 L270,349 L300,349 L330,347 L360,344 L390,338 L420,332 L450,325 L480,318 L510,313 L540,308 L570,306 L600,306 L630,308 L660,312 L690,317 L720,324 L750,330 L780,337 L810,343 L840,347 L870,349 L900,349 L930,347 L960,344 L990,338 L1020,332 L1050,325 L1080,318 L1110,313 L1140,308 L1170,306 L1200,306 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
+  <path d="M0,420 L0,363 L30,364 L60,366 L90,367 L120,369 L150,371 L180,374 L210,376 L240,379 L270,381 L300,384 L330,386 L360,388 L390,390 L420,391 L450,393 L480,393 L510,394 L540,394 L570,394 L600,393 L630,392 L660,390 L690,389 L720,387 L750,385 L780,382 L810,380 L840,377 L870,375 L900,372 L930,370 L960,368 L990,366 L1020,365 L1050,363 L1080,363 L1110,362 L1140,362 L1170,362 L1200,363 L1200,420 Z" fill="#50736a" opacity="0.5"/>
+  <ellipse cx="892" cy="290" rx="187" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(1.1 892 290)"/><ellipse cx="892" cy="290" rx="259" ry="72" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(7.1 892 290)"/>
+  <circle cx="892" cy="290" r="73" fill="url(#cimxyq5pl)"/>
+  <circle cx="788" cy="351" r="16" fill="#ffffff" opacity="0.80"/><circle cx="659" cy="321" r="7" fill="#ffffff" opacity="0.76"/><circle cx="777" cy="355" r="18" fill="#ffffff" opacity="0.75"/>
+</svg></figure>
+      <div class="doc-body"><div class="prose"><p>A Hopfield network&#39;s memory is not free: pack in too many patterns and recall starts failing, often all at once rather than gradually. This topic puts a number on &quot;too many&quot; and shows what recall failure actually looks like.</p>
+<p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">Hopfield Networks</a>, <a class="wikilink" href="/neural-networks/energy-functions-and-attractor-dynamics/" data-topic="neural-networks/energy-functions-and-attractor-dynamics">Energy Functions and Attractor Dynamics</a>.</p>
+<h2 id="the-question-it-answers">The question it answers</h2>
+<p>&quot;How many patterns can one Hopfield network reliably store, and what happens when you exceed that?&quot; Classical analysis gives a rule of thumb — roughly <code>0.138 N</code> random patterns for <code>N</code> units — and the failure past that point is not a soft decline but a fairly sharp breakdown where even the stored patterns themselves stop being stable.</p>
+<h2 id="intuition">Intuition</h2>
+<p>Every stored pattern carves a dip into the energy landscape from <a class="wikilink" href="/neural-networks/energy-functions-and-attractor-dynamics/" data-topic="neural-networks/energy-functions-and-attractor-dynamics">Energy Functions and Attractor Dynamics</a>. With only a few patterns, the dips are far apart and clean. Pack in more, and the dips start to overlap and distort each other — &quot;spurious&quot; shallow dips appear between real patterns, and eventually some of the intended dips disappear entirely, swallowed by interference from all the others sharing the same weight matrix.</p>
+<h2 id="definition-and-notation">Definition and notation</h2>
+<p>For <code>N</code> units storing <code>K</code> random <code>±1</code> patterns via the Hebbian outer-product rule, the classical capacity result (Amit, Gutfreund &amp; Sompolinsky, 1985) is:</p>
+<pre><code class="language-text">K_max ≈ 0.138 · N
+</code></pre>
+<p>Below this ratio, nearly every stored pattern is recovered from a moderately corrupted cue. Above it, recall degrades sharply — not gradually — because interference between patterns starts corrupting the very patterns the network is supposed to remember.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>Fifty random <code>±1</code> patterns of length <code>N = 50</code>, each with 10% of its bits flipped before recall, settled with asynchronous updates:</p>
+<pre><code class="language-text">K     K/N     recall success rate
+ 6    0.12    100%
+ 7    0.14     86%
+ 8    0.16     50%
+10    0.20     20%
+20    0.40      0%
+</code></pre>
+<p><code>0.138 × 50 ≈ 6.9</code> — and the measured breakdown sits exactly where the formula predicts: full recall through <code>K = 6</code>, a sharp drop starting at <code>K = 7</code>–<code>8</code>, and almost total failure well past it. Below capacity, corruption is recoverable; above it, the stored patterns themselves are no longer stable attractors.</p>
+<h2 id="bench">Bench</h2>
+<div class="bench" data-bench="hopfield-capacity" data-title="How many patterns fit before recall breaks down"><p class="bench-fallback"><strong>Interactive bench: How many patterns fit before recall breaks down.</strong> Store a chosen number of random patterns in a Hopfield network of fixed size, corrupt each one by the same amount, and see what fraction settle back to the exact original pattern.</p></div>
+<p><strong>Try this</strong></p>
+<ol>
+<li>Start with a small number of stored patterns and confirm recall succeeds every time.</li>
+<li>Increase the pattern count past the <code>0.138 N</code> line and watch the success rate drop.</li>
+<li>Push well past capacity and notice the drop is not gradual — it happens over a narrow range of pattern counts.</li>
+</ol>
+<p><strong>What you should notice:</strong> the breakdown is a genuine phase transition, not a smooth curve — a network just under capacity recalls almost perfectly, and one not far over it recalls almost nothing.</p>
+<h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
+<ul>
+<li><strong>It is the first hard limit on this planet&#39;s memory model</strong>: unlike a hash table, a Hopfield network&#39;s capacity is a fixed fraction of its unit count, not something you can trade off against retrieval time.</li>
+<li><strong>It motivates <a class="wikilink" href="/neural-networks/boltzmann-machines/" data-topic="neural-networks/boltzmann-machines">hidden units</a></strong>: adding units not used to store the pattern directly, trading raw capacity for the ability to represent correlations between visible units.</li>
+<li><strong><a class="wikilink" href="/neural-networks/modern-hopfield-networks-and-attention/" data-topic="neural-networks/modern-hopfield-networks-and-attention">Modern Hopfield Networks and Attention</a> fixes exactly this limitation</strong>: a continuous generalization of the energy function pushes capacity from linear in <code>N</code> to exponential in <code>N</code>, which is part of why it resembles the attention mechanism used in <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>.</li>
+</ul>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Expecting a gentle decline near capacity.</strong> The transition is sharp; being &quot;a little over&quot; capacity can already mean most patterns fail to recall.</li>
+<li><strong>Forgetting capacity depends on pattern correlation.</strong> The <code>0.138 N</code> figure assumes random, roughly uncorrelated patterns; correlated patterns can interfere more and lower the effective capacity further.</li>
+<li><strong>Treating capacity as a hard training limit rather than a recall limit.</strong> The weights can still be computed for any number of patterns — what fails above capacity is reliably recalling them, not storing them in the first place.</li>
+</ul>
+<h2 id="quick-check">Quick check</h2>
+<details><summary>1. What is the classical rule-of-thumb capacity for a Hopfield network of N units storing random patterns?</summary>
+Roughly `0.138 N` patterns.
+</details>
+
+<details><summary>2. Does recall degrade gradually or sharply as the pattern count crosses this threshold?</summary>
+Sharply — the worked example's success rate falls from 100% to 50% between `K=6` and `K=8` for `N=50`, close to the predicted `K_max ≈ 6.9`.
+</details>
+
+<details><summary>3. What eventually fixes this capacity limitation within the Hopfield family?</summary>
+The continuous, modern Hopfield network used in <a class="wikilink" href="/neural-networks/modern-hopfield-networks-and-attention/" data-topic="neural-networks/modern-hopfield-networks-and-attention">Modern Hopfield Networks and Attention</a>, whose capacity scales exponentially rather than linearly in `N`.
+</details>
+
+<h2 id="key-terms">Key terms</h2>
+<ul>
+<li><strong>Capacity:</strong> the largest number of patterns a memory network can store while still reliably recalling each one.</li>
+<li><strong>Spurious state:</strong> a stable point of the energy landscape that is not one of the intended stored patterns, often created by interference between several.</li>
+<li><strong>Phase transition:</strong> a sharp, not gradual, change in behaviour as a parameter (here, patterns per unit) crosses a threshold.</li>
+</ul>
+<h2 id="related">Related</h2>
+<p><a class="wikilink" href="/neural-networks/hopfield-networks/" data-topic="neural-networks/hopfield-networks">Hopfield Networks</a> · <a class="wikilink" href="/neural-networks/energy-functions-and-attractor-dynamics/" data-topic="neural-networks/energy-functions-and-attractor-dynamics">Energy Functions and Attractor Dynamics</a> · <a class="wikilink" href="/neural-networks/boltzmann-machines/" data-topic="neural-networks/boltzmann-machines">Boltzmann Machines</a> · <a class="wikilink" href="/neural-networks/modern-hopfield-networks-and-attention/" data-topic="neural-networks/modern-hopfield-networks-and-attention">Modern Hopfield Networks and Attention</a></p>
+</div></div>
+      <footer class="doc-end">
+        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/neural-networks/content-addressable-memory-and-capacity">Open in the interactive site →</a></p>
+        <a class="read-next" href="/neural-networks/boltzmann-machines/"><small>Read next</small><b>Boltzmann Machines</b><p>A Hopfield network only ever moves downhill, so it can get permanently stuck in a shallow dip that isn&#39;t the pattern you wanted.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/neural-networks/hopfield-networks/"><b>Hopfield Networks</b><p>A Hopfield network stores a set of patterns not as a lookup table but as the stable points of a dynamical system: give it a noisy or partial version of a pattern, let every unit repeatedly update…</p></a><a class="rc-card" href="/neural-networks/energy-functions-and-attractor-dynamics/"><b>Energy Functions and Attractor Dynamics</b><p>The previous topic claimed that asynchronous updates always stop. This topic proves it, with a single number that can only go down: the network&#39;s energy.</p></a><a class="rc-card" href="/neural-networks/boltzmann-machines/"><b>Boltzmann Machines</b><p>A Hopfield network only ever moves downhill, so it can get permanently stuck in a shallow dip that isn&#39;t the pattern you wanted.</p></a><a class="rc-card" href="/neural-networks/modern-hopfield-networks-and-attention/"><b>Modern Hopfield Networks and Attention</b><p>The classical Hopfield network&#39;s capacity problem was fixed in 2020 by a surprising result: generalize the energy function to continuous states, and the resulting update rule turns out to be…</p></a><a class="rc-card" href="/deep-learning/deep-learning/"><b>Deep Learning</b><p>Deep learning is machine learning with many-layered neural networks: instead of hand-picking features, you stack simple units into layers and let training discover the representations itself.</p></a><a class="rc-card" href="/neural-networks/energy-based-networks/"><b>Energy-Based Networks</b><p>Instead of computing an output in one forward pass, an energy-based network keeps nudging itself downhill on a landscape of its own making until it settles — and whatever it settles on is the answer.</p></a></div></section>
+        <p class="doc-prev"><a href="/neural-networks/energy-functions-and-attractor-dynamics/">← Previous: Energy Functions and Attractor Dynamics</a></p>
+      </footer>
+    </article></main>
+</body>
+</html>
