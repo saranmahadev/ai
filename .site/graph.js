@@ -36,23 +36,51 @@ function mulberry32(seed) {
   };
 }
 
-// A node's base (unzoomed) draw radius, by its degree — shared between the layout's own collision
-// pass (so the physics knows each node's true footprint) and mountGraph's draw() below.
-export function nodeRadius(degree) { return 4 + Math.min(10, Math.sqrt(degree) * 2.4); }
+// A node's base (unzoomed) draw radius, by its degree — small and fairly uniform, like Obsidian's own
+// graph (a plain dot per note, only mildly bigger for a well-linked hub) rather than a chart-style bubble.
+// Shared between the layout's own collision pass (so the physics knows each node's true footprint) and
+// mountGraph's draw() below.
+export function nodeRadius(degree) { return 2.5 + Math.min(6, Math.sqrt(degree) * 1.3); }
+
+// A pure circle-packing pass (Gephi's "noverlap" idea, also what keeps Obsidian's own graph from ever
+// showing two overlapping dots): push apart any pair of nodes closer than the sum of their radii, repeated
+// until stable. Exported so a manual node drag (see mountGraph) can re-run just this step locally afterwards,
+// instead of the full, much more expensive force-directed layout below.
+export function declutterPositions(nodes, pos, iterations = 200, seed = 2) {
+  const rng = mulberry32(seed);
+  const pad = 2;
+  for (let it = 0; it < iterations; it++) {
+    let moved = false;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i].id, b = nodes[j].id, pa = pos[a], pb = pos[b];
+        let dx = pa.x - pb.x, dy = pa.y - pb.y;
+        let d = Math.hypot(dx, dy);
+        const minD = nodeRadius(nodes[i].degree) + nodeRadius(nodes[j].degree) + pad;
+        if (d >= minD) continue;
+        if (d < 0.01) { dx = (rng() - 0.5) * 0.1; dy = (rng() - 0.5) * 0.1; d = 0.1; }
+        const push = (minD - d) / 2, ux = dx / d, uy = dy / d;
+        pa.x += ux * push; pa.y += uy * push;
+        pb.x -= ux * push; pb.y -= uy * push;
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+}
 
 // Fruchterman-Reingold force-directed layout for the overall shape (clusters pulled together by their
-// edges, pushed apart otherwise), then a dedicated circle-packing declutter pass so no two nodes end up
-// overlapping regardless of how dense a cluster gets — run once to a settled, static layout (no continuous
-// physics afterwards — the result is cached by the caller, so this cost is paid once per content version).
+// edges, pushed apart otherwise), then declutterPositions above so no two nodes end up overlapping
+// regardless of how dense a cluster gets — run once to a settled, static layout (no continuous physics
+// afterwards — the result is cached by the caller, so this cost is paid once per content version).
 export function layoutGraph(nodes, edges, { width = 2000, height = 1400, iterations = 110, declutterIterations = 200, seed = 1 } = {}) {
   const rng = mulberry32(seed);
   const idx = new Map(nodes.map((n, i) => [n.id, i]));
   const n = nodes.length;
   const px = new Float64Array(n), py = new Float64Array(n), fx = new Float64Array(n), fy = new Float64Array(n);
-  const radius = new Float64Array(n);
-  for (let i = 0; i < n; i++) { px[i] = (rng() - 0.5) * width; py[i] = (rng() - 0.5) * height; radius[i] = nodeRadius(nodes[i].degree); }
+  for (let i = 0; i < n; i++) { px[i] = (rng() - 0.5) * width; py[i] = (rng() - 0.5) * height; }
   const adj = edges.map((e) => [idx.get(e.a), idx.get(e.b)]).filter(([a, b]) => a !== undefined && b !== undefined);
-  const k = Math.sqrt((width * height) / Math.max(1, n)) * 1.3; // extra breathing room beyond the bare minimum spacing
+  const k = Math.sqrt((width * height) / Math.max(1, n)) * 1.6; // generous breathing room — Obsidian's graph is airy, not packed
   let temp = width / 10;
   for (let it = 0; it < iterations; it++) {
     fx.fill(0); fy.fill(0);
@@ -81,34 +109,14 @@ export function layoutGraph(nodes, edges, { width = 2000, height = 1400, iterati
     }
     temp *= 0.94;
   }
-  // declutter: a pure circle-packing pass (Gephi's "noverlap" idea) — push apart any pair closer than
-  // the sum of their radii, repeated until stable. Keeps the FR layout's overall shape/clustering intact,
-  // it only resolves local overlap FR's uniform ideal-distance can't account for around high-degree nodes.
-  const pad = 3;
-  for (let it = 0; it < declutterIterations; it++) {
-    let moved = false;
-    for (let i = 0; i < n; i++) {
-      for (let j = i + 1; j < n; j++) {
-        let dx = px[i] - px[j], dy = py[i] - py[j];
-        let d = Math.hypot(dx, dy);
-        const minD = radius[i] + radius[j] + pad;
-        if (d >= minD) continue;
-        if (d < 0.01) { dx = (rng() - 0.5) * 0.1; dy = (rng() - 0.5) * 0.1; d = 0.1; }
-        const push = (minD - d) / 2, ux = dx / d, uy = dy / d;
-        px[i] += ux * push; py[i] += uy * push;
-        px[j] -= ux * push; py[j] -= uy * push;
-        moved = true;
-      }
-    }
-    if (!moved) break;
-  }
-  const out = {};
-  for (let i = 0; i < n; i++) out[nodes[i].id] = { x: px[i], y: py[i] };
-  return out;
+  const pos = {};
+  for (let i = 0; i < n; i++) pos[nodes[i].id] = { x: px[i], y: py[i] };
+  declutterPositions(nodes, pos, declutterIterations);
+  return pos;
 }
 
 const cssVar = (name, fallback) => (getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback);
-const LAYOUT_VERSION = "v2"; // bump to invalidate every cached ai-base-graph-layout when the algorithm changes
+const LAYOUT_VERSION = "v3"; // bump to invalidate every cached ai-base-graph-layout when the algorithm changes
 
 // ---------- mount: canvas render + pan/zoom/hover/click/filter/search
 export function mountGraph(root, { nodes, edges }, { content, reduceMotion = false, onOpen, cacheKey } = {}) {
@@ -187,43 +195,47 @@ export function mountGraph(root, { nodes, edges }, { content, reduceMotion = fal
     ctx.fillRect(0, 0, w, h);
 
     const inkColor = cssVar("--ink", "#2f2a4a");
-    const highlightActive = hoverId || matchIds;
+    const restColor = cssVar("--muted", "#8a84ad"); // resting edges: faint and low-contrast, like Obsidian's own thin gray lines
+    const activeId = draggedId || hoverId;
+    const highlightActive = activeId || matchIds;
 
-    // edges
+    // edges — barely-there at rest so 2500+ of them read as soft connective tissue, not a hairball;
+    // only the hovered/dragged node's own edges (or a search match) pop to full contrast.
     ctx.lineWidth = 1;
-    ctx.strokeStyle = inkColor;
     for (const e of edges) {
       const na = byId.get(e.a), nb = byId.get(e.b);
       if (!na || !nb) continue;
       const dimmed = hiddenPlanets.has(na.planet) || hiddenPlanets.has(nb.planet);
-      const touches = hoverId && (e.a === hoverId || e.b === hoverId);
+      const touches = activeId && (e.a === activeId || e.b === activeId);
       const inMatch = matchIds && matchIds.has(e.a) && matchIds.has(e.b);
       const pa = worldToScreen(pos[e.a].x, pos[e.a].y), pb = worldToScreen(pos[e.b].x, pos[e.b].y);
-      let alpha = dimmed ? 0.05 : 0.16;
-      if (highlightActive) alpha = touches || inMatch ? 0.55 : dimmed ? 0.03 : 0.06;
+      let alpha = dimmed ? 0.03 : 0.08;
+      ctx.strokeStyle = restColor;
+      if (touches || inMatch) { alpha = 0.7; ctx.strokeStyle = inkColor; }
+      else if (highlightActive) alpha = dimmed ? 0.015 : 0.025;
       ctx.globalAlpha = alpha;
       ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
     }
     ctx.globalAlpha = 1;
 
     screenPos.clear();
-    const showLabels = view.scale > 0.9 || hoverId || matchIds;
+    const showLabels = view.scale > 1.15 || activeId || matchIds;
     for (const node of nodes) {
       const p = worldToScreen(pos[node.id].x, pos[node.id].y);
-      const r = radiusOf(node) * Math.min(1.4, Math.max(0.55, view.scale));
+      const r = radiusOf(node) * Math.min(1.5, Math.max(0.6, view.scale));
       screenPos.set(node.id, { x: p.x, y: p.y, r: Math.max(r, 6) });
       const dimmed = hiddenPlanets.has(node.planet);
-      const isHover = node.id === hoverId;
+      const isActive = node.id === activeId;
       const isMatch = matchIds && matchIds.has(node.id);
       const planet = node.planet && planetOf(node.planet);
       const color = planet ? planet.color : neutral();
       let alpha = dimmed ? 0.12 : 1;
-      if (highlightActive && !isHover && !isMatch) alpha = dimmed ? 0.05 : 0.22;
+      if (highlightActive && !isActive && !isMatch) alpha = dimmed ? 0.04 : 0.14; // Obsidian-style spotlight: fade almost everything else away
 
       ctx.globalAlpha = alpha;
-      if (isHover || isMatch) {
+      if (isActive || isMatch) {
         ctx.save();
-        ctx.shadowColor = color; ctx.shadowBlur = reduceMotion ? 0 : 16;
+        ctx.shadowColor = color; ctx.shadowBlur = reduceMotion ? 0 : 14;
         ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
         ctx.restore();
       }
@@ -234,13 +246,13 @@ export function mountGraph(root, { nodes, edges }, { content, reduceMotion = fal
         ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
       }
       if (node.status === "outlined") {
-        ctx.lineWidth = 2; ctx.strokeStyle = color; ctx.stroke();
+        ctx.lineWidth = 1.5; ctx.strokeStyle = color; ctx.stroke();
       } else {
         ctx.fillStyle = color; ctx.fill();
       }
-      if (showLabels && (isHover || isMatch || view.scale > 1.3)) {
+      if (showLabels && (isActive || isMatch || view.scale > 1.6)) {
         ctx.globalAlpha = 1;
-        ctx.font = `${isHover ? "700" : "600"} 12px var(--font, sans-serif)`;
+        ctx.font = `${isActive ? "700" : "600"} 12px var(--font, sans-serif)`;
         ctx.fillStyle = inkColor;
         ctx.fillText(node.title, p.x + r + 5, p.y + 4);
       }
@@ -249,14 +261,37 @@ export function mountGraph(root, { nodes, edges }, { content, reduceMotion = fal
     ctx.restore();
   }
 
-  // ---------- interaction: pan, zoom, hover, click
-  let dragging = false, lastX = 0, lastY = 0, moved = false;
+  // ---------- interaction: pan the canvas from empty space, drag an individual node from on top of
+  // one (Obsidian lets you pick up and reposition a note's dot; everything else just pans), hover, click.
+  let panning = false, draggedId = null, lastX = 0, lastY = 0, moved = false;
+  function nodeAt(sx, sy) {
+    let best = null, bestD = Infinity;
+    for (const [id, s] of screenPos) {
+      const d = Math.hypot(sx - s.x, sy - s.y);
+      if (d < s.r + 4 && d < bestD) { bestD = d; best = id; }
+    }
+    return best;
+  }
+  function persistPos() {
+    try { localStorage.setItem("ai-base-graph-layout", JSON.stringify({ key: fullCacheKey, pos })); } catch { /* ignore */ }
+  }
   canvas.addEventListener("pointerdown", (e) => {
-    dragging = true; moved = false; lastX = e.clientX; lastY = e.clientY;
+    const rect = canvas.getBoundingClientRect();
+    const hit = nodeAt(e.clientX - rect.left, e.clientY - rect.top);
+    moved = false; lastX = e.clientX; lastY = e.clientY;
     canvas.setPointerCapture(e.pointerId);
+    if (hit) { draggedId = hit; hoverId = hit; } else { panning = true; }
   });
   canvas.addEventListener("pointermove", (e) => {
-    if (dragging) {
+    const rect = canvas.getBoundingClientRect();
+    if (draggedId) {
+      if (Math.hypot(e.clientX - lastX, e.clientY - lastY) > 1) moved = true;
+      const w = screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
+      pos[draggedId].x = w.x; pos[draggedId].y = w.y;
+      draw();
+      return;
+    }
+    if (panning) {
       const dx = e.clientX - lastX, dy = e.clientY - lastY;
       if (Math.hypot(dx, dy) > 2) moved = true;
       view.x -= dx / view.scale; view.y -= dy / view.scale;
@@ -264,22 +299,22 @@ export function mountGraph(root, { nodes, edges }, { content, reduceMotion = fal
       draw();
       return;
     }
-    const rect = canvas.getBoundingClientRect();
-    const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
-    let best = null, bestD = Infinity;
-    for (const [id, s] of screenPos) {
-      const d = Math.hypot(sx - s.x, sy - s.y);
-      if (d < s.r + 4 && d < bestD) { bestD = d; best = id; }
+    const best = nodeAt(e.clientX - rect.left, e.clientY - rect.top);
+    if (best !== hoverId) { hoverId = best; draw(); }
+  });
+  const endDrag = (e) => {
+    if (draggedId) {
+      if (moved) { declutterPositions(nodes, pos, 20); persistPos(); draw(); }
+      else if (onOpen) onOpen(draggedId);
+      draggedId = null;
+    } else if (panning && !moved && hoverId && onOpen) {
+      onOpen(hoverId);
     }
-    if (best !== hoverId) { hoverId = best; canvas.style.cursor = best ? "pointer" : "grab"; draw(); }
-  });
-  const endDrag = () => { dragging = false; };
-  canvas.addEventListener("pointerup", (e) => {
-    endDrag();
-    if (!moved && hoverId && onOpen) onOpen(hoverId);
-  });
-  canvas.addEventListener("pointercancel", endDrag);
-  canvas.addEventListener("pointerleave", () => { if (!dragging) { hoverId = null; draw(); } });
+    panning = false;
+  };
+  canvas.addEventListener("pointerup", endDrag);
+  canvas.addEventListener("pointercancel", () => { draggedId = null; panning = false; });
+  canvas.addEventListener("pointerleave", () => { if (!draggedId && !panning) { hoverId = null; draw(); } });
   canvas.addEventListener("wheel", (e) => {
     e.preventDefault();
     const rect = canvas.getBoundingClientRect();
@@ -342,7 +377,7 @@ export function mountGraph(root, { nodes, edges }, { content, reduceMotion = fal
       if (raw) { const parsed = JSON.parse(raw); if (parsed.key === fullCacheKey) cached = parsed.pos; }
     } catch { /* ignore */ }
     if (cached) { pos = cached; }
-    else { pos = layoutGraph(nodes, edges, { width: Math.max(1200, rect.width * 1.4), height: Math.max(900, rect.height * 1.4) }); try { localStorage.setItem("ai-base-graph-layout", JSON.stringify({ key: fullCacheKey, pos })); } catch { /* ignore */ } }
+    else { pos = layoutGraph(nodes, edges, { width: Math.max(1200, rect.width * 1.4), height: Math.max(900, rect.height * 1.4) }); persistPos(); }
     if (statusEl) statusEl.hidden = true;
     if (countEl) countEl.textContent = `${nodes.length} topics · ${edges.length} connections`;
     renderLegend();
