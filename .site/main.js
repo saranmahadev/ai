@@ -14,13 +14,20 @@ const STATUS = { written: "Written", outlined: "Outlined", index: "Index", plann
 const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 
 applyPrefs();
-// Two modes: Read (the default, every route is a plain document) and Explorer (unlocks the rocket and
+// Two modes: Standard (the default, every route is a plain document) and Play (unlocks the rocket and
 // the walkable 3D planets). The choice is remembered in this browser only, same as the other ai-base-* prefs.
-const MODES = ["read", "explore"];
+// LEGACY_MODE_NAMES maps this site's old mode names (read/explore) to the current ones, so a stored
+// preference or a shared ?mode= link from before this rename keeps working instead of silently resetting.
+const MODES = ["standard", "play"];
+const LEGACY_MODE_NAMES = { read: "standard", explore: "play" };
 function getMode() {
-  const q = new URLSearchParams(location.search).get("mode");
+  const q = LEGACY_MODE_NAMES[new URLSearchParams(location.search).get("mode")] || new URLSearchParams(location.search).get("mode");
   if (MODES.includes(q)) return q; // ?mode= forces it for this pageload (used by the test suite and shareable 3D links)
-  try { const m = localStorage.getItem("ai-base-mode"); return MODES.includes(m) ? m : "read"; } catch { return "read"; }
+  try {
+    const raw = localStorage.getItem("ai-base-mode");
+    const m = LEGACY_MODE_NAMES[raw] || raw;
+    return MODES.includes(m) ? m : "standard";
+  } catch { return "standard"; }
 }
 function setMode(m) { try { localStorage.setItem("ai-base-mode", m); } catch { /* ignore */ } }
 const view = $("#view");
@@ -158,7 +165,7 @@ function pathView() {
   };
   return `
     <header class="page-head"><p class="kicker">Your progress</p><h2>My path</h2>
-    <p class="blurb">${done} of ${total} topics read across ${explored.length} planets. A topic counts as read when you reach the end of it. Progress is kept in this browser only.</p></header>
+    <p class="blurb">${done} of ${total} topics read across ${explored.length} subjects. A topic counts as read when you reach the end of it. Progress is kept in this browser only.</p></header>
     <div class="pbar big" role="progressbar" aria-label="Overall progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct(done, total)}"><i style="width:${pct(done, total)}%"></i></div>
     ${cont ? `<a class="read-next path-continue" href="#/${cont.id}"><small>${done ? "Continue where you left off" : "Start here"}</small><b>${esc(cont.title)}</b><p>${esc(cont.summary || "")}</p><span aria-hidden="true">→</span></a>` : `<p class="notice">Every written topic is read. New ones appear here as they are added.</p>`}
     ${explored.map(planetBlock).join("")}
@@ -299,7 +306,7 @@ function enhanceArticle(topic) {
     p.querySelectorAll('a[href^="#/"]').forEach((a) => {
       const t = content.topics[decodeURIComponent(a.getAttribute("href").slice(2))];
       const pl = t && t.planet && t.planet !== topic.planet && content.planets.find((x) => x.id === t.planet);
-      if (pl && !a.nextElementSibling?.classList?.contains("xp")) a.insertAdjacentHTML("afterend", `<span class="xp" title="This prerequisite is on the ${esc(pl.title)} planet">${esc(pl.title)}</span>`);
+      if (pl && !a.nextElementSibling?.classList?.contains("xp")) a.insertAdjacentHTML("afterend", `<span class="xp" title="This prerequisite is on the ${esc(pl.title)} subject">${esc(pl.title)}</span>`);
     });
     break;
   }
@@ -353,7 +360,7 @@ function renderNav(info) {
   const el = $("#navbar");
   if (!info) { el.hidden = true; return; }
   const a = (c, cls = "") => c.href
-    ? `<a class="${cls}" href="${c.href}"${c.warp ? ` data-warp="${c.warp}"` : ""}${c.board ? " data-board" : ""}${c.title ? ` title="${esc(c.title)}"` : ""}>${esc(c.label)}</a>`
+    ? `<a class="${cls}" href="${c.href}"${c.warp ? ` data-warp="${c.warp}"` : ""}${c.board ? " data-board" : ""}${c.setMode ? ` data-set-mode="${c.setMode}"` : ""}${c.title ? ` title="${esc(c.title)}"` : ""}>${esc(c.label)}</a>`
     : `<span class="${cls}" aria-current="page">${esc(c.label)}</span>`;
   el.hidden = false;
   const back = info.back;
@@ -372,6 +379,9 @@ function renderNav(info) {
 $("#navbar").addEventListener("click", (e) => {
   const l = e.target.closest("a[href]");
   if (!l || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+  // an action that invites into Play Mode (e.g. "Try Play Mode" on a subject page) sets the mode
+  // before the href navigates it there, same as the home page's launch button does
+  if (l.dataset.setMode) { setMode(l.dataset.setMode); syncModePill(); }
   if (l.hasAttribute("data-board")) { e.preventDefault(); backToGalaxy(); }
   else if (l.dataset.warp) {
     e.preventDefault();
@@ -441,7 +451,7 @@ function route() {
   const [pathPart, query] = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("?");
   const parts = pathPart.split("/").filter(Boolean);
   const key = parts.join("/");
-  const explorerMode = getMode() === "explore";
+  const explorerMode = getMode() === "play";
   const planetObj = parts.length === 1 && content.planets.find((p) => p.id === key);
   // checked ahead of any topic lookup: a topic id is also <planet>/<slug>-shaped, so a sub-route always wins
   const glossaryPlanet = parts.length === 2 && parts[1] === "glossary" && content.planets.find((p) => p.id === parts[0]);
@@ -527,9 +537,9 @@ view.addEventListener("click", (e) => {
   if (topic) return; // topic to topic is a plain page change
   if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`); }
 });
-// ---------- mode pill (header): one segmented control for the three modes, replacing the old binary
-// Explorer-Mode toggle button. The choice persists via ai-base-mode (see getMode/setMode above).
-// Delegated on document (not just the header's own buttons) in case a future inline link reuses it.
+// ---------- mode pill (header): one segmented control for Standard and Play Mode. The choice persists
+// via ai-base-mode (see getMode/setMode above). Delegated on document (not just the header's own
+// buttons) in case a future inline link reuses it.
 function syncModePill() {
   const m = getMode();
   for (const b of document.querySelectorAll("[data-mode-btn]")) b.setAttribute("aria-checked", String(b.dataset.modeBtn === m));
@@ -544,8 +554,8 @@ document.addEventListener("click", (e) => {
   syncModePill();
   const [pathPart] = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("?");
   const key = pathPart.split("/").filter(Boolean).join("/");
-  // leaving the catalog text view while switching on Explorer Mode lands straight in the 3D galaxy
-  if (next === "explore" && galaxy && (key === "list" || key === "explore")) { location.hash = "#/galaxy"; return; }
+  // leaving the catalog text view while switching on Play Mode lands straight in the 3D galaxy
+  if (next === "play" && galaxy && (key === "list" || key === "explore")) { location.hash = "#/galaxy"; return; }
   route();
 });
 syncModePill();
@@ -572,7 +582,7 @@ syncModePill();
 // transient transition, triggered by an explicit click, then the canvas hands off to the galaxy scene.
 $("#home-launch").addEventListener("click", async () => {
   if (launching) return;
-  setMode("explore");
+  setMode("play");
   syncModePill();
   if (!homeScene || !stage) { location.hash = "#/galaxy"; return; }
   launching = true;

@@ -38,6 +38,9 @@ export function navFor({ key, query, content, has3d }) {
     const actions = [];
     if (threeD) actions.push({ label: "Reading view", href: `#/${planet.id}?text` });
     else if (has3d && !planet.planned) actions.push({ label: "🚀 Walk the road", href: `#/${planet.id}` });
+    // Standard Mode offers an explicit invitation into the 3D game instead of ever implying you're
+    // already in it (has3d is only true once Play Mode is actually the active mode, see main.js's route()).
+    else if (!has3d && !planet.planned) actions.push({ label: "🚀 Try Play Mode", href: `#/${planet.id}`, setMode: "play" });
     if (!planet.planned) actions.push({ label: "Glossary", href: `#/${planet.id}/glossary` });
     return {
       back: { label: galaxyLabel, href: galaxyHref, board: threeD },

@@ -33,7 +33,7 @@ const check = (name, ok, detail = "") => { steps.push({ name, ok }); console.log
 const shot = async (name) => { if (shots) await page.screenshot({ path: join(shots, `${name}.png`) }); };
 
 try {
-  await page.goto(`${base}?time=${time}&mode=explore&debug&detail=full#/${planetId}`);
+  await page.goto(`${base}?time=${time}&mode=play&debug&detail=full#/${planetId}`);
   await page.waitForSelector("#planet:not([hidden])", { timeout: 20000 });
   await page.waitForTimeout(2500);
   check("planet scene shows", true);
@@ -70,8 +70,8 @@ try {
   for (const w of ["storm", "snow"]) { await page.selectOption("#pweather", w); await page.waitForTimeout(400); await shot(`planet-${w}`); }
   await page.selectOption("#pweather", "clear");
   const hashA = stats.sceneryHash;
-  await page.goto(`${base}?time=${time}&mode=explore&debug&detail=full#/ai`); await page.waitForTimeout(300);
-  await page.goto(`${base}?time=${time}&mode=explore&debug&detail=full#/${planetId}`);
+  await page.goto(`${base}?time=${time}&mode=play&debug&detail=full#/ai`); await page.waitForTimeout(300);
+  await page.goto(`${base}?time=${time}&mode=play&debug&detail=full#/${planetId}`);
   await page.waitForSelector("#planet:not([hidden])", { timeout: 20000 });
   await page.waitForTimeout(1500);
   const hashB = await page.evaluate(() => window.__aiBase.planetScene.stats().sceneryHash);
@@ -110,7 +110,7 @@ try {
   const mp = await mctx.newPage();
   mp.on("console", (m) => { if (m.type() === "error") errors.push("[motion] " + m.text()); });
   mp.on("pageerror", (e) => errors.push("[motion] " + e));
-  await mp.goto(`${base}?time=${time}&mode=explore&debug&detail=lite#/${planetId}`);
+  await mp.goto(`${base}?time=${time}&mode=play&debug&detail=lite#/${planetId}`);
   await mp.waitForSelector("#planet:not([hidden])", { timeout: 90000 });
   await mp.waitForTimeout(4500);
   for (const w of ["rain", "snow", "storm"]) { await mp.selectOption("#pweather", w); await mp.waitForTimeout(1800); if (shots && w === "storm") await mp.screenshot({ path: join(shots, "planet-storm-motion.png") }); }
