@@ -5,7 +5,7 @@
 // writes plain, self-contained HTML pages at real paths (.site/math/logarithms/index.html, served at
 // /math/logarithms/) alongside the unchanged SPA at .site/index.html, which still handles all in-site
 // navigation. A visitor arriving from search gets a fully readable article immediately, with a link to open
-// the same topic in the interactive site for the full reader toolbar, progress tracking and Explorer Mode.
+// the same topic in the interactive site for the full reader toolbar, progress tracking and Play Mode.
 // Run: `npm run content` (runs this automatically after build-content.mjs) or `node scripts/build-static.mjs` alone.
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
