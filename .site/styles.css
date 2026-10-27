@@ -694,6 +694,11 @@ html:has(body.reading) { scroll-padding-bottom: 96px; } /* leave room for the fl
   font: inherit; font-weight: 800; color: var(--ink); background: var(--soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%236b6590' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7.5l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 8px center / 12px;
   border: 0; border-radius: 10px; padding: 5px 24px 5px 10px; appearance: none; -webkit-appearance: none; box-shadow: var(--press); cursor: pointer;
 }
+/* the arrow's stroke color is baked into the data URI (can't read a CSS variable), so night mode gets
+   its own copy in the lighter --muted shade used elsewhere at night, instead of the day-mode grey. */
+html.night #pctl select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23a9a3d6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7.5l5 5 5-5'/%3E%3C/svg%3E");
+}
 #pctl select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 #pctl input[type="checkbox"] { width: 17px; height: 17px; margin: 0; accent-color: var(--accent); cursor: pointer; }
 #pctl kbd { font: inherit; opacity: .6; border: 1px solid var(--soft); border-radius: 5px; padding: 0 4px; }
