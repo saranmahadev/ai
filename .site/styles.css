@@ -397,41 +397,43 @@ body.reading .nb-crumbs a:hover { color: var(--r-ink); text-decoration: underlin
 body.reading .nb-actions { gap: 2px; }
 body.reading .nb-actions .clay-pill { border: 0; padding: 6px 10px; border-radius: 7px; font-weight: 600; font-size: 13px; color: var(--r-link); background: none; }
 body.reading .nb-actions .clay-pill:hover { background: var(--r-rule); color: var(--r-link); }
-body.reading #view h2, body.reading #view h3 { font-weight: 700; }
-#view .kicker { font-size: 13px; font-weight: 600; letter-spacing: .04em; color: var(--r-muted, var(--muted)); }
-#view .badge { box-shadow: none; background: var(--r-surface, var(--soft)); border: 1px solid var(--r-rule, var(--soft2)); font-weight: 600; }
-#view .badge.written, #view .badge.explored { background: #dafbe1; color: #1a7f37; border-color: #aceebb; }
-#view .badge.outlined { background: #fff8c5; color: #7d4e00; border-color: #eac54f; }
-html.night #view .badge.written, html.night #view .badge.explored { background: #12261e; color: #56d364; border-color: #1f6f3a; }
-html.night #view .badge.outlined { background: #2d2a12; color: #e3b341; border-color: #6b551b; }
-#view .orb { width: 22px; height: 22px; box-shadow: none; background: var(--c); margin-top: .5em; }
-#view .page-head { align-items: flex-start; gap: 14px; }
-#view .card { background: none; box-shadow: none; border: 1px solid var(--r-rule); border-radius: 10px; padding: 18px 20px; }
-#view a.card:hover { transform: none; border-color: var(--c, var(--accent)); background: color-mix(in srgb, var(--c, var(--accent)) 5%, transparent); }
-#view .planet-card .orb { width: 18px; height: 18px; margin-top: 4px; }
-#view .planet-card h3 { font-size: 1.05rem; margin: 0 0 4px; }
-#view .planet-card p { font-weight: 400; color: var(--r-muted); }
-#view .meta { font-weight: 500; }
-#view .big-picture a { padding: 0; text-decoration: underline; color: var(--r-link); font-weight: 600; }
-#view .district h3 { font-size: 13px; letter-spacing: .04em; font-weight: 600; margin: 0 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--r-rule); }
-#view .chips { gap: 4px 20px; }
-#view .chip { padding: 0; background: none; box-shadow: none; border-radius: 0; font-size: 15px; font-weight: 400; color: var(--r-link); text-decoration: underline; text-underline-offset: 2px; }
-#view .chip.index { font-weight: 600; }
-#view .chip.outlined { border: 0; color: var(--r-muted); font-style: italic; }
-#view .chip:hover, #view .chip:active { transform: none; box-shadow: none; }
-#view .notice { background: var(--r-surface); color: var(--r-ink); box-shadow: none; border: 1px solid var(--r-rule); border-left: 4px solid var(--c, var(--accent)); border-radius: 6px; font-weight: 400; padding: 12px 16px; }
+body.reading #view h2, body.reading #view h3, body.reading #static-view h2, body.reading #static-view h3 { font-weight: 700; }
+/* Scoped to body.reading (not #view's id) so the same flat skin reaches the static prerendered pages
+   too, which render this exact markup inside #static-view instead of #view — see build-static.mjs. */
+body.reading .kicker { font-size: 13px; font-weight: 600; letter-spacing: .04em; color: var(--r-muted, var(--muted)); }
+body.reading .badge { box-shadow: none; background: var(--r-surface, var(--soft)); border: 1px solid var(--r-rule, var(--soft2)); font-weight: 600; }
+body.reading .badge.written, body.reading .badge.explored { background: #dafbe1; color: #1a7f37; border-color: #aceebb; }
+body.reading .badge.outlined { background: #fff8c5; color: #7d4e00; border-color: #eac54f; }
+html.night body.reading .badge.written, html.night body.reading .badge.explored { background: #12261e; color: #56d364; border-color: #1f6f3a; }
+html.night body.reading .badge.outlined { background: #2d2a12; color: #e3b341; border-color: #6b551b; }
+body.reading .orb { width: 22px; height: 22px; box-shadow: none; background: var(--c); margin-top: .5em; }
+body.reading .page-head { align-items: flex-start; gap: 14px; }
+body.reading .card { background: none; box-shadow: none; border: 1px solid var(--r-rule); border-radius: 10px; padding: 18px 20px; }
+body.reading a.card:hover { transform: none; border-color: var(--c, var(--accent)); background: color-mix(in srgb, var(--c, var(--accent)) 5%, transparent); }
+body.reading .planet-card .orb { width: 18px; height: 18px; margin-top: 4px; }
+body.reading .planet-card h3 { font-size: 1.05rem; margin: 0 0 4px; }
+body.reading .planet-card p { font-weight: 400; color: var(--r-muted); }
+body.reading .meta { font-weight: 500; }
+body.reading .big-picture a { padding: 0; text-decoration: underline; color: var(--r-link); font-weight: 600; }
+body.reading .district h3 { font-size: 13px; letter-spacing: .04em; font-weight: 600; margin: 0 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--r-rule); }
+body.reading .chips { gap: 4px 20px; }
+body.reading .chip { padding: 0; background: none; box-shadow: none; border-radius: 0; font-size: 15px; font-weight: 400; color: var(--r-link); text-decoration: underline; text-underline-offset: 2px; }
+body.reading .chip.index { font-weight: 600; }
+body.reading .chip.outlined { border: 0; color: var(--r-muted); font-style: italic; }
+body.reading .chip:hover, body.reading .chip:active { transform: none; box-shadow: none; }
+body.reading .notice { background: var(--r-surface); color: var(--r-ink); box-shadow: none; border: 1px solid var(--r-rule); border-left: 4px solid var(--c, var(--accent)); border-radius: 6px; font-weight: 400; padding: 12px 16px; }
 /* .cta is also used inside reading pages now (e.g. the 404 view); its background/text need to flip
    with the reader theme instead of inheriting --ink, which turns near-white in dark theme and would
    otherwise pair white-on-white. */
-#view .cta, body.reading .cta {
+body.reading .cta {
   background: var(--r-ink); color: var(--r-bg); box-shadow: none; border-radius: 8px;
   background-position: 0 0;
 }
-#view .cta:hover, body.reading .cta:hover { background: var(--accent); color: var(--r-bg); transform: none; }
-#view .cta:active, body.reading .cta:active { box-shadow: none; }
-#view code { background: var(--r-surface); border: 1px solid var(--r-rule); border-radius: 4px; padding: 1px 5px; }
+body.reading .cta:hover { background: var(--accent); color: var(--r-bg); transform: none; }
+body.reading .cta:active { box-shadow: none; }
+body.reading code { background: var(--r-surface); border: 1px solid var(--r-rule); border-radius: 4px; padding: 1px 5px; }
 
-#view .blurb { font-weight: 400; color: var(--r-muted, var(--blurb)); }
+body.reading .blurb { font-weight: 400; color: var(--r-muted, var(--blurb)); }
 
 /* ---------- benches: interactive demos inside articles (flat, roomy, two panes) */
 .bench { margin: 2.2rem 0; padding: 24px; font-family: var(--r-font); border: 1px solid var(--r-rule); border-radius: 12px; background: var(--r-bg); color: var(--r-ink); font-size: 15px; line-height: 1.5; }
