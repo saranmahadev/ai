@@ -14,10 +14,9 @@ const STATUS = { written: "Written", outlined: "Outlined", index: "Index", plann
 const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 
 applyPrefs();
-// Three modes: Read (the default, every route is a plain document), Explorer (unlocks the rocket and
-// the walkable 3D planets), and Graph (a 2D map of every topic and the links between them, at #/graph —
-// see graph.js). The choice is remembered in this browser only, same as the other ai-base-* prefs.
-const MODES = ["read", "explore", "graph"];
+// Two modes: Read (the default, every route is a plain document) and Explorer (unlocks the rocket and
+// the walkable 3D planets). The choice is remembered in this browser only, same as the other ai-base-* prefs.
+const MODES = ["read", "explore"];
 function getMode() {
   const q = new URLSearchParams(location.search).get("mode");
   if (MODES.includes(q)) return q; // ?mode= forces it for this pageload (used by the test suite and shareable 3D links)
@@ -25,8 +24,6 @@ function getMode() {
 }
 function setMode(m) { try { localStorage.setItem("ai-base-mode", m); } catch { /* ignore */ } }
 const view = $("#view");
-const graphEl = $("#graph");
-let graphApi = null, graphLoading = false;
 const home = $("#home");
 let content = null;
 let stage = null, homeScene = null, galaxy = null, planetScene = null, planetKey = null;
@@ -451,19 +448,16 @@ function route() {
   const isPlanet = !!(explorerMode && planetScene && planetObj && !planetObj.planned && query !== "text");
   const isHome = parts.length === 0;
   const isGalaxy = explorerMode && key === "galaxy" && !!galaxy;
-  const isGraph = key === "graph";
   document.body.classList.toggle("route-home", isHome);
   document.body.classList.toggle("route-galaxy", isGalaxy);
   document.body.classList.toggle("route-planet", isPlanet);
-  document.body.classList.toggle("route-graph", isGraph);
   document.body.classList.toggle("route-path", key === "path");
-  document.body.classList.toggle("route-topic", !isHome && !isGalaxy && !isPlanet && !isGraph && !!content.topics[key]);
-  document.body.classList.toggle("reading", !isHome && !isGalaxy && !isPlanet && !isGraph);
+  document.body.classList.toggle("route-topic", !isHome && !isGalaxy && !isPlanet && !!content.topics[key]);
+  document.body.classList.toggle("reading", !isHome && !isGalaxy && !isPlanet);
   planetEl.hidden = !isPlanet;
   home.hidden = !isHome;
   galaxyEl.hidden = !isGalaxy;
-  graphEl.hidden = !isGraph;
-  view.hidden = isHome || isGalaxy || isPlanet || isGraph;
+  view.hidden = isHome || isGalaxy || isPlanet;
   if (stage) stage.setActive(isGalaxy ? galaxy : isPlanet ? planetScene : null);
   if (galaxy) { if (isGalaxy) galaxy.enter(); else galaxy.leave(); }
   if (planetScene) {
@@ -475,20 +469,6 @@ function route() {
   if (isPlanet) { setTitle(`${planetObj.title} · AI Base`); return; }
   if (isHome) { refreshHomeProgress(); setTitle("AI Base"); return; }
   if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
-  if (isGraph) {
-    setTitle("Graph · AI Base");
-    if (!graphApi && !graphLoading) {
-      graphLoading = true;
-      import("./graph.js").then((mod) => {
-        graphApi = mod.mountGraph(graphEl, mod.buildGraphData(content), {
-          content, reduceMotion, cacheKey: content.generated,
-          onOpen: (id) => { location.hash = `#/${id}`; }
-        });
-        graphLoading = false;
-      });
-    } else if (graphApi) graphApi.resize();
-    return;
-  }
 
   const wanted = !glossaryPlanet && content.topics[key];
   if (wanted && wanted.html === undefined && wanted.status !== "outlined") {
@@ -566,8 +546,6 @@ document.addEventListener("click", (e) => {
   const key = pathPart.split("/").filter(Boolean).join("/");
   // leaving the catalog text view while switching on Explorer Mode lands straight in the 3D galaxy
   if (next === "explore" && galaxy && (key === "list" || key === "explore")) { location.hash = "#/galaxy"; return; }
-  // Graph Mode's whole purpose is the graph itself, so selecting it always jumps straight there
-  if (next === "graph" && key !== "graph") { location.hash = "#/graph"; return; }
   route();
 });
 syncModePill();
@@ -595,7 +573,7 @@ syncModePill();
 $("#home-launch").addEventListener("click", async () => {
   if (launching) return;
   setMode("explore");
-  syncModeToggle();
+  syncModePill();
   if (!homeScene || !stage) { location.hash = "#/galaxy"; return; }
   launching = true;
   $("#home-launch").disabled = true;
@@ -687,9 +665,7 @@ function setupPlanetHud() {
 }
 // ?debug: frame rate, draw calls and triangles, and the scene objects for tests
 function setupDebug() {
-  // a getter, not a one-time snapshot: graph.js is lazy-loaded on first visit to #/graph, which can
-  // resolve before or after this runs depending on route order, so graphApi must be read live.
-  window.__aiBase = { stage, planetScene, get graph() { return graphApi && graphApi.debug; } };
+  window.__aiBase = { stage, planetScene };
   const box = document.createElement("pre");
   box.id = "dbg"; box.setAttribute("aria-hidden", "true");
   document.body.append(box);
