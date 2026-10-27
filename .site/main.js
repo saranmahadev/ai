@@ -140,7 +140,7 @@ function notFoundView() {
   return `
     <header class="page-head"><p class="kicker">404</p><h2>Nothing here</h2>
     <p class="blurb">That page doesn't exist, or the link is out of date.</p></header>
-    <p><a class="chip" href="#/explore">← Browse the knowledge base</a></p>`;
+    <p><a class="cta small" href="#/explore">← Browse the knowledge base</a></p>`;
 }
 
 // ---------- My path: progress across planets, from the topics you have read to the end (localStorage, this device only)
@@ -159,7 +159,7 @@ function pathView() {
     return `<section class="path-planet" style="--c:${p.color}">
       <h3>${planetDot(p)}<a href="#/${p.id}">${esc(p.title)}</a><span>${n} of ${ids.length} read</span></h3>
       <div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct(n, ids.length)}"><i style="width:${pct(n, ids.length)}%"></i></div>
-      <details ${n && n < ids.length ? "open" : ""}><summary>Districts</summary>
+      <details ${n && n < ids.length ? "open" : ""}><summary>Sections</summary>
       ${p.districts.map((d) => { const dids = d.topics.filter((id) => content.topics[id] && content.topics[id].status === "written"), dn = dids.filter((id) => read.has(id)).length; return `<div class="path-district"><h4>${esc(d.title)} <small>${dn}/${dids.length}</small></h4><ul class="chips">${dids.map((id) => `<li><a class="chip ${read.has(id) ? "read" : ""}" href="#/${id}"${read.has(id) ? ' aria-label="' + esc(content.topics[id].title) + ' (read)"' : ""}>${esc(content.topics[id].title)}</a></li>`).join("")}</ul></div>`; }).join("")}
       </details></section>`;
   };

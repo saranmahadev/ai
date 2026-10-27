@@ -63,24 +63,31 @@ body.reading .mode-pill button[aria-checked="true"] { background: var(--r-surfac
 body.reading .more-popover { background: var(--r-bg); border: 1px solid var(--r-rule); box-shadow: 0 8px 24px rgba(0, 0, 0, .12); }
 body.reading .more-popover a:hover { color: var(--r-ink); background: var(--r-surface); }
 
-/* ---------- home: Medium-style document with claymorphism accents. No idle 3D — the canvas only
-   appears for the one-shot Play Mode launch transition (see #home-launch in main.js). */
-#home { position: relative; z-index: 3; max-width: 1040px; margin: 0 auto; padding: 150px 24px 0; overflow-x: hidden; transition: opacity .4s ease; }
+/* ---------- home: a plain, flat landing page for Standard Mode — no clay, no blobs, no neumorphic
+   shadows. The canvas only appears for the one-shot Play Mode launch transition (see #home-launch in
+   main.js); the world's claymorphism never otherwise reaches this page. Scoped locally (not via
+   body.reading, which this route deliberately doesn't carry — see route() in main.js) so the header
+   chrome above it can stay clay-flavoured without this page having its own nav bar to clash with. */
+#home {
+  position: relative; z-index: 3; max-width: 1040px; margin: 0 auto; padding: 150px 24px 0; overflow-x: hidden;
+  transition: opacity .4s ease; background: #fff; color: #1f2328;
+  --ink: #1f2328; --muted: #59636e; --link: #0550ae; --accent: #6d4aed; --soft2: #e6eaef; --page-bg: #fff;
+}
+html.night #home { background: #0d1117; color: #e6edf3; --ink: #e6edf3; --muted: #9198a1; --link: #79c0ff; --accent: #a58cff; --soft2: #21262d; --page-bg: #0d1117; }
 #home[hidden] { display: none; }
 #home.away { opacity: 0; }
+body.route-home { background: #fff; }
+html.night body.route-home { background: #0d1117; }
 
-.home-hero { position: relative; max-width: 640px; padding-bottom: 60px; overflow: visible; }
-.home-blobs { position: absolute; inset: -90px -20% auto -14%; height: 380px; z-index: -1; pointer-events: none; }
-.home-blobs i { position: absolute; display: block; border-radius: 50%; filter: blur(64px); opacity: .5; animation: blobDrift 24s ease-in-out infinite; }
-.home-blobs i:nth-child(1) { width: 320px; height: 320px; left: 0; top: 0; background: #b39cf5; }
-.home-blobs i:nth-child(2) { width: 280px; height: 280px; right: 0; top: 60px; background: #ffc46b; animation-delay: -8s; animation-duration: 28s; }
-.home-blobs i:nth-child(3) { width: 240px; height: 240px; left: 32%; top: 140px; background: #79d3c1; animation-delay: -16s; animation-duration: 20s; }
-@keyframes blobDrift { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(16px, -12px) scale(1.06); } }
+.home-hero { max-width: 640px; padding-bottom: 56px; }
 
-h1 { font-size: clamp(2.4rem, 5.6vw, 4.4rem); line-height: 1.04; margin: 0 0 20px; letter-spacing: -.03em; font-weight: 900; }
-.home-title .accent { background: linear-gradient(160deg, #9b82ff, #7c5cf0); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.lede { color: var(--muted); font-size: 1.15rem; line-height: 1.55; margin: 0 0 28px; font-weight: 700; max-width: 46ch; }
-.actions { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+#home h1 { font-family: "Nunito", var(--font); font-size: clamp(2.3rem, 5.2vw, 3.8rem); line-height: 1.08; margin: 0 0 18px; letter-spacing: -.02em; font-weight: 800; }
+.home-title .accent { color: var(--accent); }
+.lede { color: var(--muted); font-size: 1.1rem; line-height: 1.55; margin: 0 0 26px; font-weight: 400; max-width: 46ch; }
+.actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+/* .cta is a shared button: Play Mode's 3D overlays (#gcard, #pprompt) use its original clay/gradient
+   look below; #home and reading pages (body.reading, #view — see their own rules further down) give
+   it a flat skin instead, since those are Standard Mode surfaces. */
 .cta {
   position: relative; padding: 16px 32px; border-radius: 999px; border: 0; font-weight: 900; font-size: 1.05rem; color: #fff;
   background: linear-gradient(160deg, #9b82ff, #7c5cf0); background-size: 220% 100%; background-position: 0% 0;
@@ -91,38 +98,61 @@ h1 { font-size: clamp(2.4rem, 5.6vw, 4.4rem); line-height: 1.04; margin: 0 0 20p
 .cta:hover { transform: translateY(-2px); background-position: 100% 0; }
 .cta:active { transform: translateY(1px) scale(.98); box-shadow: inset 5px 6px 12px rgba(60, 30, 160, .5); }
 .cta:disabled { opacity: .7; pointer-events: none; }
+#home .cta {
+  padding: 13px 26px; border-radius: 8px; font-weight: 700; font-size: 1rem; box-shadow: none;
+  background: var(--ink); color: var(--page-bg); background-position: 0 0; transition: background .15s, transform .1s;
+}
+#home .cta:hover { background: var(--accent); color: var(--page-bg); transform: none; }
+#home .cta:active { transform: scale(.98); box-shadow: none; }
 
 .home-stats { display: flex; gap: 36px; margin: 4px 0 30px; flex-wrap: wrap; }
 .home-stats .stat { display: flex; flex-direction: column; gap: 2px; }
-.home-stats b { font-size: 2rem; font-weight: 900; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.home-stats span { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+.home-stats b { font-size: 1.8rem; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.home-stats span { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 
-.home-section { padding: 56px 0; border-top: 1px solid var(--soft2); }
-.home-section h2 { margin: 0 0 24px; }
-.home-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.home-section { padding: 52px 0; border-top: 1px solid var(--soft2); }
+.home-section h2 { margin: 0 0 22px; font-family: "Nunito", var(--font); font-size: 1.6rem; font-weight: 800; }
+.home-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
 .home-section-head h2 { margin: 0; }
-.section-link { font-weight: 800; color: var(--link); text-decoration: none; white-space: nowrap; }
+.section-link { font-weight: 600; color: var(--link); text-decoration: none; white-space: nowrap; font-size: .92rem; }
 .section-link:hover { text-decoration: underline; }
 
-.why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-.why-card { background: var(--clay); border-radius: 24px; padding: 22px 24px; box-shadow: var(--puff-sm); }
-.why-card h3 { margin: 0 0 8px; font-size: 1.05rem; }
-.why-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; font-weight: 700; }
+.why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+.why-card { border: 1px solid var(--soft2); border-radius: 10px; padding: 20px 22px; }
+.why-card h3 { margin: 0 0 8px; font-size: 1rem; font-weight: 700; }
+.why-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; font-weight: 400; }
 
 .explorer-card {
-  background: var(--clay); border-radius: 30px; padding: 30px 32px; box-shadow: var(--puff);
+  border: 1px solid var(--soft2); border-radius: 12px; padding: 26px 28px;
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
   display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
 }
-.explorer-card h2 { margin: 2px 0 6px; font-size: 1.6rem; }
-.explorer-card p { margin: 0; color: var(--muted); font-weight: 700; max-width: 42ch; }
+.explorer-card h2 { margin: 2px 0 6px; font-size: 1.4rem; font-weight: 800; }
+.explorer-card p { margin: 0; color: var(--muted); font-weight: 400; max-width: 42ch; }
+#home .explorer-card .cta { background: var(--accent); }
+#home .explorer-card .cta:hover { background: var(--ink); }
 
-.home-footer { padding: 40px 0 70px; border-top: 1px solid var(--soft2); color: var(--muted); font-weight: 700; font-size: 14px; }
+.home-footer { padding: 36px 0 64px; border-top: 1px solid var(--soft2); color: var(--muted); font-weight: 400; font-size: 14px; }
 .home-footer a { color: var(--link); text-decoration: none; }
 .home-footer a:hover { text-decoration: underline; }
 .home-footer-note { margin: 8px 0 0; font-size: 13px; }
 
-.reveal { opacity: 0; transform: translateY(18px); transition: opacity .5s ease, transform .5s ease; }
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
 .reveal.in { opacity: 1; transform: none; }
+
+/* the subject cards reuse the shared .card/.planet-card component (also used by Play Mode's clay
+   #gcard overlay — see its own rule above); #home gives it the same flat, bordered skin as the
+   reading pages' own #view .card override, instead of the clay/shadow default. */
+#home .card { background: none; box-shadow: none; border: 1px solid var(--soft2); border-radius: 10px; padding: 18px 20px; transition: border-color .15s, background .15s; }
+#home a.card:hover { transform: none; border-color: var(--c, var(--accent)); background: color-mix(in srgb, var(--c, var(--accent)) 5%, transparent); }
+#home a.card:active { box-shadow: none; }
+#home .planet-card .orb { width: 44px; height: 44px; box-shadow: none; }
+#home .planet-card h3 { font-size: 1.05rem; margin: 2px 0 4px; }
+#home .planet-card p { font-weight: 400; color: var(--muted); }
+#home .badge { box-shadow: none; background: none; border: 1px solid var(--soft2); font-weight: 600; }
+#home .badge.written, #home .badge.explored { background: #dafbe1; color: #1a7f37; border-color: #aceebb; }
+html.night #home .badge.written, html.night #home .badge.explored { background: #12261e; color: #56d364; border-color: #1f6f3a; }
+#home .meta { font-weight: 500; }
 
 /* ---------- galaxy */
 #glabels { position: fixed; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
@@ -260,7 +290,7 @@ body:not(.route-topic) #readbar { display: none; }
 @media (max-width: 820px) {
   .hud { padding: 12px 14px; }
   .brand { white-space: nowrap; font-size: 14px; padding: 8px 14px 8px 10px; }
-  h1 { font-size: 2.3rem; }
+  #home h1 { font-size: 2.3rem; }
   #home { padding: 96px 20px 0; }
   .home-section { padding: 40px 0; }
   .home-stats { gap: 24px; }
@@ -377,7 +407,7 @@ html.night #view .badge.outlined { background: #2d2a12; color: #e3b341; border-c
 #view .orb { width: 22px; height: 22px; box-shadow: none; background: var(--c); margin-top: .5em; }
 #view .page-head { align-items: flex-start; gap: 14px; }
 #view .card { background: none; box-shadow: none; border: 1px solid var(--r-rule); border-radius: 10px; padding: 18px 20px; }
-#view a.card:hover { transform: none; border-color: var(--c, var(--accent)); }
+#view a.card:hover { transform: none; border-color: var(--c, var(--accent)); background: color-mix(in srgb, var(--c, var(--accent)) 5%, transparent); }
 #view .planet-card .orb { width: 18px; height: 18px; margin-top: 4px; }
 #view .planet-card h3 { font-size: 1.05rem; margin: 0 0 4px; }
 #view .planet-card p { font-weight: 400; color: var(--r-muted); }
@@ -390,6 +420,15 @@ html.night #view .badge.outlined { background: #2d2a12; color: #e3b341; border-c
 #view .chip.outlined { border: 0; color: var(--r-muted); font-style: italic; }
 #view .chip:hover, #view .chip:active { transform: none; box-shadow: none; }
 #view .notice { background: var(--r-surface); color: var(--r-ink); box-shadow: none; border: 1px solid var(--r-rule); border-left: 4px solid var(--c, var(--accent)); border-radius: 6px; font-weight: 400; padding: 12px 16px; }
+/* .cta is also used inside reading pages now (e.g. the 404 view); its background/text need to flip
+   with the reader theme instead of inheriting --ink, which turns near-white in dark theme and would
+   otherwise pair white-on-white. */
+#view .cta, body.reading .cta {
+  background: var(--r-ink); color: var(--r-bg); box-shadow: none; border-radius: 8px;
+  background-position: 0 0;
+}
+#view .cta:hover, body.reading .cta:hover { background: var(--accent); color: var(--r-bg); transform: none; }
+#view .cta:active, body.reading .cta:active { box-shadow: none; }
 #view code { background: var(--r-surface); border: 1px solid var(--r-rule); border-radius: 4px; padding: 1px 5px; }
 
 #view .blurb { font-weight: 400; color: var(--r-muted, var(--blurb)); }
