@@ -683,10 +683,17 @@ html:has(body.reading) { scroll-padding-bottom: 96px; } /* leave room for the fl
 #phud > * { pointer-events: auto; }
 #pmap { width: 168px; height: 168px; border-radius: 50%; box-shadow: var(--puff-sm); }
 #pmap[hidden] { display: none; }
-#pctl { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 18px; background: var(--clay); box-shadow: var(--puff-sm); font-size: .82rem; color: var(--ink); }
+#pctl { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 18px; background: var(--clay); box-shadow: var(--puff-sm); font-size: .82rem; font-weight: 800; color: var(--ink); }
 #pctl label { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-#pctl label.chk { justify-content: flex-start; gap: 6px; }
-#pctl select { font: inherit; color: var(--ink); background: transparent; border: 1px solid var(--soft); border-radius: 10px; padding: 2px 6px; }
+#pctl label.chk { justify-content: flex-start; gap: 8px; }
+/* native <select>/checkbox chrome clashes with the clay pill language used everywhere else in Play
+   Mode, so both get a matching custom skin instead of the OS default box. */
+#pctl select {
+  font: inherit; font-weight: 800; color: var(--ink); background: var(--soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%236b6590' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7.5l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 8px center / 12px;
+  border: 0; border-radius: 10px; padding: 5px 24px 5px 10px; appearance: none; -webkit-appearance: none; box-shadow: var(--press); cursor: pointer;
+}
+#pctl select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#pctl input[type="checkbox"] { width: 17px; height: 17px; margin: 0; accent-color: var(--accent); cursor: pointer; }
 #pctl kbd { font: inherit; opacity: .6; border: 1px solid var(--soft); border-radius: 5px; padding: 0 4px; }
 #phudtoggle { display: none; }
 #dbg { position: fixed; left: 8px; bottom: 8px; z-index: 50; margin: 0; padding: 6px 9px; border-radius: 8px; background: rgba(0, 0, 0, .65); color: #9ff5d2; font: 12px/1.3 ui-monospace, monospace; pointer-events: none; }
