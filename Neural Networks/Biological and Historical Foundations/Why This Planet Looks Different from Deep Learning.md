@@ -1,10 +1,10 @@
-Every architecture on [[Deep Learning|the Deep Learning planet]] is trained the same fundamental way: compute an error against a known target, and adjust every weight to reduce it, by [[Backpropagation by Hand|backpropagation]]. Almost nothing on *this* planet is trained that way. This topic is the map: what the alternative training signals ahead actually are, and why none of them need backpropagation at all.
+Every architecture in [[Deep Learning|the Deep Learning subject]] is trained the same fundamental way: compute an error against a known target, and adjust every weight to reduce it, by [[Backpropagation by Hand|backpropagation]]. Almost nothing in *this* subject is trained that way. This topic is the map: what the alternative training signals ahead actually are, and why none of them need backpropagation at all.
 
 **You need:** [[The McCulloch-Pitts Neuron]] and [[Backpropagation by Hand]].
 
 ## The question it answers
 
-"If backpropagation works so well, why does an entire planet exist for networks that don't use it?" Because backpropagation needs something not every situation has: a known, correct target to measure error against. Every topic ahead finds a different way to learn without one — or sidesteps learning from data altogether.
+"If backpropagation works so well, why does an entire subject exist for networks that don't use it?" Because backpropagation needs something not every situation has: a known, correct target to measure error against. Every topic ahead finds a different way to learn without one — or sidesteps learning from data altogether.
 
 ## Intuition: four different sources of a training signal
 
@@ -44,23 +44,23 @@ fallback: The same connection, updated by each of the four signal sources in tur
 2. Set the target equal to the current output and see the error-driven update shrink to zero, while the Hebbian update is unaffected (it never looked at the target).
 3. Think about what each of the four approaches assumes is available — and what happens when that assumption doesn't hold.
 
-**What you should notice:** "no target available" is not a dead end — three different, genuinely useful strategies (correlation, energy, or no learning at all) exist for exactly that situation, and the rest of this planet is organised around them.
+**What you should notice:** "no target available" is not a dead end — three different, genuinely useful strategies (correlation, energy, or no learning at all) exist for exactly that situation, and the rest of this subject is organised around them.
 
 ## Where it appears in AI
 
 * **Correlation-driven and energy-driven learning solve real problems backpropagation can't reach directly**: learning with no labels at all, or building associative memory that recalls a whole pattern from a partial cue.
-* **Several of these ideas resurface inside modern deep learning anyway** — layer-wise pretraining (see [[Layer-Wise and Unsupervised Pretraining]]) and the attention-equivalence of modern Hopfield networks (see [[Modern Hopfield Networks and Attention]]) are two direct examples ahead on this road.
+* **Several of these ideas resurface inside modern deep learning anyway** — layer-wise pretraining (see [[Layer-Wise and Unsupervised Pretraining]]) and the attention-equivalence of modern Hopfield networks (see [[Modern Hopfield Networks and Attention]]) are two direct examples ahead.
 * **Choosing among them is itself a real decision** (see [[Choosing Classical vs Modern Approaches]]) that depends on whether labels exist, what kind of answer you need, and what hardware you're targeting.
 
 ## Common pitfalls
 
-* **Assuming "classical" means "obsolete."** Several ideas on this planet are in active, practical use — reservoir computing, spiking hardware, and self-organizing maps all solve real problems today.
-* **Expecting every topic ahead to be trained the same way.** Even within this planet, the four strategies above are genuinely different, not just variations on backpropagation.
+* **Assuming "classical" means "obsolete."** Several ideas in this subject are in active, practical use — reservoir computing, spiking hardware, and self-organizing maps all solve real problems today.
+* **Expecting every topic ahead to be trained the same way.** Even within this subject, the four strategies above are genuinely different, not just variations on backpropagation.
 * **Forgetting backpropagation itself needs a target.** It is extremely effective exactly when one exists — the topics ahead matter precisely for the situations where it doesn't.
 
 ## Quick check
 
-<details><summary>1. What does error-driven learning require that the other three strategies on this planet do not?</summary>
+<details><summary>1. What does error-driven learning require that the other three strategies in this subject do not?</summary>
 A known, correct target to compare the output against.
 </details>
 
@@ -68,7 +68,7 @@ A known, correct target to compare the output against.
 Hebb's rule never looks at the target at all — it only depends on the input and the output's own current values.
 </details>
 
-<details><summary>3. Name one strategy covered on this planet for learning (or not learning) with no target available.</summary>
+<details><summary>3. Name one strategy covered in this subject for learning (or not learning) with no target available.</summary>
 Correlation-driven (Hebbian) learning, energy-driven settling, or using fixed/random weights with nothing trained — any one of the three.
 </details>
 

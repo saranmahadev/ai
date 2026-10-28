@@ -1,6 +1,6 @@
-Information theory measures uncertainty and surprise in numbers. It began as the mathematics of sending messages efficiently, and it turned out to supply the loss functions of modern machine learning: cross-entropy trains classifiers and language models, and KL divergence measures how far one distribution is from another. This district builds them up from a single idea: rare events carry more information.
+Information theory measures uncertainty and surprise in numbers. It began as the mathematics of sending messages efficiently, and it turned out to supply the loss functions of modern machine learning: cross-entropy trains classifiers and language models, and KL divergence measures how far one distribution is from another. This section builds them up from a single idea: rare events carry more information.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Surprise and Information]]: measuring how unexpected an event is, in bits.
 * [[Entropy]]: the average surprise of a distribution.

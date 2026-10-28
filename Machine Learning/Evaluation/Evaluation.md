@@ -1,6 +1,6 @@
-A model is only as good as the evidence for it. This district covers how to measure a classifier honestly, from the confusion matrix and its rare-class traps to the trade-off between precision and recall and the threshold-free view of the ROC curve, how to score numeric predictions, how to get a steadier estimate from small data with cross-validation, and how to choose settings without fooling yourself.
+A model is only as good as the evidence for it. This section covers how to measure a classifier honestly, from the confusion matrix and its rare-class traps to the trade-off between precision and recall and the threshold-free view of the ROC curve, how to score numeric predictions, how to get a steadier estimate from small data with cross-validation, and how to choose settings without fooling yourself.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Accuracy and the Confusion Matrix]]: four outcomes and the rare-class trap.
 * [[Precision, Recall and F1]]: the threshold trade-off.

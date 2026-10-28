@@ -1,4 +1,4 @@
-**Attention** lets a model decide, for each item, which other items to focus on. It is three ideas from this planet in a row: compare a **query** with every **key** using dot products, turn the scores into weights with softmax, and take a weighted average of the **values**. It is the core of the Transformer.
+**Attention** lets a model decide, for each item, which other items to focus on. It is three ideas from this subject in a row: compare a **query** with every **key** using dot products, turn the scores into weights with softmax, and take a weighted average of the **values**. It is the core of the Transformer.
 
 **You need:** [[Dot Product]], [[Softmax and Cross-Entropy in Practice]], [[Expectation]] and [[Matrix Multiplication]].
 

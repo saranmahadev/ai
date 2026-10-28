@@ -1,6 +1,6 @@
-Knowing whether an LLM is actually good — not just at one cherry-picked example, but systematically — means building and trusting the right measurement tools. This district covers how the field evaluates these models, and the specific ways those measurements can mislead if taken at face value.
+Knowing whether an LLM is actually good — not just at one cherry-picked example, but systematically — means building and trusting the right measurement tools. This section covers how the field evaluates these models, and the specific ways those measurements can mislead if taken at face value.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Benchmark Suites (MMLU, HELM, BIG-bench)]]: the standardized tests the field uses to compare models.
 * [[Benchmark Contamination and Leakage]]: when a model has already seen the test, invalidating the score.

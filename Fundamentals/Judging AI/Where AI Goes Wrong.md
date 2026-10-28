@@ -59,11 +59,11 @@ fallback: Two groups of readings whose true cut-offs differ. A model picks one c
 * **Match the measure to the harm:** see [[Measuring Performance]].
 * **Do not assume fluent means correct.**
 
-The bench uses "groups" abstractly. In real systems the groups might be devices, regions, ages, languages or people. Later parts of the galaxy return to these questions in detail.
+The bench uses "groups" abstractly. In real systems the groups might be devices, regions, ages, languages or people. Later parts of this knowledge base return to these questions in detail.
 
 ## Where it appears in AI
 
-Every planet inherits these issues. [[Machine Learning]] adds tools to measure and reduce them. [[LLMs]] and [[Generative AI]] add new forms of confident error. [[Agents]] add the risk that a wrong decision is acted on.
+Every subject inherits these issues. [[Machine Learning]] adds tools to measure and reduce them. [[LLMs]] and [[Generative AI]] add new forms of confident error. [[Agents]] add the risk that a wrong decision is acted on.
 
 ## Common pitfalls
 

@@ -54,7 +54,7 @@ fallback: Step through retries of a transient and a permanent tool error and wat
 ## Where it appears in AI
 
 * **This is the same detect-and-recover shape as [[Re-Planning on Failure]]**, but at the level of a single tool call rather than a whole plan — the key judgment call in both cases is distinguishing a fixable failure from one that will recur identically.
-* **[[Designing Tools for Agent Reliability]], later in this district, is about reducing how often permanent errors happen in the first place** — a well-designed tool interface prevents many "malformed arguments" failures before any retry logic is even needed.
+* **[[Designing Tools for Agent Reliability]], later in this section, is about reducing how often permanent errors happen in the first place** — a well-designed tool interface prevents many "malformed arguments" failures before any retry logic is even needed.
 * **Blind retries without this distinction waste calls and money on errors retrying can never fix**, which is exactly why production agent systems need to classify an error before deciding whether to retry it at all.
 
 ## Common pitfalls

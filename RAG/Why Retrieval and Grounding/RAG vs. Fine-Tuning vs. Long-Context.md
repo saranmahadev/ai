@@ -52,9 +52,9 @@ fallback: Switch between task scenarios and see which approach actually scores b
 
 ## Where it appears in AI
 
-* **This reuses the same weighted-scoring mechanism as [[Choosing a Model for a Task]] on the LLMs planet**, applied here to choosing an adaptation strategy instead of a model size.
+* **This reuses the same weighted-scoring mechanism as [[Choosing a Model for a Task]] in LLMs**, applied here to choosing an adaptation strategy instead of a model size.
 * **Long-context's latency and cost scale with how much is stuffed into the prompt every single request ([[Cost and Latency of LLM APIs]])** — exactly the trade-off RAG's targeted retrieval is designed to avoid.
-* **Fine-tuning's own trade-offs (forgetting, update cost) are covered in depth on the LLMs planet ([[Fine-Tuning for a Specific Task]], [[Catastrophic Forgetting in Fine-Tuning]])** — this topic only covers when fine-tuning is the right tool to reach for in the first place.
+* **Fine-tuning's own trade-offs (forgetting, update cost) are covered in depth in LLMs ([[Fine-Tuning for a Specific Task]], [[Catastrophic Forgetting in Fine-Tuning]])** — this topic only covers when fine-tuning is the right tool to reach for in the first place.
 
 ## Common pitfalls
 

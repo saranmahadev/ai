@@ -5,7 +5,7 @@ const words = (s) => (s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").
 
 export function buildIndex(content) {
   const docs = [];
-  for (const p of content.planets) docs.push({ id: p.id, kind: "planet", title: p.title, sub: p.planned ? "Planet · not explored yet" : "Planet", text: p.blurb, terms: "", planet: p.title });
+  for (const p of content.planets) docs.push({ id: p.id, kind: "planet", title: p.title, sub: p.planned ? "Subject · not explored yet" : "Subject", text: p.blurb, terms: "", planet: p.title });
   for (const t of Object.values(content.topics)) {
     if (t.status === "outlined") continue;
     const p = t.planet && content.planets.find((x) => x.id === t.planet), d = p && p.districts.find((x) => x.id === t.district);
@@ -50,7 +50,7 @@ export function mountSearch({ content, onGo }) {
     active = 0;
     list.innerHTML = results.length
       ? results.map((d, i) => `<li role="option" id="sr-${i}" data-i="${i}" aria-selected="${i === active}"><b>${esc(d.title)}</b><small>${esc(d.sub)}</small><span>${esc(d.text.length > 110 ? d.text.slice(0, 108).replace(/\s+\S*$/, "") + "…" : d.text)}</span></li>`).join("")
-      : `<li class="empty" role="presentation">${q ? "No topics match. Try a shorter word." : "Type a word: a topic, a term or a planet."}</li>`;
+      : `<li class="empty" role="presentation">${q ? "No topics match. Try a shorter word." : "Type a word: a topic, a term or a subject."}</li>`;
     input.setAttribute("aria-activedescendant", results.length ? "sr-0" : "");
   };
   const mark = () => { list.querySelectorAll("[role=option]").forEach((li, i) => { li.setAttribute("aria-selected", String(i === active)); if (i === active) li.scrollIntoView({ block: "nearest" }); }); input.setAttribute("aria-activedescendant", results.length ? `sr-${active}` : ""); };

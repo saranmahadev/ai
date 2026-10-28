@@ -1,4 +1,4 @@
-Everything so far on this planet has been about making a single forward pass efficient. Serving a transformer to real traffic adds a different question entirely: many requests arrive at once, and how they're grouped together changes both how much total work the hardware gets through and how long any individual request actually waits.
+Everything so far in this subject has been about making a single forward pass efficient. Serving a transformer to real traffic adds a different question entirely: many requests arrive at once, and how they're grouped together changes both how much total work the hardware gets through and how long any individual request actually waits.
 
 **You need:** [[KV-Caching for Autoregressive Inference]], [[Multi-Query and Grouped-Query Attention]].
 
@@ -54,7 +54,7 @@ fallback: Set a batch size and see processing time and throughput change, alongs
 
 * **Every production transformer-serving system has to make this trade-off explicitly**, usually by capping batch size or the maximum wait time before processing a partially-filled batch, rather than choosing one extreme.
 * **[[Multi-Query and Grouped-Query Attention|KV-cache size]] directly limits how large a batch can grow**: each request in a batch needs its own growing cache, so memory — not just compute — caps batch size in practice.
-* **[[Capstone: Assembling a Tiny Transformer from the Ground Up|the planet's capstone]] closes by tracing a single request through the whole pipeline this planet has built**, end to end.
+* **[[Capstone: Assembling a Tiny Transformer from the Ground Up|this subject's capstone]] closes by tracing a single request through the whole pipeline this subject has built**, end to end.
 
 ## Common pitfalls
 

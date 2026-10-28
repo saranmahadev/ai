@@ -50,7 +50,7 @@ fallback: Switch between license styles and see which freedoms are actually perm
 
 * **A model's license is independent of whether its weights are published** ([[Open-Weight vs. Closed Models]]) — open weights under a usage-capped license still restrict large-scale commercial redistribution.
 * **A model card ([[Model Cards and Responsible Release]]) documents capabilities and limitations, not legal permissions** — license terms are a separate, usually separately published, document.
-* **Deploying a fine-tuned or merged model (covered on the LLMs in Practice stretch of this road) inherits the license terms of every model that went into it** — governance isn't limited to the first release.
+* **Deploying a fine-tuned or merged model (covered in the LLMs in Practice section of this subject) inherits the license terms of every model that went into it** — governance isn't limited to the first release.
 
 ## Common pitfalls
 

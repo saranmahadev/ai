@@ -1,10 +1,10 @@
-Every technique in this district so far — longer chains, wider search, more refinement rounds, tool calls — shares something in common: none of them change the model's weights. They all spend more computation *after* training, at the moment of answering, in exchange for a better answer.
+Every technique in this section so far — longer chains, wider search, more refinement rounds, tool calls — shares something in common: none of them change the model's weights. They all spend more computation *after* training, at the moment of answering, in exchange for a better answer.
 
 **You need:** [[Tree-of-Thought and Search-Based Reasoning]], [[Self-Consistency and Best-of-N Sampling]].
 
 ## The question it answers
 
-"Can spending more compute at answer time substitute for a better-trained model?" Within real limits, yes. **Test-time compute scaling** is the general principle behind every technique in this district: holding the trained model fixed, spend more inference-time computation — more samples, deeper search, more verification — to reliably push accuracy higher. A **verifier-scored best-of-N** search makes this concrete: sample N candidate answers, score each with a verifier (a model or rule that estimates correctness, noisily but usefully correlated with the truth), and keep whichever scored highest.
+"Can spending more compute at answer time substitute for a better-trained model?" Within real limits, yes. **Test-time compute scaling** is the general principle behind every technique in this section: holding the trained model fixed, spend more inference-time computation — more samples, deeper search, more verification — to reliably push accuracy higher. A **verifier-scored best-of-N** search makes this concrete: sample N candidate answers, score each with a verifier (a model or rule that estimates correctness, noisily but usefully correlated with the truth), and keep whichever scored highest.
 
 ## Intuition
 
@@ -56,7 +56,7 @@ fallback: Adjust how many samples a verifier-scored search draws at inference ti
 ## Where it appears in AI
 
 * **Modern "reasoning" models (trained to generate much longer chains of thought before answering) are, in effect, spending far more test-time compute per query than earlier models did**, directly trading inference cost for accuracy on hard reasoning tasks.
-* **It's a genuinely different lever from pretraining-time scaling** ([[Compute-Optimal Scaling (Chinchilla)|covered earlier on this planet]]): one invests compute once, during training, to make the model itself better; the other spends compute repeatedly, every time a question is asked, to get a better answer from the same model.
+* **It's a genuinely different lever from pretraining-time scaling** ([[Compute-Optimal Scaling (Chinchilla)|covered earlier in this subject]]): one invests compute once, during training, to make the model itself better; the other spends compute repeatedly, every time a question is asked, to get a better answer from the same model.
 * **It composes with [[Tree-of-Thought and Search-Based Reasoning|search]] and [[Self-Refinement and Iterative Critique|refinement]]** — all three are different concrete mechanisms for spending more inference-time compute, and real systems often combine more than one.
 
 ## Common pitfalls
@@ -75,7 +75,7 @@ More inference-time computation — more samples, deeper search, more refinement
 It rose from under 40% to effectively 100%, purely from drawing more independent samples and keeping whichever one the verifier scored highest.
 </details>
 
-<details><summary>3. How does test-time compute scaling differ from the pretraining-time scaling covered earlier on this planet?</summary>
+<details><summary>3. How does test-time compute scaling differ from the pretraining-time scaling covered earlier in this subject?</summary>
 Pretraining-time scaling spends compute once, during training, to produce a better model; test-time compute scaling spends compute repeatedly, every time a question is answered, using a model whose weights never change.
 </details>
 

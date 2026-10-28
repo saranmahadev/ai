@@ -22,7 +22,7 @@
 
 ---
 
-Every subject follows the same arc: a plain-language explanation, a worked example with real numbers, an interactive bench you can play with in the browser, common pitfalls, a quick check, and links to what to read next. There's also an optional 3D **Explorer Mode**, if you'd rather fly a rocket between subjects and walk a planet's streets than click through a list — same content either way, nothing locked behind it.
+Every subject follows the same arc: a plain-language explanation, a worked example with real numbers, an interactive bench you can play with in the browser, common pitfalls, a quick check, and links to what to read next. There's also an optional 3D **Play Mode**, if you'd rather fly a rocket between subjects and walk a planet's streets than click through a list — same content either way, nothing locked behind it.
 
 ## Why this is different
 

@@ -49,7 +49,7 @@ fallback: Switch between human oversight tiers and watch how many of a trajector
 ## Where it appears in AI
 
 * **This tiering is the agent-specific extension of [[Open-Loop vs. Closed-Loop Behavior]]**: a closed loop checks its own results automatically, while an oversight tier decides when a *human*, not the agent itself, is the one doing the checking.
-* **[[Sandboxing and Isolation]] and [[Excessive Agency and Scope Limits]], later in this district, are the complementary approach**: instead of relying on a human catching a mistake before it happens, they limit how much damage any single mistake can do in the first place.
+* **[[Sandboxing and Isolation]] and [[Excessive Agency and Scope Limits]], later in this section, are the complementary approach**: instead of relying on a human catching a mistake before it happens, they limit how much damage any single mistake can do in the first place.
 * **The irreversibility distinction this topic relies on recurs throughout [[Guardrails for Agent Actions]]**: a guardrail can use the exact same reversible/irreversible split to decide which proposed actions need an extra check.
 
 ## Common pitfalls

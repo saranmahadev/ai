@@ -1,6 +1,6 @@
-The last stretch of the road is judgment: picking an architecture, trusting it, knowing where it breaks, and seeing the whole planet in one project.
+The last section is judgment: picking an architecture, trusting it, knowing where it breaks, and seeing the whole subject in one project.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Choosing an Architecture for a Problem]]: matching a problem's data and constraints to a family of networks.
 * [[Adversarial Examples and Robustness]]: tiny, deliberate changes that fool a network that otherwise performs well.

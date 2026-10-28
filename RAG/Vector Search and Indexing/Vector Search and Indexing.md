@@ -1,6 +1,6 @@
-Once a collection has a few million chunks, each with its own embedding, finding the handful nearest to a query vector stops being a problem you can solve by checking every single one. This district is about the data structures and systems that make that search fast at scale.
+Once a collection has a few million chunks, each with its own embedding, finding the handful nearest to a query vector stops being a problem you can solve by checking every single one. This section is about the data structures and systems that make that search fast at scale.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Exact Nearest Neighbor Search]]: finding the true closest vectors, and why it stops being affordable.
 * [[Approximate Nearest Neighbor Search with HNSW]]: searching a graph of vectors instead of the whole collection.

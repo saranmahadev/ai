@@ -1,4 +1,4 @@
-Everything on this planet so far has been about a single request: decode it well, condition it correctly, evaluate it fairly. A real product serves thousands of requests, and most of its cost comes from decisions that have nothing to do with any individual one of them.
+Everything in this subject so far has been about a single request: decode it well, condition it correctly, evaluate it fairly. A real product serves thousands of requests, and most of its cost comes from decisions that have nothing to do with any individual one of them.
 
 **You need:** [[Parameter-Efficient Adaptation for Generation]], [[Content Safety and Red-Teaming]].
 
@@ -55,7 +55,7 @@ fallback: Adjust a cache hit rate and watch how much of a generative product's t
 
 * **Production LLM APIs commonly cache responses to repeated or near-identical prompts**, especially for common queries, because the savings from avoiding redundant generation can be substantial at scale.
 * **Safety filtering, when it can run cheaply before generation, is a cost optimization as well as a safety one** — a request blocked before reaching the model costs nothing to generate.
-* **[[Inference Serving Trade-offs|batching decisions]] on the Transformers planet address a related but distinct cost lever** — how to make the *generation* stage itself more efficient once a request actually reaches it, rather than how to avoid reaching it in the first place.
+* **[[Inference Serving Trade-offs|batching decisions]] in Transformers address a related but distinct cost lever** — how to make the *generation* stage itself more efficient once a request actually reaches it, rather than how to avoid reaching it in the first place.
 
 ## Common pitfalls
 

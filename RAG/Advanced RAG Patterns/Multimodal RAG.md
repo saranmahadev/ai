@@ -50,8 +50,8 @@ fallback: Rank images by cross-modal similarity to a text query in a shared embe
 ## Where it appears in AI
 
 * **This reuses [[Dense Retrieval]]'s exact similarity mechanism**, with the only change being which modality each side's embedding comes from.
-* **Building the shared space in the first place is exactly [[Contrastive Learning]]**, already covered on the Deep Learning planet — this topic is about using that shared space for retrieval, not re-deriving how it's trained.
-* **A multimodal RAG system's generation stage often needs a model capable of reasoning over the retrieved image directly**, not just citing it as text — connecting back to multimodal generation covered on the Generative AI planet.
+* **Building the shared space in the first place is exactly [[Contrastive Learning]]**, already covered in Deep Learning — this topic is about using that shared space for retrieval, not re-deriving how it's trained.
+* **A multimodal RAG system's generation stage often needs a model capable of reasoning over the retrieved image directly**, not just citing it as text — connecting back to multimodal generation covered in Generative AI.
 
 ## Common pitfalls
 

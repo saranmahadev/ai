@@ -1,4 +1,4 @@
-Every metric so far on this planet is automatic — computed from numbers, with no judgment involved. For plenty of generated content, that's exactly the problem: whether a joke is funny, a summary reads naturally, or an image "feels right" doesn't reduce cleanly to an automatic formula. This note covers collecting human judgment directly, and combining many small, noisy opinions into a reliable ranking.
+Every metric so far in this subject is automatic — computed from numbers, with no judgment involved. For plenty of generated content, that's exactly the problem: whether a joke is funny, a summary reads naturally, or an image "feels right" doesn't reduce cleanly to an automatic formula. This note covers collecting human judgment directly, and combining many small, noisy opinions into a reliable ranking.
 
 **You need:** [[Distributional Metrics (FID, Inception Score and CLIP Score)]].
 

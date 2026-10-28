@@ -1,4 +1,4 @@
-Every agent architecture this road covers, however different the application, is built from the same five named pieces: something that perceives the current request, something that remembers relevant state, something that plans, something that acts, and something that decides whether to loop again. Naming them consistently here means every later topic can refer to "the planner" or "the controller" without re-explaining what that is.
+Every agent architecture covered in this subject, however different the application, is built from the same five named pieces: something that perceives the current request, something that remembers relevant state, something that plans, something that acts, and something that decides whether to loop again. Naming them consistently here means every later topic can refer to "the planner" or "the controller" without re-explaining what that is.
 
 **You need:** [[The Augmented LLM]], [[Open-Loop vs. Closed-Loop Behavior]].
 
@@ -49,8 +49,8 @@ fallback: Step through the named components of an agent architecture on one toy 
 
 ## Where it appears in AI
 
-* **This is the same shape as [[PDA Loop|the perceive-decide-act loop]] already covered on the Fundamentals planet**, split into finer-grained, named pieces specific to how an agent built on an LLM actually works.
-* **Every later district is a deep dive into one of these five components**: [[Planning and Task Decomposition]] is the planner, [[Tool Use and Function Calling]] is the tool executor, [[Memory and State Management]] is memory, and the controller's checking behavior is [[Open-Loop vs. Closed-Loop Behavior]].
+* **This is the same shape as [[PDA Loop|the perceive-decide-act loop]] already covered in Fundamentals**, split into finer-grained, named pieces specific to how an agent built on an LLM actually works.
+* **Every later section is a deep dive into one of these five components**: [[Planning and Task Decomposition]] is the planner, [[Tool Use and Function Calling]] is the tool executor, [[Memory and State Management]] is memory, and the controller's checking behavior is [[Open-Loop vs. Closed-Loop Behavior]].
 * **[[Observability and Tracing for Agent Runs]] depends on being able to log which component produced which part of a run** — naming the components consistently is what makes a trace readable at all.
 
 ## Common pitfalls

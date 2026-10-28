@@ -1,6 +1,6 @@
 Probability is the maths of uncertainty. It gives numbers to "how likely?", and rules for combining those numbers. Modern AI is probabilistic at heart: a classifier outputs the *probability* of each label, a language model outputs a probability for every possible next word, and training itself is often framed as making the observed data as probable as possible.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Events and Sample Spaces]]: the outcomes that can happen and the groups of them we care about.
 * [[Probability Rules]]: the few rules every probability obeys.

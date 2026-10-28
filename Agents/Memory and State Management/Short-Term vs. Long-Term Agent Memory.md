@@ -57,7 +57,7 @@ fallback: Compare how many times a fact must be restated across sessions with an
 
 * **This is the memory component named in [[Anatomy of an Agent Architecture]]**, looked at specifically through the lens of what does and doesn't survive past one run.
 * **[[Episodic Memory and Experience Logs]] is a specific, structured kind of long-term memory**: not just facts, but a record of what the agent actually did and what happened.
-* **This is a different problem from [[Multi-Turn Conversation State and Memory|managing a single long conversation's context]], already covered on the LLMs planet** — that's about keeping one ongoing conversation's context bounded; this is about whether anything survives at all once a run ends entirely.
+* **This is a different problem from [[Multi-Turn Conversation State and Memory|managing a single long conversation's context]], already covered in LLMs** — that's about keeping one ongoing conversation's context bounded; this is about whether anything survives at all once a run ends entirely.
 
 ## Common pitfalls
 

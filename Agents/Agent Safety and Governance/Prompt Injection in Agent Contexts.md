@@ -49,7 +49,7 @@ fallback: Toggle a scope-limited action gate and watch an injected instruction f
 
 ## Where it appears in AI
 
-* **This is the agent-specific sequel to prompt injection risks already named on [[Security and Data Leakage in RAG|the RAG planet]] and the adversarial-attack framing on [[Adversarial and Jailbreak Evaluation|the LLMs planet]]** — those cover getting a model to produce bad *text*; this topic covers the same mechanism producing a bad *action*.
+* **This is the agent-specific sequel to prompt injection risks already named in [[Security and Data Leakage in RAG|RAG]] and the adversarial-attack framing in [[Adversarial and Jailbreak Evaluation|LLMs]]** — those cover getting a model to produce bad *text*; this topic covers the same mechanism producing a bad *action*.
 * **[[Excessive Agency and Scope Limits]] is the actual defense this worked example relies on**: an injected instruction can only succeed at actions inside the agent's granted tool scope, which is exactly why minimizing that scope matters.
 * **[[Guardrails for Agent Actions]] is the second line of defense for an action that does remain inside scope**: even a tool the agent legitimately has can be checked against a high-risk pattern before it runs, whatever instruction (legitimate or injected) triggered it.
 

@@ -1,6 +1,6 @@
-Some problems come with no answer key, only a score after the fact. Reinforcement learning is about agents that learn to act from rewards. This district covers what a reward, a state and a policy are, how the value of a situation is defined and computed, the exploration trade-off in its simplest form, learning values from experience with Q-learning, and improving a policy directly with policy gradients.
+Some problems come with no answer key, only a score after the fact. Reinforcement learning is about agents that learn to act from rewards. This section covers what a reward, a state and a policy are, how the value of a situation is defined and computed, the exploration trade-off in its simplest form, learning values from experience with Q-learning, and improving a policy directly with policy gradients.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Rewards, States and Policies]]: return, discounting and policies.
 * [[Value Functions]]: how good is it to be here?

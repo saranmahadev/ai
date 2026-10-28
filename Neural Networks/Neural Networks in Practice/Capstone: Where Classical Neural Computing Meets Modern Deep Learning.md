@@ -1,4 +1,4 @@
-This capstone builds one small memory-recall pipeline and runs it two ways — the classical, discrete way from early in this planet, and the continuous, attention-equivalent way from [[Modern Hopfield Networks and Attention]] — to see, in one concrete example, how directly they agree.
+This capstone builds one small memory-recall pipeline and runs it two ways — the classical, discrete way from early in this subject, and the continuous, attention-equivalent way from [[Modern Hopfield Networks and Attention]] — to see, in one concrete example, how directly they agree.
 
 **You need:** [[Hopfield Networks]], [[Modern Hopfield Networks and Attention]], [[Neuromorphic Hardware]].
 
@@ -8,7 +8,7 @@ This capstone builds one small memory-recall pipeline and runs it two ways — t
 
 ## Intuition
 
-Store a handful of patterns once. Ask the memory to recall one from a partial, corrupted cue two different ways: the classical way, flipping one binary unit at a time until nothing changes; and the continuous way, taking one softmax-weighted average over all the stored patterns at once. If the planet's central claim holds — that these are, underneath, the same computation — the two answers should land in the same place, with the continuous version's answer sharpening toward the classical one as its temperature parameter is turned down.
+Store a handful of patterns once. Ask the memory to recall one from a partial, corrupted cue two different ways: the classical way, flipping one binary unit at a time until nothing changes; and the continuous way, taking one softmax-weighted average over all the stored patterns at once. If this subject's central claim holds — that these are, underneath, the same computation — the two answers should land in the same place, with the continuous version's answer sharpening toward the classical one as its temperature parameter is turned down.
 
 ## Worked walkthrough
 
@@ -40,7 +40,7 @@ Even at a modest temperature (`β = 1`), the continuous version already puts 98%
 
 ## Where this would go next
 
-If this memory lookup needed to run continuously on a battery-powered device, [[Neuromorphic Hardware|the sparsity-advantage formula]] from earlier in this planet gives a concrete way to estimate the saving: a lookup queried only occasionally — say a duty cycle of `r = 0.1` — would cost roughly `1 / 0.1 = 10×` less on event-driven hardware than on hardware that re-evaluates the whole memory every clock cycle, for exactly the same reason a sparsely-firing spiking network does.
+If this memory lookup needed to run continuously on a battery-powered device, [[Neuromorphic Hardware|the sparsity-advantage formula]] from earlier in this subject gives a concrete way to estimate the saving: a lookup queried only occasionally — say a duty cycle of `r = 0.1` — would cost roughly `1 / 0.1 = 10×` less on event-driven hardware than on hardware that re-evaluates the whole memory every clock cycle, for exactly the same reason a sparsely-firing spiking network does.
 
 ## Bench
 
@@ -60,9 +60,9 @@ fallback: Store a few patterns, corrupt a cue, and compare the classical network
 
 ## Where it appears in AI
 
-* **It closes the loop this planet opened** in [[Why This Planet Looks Different from Deep Learning]]: a training signal with no target at all (energy-driven settling) turns out, decades later, to be mathematically inside one of the most important mechanisms in modern deep learning.
+* **It closes the loop this subject opened** in [[Why This Planet Looks Different from Deep Learning]]: a training signal with no target at all (energy-driven settling) turns out, decades later, to be mathematically inside one of the most important mechanisms in modern deep learning.
 * **It is a template for reading research claims critically**: rather than taking "these are equivalent" on faith, this capstone checked it directly on numbers small enough to verify by hand.
-* **The deployment framing connects back to [[Efficiency and Deployment]] on [[Deep Learning]]**: the same instinct — measure the actual cost of a specific deployment constraint — applies whether the constraint is memory, latency, or (as here) power.
+* **The deployment framing connects back to [[Efficiency and Deployment]] in [[Deep Learning]]**: the same instinct — measure the actual cost of a specific deployment constraint — applies whether the constraint is memory, latency, or (as here) power.
 
 ## Common pitfalls
 

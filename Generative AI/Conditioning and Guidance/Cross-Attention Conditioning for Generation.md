@@ -30,7 +30,7 @@ latent 0 (≈ "a"):    attention weights  a: 0.419   cat: 0.254   red: 0.327
 latent 1 (≈ "cat"):  attention weights  a: 0.274   cat: 0.408   red: 0.318
 ```
 
-Each latent's highest attention weight lands on the text token it's closest to — latent 0 on "a" (0.419), latent 1 on "cat" (0.408) — and its output becomes a blend of all three conditioning values, dominated by whichever one it attended to most. Nothing forced this; it falls directly out of the same dot-product similarity that drives every other attention computation on this road.
+Each latent's highest attention weight lands on the text token it's closest to — latent 0 on "a" (0.419), latent 1 on "cat" (0.408) — and its output becomes a blend of all three conditioning values, dominated by whichever one it attended to most. Nothing forced this; it falls directly out of the same dot-product similarity that drives every other attention computation in this knowledge base.
 
 ## Bench
 

@@ -1,6 +1,6 @@
-The last stretch of this planet's road: adapting a generative model to a specific use case, serving it as a real product, counting the resources that costs, and a capstone that reassembles decoding and guidance into one small working generator.
+This last section of the subject: adapting a generative model to a specific use case, serving it as a real product, counting the resources that costs, and a capstone that reassembles decoding and guidance into one small working generator.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Parameter-Efficient Adaptation for Generation]]: adapting a large generative model's style or domain without retraining all of it.
 * [[Building a Generative Product]]: the product-level decisions around serving generation to real users.

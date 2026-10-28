@@ -51,7 +51,7 @@ fallback: Add a new document to a store and compare how a parametric and a retri
 
 ## Where it appears in AI
 
-* **This is the entire reason retrieval-augmented generation exists**: every topic on this planet is, in one way or another, about building and using the non-parametric half of this picture well.
+* **This is the entire reason retrieval-augmented generation exists**: every topic in this subject is, in one way or another, about building and using the non-parametric half of this picture well.
 * **[[Hallucination and Knowledge Cutoff]] is what happens when a model is forced to answer from parametric knowledge alone, past the point where that knowledge is current or complete.**
 * **[[RAG vs. Fine-Tuning vs. Long-Context]] compares this topic's two knowledge stores against a third option — stuffing non-parametric information directly into the prompt instead of a searchable store.**
 

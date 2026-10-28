@@ -1,6 +1,6 @@
-Text, audio and time series are sequences: order matters, and length varies. This district covers the networks built to read one step at a time while keeping a memory of what came before.
+Text, audio and time series are sequences: order matters, and length varies. This section covers the networks built to read one step at a time while keeping a memory of what came before.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Recurrent Neural Networks]]: a network with a memory that feeds back into itself at every step.
 * [[Backpropagation Through Time]]: training a recurrent network by unrolling it into a long chain.

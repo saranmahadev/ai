@@ -52,7 +52,7 @@ fallback: Slide the number of candidate objects and compare success rate across 
 ## Where it appears in AI
 
 * **This generalizes the lesson from [[Web-Browsing Agents]] and [[Computer-Use Agents and GUI Grounding]]**: index-based web actions and raw pixel clicks are both, in effect, enumerated or coarse designs with their own specific failure patterns — naming an element by stable identity is the parameterized fix in both cases.
-* **[[Tool Selection Among Many Candidates]], covered in the tool-use district, is the enumerated failure mode applied specifically to tool choice** — picking the right one of many near-identical tools degrades the same way as k grows.
+* **[[Tool Selection Among Many Candidates]], covered in the tool-use section, is the enumerated failure mode applied specifically to tool choice** — picking the right one of many near-identical tools degrades the same way as k grows.
 * **[[Hierarchical Task Planning]]'s branching-factor problem is a close relative**: both topics show that how a space (of actions, or of plans) is structured determines how hard search or choice becomes, independent of how capable the chooser is.
 
 ## Common pitfalls

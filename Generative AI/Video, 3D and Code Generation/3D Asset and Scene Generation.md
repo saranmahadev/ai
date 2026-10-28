@@ -1,4 +1,4 @@
-Every generation method so far on this planet produces a flat grid of values — pixels, a spectrogram, a sequence of frames. A genuinely three-dimensional object needs a different kind of representation entirely: something that can answer "is this point inside the shape, or outside it?" for *any* point in space, not just at fixed grid positions.
+Every generation method so far in this subject produces a flat grid of values — pixels, a spectrogram, a sequence of frames. A genuinely three-dimensional object needs a different kind of representation entirely: something that can answer "is this point inside the shape, or outside it?" for *any* point in space, not just at fixed grid positions.
 
 **You need:** [[ControlNet-Style Structural Conditioning]].
 

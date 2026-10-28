@@ -48,7 +48,7 @@ fallback: Compare raw transcript size against a fixed summarization budget as a 
 
 ## Where it appears in AI
 
-* **This is the same trade-off as [[Multi-Turn Conversation State and Memory|summarization-based conversation memory]] on the LLMs planet**, applied to an agent's whole long-term memory store rather than just one conversation's context.
+* **This is the same trade-off as [[Multi-Turn Conversation State and Memory|summarization-based conversation memory]] in LLMs**, applied to an agent's whole long-term memory store rather than just one conversation's context.
 * **[[Memory Retrieval as Agent-Time RAG]] can only retrieve what the store still has** — a detail compressed away or dropped during forgetting is gone from retrieval too, no matter how relevant it would have been.
 * **[[Memory Compression and Forgetting|Forgetting]] deliberately, bounded by a budget, is different from losing information by accident** — the budget is a design decision about how much of the past to keep, not a failure to keep anything at all.
 

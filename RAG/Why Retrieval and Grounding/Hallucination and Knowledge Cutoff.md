@@ -53,8 +53,8 @@ fallback: Slide an event's date relative to a training cutoff and watch confiden
 
 ## Where it appears in AI
 
-* **This is a specific, dateable instance of the broader [[Hallucination and Factuality|hallucination]] problem** covered on the Generative AI planet — knowledge cutoff is one concrete, predictable cause among several.
-* **Retrieval directly addresses this gap** by giving the model current documents to answer from instead of relying on its own decaying confidence — the motivation behind everything else on this planet.
+* **This is a specific, dateable instance of the broader [[Hallucination and Factuality|hallucination]] problem** covered in Generative AI — knowledge cutoff is one concrete, predictable cause among several.
+* **Retrieval directly addresses this gap** by giving the model current documents to answer from instead of relying on its own decaying confidence — the motivation behind everything else in this subject.
 * **[[RAG vs. Fine-Tuning vs. Long-Context]] treats "freshness" as one of the dimensions that decides whether retrieval is the right fix for a given knowledge gap.**
 
 ## Common pitfalls

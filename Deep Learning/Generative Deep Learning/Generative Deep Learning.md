@@ -1,6 +1,6 @@
-[[Generative vs Discriminative Models]] on the Machine Learning planet draws the line; this district walks the deep architectures that learn to generate rather than only recognise, from a bottleneck that reconstructs to one that denoises.
+[[Generative vs Discriminative Models]] in Machine Learning draws the line; this section walks the deep architectures that learn to generate rather than only recognise, from a bottleneck that reconstructs to one that denoises.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Variational Autoencoders]]: an autoencoder whose bottleneck is a distribution you can sample from.
 * [[Generative Adversarial Networks]]: two networks trained against each other, one generating and one judging.

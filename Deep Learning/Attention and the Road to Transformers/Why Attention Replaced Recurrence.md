@@ -50,7 +50,7 @@ fallback: A sequence length slider. Compare the path length (and resulting signa
 ## Where it appears in AI
 
 * **Every modern large language model** is built from self-attention for exactly this reason — the ability to relate any two tokens directly, however far apart, without a chain of recurrent steps between them.
-* **The quadratic cost of full self-attention is a genuine, active engineering problem**, driving research into more efficient attention variants for very long sequences — a topic for later planets, not covered in depth here.
+* **The quadratic cost of full self-attention is a genuine, active engineering problem**, driving research into more efficient attention variants for very long sequences — a topic for later subjects, not covered in depth here.
 * **Parallel training (not just parallel attention computation)** is a major practical win too: an entire sequence's self-attention layer can be computed in one batched matrix operation, unlike an RNN's inherently step-by-step forward pass.
 
 ## Common pitfalls

@@ -1,4 +1,4 @@
-This capstone builds a small classifier from start to finish and brings the whole planet together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look at a sealed test set. The data is designed so that each earlier lesson matters: a huge-scale noise column, a pattern no straight line can find, and a label with some noise.
+This capstone builds a small classifier from start to finish and brings the whole subject together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look at a sealed test set. The data is designed so that each earlier lesson matters: a huge-scale noise column, a pattern no straight line can find, and a label with some noise.
 
 **You need:** [[The ML Workflow]], [[Pipelines and Leakage]], [[Feature Engineering]], [[Scaling and Normalisation]] and [[Random Forests]].
 
@@ -94,7 +94,7 @@ Zero: choose with cross-validation and open the test set once at the end.
 
 ## Key terms
 
-* **Capstone:** a project that combines the lessons of a whole planet.
+* **Capstone:** a project that combines the lessons of a whole subject.
 * **Sealed test set:** data kept unseen until the final score.
 * **Engineered feature:** a new input built from existing ones.
 * **Honest estimate:** a score not influenced by decisions made on the test data.

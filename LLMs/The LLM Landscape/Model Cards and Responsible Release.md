@@ -52,7 +52,7 @@ fallback: Toggle which model-card sections are filled in and watch the completen
 
 * **Open-weight releases (see [[Open-Weight vs. Closed Models]]) are often accompanied by a model card**, since there's no other way for downstream users to learn what the provider knows about the model's limitations.
 * **[[Responsible Scaling Policies and Frontier Safety]] treats documentation completeness as part of what a responsible release requires**, especially for the known-biases and limitations sections.
-* **A leaderboard entry (covered on the Evaluating LLMs stretch of this road) says nothing about a model's documented limitations** — model-card completeness is a separate, complementary signal to benchmark scores.
+* **A leaderboard entry (covered in the Evaluating LLMs section of this subject) says nothing about a model's documented limitations** — model-card completeness is a separate, complementary signal to benchmark scores.
 
 ## Common pitfalls
 

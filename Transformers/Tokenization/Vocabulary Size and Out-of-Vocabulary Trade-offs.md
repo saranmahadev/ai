@@ -51,7 +51,7 @@ fallback: Train BPE to a chosen number of merges and see the resulting vocabular
 
 ## Where it appears in AI
 
-* **It is the first of several budget trade-offs this planet makes concrete** — later districts weigh similar costs for attention computation itself (see [[Efficient and Scaled Attention]]) and for a transformer's total parameter count (see [[Counting a Transformer's Parameters and FLOPs]]).
+* **It is the first of several budget trade-offs this subject makes concrete** — later sections weigh similar costs for attention computation itself (see [[Efficient and Scaled Attention]]) and for a transformer's total parameter count (see [[Counting a Transformer's Parameters and FLOPs]]).
 * **Real tokenizers converge on broadly similar vocabulary sizes** (tens of thousands of entries) across very different models, because this trade-off has a genuine sweet spot rather than a single "more is better" direction.
 * **A fixed vocabulary set at training time is one of the few truly immovable choices in a deployed model** — changing it means retraining the embedding table (and usually the whole model) from scratch.
 

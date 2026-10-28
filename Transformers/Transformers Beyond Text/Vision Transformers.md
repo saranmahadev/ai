@@ -1,4 +1,4 @@
-[[Tokenizing Beyond Text|Patches became a token sequence]] several districts ago. This topic finishes the job: linearly project each patch into the model's width, prepend a special summary token, add positional information, and run the exact same transformer block machinery already built for text.
+[[Tokenizing Beyond Text|Patches became a token sequence]] several sections ago. This topic finishes the job: linearly project each patch into the model's width, prepend a special summary token, add positional information, and run the exact same transformer block machinery already built for text.
 
 **You need:** [[Tokenizing Beyond Text]], [[Learned Positional Embeddings]], [[Assembling One Transformer Block]].
 
@@ -62,7 +62,7 @@ fallback: Patchify a small image, project the patches, prepend a CLS token, and 
 ## Where it appears in AI
 
 * **It is the standard architecture for applying transformers to image classification**, and the clearest demonstration that nothing about the transformer block itself is specific to language.
-* **It directly reuses [[Assembling One Transformer Block|the full block]] built earlier on this planet** — a genuine example of the same machinery generalizing to a new modality with minimal new parts.
+* **It directly reuses [[Assembling One Transformer Block|the full block]] built earlier in this subject** — a genuine example of the same machinery generalizing to a new modality with minimal new parts.
 * **[[Multimodal Transformers as an Architecture Pattern|the next topic]] builds on exactly this**: once image patches are vectors in a sequence, nothing stops combining them with text tokens in a single sequence.
 
 ## Common pitfalls

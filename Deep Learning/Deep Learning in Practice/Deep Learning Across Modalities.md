@@ -62,7 +62,7 @@ fallback: Pick an architectural idea (convolution, attention) and a modality (vi
 
 * **Vision transformers** apply attention (originally developed for language) to images, by splitting an image into patches and treating each patch like a "word" in a sequence.
 * **Speech recognition and audio generation models** borrow heavily from both convolutional and sequence-modelling ideas developed first for vision and language respectively.
-* **Multimodal models** — handling images and text together, as in CLIP-style architectures (see [[Contrastive Learning]]) — are an increasingly central direction, and are the natural bridge toward the Transformers, Generative AI and LLMs planets ahead on this road.
+* **Multimodal models** — handling images and text together, as in CLIP-style architectures (see [[Contrastive Learning]]) — are an increasingly central direction, and are the natural bridge toward the Transformers, Generative AI and LLMs subjects ahead.
 
 ## Common pitfalls
 

@@ -1,6 +1,6 @@
 Calculus is the maths of change. It answers "how fast is this quantity changing right now?" (differentiation) and "how much has it accumulated?" (integration). For AI, the first question is the important one: training a model means nudging its numbers in the direction that reduces its error, and calculus tells you which direction that is.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Rate of Change]]: average and instantaneous change.
 * [[Limits]]: what a value approaches.

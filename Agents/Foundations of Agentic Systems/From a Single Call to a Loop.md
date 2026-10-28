@@ -53,7 +53,7 @@ fallback: Step a multi-hop lookup and compare a single call's answer against a l
 
 ## Where it appears in AI
 
-* **This is exactly the [[PDA Loop|perceive-decide-act loop]] already covered on the Fundamentals planet**, now specifically framed around *when* that loop needs more than one iteration to reach a goal.
+* **This is exactly the [[PDA Loop|perceive-decide-act loop]] already covered in Fundamentals**, now specifically framed around *when* that loop needs more than one iteration to reach a goal.
 * **[[Goal Decomposition into Subtasks]] is the planning-side version of the same idea** — recognizing in advance that a question needs multiple hops, rather than discovering it only after the first hop falls short.
 * **[[Anatomy of an Agent Architecture]] names the specific component (the controller) responsible for deciding whether to loop again** — this topic is about why that component exists at all.
 

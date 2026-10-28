@@ -1,4 +1,4 @@
-Every number quoted for a transformer's size — "110 million parameters," "175 billion parameters" — comes from literally adding up the matrices covered earlier on this planet. This topic does that addition explicitly, and checks the result against a real, published model.
+Every number quoted for a transformer's size — "110 million parameters," "175 billion parameters" — comes from literally adding up the matrices covered earlier in this subject. This topic does that addition explicitly, and checks the result against a real, published model.
 
 **You need:** [[Assembling One Transformer Block]], [[Weight Tying]], [[The Feed-Forward Sublayer]].
 

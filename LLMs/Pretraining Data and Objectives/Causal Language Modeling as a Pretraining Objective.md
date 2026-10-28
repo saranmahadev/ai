@@ -61,7 +61,7 @@ fallback: Step through a sequence and watch the loss computed at each position, 
 
 * **Assuming the loss cares about the full probability distribution.** It only looks at the probability assigned to the single token that actually came next — a model that was "close" (assigning decent probability to a near-synonym) but didn't put enough probability on the exact true token still pays a real loss.
 * **Confusing teacher forcing with how generation actually works.** Training always conditions on the ground truth; generation has no ground truth to condition on beyond what the model itself already produced.
-* **Thinking causal language modeling is a special, LLM-specific invention.** It's the direct continuation of the same cross-entropy loss used throughout this road's earlier planets — the only LLM-specific part is doing it at a vastly larger scale.
+* **Thinking causal language modeling is a special, LLM-specific invention.** It's the direct continuation of the same cross-entropy loss used throughout earlier subjects — the only LLM-specific part is doing it at a vastly larger scale.
 
 ## Quick check
 

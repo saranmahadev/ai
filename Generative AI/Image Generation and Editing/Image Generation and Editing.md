@@ -1,6 +1,6 @@
-With decoding and conditioning covered as general mechanisms, this district applies them to the modality generative AI is best known for: pictures — generating them from text, and then editing what's already there.
+With decoding and conditioning covered as general mechanisms, this section applies them to the modality generative AI is best known for: pictures — generating them from text, and then editing what's already there.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Text-to-Image Pipelines]]: assembling a text encoder, conditioning and a diffusion model into one text-to-image system.
 * [[Super-Resolution and Upscaling]]: generating a higher-resolution image from a lower-resolution one.

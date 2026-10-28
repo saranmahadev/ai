@@ -4,7 +4,7 @@ Running three independent pieces of a task one after another wastes time that di
 
 ## The question it answers
 
-"What are the two different reasons to run several LLM calls at once instead of one?" **Sectioning** splits one task into genuinely independent subtasks and runs them in parallel, finishing in however long the *slowest* piece takes rather than the *sum* of all of them. **Voting** runs the identical prompt several times on the same question and takes the most common answer — a form of the self-consistency sampling already covered on the LLMs planet — trading extra compute for a meaningfully more reliable answer.
+"What are the two different reasons to run several LLM calls at once instead of one?" **Sectioning** splits one task into genuinely independent subtasks and runs them in parallel, finishing in however long the *slowest* piece takes rather than the *sum* of all of them. **Voting** runs the identical prompt several times on the same question and takes the most common answer — a form of the self-consistency sampling already covered in LLMs — trading extra compute for a meaningfully more reliable answer.
 
 ## Intuition
 
@@ -51,7 +51,7 @@ fallback: Compare sequential vs. sectioned (parallel) latency, and watch majorit
 
 ## Where it appears in AI
 
-* **Voting is exactly [[Self-Consistency and Best-of-N Sampling|self-consistency sampling]], already covered on the Generative AI planet** — this topic is about using it as a parallelization pattern alongside sectioning, not re-deriving the sampling mechanism.
+* **Voting is exactly [[Self-Consistency and Best-of-N Sampling|self-consistency sampling]], already covered in Generative AI** — this topic is about using it as a parallelization pattern alongside sectioning, not re-deriving the sampling mechanism.
 * **[[Orchestrator-Workers]] is the natural extension of sectioning** when the subtasks themselves need to be identified dynamically rather than being fixed in advance.
 * **Sectioning's speedup assumes genuinely independent subtasks** — a task whose pieces depend on each other's results can't be sectioned this way at all, which is exactly why [[Plan-and-Execute Agents]] exists for tasks that need ordered steps instead.
 

@@ -57,7 +57,7 @@ fallback: Set a generation length and compare the total key/value computations n
 
 * **It is standard practice in essentially every deployed autoregressive transformer** — without it, generating long text would be prohibitively slow, scaling quadratically for no computational benefit.
 * **It is also the main memory cost of serving a decoder-only model**: the cache has to be stored for the whole generation, which is exactly why [[Multi-Query and Grouped-Query Attention|shrinking num_kv_heads]] matters so much in practice.
-* **[[Inference Serving Trade-offs|later in this planet]], batching multiple requests together means managing many of these caches simultaneously** — a real systems problem built directly on top of this mechanism.
+* **[[Inference Serving Trade-offs|later in this subject]], batching multiple requests together means managing many of these caches simultaneously** — a real systems problem built directly on top of this mechanism.
 
 ## Common pitfalls
 

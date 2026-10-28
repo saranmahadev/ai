@@ -1,4 +1,4 @@
-Every generative model covered so far on this planet outputs some intermediate representation — a latent, a spectrogram-like set of frequencies and amplitudes — but none of that is sound yet. A speaker can't play a spectrogram. This note covers the last step: turning that representation into an actual waveform.
+Every generative model covered so far in this subject outputs some intermediate representation — a latent, a spectrogram-like set of frequencies and amplitudes — but none of that is sound yet. A speaker can't play a spectrogram. This note covers the last step: turning that representation into an actual waveform.
 
 **You need:** [[Text-to-Image Pipelines]].
 

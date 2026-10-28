@@ -53,7 +53,7 @@ fallback: Slide a similarity threshold and watch where semantic chunking places 
 
 ## Where it appears in AI
 
-* **The similarity computation itself is exactly [[Embeddings and Similarity Search|cosine similarity]]**, already covered on the Math planet — this topic is about using it to decide *where* to cut, not re-deriving the metric.
+* **The similarity computation itself is exactly [[Embeddings and Similarity Search|cosine similarity]]**, already covered in Math — this topic is about using it to decide *where* to cut, not re-deriving the metric.
 * **Structure-aware chunking is the cheaper, no-embedding alternative**: splitting at a document's own markdown headings or paragraph breaks instead of computing sentence-by-sentence similarity.
 * **A badly placed threshold produces the same symptom as naive fixed-size chunking** ([[Fixed-Size and Recursive Chunking]]) — a chunk that straddles two unrelated topics, diluting whatever gets embedded from it.
 

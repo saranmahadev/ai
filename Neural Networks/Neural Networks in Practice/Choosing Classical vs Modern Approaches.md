@@ -1,18 +1,18 @@
-Every topic on this planet solves a real problem, but almost none of them is anyone's first choice for a brand-new project today. This topic is about when one of them should still be the choice: matching a concrete constraint — no labels, a tiny energy budget, no time to train — to the classical tool actually built for it.
+Every topic in this subject solves a real problem, but almost none of them is anyone's first choice for a brand-new project today. This topic is about when one of them should still be the choice: matching a concrete constraint — no labels, a tiny energy budget, no time to train — to the classical tool actually built for it.
 
 **You need:** [[Why This Planet Looks Different from Deep Learning]], [[Content-Addressable Memory and Capacity]], [[Neuromorphic Hardware]], [[Extreme Learning Machines]].
 
 ## The question it answers
 
-"Given a specific constraint, which classical approach on this planet actually beats reaching for a standard, backpropagation-trained network?" Each topic on this planet traded something standard deep learning assumes you have — labels, training time, or a flexible power budget — for a specific advantage. Choosing well means matching the constraint you actually have to the trade that specific method made.
+"Given a specific constraint, which classical approach in this subject actually beats reaching for a standard, backpropagation-trained network?" Each topic in this subject traded something standard deep learning assumes you have — labels, training time, or a flexible power budget — for a specific advantage. Choosing well means matching the constraint you actually have to the trade that specific method made.
 
 ## Intuition
 
-A standard deep network assumes: plenty of labelled data, plenty of time and compute to iterate, and a hardware target that doesn't care much about sparsity. Take any one of those assumptions away, and one of this planet's methods is often built exactly for that gap — [[Hopfield Networks|Hopfield networks]] for memory with no labels at all, [[Extreme Learning Machines|ELMs]] and [[Radial Basis Function Networks|RBF networks]] for a fast, exact fit with no iteration, [[Spiking Neural Networks|spiking networks]] on [[Neuromorphic Hardware]] for an extreme energy budget.
+A standard deep network assumes: plenty of labelled data, plenty of time and compute to iterate, and a hardware target that doesn't care much about sparsity. Take any one of those assumptions away, and one of this subject's methods is often built exactly for that gap — [[Hopfield Networks|Hopfield networks]] for memory with no labels at all, [[Extreme Learning Machines|ELMs]] and [[Radial Basis Function Networks|RBF networks]] for a fast, exact fit with no iteration, [[Spiking Neural Networks|spiking networks]] on [[Neuromorphic Hardware]] for an extreme energy budget.
 
 ## Definition and notation
 
-Three constraints, matched to the numbers already verified on this planet:
+Three constraints, matched to the numbers already verified in this subject:
 
 ```text
 constraint: store and recall patterns, no training data, no labels
@@ -32,7 +32,7 @@ constraint: run on a severe, fixed energy budget
 
 ## A worked example
 
-Three scenarios, matched using only numbers already established earlier on this planet:
+Three scenarios, matched using only numbers already established earlier in this subject:
 
 ```text
 scenario A: recall any of 50 stored 400-bit patterns from a partial cue, no labels exist
@@ -57,20 +57,20 @@ In every scenario, the deciding factor was not "which method is more powerful" �
 ```bench
 id: choose-classical
 title: Match the constraint to the method
-fallback: Pick a constraint — no labels, no training time, or a tight energy budget — and see which classical architecture from this planet is built for exactly that trade-off, and why.
+fallback: Pick a constraint — no labels, no training time, or a tight energy budget — and see which classical architecture from this subject is built for exactly that trade-off, and why.
 ```
 
 **Try this**
 
 1. Pick each constraint in turn and read which method it points to and why.
 2. Try combining two constraints at once and notice that not every combination has a clean single answer.
-3. Consider a case with none of these constraints — plenty of labels, time, and power — and confirm that a standard deep network, not anything on this planet, is then the right default.
+3. Consider a case with none of these constraints — plenty of labels, time, and power — and confirm that a standard deep network, not anything in this subject, is then the right default.
 
-**What you should notice:** every method on this planet is the right answer to a specific question, not a generally better or worse alternative to deep learning — the choice is about which constraint you are actually under, not which model is "stronger."
+**What you should notice:** every method in this subject is the right answer to a specific question, not a generally better or worse alternative to deep learning — the choice is about which constraint you are actually under, not which model is "stronger."
 
 ## Where it appears in AI
 
-* **It is the practical payoff of everything this planet covered**: each topic traded something a standard deep network assumes available for a specific, nameable advantage, and this topic is where those trades get weighed against a real constraint.
+* **It is the practical payoff of everything this subject covered**: each topic traded something a standard deep network assumes available for a specific, nameable advantage, and this topic is where those trades get weighed against a real constraint.
 * **The same reasoning pattern recurs throughout [[Machine Learning]]**: choosing a simpler, more constrained model over a more flexible one specifically because the simpler model's assumptions match the problem's actual constraints.
 * **[[Modern Hopfield Networks and Attention]] complicates the picture usefully**: sometimes the "classical" and "modern" choices turn out to be the same underlying computation, which is itself worth knowing before assuming they are strictly alternatives.
 
@@ -78,7 +78,7 @@ fallback: Pick a constraint — no labels, no training time, or a tight energy b
 
 * **Assuming classical always means worse.** Each method here solves its matched problem at least as well as a standard deep network would, often with far less training cost.
 * **Picking a method because it's interesting rather than because the constraint demands it.** With no unusual constraint at all, a standard, well-supported deep network is still the sensible default.
-* **Ignoring combined constraints.** A problem that is simultaneously label-free, energy-constrained, *and* needs instant inference may not have a single clean answer on this planet, and might need a hybrid approach.
+* **Ignoring combined constraints.** A problem that is simultaneously label-free, energy-constrained, *and* needs instant inference may not have a single clean answer in this subject, and might need a hybrid approach.
 
 ## Quick check
 
@@ -90,7 +90,7 @@ The specific constraint the problem is under (no labels, no training time, or a 
 Fifty 400-bit patterns sit just under the network's roughly 55-pattern capacity (0.138 × 400), and there is no labelled training data available — exactly the situation the method is built for.
 </details>
 
-<details><summary>3. Is a classical method on this planet ever simply a worse version of a standard deep network?</summary>
+<details><summary>3. Is a classical method in this subject ever simply a worse version of a standard deep network?</summary>
 No — each one is matched to a constraint a standard deep network doesn't handle as efficiently (no labels, no iteration time, or an extreme energy budget), not a weaker general-purpose model.
 </details>
 

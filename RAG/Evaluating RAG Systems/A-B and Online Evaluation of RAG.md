@@ -4,7 +4,7 @@ A test set, synthetic or hand-written, measures a RAG system against questions s
 
 ## The question it answers
 
-"How do you know a change to a RAG system actually improved things for real users, rather than looking better on paper?" An A/B test routes real traffic to two variants of the system and compares a real outcome metric (thumbs-up rate, follow-up rate) between them. The same [[Hypothesis Testing and P-values|hypothesis-testing]] logic already covered on the Math planet applies directly: an observed difference between two variants' rates isn't automatically trustworthy — it needs enough sample size for the difference to be statistically distinguishable from noise.
+"How do you know a change to a RAG system actually improved things for real users, rather than looking better on paper?" An A/B test routes real traffic to two variants of the system and compares a real outcome metric (thumbs-up rate, follow-up rate) between them. The same [[Hypothesis Testing and P-values|hypothesis-testing]] logic already covered in Math applies directly: an observed difference between two variants' rates isn't automatically trustworthy — it needs enough sample size for the difference to be statistically distinguishable from noise.
 
 ## Intuition
 
@@ -46,7 +46,7 @@ fallback: Slide sample size and watch the same observed difference between two R
 
 ## Where it appears in AI
 
-* **This is a direct application of [[Hypothesis Testing and P-values]]**, already covered in depth on the Math planet — this topic is specifically about applying that logic to RAG variant comparisons, not re-deriving significance testing.
+* **This is a direct application of [[Hypothesis Testing and P-values]]**, already covered in depth in Math — this topic is specifically about applying that logic to RAG variant comparisons, not re-deriving significance testing.
 * **An A/B test's outcome metric is often a proxy for exactly what [[Faithfulness and Answer Relevancy Metrics]] measures offline** (a thumbs-up roughly correlating with a relevant, faithful answer) — online evaluation checks whether offline metrics actually predict real user satisfaction.
 * **[[Synthetic Test-Set Generation for RAG]] and A/B testing are complementary, not competing**: a synthetic test set catches regressions before deployment; A/B testing catches whether a change that passed offline evaluation actually helps real users.
 

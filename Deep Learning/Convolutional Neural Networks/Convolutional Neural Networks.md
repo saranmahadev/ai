@@ -1,6 +1,6 @@
-A photograph has structure a plain feedforward network ignores: a cat's ear looks the same whether it is in the top-left or bottom-right corner. Convolutional networks build that structure in, and this district builds one up from a single filter to a full image classifier.
+A photograph has structure a plain feedforward network ignores: a cat's ear looks the same whether it is in the top-left or bottom-right corner. Convolutional networks build that structure in, and this section builds one up from a single filter to a full image classifier.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[The Convolution Operation]]: sliding a small filter over an image and what it computes.
 * [[Filters, Feature Maps and Channels]]: what a filter learns to detect, and how many run side by side.

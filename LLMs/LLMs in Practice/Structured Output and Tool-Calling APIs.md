@@ -4,7 +4,7 @@ Code that calls an LLM usually needs the response in a specific shape — valid 
 
 ## The question it answers
 
-"How does an application reliably get a model's output into a shape its code can actually use?" One approach prompts the model to produce JSON (or a tool call) in free-form generation and hopes it's well-formed; parsing then sometimes fails. The more reliable approach, already derived on the Generative AI planet as [[Constrained and Structured Generation|grammar-constrained decoding]], masks out every token that would violate the required schema at each decoding step, so a malformed result is never produced in the first place.
+"How does an application reliably get a model's output into a shape its code can actually use?" One approach prompts the model to produce JSON (or a tool call) in free-form generation and hopes it's well-formed; parsing then sometimes fails. The more reliable approach, already derived in Generative AI as [[Constrained and Structured Generation|grammar-constrained decoding]], masks out every token that would violate the required schema at each decoding step, so a malformed result is never produced in the first place.
 
 ## Intuition
 
@@ -46,7 +46,7 @@ fallback: Slide the free-form malformed-output rate and compare it against gramm
 
 ## Where it appears in AI
 
-* **This reuses the exact masking mechanism derived in [[Constrained and Structured Generation|grammar-constrained decoding]] on the Generative AI planet** — a tool-calling API's JSON schema is just another grammar to mask against.
+* **This reuses the exact masking mechanism derived in [[Constrained and Structured Generation|grammar-constrained decoding]] in Generative AI** — a tool-calling API's JSON schema is just another grammar to mask against.
 * **A system prompt ([[System Prompts and Prompt Templates]]) often carries the schema or tool definitions a model is meant to follow**, whether or not decoding is actually constrained to match it.
 * **An application choosing between free-form and schema-constrained generation is itself part of [[Choosing a Model for a Task]]** — not every provider or model supports constrained decoding equally well.
 

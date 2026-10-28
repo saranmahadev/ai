@@ -4,7 +4,7 @@ A bare model call can only ever draw on what was baked into its weights during t
 
 ## The question it answers
 
-"What's the minimal set of additions that turns a plain model call into the building block almost every agent is made of?" Three additions, each already derived elsewhere on this road: tools ([[Structured Output and Tool-Calling APIs|the ability to call a function and act]]), memory (state that persists across turns), and retrieval ([[Parametric vs. Non-Parametric Knowledge|a document store searched at answer-time]]). None of these require a different model — they're capabilities wired around the same underlying call.
+"What's the minimal set of additions that turns a plain model call into the building block almost every agent is made of?" Three additions, each already derived elsewhere in this subject: tools ([[Structured Output and Tool-Calling APIs|the ability to call a function and act]]), memory (state that persists across turns), and retrieval ([[Parametric vs. Non-Parametric Knowledge|a document store searched at answer-time]]). None of these require a different model — they're capabilities wired around the same underlying call.
 
 ## Intuition
 
@@ -48,8 +48,8 @@ fallback: Compare what a bare LLM can do against the same model augmented with t
 
 ## Where it appears in AI
 
-* **This is the single building block nearly every pattern on this road is built from** — [[Workflow Patterns Before Autonomy]]'s structured patterns and [[Planning and Task Decomposition]]'s autonomous loops are both arrangements of augmented LLM calls, not a different underlying mechanism.
-* **Tools are covered in depth in [[Tool Use and Function Calling]]**, memory in [[Memory and State Management]], retrieval across the entire RAG planet — this topic is only about naming the three as one shared building block.
+* **This is the single building block nearly every pattern in this subject is built from** — [[Workflow Patterns Before Autonomy]]'s structured patterns and [[Planning and Task Decomposition]]'s autonomous loops are both arrangements of augmented LLM calls, not a different underlying mechanism.
+* **Tools are covered in depth in [[Tool Use and Function Calling]]**, memory in [[Memory and State Management]], retrieval across the entire RAG subject — this topic is only about naming the three as one shared building block.
 * **Removing any one augmentation removes exactly the capabilities tied to it** — an agent with tools and memory but no retrieval still can't answer from a document it's never seen, however good its other two augmentations are.
 
 ## Common pitfalls

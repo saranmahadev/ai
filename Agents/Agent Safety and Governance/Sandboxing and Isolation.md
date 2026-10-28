@@ -47,7 +47,7 @@ fallback: Toggle sandboxing and watch how many host files a running piece of cod
 ## Where it appears in AI
 
 * **This is the complementary approach to [[Autonomy Levels and Human Oversight Tiers]]**: instead of a human catching a mistake before it runs, a sandbox limits how much damage the mistake can do even if nobody catches it in time.
-* **[[Excessive Agency and Scope Limits]], next in this district, applies the identical idea to tool grants rather than filesystem access** — restricting what's reachable, whether that's files on disk or actions through an API.
+* **[[Excessive Agency and Scope Limits]], next in this section, applies the identical idea to tool grants rather than filesystem access** — restricting what's reachable, whether that's files on disk or actions through an API.
 * **This directly extends [[Code-Execution Agents]]**: that topic covers what a code-execution agent can do; this one covers containing what it can do when something goes wrong.
 
 ## Common pitfalls

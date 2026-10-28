@@ -1,6 +1,6 @@
-A RAG system can fail in two independent places — retrieval can find the wrong passages, or generation can answer badly even from the right ones — and a single end-to-end score can't tell you which. This district covers measuring each half separately, then together.
+A RAG system can fail in two independent places — retrieval can find the wrong passages, or generation can answer badly even from the right ones — and a single end-to-end score can't tell you which. This section covers measuring each half separately, then together.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Retrieval Metrics: Precision, Recall, MRR and NDCG]]: scoring whether the right passages were found, and how high they ranked.
 * [[Faithfulness and Answer Relevancy Metrics]]: scoring whether the generated answer actually uses, and actually answers, what was retrieved.

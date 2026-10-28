@@ -1,4 +1,4 @@
-A Hopfield network stores a set of patterns not as a lookup table but as the *stable points* of a dynamical system: give it a noisy or partial version of a pattern, let every unit repeatedly update itself from its neighbours, and it settles into the clean pattern it was trained on. This topic is the simplest working model of content-addressable memory in the whole planet.
+A Hopfield network stores a set of patterns not as a lookup table but as the *stable points* of a dynamical system: give it a noisy or partial version of a pattern, let every unit repeatedly update itself from its neighbours, and it settles into the clean pattern it was trained on. This topic is the simplest working model of content-addressable memory in the whole subject.
 
 **You need:** [[The McCulloch-Pitts Neuron]] and [[Matrix Multiplication]].
 

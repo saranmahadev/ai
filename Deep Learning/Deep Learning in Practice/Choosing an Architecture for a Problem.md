@@ -1,4 +1,4 @@
-Every architecture in this planet was built to exploit some specific structure in its data: convolution exploits a grid, recurrence and attention exploit a sequence, graph networks exploit arbitrary connections. **Choosing an architecture** starts from asking what structure your actual data has — not from picking whatever is currently most popular.
+Every architecture in this subject was built to exploit some specific structure in its data: convolution exploits a grid, recurrence and attention exploit a sequence, graph networks exploit arbitrary connections. **Choosing an architecture** starts from asking what structure your actual data has — not from picking whatever is currently most popular.
 
 **You need:** [[CNN Architectures: From LeNet to ResNet]] and [[Recurrent Neural Networks]].
 
@@ -18,7 +18,7 @@ grid (images, spectrograms)    convolutional networks
 sequence (text, audio, time series)   recurrent networks, or attention-based (transformer) models
 graph (social networks, molecules)    graph neural networks
 tabular, no spatial/sequential structure   a plain feedforward network (or often, a classic ML model
-                                            from the Machine Learning planet, which can be a stronger
+                                            from Machine Learning, which can be a stronger
                                             and cheaper baseline)
 ```
 
@@ -41,7 +41,7 @@ scenario 2: predict next week's sales from the past two years of daily sales fig
 
 scenario 3: a few hundred rows of a spreadsheet: age, income, location, purchase history
   → tabular, no spatial or sequential structure to exploit, small dataset
-  → likely best served by a classic ML model (see the Machine Learning planet) or a small
+  → likely best served by a classic ML model (see Machine Learning) or a small
     plain feedforward network at most — a large deep architecture here would be overkill,
     with a high risk of overfitting a dataset this small
 ```

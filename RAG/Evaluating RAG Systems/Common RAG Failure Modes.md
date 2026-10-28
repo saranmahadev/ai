@@ -1,10 +1,10 @@
-Across this planet's road, the same handful of failure symptoms keep recurring — a stale fact, a result count that's mysteriously short, an answer that confidently cites the wrong thing. Recognizing a symptom quickly, and knowing which earlier topic actually fixes it, turns debugging a RAG system from guesswork into a lookup.
+Across this subject, the same handful of failure symptoms keep recurring — a stale fact, a result count that's mysteriously short, an answer that confidently cites the wrong thing. Recognizing a symptom quickly, and knowing which earlier topic actually fixes it, turns debugging a RAG system from guesswork into a lookup.
 
 **You need:** [[End-to-End RAG Evaluation Frameworks]].
 
 ## The question it answers
 
-"When a RAG system misbehaves, what's the shortest path from the symptom to the fix?" Most RAG failures recur across systems because they trace back to one of a small number of root causes, each already covered earlier on this road: a missing metadata filter, a post-filtering mistake, a vocabulary mismatch, a missing relevance check, or a question requiring more than one retrieval hop. Recognizing the symptom and knowing which earlier topic addresses it is faster than re-deriving the fix from scratch each time.
+"When a RAG system misbehaves, what's the shortest path from the symptom to the fix?" Most RAG failures recur across systems because they trace back to one of a small number of root causes, each already covered earlier in this subject: a missing metadata filter, a post-filtering mistake, a vocabulary mismatch, a missing relevance check, or a question requiring more than one retrieval hop. Recognizing the symptom and knowing which earlier topic addresses it is faster than re-deriving the fix from scratch each time.
 
 ## Intuition
 
@@ -13,7 +13,7 @@ A mechanic who's seen a thousand cars doesn't start from first principles every 
 ## Definition and notation
 
 ```text
-symptom → likely stage → fix (already covered earlier on this road)
+symptom → likely stage → fix (already covered earlier in this subject)
 ```
 
 ## A worked example
@@ -60,7 +60,7 @@ fallback: Pick a RAG failure symptom and see which stage and fix it actually poi
 
 ## Where it appears in AI
 
-* **This is a lookup table over nearly every earlier district on this road** — each row's fix is a specific topic already covered, from [[Metadata Extraction and Enrichment]] in District 2 through [[Grounded Generation and Faithfulness]] in District 7.
+* **This is a lookup table over nearly every earlier section in this subject** — each row's fix is a specific topic already covered, from [[Metadata Extraction and Enrichment]] in the second section through [[Grounded Generation and Faithfulness]] in the seventh section.
 * **[[End-to-End RAG Evaluation Frameworks]]'s scorecard is what surfaces which symptom a real system is actually exhibiting**, before this topic's lookup table identifies the likely cause.
 * **[[Production RAG Pipeline Architecture]] is where these fixes actually get assembled into a running system**, often addressing several of these failure modes simultaneously by design rather than reactively.
 

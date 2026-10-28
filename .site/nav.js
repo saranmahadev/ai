@@ -20,12 +20,7 @@ export function navFor({ key, query, content, has3d }) {
   }
   if (key === "galaxy" || key === "list" || key === "explore") {
     const actions = has3d ? [{ label: "3D galaxy", href: "#/galaxy" }] : [];
-    actions.push({ label: "Graph view", href: "#/graph" });
     return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Explore" }], actions };
-  }
-  if (key === "graph") {
-    return { back: { label: "Home", href: "#/" }, crumbs: [{ label: "Graph" }],
-      actions: [{ label: galaxyLabel, href: galaxyHref }] };
   }
   if (key.endsWith("/glossary")) {
     const p = content.planets.find((x) => x.id === key.slice(0, -"/glossary".length));
@@ -43,6 +38,9 @@ export function navFor({ key, query, content, has3d }) {
     const actions = [];
     if (threeD) actions.push({ label: "Reading view", href: `#/${planet.id}?text` });
     else if (has3d && !planet.planned) actions.push({ label: "🚀 Walk the road", href: `#/${planet.id}` });
+    // Standard Mode offers an explicit invitation into the 3D game instead of ever implying you're
+    // already in it (has3d is only true once Play Mode is actually the active mode, see main.js's route()).
+    else if (!has3d && !planet.planned) actions.push({ label: "🚀 Try Play Mode", href: `#/${planet.id}`, setMode: "play" });
     if (!planet.planned) actions.push({ label: "Glossary", href: `#/${planet.id}/glossary` });
     return {
       back: { label: galaxyLabel, href: galaxyHref, board: threeD },

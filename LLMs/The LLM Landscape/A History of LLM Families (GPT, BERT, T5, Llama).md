@@ -1,14 +1,14 @@
-Every architectural choice this road has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family. Tracing those choices through a handful of landmark models turns an abstract menu of options into an actual history.
+Every architectural choice this subject has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family. Tracing those choices through a handful of landmark models turns an abstract menu of options into an actual history.
 
 **You need:** [[Architectural Families|Choosing an Architecture Family for a Task]], [[Compute-Optimal Scaling (Chinchilla)]].
 
 ## The question it answers
 
-"How do today's major LLM families trace back to the architectural decisions covered earlier on this road?" A small number of landmark models mark the major turns: **BERT** (2018) established encoder-only masked-language-model pretraining; **GPT-2** (2019) showed decoder-only causal language modeling could scale into genuinely fluent, general-purpose generation; **T5** (2019) unified many NLP tasks under one encoder-decoder, text-to-text framing; **GPT-3** (2020) showed that scaling a decoder-only model further unlocked few-shot, in-context capabilities; **Llama 2** (2023) combined a decoder-only architecture with RoPE and other efficiency refinements, at a far smaller parameter count than GPT-3, trained on far more tokens.
+"How do today's major LLM families trace back to the architectural decisions covered earlier in this subject?" A small number of landmark models mark the major turns: **BERT** (2018) established encoder-only masked-language-model pretraining; **GPT-2** (2019) showed decoder-only causal language modeling could scale into genuinely fluent, general-purpose generation; **T5** (2019) unified many NLP tasks under one encoder-decoder, text-to-text framing; **GPT-3** (2020) showed that scaling a decoder-only model further unlocked few-shot, in-context capabilities; **Llama 2** (2023) combined a decoder-only architecture with RoPE and other efficiency refinements, at a far smaller parameter count than GPT-3, trained on far more tokens.
 
 ## Intuition
 
-Looking at a family tree of cars — the first mass-produced model, the first with a specific safety feature everyone later adopted, the first widely available at a dramatically lower price — tells a clearer story about how the industry got to today's vehicles than reading a list of abstract engineering principles ever could. Tracing a handful of actual LLMs, in order, through the specific architectural and scaling choices that defined each one, does the same for this road's more abstract coverage of tokenization, architecture and scaling.
+Looking at a family tree of cars — the first mass-produced model, the first with a specific safety feature everyone later adopted, the first widely available at a dramatically lower price — tells a clearer story about how the industry got to today's vehicles than reading a list of abstract engineering principles ever could. Tracing a handful of actual LLMs, in order, through the specific architectural and scaling choices that defined each one, does the same for this subject's more abstract coverage of tokenization, architecture and scaling.
 
 ## Definition and notation
 
@@ -46,15 +46,15 @@ fallback: Step through major LLM families in order and watch parameter count and
 
 1. Step through from BERT-base to GPT-3 and watch parameter count climb.
 2. Step to Llama 2 70B and notice it's smaller than GPT-3, not larger.
-3. Compare each model's architecture family against what you've already covered on this road.
+3. Compare each model's architecture family against what you've already covered in this subject.
 
 **What you should notice:** parameter count doesn't climb monotonically across this history — Llama 2's smaller size than GPT-3 despite being newer reflects a real, deliberate shift in scaling philosophy, not a step backward.
 
 ## Where it appears in AI
 
-* **Each family in this timeline is covered architecturally on [[Architectural Families|Choosing an Architecture Family for a Task]]** on the Transformers planet — this note is specifically about the historical sequence, not re-deriving the architectures themselves.
+* **Each family in this timeline is covered architecturally on [[Architectural Families|Choosing an Architecture Family for a Task]]** in Transformers — this note is specifically about the historical sequence, not re-deriving the architectures themselves.
 * **The shift from GPT-3-era scaling to Llama-era scaling is a direct, real-world instance of [[Compute-Optimal Scaling (Chinchilla)|compute-optimal scaling]] changing how the field allocates training budgets.**
-* **Later model families (not covered in this small sample) continue evolving along axes this road has covered**: mixture-of-experts routing, longer context windows, multimodal input — each an extension of mechanisms already derived earlier.
+* **Later model families (not covered in this small sample) continue evolving along axes this subject has covered**: mixture-of-experts routing, longer context windows, multimodal input — each an extension of mechanisms already derived earlier.
 
 ## Common pitfalls
 

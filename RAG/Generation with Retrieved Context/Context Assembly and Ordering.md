@@ -4,7 +4,7 @@ Retrieval can rank the single most relevant passage first — and assembly can s
 
 ## The question it answers
 
-"Does it matter what order retrieved passages are assembled in?" Yes — this reuses the exact [[Context Rot and Lost-in-the-Middle Effects|lost-in-the-middle]] finding already established on the LLMs planet: a model is most likely to actually use information placed near the start or end of its context, and least likely to use information buried in the middle, regardless of how relevant that information actually is. Assembly is the stage that decides this placement, so it directly controls how much of retrieval's hard-won ranking actually survives into the generated answer.
+"Does it matter what order retrieved passages are assembled in?" Yes — this reuses the exact [[Context Rot and Lost-in-the-Middle Effects|lost-in-the-middle]] finding already established in LLMs: a model is most likely to actually use information placed near the start or end of its context, and least likely to use information buried in the middle, regardless of how relevant that information actually is. Assembly is the stage that decides this placement, so it directly controls how much of retrieval's hard-won ranking actually survives into the generated answer.
 
 ## Intuition
 

@@ -1,4 +1,4 @@
-A plain LLM call already has its own cost and latency math, already covered on the LLMs planet. RAG adds a handful of extra stages in front of that call — and the question this topic actually answers is how much those extra stages cost on top of a plain generation request, not how generation itself is priced.
+A plain LLM call already has its own cost and latency math, already covered in LLMs. RAG adds a handful of extra stages in front of that call — and the question this topic actually answers is how much those extra stages cost on top of a plain generation request, not how generation itself is priced.
 
 **You need:** [[Cost and Latency of LLM APIs]], [[Production RAG Pipeline Architecture]].
 

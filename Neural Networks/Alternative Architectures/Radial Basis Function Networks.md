@@ -65,7 +65,7 @@ fallback: Place two RBF centres and set their width, then solve the linear outpu
 ## Where it appears in AI
 
 * **It is a direct example of solving instead of iterating**: once the nonlinear part of the model (the centres) is fixed, the rest is exactly the kind of problem [[Least Squares]] already solves in closed form.
-* **It foreshadows [[Extreme Learning Machines]]**, covered later in this district, which pushes the same idea further: make *all* of the hidden layer's parameters fixed (not just placed by hand) and solve for the output weights alone.
+* **It foreshadows [[Extreme Learning Machines]]**, covered later in this section, which pushes the same idea further: make *all* of the hidden layer's parameters fixed (not just placed by hand) and solve for the output weights alone.
 * **Kernel methods on [[Machine Learning]]**, particularly kernel-based [[Support Vector Machines|SVMs]], use a mathematically related idea — measuring similarity via a kernel function rather than a raw dot product.
 
 ## Common pitfalls

@@ -1,6 +1,6 @@
-A deep network has enough parameters to memorise its training set outright. This district covers the techniques that keep it from doing so — and the surprising modern finding that memorising is not always as fatal as classical theory predicts.
+A deep network has enough parameters to memorise its training set outright. This section covers the techniques that keep it from doing so — and the surprising modern finding that memorising is not always as fatal as classical theory predicts.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Overfitting and Double Descent]]: why test error can fall, rise, then fall again as a network grows.
 * [[Dropout]]: randomly silencing units during training so no single one is relied on.

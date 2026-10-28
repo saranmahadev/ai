@@ -1,6 +1,6 @@
-A trained language model outputs a probability distribution over the next token, not a finished sentence. This district covers the algorithms that turn those probabilities into actual output, and the input-side counterpart: writing the prompt that shapes what those probabilities will look like in the first place.
+A trained language model outputs a probability distribution over the next token, not a finished sentence. This section covers the algorithms that turn those probabilities into actual output, and the input-side counterpart: writing the prompt that shapes what those probabilities will look like in the first place.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Greedy and Beam Search Decoding]]: always taking the single most likely continuation, or tracking several at once.
 * [[Temperature and Nucleus (Top-p) Sampling]]: injecting controlled randomness instead of always taking the most likely token.

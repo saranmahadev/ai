@@ -4,7 +4,7 @@ Every piece needed is now on the table: [[Multi-Head Attention|attention]] itsel
 
 ## The question it answers
 
-"What is the exact sequence of operations inside one transformer block, from input to output?" A pre-norm block (the modern default) runs two residual sublayers in order: normalize, then attend, then add back to the input; normalize again, then feed forward, then add back to that result. Every piece covered earlier on this planet has exactly one job inside this sequence.
+"What is the exact sequence of operations inside one transformer block, from input to output?" A pre-norm block (the modern default) runs two residual sublayers in order: normalize, then attend, then add back to the input; normalize again, then feed forward, then add back to that result. Every piece covered earlier in this subject has exactly one job inside this sequence.
 
 ## Intuition
 
@@ -57,9 +57,9 @@ fallback: Trace a small sequence of vectors through one complete pre-norm transf
 
 ## Where it appears in AI
 
-* **It is literally the building block of every transformer**, from a small research model to a frontier-scale one — the only things that change between models are the number of blocks, their width, and small variant choices (RMSNorm vs LayerNorm, gated vs plain feed-forward) covered earlier in this district.
+* **It is literally the building block of every transformer**, from a small research model to a frontier-scale one — the only things that change between models are the number of blocks, their width, and small variant choices (RMSNorm vs LayerNorm, gated vs plain feed-forward) covered earlier in this section.
 * **[[Encoder-Only Architectures|Encoder-only]], [[Decoder-Only Architectures|decoder-only]] and [[Encoder-Decoder Architectures as a Pattern|encoder-decoder]] architectures**, covered next, differ only in what masking is applied to the attention sublayer and whether a second, cross-attention sublayer is added — the block's core shape stays the same.
-* **[[Capstone: Assembling a Tiny Transformer from the Ground Up|the planet's own capstone]]** extends exactly this worked example into a full, multi-block transformer.
+* **[[Capstone: Assembling a Tiny Transformer from the Ground Up|this subject's own capstone]]** extends exactly this worked example into a full, multi-block transformer.
 
 ## Common pitfalls
 

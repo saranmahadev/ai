@@ -50,7 +50,7 @@ fallback: Compare two RAG systems' full metric scorecards and spot which pipelin
 ## Where it appears in AI
 
 * **This combines exactly [[Retrieval Metrics: Precision, Recall, MRR and NDCG]] and [[Faithfulness and Answer Relevancy Metrics]]** into one scorecard — the framework's value is in combining them, not in any new metric of its own.
-* **Diagnosing System A's problem (good retrieval, bad generation) points directly at [[Grounded Generation and Faithfulness]] as the place to fix it; System B's problem points at the retrieval strategies covered across this planet's earlier districts.**
+* **Diagnosing System A's problem (good retrieval, bad generation) points directly at [[Grounded Generation and Faithfulness]] as the place to fix it; System B's problem points at the retrieval strategies covered across this subject's earlier sections.**
 * **[[Common RAG Failure Modes]] catalogs the specific symptoms each kind of weak metric tends to produce**, giving a faster first guess before running the full scorecard.
 
 ## Common pitfalls

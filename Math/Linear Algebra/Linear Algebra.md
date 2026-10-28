@@ -1,6 +1,6 @@
 Linear algebra is the maths of lists of numbers (**vectors**) and grids of numbers (**matrices**), and of the simple operations that combine them. It is the working language of machine learning: data is stored in vectors and matrices, models multiply them, and geometry ideas such as angle, projection and direction describe what those models are doing.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Scalars and Vectors]]: single numbers, lists of numbers and what they mean.
 * [[Vector Operations]]: adding, subtracting and scaling.

@@ -1,6 +1,6 @@
-Not every multi-step task needs a fully autonomous agent deciding what to do next. A fixed sequence of LLM calls, wired together by code the developer controls, solves most well-defined tasks more predictably and more cheaply than letting a model improvise the whole plan. This district covers those structured patterns, which stay the right choice right up until a task is genuinely open-ended.
+Not every multi-step task needs a fully autonomous agent deciding what to do next. A fixed sequence of LLM calls, wired together by code the developer controls, solves most well-defined tasks more predictably and more cheaply than letting a model improvise the whole plan. This section covers those structured patterns, which stay the right choice right up until a task is genuinely open-ended.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Prompt Chaining]]: splitting one task into a fixed sequence of smaller LLM calls.
 * [[Routing Between Specialized Prompts]]: sending a request to whichever of several specialized prompts actually fits it.

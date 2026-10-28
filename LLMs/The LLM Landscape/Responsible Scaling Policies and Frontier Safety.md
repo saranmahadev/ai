@@ -54,7 +54,7 @@ fallback: Slide a model's measured capability and see which safety tier's commit
 
 * **Open-weight release ([[Open-Weight vs. Closed Models]]) of a tier-4-level model is a one-way decision under an RSP** — once weights are public, no later safety fix reaches every downloaded copy, which is why the highest tiers often restrict release mode itself.
 * **A model card's known-biases and limitations sections ([[Model Cards and Responsible Release]]) are part of what an RSP's evaluation requirements at higher tiers call for.**
-* **Benchmark-based capability evaluation (covered on the Evaluating LLMs stretch of this road) is exactly what feeds the capability score an RSP's thresholds are checked against.**
+* **Benchmark-based capability evaluation (covered in the Evaluating LLMs section of this subject) is exactly what feeds the capability score an RSP's thresholds are checked against.**
 
 ## Common pitfalls
 

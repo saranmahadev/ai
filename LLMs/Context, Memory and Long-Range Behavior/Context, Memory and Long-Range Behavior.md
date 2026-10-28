@@ -1,6 +1,6 @@
-A single forward pass has a fixed context window, but real use involves far more text than fits in one, conversations that span many turns, and sessions that return days later expecting to be remembered. This district covers handling all of that on top of a mechanism that, underneath, only ever sees one bounded window at a time.
+A single forward pass has a fixed context window, but real use involves far more text than fits in one, conversations that span many turns, and sessions that return days later expecting to be remembered. This section covers handling all of that on top of a mechanism that, underneath, only ever sees one bounded window at a time.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Long-Context Transformers]]: what actually breaks as context length grows, and the main approaches to extending it.
 * [[Context Window Extension Techniques]]: stretching a model trained on shorter sequences to handle longer ones.

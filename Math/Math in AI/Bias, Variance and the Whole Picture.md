@@ -1,4 +1,4 @@
-A model's error on new data comes from three sources: **bias** (the model is too simple to capture the pattern), **variance** (the model is so flexible it changes wildly with the particular training data) and **noise** (randomness no model can predict). Tuning a model is largely a trade between the first two. This topic also pulls the whole planet together.
+A model's error on new data comes from three sources: **bias** (the model is too simple to capture the pattern), **variance** (the model is so flexible it changes wildly with the particular training data) and **noise** (randomness no model can predict). Tuning a model is largely a trade between the first two. This topic also pulls the whole subject together.
 
 **You need:** [[Estimation and Bias]], [[Overfitting in Statistics]], [[Variance and Standard Deviation]] and [[Regularization as a Constraint]].
 
@@ -45,7 +45,7 @@ degree   bias²    variance   noise²   total
 
 ## The whole picture
 
-Every district fed into this. **Linear algebra** stores data and computes predictions; **calculus** and **optimization** train the parameters; **probability** and **information theory** define what a good prediction and a good loss are; **statistics** tells you how far to trust the result; **numerical computing** keeps it all running on real hardware. A model is a function with parameters, fitted by minimising a loss over data, judged on data it has not seen.
+Every section fed into this. **Linear algebra** stores data and computes predictions; **calculus** and **optimization** train the parameters; **probability** and **information theory** define what a good prediction and a good loss are; **statistics** tells you how far to trust the result; **numerical computing** keeps it all running on real hardware. A model is a function with parameters, fitted by minimising a loss over data, judged on data it has not seen.
 
 ## Bench
 

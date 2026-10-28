@@ -60,7 +60,7 @@ fallback: A diagram of environment, sensors, decision maker, actuators and goal 
 
 ## Where it appears in AI
 
-Every planet builds on this picture. In [[Machine Learning]] the decision maker is a model learned from data. In [[Agents]] the decision maker is often a language model choosing which tool to call. The next topic, [[PDA Loop]], adds the missing ingredient: the agent does all this *repeatedly*.
+Every subject builds on this picture. In [[Machine Learning]] the decision maker is a model learned from data. In [[Agents]] the decision maker is often a language model choosing which tool to call. The next topic, [[PDA Loop]], adds the missing ingredient: the agent does all this *repeatedly*.
 
 ## Common pitfalls
 

@@ -1,6 +1,6 @@
-Optimization is the art of finding the best values: the parameters that make a model's error as small as possible. Training a model is an optimization problem, and everything before this district, functions, derivatives, gradients and vectors, was preparation for it. This district explains the loss you minimise, the landscape you walk over, the step you take, and the tricks that make the walk faster and safer.
+Optimization is the art of finding the best values: the parameters that make a model's error as small as possible. Training a model is an optimization problem, and everything before this section, functions, derivatives, gradients and vectors, was preparation for it. This section explains the loss you minimise, the landscape you walk over, the step you take, and the tricks that make the walk faster and safer.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Loss Functions]]: turning "how wrong" into a single number.
 * [[Minima, Maxima and Saddle Points]]: the flat spots of a landscape.

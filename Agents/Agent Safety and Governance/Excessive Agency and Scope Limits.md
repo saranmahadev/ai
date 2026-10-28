@@ -49,7 +49,7 @@ fallback: Compare how many of an attacker's desired actions succeed under broad 
 ## Where it appears in AI
 
 * **This is the same reachability idea as [[Sandboxing and Isolation]], applied to tool grants instead of filesystem access** — both work by removing what's reachable, not by trusting judgment about what should be reachable.
-* **[[Guardrails for Agent Actions]], next in this district, is the layer that still matters even within a granted tool** — scope limits decide which tools exist at all; a guardrail decides which specific calls to an allowed tool are still too risky to run.
+* **[[Guardrails for Agent Actions]], next in this section, is the layer that still matters even within a granted tool** — scope limits decide which tools exist at all; a guardrail decides which specific calls to an allowed tool are still too risky to run.
 * **[[Prompt Injection in Agent Contexts]] is exactly the failure mode excessive agency makes dangerous**: an injected instruction can only succeed at actions the agent was actually granted the tools to perform.
 
 ## Common pitfalls

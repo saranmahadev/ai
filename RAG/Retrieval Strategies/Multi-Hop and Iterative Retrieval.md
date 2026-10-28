@@ -51,7 +51,7 @@ fallback: Step through a single-hop retrieval versus a two-hop chain that uses t
 
 ## Where it appears in AI
 
-* **This is the retrieval-side counterpart to [[Tree-of-Thought and Search-Based Reasoning]] on the LLMs planet** — both break a hard problem into intermediate steps, here applied to retrieval queries rather than reasoning steps.
+* **This is the retrieval-side counterpart to [[Tree-of-Thought and Search-Based Reasoning]] in LLMs** — both break a hard problem into intermediate steps, here applied to retrieval queries rather than reasoning steps.
 * **[[Chunk Overlap and Size Trade-offs]] mentioned multi-hop retrieval as an alternative fix for a split fact** — sometimes the better answer to "this fact doesn't fit in one chunk" is to retrieve twice rather than widen overlap.
 * **[[Common RAG Failure Modes]] includes "question requires combining facts from multiple documents" as a specific failure category** that single-hop retrieval, by design, can never solve.
 

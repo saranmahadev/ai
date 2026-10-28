@@ -57,7 +57,7 @@ fallback: Step through a ReAct-style trace and compare the mental-math-only gues
 
 * **Production "agentic" LLM systems use this exact pattern constantly**: deciding when to search the web, run code, query a database, or call any other external function, interleaved with ordinary reasoning about the overall task.
 * **[[Structured Output and Tool-Calling APIs|the practical mechanics of a tool call]] — getting a model to emit a well-formed function call with the right arguments — is a separate, engineering-level concern from the ReAct reasoning pattern itself.**
-* **It's the direct ancestor of what later became formalized as [[Agents|agentic systems]]** on the next planet — repeated cycles of reasoning, acting, and observing results, chained together to complete a larger task.
+* **It's the direct ancestor of what later became formalized as [[Agents|agentic systems]]** in the subject that comes next — repeated cycles of reasoning, acting, and observing results, chained together to complete a larger task.
 
 ## Common pitfalls
 

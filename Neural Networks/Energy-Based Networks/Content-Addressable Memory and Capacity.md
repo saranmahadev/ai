@@ -53,7 +53,7 @@ fallback: Store a chosen number of random patterns in a Hopfield network of fixe
 
 ## Where it appears in AI
 
-* **It is the first hard limit on this planet's memory model**: unlike a hash table, a Hopfield network's capacity is a fixed fraction of its unit count, not something you can trade off against retrieval time.
+* **It is the first hard limit in this subject's memory model**: unlike a hash table, a Hopfield network's capacity is a fixed fraction of its unit count, not something you can trade off against retrieval time.
 * **It motivates [[Boltzmann Machines|hidden units]]**: adding units not used to store the pattern directly, trading raw capacity for the ability to represent correlations between visible units.
 * **[[Modern Hopfield Networks and Attention]] fixes exactly this limitation**: a continuous generalization of the energy function pushes capacity from linear in `N` to exponential in `N`, which is part of why it resembles the attention mechanism used in [[Deep Learning]].
 

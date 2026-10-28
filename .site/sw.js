@@ -1,5 +1,5 @@
 // App-shell precache + runtime caching for visited content, so a previously-read topic still works
-// offline. Deliberately does not cache Explorer Mode's three.js/vendor/scenes/models assets — that stays
+// offline. Deliberately does not cache Play Mode's three.js/vendor/scenes/models assets — that stays
 // online-only, keeping the install light and in keeping with the site's "stay light, no bloat" ethos.
 // Bump CACHE_VERSION when the app shell's own files change in a way that needs old caches cleared.
 const CACHE_VERSION = "v1";

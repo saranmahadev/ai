@@ -1,6 +1,6 @@
-Every AI system, from a thermostat to a chatbot, can be described with the same seven parts: a **goal**, the **data** it uses, a **model or rule**, and a loop of **perceive, decide, act**, all **judged** by some measure of success. This topic pulls the whole planet together and shows you where the rest of the galaxy fits.
+Every AI system, from a thermostat to a chatbot, can be described with the same seven parts: a **goal**, the **data** it uses, a **model or rule**, and a loop of **perceive, decide, act**, all **judged** by some measure of success. This topic pulls the whole subject together and shows you where the rest of this knowledge base fits.
 
-**You need:** everything on this planet so far, especially [[PDA Loop]], [[A Model Is a Function]] and [[Measuring Performance]].
+**You need:** everything in this subject so far, especially [[PDA Loop]], [[A Model Is a Function]] and [[Measuring Performance]].
 
 ## The question it answers
 
@@ -51,9 +51,9 @@ fallback: Four familiar systems (thermostat, spam filter, self-driving car, chat
 
 **What you should notice:** the same seven questions apply to a rule-based thermostat and a billion-parameter chatbot. The answers differ enormously, and the framework keeps you oriented.
 
-## The road ahead
+## What comes next
 
-The rest of the galaxy takes each piece further:
+The rest of this knowledge base takes each piece further:
 
 * [[Math]]: the language every model is written in: vectors, gradients, probability.
 * [[Machine Learning]]: how models learn patterns from data, and how to judge them properly.

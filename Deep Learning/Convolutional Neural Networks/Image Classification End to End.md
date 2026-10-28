@@ -1,4 +1,4 @@
-Every idea in this district — convolution, channels, padding and pooling, depth, residual connections, receptive fields — exists to serve one standard pipeline: **convolve, pool, repeat, flatten, classify.** This topic runs that whole pipeline by hand on one tiny image.
+Every idea in this section — convolution, channels, padding and pooling, depth, residual connections, receptive fields — exists to serve one standard pipeline: **convolve, pool, repeat, flatten, classify.** This topic runs that whole pipeline by hand on one tiny image.
 
 **You need:** [[CNN Architectures: From LeNet to ResNet]] and [[Padding, Stride and Pooling]].
 
