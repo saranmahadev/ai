@@ -55,7 +55,7 @@ fallback: Push a vector through a two-layer feed-forward sublayer and watch the 
 
 * **It is where most of a transformer's parameters typically live**: with `d_ff = 4 × d_model`, the two feed-forward matrices together usually outweigh the attention sublayer's own parameters at a given layer.
 * **[[Modern Feed-Forward Variants: SwiGLU and GeGLU|the next topic]] replaces the plain ReLU activation used here** with a gated variant that most modern large transformers use instead.
-* **[[Mixture-of-Experts Transformer Blocks]], much later on this planet, replaces this entire sublayer** with several specialist copies and a router choosing which to use per token — directly building on the structure introduced here.
+* **[[Mixture-of-Experts Transformer Blocks]], much later in this subject, replaces this entire sublayer** with several specialist copies and a router choosing which to use per token — directly building on the structure introduced here.
 
 ## Common pitfalls
 

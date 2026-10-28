@@ -49,7 +49,7 @@ fallback: Adjustable training-set loss and held-out loss values. See how large a
 2. Narrow the gap (as a well-regularised model would) and see the privacy risk shrink correspondingly.
 3. Think about what kinds of training data would make this risk most serious.
 
-**What you should notice:** regularisation techniques from earlier in this planet (dropout, data augmentation, early stopping) that reduce overfitting also, as a side effect, reduce this particular privacy risk — the two problems share a root cause.
+**What you should notice:** regularisation techniques from earlier in this subject (dropout, data augmentation, early stopping) that reduce overfitting also, as a side effect, reduce this particular privacy risk — the two problems share a root cause.
 
 ## Where it appears in AI
 

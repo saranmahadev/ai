@@ -48,7 +48,7 @@ fallback: Slide the number of pipeline steps and compare total code volume betwe
 ## Where it appears in AI
 
 * **This extends [[Code as a Tool-Calling Interface]]**, which covered choosing code as the action representation at all; this topic is specifically about what persists across the calls that representation produces.
-* **[[Shared State Across a Multi-Step Task]], already covered in the memory district, is the general version of this same problem** — a code-execution sandbox's persistent variables are one concrete mechanism for carrying state between steps, alongside a blackboard or shared document.
+* **[[Shared State Across a Multi-Step Task]], already covered in the memory section, is the general version of this same problem** — a code-execution sandbox's persistent variables are one concrete mechanism for carrying state between steps, alongside a blackboard or shared document.
 * **[[Hybrid Code-and-GUI Action Spaces]], the next topic, has to decide when code execution (with its own state model) is the right tool at all**, versus clicking through an interface instead.
 
 ## Common pitfalls

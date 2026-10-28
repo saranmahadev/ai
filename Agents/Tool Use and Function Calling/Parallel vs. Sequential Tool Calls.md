@@ -51,7 +51,7 @@ fallback: Compare total latency for independent tool calls run in parallel again
 
 ## Where it appears in AI
 
-* **This is exactly [[Parallelization: Sectioning and Voting|sectioning]] from the previous district**, applied specifically to tool calls instead of whole sub-prompts — the mechanism (independent work finishes in the time of its slowest piece) doesn't change.
+* **This is exactly [[Parallelization: Sectioning and Voting|sectioning]] from the previous section**, applied specifically to tool calls instead of whole sub-prompts — the mechanism (independent work finishes in the time of its slowest piece) doesn't change.
 * **[[Goal Decomposition into Subtasks]]'s dependency graph is what actually determines which tool calls are independent** — a correct decomposition identifies this before any call is made, rather than discovering it by trial and error.
 * **A chain of dependent tool calls is a small instance of [[Plan-and-Execute Agents|plan-and-execute]]'s step-by-step execution**, where each step genuinely needs the step before it.
 

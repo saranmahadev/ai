@@ -1,10 +1,10 @@
-This capstone traces one phrase through every stage this planet built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer block, and projecting back to a prediction over the vocabulary — checking that every piece still fits together exactly as each individual topic claimed.
+This capstone traces one phrase through every stage this subject built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer block, and projecting back to a prediction over the vocabulary — checking that every piece still fits together exactly as each individual topic claimed.
 
 **You need:** [[Byte Pair Encoding]], [[Token Embeddings and Embedding Scaling]], [[Learned Positional Embeddings]], [[Weight Tying]], [[Assembling One Transformer Block]].
 
 ## The question it answers
 
-"Do all of this planet's individually-verified pieces actually compose into one working pipeline?" This capstone builds the pipeline directly, stage by stage, reusing the same tokenizer, embedding scaling, transformer block, and tied output projection verified separately throughout the planet — and checks that a genuinely novel input flows cleanly from raw text to a predicted next token.
+"Do all of this subject's individually-verified pieces actually compose into one working pipeline?" This capstone builds the pipeline directly, stage by stage, reusing the same tokenizer, embedding scaling, transformer block, and tied output projection verified separately throughout the subject — and checks that a genuinely novel input flows cleanly from raw text to a predicted next token.
 
 ## The pipeline
 
@@ -57,7 +57,7 @@ Projecting that final hidden vector back through the *same tied* embedding table
      wid:      0.1250
 ```
 
-The model's top prediction after "lowest" is `est</w>` itself — not a meaningful prediction (the weights here are untrained, small random numbers), but a complete, working pipeline: a word the BPE merges never saw during training was still tokenized sensibly, embedded, positioned, transformed through a full attention-and-feed-forward block, and turned into a genuine probability distribution over the vocabulary, using nothing but the pieces this planet built one at a time.
+The model's top prediction after "lowest" is `est</w>` itself — not a meaningful prediction (the weights here are untrained, small random numbers), but a complete, working pipeline: a word the BPE merges never saw during training was still tokenized sensibly, embedded, positioned, transformed through a full attention-and-feed-forward block, and turned into a genuine probability distribution over the vocabulary, using nothing but the pieces this subject built one at a time.
 
 ## Bench
 
@@ -73,13 +73,13 @@ fallback: Trace a word through tokenization, embedding, one transformer block an
 2. Try a different word and see how its tokenization and final prediction differ.
 3. Compare the final probabilities' spread — notice how flat they are with untrained, random weights.
 
-**What you should notice:** every stage's output is exactly consistent with that stage's own topic earlier on this planet — nothing here is special-cased for this capstone; it's the same functions, called in sequence.
+**What you should notice:** every stage's output is exactly consistent with that stage's own topic earlier in this subject — nothing here is special-cased for this capstone; it's the same functions, called in sequence.
 
 ## Where it appears in AI
 
-* **This is, structurally, exactly what a real transformer does on every input** — the only difference from a production model is scale (far more layers, far wider vectors, trained weights) and the specific architectural variants (RoPE instead of simple positions, RMSNorm, gated feed-forward) covered as options earlier on this planet.
-* **It demonstrates this planet's central claim**: a transformer is not one monolithic mechanism, but a composition of independently-understandable pieces, each doing one job, stacked and connected in a fixed, learnable pattern.
-* **From here, [[LLMs|training this pipeline on real data at real scale]]**, generating many tokens autoregressively, and grounding it in retrieved documents or tool use are the next planets' jobs — this planet's job was the architecture itself.
+* **This is, structurally, exactly what a real transformer does on every input** — the only difference from a production model is scale (far more layers, far wider vectors, trained weights) and the specific architectural variants (RoPE instead of simple positions, RMSNorm, gated feed-forward) covered as options earlier in this subject.
+* **It demonstrates this subject's central claim**: a transformer is not one monolithic mechanism, but a composition of independently-understandable pieces, each doing one job, stacked and connected in a fixed, learnable pattern.
+* **From here, [[LLMs|training this pipeline on real data at real scale]]**, generating many tokens autoregressively, and grounding it in retrieved documents or tool use are the next subjects' jobs — this subject's job was the architecture itself.
 
 ## Common pitfalls
 
@@ -97,7 +97,7 @@ Tokenization, scaled embedding lookup, adding positional information, one transf
 It was never part of the BPE training corpus, so successfully tokenizing and processing it demonstrates the pipeline generalizing to unseen input, not just replaying memorized training examples.
 </details>
 
-<details><summary>3. What does this capstone's result demonstrate about the planet's topics as a whole?</summary>
+<details><summary>3. What does this capstone's result demonstrate about the subject's topics as a whole?</summary>
 That the individually-verified pieces — tokenization, embedding scaling, the transformer block, and tied weights — genuinely compose into one working pipeline, with each stage's output consistent with what its own topic claimed.
 </details>
 

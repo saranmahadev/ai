@@ -1,4 +1,4 @@
-Every mechanism on the previous district's road — guidance, cross-attention conditioning — exists to answer one practical question: given a sentence of text, how do you actually get a picture out the other end? This note assembles them into one pipeline.
+Every mechanism from the previous section — guidance, cross-attention conditioning — exists to answer one practical question: given a sentence of text, how do you actually get a picture out the other end? This note assembles them into one pipeline.
 
 **You need:** [[Classifier-Free Guidance]], [[Cross-Attention Conditioning for Generation]].
 

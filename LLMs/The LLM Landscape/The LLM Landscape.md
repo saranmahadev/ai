@@ -1,6 +1,6 @@
-Outside the technical mechanics, LLMs exist inside a fast-moving ecosystem of model families, release decisions, licenses and governance frameworks that shape who can actually build on what. This district covers that landscape.
+Outside the technical mechanics, LLMs exist inside a fast-moving ecosystem of model families, release decisions, licenses and governance frameworks that shape who can actually build on what. This section covers that landscape.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[A History of LLM Families (GPT, BERT, T5, Llama)]]: how today's major model lineages trace back to a handful of architectural decisions.
 * [[Open-Weight vs. Closed Models]]: what "open" actually means for a model, and what it doesn't.

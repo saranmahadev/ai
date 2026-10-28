@@ -49,7 +49,7 @@ fallback: A scrubbable timeline from 1950 to 2022 with thirteen events, and shad
 
 ## Where it appears in AI
 
-The rest of the galaxy tells the last act in detail: [[Neural Networks]] and [[Deep Learning]] for 1986 and 2012, [[Transformers]] for 2017, and [[LLMs]] for the chatbot wave. [[Expert Systems and Their Limits]] in this planet covers act four.
+The rest of this knowledge base tells the last act in detail: [[Neural Networks]] and [[Deep Learning]] for 1986 and 2012, [[Transformers]] for 2017, and [[LLMs]] for the chatbot wave. [[Expert Systems and Their Limits]] in this subject covers act four.
 
 ## Common pitfalls
 

@@ -4,7 +4,7 @@ A **function** is a rule that takes an input and gives back exactly one output. 
 
 ## The question it answers
 
-"What is a rule from inputs to outputs, and how do I read one?" Functions are the central object of this planet: [[Calculus]] studies how they change, [[Linear Algebra]] studies the simplest ones, and a model is one with adjustable numbers.
+"What is a rule from inputs to outputs, and how do I read one?" Functions are the central object of this subject: [[Calculus]] studies how they change, [[Linear Algebra]] studies the simplest ones, and a model is one with adjustable numbers.
 
 ## Intuition: a machine with a slot and a chute
 

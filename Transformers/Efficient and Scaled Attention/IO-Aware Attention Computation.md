@@ -57,7 +57,7 @@ fallback: Step through computing attention in blocks using the online softmax tr
 ## Where it appears in AI
 
 * **It is the core idea behind FlashAttention and similar exact, memory-efficient attention implementations**, widely used in practice because they compute identical results to standard attention while running meaningfully faster on real hardware.
-* **It complements rather than replaces the other efficiency topics on this planet**: nothing stops combining IO-aware computation with [[Sparse and Local (Windowed) Attention|windowed]] or [[Multi-Query and Grouped-Query Attention|grouped-query]] attention — they address different costs (compute pattern, memory bandwidth, and cache size respectively).
+* **It complements rather than replaces the other efficiency topics in this subject**: nothing stops combining IO-aware computation with [[Sparse and Local (Windowed) Attention|windowed]] or [[Multi-Query and Grouped-Query Attention|grouped-query]] attention — they address different costs (compute pattern, memory bandwidth, and cache size respectively).
 * **The online-softmax trick itself is useful anywhere a softmax needs to be computed over data too large to hold at once** — not specific to attention at all.
 
 ## Common pitfalls

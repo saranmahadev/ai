@@ -4,7 +4,7 @@ An aligned, general-purpose assistant is often not what a product actually needs
 
 ## The question it answers
 
-"After pretraining and alignment, how does a model actually get adapted to one narrow job?" The same supervised fine-tuning mechanism covered earlier on this road — more gradient steps, on a new, narrower dataset — is reused, but now the goal is narrowing the model's behavior to one task rather than broadening it into a general assistant. The practical question is how much of the model to update: a full fine-tune updates every parameter; a low-rank update (already derived on the Generative AI planet as [[Parameter-Efficient Adaptation for Generation|LoRA]]) updates a tiny fraction of that, added on top of the frozen base weights.
+"After pretraining and alignment, how does a model actually get adapted to one narrow job?" The same supervised fine-tuning mechanism covered earlier in this subject — more gradient steps, on a new, narrower dataset — is reused, but now the goal is narrowing the model's behavior to one task rather than broadening it into a general assistant. The practical question is how much of the model to update: a full fine-tune updates every parameter; a low-rank update (already derived in Generative AI as [[Parameter-Efficient Adaptation for Generation|LoRA]]) updates a tiny fraction of that, added on top of the frozen base weights.
 
 ## Intuition
 
@@ -49,7 +49,7 @@ fallback: Slide hidden size and rank and compare full fine-tuning's parameter co
 
 ## Where it appears in AI
 
-* **This reuses the exact low-rank mechanism derived in [[Parameter-Efficient Adaptation for Generation|LoRA]] on the Generative AI planet** — the mechanism doesn't change for LLMs, only the motivation (task specialization rather than style or subject adaptation).
+* **This reuses the exact low-rank mechanism derived in [[Parameter-Efficient Adaptation for Generation|LoRA]] in Generative AI** — the mechanism doesn't change for LLMs, only the motivation (task specialization rather than style or subject adaptation).
 * **A fine-tuned model can be merged with others ([[Model Merging and Weight Averaging]]) or risk forgetting what it knew before fine-tuning ([[Catastrophic Forgetting in Fine-Tuning]])** — both are direct consequences of how fine-tuning updates the model's weights.
 * **Choosing whether to fine-tune at all, versus prompting a general model, is part of [[Choosing a Model for a Task]].**
 

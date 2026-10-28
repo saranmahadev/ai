@@ -1,6 +1,6 @@
-Before an AI system can decide anything, it has to perceive, and for most modern systems perceiving means turning the world into **data**. This district explains what data is, how it is described with **features** and **labels**, what a **model** does with it, the difference between **training** and **inference**, and the main types of tasks.
+Before an AI system can decide anything, it has to perceive, and for most modern systems perceiving means turning the world into **data**. This section explains what data is, how it is described with **features** and **labels**, what a **model** does with it, the difference between **training** and **inference**, and the main types of tasks.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Data as Raw Material]]: the forms data takes, and why they all become numbers.
 * [[Features and Labels]]: what a model looks at, and what it is asked to predict.

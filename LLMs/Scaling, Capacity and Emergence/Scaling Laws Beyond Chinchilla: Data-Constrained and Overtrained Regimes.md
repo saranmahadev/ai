@@ -70,7 +70,7 @@ fallback: Compare growing model size against a fixed data cap, or growing traini
 ## Common pitfalls
 
 * **Treating compute-optimal as the only "correct" choice.** Real deployments routinely and reasonably deviate from it — overtraining a small model is a deliberate trade favoring cheap inference, not a mistake.
-* **Assuming data-constrained training can always be fixed by adding synthetic data.** As [[Synthetic Data for Pretraining|covered elsewhere on this planet]], recursive reliance on model-generated data to beat a real data ceiling carries its own serious risk.
+* **Assuming data-constrained training can always be fixed by adding synthetic data.** As [[Synthetic Data for Pretraining|covered elsewhere in this subject]], recursive reliance on model-generated data to beat a real data ceiling carries its own serious risk.
 * **Expecting diminishing returns to mean zero returns.** Both worked-example curves keep improving, just by less and less — pushing past the point of good returns isn't pointless, only less efficient.
 
 ## Quick check

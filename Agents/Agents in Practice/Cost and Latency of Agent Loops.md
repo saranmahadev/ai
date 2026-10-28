@@ -1,4 +1,4 @@
-A single LLM call's cost and latency already has its own math, covered on the LLMs planet. An agent loop doesn't just repeat that call n times at a flat price — the transcript each call reasons over grows every iteration, so later calls cost more than earlier ones, and the total runs well past "one call's cost times n."
+A single LLM call's cost and latency already has its own math, covered in LLMs. An agent loop doesn't just repeat that call n times at a flat price — the transcript each call reasons over grows every iteration, so later calls cost more than earlier ones, and the total runs well past "one call's cost times n."
 
 **You need:** [[Cost and Latency of LLM APIs]], [[Production Agent Architecture]], [[Memory Compression and Forgetting]].
 

@@ -1,10 +1,10 @@
-"Cells that fire together wire together." **Hebbian learning** strengthens the connection between two neurons in direct proportion to how often they're active at the same time — no error signal, no label, no teacher telling it what the right answer should have been. It is the oldest learning rule in this field, and the ancestor of every unsupervised rule on this planet.
+"Cells that fire together wire together." **Hebbian learning** strengthens the connection between two neurons in direct proportion to how often they're active at the same time — no error signal, no label, no teacher telling it what the right answer should have been. It is the oldest learning rule in this field, and the ancestor of every unsupervised rule in this subject.
 
 **You need:** [[The Biological Neuron]] and [[Vector Operations]].
 
 ## The question it answers
 
-"Every learning rule so far on these planets corrects a *mistake* — what would a rule that has no notion of 'mistake' at all even look like?" One that simply strengthens connections between neurons that tend to activate together, and weakens nothing on its own — correlation, not correction, as the entire basis for learning.
+"Every learning rule so far in these subjects corrects a *mistake* — what would a rule that has no notion of 'mistake' at all even look like?" One that simply strengthens connections between neurons that tend to activate together, and weakens nothing on its own — correlation, not correction, as the entire basis for learning.
 
 ## Intuition: wiring follows coincidence
 
@@ -52,8 +52,8 @@ fallback: Two adjustable neuron activations and a learning rate. Step through re
 
 ## Where it appears in AI
 
-* **Every other unsupervised rule on this planet traces back to this idea**: [[Self-Organizing Maps|self-organizing maps]], [[Competitive Learning and Vector Quantization|competitive learning]], and [[Spike-Timing-Dependent Plasticity|spike-timing-dependent plasticity]] are all, at heart, correlation-driven updates in Hebb's spirit.
-* **Modern self-supervised learning** (see [[Self-Supervised Learning]] on the Deep Learning planet) is a very different, much more engineered answer to the same underlying question: how do you learn something useful with no labels?
+* **Every other unsupervised rule in this subject traces back to this idea**: [[Self-Organizing Maps|self-organizing maps]], [[Competitive Learning and Vector Quantization|competitive learning]], and [[Spike-Timing-Dependent Plasticity|spike-timing-dependent plasticity]] are all, at heart, correlation-driven updates in Hebb's spirit.
+* **Modern self-supervised learning** (see [[Self-Supervised Learning]] in Deep Learning) is a very different, much more engineered answer to the same underlying question: how do you learn something useful with no labels?
 * **Hebb's original 1949 proposal predates the perceptron by nearly a decade**, making it one of the earliest concrete theories of how learning might work in a nervous system.
 
 ## Common pitfalls

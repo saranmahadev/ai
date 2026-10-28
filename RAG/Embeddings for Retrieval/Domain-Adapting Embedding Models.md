@@ -53,7 +53,7 @@ fallback: Compare a general-purpose embedding's sense confusion against a domain
 
 ## Where it appears in AI
 
-* **This reuses the exact fine-tuning mechanism already covered as [[Continued Pretraining and Domain Adaptation]] on the LLMs planet**, applied here specifically to embedding models rather than generation models.
+* **This reuses the exact fine-tuning mechanism already covered as [[Continued Pretraining and Domain Adaptation]] in LLMs**, applied here specifically to embedding models rather than generation models.
 * **A domain-adapted embedding model is still a bi-encoder ([[Bi-Encoders and Dense Embeddings]])** — adaptation changes what the model has learned to consider similar, not the architecture itself.
 * **Getting this wrong directly causes the kind of retrieval failure [[Common RAG Failure Modes]] catalogs**: confidently retrieving a document about the wrong sense of an ambiguous term.
 

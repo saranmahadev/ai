@@ -1,8 +1,8 @@
-Every AI model is, underneath, arithmetic done at enormous scale. This planet teaches the mathematics you need to see exactly what a model is doing, starting from ordinary numbers and ending with the ideas behind training, probability and attention. You do not need any earlier maths: each topic says what it needs, and only ever needs topics that come before it on the road.
+Every AI model is, underneath, arithmetic done at enormous scale. This subject teaches the mathematics you need to see exactly what a model is doing, starting from ordinary numbers and ending with the ideas behind training, probability and attention. You do not need any earlier maths: each topic says what it needs, and only ever needs topics that come before it.
 
 Each topic asks one question, explains it in plain language with a small worked example, lets you play with it in a **bench**, and ends with where the idea shows up in AI.
 
-## The road
+## Topics
 
 1. [[Arithmetic and Number Sense]]: kinds of numbers, fractions, powers, logarithms, scale and notation.
 2. [[Algebra and Functions]]: variables, equations, sequences, sums and the functions models are built from.
@@ -17,4 +17,4 @@ Each topic asks one question, explains it in plain language with a small worked 
 11. [[Numerical Computing]]: why real computers get maths slightly wrong, and how to cope.
 12. [[Math in AI]]: regression, a forward and backward pass, embeddings and attention, worked by hand.
 
-If you already know a stretch of the road, jump to the district you need; every topic links back to what it builds on. From here the road leads on to [[Machine Learning]].
+If you already know part of this, jump to the section you need; every topic links back to what it builds on. Next comes [[Machine Learning]].

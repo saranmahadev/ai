@@ -2,7 +2,7 @@
 
 **You need:** [[Entropy]] and [[Surprise and Information]].
 
-Cross-entropy is used as a loss function; the [[Optimization]] district, later on the road, shows how such losses are minimised.
+Cross-entropy is used as a loss function; the [[Optimization]] section, later on, shows how such losses are minimised.
 
 ## The question it answers
 

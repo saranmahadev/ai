@@ -58,7 +58,7 @@ fallback: Step through generating a sequence one token at a time, watching exact
 
 * **GPT-style models are the canonical decoder-only architecture**, trained to predict the next token given everything before it — exactly the generation process traced in the worked example.
 * **This is the architecture [[LLMs|most modern large language models]] are built on**, since their core capability — generating fluent, coherent text one token at a time — is precisely what causal masking makes consistent between training and actual use.
-* **[[KV-Caching for Autoregressive Inference|KV-caching]], covered later on this planet**, exists specifically because decoder-only generation repeats the same growing-context computation at every single step — a real cost this architecture's generation process creates.
+* **[[KV-Caching for Autoregressive Inference|KV-caching]], covered later in this subject**, exists specifically because decoder-only generation repeats the same growing-context computation at every single step — a real cost this architecture's generation process creates.
 
 ## Common pitfalls
 

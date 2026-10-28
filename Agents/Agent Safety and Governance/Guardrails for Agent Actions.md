@@ -4,7 +4,7 @@ A text guardrail scores free-form output for risk and has to guess at intent fro
 
 ## The question it answers
 
-"How do you stop a specific proposed action before it runs, rather than filtering the text around it?" An **action guardrail** sits between an agent's decision and its execution, checking the proposed action's actual parameters against a policy — block anything matching a known high-risk pattern, let everything else through. Unlike the text classifier covered in [[Guardrails and Deployment-Time Safety Filters|the earlier, LLMs-planet guardrail]], which scores ambiguous free text on a continuous threshold, an action guardrail can often match exactly: a `DROP TABLE` statement or a `wire_transfer` call either matches a rule or it doesn't.
+"How do you stop a specific proposed action before it runs, rather than filtering the text around it?" An **action guardrail** sits between an agent's decision and its execution, checking the proposed action's actual parameters against a policy — block anything matching a known high-risk pattern, let everything else through. Unlike the text classifier covered in [[Guardrails and Deployment-Time Safety Filters|the earlier guardrail from LLMs]], which scores ambiguous free text on a continuous threshold, an action guardrail can often match exactly: a `DROP TABLE` statement or a `wire_transfer` call either matches a rule or it doesn't.
 
 ## Intuition
 
@@ -55,7 +55,7 @@ fallback: Toggle an action-level guardrail and watch it block proposed actions m
 
 * **This directly extends [[Guardrails and Deployment-Time Safety Filters]]** from a continuous risk score on free text to an exact match on an action's structured parameters — the same deployment-time-filter idea, applied where it can be more precise.
 * **[[Autonomy Levels and Human Oversight Tiers]]'s irreversible/reversible split is a natural rule set for an action guardrail to encode** — routing irreversible actions through extra checks is one concrete policy this mechanism can enforce automatically.
-* **[[Prompt Injection in Agent Contexts]], next in this district, shows exactly why this matters**: an action guardrail still blocks a high-risk action even when the *instruction* asking for it came from somewhere the agent never should have trusted.
+* **[[Prompt Injection in Agent Contexts]], next in this section, shows exactly why this matters**: an action guardrail still blocks a high-risk action even when the *instruction* asking for it came from somewhere the agent never should have trusted.
 
 ## Common pitfalls
 

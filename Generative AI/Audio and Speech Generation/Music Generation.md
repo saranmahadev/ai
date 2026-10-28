@@ -4,7 +4,7 @@ Speech has to be intelligible; music, rather famously, has to sound *right* in a
 
 ## The question it answers
 
-"How do you generate a melody that stays in a given musical key?" The same [[Constrained and Structured Generation|grammar masking]] used to force valid arithmetic can force valid *scale membership*: at every step, mask out every note that doesn't belong to the chosen scale before sampling the next one, exactly the way an invalid arithmetic token was masked out earlier on this planet. The underlying note-to-note preferences (a toy model favoring small, stepwise melodic motion) stay exactly the same — only which notes are *available* to express that preference over changes.
+"How do you generate a melody that stays in a given musical key?" The same [[Constrained and Structured Generation|grammar masking]] used to force valid arithmetic can force valid *scale membership*: at every step, mask out every note that doesn't belong to the chosen scale before sampling the next one, exactly the way an invalid arithmetic token was masked out earlier in this subject. The underlying note-to-note preferences (a toy model favoring small, stepwise melodic motion) stay exactly the same — only which notes are *available* to express that preference over changes.
 
 ## Intuition
 

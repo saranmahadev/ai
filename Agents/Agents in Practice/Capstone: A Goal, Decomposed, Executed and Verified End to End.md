@@ -1,10 +1,10 @@
-Every mechanism this planet covered separately — decomposing a goal, picking a tool, sharing state across steps, checking a trajectory, gating a risky action, accounting for cost — is usually described one at a time, with its own worked example. This capstone follows one real goal through all six of those mechanisms in order, reusing the exact same functions each earlier topic already verified, so the whole pipeline's numbers connect end to end.
+Every mechanism this subject covered separately — decomposing a goal, picking a tool, sharing state across steps, checking a trajectory, gating a risky action, accounting for cost — is usually described one at a time, with its own worked example. This capstone follows one real goal through all six of those mechanisms in order, reusing the exact same functions each earlier topic already verified, so the whole pipeline's numbers connect end to end.
 
 **You need:** [[Goal Decomposition into Subtasks]], [[Tool Selection Among Many Candidates]], [[Shared State Across a Multi-Step Task]], [[Trajectory-Level Evaluation]], [[Autonomy Levels and Human Oversight Tiers]], [[Cost and Latency of Agent Loops]].
 
 ## The question it answers
 
-"What does a single goal actually go through, in order, from arriving as a request to being executed and checked?" Six stages, each already covered in depth on this road: breaking the goal into ordered subtasks; selecting the right tool for a step among several candidates; sharing state fetched once across the steps that all need it; verifying the finished trajectory step by step, not just its final answer; checking which of its actions need a human's sign-off before running; and totaling what the whole thing actually cost.
+"What does a single goal actually go through, in order, from arriving as a request to being executed and checked?" Six stages, each already covered in depth in this subject: breaking the goal into ordered subtasks; selecting the right tool for a step among several candidates; sharing state fetched once across the steps that all need it; verifying the finished trajectory step by step, not just its final answer; checking which of its actions need a human's sign-off before running; and totaling what the whole thing actually cost.
 
 ## Intuition
 
@@ -23,7 +23,7 @@ stage 6: account cost    — total what the whole trajectory actually cost
 
 ## A worked example
 
-The goal "book a flight to Denver and email the itinerary," traced through all six stages using the exact functions already verified earlier on this planet:
+The goal "book a flight to Denver and email the itinerary," traced through all six stages using the exact functions already verified earlier in this subject:
 
 ```text
 stage 1 (decompose): search_flights → book_flight → email_itinerary
@@ -55,8 +55,8 @@ Nothing in this trace is new mechanics — decomposition's 0-versus-2 violations
 
 ```bench
 id: agents-capstone
-title: One goal, every stage of this road
-fallback: Step one goal through decomposition, tool selection, shared state, verification, a safety check and cost accounting, reusing this planet's own verified functions at each stage.
+title: One goal, every stage of this subject
+fallback: Step one goal through decomposition, tool selection, shared state, verification, a safety check and cost accounting, reusing this subject's own verified functions at each stage.
 ```
 
 **Try this**
@@ -65,7 +65,7 @@ fallback: Step one goal through decomposition, tool selection, shared state, ver
 2. Compare stage 1's decomposed-order violations (0) against the flat guess (2) — notice decomposition is what made every later stage's assumptions valid in the first place.
 3. Reset and imagine stage 5's safety check didn't exist — would the irreversible booking action have run without anyone approving it first?
 
-**What you should notice:** each stage's number was independently verified earlier on this planet's own road — this capstone doesn't introduce new mechanics, it chains six already-verified mechanisms together in the order a real agent run would actually hit them.
+**What you should notice:** each stage's number was independently verified earlier in this subject — this capstone doesn't introduce new mechanics, it chains six already-verified mechanisms together in the order a real agent run would actually hit them.
 
 ## Where it appears in AI
 

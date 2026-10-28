@@ -48,7 +48,7 @@ fallback: Compare total tool calls needed to process a growing number of items u
 ## Where it appears in AI
 
 * **This is the same call-count logic behind [[Orchestrator-Workers]] and sectioning, in reverse**: those patterns split one task into many separate calls when the pieces genuinely need independent handling; code-as-tool collapses many repetitive pieces back into one call when they don't.
-* **[[Code-Execution Agents]], covered in the next district, is the full environment built around this idea** — an execution sandbox, state carried between code snippets, and the broader question of what an agent can do once code itself is its action space. This topic is specifically about the *interface* choice; that one is about the environment it runs in.
+* **[[Code-Execution Agents]], covered in the next section, is the full environment built around this idea** — an execution sandbox, state carried between code snippets, and the broader question of what an agent can do once code itself is its action space. This topic is specifically about the *interface* choice; that one is about the environment it runs in.
 * **Structured function calling still has real advantages this topic doesn't erase**: its schema makes every individual action easy to validate and log, which a freeform code blob makes harder to inspect before it runs.
 
 ## Common pitfalls

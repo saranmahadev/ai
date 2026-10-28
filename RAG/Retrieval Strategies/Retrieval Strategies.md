@@ -1,6 +1,6 @@
-Having a fast index doesn't yet say what to search it with. This district covers the different ways of turning a user's question into something retrievable, and how to combine them when any single strategy misses too much.
+Having a fast index doesn't yet say what to search it with. This section covers the different ways of turning a user's question into something retrievable, and how to combine them when any single strategy misses too much.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Sparse Retrieval with TF-IDF and BM25]]: ranking by matching words, still a strong baseline.
 * [[Dense Retrieval]]: ranking by embedding similarity instead of word overlap.

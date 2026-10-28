@@ -53,7 +53,7 @@ fallback: Fit a wavy target function with a chosen number of random sigmoid hidd
 
 ## Where it appears in AI
 
-* **It is the logical extreme of the whole "fix the nonlinear part, solve the linear part" family** on this planet, after [[Radial Basis Function Networks]] (a few chosen centres) and [[Reservoir Computing and Liquid State Machines]] (a large, fixed recurrent core).
+* **It is the logical extreme of the whole "fix the nonlinear part, solve the linear part" family** in this subject, after [[Radial Basis Function Networks]] (a few chosen centres) and [[Reservoir Computing and Liquid State Machines]] (a large, fixed recurrent core).
 * **It highlights how much of a trained network's power can come from its linear output layer alone**, given a sufficiently rich fixed or random representation underneath — a useful reality check against assuming every parameter in a deep network needs careful training to matter.
 * **Random features reappear in kernel approximation methods** on [[Machine Learning]], where a random nonlinear projection is used to approximate an expensive kernel computation cheaply.
 

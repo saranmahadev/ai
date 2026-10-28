@@ -1,4 +1,4 @@
-Every retrieval-augmented system, however elaborate, is built from the same handful of stages in the same order: a question comes in, it becomes a vector, that vector finds relevant passages, those passages get assembled into context, and the model generates an answer from that context. Everything else on this planet is a deeper look at one of these five stages.
+Every retrieval-augmented system, however elaborate, is built from the same handful of stages in the same order: a question comes in, it becomes a vector, that vector finds relevant passages, those passages get assembled into context, and the model generates an answer from that context. Everything else in this subject is a deeper look at one of these five stages.
 
 **You need:** [[Embeddings and Similarity Search]].
 
@@ -16,7 +16,7 @@ A reference librarian answering a question does roughly the same five things: he
 query  → embed  → retrieve (top-k by similarity)  → assemble (context)  → generate (answer)
 ```
 
-Each arrow is a real engineering decision this planet covers in depth: how to embed ([[Bi-Encoders and Dense Embeddings]]), how to retrieve ([[Dense Retrieval]], [[Sparse Retrieval with TF-IDF and BM25]]), how to assemble ([[Context Assembly and Ordering]]), how to generate faithfully ([[Grounded Generation and Faithfulness]]).
+Each arrow is a real engineering decision this subject covers in depth: how to embed ([[Bi-Encoders and Dense Embeddings]]), how to retrieve ([[Dense Retrieval]], [[Sparse Retrieval with TF-IDF and BM25]]), how to assemble ([[Context Assembly and Ordering]]), how to generate faithfully ([[Grounded Generation and Faithfulness]]).
 
 ## A worked example
 
@@ -59,13 +59,13 @@ fallback: Step through a RAG pipeline's stages on one toy query, from embedding 
 
 ## Where it appears in AI
 
-* **Every later district on this planet is a deeper treatment of one arrow in this diagram**: chunking happens before embedding even starts; embeddings, indexing and retrieval strategies fill in the retrieve stage; assembly and faithful generation fill in the last two.
+* **Every later section in this subject is a deeper treatment of one arrow in this diagram**: chunking happens before embedding even starts; embeddings, indexing and retrieval strategies fill in the retrieve stage; assembly and faithful generation fill in the last two.
 * **[[RAG vs. Fine-Tuning vs. Long-Context]] compares this entire five-stage pipeline against alternatives that skip some or all of these stages.**
-* **The capstone ([[Capstone: A Question Answered, Traced from Query to Grounded Answer]]) walks this same five-stage shape again, at the end of the planet, with every stage built out using the planet's own verified techniques.**
+* **The capstone ([[Capstone: A Question Answered, Traced from Query to Grounded Answer]]) walks this same five-stage shape again, at the end of this subject, with every stage built out using this subject's own verified techniques.**
 
 ## Common pitfalls
 
-* **Assuming "RAG" means one specific technique.** It names this whole five-stage shape; nearly every other topic on this planet is a different, swappable way to implement one of its stages.
+* **Assuming "RAG" means one specific technique.** It names this whole five-stage shape; nearly every other topic in this subject is a different, swappable way to implement one of its stages.
 * **Treating retrieval as a single step that either works or doesn't.** The worked example's numeric scores show retrieval is a *ranking*, not a binary decision — "top-k" always involves a cutoff choice with real consequences.
 * **Forgetting that assembly is a real stage with real decisions.** Which retrieved passages go first, how they're separated, and how many fit are all choices — not an automatic consequence of retrieval.
 

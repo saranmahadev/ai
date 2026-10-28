@@ -1,10 +1,10 @@
-Checking an agent's full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there's no reference string for "was this a reasonable approach." Using an LLM as the judge, already covered on the LLMs planet for single outputs, extends naturally to reading an entire transcript and rendering a verdict on the whole run — and it inherits that judge's exact same biases while doing it.
+Checking an agent's full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there's no reference string for "was this a reasonable approach." Using an LLM as the judge, already covered in LLMs for single outputs, extends naturally to reading an entire transcript and rendering a verdict on the whole run — and it inherits that judge's exact same biases while doing it.
 
 **You need:** [[Trajectory-Level Evaluation]].
 
 ## The question it answers
 
-"How do you grade a property of an agent's run that no fixed rule can check?" Rule-based trajectory checkers (like the step-validity check in the previous topic) only work when "valid" has a checkable definition. For judgments like "was this a sound approach" or "did the agent waste effort," there's often no reference answer to check against — so the same **LLM-as-judge** mechanism already covered for single outputs gets applied to the entire trajectory transcript instead, with the identical position-bias risk the LLMs planet already demonstrated.
+"How do you grade a property of an agent's run that no fixed rule can check?" Rule-based trajectory checkers (like the step-validity check in the previous topic) only work when "valid" has a checkable definition. For judgments like "was this a sound approach" or "did the agent waste effort," there's often no reference answer to check against — so the same **LLM-as-judge** mechanism already covered for single outputs gets applied to the entire trajectory transcript instead, with the identical position-bias risk already demonstrated in LLMs.
 
 ## Intuition
 
@@ -14,7 +14,7 @@ Grading a single essay for quality is already subjective enough to need a human-
 
 ```text
 judge_score(trajectory, position) = quality(trajectory) + bias_term(position)
-                                     (the exact mechanism from the LLMs planet,
+                                     (the exact mechanism from LLMs,
                                       "trajectory" standing in for "response")
 ```
 
@@ -51,11 +51,11 @@ fallback: Swap which full agent trajectory is shown first and watch the judge's 
 2. Swap the order and compare the verdict.
 3. Consider how a production pipeline might cancel out this effect, the same way it would for single-response judging.
 
-**What you should notice:** this is the identical position-bias mechanism already verified on the LLMs planet — nothing about judging trajectories instead of single responses changes how the bias behaves, only what's being read has gotten much longer.
+**What you should notice:** this is the identical position-bias mechanism already verified in LLMs — nothing about judging trajectories instead of single responses changes how the bias behaves, only what's being read has gotten much longer.
 
 ## Where it appears in AI
 
-* **This directly reuses the [[LLM-as-Judge Evaluation|LLM-as-judge mechanism]] already covered on the LLMs planet** — the bias term, the mitigation (order randomization), and the underlying risk are unchanged; only the object being judged (a full trajectory instead of a single output) is new.
+* **This directly reuses the [[LLM-as-Judge Evaluation|LLM-as-judge mechanism]] already covered in LLMs** — the bias term, the mitigation (order randomization), and the underlying risk are unchanged; only the object being judged (a full trajectory instead of a single output) is new.
 * **The 40× longer input in the worked example is exactly why [[Cost and Reliability as Joint Metrics]], covered next, matters for trajectory judging** — reading and scoring full transcripts costs meaningfully more than judging single outputs.
 * **[[Debate and Adversarial Multi-Agent Setups]] often uses a judge of exactly this kind** to decide between two agents' competing trajectories, once a challenge has been raised.
 

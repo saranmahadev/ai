@@ -57,7 +57,7 @@ fallback: Compare a free-text date field's parse failures against a strict ISO-8
 
 * **This directly reduces the permanent-error rate from [[Handling Tool Errors and Retries]]** — a malformed-argument failure caused by an ambiguous field design is exactly the kind of permanent error no amount of retrying fixes; a stricter schema prevents it from happening at all.
 * **[[Tool Result Verification]] is the safety net for whatever reliability problems a tool's design doesn't prevent** — the two are complementary, not alternatives: design reduces how often bad calls happen, verification catches the ones that still get through.
-* **[[Code as a Tool-Calling Interface]], next in this district, is itself a tool-interface design choice** at a larger scale — the same reliability questions (how much room is left for ambiguity or error) apply there too.
+* **[[Code as a Tool-Calling Interface]], next in this section, is itself a tool-interface design choice** at a larger scale — the same reliability questions (how much room is left for ambiguity or error) apply there too.
 
 ## Common pitfalls
 

@@ -1,4 +1,4 @@
-Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this planet's own illustrative units — far too much for a live request. Running it only over the 50 documents a cheap bi-encoder already found promising costs a tiny fraction of that, for most of the accuracy benefit.
+Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this subject's own illustrative units — far too much for a live request. Running it only over the 50 documents a cheap bi-encoder already found promising costs a tiny fraction of that, for most of the accuracy benefit.
 
 **You need:** [[Cross-Encoders and Re-Rankers]].
 

@@ -17,7 +17,7 @@ given frame A (position a) and frame B (position b), n frames apart:
   interpolated frame i = a + (i/n)·(b−a)      for i = 0, ..., n
 
 (this is exactly harmonic inpainting from the Image Generation and Editing
-district, with "pixel value" replaced by "frame position")
+section, with "pixel value" replaced by "frame position")
 ```
 
 ## A worked example

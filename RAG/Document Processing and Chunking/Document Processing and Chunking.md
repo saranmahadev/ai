@@ -1,6 +1,6 @@
 Before anything can be retrieved, raw documents — PDFs, web pages, spreadsheets, code — have to become a collection of individually retrievable pieces. How that split happens shapes everything downstream: too coarse and irrelevant text gets dragged along with what's useful; too fine and a passage loses the context it needs to make sense on its own.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Parsing Documents for Retrieval]]: turning PDFs, HTML and other formats into clean, retrievable text.
 * [[Fixed-Size and Recursive Chunking]]: the simplest ways to split a document into pieces.

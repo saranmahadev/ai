@@ -1,4 +1,4 @@
-This capstone traces one prompt through the two mechanisms this planet opened with — conditioning and guidance — and closes the loop by decoding the result back into a named concept, checking that the pieces this planet built compose into one working pipeline, exactly as the Transformers planet's own capstone did for its road.
+This capstone traces one prompt through the two mechanisms this subject opened with — conditioning and guidance — and closes the loop by decoding the result back into a named concept, checking that the pieces this subject built compose into one working pipeline, exactly as the Transformers subject's own capstone did.
 
 **You need:** [[Classifier-Free Guidance]], [[Text-to-Image Pipelines]], [[Any-to-Any Generative Models]].
 
@@ -30,7 +30,7 @@ prompt "dog":   target (2, 2)     →   final latent (1.970, 2.012)    →   dec
 prompt "bird":  target (0, -2.5)  →   final latent (0.000, -2.412)   →   decoded "bird"  (distance 0.088)
 ```
 
-Every prompt decodes back to exactly the concept it named, each landing within a small fraction of a unit from its true target — confirming that conditioning, guidance and decoding, built and verified separately across this planet's road, genuinely compose into one working pipeline from a text prompt to a correctly recovered concept.
+Every prompt decodes back to exactly the concept it named, each landing within a small fraction of a unit from its true target — confirming that conditioning, guidance and decoding, built and verified separately across this subject, genuinely compose into one working pipeline from a text prompt to a correctly recovered concept.
 
 ## Bench
 
@@ -46,13 +46,13 @@ fallback: Pick a prompt and trace it through conditioning, guided denoising, and
 2. Compare the final distance-to-target across the three prompts.
 3. Consider what a much larger distance would have suggested about the pipeline.
 
-**What you should notice:** every stage's output here is exactly the same function, called with exactly the same code, as when each stage was introduced on its own earlier on this planet — nothing here is special-cased for this capstone.
+**What you should notice:** every stage's output here is exactly the same function, called with exactly the same code, as when each stage was introduced on its own earlier in this subject — nothing here is special-cased for this capstone.
 
 ## Where it appears in AI
 
 * **This is, structurally, exactly what a real text-to-image or text-to-anything pipeline does**: encode a condition, run guided generation, and interpret the result — at a scale of millions of parameters and a far richer shared space than this toy example's three concepts.
-* **It demonstrates this planet's central claim**: generation-time behavior (decoding, conditioning, guidance), modality-specific pipelines, and evaluation are each independently understandable pieces that combine into one system, not one monolithic mechanism.
-* **From here, [[LLMs|training and scaling the models these mechanisms condition and guide]], grounding generation in retrieved documents, and building agents that call on generation as one tool among several are the next planets' jobs** — this planet's job was generation-time behavior itself.
+* **It demonstrates this subject's central claim**: generation-time behavior (decoding, conditioning, guidance), modality-specific pipelines, and evaluation are each independently understandable pieces that combine into one system, not one monolithic mechanism.
+* **From here, [[LLMs|training and scaling the models these mechanisms condition and guide]], grounding generation in retrieved documents, and building agents that call on generation as one tool among several are the next subjects' jobs** — this subject's job was generation-time behavior itself.
 
 ## Common pitfalls
 
@@ -67,11 +67,11 @@ Setting a conditioning target from the prompt, running classifier-free-guidance-
 </details>
 
 <details><summary>2. Why was the prompt "cat" specifically chosen as one of the worked example's three cases?</summary>
-It's one of three concepts whose positions were fixed in the toy setup, letting the pipeline's result be checked directly against a known correct answer — the same verification approach used for every worked example on this planet.
+It's one of three concepts whose positions were fixed in the toy setup, letting the pipeline's result be checked directly against a known correct answer — the same verification approach used for every worked example in this subject.
 </details>
 
-<details><summary>3. What does this capstone's result demonstrate about the planet's topics as a whole?</summary>
-That conditioning, guidance and cross-modal decoding — each verified independently earlier on this planet — genuinely compose into one working pipeline, taking a text prompt all the way to a correctly recovered concept.
+<details><summary>3. What does this capstone's result demonstrate about the subject's topics as a whole?</summary>
+That conditioning, guidance and cross-modal decoding — each verified independently earlier in this subject — genuinely compose into one working pipeline, taking a text prompt all the way to a correctly recovered concept.
 </details>
 
 ## Key terms

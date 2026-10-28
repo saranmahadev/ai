@@ -44,7 +44,7 @@ x = 1:   z = −2   p = σ(−2) = 0.1192
 
 If the true label at `x = 1` is `y = 1` (a yes the model doubted): `L = −ln 0.1192 = 2.127`. Gradient with respect to the score: `p − y = 0.1192 − 1 = −0.881`, so the update pushes the score for that example up. If instead `y = 0`, the loss is `−ln(1 − 0.1192) = 0.127` (small: the model was right).
 
-Notice it uses [[Cross-Entropy]] from the information-theory district, the sigmoid from the algebra district, and the chain rule from calculus.
+Notice it uses [[Cross-Entropy]] from the information-theory section, the sigmoid from the algebra section, and the chain rule from calculus.
 
 ## Bench
 

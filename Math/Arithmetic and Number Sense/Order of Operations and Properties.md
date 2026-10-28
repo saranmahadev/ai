@@ -4,7 +4,7 @@ An expression such as `2 + 3 × 4` has one right answer because everyone agrees 
 
 ## The question it answers
 
-"In what order do I calculate, and what can I move around without changing the answer?" Every formula in the rest of this planet depends on reading expressions the same way a computer does.
+"In what order do I calculate, and what can I move around without changing the answer?" Every formula in the rest of this subject depends on reading expressions the same way a computer does.
 
 ## Intuition: strong glue and weak glue
 

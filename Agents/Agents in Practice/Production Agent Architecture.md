@@ -1,10 +1,10 @@
-Every topic on this road so far has zoomed into one piece of an agent — planning, a tool call, a memory lookup. Running the whole thing means those pieces fit into one repeating loop, and the time each stage of that loop takes adds up into a single number a real request actually waits on.
+Every topic in this subject so far has zoomed into one piece of an agent — planning, a tool call, a memory lookup. Running the whole thing means those pieces fit into one repeating loop, and the time each stage of that loop takes adds up into a single number a real request actually waits on.
 
 **You need:** [[Anatomy of an Agent Architecture]], [[Observability and Tracing for Agent Runs]].
 
 ## The question it answers
 
-"How do the pieces this planet covered separately fit into one running loop?" A production agent loop repeats four stages every iteration: **observe** the current state of the environment, **reason** about what to do next (typically an LLM call), **act** by calling a tool, and **verify** the result before deciding whether to continue. Each stage is individually fast or slow for different reasons, and — just like a RAG pipeline's latency is dominated by generation — one stage usually dominates an agent loop's latency too.
+"How do the pieces this subject covered separately fit into one running loop?" A production agent loop repeats four stages every iteration: **observe** the current state of the environment, **reason** about what to do next (typically an LLM call), **act** by calling a tool, and **verify** the result before deciding whether to continue. Each stage is individually fast or slow for different reasons, and — just like a RAG pipeline's latency is dominated by generation — one stage usually dominates an agent loop's latency too.
 
 ## Intuition
 
@@ -49,7 +49,7 @@ fallback: See where one agent-loop iteration's latency actually goes, and how th
 
 ## Where it appears in AI
 
-* **The reason stage is exactly one augmented-LLM call, [[The Augmented LLM|already covered]] on this road** — this topic is about where it sits in a repeating loop, not a new mechanism.
+* **The reason stage is exactly one augmented-LLM call, [[The Augmented LLM|already covered]] in this subject** — this topic is about where it sits in a repeating loop, not a new mechanism.
 * **[[Observability and Tracing for Agent Runs]] is what makes this stage-by-stage breakdown visible in the first place** — without tracing, you'd only see the loop's total time, not which stage spent it.
 * **[[Cost and Latency of Agent Loops]] takes this same four-stage shape and adds up what happens across many iterations**, not just one.
 

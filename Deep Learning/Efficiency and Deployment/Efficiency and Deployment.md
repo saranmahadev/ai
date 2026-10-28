@@ -1,6 +1,6 @@
-A network that trains well is not automatically one you can afford to run. This district covers shrinking a trained network and finding its architecture automatically, so it fits a budget of memory, latency or power.
+A network that trains well is not automatically one you can afford to run. This section covers shrinking a trained network and finding its architecture automatically, so it fits a budget of memory, latency or power.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Model Pruning]]: removing weights or units a trained network turns out not to need.
 * [[Quantization]]: storing and computing with numbers that use fewer bits.

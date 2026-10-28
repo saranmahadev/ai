@@ -1,4 +1,4 @@
-Every network so far on this planet, and every one on [[Deep Learning]], communicates with continuous numbers — an activation, a probability, a weight. A real neuron communicates with something much simpler: it stays quiet, accumulating input, and then fires a single, brief, identical spike. A spiking neural network takes that literally.
+Every network so far in this subject, and every one in [[Deep Learning]], communicates with continuous numbers — an activation, a probability, a weight. A real neuron communicates with something much simpler: it stays quiet, accumulating input, and then fires a single, brief, identical spike. A spiking neural network takes that literally.
 
 **You need:** [[The Biological Neuron]].
 

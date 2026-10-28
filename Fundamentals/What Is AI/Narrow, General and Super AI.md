@@ -56,7 +56,7 @@ fallback: A grid of six kinds of AI system against six tasks, marking which each
 
 ## Where it appears in AI
 
-The specialist-versus-generalist tension runs through the galaxy. [[Machine Learning]] usually builds specialists. Large [[LLMs]] and [[Generative AI]] models are trained broadly, then adapted to tasks, which is why they feel so different. [[Agents]] combine a broad model with tools to reach further.
+The specialist-versus-generalist tension runs through every subject. [[Machine Learning]] usually builds specialists. Large [[LLMs]] and [[Generative AI]] models are trained broadly, then adapted to tasks, which is why they feel so different. [[Agents]] combine a broad model with tools to reach further.
 
 ## Common pitfalls
 

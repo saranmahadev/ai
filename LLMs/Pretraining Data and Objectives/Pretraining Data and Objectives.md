@@ -1,6 +1,6 @@
-Before any alignment, reasoning, or instruction-following, an LLM starts as a plain next-token predictor, trained on a specific objective over a specific (and heavily engineered) pile of text. This district covers what goes into that first, largest training stage, and how much of a model's eventual behavior traces back to decisions made here.
+Before any alignment, reasoning, or instruction-following, an LLM starts as a plain next-token predictor, trained on a specific objective over a specific (and heavily engineered) pile of text. This section covers what goes into that first, largest training stage, and how much of a model's eventual behavior traces back to decisions made here.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Pretraining Corpora and Data Curation]]: what actually goes into the dataset a model sees first, and why that choice matters so much.
 * [[Causal Language Modeling as a Pretraining Objective]]: the one task — predict the next token — that pretraining optimizes for.

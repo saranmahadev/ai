@@ -57,7 +57,7 @@ fallback: Run an aggregate question as a structured query over a table and compa
 ## Where it appears in AI
 
 * **This is the sharper version of the problem [[Handling Tables, Code and Structured Content]] introduced**: even perfectly preserved row-level chunks can't answer an aggregate question across many rows.
-* **The "translate the question into a query" step is itself a generation task**, related to [[Structured Output and Tool-Calling APIs]] on the LLMs planet — producing a correctly structured query is a constrained-generation problem.
+* **The "translate the question into a query" step is itself a generation task**, related to [[Structured Output and Tool-Calling APIs]] in LLMs — producing a correctly structured query is a constrained-generation problem.
 * **A production RAG system often routes a question to either retrieval or a structured query engine** depending on what kind of question it is — part of the decision [[Production RAG Pipeline Architecture]] has to make.
 
 ## Common pitfalls

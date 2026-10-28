@@ -1,4 +1,4 @@
-A **proof** is an argument that a statement is true in every case, built from clear steps. **Quantifiers** ("for all", "there exists") say how many cases a statement covers. You will not write many proofs on this road, but you will read claims like "for every input" and it helps to know what such claims promise.
+A **proof** is an argument that a statement is true in every case, built from clear steps. **Quantifiers** ("for all", "there exists") say how many cases a statement covers. You will not write many proofs in this subject, but you will read claims like "for every input" and it helps to know what such claims promise.
 
 **You need:** [[Logic and Truth Tables]].
 

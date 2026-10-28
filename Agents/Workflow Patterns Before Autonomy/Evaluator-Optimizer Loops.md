@@ -4,7 +4,7 @@ A first draft critiqued once gets noticeably better; critiqued a second time, it
 
 ## The question it answers
 
-"How do you turn a single generation into something that improves itself with feedback?" An evaluator-optimizer loop pairs two roles: an **optimizer** that generates or revises a candidate, and an **evaluator** that judges the candidate and returns specific feedback. The optimizer's next revision responds directly to that feedback, and the two alternate for a fixed number of rounds or until the evaluator passes the result — the same generate-critique-improve cycle as [[Self-Refinement and Iterative Critique|self-refinement]], already covered on the LLMs planet, used here as a workflow pattern rather than a reasoning technique.
+"How do you turn a single generation into something that improves itself with feedback?" An evaluator-optimizer loop pairs two roles: an **optimizer** that generates or revises a candidate, and an **evaluator** that judges the candidate and returns specific feedback. The optimizer's next revision responds directly to that feedback, and the two alternate for a fixed number of rounds or until the evaluator passes the result — the same generate-critique-improve cycle as [[Self-Refinement and Iterative Critique|self-refinement]], already covered in LLMs, used here as a workflow pattern rather than a reasoning technique.
 
 ## Intuition
 
@@ -14,12 +14,12 @@ A writer who hands a draft to an editor, gets back specific notes ("the ending d
 
 ```text
 loop:    generate → evaluate → feedback → revise → evaluate → feedback → revise → ...
-quality after round r = 1 − 0.5^(r+1)        (the self-refinement curve from the LLMs planet)
+quality after round r = 1 − 0.5^(r+1)        (the self-refinement curve from LLMs)
 ```
 
 ## A worked example
 
-Quality after each evaluator-optimizer round, reusing the exact self-refinement curve already verified on the LLMs planet:
+Quality after each evaluator-optimizer round, reusing the exact self-refinement curve already verified in LLMs:
 
 ```text
 round 0 (first draft):  50.00%
@@ -45,19 +45,19 @@ fallback: Step through evaluator-optimizer rounds and watch quality climb with d
 2. Notice how much smaller the jump from round 3 to round 4 is than the jump from round 0 to round 1.
 3. Imagine the evaluator has a fixed quality bar it requires before passing a result — at what round would it likely stop this loop?
 
-**What you should notice:** the loop's gains shrink round over round in exactly the same shape as the self-refinement curve on the LLMs planet — it's the identical mechanism, just run inside a workflow with an explicit evaluator role instead of a single model critiquing its own output.
+**What you should notice:** the loop's gains shrink round over round in exactly the same shape as the self-refinement curve in LLMs — it's the identical mechanism, just run inside a workflow with an explicit evaluator role instead of a single model critiquing its own output.
 
 ## Where it appears in AI
 
-* **This is [[Self-Refinement and Iterative Critique|self-refinement]] from the LLMs planet, used as a workflow pattern.** The underlying curve — each round closing half the remaining gap — is the exact same mechanism; what's new here is treating it as a structured loop with its own stopping condition, alongside the other workflow patterns on this road.
+* **This is [[Self-Refinement and Iterative Critique|self-refinement]] from LLMs, used as a workflow pattern.** The underlying curve — each round closing half the remaining gap — is the exact same mechanism; what's new here is treating it as a structured loop with its own stopping condition, alongside the other workflow patterns in this subject.
 * **[[Verifier-Guided Agent Loops]] generalizes this same evaluator role** into a check that runs continuously inside an autonomous agent, rather than a fixed number of workflow rounds.
-* **[[Reflection and Self-Improvement|Reflection and self-improvement]], the next district, covers the agent-level version of this same critique-and-revise cycle** happening across an agent's own trajectory rather than inside a fixed workflow.
+* **[[Reflection and Self-Improvement|Reflection and self-improvement]], the next section, covers the agent-level version of this same critique-and-revise cycle** happening across an agent's own trajectory rather than inside a fixed workflow.
 
 ## Common pitfalls
 
 * **Running the loop for a fixed large number of rounds regardless of returns.** The worked example shows round 4 adds only about 3 percentage points over round 3 — past some point, another round costs more compute than the quality gain is worth.
 * **Giving the evaluator no specific feedback to act on.** A pass/fail verdict with no explanation of *what's* wrong gives the optimizer nothing concrete to revise — the loop depends on the evaluator's feedback being specific enough to act on.
-* **Confusing this with the agent's own self-correction.** The loop here has a fixed workflow structure with two defined roles; an agent reflecting mid-trajectory (the next district) is doing something related but less structured, with no fixed round count decided in advance.
+* **Confusing this with the agent's own self-correction.** The loop here has a fixed workflow structure with two defined roles; an agent reflecting mid-trajectory (the next section) is doing something related but less structured, with no fixed round count decided in advance.
 
 ## Quick check
 

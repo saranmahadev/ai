@@ -1,4 +1,4 @@
-Every method in this district optimizes a policy to satisfy a reward signal — a reward model's score, an AI judge's ranking. All of them share the exact same vulnerability: optimizing hard for the *signal* works perfectly well even when the signal has quietly drifted away from what it was supposed to measure.
+Every method in this section optimizes a policy to satisfy a reward signal — a reward model's score, an AI judge's ranking. All of them share the exact same vulnerability: optimizing hard for the *signal* works perfectly well even when the signal has quietly drifted away from what it was supposed to measure.
 
 **You need:** [[Reward Modeling]], [[Reinforcement Learning from Human Feedback (RLHF)]].
 

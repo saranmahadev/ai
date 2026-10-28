@@ -56,7 +56,7 @@ fallback: Compare five tool calls that all completed without an exception agains
 
 * **This is the same validation gate from [[Prompt Chaining]], applied to a tool's output instead of a chained step's output** — the mechanism (check the fields the next step actually depends on) doesn't change.
 * **[[Handling Tool Errors and Retries]] only catches failures the call itself signals** — an exception, a timeout, an error code. Result verification catches the failures that the call reports as a success.
-* **[[Designing Tools for Agent Reliability]], later in this district, is about reducing how often a tool can silently return an incomplete result in the first place** — verification is the safety net for whatever still gets through.
+* **[[Designing Tools for Agent Reliability]], later in this section, is about reducing how often a tool can silently return an incomplete result in the first place** — verification is the safety net for whatever still gets through.
 
 ## Common pitfalls
 

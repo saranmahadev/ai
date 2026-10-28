@@ -1,4 +1,4 @@
-Running a model on a phone, a smartwatch, or a tiny embedded chip is a different problem from running it on a server: memory, compute, power and network connectivity are all far more constrained, and often there's no network connection to a server at all. **Edge deployment** combines everything from this district — pruning, quantization, distillation — to fit a model within those limits.
+Running a model on a phone, a smartwatch, or a tiny embedded chip is a different problem from running it on a server: memory, compute, power and network connectivity are all far more constrained, and often there's no network connection to a server at all. **Edge deployment** combines everything from this section — pruning, quantization, distillation — to fit a model within those limits.
 
 **You need:** [[Quantization]], [[Model Pruning]] and [[Knowledge Distillation]].
 

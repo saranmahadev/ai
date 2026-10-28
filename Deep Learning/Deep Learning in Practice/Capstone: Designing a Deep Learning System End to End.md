@@ -1,14 +1,14 @@
-This capstone walks one project through every stage this planet covered: choosing an architecture, initializing and training it soundly, regularising it, checking it honestly, and shrinking it for deployment — citing the actual, verified numbers this planet's own benches produced along the way, not fresh claims.
+This capstone walks one project through every stage this subject covered: choosing an architecture, initializing and training it soundly, regularising it, checking it honestly, and shrinking it for deployment — citing the actual, verified numbers this subject's own benches produced along the way, not fresh claims.
 
 **You need:** [[Choosing an Architecture for a Problem]], [[Weight Initialization]], [[Overfitting and Double Descent]], [[Debugging a Training Run]] and [[Edge and On-Device Deep Learning]].
 
 ## The question it answers
 
-"Do all these separate topics — initialization, regularization, attention, pruning — actually fit together into one coherent process?" Yes: a real project visits most of them, in roughly this order, each decision informed by evidence this planet already produced.
+"Do all these separate topics — initialization, regularization, attention, pruning — actually fit together into one coherent process?" Yes: a real project visits most of them, in roughly this order, each decision informed by evidence this subject already produced.
 
 ## The project
 
-A small image classifier, trained on a modest labelled dataset, destined to run on a phone. Each stage below is a real decision point, backed by a number this planet's own benches already computed.
+A small image classifier, trained on a modest labelled dataset, destined to run on a phone. Each stage below is a real decision point, backed by a number this subject's own benches already computed.
 
 ## The design walkthrough
 
@@ -76,7 +76,7 @@ fallback: Step through all nine stages of a real deep learning project, from cho
 
 * **This is, in miniature, what a real applied deep learning project actually looks like** — fewer surprises and more checklist than the architecture diagrams alone might suggest.
 * **Different projects weight these stages differently**: a research project might spend most of its effort on stage 1 (architecture) and little on stage 8 (compression); a production mobile app is often the reverse.
-* **The road ahead** — Neural Networks, Transformers, Generative AI, LLMs, RAG and Agents — builds on every one of these same foundations, applied to ever larger and more specialised models.
+* **What comes next** — Neural Networks, Transformers, Generative AI, LLMs, RAG and Agents — builds on every one of these same foundations, applied to ever larger and more specialised models.
 
 ## Common pitfalls
 

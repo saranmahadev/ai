@@ -1,4 +1,4 @@
-Training a model is a loop: **predict** with the current parameters, **measure** the loss, work out which way each parameter should move to lower it, **nudge** the parameters, and repeat. This loop, gradient descent, is how almost every model in this planet and the next ones learns.
+Training a model is a loop: **predict** with the current parameters, **measure** the loss, work out which way each parameter should move to lower it, **nudge** the parameters, and repeat. This loop, gradient descent, is how almost every model in this subject and the next ones learns.
 
 **You need:** [[What Is Machine Learning]], [[Gradient Descent]] and [[Learning Rate]].
 

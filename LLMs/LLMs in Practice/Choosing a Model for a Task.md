@@ -60,7 +60,7 @@ fallback: Switch between task scenarios and see which model size actually scores
 
 * **This reuses the exact weighted-scoring mechanism from [[Leaderboards and Their Limits]]**, applied to model selection instead of leaderboard ranking — the same lesson (reweighting flips the winner) shows up at both levels.
 * **The "speed" and "affordability" dimensions here are exactly what [[Cost and Latency of LLM APIs]] measures concretely** — this topic is about the decision; that one is about the underlying numbers.
-* **A model's capability score itself comes from the kind of benchmark evaluation covered on the Evaluating LLMs stretch of this road** — model choice sits downstream of how models are measured in the first place.
+* **A model's capability score itself comes from the kind of benchmark evaluation covered in the Evaluating LLMs section of this subject** — model choice sits downstream of how models are measured in the first place.
 
 ## Common pitfalls
 

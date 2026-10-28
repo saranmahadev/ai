@@ -1,6 +1,6 @@
-Gradient descent and backpropagation (see [[Gradient Descent]] and [[Backpropagation by Hand]] on the Math planet) are the engine; this district covers the practical decisions that decide whether that engine actually trains a deep network — or stalls, explodes, or wanders for days.
+Gradient descent and backpropagation (see [[Gradient Descent]] and [[Backpropagation by Hand]] in Math) are the engine; this section covers the practical decisions that decide whether that engine actually trains a deep network — or stalls, explodes, or wanders for days.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Weight Initialization]]: starting the weights so signal neither vanishes nor explodes before training begins.
 * [[Vanishing and Exploding Gradients]]: why gradients shrink or blow up in deep networks, and what that does to training.

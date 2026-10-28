@@ -1,6 +1,6 @@
-Algebra is arithmetic with unknowns, and a function is a rule that turns inputs into outputs. Together they are the grammar of every model: a model is just a function with adjustable numbers, written in algebra. This district builds from variables and equations through sequences and sums to the specific functions that machine learning uses.
+Algebra is arithmetic with unknowns, and a function is a rule that turns inputs into outputs. Together they are the grammar of every model: a model is just a function with adjustable numbers, written in algebra. This section builds from variables and equations through sequences and sums to the specific functions that machine learning uses.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Variables and Expressions]]: letters standing for numbers, and formulas built from them.
 * [[Equations and Solving]]: finding the number that makes a statement true.

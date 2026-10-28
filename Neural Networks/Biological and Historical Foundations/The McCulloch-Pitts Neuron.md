@@ -54,9 +54,9 @@ fallback: Pick AND, OR or NOT and watch an MCP neuron's excitatory sum, inhibito
 
 ## Where it appears in AI
 
-* **The MCP neuron is the direct ancestor of every artificial neuron on both this planet and Deep Learning** — the perceptron, fifteen years later, kept the threshold-unit shape and added the missing piece: a way to *learn* the weights from data instead of hand-setting them.
+* **The MCP neuron is the direct ancestor of every artificial neuron in both this subject and Deep Learning** — the perceptron, fifteen years later, kept the threshold-unit shape and added the missing piece: a way to *learn* the weights from data instead of hand-setting them.
 * **Its proof that threshold-unit networks are logically universal** was an early, influential argument that brain-like computation might, in principle, be able to compute anything a digital computer could.
-* **It had no answer to the XOR problem any more than a single perceptron did** (see [[From Linear Models to Neural Networks]] on the Deep Learning planet) — a *single* threshold unit still can't separate XOR, hand-wired or learned; MCP's universality claim is about *networks* of units, not any one unit alone.
+* **It had no answer to the XOR problem any more than a single perceptron did** (see [[From Linear Models to Neural Networks]] in Deep Learning) — a *single* threshold unit still can't separate XOR, hand-wired or learned; MCP's universality claim is about *networks* of units, not any one unit alone.
 
 ## Common pitfalls
 

@@ -53,7 +53,7 @@ fallback: Compare success rates across several adversarial attack strategies aga
 
 * **Red-teaming teams (internal or external) specifically develop and test strategies like these before a model's deployment**, precisely because direct-request testing alone would miss most real vulnerabilities.
 * **New jailbreak strategies are continuously discovered as models and guardrails evolve** — adversarial evaluation is an ongoing process, not a one-time certification that stays valid forever.
-* **[[Content Safety and Red-Teaming|the same obfuscation principle from earlier on the Generative AI planet]] generalizes here**: a guardrail built around a narrow signal (blocking specific phrasing) is vulnerable to any input that evades that narrow signal while preserving the underlying harmful intent.
+* **[[Content Safety and Red-Teaming|the same obfuscation principle from earlier in Generative AI]] generalizes here**: a guardrail built around a narrow signal (blocking specific phrasing) is vulnerable to any input that evades that narrow signal while preserving the underlying harmful intent.
 
 ## Common pitfalls
 

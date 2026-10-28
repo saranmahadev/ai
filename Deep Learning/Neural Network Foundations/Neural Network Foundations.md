@@ -1,6 +1,6 @@
-A neural network is many simple units arranged in layers, each one a tiny scoring function like the ones on the Math and Machine Learning planets. This district builds that picture up from a single unit to a stack of them, and asks why stacking helps at all.
+A neural network is many simple units arranged in layers, each one a tiny scoring function like the ones in the Math and Machine Learning subjects. This section builds that picture up from a single unit to a stack of them, and asks why stacking helps at all.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[From Linear Models to Neural Networks]]: what changes when you stack linear units instead of using just one.
 * [[The Artificial Neuron and Activation Functions]]: the unit itself, and why it needs a non-linear kink.

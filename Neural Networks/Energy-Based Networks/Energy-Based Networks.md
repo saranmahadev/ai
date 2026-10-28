@@ -1,6 +1,6 @@
-Instead of computing an output in one forward pass, an energy-based network keeps nudging itself downhill on a landscape of its own making until it settles — and whatever it settles on is the answer. This district builds that idea from a simple, fully-connected memory network up to networks with hidden units and a stochastic rule for climbing out of bad settling points.
+Instead of computing an output in one forward pass, an energy-based network keeps nudging itself downhill on a landscape of its own making until it settles — and whatever it settles on is the answer. This section builds that idea from a simple, fully-connected memory network up to networks with hidden units and a stochastic rule for climbing out of bad settling points.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Hopfield Networks]]: a network that remembers patterns by settling into them.
 * [[Energy Functions and Attractor Dynamics]]: what "settling" means, made precise.

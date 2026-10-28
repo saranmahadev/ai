@@ -1,4 +1,4 @@
-Every stage on this planet, from a single denoising step to a whole product pipeline, costs real computation — and computation costs real energy, drawn from a real power grid. This note puts rough numbers on exactly how much, and on one of generative AI's most consistently misunderstood comparisons.
+Every stage in this subject, from a single denoising step to a whole product pipeline, costs real computation — and computation costs real energy, drawn from a real power grid. This note puts rough numbers on exactly how much, and on one of generative AI's most consistently misunderstood comparisons.
 
 **You need:** [[Building a Generative Product]].
 
@@ -58,7 +58,7 @@ fallback: Adjust how many tokens a request generates and compare its energy cost
 
 * **Training cost is a one-time (or periodic, for retraining) expense, while inference cost scales with usage** — a model served to millions of users accumulates inference cost that can eventually rival or exceed its training cost in total, even though any single request is minuscule.
 * **Real energy estimates for production models are far more involved** than this toy chain — they account for actual measured GPU utilization, cooling overhead, and data-center efficiency (PUE), among other factors this worked example simplifies away.
-* **[[Model Pruning|efficiency techniques elsewhere on these planets]] (quantization, pruning, distillation) directly reduce the FLOPs term in this chain**, lowering both cost and environmental impact at the inference stage specifically.
+* **[[Model Pruning|efficiency techniques covered in other subjects]] (quantization, pruning, distillation) directly reduce the FLOPs term in this chain**, lowering both cost and environmental impact at the inference stage specifically.
 
 ## Common pitfalls
 

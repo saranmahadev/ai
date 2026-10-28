@@ -1,6 +1,6 @@
-An aligned, instruction-following model still has to decide how to actually arrive at an answer — straight to a conclusion, or by working through intermediate steps the way a person solving the same problem would. This district covers the techniques that get more reliable answers out of a model by changing how it reasons, not what it knows.
+An aligned, instruction-following model still has to decide how to actually arrive at an answer — straight to a conclusion, or by working through intermediate steps the way a person solving the same problem would. This section covers the techniques that get more reliable answers out of a model by changing how it reasons, not what it knows.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Chain-of-Thought Prompting]]: asking a model to show its intermediate steps, not just its final answer.
 * [[Process Reward vs. Outcome Reward]]: rewarding a correct chain of reasoning versus rewarding only a correct final answer.

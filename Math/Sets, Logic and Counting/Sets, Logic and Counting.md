@@ -1,6 +1,6 @@
-This district covers the discrete foundations: collections of things (sets), statements that are true or false (logic), how to argue carefully (proofs), how to count possibilities, how to describe connections (graphs and trees), and how fast a computation grows. Probability is built on sets and counting, and every algorithm's cost is described by growth rates.
+This section covers the discrete foundations: collections of things (sets), statements that are true or false (logic), how to argue carefully (proofs), how to count possibilities, how to describe connections (graphs and trees), and how fast a computation grows. Probability is built on sets and counting, and every algorithm's cost is described by growth rates.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Sets and Operations]]: collections, unions, intersections and complements.
 * [[Logic and Truth Tables]]: AND, OR, NOT and IF-THEN.

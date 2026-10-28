@@ -60,7 +60,7 @@ fallback: Twelve example systems to sort into four groups: AI without learning, 
 
 ## Where it appears in AI
 
-The rest of the galaxy follows these dolls inwards: [[Machine Learning]], then [[Deep Learning]] and [[Neural Networks]], then [[Transformers]], [[Generative AI]] and [[LLMs]]. Classic, non-learning AI stays in this planet's [[Classic AI]] district.
+The rest of this knowledge base follows these dolls inwards: [[Machine Learning]], then [[Deep Learning]] and [[Neural Networks]], then [[Transformers]], [[Generative AI]] and [[LLMs]]. Classic, non-learning AI stays in this subject's [[Classic AI]] section.
 
 ## Common pitfalls
 

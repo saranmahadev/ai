@@ -52,13 +52,13 @@ fallback: Adjust a firing threshold and an input current. See the rate-coded fir
 
 * **ReLU and its variants** (see [[The Artificial Neuron and Activation Functions]]) remain the default choice for hidden-layer activations in deep networks, for reasons unrelated to biology (training behaviour, mostly) — the resemblance here is a bonus, not the motivation.
 * **Spiking neural networks** (see [[Spiking Neural Networks]]) take the discreteness and timing this topic throws away and build them back in.
-* **Every topic on the rest of this planet** keeps some piece of biology that mainstream deep learning simplified away — a local learning rule, a settling dynamic, discrete spikes — and asks what you gain or lose by keeping it.
+* **Every topic on the rest of this subject** keeps some piece of biology that mainstream deep learning simplified away — a local learning rule, a settling dynamic, discrete spikes — and asks what you gain or lose by keeping it.
 
 ## Common pitfalls
 
 * **Treating "neural network" as a claim about how the brain works.** An artificial neuron is a loose, convenient abstraction, not a model of a real neuron's mechanism.
 * **Assuming rate coding is the whole story.** Real neurons' exact spike timing can carry information a firing-rate average throws away (see [[Rate and Temporal Coding]]).
-* **Thinking ReLU was designed to resemble a real neuron.** It was adopted because of how it behaves during gradient-based training ([[Vanishing and Exploding Gradients]] on the Deep Learning planet), not out of biological intent.
+* **Thinking ReLU was designed to resemble a real neuron.** It was adopted because of how it behaves during gradient-based training ([[Vanishing and Exploding Gradients]] in Deep Learning), not out of biological intent.
 
 ## Quick check
 

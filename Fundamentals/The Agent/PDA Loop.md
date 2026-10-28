@@ -69,7 +69,7 @@ fallback: A small grid world with an agent, a wall and a goal. Each press of Ste
 
 ## Where it appears in AI
 
-This loop returns in every later planet. A learned model usually lives inside the *decide* phase. Reinforcement learning is about improving the decisions over many trips round the loop. In the [[Agents]] planet, a language model perceives text and tool results, decides what to do next, and acts by calling a tool, and then the loop runs again.
+This loop returns in every later subject. A learned model usually lives inside the *decide* phase. Reinforcement learning is about improving the decisions over many trips round the loop. In the [[Agents]] subject, a language model perceives text and tool results, decides what to do next, and acts by calling a tool, and then the loop runs again.
 
 ## Common pitfalls
 

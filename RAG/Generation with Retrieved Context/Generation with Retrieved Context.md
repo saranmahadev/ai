@@ -1,6 +1,6 @@
-Retrieval only hands a model raw material; what the model does with that material is a separate problem. This district is about turning a stack of retrieved passages into an answer that's actually grounded in them — ordered sensibly, attributed to its sources, and honest about what the passages don't settle.
+Retrieval only hands a model raw material; what the model does with that material is a separate problem. This section is about turning a stack of retrieved passages into an answer that's actually grounded in them — ordered sensibly, attributed to its sources, and honest about what the passages don't settle.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Context Assembly and Ordering]]: deciding what order retrieved passages go in, and why it isn't arbitrary.
 * [[Citation and Source Attribution]]: tracing a generated claim back to the passage that supports it.

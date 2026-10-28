@@ -52,7 +52,7 @@ fallback: Compare two agent configurations' cost per successful run, not just th
 
 * **This reuses the task-cost reasoning from [[Cost and Latency of Agent Loops]]**, folding in success rate specifically to answer "worth it for what you actually get," not just "how much does one attempt cost."
 * **Production agent deployments routinely report cost per successful task as a primary metric**, exactly because success rate and raw cost can each look fine individually while hiding a bad trade when combined.
-* **[[Production Agent Architecture]], covered in the final district, puts this joint metric into a real deployment decision**, alongside latency and reliability requirements that a single success-rate number can't capture.
+* **[[Production Agent Architecture]], covered in the final section, puts this joint metric into a real deployment decision**, alongside latency and reliability requirements that a single success-rate number can't capture.
 
 ## Common pitfalls
 

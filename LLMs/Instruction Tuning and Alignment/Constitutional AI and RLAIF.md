@@ -1,4 +1,4 @@
-Every method so far in this district needs human preference judgments — and those are slow and expensive to collect at the scale alignment training wants. Constitutional AI replaces the human judge with an AI judge instructed to follow a written set of principles.
+Every method so far in this section needs human preference judgments — and those are slow and expensive to collect at the scale alignment training wants. Constitutional AI replaces the human judge with an AI judge instructed to follow a written set of principles.
 
 **You need:** [[Direct Preference Optimization (DPO)]].
 

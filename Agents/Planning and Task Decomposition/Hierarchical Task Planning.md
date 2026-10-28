@@ -49,7 +49,7 @@ fallback: Compare a flat planner's branching factor against a hierarchical plann
 
 ## Where it appears in AI
 
-* **This is the same branching-factor idea behind [[Tree-of-Thought and Search-Based Reasoning|tree-of-thought search]] on the LLMs planet**, applied to planning actions in the world instead of searching over reasoning paths — keeping each level's choice set small is what makes either kind of search tractable at all.
+* **This is the same branching-factor idea behind [[Tree-of-Thought and Search-Based Reasoning|tree-of-thought search]] in LLMs**, applied to planning actions in the world instead of searching over reasoning paths — keeping each level's choice set small is what makes either kind of search tractable at all.
 * **[[Goal Decomposition into Subtasks]] is the single-level version of this same mechanism**; hierarchical planning is what happens when decomposition is applied recursively, level after level, rather than just once.
 * **A deep hierarchy trades a smaller branching factor at each level for more total levels to plan through** — there's a real cost on the other side of this benefit.
 

@@ -1,6 +1,6 @@
-Generative models fail in ways discriminative models mostly don't: confidently wrong output, reproduced training data, content nobody consented to be trained on, and output that's hard to tell from something real. This district covers those failure modes and the mitigations built around them.
+Generative models fail in ways discriminative models mostly don't: confidently wrong output, reproduced training data, content nobody consented to be trained on, and output that's hard to tell from something real. This section covers those failure modes and the mitigations built around them.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Hallucination and Factuality]]: generated output that's fluent and confident but not true.
 * [[Bias and Representational Harm in Generation]]: how training data imbalances surface as unfair or stereotyped generated content.

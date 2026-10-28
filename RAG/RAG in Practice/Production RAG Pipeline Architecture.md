@@ -1,10 +1,10 @@
-Every topic on this road so far has zoomed into one stage of a RAG system. Running the whole thing means those stages have to actually fit together into one pipeline, each one handing its output to the next — and the time each stage takes adds up into a single number a real user actually waits for.
+Every topic in this subject so far has zoomed into one stage of a RAG system. Running the whole thing means those stages have to actually fit together into one pipeline, each one handing its output to the next — and the time each stage takes adds up into a single number a real user actually waits for.
 
 **You need:** [[Anatomy of a RAG Pipeline]], [[Re-Ranking Retrieved Results]].
 
 ## The question it answers
 
-"How do all the pieces this planet covered separately fit into one running system?" A production pipeline chains together everything from earlier districts: embed the query, search the vector index, re-rank the shortlist, assemble the context, and generate an answer — each stage built from a specific technique this planet already covered, run in sequence for every single request.
+"How do all the pieces this subject covered separately fit into one running system?" A production pipeline chains together everything from earlier sections: embed the query, search the vector index, re-rank the shortlist, assemble the context, and generate an answer — each stage built from a specific technique this subject already covered, run in sequence for every single request.
 
 ## Intuition
 
@@ -49,7 +49,7 @@ fallback: See where a RAG request's total latency actually goes, stage by stage.
 
 ## Where it appears in AI
 
-* **Every stage in this pipeline is a specific technique from an earlier district**: embedding ([[Bi-Encoders and Dense Embeddings]]), searching ([[Approximate Nearest Neighbor Search with HNSW]] or similar), re-ranking ([[Re-Ranking Retrieved Results]]), assembling ([[Context Assembly and Ordering]]), generating ([[Grounded Generation and Faithfulness]]).
+* **Every stage in this pipeline is a specific technique from an earlier section**: embedding ([[Bi-Encoders and Dense Embeddings]]), searching ([[Approximate Nearest Neighbor Search with HNSW]] or similar), re-ranking ([[Re-Ranking Retrieved Results]]), assembling ([[Context Assembly and Ordering]]), generating ([[Grounded Generation and Faithfulness]]).
 * **[[Cost and Latency of RAG Systems]] takes this same breakdown and adds the dollar cost side**, not just timing.
 * **[[Caching and Incremental Indexing]] is where this architecture gets optimized further**, specifically targeting the stages whose cost can be avoided on repeated or near-duplicate requests.
 

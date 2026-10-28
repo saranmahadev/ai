@@ -4,7 +4,7 @@ Deciding every step of a trip itinerary up front, then just following it, takes 
 
 ## The question it answers
 
-"Should an agent decide its whole sequence of steps up front, or decide each next step as it goes?" A **plan-and-execute** agent makes one planning call that decomposes the goal into an ordered list of steps, then makes one additional call per step to execute it — no further reasoning about *what* to do next, just doing what the plan already said. An **interleaved** agent (the [[Tool-Augmented Reasoning (ReAct-Style)|ReAct-style]] pattern already covered on the LLMs planet) instead reasons about what to do at every single step, which costs roughly twice as many calls for the same number of steps but can react to new information the plan never anticipated.
+"Should an agent decide its whole sequence of steps up front, or decide each next step as it goes?" A **plan-and-execute** agent makes one planning call that decomposes the goal into an ordered list of steps, then makes one additional call per step to execute it — no further reasoning about *what* to do next, just doing what the plan already said. An **interleaved** agent (the [[Tool-Augmented Reasoning (ReAct-Style)|ReAct-style]] pattern already covered in LLMs) instead reasons about what to do at every single step, which costs roughly twice as many calls for the same number of steps but can react to new information the plan never anticipated.
 
 ## Intuition
 
@@ -47,7 +47,7 @@ fallback: Compare total LLM calls for plan-and-execute against interleaving a th
 
 ## Where it appears in AI
 
-* **Interleaved planning is the [[Tool-Augmented Reasoning (ReAct-Style)|ReAct pattern]] from the LLMs planet**, applied here as the alternative to committing to a full plan up front.
+* **Interleaved planning is the [[Tool-Augmented Reasoning (ReAct-Style)|ReAct pattern]] from LLMs**, applied here as the alternative to committing to a full plan up front.
 * **[[Re-Planning on Failure]] is what a plan-and-execute agent needs when the world doesn't match the plan it committed to** — without it, a stale plan just keeps executing anyway.
 * **[[Hierarchical Task Planning]] extends the same idea** by planning at more than one level of detail, rather than producing one flat list of steps.
 

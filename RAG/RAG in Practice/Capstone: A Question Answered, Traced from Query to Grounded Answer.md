@@ -1,10 +1,10 @@
-Every stage this planet covered separately — retrieving by similarity, re-ranking for accuracy, assembling context sensibly, generating with citations — is usually described one at a time, with its own worked example. This capstone follows one real question through all four stages in order, reusing the exact same functions each earlier topic already verified, so the whole pipeline's numbers connect end to end.
+Every stage this subject covered separately — retrieving by similarity, re-ranking for accuracy, assembling context sensibly, generating with citations — is usually described one at a time, with its own worked example. This capstone follows one real question through all four stages in order, reusing the exact same functions each earlier topic already verified, so the whole pipeline's numbers connect end to end.
 
 **You need:** [[Dense Retrieval]], [[Re-Ranking Retrieved Results]], [[Context Assembly and Ordering]], [[Grounded Generation and Faithfulness]].
 
 ## The question it answers
 
-"What does a question actually go through, in order, from arriving as text to becoming a grounded, cited answer?" Four stages, each one this road already covered in depth: embedding the query and retrieving the closest documents by similarity; re-ranking that shortlist with a more careful, joint relevance score; assembling the kept passages into context, aware of where each one lands; and generating an answer whose claims are checked against — and cited to — what was actually retrieved.
+"What does a question actually go through, in order, from arriving as text to becoming a grounded, cited answer?" Four stages, each one this subject already covered in depth: embedding the query and retrieving the closest documents by similarity; re-ranking that shortlist with a more careful, joint relevance score; assembling the kept passages into context, aware of where each one lands; and generating an answer whose claims are checked against — and cited to — what was actually retrieved.
 
 ## Intuition
 
@@ -21,7 +21,7 @@ stage 4: generate + cite    — answer, then check each claim against what was r
 
 ## A worked example
 
-The question "how long do refunds take," traced through all four stages using the exact numbers already verified earlier on this planet:
+The question "how long do refunds take," traced through all four stages using the exact numbers already verified earlier in this subject:
 
 ```text
 stage 1 (embed + retrieve): query vs. 4 documents by cosine similarity
@@ -43,8 +43,8 @@ Retrieval alone couldn't have told you "refund timeline" was more reliable than 
 
 ```bench
 id: rag-capstone
-title: One question, every stage of this road
-fallback: Step one question through retrieval, re-ranking, assembly and grounded generation, reusing this planet's own verified functions at each stage.
+title: One question, every stage of this subject
+fallback: Step one question through retrieval, re-ranking, assembly and grounded generation, reusing this subject's own verified functions at each stage.
 ```
 
 **Try this**
@@ -53,7 +53,7 @@ fallback: Step one question through retrieval, re-ranking, assembly and grounded
 2. Compare the retrieval ranking (stage 1) against the re-ranked order (stage 2) — notice the shortlist's membership didn't change, only its order.
 3. Reset and imagine skipping stage 4's citation check — would you be able to tell, just from reading the answer, whether it was actually grounded?
 
-**What you should notice:** each stage's number was independently verified earlier on this planet's own road — this capstone doesn't introduce new mechanics, it chains the same four mechanisms together in the order they actually happen.
+**What you should notice:** each stage's number was independently verified earlier in this subject — this capstone doesn't introduce new mechanics, it chains the same four mechanisms together in the order they actually happen.
 
 ## Where it appears in AI
 
@@ -65,7 +65,7 @@ fallback: Step one question through retrieval, re-ranking, assembly and grounded
 
 * **Treating these four stages as interchangeable or reorderable.** Each stage assumes the previous one already happened — re-ranking assumes a shortlist retrieval already produced; generation assumes context assembly already placed the passages it's meant to cite.
 * **Expecting retrieval's similarity scores to directly predict re-ranking's verdict.** The worked example's stage 1 and stage 2 scores aren't on the same scale and aren't meant to be compared directly — re-ranking's whole purpose is to look more carefully than retrieval's cheap first pass could.
-* **Assuming a fully grounded final answer means the pipeline is working perfectly everywhere.** This worked example traces a case where every stage succeeds — a real system also needs the failure-mode handling ([[Corrective RAG]], permission filtering, conflict resolution) covered elsewhere on this road for when a stage doesn't go this cleanly.
+* **Assuming a fully grounded final answer means the pipeline is working perfectly everywhere.** This worked example traces a case where every stage succeeds — a real system also needs the failure-mode handling ([[Corrective RAG]], permission filtering, conflict resolution) covered elsewhere in this subject for when a stage doesn't go this cleanly.
 
 ## Quick check
 

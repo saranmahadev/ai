@@ -48,7 +48,7 @@ fallback: Slide corpus size and compare how much of it a human could hand-write 
 ## Where it appears in AI
 
 * **A synthetic test set is exactly what [[End-to-End RAG Evaluation Frameworks]]'s scorecard needs to run against** — the scorecard's metrics are only as representative as the test set they're computed over.
-* **The question-generation step is itself a generation task**, subject to the same risk of producing plausible-but-wrong content covered broadly on the Generative AI planet — a generated question's "expected answer" still needs some form of validation.
+* **The question-generation step is itself a generation task**, subject to the same risk of producing plausible-but-wrong content covered broadly in Generative AI — a generated question's "expected answer" still needs some form of validation.
 * **[[A-B and Online Evaluation of RAG]] is a complementary approach**: instead of a synthetic (or hand-written) fixed test set, it measures quality against real user interactions directly.
 
 ## Common pitfalls

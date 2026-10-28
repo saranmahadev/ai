@@ -4,7 +4,7 @@ Alignment training shapes what a model tends to do on its own, but a deployed pr
 
 ## The question it answers
 
-"What's the difference between a model trained to be safe and a product that's actually safe to deploy?" Alignment training (RLHF, DPO, Constitutional AI, all covered earlier on this road) changes the model's own behavior. A guardrail is a separate, external check — a classifier or rule scoring how risky a request or response looks — that runs *around* the model, blocking anything above a threshold regardless of what the model itself would have done. Looser thresholds catch more unsafe content but also block more safe content by mistake; stricter thresholds reduce false blocks but let more unsafe content through.
+"What's the difference between a model trained to be safe and a product that's actually safe to deploy?" Alignment training (RLHF, DPO, Constitutional AI, all covered earlier in this subject) changes the model's own behavior. A guardrail is a separate, external check — a classifier or rule scoring how risky a request or response looks — that runs *around* the model, blocking anything above a threshold regardless of what the model itself would have done. Looser thresholds catch more unsafe content but also block more safe content by mistake; stricter thresholds reduce false blocks but let more unsafe content through.
 
 ## Intuition
 

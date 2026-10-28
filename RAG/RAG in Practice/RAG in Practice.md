@@ -1,8 +1,8 @@
-Everything on this road so far has covered one piece of a RAG system at a time. This last district is about running the whole thing: the production architecture, what it costs to keep an index current, where it leaks data it shouldn't, and a capstone that follows one question through every stage this planet covered.
+Everything in this subject so far has covered one piece of a RAG system at a time. This last section is about running the whole thing: the production architecture, what it costs to keep an index current, where it leaks data it shouldn't, and a capstone that follows one question through every stage this subject covered.
 
-Topics on this stretch of the road:
+Topics in this section:
 
-* [[Production RAG Pipeline Architecture]]: how the pieces on this road fit into one running system.
+* [[Production RAG Pipeline Architecture]]: how the pieces in this subject fit into one running system.
 * [[Caching and Incremental Indexing]]: keeping an index current without rebuilding it from scratch.
 * [[Cost and Latency of RAG Systems]]: where a RAG request actually spends its time and money, beyond the model call itself.
 * [[Security and Data Leakage in RAG]]: what retrieval adds to the list of things that can go wrong with access and privacy.

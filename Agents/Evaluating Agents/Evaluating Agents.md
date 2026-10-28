@@ -1,6 +1,6 @@
-Scoring a single generated answer is one problem; scoring a hundred-step trajectory of actions, any one of which could be the reason the whole task failed, is a different and harder one. This district covers measuring whether an agent actually finished the job, how it got there, and at what cost.
+Scoring a single generated answer is one problem; scoring a hundred-step trajectory of actions, any one of which could be the reason the whole task failed, is a different and harder one. This section covers measuring whether an agent actually finished the job, how it got there, and at what cost.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Agent Benchmarks and Task Suites]]: the standardized tasks (browsing, coding, tool use) agents get measured against.
 * [[Success-Rate Metrics and Their Blind Spots]]: what a simple pass/fail rate hides about how an agent actually performed.

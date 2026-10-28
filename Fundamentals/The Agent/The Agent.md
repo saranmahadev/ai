@@ -1,6 +1,6 @@
-Almost every AI system, however different it looks, has the same shape: it is an **agent** inside an **environment**. It senses what is happening, decides what to do to reach a goal, and acts, over and over. This district builds that picture piece by piece.
+Almost every AI system, however different it looks, has the same shape: it is an **agent** inside an **environment**. It senses what is happening, decides what to do to reach a goal, and acts, over and over. This section builds that picture piece by piece.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Agents and Environments]]: the basic unit of an AI system.
 * [[PDA Loop]]: perceive, decide, act, and repeat.

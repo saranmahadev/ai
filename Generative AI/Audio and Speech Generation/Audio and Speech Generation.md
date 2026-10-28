@@ -1,6 +1,6 @@
-The same generation machinery — learned distributions, conditioning, iterative refinement — applies just as well to sound. This district covers turning model output into audio: speech, a specific voice, and music.
+The same generation machinery — learned distributions, conditioning, iterative refinement — applies just as well to sound. This section covers turning model output into audio: speech, a specific voice, and music.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Vocoders and Neural Audio Synthesis]]: turning an intermediate audio representation into an actual waveform.
 * [[Text-to-Speech Pipelines]]: assembling text analysis, an acoustic model and a vocoder into spoken audio.

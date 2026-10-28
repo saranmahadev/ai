@@ -35,7 +35,7 @@ text position 0's attention weights over all four positions:
 attention spent on the two image patches alone: 0.2706 + 0.2584 = 0.5290
 ```
 
-A text token's attention spreads across *both* the other text token and both image patches, in a single computation — more than half its attention mass (52.9%) went to the image patches here, with no special mechanism needed to let that happen; it's the same self-attention formula used throughout this entire planet.
+A text token's attention spreads across *both* the other text token and both image patches, in a single computation — more than half its attention mass (52.9%) went to the image patches here, with no special mechanism needed to let that happen; it's the same self-attention formula used throughout this entire subject.
 
 ## Bench
 
@@ -56,8 +56,8 @@ fallback: Combine a few text tokens and image patches into one sequence and see 
 ## Where it appears in AI
 
 * **It is the standard pattern behind models that jointly process text and images**, extending cleanly to audio, video, or any other modality with its own front-end producing `d_model`-wide vectors.
-* **It requires no new attention mechanism at all** — every efficiency and architecture topic covered earlier on this planet (masking, positional schemes, KV-caching) applies to a multimodal sequence exactly as it would to a single-modality one.
-* **It closes the loop this planet opened in [[Tokenizing Beyond Text]]**: once anything can become a token sequence, combining several different anythings into one sequence is a natural, almost free extension.
+* **It requires no new attention mechanism at all** — every efficiency and architecture topic covered earlier in this subject (masking, positional schemes, KV-caching) applies to a multimodal sequence exactly as it would to a single-modality one.
+* **It closes the loop this subject opened in [[Tokenizing Beyond Text]]**: once anything can become a token sequence, combining several different anythings into one sequence is a natural, almost free extension.
 
 ## Common pitfalls
 

@@ -1,6 +1,6 @@
-A model pretrained purely to predict the next token has no particular reason to follow an instruction, refuse a harmful request, or prefer a helpful answer over a merely plausible one. This district covers the training stages that turn raw next-token prediction into a model that behaves like an assistant — and the specific ways that process can go wrong.
+A model pretrained purely to predict the next token has no particular reason to follow an instruction, refuse a harmful request, or prefer a helpful answer over a merely plausible one. This section covers the training stages that turn raw next-token prediction into a model that behaves like an assistant — and the specific ways that process can go wrong.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Supervised Fine-Tuning (SFT)]]: the first step toward an assistant — training directly on examples of good responses.
 * [[Instruction Dataset Construction]]: where the examples SFT trains on actually come from.

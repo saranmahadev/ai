@@ -1,4 +1,4 @@
-Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered on the Math planet. A **bi-encoder** is the specific choice of encoding the query and each document *independently*, so every document's vector can be computed once, stored, and reused across every future query — the whole reason retrieval over millions of documents can be fast at all.
+Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered in Math. A **bi-encoder** is the specific choice of encoding the query and each document *independently*, so every document's vector can be computed once, stored, and reused across every future query — the whole reason retrieval over millions of documents can be fast at all.
 
 **You need:** [[Embeddings and Similarity Search]], [[Anatomy of a RAG Pipeline]].
 
@@ -42,7 +42,7 @@ fallback: Rank documents by bi-encoder cosine similarity and compare the per-que
 
 **Try this**
 
-1. Look at the ranking — it's the same cosine-similarity computation from the Math planet, applied to retrieval.
+1. Look at the ranking — it's the same cosine-similarity computation from Math, applied to retrieval.
 2. Slide the collection size up and watch the cost gap between bi-encoder and cross-encoder widen.
 3. Imagine a collection of a million documents — would re-encoding every one of them for every query still be feasible?
 

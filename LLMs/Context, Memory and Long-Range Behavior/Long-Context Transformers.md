@@ -1,10 +1,10 @@
-Every mechanism this road has covered for making attention cheaper — [[Sparse and Local (Windowed) Attention|windowed]], [[Linear Attention Approximations|linear]], [[IO-Aware Attention Computation|IO-aware]] — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more expensive as context grows, and "long context" means running straight into that wall.
+Every mechanism this subject has covered for making attention cheaper — [[Sparse and Local (Windowed) Attention|windowed]], [[Linear Attention Approximations|linear]], [[IO-Aware Attention Computation|IO-aware]] — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more expensive as context grows, and "long context" means running straight into that wall.
 
 **You need:** [[Sparse and Local (Windowed) Attention]], [[IO-Aware Attention Computation]].
 
 ## The question it answers
 
-"Why is handling a longer context fundamentally harder than just 'using a bigger number'?" Ordinary self-attention computes a score between every pair of positions in a sequence — for a sequence of length `n`, that's `n²` pairwise scores. Double the sequence length, and the attention computation doesn't double in cost; it quadruples. Long-context transformers aren't just models with a larger number written in a config file — they specifically have to grapple with this quadratic wall, usually through the efficient-attention techniques already covered earlier on this road.
+"Why is handling a longer context fundamentally harder than just 'using a bigger number'?" Ordinary self-attention computes a score between every pair of positions in a sequence — for a sequence of length `n`, that's `n²` pairwise scores. Double the sequence length, and the attention computation doesn't double in cost; it quadruples. Long-context transformers aren't just models with a larger number written in a config file — they specifically have to grapple with this quadratic wall, usually through the efficient-attention techniques already covered earlier in this subject.
 
 ## Intuition
 
@@ -52,14 +52,14 @@ fallback: Pick a sequence length and watch how sharply attention's FLOPs cost gr
 
 ## Where it appears in AI
 
-* **Every efficient-attention technique already covered on this road** — sparsity, linear-order approximations, IO-aware computation — exists specifically to avoid paying this full quadratic cost as context grows.
+* **Every efficient-attention technique already covered in this subject** — sparsity, linear-order approximations, IO-aware computation — exists specifically to avoid paying this full quadratic cost as context grows.
 * **"Long context" as a marketed model feature usually means a combination of architectural tricks and serving-infrastructure engineering**, not simply running an unmodified quadratic-attention transformer at a much larger sequence length.
 * **[[Context Window Extension Techniques|extending how far a model's positional understanding reaches]] is a separate problem from the raw compute cost** — a model could, in principle, have cheap-enough attention for a long sequence while still never having learned to handle positions that far apart meaningfully.
 
 ## Common pitfalls
 
 * **Assuming a model's maximum context length is purely a memory or compute limit that can always be raised by using better hardware.** Raw compute cost is one real constraint, but [[Context Window Extension Techniques|a model's own positional understanding]] is a separate limit that more hardware alone doesn't fix.
-* **Expecting "long context" models to use ordinary, unmodified self-attention at huge sequence lengths.** In practice, most long-context systems rely on some combination of the efficiency techniques covered earlier on this road.
+* **Expecting "long context" models to use ordinary, unmodified self-attention at huge sequence lengths.** In practice, most long-context systems rely on some combination of the efficiency techniques covered earlier in this subject.
 * **Treating the quadratic cost as a recent problem.** It's been a structural property of self-attention since it was introduced — what's changed over time is how aggressively that cost gets engineered around.
 
 ## Quick check

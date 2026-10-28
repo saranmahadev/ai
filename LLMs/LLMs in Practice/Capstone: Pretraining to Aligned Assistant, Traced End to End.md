@@ -1,10 +1,10 @@
-Every stage this planet's road has covered — pretraining, fine-tuning, preference alignment, deployment — is usually described separately, with its own numbers and its own bench. This capstone follows one model through all four stages in order, reusing the exact same functions each earlier topic already verified, so the whole pipeline's numbers connect end to end.
+Every stage this subject has covered — pretraining, fine-tuning, preference alignment, deployment — is usually described separately, with its own numbers and its own bench. This capstone follows one model through all four stages in order, reusing the exact same functions each earlier topic already verified, so the whole pipeline's numbers connect end to end.
 
 **You need:** [[Causal Language Modeling as a Pretraining Objective]], [[Supervised Fine-Tuning (SFT)|Supervised Fine-Tuning (SFT)]], [[Direct Preference Optimization (DPO)]], [[Cost and Latency of LLM APIs]].
 
 ## The question it answers
 
-"What does a model actually go through, in order, between raw pretraining and being a deployed, aligned assistant that costs money to run?" Four stages, each one this road already covered in depth: pretraining on raw text with the causal language modeling objective; supervised fine-tuning on assistant-formatted demonstrations; preference alignment (via DPO, no separate reward model needed); and deployment behind an API, where every request now has a real cost and latency.
+"What does a model actually go through, in order, between raw pretraining and being a deployed, aligned assistant that costs money to run?" Four stages, each one this subject already covered in depth: pretraining on raw text with the causal language modeling objective; supervised fine-tuning on assistant-formatted demonstrations; preference alignment (via DPO, no separate reward model needed); and deployment behind an API, where every request now has a real cost and latency.
 
 ## Intuition
 
@@ -21,7 +21,7 @@ stage 4: deployment         — apiCostLatency, pricing and timing a real reques
 
 ## A worked example
 
-Reusing the exact logits and parameters already verified in this planet's own topics:
+Reusing the exact logits and parameters already verified in this subject's own topics:
 
 ```text
 stage 1 (pretraining):  mean CLM loss = 1.9348
@@ -36,7 +36,7 @@ The loss dropping nearly 7× from pretraining to SFT reflects the model learning
 
 ```bench
 id: capstone-pretrain-to-assistant
-title: One model, through every stage of this road
+title: One model, through every stage of this subject
 fallback: Step through pretraining, SFT, DPO alignment and deployment and watch each stage's own verified numbers connect.
 ```
 
@@ -46,7 +46,7 @@ fallback: Step through pretraining, SFT, DPO alignment and deployment and watch 
 2. Compare how large the loss drop is from pretraining to SFT against how large the probability shift is from DPO — notice they're not measuring the same kind of quantity.
 3. Reset and think about which stage, if skipped, would leave the model least usable as a deployed assistant.
 
-**What you should notice:** each stage's number was independently verified earlier on this planet's own road — this capstone doesn't introduce new mechanics, it chains the same four mechanisms together in the order they actually happen.
+**What you should notice:** each stage's number was independently verified earlier in this subject — this capstone doesn't introduce new mechanics, it chains the same four mechanisms together in the order they actually happen.
 
 ## Where it appears in AI
 

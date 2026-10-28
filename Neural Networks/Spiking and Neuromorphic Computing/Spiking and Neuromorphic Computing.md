@@ -1,6 +1,6 @@
-A real neuron doesn't output a continuous number — it stays silent, then fires a brief, discrete spike. This district takes that seriously: neurons that communicate in spikes, the two ways timing itself can carry information, the biological learning rule spikes make possible, and the hardware built to run all of this efficiently.
+A real neuron doesn't output a continuous number — it stays silent, then fires a brief, discrete spike. This section takes that seriously: neurons that communicate in spikes, the two ways timing itself can carry information, the biological learning rule spikes make possible, and the hardware built to run all of this efficiently.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Spiking Neural Networks]]: neurons that accumulate input and fire a discrete spike, not a continuous value.
 * [[Rate and Temporal Coding]]: two different ways a train of spikes can carry information.

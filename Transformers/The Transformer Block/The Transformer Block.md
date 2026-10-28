@@ -1,6 +1,6 @@
-Attention on its own is only half of a transformer layer. This district assembles the rest: the residual connections and normalization that make deep stacks of these layers trainable at all, the feed-forward sublayer that sits alongside attention, and how all of it fits together into the one repeatable block that gets stacked a dozen, or a hundred, times.
+Attention on its own is only half of a transformer layer. This section assembles the rest: the residual connections and normalization that make deep stacks of these layers trainable at all, the feed-forward sublayer that sits alongside attention, and how all of it fits together into the one repeatable block that gets stacked a dozen, or a hundred, times.
 
-Topics on this stretch of the road:
+Topics in this section:
 
 * [[Residual Connections in Transformers]]: why every sublayer adds to its input instead of replacing it.
 * [[Layer Normalization Placement: Pre-Norm vs Post-Norm]]: where normalization sits relative to a sublayer, and why it matters.

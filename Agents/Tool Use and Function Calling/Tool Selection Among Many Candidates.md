@@ -4,7 +4,7 @@ An agent with 40 tools available for one task has exactly one that's actually co
 
 ## The question it answers
 
-"Does showing an agent more tools make it more capable, or does it make tool selection harder?" Every tool description added to a prompt is one more plausible-looking option the model has to rule out before picking the right one. **Tool retrieval** addresses this the same way retrieval addresses it for documents on the RAG planet: rank the available tools by relevance to the task, keep only the top K, and let the model choose among that smaller set — trading the risk of filtering the right tool out entirely (if K is too small) against the cost of drowning it in distractors (if K is too large).
+"Does showing an agent more tools make it more capable, or does it make tool selection harder?" Every tool description added to a prompt is one more plausible-looking option the model has to rule out before picking the right one. **Tool retrieval** addresses this the same way retrieval addresses it for documents in RAG: rank the available tools by relevance to the task, keep only the top K, and let the model choose among that smaller set — trading the risk of filtering the right tool out entirely (if K is too small) against the cost of drowning it in distractors (if K is too large).
 
 ## Intuition
 
@@ -48,9 +48,9 @@ fallback: Slide the number of pre-filtered candidates and watch recall and worst
 
 ## Where it appears in AI
 
-* **This is tool retrieval, the direct analogue of [[Retrieval Metrics: Precision, Recall, MRR and NDCG|retrieval metrics]] already covered on the RAG planet** — a tool library behaves exactly like a document collection once there are more candidates than fit comfortably in one prompt.
-* **[[Routing Between Specialized Prompts]], from the previous district, routes among a handful of whole prompts**; tool selection is the same problem scaled up to dozens or hundreds of fine-grained candidates, which is exactly why a retrieval step becomes necessary here and wasn't for routing.
-* **[[Designing Tools for Agent Reliability]], later in this district, addresses a different cause of selection error**: tools that are genuinely similar in description, which pre-filtering alone can't fix.
+* **This is tool retrieval, the direct analogue of [[Retrieval Metrics: Precision, Recall, MRR and NDCG|retrieval metrics]] already covered in RAG** — a tool library behaves exactly like a document collection once there are more candidates than fit comfortably in one prompt.
+* **[[Routing Between Specialized Prompts]], from the previous section, routes among a handful of whole prompts**; tool selection is the same problem scaled up to dozens or hundreds of fine-grained candidates, which is exactly why a retrieval step becomes necessary here and wasn't for routing.
+* **[[Designing Tools for Agent Reliability]], later in this section, addresses a different cause of selection error**: tools that are genuinely similar in description, which pre-filtering alone can't fix.
 
 ## Common pitfalls
 

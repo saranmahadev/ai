@@ -55,7 +55,7 @@ fallback: Step through fine-tuning updates and watch loss on the old task climb 
 
 * **This is a direct risk of [[Fine-Tuning for a Specific Task]]** — the more aggressively a model is specialized, the more of its prior general capability it tends to lose.
 * **[[Model Merging and Weight Averaging]] is one practical way to recover some of what was lost**, by combining a forgetting specialist's weights back with the original (or another task's) weights.
-* **The same phenomenon appears earlier on this road wherever a single model is pushed to serve multiple objectives in sequence** — any time an update moves shared weights toward a new target, it can degrade an old one.
+* **The same phenomenon appears earlier in this subject wherever a single model is pushed to serve multiple objectives in sequence** — any time an update moves shared weights toward a new target, it can degrade an old one.
 
 ## Common pitfalls
 

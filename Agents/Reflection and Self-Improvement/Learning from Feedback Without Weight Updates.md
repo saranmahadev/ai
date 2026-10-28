@@ -4,7 +4,7 @@ An agent that gets told "that approach was wrong, try this instead" and then kee
 
 ## The question it answers
 
-"How does an agent change its behavior mid-run, with no training step involved?" An agent's weights are fixed once it's deployed — nothing about this run updates them. But its *behavior* can still change within that run, because its context window can carry what it's already observed: a correction, a failed attempt, an example of what worked. Folding feedback into context this way is exactly the in-context learning already covered on the Generative AI planet, applied here specifically to an agent incorporating its own feedback across repeated attempts at the same task.
+"How does an agent change its behavior mid-run, with no training step involved?" An agent's weights are fixed once it's deployed — nothing about this run updates them. But its *behavior* can still change within that run, because its context window can carry what it's already observed: a correction, a failed attempt, an example of what worked. Folding feedback into context this way is exactly the in-context learning already covered in Generative AI, applied here specifically to an agent incorporating its own feedback across repeated attempts at the same task.
 
 ## Intuition
 
@@ -47,7 +47,7 @@ fallback: Compare five attempts at a task with and without the previous attempt'
 
 ## Where it appears in AI
 
-* **This is exactly [[Prompting and In-Context Learning|in-context learning]], already covered on the Generative AI planet** — what's new here is using it specifically to carry an agent's own feedback forward across repeated attempts at one task, rather than across unrelated few-shot examples.
+* **This is exactly [[Prompting and In-Context Learning|in-context learning]], already covered in Generative AI** — what's new here is using it specifically to carry an agent's own feedback forward across repeated attempts at one task, rather than across unrelated few-shot examples.
 * **[[Episodic Memory and Experience Logs]], covered earlier, is the longer-horizon version of the same idea** — carrying a lesson forward across many separate task instances rather than across attempts within one run.
 * **This is the mechanism underneath [[Self-Critique Loops in Agents|self-critique]] and [[Verifier-Guided Agent Loops|verifier-guided loops]]**: once a mistake is detected, folding it into context is how the next attempt actually changes.
 
@@ -68,7 +68,7 @@ Nothing about their weights differs; the only difference is what's included in t
 </details>
 
 <details><summary>3. Does this kind of behavior change survive into a new, separate run with a fresh context window?</summary>
-No — because nothing was actually learned at the weight level, a new run with no memory of the previous context starts from the same mistake again, unless the feedback is carried forward some other way (such as the longer-horizon memory mechanisms covered elsewhere on this road).
+No — because nothing was actually learned at the weight level, a new run with no memory of the previous context starts from the same mistake again, unless the feedback is carried forward some other way (such as the longer-horizon memory mechanisms covered elsewhere in this subject).
 </details>
 
 ## Key terms

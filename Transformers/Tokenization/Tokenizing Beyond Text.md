@@ -54,7 +54,7 @@ fallback: Split a small image grid into patches at a chosen patch size, and see 
 
 ## Where it appears in AI
 
-* **It is the entire input mechanism behind [[Vision Transformers]]**, covered in full later on this planet — this topic is only the "how do we cut it into pieces" half of that story.
+* **It is the entire input mechanism behind [[Vision Transformers]]**, covered in full later in this subject — this topic is only the "how do we cut it into pieces" half of that story.
 * **It generalizes directly to other modalities**: audio as fixed-length time windows, video as space-time patches — anything choppable into fixed-size pieces becomes a token sequence this way.
 * **[[Multimodal Transformers as an Architecture Pattern|combining modalities]]** relies on exactly this: once both text tokens and image patches are vectors in a sequence, they can sit in the same sequence together.
 

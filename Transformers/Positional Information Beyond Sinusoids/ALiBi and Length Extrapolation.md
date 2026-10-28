@@ -60,7 +60,7 @@ fallback: Compare the ALiBi bias at a chosen distance across several attention h
 ## Where it appears in AI
 
 * **It is specifically designed for length extrapolation** — running a trained model on sequences longer than anything in its training data, a real, practical need for long-document and long-context use cases.
-* **It removes positional information from the vectors entirely**, unlike every other scheme on this planet — ALiBi adds nothing to queries, keys or embeddings; it only modifies the attention scores directly, alongside the masks from [[Attention Masks: Padding and Causal Masking]].
+* **It removes positional information from the vectors entirely**, unlike every other scheme in this subject — ALiBi adds nothing to queries, keys or embeddings; it only modifies the attention scores directly, alongside the masks from [[Attention Masks: Padding and Causal Masking]].
 * **The different slopes across heads give the model a built-in range of "attention spans"** for free, without any slope ever being trained — a structural choice baked into the architecture rather than learned.
 
 ## Common pitfalls
