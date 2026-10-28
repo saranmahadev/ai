@@ -1,6 +1,6 @@
 **Artificial intelligence** has no single agreed definition, so whether something "counts" depends on the question you ask. The most useful definition for learning is a practical one: a system that senses its world, chooses actions to pursue a goal, and often improves from experience.
 
-**You need:** nothing. This is where it starts.
+**You need:** nothing. This is the starting point.
 
 ## The question it answers
 
