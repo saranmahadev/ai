@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Capstone: Assembling a Tiny Transformer from the Ground Up — AI Base</title>
-<meta name="description" content="This capstone traces one phrase through every stage this planet built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer block,…">
+<meta name="description" content="This capstone traces one phrase through every stage this subject built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer…">
 <link rel="canonical" href="https://ai.saranmahadev.in/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AI Base">
 <meta property="og:title" content="Capstone: Assembling a Tiny Transformer from the Ground Up — AI Base">
-<meta property="og:description" content="This capstone traces one phrase through every stage this planet built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer block,…">
+<meta property="og:description" content="This capstone traces one phrase through every stage this subject built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer…">
 <meta property="og:url" content="https://ai.saranmahadev.in/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/">
 <meta property="og:image" content="https://ai.saranmahadev.in/og.png">
 <meta property="og:image:width" content="1200">
@@ -19,8 +19,8 @@
 <link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":4,"name":"Transformers in Practice"},{"@type":"ListItem","position":5,"name":"Capstone: Assembling a Tiny Transformer from the Ground Up","item":"https://ai.saranmahadev.in/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Capstone: Assembling a Tiny Transformer from the Ground Up","description":"This capstone traces one phrase through every stage this planet built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer block,…","url":"https://ai.saranmahadev.in/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the five stages this capstone traces a phrase through, in order?","acceptedAnswer":{"@type":"Answer","text":"Tokenization, scaled embedding lookup, adding positional information, one transformer block (attention and feed-forward, each with residual connections and normalization), and output projection through the tied embedding table followed by softmax."}},{"@type":"Question","name":"Why was the word \"lowest\" specifically chosen for this worked example?","acceptedAnswer":{"@type":"Answer","text":"It was never part of the BPE training corpus, so successfully tokenizing and processing it demonstrates the pipeline generalizing to unseen input, not just replaying memorized training examples."}},{"@type":"Question","name":"What does this capstone's result demonstrate about the planet's topics as a whole?","acceptedAnswer":{"@type":"Answer","text":"That the individually-verified pieces — tokenization, embedding scaling, the transformer block, and tied weights — genuinely compose into one working pipeline, with each stage's output consistent with what its own topic claimed."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Capstone: Assembling a Tiny Transformer from the Ground Up","description":"This capstone traces one phrase through every stage this subject built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer…","url":"https://ai.saranmahadev.in/transformers/capstone-assembling-a-tiny-transformer-from-the-ground-up/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the five stages this capstone traces a phrase through, in order?","acceptedAnswer":{"@type":"Answer","text":"Tokenization, scaled embedding lookup, adding positional information, one transformer block (attention and feed-forward, each with residual connections and normalization), and output projection through the tied embedding table followed by softmax."}},{"@type":"Question","name":"Why was the word \"lowest\" specifically chosen for this worked example?","acceptedAnswer":{"@type":"Answer","text":"It was never part of the BPE training corpus, so successfully tokenizing and processing it demonstrates the pipeline generalizing to unseen input, not just replaying memorized training examples."}},{"@type":"Question","name":"What does this capstone's result demonstrate about the subject's topics as a whole?","acceptedAnswer":{"@type":"Answer","text":"That the individually-verified pieces — tokenization, embedding scaling, the transformer block, and tied weights — genuinely compose into one working pipeline, with each stage's output consistent with what its own topic claimed."}}]}</script>
 </head>
 <body class="reading static-page" data-theme="light">
 <header class="hud">
@@ -45,22 +45,15 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="cisyflabg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
-    <radialGradient id="cisyflapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#cisyflabg)"/>
-  <circle cx="1039" cy="395" r="128" fill="#4f669f" opacity="0.38"/><circle cx="651" cy="88" r="143" fill="#c5cacf" opacity="0.57"/><circle cx="995" cy="5" r="216" fill="#abd0ff" opacity="0.30"/><circle cx="375" cy="287" r="189" fill="#c5cacf" opacity="0.41"/><circle cx="76" cy="371" r="74" fill="#e2efff" opacity="0.31"/><circle cx="1031" cy="417" r="218" fill="#4f669f" opacity="0.31"/><circle cx="438" cy="291" r="113" fill="#abd0ff" opacity="0.44"/>
-  <path d="M0,420 L0,348 L30,349 L60,349 L90,348 L120,346 L150,343 L180,339 L210,334 L240,329 L270,324 L300,319 L330,314 L360,311 L390,308 L420,306 L450,306 L480,306 L510,308 L540,311 L570,315 L600,320 L630,325 L660,330 L690,335 L720,340 L750,343 L780,347 L810,349 L840,350 L870,349 L900,348 L930,345 L960,342 L990,337 L1020,332 L1050,327 L1080,322 L1110,317 L1140,313 L1170,310 L1200,307 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
-  <path d="M0,420 L0,372 L30,369 L60,366 L90,364 L120,363 L150,362 L180,362 L210,364 L240,366 L270,368 L300,371 L330,375 L360,379 L390,383 L420,386 L450,389 L480,391 L510,393 L540,394 L570,394 L600,393 L630,391 L660,389 L690,386 L720,382 L750,378 L780,375 L810,371 L840,368 L870,365 L900,363 L930,362 L960,362 L990,363 L1020,364 L1050,366 L1080,369 L1110,373 L1140,376 L1170,380 L1200,384 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
-  <ellipse cx="992" cy="180" rx="154" ry="43" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.0 992 180)"/><ellipse cx="992" cy="180" rx="212" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(2.0 992 180)"/>
-  <circle cx="992" cy="180" r="60" fill="url(#cisyflapl)"/>
-  <circle cx="844" cy="154" r="9" fill="#ffffff" opacity="0.67"/><circle cx="855" cy="124" r="12" fill="#ffffff" opacity="0.68"/>
+  <rect width="1200" height="420" fill="#f2f8ff"/>
+  <circle cx="1018" cy="177" r="131" fill="#cbe2ff" opacity="0.36"/><circle cx="837" cy="259" r="175" fill="#cbe2ff" opacity="0.55"/>
+  <circle cx="365" cy="298" r="156" fill="#7db7ff"/>
+  <line x1="0" y1="120" x2="1200" y2="120" stroke="#7db7ff" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
-      <div class="doc-body"><div class="prose"><p>This capstone traces one phrase through every stage this planet built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer block, and projecting back to a prediction over the vocabulary — checking that every piece still fits together exactly as each individual topic claimed.</p>
+      <div class="doc-body"><div class="prose"><p>This capstone traces one phrase through every stage this subject built, in order: tokenizing it, embedding and scaling the pieces, adding positional information, running one full transformer block, and projecting back to a prediction over the vocabulary — checking that every piece still fits together exactly as each individual topic claimed.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/transformers/byte-pair-encoding/" data-topic="transformers/byte-pair-encoding">Byte Pair Encoding</a>, <a class="wikilink" href="/transformers/token-embeddings-and-embedding-scaling/" data-topic="transformers/token-embeddings-and-embedding-scaling">Token Embeddings and Embedding Scaling</a>, <a class="wikilink" href="/transformers/learned-positional-embeddings/" data-topic="transformers/learned-positional-embeddings">Learned Positional Embeddings</a>, <a class="wikilink" href="/transformers/weight-tying/" data-topic="transformers/weight-tying">Weight Tying</a>, <a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">Assembling One Transformer Block</a>.</p>
 <h2 id="the-question-it-answers">The question it answers</h2>
-<p>&quot;Do all of this planet&#39;s individually-verified pieces actually compose into one working pipeline?&quot; This capstone builds the pipeline directly, stage by stage, reusing the same tokenizer, embedding scaling, transformer block, and tied output projection verified separately throughout the planet — and checks that a genuinely novel input flows cleanly from raw text to a predicted next token.</p>
+<p>&quot;Do all of this subject&#39;s individually-verified pieces actually compose into one working pipeline?&quot; This capstone builds the pipeline directly, stage by stage, reusing the same tokenizer, embedding scaling, transformer block, and tied output projection verified separately throughout the subject — and checks that a genuinely novel input flows cleanly from raw text to a predicted next token.</p>
 <h2 id="the-pipeline">The pipeline</h2>
 <pre><code class="language-text">1. Tokenization (Byte Pair Encoding)
 2. Scaled embedding lookup (Token Embeddings and Embedding Scaling)
@@ -96,7 +89,7 @@
      new:      0.1901
      wid:      0.1250
 </code></pre>
-<p>The model&#39;s top prediction after &quot;lowest&quot; is <code>est&lt;/w&gt;</code> itself — not a meaningful prediction (the weights here are untrained, small random numbers), but a complete, working pipeline: a word the BPE merges never saw during training was still tokenized sensibly, embedded, positioned, transformed through a full attention-and-feed-forward block, and turned into a genuine probability distribution over the vocabulary, using nothing but the pieces this planet built one at a time.</p>
+<p>The model&#39;s top prediction after &quot;lowest&quot; is <code>est&lt;/w&gt;</code> itself — not a meaningful prediction (the weights here are untrained, small random numbers), but a complete, working pipeline: a word the BPE merges never saw during training was still tokenized sensibly, embedded, positioned, transformed through a full attention-and-feed-forward block, and turned into a genuine probability distribution over the vocabulary, using nothing but the pieces this subject built one at a time.</p>
 <h2 id="bench">Bench</h2>
 <div class="bench" data-bench="nn-capstone-transformer" data-title="One phrase, the whole pipeline"><p class="bench-fallback"><strong>Interactive bench: One phrase, the whole pipeline.</strong> Trace a word through tokenization, embedding, one transformer block and the output projection, watching each stage's output in turn.</p></div>
 <p><strong>Try this</strong></p>
@@ -105,12 +98,12 @@
 <li>Try a different word and see how its tokenization and final prediction differ.</li>
 <li>Compare the final probabilities&#39; spread — notice how flat they are with untrained, random weights.</li>
 </ol>
-<p><strong>What you should notice:</strong> every stage&#39;s output is exactly consistent with that stage&#39;s own topic earlier on this planet — nothing here is special-cased for this capstone; it&#39;s the same functions, called in sequence.</p>
+<p><strong>What you should notice:</strong> every stage&#39;s output is exactly consistent with that stage&#39;s own topic earlier in this subject — nothing here is special-cased for this capstone; it&#39;s the same functions, called in sequence.</p>
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
-<li><strong>This is, structurally, exactly what a real transformer does on every input</strong> — the only difference from a production model is scale (far more layers, far wider vectors, trained weights) and the specific architectural variants (RoPE instead of simple positions, RMSNorm, gated feed-forward) covered as options earlier on this planet.</li>
-<li><strong>It demonstrates this planet&#39;s central claim</strong>: a transformer is not one monolithic mechanism, but a composition of independently-understandable pieces, each doing one job, stacked and connected in a fixed, learnable pattern.</li>
-<li><strong>From here, <a class="wikilink" href="/llms/llms/" data-topic="llms/llms">training this pipeline on real data at real scale</a></strong>, generating many tokens autoregressively, and grounding it in retrieved documents or tool use are the next planets&#39; jobs — this planet&#39;s job was the architecture itself.</li>
+<li><strong>This is, structurally, exactly what a real transformer does on every input</strong> — the only difference from a production model is scale (far more layers, far wider vectors, trained weights) and the specific architectural variants (RoPE instead of simple positions, RMSNorm, gated feed-forward) covered as options earlier in this subject.</li>
+<li><strong>It demonstrates this subject&#39;s central claim</strong>: a transformer is not one monolithic mechanism, but a composition of independently-understandable pieces, each doing one job, stacked and connected in a fixed, learnable pattern.</li>
+<li><strong>From here, <a class="wikilink" href="/llms/llms/" data-topic="llms/llms">training this pipeline on real data at real scale</a></strong>, generating many tokens autoregressively, and grounding it in retrieved documents or tool use are the next subjects&#39; jobs — this subject&#39;s job was the architecture itself.</li>
 </ul>
 <h2 id="common-pitfalls">Common pitfalls</h2>
 <ul>
@@ -127,7 +120,7 @@ Tokenization, scaled embedding lookup, adding positional information, one transf
 It was never part of the BPE training corpus, so successfully tokenizing and processing it demonstrates the pipeline generalizing to unseen input, not just replaying memorized training examples.
 </details>
 
-<details><summary>3. What does this capstone's result demonstrate about the planet's topics as a whole?</summary>
+<details><summary>3. What does this capstone's result demonstrate about the subject's topics as a whole?</summary>
 That the individually-verified pieces — tokenization, embedding scaling, the transformer block, and tied weights — genuinely compose into one working pipeline, with each stage's output consistent with what its own topic claimed.
 </details>
 

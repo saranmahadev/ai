@@ -45,17 +45,10 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="cybjd8ubg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
-    <radialGradient id="cybjd8upl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#cybjd8ubg)"/>
-  <circle cx="1" cy="320" r="213" fill="#dcbef5" opacity="0.54"/><circle cx="48" cy="308" r="211" fill="#dcbef5" opacity="0.48"/><circle cx="218" cy="330" r="136" fill="#dcbef5" opacity="0.30"/><circle cx="1163" cy="260" r="201" fill="#dcbef5" opacity="0.53"/><circle cx="700" cy="14" r="101" fill="#e7bdc8" opacity="0.54"/>
-  <path d="M0,420 L0,349 L30,346 L60,341 L90,335 L120,329 L150,322 L180,315 L210,310 L240,307 L270,306 L300,306 L330,309 L360,314 L390,320 L420,327 L450,333 L480,340 L510,345 L540,348 L570,350 L600,349 L630,346 L660,341 L690,335 L720,329 L750,322 L780,315 L810,310 L840,307 L870,306 L900,306 L930,309 L960,314 L990,320 L1020,327 L1050,333 L1080,340 L1110,345 L1140,348 L1170,350 L1200,349 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
-  <path d="M0,420 L0,394 L30,394 L60,392 L90,389 L120,385 L150,381 L180,376 L210,371 L240,367 L270,364 L300,362 L330,362 L360,364 L390,367 L420,371 L450,375 L480,380 L510,385 L540,389 L570,392 L600,394 L630,394 L660,392 L690,389 L720,385 L750,381 L780,376 L810,371 L840,367 L870,364 L900,362 L930,362 L960,364 L990,367 L1020,371 L1050,375 L1080,380 L1110,385 L1140,389 L1170,392 L1200,394 L1200,420 Z" fill="#725998" opacity="0.5"/>
-  <ellipse cx="795" cy="261" rx="184" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(14.3 795 261)"/><ellipse cx="795" cy="261" rx="254" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(20.3 795 261)"/>
-  <circle cx="795" cy="261" r="72" fill="url(#cybjd8upl)"/>
-  <circle cx="716" cy="337" r="11" fill="#ffffff" opacity="0.70"/><circle cx="538" cy="265" r="11" fill="#ffffff" opacity="0.70"/><circle cx="971" cy="217" r="15" fill="#ffffff" opacity="0.75"/><circle cx="543" cy="230" r="18" fill="#ffffff" opacity="0.82"/>
+  <rect width="1200" height="420" fill="#faf5fe"/>
+  <circle cx="695" cy="315" r="65" fill="#e9d7f9" opacity="0.52"/><circle cx="1027" cy="186" r="145" fill="#e9d7f9" opacity="0.35"/><circle cx="955" cy="193" r="102" fill="#e9d7f9" opacity="0.36"/>
+  <circle cx="208" cy="90" r="143" fill="#c99bf0"/>
+  <line x1="0" y1="305" x2="1200" y2="305" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
       <div class="doc-body"><div class="prose"><p>An agent built to summarize an inbox only needs to read email. Give it a mail tool that can also send, delete, and forward, and every one of those extra abilities sits there unused — right up until a mistake or a manipulated instruction tries to use one of them, at which point it turns out they were never blocked at all.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability">Designing Tools for Agent Reliability</a>.</p>
@@ -87,7 +80,7 @@ least-privilege scope (read only, matches task): 1 of 4 actions succeeds
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
 <li><strong>This is the same reachability idea as <a class="wikilink" href="/agents/sandboxing-and-isolation/" data-topic="agents/sandboxing-and-isolation">Sandboxing and Isolation</a>, applied to tool grants instead of filesystem access</strong> — both work by removing what&#39;s reachable, not by trusting judgment about what should be reachable.</li>
-<li><strong><a class="wikilink" href="/agents/guardrails-for-agent-actions/" data-topic="agents/guardrails-for-agent-actions">Guardrails for Agent Actions</a>, next in this district, is the layer that still matters even within a granted tool</strong> — scope limits decide which tools exist at all; a guardrail decides which specific calls to an allowed tool are still too risky to run.</li>
+<li><strong><a class="wikilink" href="/agents/guardrails-for-agent-actions/" data-topic="agents/guardrails-for-agent-actions">Guardrails for Agent Actions</a>, next in this section, is the layer that still matters even within a granted tool</strong> — scope limits decide which tools exist at all; a guardrail decides which specific calls to an allowed tool are still too risky to run.</li>
 <li><strong><a class="wikilink" href="/agents/prompt-injection-in-agent-contexts/" data-topic="agents/prompt-injection-in-agent-contexts">Prompt Injection in Agent Contexts</a> is exactly the failure mode excessive agency makes dangerous</strong>: an injected instruction can only succeed at actions the agent was actually granted the tools to perform.</li>
 </ul>
 <h2 id="common-pitfalls">Common pitfalls</h2>

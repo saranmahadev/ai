@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spiking Neural Networks — AI Base</title>
-<meta name="description" content="Every network so far on this planet, and every one on Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.">
+<meta name="description" content="Every network so far in this subject, and every one in Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.">
 <link rel="canonical" href="https://ai.saranmahadev.in/neural-networks/spiking-neural-networks/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AI Base">
 <meta property="og:title" content="Spiking Neural Networks — AI Base">
-<meta property="og:description" content="Every network so far on this planet, and every one on Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.">
+<meta property="og:description" content="Every network so far in this subject, and every one in Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.">
 <meta property="og:url" content="https://ai.saranmahadev.in/neural-networks/spiking-neural-networks/">
 <meta property="og:image" content="https://ai.saranmahadev.in/og.png">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/"},{"@type":"ListItem","position":4,"name":"Spiking and Neuromorphic Computing"},{"@type":"ListItem","position":5,"name":"Spiking Neural Networks","item":"https://ai.saranmahadev.in/neural-networks/spiking-neural-networks/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Spiking Neural Networks","description":"Every network so far on this planet, and every one on Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.","url":"https://ai.saranmahadev.in/neural-networks/spiking-neural-networks/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Spiking Neural Networks","description":"Every network so far in this subject, and every one in Deep Learning, communicates with continuous numbers — an activation, a probability, a weight.","url":"https://ai.saranmahadev.in/neural-networks/spiking-neural-networks/","isPartOf":{"@type":"CreativeWorkSeries","name":"Neural Networks","url":"https://ai.saranmahadev.in/neural-networks/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the two things that happen to a LIF neuron's membrane potential every time step?","acceptedAnswer":{"@type":"Answer","text":"It is reduced slightly by the leak term, and increased by whatever input it is receiving."}},{"@type":"Question","name":"In the worked example, why does the neuron spike every 4 steps rather than, say, every 3 or every 5?","acceptedAnswer":{"@type":"Answer","text":"With leak 0.1, threshold 1 and input 0.3, it takes exactly 3 steps of accumulation to cross the threshold on the 4th; this specific period comes directly from those three numbers."}},{"@type":"Question","name":"What happens to a weak, constant input that never reaches threshold?","acceptedAnswer":{"@type":"Answer","text":"The potential rises until the leak exactly balances the input and then stays below threshold forever — the neuron never spikes."}}]}</script>
 </head>
 <body class="reading static-page" data-theme="light">
@@ -45,19 +45,12 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Neural Networks</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="c1uarfvgbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f6e5"/><stop offset="1" stop-color="#ace3b3"/></linearGradient>
-    <radialGradient id="c1uarfvgpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7fd48a"/><stop offset="1" stop-color="#50736a"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#c1uarfvgbg)"/>
-  <circle cx="225" cy="147" r="223" fill="#50736a" opacity="0.35"/><circle cx="931" cy="222" r="163" fill="#e3f6e5" opacity="0.37"/><circle cx="818" cy="111" r="69" fill="#50736a" opacity="0.52"/><circle cx="307" cy="148" r="77" fill="#c5d79b" opacity="0.40"/><circle cx="353" cy="146" r="215" fill="#50736a" opacity="0.57"/><circle cx="60" cy="242" r="160" fill="#ace3b3" opacity="0.32"/><circle cx="73" cy="216" r="147" fill="#e3f6e5" opacity="0.27"/>
-  <path d="M0,420 L0,306 L30,306 L60,307 L90,309 L120,311 L150,313 L180,316 L210,319 L240,322 L270,326 L300,329 L330,333 L360,336 L390,339 L420,342 L450,344 L480,346 L510,348 L540,349 L570,350 L600,350 L630,349 L660,348 L690,346 L720,344 L750,342 L780,339 L810,336 L840,333 L870,329 L900,326 L930,323 L960,319 L990,316 L1020,313 L1050,311 L1080,309 L1110,307 L1140,306 L1170,306 L1200,306 L1200,420 Z" fill="#ace3b3" opacity="0.35"/>
-  <path d="M0,420 L0,363 L30,365 L60,367 L90,370 L120,374 L150,378 L180,381 L210,385 L240,388 L270,391 L300,393 L330,394 L360,394 L390,393 L420,392 L450,390 L480,387 L510,383 L540,380 L570,376 L600,372 L630,369 L660,366 L690,364 L720,363 L750,362 L780,362 L810,364 L840,366 L870,368 L900,371 L930,375 L960,379 L990,383 L1020,386 L1050,389 L1080,391 L1110,393 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#50736a" opacity="0.5"/>
-  <ellipse cx="901" cy="195" rx="174" ry="49" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(3.8 901 195)"/><ellipse cx="901" cy="195" rx="240" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(9.8 901 195)"/>
-  <circle cx="901" cy="195" r="68" fill="url(#c1uarfvgpl)"/>
-  <circle cx="752" cy="107" r="11" fill="#ffffff" opacity="0.64"/><circle cx="843" cy="132" r="15" fill="#ffffff" opacity="0.66"/><circle cx="1104" cy="218" r="7" fill="#ffffff" opacity="0.67"/>
+  <rect width="1200" height="420" fill="#f2fbf3"/>
+  <circle cx="1046" cy="150" r="161" fill="#cceed0" opacity="0.46"/><circle cx="908" cy="77" r="108" fill="#cceed0" opacity="0.50"/><circle cx="741" cy="57" r="186" fill="#cceed0" opacity="0.53"/>
+  <circle cx="393" cy="135" r="115" fill="#7fd48a"/>
+  <line x1="0" y1="167" x2="1200" y2="167" stroke="#7fd48a" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
-      <div class="doc-body"><div class="prose"><p>Every network so far on this planet, and every one on <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>, communicates with continuous numbers — an activation, a probability, a weight. A real neuron communicates with something much simpler: it stays quiet, accumulating input, and then fires a single, brief, identical spike. A spiking neural network takes that literally.</p>
+      <div class="doc-body"><div class="prose"><p>Every network so far in this subject, and every one in <a class="wikilink" href="/deep-learning/deep-learning/" data-topic="deep-learning/deep-learning">Deep Learning</a>, communicates with continuous numbers — an activation, a probability, a weight. A real neuron communicates with something much simpler: it stays quiet, accumulating input, and then fires a single, brief, identical spike. A spiking neural network takes that literally.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/neural-networks/the-biological-neuron/" data-topic="neural-networks/the-biological-neuron">The Biological Neuron</a>.</p>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;What does a neuron model look like if it only ever outputs a spike or nothing, never a continuous value?&quot; The <strong>leaky integrate-and-fire (LIF)</strong> neuron is the simplest standard answer: it integrates (accumulates) incoming input into a membrane potential, leaks a fraction of that potential away each time step, and fires a spike — then resets to zero — the instant the potential crosses a threshold.</p>

@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Training Deep Networks — AI Base</title>
-<meta name="description" content="Gradient descent and backpropagation (see Gradient Descent and Backpropagation by Hand on the Math planet) are the engine; this district covers the practical decisions that decide whether that…">
+<meta name="description" content="Gradient descent and backpropagation (see Gradient Descent and Backpropagation by Hand in Math) are the engine; this section covers the practical decisions that decide whether that engine actually…">
 <link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/training-deep-networks/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AI Base">
 <meta property="og:title" content="Training Deep Networks — AI Base">
-<meta property="og:description" content="Gradient descent and backpropagation (see Gradient Descent and Backpropagation by Hand on the Math planet) are the engine; this district covers the practical decisions that decide whether that…">
+<meta property="og:description" content="Gradient descent and backpropagation (see Gradient Descent and Backpropagation by Hand in Math) are the engine; this section covers the practical decisions that decide whether that engine actually…">
 <meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/training-deep-networks/">
 <meta property="og:image" content="https://ai.saranmahadev.in/og.png">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":4,"name":"Training Deep Networks"},{"@type":"ListItem","position":5,"name":"Training Deep Networks","item":"https://ai.saranmahadev.in/deep-learning/training-deep-networks/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Training Deep Networks","description":"Gradient descent and backpropagation (see Gradient Descent and Backpropagation by Hand on the Math planet) are the engine; this district covers the practical decisions that decide whether that…","url":"https://ai.saranmahadev.in/deep-learning/training-deep-networks/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Training Deep Networks","description":"Gradient descent and backpropagation (see Gradient Descent and Backpropagation by Hand in Math) are the engine; this section covers the practical decisions that decide whether that engine actually…","url":"https://ai.saranmahadev.in/deep-learning/training-deep-networks/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 </head>
 <body class="reading static-page" data-theme="light">
 <header class="hud">
@@ -44,20 +44,13 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>1 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="c98hjjubg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
-    <radialGradient id="c98hjjupl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#c98hjjubg)"/>
-  <circle cx="1167" cy="214" r="64" fill="#ffb89d" opacity="0.33"/><circle cx="813" cy="270" r="150" fill="#ffb6b6" opacity="0.37"/><circle cx="796" cy="215" r="175" fill="#ffb89d" opacity="0.31"/><circle cx="96" cy="78" r="177" fill="#ffe6e6" opacity="0.22"/><circle cx="690" cy="44" r="80" fill="#ffb6b6" opacity="0.60"/><circle cx="533" cy="232" r="217" fill="#ffb89d" opacity="0.44"/>
-  <path d="M0,420 L0,339 L30,334 L60,329 L90,324 L120,319 L150,314 L180,311 L210,308 L240,306 L270,306 L300,306 L330,308 L360,311 L390,315 L420,319 L450,324 L480,330 L510,335 L540,339 L570,343 L600,347 L630,349 L660,350 L690,349 L720,348 L750,345 L780,342 L810,337 L840,332 L870,327 L900,322 L930,317 L960,313 L990,310 L1020,307 L1050,306 L1080,306 L1110,307 L1140,309 L1170,312 L1200,316 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
-  <path d="M0,420 L0,364 L30,363 L60,362 L90,362 L120,362 L150,363 L180,363 L210,365 L240,366 L270,368 L300,370 L330,372 L360,375 L390,377 L420,380 L450,382 L480,385 L510,387 L540,389 L570,391 L600,392 L630,393 L660,394 L690,394 L720,394 L750,393 L780,393 L810,391 L840,390 L870,388 L900,386 L930,384 L960,381 L990,379 L1020,376 L1050,374 L1080,371 L1110,369 L1140,367 L1170,365 L1200,364 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
-  <ellipse cx="811" cy="164" rx="264" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-2.1 811 164)"/><ellipse cx="811" cy="164" rx="365" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(3.9 811 164)"/>
-  <circle cx="811" cy="164" r="103" fill="url(#c98hjjupl)"/>
-  <circle cx="616" cy="45" r="16" fill="#ffffff" opacity="0.73"/><circle cx="578" cy="234" r="16" fill="#ffffff" opacity="0.71"/><circle cx="1144" cy="153" r="9" fill="#ffffff" opacity="0.80"/><circle cx="1087" cy="161" r="16" fill="#ffffff" opacity="0.80"/>
+  <rect width="1200" height="420" fill="#fff4f4"/>
+  <circle cx="834" cy="130" r="148" fill="#ffd2d2" opacity="0.49"/><circle cx="806" cy="203" r="108" fill="#ffd2d2" opacity="0.50"/>
+  <circle cx="255" cy="323" r="126" fill="#ff8f8f"/>
+  <line x1="0" y1="217" x2="1200" y2="217" stroke="#ff8f8f" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
-      <div class="doc-body"><div class="prose"><p>Gradient descent and backpropagation (see <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> and <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a> on the Math planet) are the engine; this district covers the practical decisions that decide whether that engine actually trains a deep network — or stalls, explodes, or wanders for days.</p>
-<p>Topics on this stretch of the road:</p>
+      <div class="doc-body"><div class="prose"><p>Gradient descent and backpropagation (see <a class="wikilink" href="/math/gradient-descent/" data-topic="math/gradient-descent">Gradient Descent</a> and <a class="wikilink" href="/math/backpropagation-by-hand/" data-topic="math/backpropagation-by-hand">Backpropagation by Hand</a> in Math) are the engine; this section covers the practical decisions that decide whether that engine actually trains a deep network — or stalls, explodes, or wanders for days.</p>
+<p>Topics in this section:</p>
 <ul>
 <li><a class="wikilink" href="/deep-learning/weight-initialization/" data-topic="deep-learning/weight-initialization">Weight Initialization</a>: starting the weights so signal neither vanishes nor explodes before training begins.</li>
 <li><a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a>: why gradients shrink or blow up in deep networks, and what that does to training.</li>

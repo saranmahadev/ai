@@ -45,17 +45,10 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="c1a1bp7jbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
-    <radialGradient id="c1a1bp7jpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#c1a1bp7jbg)"/>
-  <circle cx="519" cy="399" r="223" fill="#abd0ff" opacity="0.36"/><circle cx="806" cy="200" r="88" fill="#4f669f" opacity="0.34"/><circle cx="865" cy="195" r="91" fill="#abd0ff" opacity="0.59"/><circle cx="244" cy="206" r="90" fill="#4f669f" opacity="0.47"/><circle cx="1124" cy="3" r="79" fill="#c5cacf" opacity="0.28"/><circle cx="870" cy="334" r="208" fill="#e2efff" opacity="0.59"/><circle cx="1133" cy="309" r="133" fill="#abd0ff" opacity="0.25"/>
-  <path d="M0,420 L0,307 L30,309 L60,311 L90,313 L120,316 L150,319 L180,323 L210,326 L240,329 L270,333 L300,336 L330,339 L360,342 L390,344 L420,346 L450,348 L480,349 L510,350 L540,350 L570,349 L600,348 L630,346 L660,344 L690,342 L720,339 L750,336 L780,333 L810,329 L840,326 L870,322 L900,319 L930,316 L960,313 L990,311 L1020,309 L1050,307 L1080,306 L1110,306 L1140,306 L1170,306 L1200,307 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
-  <path d="M0,420 L0,367 L30,369 L60,372 L90,374 L120,377 L150,379 L180,382 L210,384 L240,386 L270,388 L300,390 L330,392 L360,393 L390,394 L420,394 L450,394 L480,394 L510,393 L540,392 L570,390 L600,389 L630,387 L660,384 L690,382 L720,379 L750,377 L780,374 L810,372 L840,370 L870,368 L900,366 L930,364 L960,363 L990,362 L1020,362 L1050,362 L1080,362 L1110,363 L1140,364 L1170,366 L1200,367 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
-  <ellipse cx="946" cy="270" rx="263" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-23.9 946 270)"/><ellipse cx="946" cy="270" rx="364" ry="102" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-17.9 946 270)"/>
-  <circle cx="946" cy="270" r="103" fill="url(#c1a1bp7jpl)"/>
-  <circle cx="689" cy="357" r="13" fill="#ffffff" opacity="0.64"/><circle cx="656" cy="389" r="13" fill="#ffffff" opacity="0.73"/><circle cx="742" cy="353" r="16" fill="#ffffff" opacity="0.77"/>
+  <rect width="1200" height="420" fill="#f2f8ff"/>
+  <circle cx="783" cy="161" r="147" fill="#cbe2ff" opacity="0.44"/><circle cx="665" cy="306" r="100" fill="#cbe2ff" opacity="0.52"/><circle cx="822" cy="103" r="112" fill="#cbe2ff" opacity="0.58"/>
+  <circle cx="361" cy="194" r="157" fill="#7db7ff"/>
+  <line x1="0" y1="157" x2="1200" y2="157" stroke="#7db7ff" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
       <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">RoPE</a> builds relative position into attention through rotation. ALiBi (Attention with Linear Biases) takes an even more direct route to a related goal: skip rotating anything, and just subtract a penalty from each attention score, proportional to how far apart the two tokens are.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">Relative Position and RoPE</a>, <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>.</p>
@@ -94,7 +87,7 @@ slopes for h heads: slope_i = 2^(−8(i+1)/h),  for i = 0, …, h−1
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
 <li><strong>It is specifically designed for length extrapolation</strong> — running a trained model on sequences longer than anything in its training data, a real, practical need for long-document and long-context use cases.</li>
-<li><strong>It removes positional information from the vectors entirely</strong>, unlike every other scheme on this planet — ALiBi adds nothing to queries, keys or embeddings; it only modifies the attention scores directly, alongside the masks from <a class="wikilink" href="/transformers/attention-masks-padding-and-causal-masking/" data-topic="transformers/attention-masks-padding-and-causal-masking">Attention Masks: Padding and Causal Masking</a>.</li>
+<li><strong>It removes positional information from the vectors entirely</strong>, unlike every other scheme in this subject — ALiBi adds nothing to queries, keys or embeddings; it only modifies the attention scores directly, alongside the masks from <a class="wikilink" href="/transformers/attention-masks-padding-and-causal-masking/" data-topic="transformers/attention-masks-padding-and-causal-masking">Attention Masks: Padding and Causal Masking</a>.</li>
 <li><strong>The different slopes across heads give the model a built-in range of &quot;attention spans&quot;</strong> for free, without any slope ever being trained — a structural choice baked into the architecture rather than learned.</li>
 </ul>
 <h2 id="common-pitfalls">Common pitfalls</h2>

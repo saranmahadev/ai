@@ -45,17 +45,10 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="clry8ojbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
-    <radialGradient id="clry8ojpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#clry8ojbg)"/>
-  <circle cx="493" cy="140" r="154" fill="#4f669f" opacity="0.48"/><circle cx="1174" cy="52" r="143" fill="#e2efff" opacity="0.40"/><circle cx="126" cy="59" r="151" fill="#e2efff" opacity="0.61"/><circle cx="838" cy="289" r="207" fill="#4f669f" opacity="0.31"/><circle cx="1150" cy="418" r="215" fill="#c5cacf" opacity="0.47"/>
-  <path d="M0,420 L0,310 L30,307 L60,306 L90,306 L120,307 L150,309 L180,312 L210,316 L240,321 L270,326 L300,331 L330,336 L360,341 L390,344 L420,347 L450,349 L480,350 L510,349 L540,347 L570,344 L600,341 L630,336 L660,331 L690,326 L720,321 L750,316 L780,312 L810,309 L840,307 L870,306 L900,306 L930,307 L960,310 L990,313 L1020,318 L1050,322 L1080,328 L1110,333 L1140,338 L1170,342 L1200,345 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
-  <path d="M0,420 L0,389 L30,384 L60,379 L90,374 L120,370 L150,366 L180,363 L210,362 L240,362 L270,364 L300,367 L330,372 L360,377 L390,382 L420,386 L450,390 L480,393 L510,394 L540,394 L570,392 L600,389 L630,384 L660,379 L690,374 L720,370 L750,366 L780,363 L810,362 L840,362 L870,364 L900,367 L930,372 L960,377 L990,382 L1020,386 L1050,390 L1080,393 L1110,394 L1140,394 L1170,392 L1200,389 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
-  <ellipse cx="671" cy="268" rx="224" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-19.8 671 268)"/><ellipse cx="671" cy="268" rx="310" ry="87" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-13.8 671 268)"/>
-  <circle cx="671" cy="268" r="88" fill="url(#clry8ojpl)"/>
-  <circle cx="363" cy="282" r="8" fill="#ffffff" opacity="0.76"/><circle cx="864" cy="216" r="15" fill="#ffffff" opacity="0.65"/><circle cx="627" cy="158" r="10" fill="#ffffff" opacity="0.80"/>
+  <rect width="1200" height="420" fill="#f2f8ff"/>
+  <circle cx="1027" cy="261" r="187" fill="#cbe2ff" opacity="0.34"/><circle cx="757" cy="99" r="119" fill="#cbe2ff" opacity="0.33"/><circle cx="526" cy="223" r="91" fill="#cbe2ff" opacity="0.59"/>
+  <circle cx="212" cy="189" r="113" fill="#7db7ff"/>
+  <line x1="0" y1="252" x2="1200" y2="252" stroke="#7db7ff" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
       <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/vision-transformers/" data-topic="transformers/vision-transformers">Image patches</a> and text tokens both end up as the exact same thing by the time attention sees them: a vector of width <code>d_model</code>. Once that&#39;s true, nothing stops putting both kinds of vectors in the <em>same</em> sequence and letting one attention computation mix freely across both.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/transformers/vision-transformers/" data-topic="transformers/vision-transformers">Vision Transformers</a>, <a class="wikilink" href="/transformers/token-embeddings-and-embedding-scaling/" data-topic="transformers/token-embeddings-and-embedding-scaling">Token Embeddings and Embedding Scaling</a>.</p>
@@ -80,7 +73,7 @@ text position 0&#39;s attention weights over all four positions:
 
 attention spent on the two image patches alone: 0.2706 + 0.2584 = 0.5290
 </code></pre>
-<p>A text token&#39;s attention spreads across <em>both</em> the other text token and both image patches, in a single computation — more than half its attention mass (52.9%) went to the image patches here, with no special mechanism needed to let that happen; it&#39;s the same self-attention formula used throughout this entire planet.</p>
+<p>A text token&#39;s attention spreads across <em>both</em> the other text token and both image patches, in a single computation — more than half its attention mass (52.9%) went to the image patches here, with no special mechanism needed to let that happen; it&#39;s the same self-attention formula used throughout this entire subject.</p>
 <h2 id="bench">Bench</h2>
 <div class="bench" data-bench="multimodal-attention" data-title="One sequence, two modalities"><p class="bench-fallback"><strong>Interactive bench: One sequence, two modalities.</strong> Combine a few text tokens and image patches into one sequence and see how attention spreads across both modalities at once.</p></div>
 <p><strong>Try this</strong></p>
@@ -93,8 +86,8 @@ attention spent on the two image patches alone: 0.2706 + 0.2584 = 0.5290
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
 <li><strong>It is the standard pattern behind models that jointly process text and images</strong>, extending cleanly to audio, video, or any other modality with its own front-end producing <code>d_model</code>-wide vectors.</li>
-<li><strong>It requires no new attention mechanism at all</strong> — every efficiency and architecture topic covered earlier on this planet (masking, positional schemes, KV-caching) applies to a multimodal sequence exactly as it would to a single-modality one.</li>
-<li><strong>It closes the loop this planet opened in <a class="wikilink" href="/transformers/tokenizing-beyond-text/" data-topic="transformers/tokenizing-beyond-text">Tokenizing Beyond Text</a></strong>: once anything can become a token sequence, combining several different anythings into one sequence is a natural, almost free extension.</li>
+<li><strong>It requires no new attention mechanism at all</strong> — every efficiency and architecture topic covered earlier in this subject (masking, positional schemes, KV-caching) applies to a multimodal sequence exactly as it would to a single-modality one.</li>
+<li><strong>It closes the loop this subject opened in <a class="wikilink" href="/transformers/tokenizing-beyond-text/" data-topic="transformers/tokenizing-beyond-text">Tokenizing Beyond Text</a></strong>: once anything can become a token sequence, combining several different anythings into one sequence is a natural, almost free extension.</li>
 </ul>
 <h2 id="common-pitfalls">Common pitfalls</h2>
 <ul>
@@ -126,8 +119,8 @@ Nothing — attention only operates on vectors and has no built-in notion of mod
 </div></div>
       <footer class="doc-end">
         <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/multimodal-transformers-as-an-architecture-pattern">Open in the interactive site →</a></p>
-        <a class="read-next" href="/transformers/transformers-in-practice/"><small>Read next</small><b>Transformers in Practice</b><p>The last stretch of the road is about running a trained transformer well, and a capstone that walks the whole planet in one place.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/vision-transformers/"><b>Vision Transformers</b><p>Patches became a token sequence several districts ago.</p></a><a class="rc-card" href="/transformers/token-embeddings-and-embedding-scaling/"><b>Token Embeddings and Embedding Scaling</b><p>A tokenizer hands back a sequence of integer ids — vocabulary indices, not vectors.</p></a><a class="rc-card" href="/transformers/tokenizing-beyond-text/"><b>Tokenizing Beyond Text</b><p>Nothing about attention requires its inputs to be words.</p></a><a class="rc-card" href="/transformers/transformers-beyond-text/"><b>Transformers Beyond Text</b><p>Nothing about the transformer block is specific to language — it only needs a sequence of vectors to attend over.</p></a><a class="rc-card" href="/transformers/graph-transformers/"><b>Graph Transformers</b><p>A graph neural network restricts every node to messages from its direct neighbours, layer after layer.</p></a><a class="rc-card" href="/generative-ai/unified-multimodal-generation/"><b>Unified Multimodal Generation</b><p>a multimodal transformer can take text and image patches as input together.</p></a></div></section>
+        <a class="read-next" href="/transformers/transformers-in-practice/"><small>Read next</small><b>Transformers in Practice</b><p>This last section is about running a trained transformer well, and a capstone that walks the whole subject in one place.</p><span aria-hidden="true">→</span></a>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/vision-transformers/"><b>Vision Transformers</b><p>Patches became a token sequence several sections ago.</p></a><a class="rc-card" href="/transformers/token-embeddings-and-embedding-scaling/"><b>Token Embeddings and Embedding Scaling</b><p>A tokenizer hands back a sequence of integer ids — vocabulary indices, not vectors.</p></a><a class="rc-card" href="/transformers/tokenizing-beyond-text/"><b>Tokenizing Beyond Text</b><p>Nothing about attention requires its inputs to be words.</p></a><a class="rc-card" href="/transformers/transformers-beyond-text/"><b>Transformers Beyond Text</b><p>Nothing about the transformer block is specific to language — it only needs a sequence of vectors to attend over.</p></a><a class="rc-card" href="/transformers/graph-transformers/"><b>Graph Transformers</b><p>A graph neural network restricts every node to messages from its direct neighbours, layer after layer.</p></a><a class="rc-card" href="/generative-ai/unified-multimodal-generation/"><b>Unified Multimodal Generation</b><p>a multimodal transformer can take text and image patches as input together.</p></a></div></section>
         <p class="doc-prev"><a href="/transformers/graph-transformers/">← Previous: Graph Transformers</a></p>
       </footer>
     </article></main>

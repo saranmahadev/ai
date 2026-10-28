@@ -45,27 +45,20 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="c1smaqq0bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
-    <radialGradient id="c1smaqq0pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#c1smaqq0bg)"/>
-  <circle cx="230" cy="357" r="156" fill="#e7bdc8" opacity="0.40"/><circle cx="992" cy="144" r="190" fill="#725998" opacity="0.53"/><circle cx="1065" cy="54" r="183" fill="#f3e9fc" opacity="0.22"/><circle cx="435" cy="157" r="108" fill="#e7bdc8" opacity="0.39"/><circle cx="627" cy="395" r="165" fill="#dcbef5" opacity="0.59"/><circle cx="739" cy="47" r="137" fill="#dcbef5" opacity="0.34"/><circle cx="1007" cy="397" r="202" fill="#e7bdc8" opacity="0.47"/>
-  <path d="M0,420 L0,325 L30,321 L60,318 L90,315 L120,312 L150,310 L180,308 L210,307 L240,306 L270,306 L300,306 L330,307 L360,308 L390,310 L420,312 L450,314 L480,317 L510,320 L540,324 L570,327 L600,331 L630,334 L660,337 L690,340 L720,343 L750,345 L780,347 L810,348 L840,349 L870,350 L900,349 L930,349 L960,347 L990,346 L1020,343 L1050,341 L1080,338 L1110,335 L1140,331 L1170,328 L1200,325 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
-  <path d="M0,420 L0,363 L30,362 L60,362 L90,363 L120,365 L150,368 L180,371 L210,375 L240,378 L270,382 L300,386 L330,389 L360,391 L390,393 L420,394 L450,394 L480,393 L510,391 L540,389 L570,386 L600,383 L630,379 L660,375 L690,372 L720,368 L750,366 L780,364 L810,362 L840,362 L870,363 L900,364 L930,366 L960,369 L990,372 L1020,376 L1050,380 L1080,383 L1110,387 L1140,390 L1170,392 L1200,393 L1200,420 Z" fill="#725998" opacity="0.5"/>
-  <ellipse cx="891" cy="213" rx="211" ry="59" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(8.8 891 213)"/><ellipse cx="891" cy="213" rx="292" ry="82" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(14.8 891 213)"/>
-  <circle cx="891" cy="213" r="83" fill="url(#c1smaqq0pl)"/>
-  <circle cx="683" cy="137" r="7" fill="#ffffff" opacity="0.70"/><circle cx="1188" cy="245" r="12" fill="#ffffff" opacity="0.61"/>
+  <rect width="1200" height="420" fill="#faf5fe"/>
+  <circle cx="950" cy="197" r="167" fill="#e9d7f9" opacity="0.40"/><circle cx="978" cy="330" r="161" fill="#e9d7f9" opacity="0.57"/><circle cx="647" cy="286" r="77" fill="#e9d7f9" opacity="0.30"/>
+  <circle cx="360" cy="136" r="150" fill="#c99bf0"/>
+  <line x1="0" y1="188" x2="1200" y2="188" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
-      <div class="doc-body"><div class="prose"><p>Checking an agent&#39;s full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there&#39;s no reference string for &quot;was this a reasonable approach.&quot; Using an LLM as the judge, already covered on the LLMs planet for single outputs, extends naturally to reading an entire transcript and rendering a verdict on the whole run — and it inherits that judge&#39;s exact same biases while doing it.</p>
+      <div class="doc-body"><div class="prose"><p>Checking an agent&#39;s full trajectory for soundness, not just its final answer, often has no fixed rule to check against — there&#39;s no reference string for &quot;was this a reasonable approach.&quot; Using an LLM as the judge, already covered in LLMs for single outputs, extends naturally to reading an entire transcript and rendering a verdict on the whole run — and it inherits that judge&#39;s exact same biases while doing it.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/agents/trajectory-level-evaluation/" data-topic="agents/trajectory-level-evaluation">Trajectory-Level Evaluation</a>.</p>
 <h2 id="the-question-it-answers">The question it answers</h2>
-<p>&quot;How do you grade a property of an agent&#39;s run that no fixed rule can check?&quot; Rule-based trajectory checkers (like the step-validity check in the previous topic) only work when &quot;valid&quot; has a checkable definition. For judgments like &quot;was this a sound approach&quot; or &quot;did the agent waste effort,&quot; there&#39;s often no reference answer to check against — so the same <strong>LLM-as-judge</strong> mechanism already covered for single outputs gets applied to the entire trajectory transcript instead, with the identical position-bias risk the LLMs planet already demonstrated.</p>
+<p>&quot;How do you grade a property of an agent&#39;s run that no fixed rule can check?&quot; Rule-based trajectory checkers (like the step-validity check in the previous topic) only work when &quot;valid&quot; has a checkable definition. For judgments like &quot;was this a sound approach&quot; or &quot;did the agent waste effort,&quot; there&#39;s often no reference answer to check against — so the same <strong>LLM-as-judge</strong> mechanism already covered for single outputs gets applied to the entire trajectory transcript instead, with the identical position-bias risk already demonstrated in LLMs.</p>
 <h2 id="intuition">Intuition</h2>
 <p>Grading a single essay for quality is already subjective enough to need a human-like judge rather than a fixed answer key. Grading an entire research process — which sources a student consulted, in what order, and why — is the same kind of judgment call, just applied to a much longer document. Whatever biases crept into the single-essay judge don&#39;t disappear just because the document got longer.</p>
 <h2 id="definition-and-notation">Definition and notation</h2>
 <pre><code class="language-text">judge_score(trajectory, position) = quality(trajectory) + bias_term(position)
-                                     (the exact mechanism from the LLMs planet,
+                                     (the exact mechanism from LLMs,
                                       &quot;trajectory&quot; standing in for &quot;response&quot;)
 </code></pre>
 <h2 id="a-worked-example">A worked example</h2>
@@ -90,10 +83,10 @@ a full trajectory transcript here runs roughly 2000 tokens — about 40× longer
 <li>Swap the order and compare the verdict.</li>
 <li>Consider how a production pipeline might cancel out this effect, the same way it would for single-response judging.</li>
 </ol>
-<p><strong>What you should notice:</strong> this is the identical position-bias mechanism already verified on the LLMs planet — nothing about judging trajectories instead of single responses changes how the bias behaves, only what&#39;s being read has gotten much longer.</p>
+<p><strong>What you should notice:</strong> this is the identical position-bias mechanism already verified in LLMs — nothing about judging trajectories instead of single responses changes how the bias behaves, only what&#39;s being read has gotten much longer.</p>
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
-<li><strong>This directly reuses the <a class="wikilink" href="/llms/llm-as-judge-evaluation/" data-topic="llms/llm-as-judge-evaluation">LLM-as-judge mechanism</a> already covered on the LLMs planet</strong> — the bias term, the mitigation (order randomization), and the underlying risk are unchanged; only the object being judged (a full trajectory instead of a single output) is new.</li>
+<li><strong>This directly reuses the <a class="wikilink" href="/llms/llm-as-judge-evaluation/" data-topic="llms/llm-as-judge-evaluation">LLM-as-judge mechanism</a> already covered in LLMs</strong> — the bias term, the mitigation (order randomization), and the underlying risk are unchanged; only the object being judged (a full trajectory instead of a single output) is new.</li>
 <li><strong>The 40× longer input in the worked example is exactly why <a class="wikilink" href="/agents/cost-and-reliability-as-joint-metrics/" data-topic="agents/cost-and-reliability-as-joint-metrics">Cost and Reliability as Joint Metrics</a>, covered next, matters for trajectory judging</strong> — reading and scoring full transcripts costs meaningfully more than judging single outputs.</li>
 <li><strong><a class="wikilink" href="/agents/debate-and-adversarial-multi-agent-setups/" data-topic="agents/debate-and-adversarial-multi-agent-setups">Debate and Adversarial Multi-Agent Setups</a> often uses a judge of exactly this kind</strong> to decide between two agents&#39; competing trajectories, once a challenge has been raised.</li>
 </ul>

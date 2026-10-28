@@ -45,17 +45,10 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="c1k3hooabg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
-    <radialGradient id="c1k3hooapl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#c1k3hooabg)"/>
-  <circle cx="410" cy="16" r="73" fill="#dcbef5" opacity="0.29"/><circle cx="813" cy="137" r="172" fill="#dcbef5" opacity="0.31"/><circle cx="92" cy="250" r="156" fill="#f3e9fc" opacity="0.48"/><circle cx="1153" cy="239" r="216" fill="#e7bdc8" opacity="0.32"/><circle cx="1128" cy="59" r="89" fill="#e7bdc8" opacity="0.57"/>
-  <path d="M0,420 L0,350 L30,348 L60,344 L90,339 L120,332 L150,326 L180,319 L210,313 L240,309 L270,306 L300,306 L330,307 L360,311 L390,316 L420,323 L450,330 L480,336 L510,342 L540,347 L570,349 L600,350 L630,348 L660,344 L690,339 L720,332 L750,326 L780,319 L810,313 L840,309 L870,306 L900,306 L930,307 L960,311 L990,316 L1020,323 L1050,330 L1080,336 L1110,342 L1140,347 L1170,349 L1200,350 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
-  <path d="M0,420 L0,383 L30,387 L60,391 L90,393 L120,394 L150,393 L180,391 L210,388 L240,383 L270,378 L300,373 L330,369 L360,365 L390,363 L420,362 L450,363 L480,365 L510,368 L540,373 L570,378 L600,383 L630,387 L660,391 L690,393 L720,394 L750,393 L780,391 L810,388 L840,383 L870,378 L900,373 L930,369 L960,365 L990,363 L1020,362 L1050,363 L1080,365 L1110,368 L1140,373 L1170,378 L1200,383 L1200,420 Z" fill="#725998" opacity="0.5"/>
-  <ellipse cx="831" cy="204" rx="185" ry="52" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(17.4 831 204)"/><ellipse cx="831" cy="204" rx="255" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(23.4 831 204)"/>
-  <circle cx="831" cy="204" r="72" fill="url(#c1k3hooapl)"/>
-  <circle cx="924" cy="270" r="8" fill="#ffffff" opacity="0.68"/><circle cx="574" cy="238" r="11" fill="#ffffff" opacity="0.79"/>
+  <rect width="1200" height="420" fill="#faf5fe"/>
+  <circle cx="697" cy="97" r="148" fill="#e9d7f9" opacity="0.40"/><circle cx="857" cy="158" r="90" fill="#e9d7f9" opacity="0.32"/>
+  <circle cx="172" cy="172" r="93" fill="#c99bf0"/>
+  <line x1="0" y1="233" x2="1200" y2="233" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
       <div class="doc-body"><div class="prose"><p>A flaky network call that succeeds 70% of the time individually succeeds 99.19% of the time within four tries — failures that are transient are exactly the kind retrying is good for. A call that fails because its arguments are malformed succeeds 0% of the time no matter how many times it&#39;s retried, because nothing about trying again fixes a request that was wrong to begin with.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a>.</p>
@@ -92,7 +85,7 @@ permanent (p = 0):
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
 <li><strong>This is the same detect-and-recover shape as <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a></strong>, but at the level of a single tool call rather than a whole plan — the key judgment call in both cases is distinguishing a fixable failure from one that will recur identically.</li>
-<li><strong><a class="wikilink" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability">Designing Tools for Agent Reliability</a>, later in this district, is about reducing how often permanent errors happen in the first place</strong> — a well-designed tool interface prevents many &quot;malformed arguments&quot; failures before any retry logic is even needed.</li>
+<li><strong><a class="wikilink" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability">Designing Tools for Agent Reliability</a>, later in this section, is about reducing how often permanent errors happen in the first place</strong> — a well-designed tool interface prevents many &quot;malformed arguments&quot; failures before any retry logic is even needed.</li>
 <li><strong>Blind retries without this distinction waste calls and money on errors retrying can never fix</strong>, which is exactly why production agent systems need to classify an error before deciding whether to retry it at all.</li>
 </ul>
 <h2 id="common-pitfalls">Common pitfalls</h2>
@@ -126,7 +119,7 @@ With p = 0, the term (1 − p) equals 1, and 1 raised to any power n is still 1 
       <footer class="doc-end">
         <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/handling-tool-errors-and-retries">Open in the interactive site →</a></p>
         <a class="read-next" href="/agents/tool-result-verification/"><small>Read next</small><b>Tool Result Verification</b><p>A weather tool call that returns no exception isn&#39;t the same as a weather tool call that actually returned a usable result.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/re-planning-on-failure/"><b>Re-Planning on Failure</b><p>A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5.</p></a><a class="rc-card" href="/agents/designing-tools-for-agent-reliability/"><b>Designing Tools for Agent Reliability</b><p>A tool with a free-text date field lets an agent write &quot;03/14/2025,&quot; &quot;March 14, 2025,&quot; or &quot;14/03/2025&quot; — three formats, at least two of them genuinely ambiguous about which number is the month.</p></a><a class="rc-card" href="/agents/tool-result-verification/"><b>Tool Result Verification</b><p>A weather tool call that returns no exception isn&#39;t the same as a weather tool call that actually returned a usable result.</p></a><a class="rc-card" href="/agents/tool-use-and-function-calling/"><b>Tool Use and Function Calling</b><p>Calling one tool correctly is a solved problem, already covered on the LLMs planet.</p></a></div></section>
+        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/re-planning-on-failure/"><b>Re-Planning on Failure</b><p>A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5.</p></a><a class="rc-card" href="/agents/designing-tools-for-agent-reliability/"><b>Designing Tools for Agent Reliability</b><p>A tool with a free-text date field lets an agent write &quot;03/14/2025,&quot; &quot;March 14, 2025,&quot; or &quot;14/03/2025&quot; — three formats, at least two of them genuinely ambiguous about which number is the month.</p></a><a class="rc-card" href="/agents/tool-result-verification/"><b>Tool Result Verification</b><p>A weather tool call that returns no exception isn&#39;t the same as a weather tool call that actually returned a usable result.</p></a><a class="rc-card" href="/agents/tool-use-and-function-calling/"><b>Tool Use and Function Calling</b><p>Calling one tool correctly is a solved problem, already covered in LLMs.</p></a></div></section>
         <p class="doc-prev"><a href="/agents/parallel-vs-sequential-tool-calls/">← Previous: Parallel vs. Sequential Tool Calls</a></p>
       </footer>
     </article></main>

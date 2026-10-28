@@ -45,22 +45,15 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>4 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="c1aeu9d7bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
-    <radialGradient id="c1aeu9d7pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#c1aeu9d7bg)"/>
-  <circle cx="258" cy="90" r="91" fill="#e7bdc8" opacity="0.41"/><circle cx="527" cy="2" r="89" fill="#f3e9fc" opacity="0.49"/><circle cx="119" cy="61" r="61" fill="#e7bdc8" opacity="0.29"/><circle cx="444" cy="183" r="106" fill="#e7bdc8" opacity="0.46"/><circle cx="488" cy="362" r="127" fill="#f3e9fc" opacity="0.40"/><circle cx="1083" cy="93" r="65" fill="#e7bdc8" opacity="0.57"/>
-  <path d="M0,420 L0,306 L30,306 L60,309 L90,313 L120,319 L150,325 L180,332 L210,339 L240,344 L270,348 L300,349 L330,349 L360,347 L390,342 L420,337 L450,330 L480,323 L510,317 L540,311 L570,308 L600,306 L630,306 L660,309 L690,313 L720,319 L750,325 L780,332 L810,339 L840,344 L870,348 L900,349 L930,349 L960,347 L990,342 L1020,337 L1050,330 L1080,323 L1110,317 L1140,311 L1170,308 L1200,306 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
-  <path d="M0,420 L0,363 L30,362 L60,362 L90,362 L120,362 L150,363 L180,364 L210,366 L240,368 L270,370 L300,372 L330,374 L360,377 L390,379 L420,382 L450,384 L480,386 L510,388 L540,390 L570,392 L600,393 L630,394 L660,394 L690,394 L720,394 L750,393 L780,392 L810,390 L840,388 L870,386 L900,384 L930,382 L960,379 L990,377 L1020,374 L1050,372 L1080,370 L1110,368 L1140,366 L1170,364 L1200,363 L1200,420 Z" fill="#725998" opacity="0.5"/>
-  <ellipse cx="797" cy="284" rx="163" ry="46" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(6.6 797 284)"/><ellipse cx="797" cy="284" rx="225" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(12.6 797 284)"/>
-  <circle cx="797" cy="284" r="64" fill="url(#c1aeu9d7pl)"/>
-  <circle cx="924" cy="352" r="18" fill="#ffffff" opacity="0.65"/><circle cx="566" cy="309" r="11" fill="#ffffff" opacity="0.80"/>
+  <rect width="1200" height="420" fill="#faf5fe"/>
+  <circle cx="819" cy="199" r="117" fill="#e9d7f9" opacity="0.30"/><circle cx="619" cy="97" r="147" fill="#e9d7f9" opacity="0.33"/>
+  <circle cx="300" cy="142" r="105" fill="#c99bf0"/>
+  <line x1="0" y1="146" x2="1200" y2="146" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
       <div class="doc-body"><div class="prose"><p>Running three independent pieces of a task one after another wastes time that didn&#39;t need to be spent sequentially at all — none of the three pieces needed the others to finish first. Running the same question several times and taking the most common answer is a different use of the same basic idea: parallel calls, combined afterward.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/agents/prompt-chaining/" data-topic="agents/prompt-chaining">Prompt Chaining</a>.</p>
 <h2 id="the-question-it-answers">The question it answers</h2>
-<p>&quot;What are the two different reasons to run several LLM calls at once instead of one?&quot; <strong>Sectioning</strong> splits one task into genuinely independent subtasks and runs them in parallel, finishing in however long the <em>slowest</em> piece takes rather than the <em>sum</em> of all of them. <strong>Voting</strong> runs the identical prompt several times on the same question and takes the most common answer — a form of the self-consistency sampling already covered on the LLMs planet — trading extra compute for a meaningfully more reliable answer.</p>
+<p>&quot;What are the two different reasons to run several LLM calls at once instead of one?&quot; <strong>Sectioning</strong> splits one task into genuinely independent subtasks and runs them in parallel, finishing in however long the <em>slowest</em> piece takes rather than the <em>sum</em> of all of them. <strong>Voting</strong> runs the identical prompt several times on the same question and takes the most common answer — a form of the self-consistency sampling already covered in LLMs — trading extra compute for a meaningfully more reliable answer.</p>
 <h2 id="intuition">Intuition</h2>
 <p>Three friends cooking three unrelated dishes for the same dinner finish whenever the slowest dish is done, not by adding up all three cooking times — that&#39;s sectioning. Asking the same trivia question to five different people and going with whatever most of them say, rather than trusting the first answer alone, is voting — useful specifically because any one person&#39;s mistake is unlikely to be the exact same mistake five people happen to share.</p>
 <h2 id="definition-and-notation">Definition and notation</h2>
@@ -89,7 +82,7 @@ voting (per-sample accuracy 60%):
 <p><strong>What you should notice:</strong> sectioning&#39;s benefit depends on genuine independence between subtasks (nothing to wait on), while voting&#39;s benefit depends on wrong answers being inconsistent with each other — if the same mistake keeps recurring, more votes wouldn&#39;t out-vote it.</p>
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
-<li><strong>Voting is exactly <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">self-consistency sampling</a>, already covered on the Generative AI planet</strong> — this topic is about using it as a parallelization pattern alongside sectioning, not re-deriving the sampling mechanism.</li>
+<li><strong>Voting is exactly <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">self-consistency sampling</a>, already covered in Generative AI</strong> — this topic is about using it as a parallelization pattern alongside sectioning, not re-deriving the sampling mechanism.</li>
 <li><strong><a class="wikilink" href="/agents/orchestrator-workers/" data-topic="agents/orchestrator-workers">Orchestrator-Workers</a> is the natural extension of sectioning</strong> when the subtasks themselves need to be identified dynamically rather than being fixed in advance.</li>
 <li><strong>Sectioning&#39;s speedup assumes genuinely independent subtasks</strong> — a task whose pieces depend on each other&#39;s results can&#39;t be sectioned this way at all, which is exactly why <a class="wikilink" href="/agents/plan-and-execute-agents/" data-topic="agents/plan-and-execute-agents">Plan-and-Execute Agents</a> exists for tasks that need ordered steps instead.</li>
 </ul>

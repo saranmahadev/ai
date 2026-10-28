@@ -45,17 +45,10 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="c1jcl9gtbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcf5f7"/><stop offset="1" stop-color="#97e1e6"/></linearGradient>
-    <radialGradient id="c1jcl9gtpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#5fd1d9"/><stop offset="1" stop-color="#42718e"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#c1jcl9gtbg)"/>
-  <circle cx="1143" cy="317" r="95" fill="#97e1e6" opacity="0.50"/><circle cx="544" cy="279" r="190" fill="#97e1e6" opacity="0.26"/><circle cx="155" cy="335" r="119" fill="#b7d5be" opacity="0.43"/><circle cx="422" cy="47" r="118" fill="#b7d5be" opacity="0.36"/><circle cx="50" cy="36" r="110" fill="#dcf5f7" opacity="0.44"/>
-  <path d="M0,420 L0,319 L30,323 L60,329 L90,334 L120,339 L150,343 L180,346 L210,348 L240,349 L270,349 L300,348 L330,346 L360,342 L390,338 L420,333 L450,328 L480,323 L510,318 L540,314 L570,310 L600,308 L630,306 L660,306 L690,306 L720,308 L750,312 L780,316 L810,320 L840,325 L870,330 L900,335 L930,340 L960,344 L990,347 L1020,349 L1050,350 L1080,349 L1110,348 L1140,345 L1170,341 L1200,337 L1200,420 Z" fill="#97e1e6" opacity="0.35"/>
-  <path d="M0,420 L0,362 L30,363 L60,365 L90,367 L120,370 L150,374 L180,377 L210,381 L240,385 L270,388 L300,391 L330,393 L360,394 L390,394 L420,393 L450,392 L480,390 L510,387 L540,384 L570,380 L600,376 L630,372 L660,369 L690,366 L720,364 L750,363 L780,362 L810,362 L840,363 L870,365 L900,368 L930,371 L960,375 L990,379 L1020,382 L1050,386 L1080,389 L1110,391 L1140,393 L1170,394 L1200,394 L1200,420 Z" fill="#42718e" opacity="0.5"/>
-  <ellipse cx="963" cy="137" rx="181" ry="51" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(5.7 963 137)"/><ellipse cx="963" cy="137" rx="251" ry="70" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(11.7 963 137)"/>
-  <circle cx="963" cy="137" r="71" fill="url(#c1jcl9gtpl)"/>
-  <circle cx="1140" cy="100" r="16" fill="#ffffff" opacity="0.63"/><circle cx="1163" cy="192" r="10" fill="#ffffff" opacity="0.81"/><circle cx="841" cy="213" r="12" fill="#ffffff" opacity="0.68"/><circle cx="977" cy="58" r="17" fill="#ffffff" opacity="0.60"/>
+  <rect width="1200" height="420" fill="#effafb"/>
+  <circle cx="762" cy="277" r="119" fill="#bfedf0" opacity="0.50"/><circle cx="944" cy="150" r="72" fill="#bfedf0" opacity="0.34"/>
+  <circle cx="213" cy="319" r="143" fill="#5fd1d9"/>
+  <line x1="0" y1="272" x2="1200" y2="272" stroke="#5fd1d9" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
       <div class="doc-body"><div class="prose"><p>Recursive chunking keeps sentences whole, but a sentence boundary isn&#39;t the same thing as a topic boundary — five sentences in a row about the same subject will still get split wherever the size limit happens to land, right through the middle of a coherent idea. Semantic chunking looks at <em>meaning</em> instead of character count: it places a boundary exactly where the topic actually shifts.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/rag/fixed-size-and-recursive-chunking/" data-topic="rag/fixed-size-and-recursive-chunking">Fixed-Size and Recursive Chunking</a>, <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a>.</p>
@@ -91,7 +84,7 @@ similarities between consecutive sentences: 0.998, 0.281, 0.998, 0.996
 <p><strong>What you should notice:</strong> the threshold has to sit meaningfully below the &quot;same topic&quot; similarity (≈0.99 here) and above the &quot;topic shift&quot; similarity (0.281) for the boundary to land in the one place that actually reflects a real change in subject.</p>
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
-<li><strong>The similarity computation itself is exactly <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">cosine similarity</a></strong>, already covered on the Math planet — this topic is about using it to decide <em>where</em> to cut, not re-deriving the metric.</li>
+<li><strong>The similarity computation itself is exactly <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">cosine similarity</a></strong>, already covered in Math — this topic is about using it to decide <em>where</em> to cut, not re-deriving the metric.</li>
 <li><strong>Structure-aware chunking is the cheaper, no-embedding alternative</strong>: splitting at a document&#39;s own markdown headings or paragraph breaks instead of computing sentence-by-sentence similarity.</li>
 <li><strong>A badly placed threshold produces the same symptom as naive fixed-size chunking</strong> (<a class="wikilink" href="/rag/fixed-size-and-recursive-chunking/" data-topic="rag/fixed-size-and-recursive-chunking">Fixed-Size and Recursive Chunking</a>) — a chunk that straddles two unrelated topics, diluting whatever gets embedded from it.</li>
 </ul>

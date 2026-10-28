@@ -45,17 +45,10 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="cgvibr6bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e9fc"/><stop offset="1" stop-color="#dcbef5"/></linearGradient>
-    <radialGradient id="cgvibr6pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c99bf0"/><stop offset="1" stop-color="#725998"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#cgvibr6bg)"/>
-  <circle cx="993" cy="362" r="129" fill="#725998" opacity="0.27"/><circle cx="59" cy="324" r="226" fill="#725998" opacity="0.59"/><circle cx="875" cy="399" r="124" fill="#725998" opacity="0.55"/><circle cx="1144" cy="234" r="131" fill="#e7bdc8" opacity="0.27"/><circle cx="44" cy="96" r="101" fill="#e7bdc8" opacity="0.38"/>
-  <path d="M0,420 L0,342 L30,339 L60,336 L90,332 L120,329 L150,325 L180,322 L210,319 L240,316 L270,313 L300,311 L330,309 L360,307 L390,306 L420,306 L450,306 L480,306 L510,307 L540,309 L570,311 L600,314 L630,317 L660,320 L690,323 L720,326 L750,330 L780,333 L810,336 L840,339 L870,342 L900,345 L930,347 L960,348 L990,349 L1020,350 L1050,349 L1080,349 L1110,348 L1140,346 L1170,344 L1200,342 L1200,420 Z" fill="#dcbef5" opacity="0.35"/>
-  <path d="M0,420 L0,391 L30,393 L60,394 L90,393 L120,391 L150,387 L180,382 L210,377 L240,373 L270,368 L300,365 L330,363 L360,362 L390,363 L420,365 L450,369 L480,374 L510,379 L540,383 L570,388 L600,391 L630,393 L660,394 L690,393 L720,391 L750,387 L780,382 L810,377 L840,373 L870,368 L900,365 L930,363 L960,362 L990,363 L1020,365 L1050,369 L1080,374 L1110,379 L1140,383 L1170,388 L1200,391 L1200,420 Z" fill="#725998" opacity="0.5"/>
-  <ellipse cx="848" cy="204" rx="242" ry="68" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(3.7 848 204)"/><ellipse cx="848" cy="204" rx="334" ry="94" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(9.7 848 204)"/>
-  <circle cx="848" cy="204" r="95" fill="url(#cgvibr6pl)"/>
-  <circle cx="1137" cy="162" r="17" fill="#ffffff" opacity="0.88"/><circle cx="922" cy="302" r="10" fill="#ffffff" opacity="0.89"/><circle cx="709" cy="110" r="13" fill="#ffffff" opacity="0.80"/>
+  <rect width="1200" height="420" fill="#faf5fe"/>
+  <circle cx="1012" cy="80" r="66" fill="#e9d7f9" opacity="0.53"/><circle cx="1085" cy="325" r="182" fill="#e9d7f9" opacity="0.52"/>
+  <circle cx="208" cy="289" r="150" fill="#c99bf0"/>
+  <line x1="0" y1="301" x2="1200" y2="301" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
       <div class="doc-body"><div class="prose"><p>&quot;Organize a conference&quot; eventually breaks down into 36 individual primitive actions — booking a specific venue, sending a specific email, printing a specific badge. A flat planner has to consider all 36 at once. A hierarchical planner never considers more than a handful at a time: pick the top-level tasks, then for each one pick its sub-tasks, then for each of those pick its primitive actions — the same 36 actions, reached through a sequence of small decisions instead of one enormous one.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/agents/goal-decomposition-into-subtasks/" data-topic="agents/goal-decomposition-into-subtasks">Goal Decomposition into Subtasks</a>.</p>
@@ -87,7 +80,7 @@ hierarchical planner:  top level picks among 3, then among 4, then among 3
 <p><strong>What you should notice:</strong> the hierarchical planner&#39;s branching factor is bounded by the <em>widest single level</em>, not by the total number of primitive actions — adding more top-level tasks or more primitive actions per sub-task barely moves it, as long as no individual level itself gets wide.</p>
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
-<li><strong>This is the same branching-factor idea behind <a class="wikilink" href="/llms/tree-of-thought-and-search-based-reasoning/" data-topic="llms/tree-of-thought-and-search-based-reasoning">tree-of-thought search</a> on the LLMs planet</strong>, applied to planning actions in the world instead of searching over reasoning paths — keeping each level&#39;s choice set small is what makes either kind of search tractable at all.</li>
+<li><strong>This is the same branching-factor idea behind <a class="wikilink" href="/llms/tree-of-thought-and-search-based-reasoning/" data-topic="llms/tree-of-thought-and-search-based-reasoning">tree-of-thought search</a> in LLMs</strong>, applied to planning actions in the world instead of searching over reasoning paths — keeping each level&#39;s choice set small is what makes either kind of search tractable at all.</li>
 <li><strong><a class="wikilink" href="/agents/goal-decomposition-into-subtasks/" data-topic="agents/goal-decomposition-into-subtasks">Goal Decomposition into Subtasks</a> is the single-level version of this same mechanism</strong>; hierarchical planning is what happens when decomposition is applied recursively, level after level, rather than just once.</li>
 <li><strong>A deep hierarchy trades a smaller branching factor at each level for more total levels to plan through</strong> — there&#39;s a real cost on the other side of this benefit.</li>
 </ul>

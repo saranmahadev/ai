@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vision Transformers — AI Base</title>
-<meta name="description" content="Patches became a token sequence several districts ago.">
+<meta name="description" content="Patches became a token sequence several sections ago.">
 <link rel="canonical" href="https://ai.saranmahadev.in/transformers/vision-transformers/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AI Base">
 <meta property="og:title" content="Vision Transformers — AI Base">
-<meta property="og:description" content="Patches became a token sequence several districts ago.">
+<meta property="og:description" content="Patches became a token sequence several sections ago.">
 <meta property="og:url" content="https://ai.saranmahadev.in/transformers/vision-transformers/">
 <meta property="og:image" content="https://ai.saranmahadev.in/og.png">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":4,"name":"Transformers Beyond Text"},{"@type":"ListItem","position":5,"name":"Vision Transformers","item":"https://ai.saranmahadev.in/transformers/vision-transformers/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Vision Transformers","description":"Patches became a token sequence several districts ago.","url":"https://ai.saranmahadev.in/transformers/vision-transformers/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Vision Transformers","description":"Patches became a token sequence several sections ago.","url":"https://ai.saranmahadev.in/transformers/vision-transformers/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What two steps are specific to images, and what's identical to a text transformer from there on?","acceptedAnswer":{"@type":"Answer","text":"Patchifying the image and linearly projecting each patch are image-specific; prepending a CLS token, adding positional embeddings, and running the transformer blocks are identical to a text transformer."}},{"@type":"Question","name":"What does the CLS token's final-layer output represent, and how does it get there?","acceptedAnswer":{"@type":"Answer","text":"A summary of the whole image, built entirely through attention over the patch tokens — the CLS token starts with no patch information of its own."}},{"@type":"Question","name":"Why doesn't the patch-projection step use a lookup table the way token embeddings do?","acceptedAnswer":{"@type":"Answer","text":"There's no fixed vocabulary of patches to look up — each patch is a unique vector of raw pixel values, so a learned linear projection, not a lookup, is used instead."}}]}</script>
 </head>
 <body class="reading static-page" data-theme="light">
@@ -45,19 +45,12 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="cgg475zbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
-    <radialGradient id="cgg475zpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#cgg475zbg)"/>
-  <circle cx="573" cy="93" r="184" fill="#e2efff" opacity="0.36"/><circle cx="49" cy="399" r="158" fill="#abd0ff" opacity="0.60"/><circle cx="967" cy="71" r="222" fill="#abd0ff" opacity="0.56"/><circle cx="342" cy="326" r="73" fill="#c5cacf" opacity="0.53"/><circle cx="1000" cy="90" r="208" fill="#e2efff" opacity="0.46"/><circle cx="337" cy="307" r="196" fill="#abd0ff" opacity="0.46"/><circle cx="99" cy="411" r="222" fill="#abd0ff" opacity="0.56"/>
-  <path d="M0,420 L0,349 L30,349 L60,350 L90,349 L120,348 L150,347 L180,345 L210,343 L240,340 L270,337 L300,334 L330,331 L360,327 L390,324 L420,320 L450,317 L480,314 L510,312 L540,309 L570,308 L600,307 L630,306 L660,306 L690,306 L720,307 L750,308 L780,310 L810,312 L840,315 L870,318 L900,321 L930,325 L960,328 L990,332 L1020,335 L1050,338 L1080,341 L1110,344 L1140,346 L1170,347 L1200,349 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
-  <path d="M0,420 L0,393 L30,393 L60,391 L90,390 L120,388 L150,386 L180,384 L210,381 L240,379 L270,376 L300,374 L330,371 L360,369 L390,367 L420,365 L450,364 L480,363 L510,362 L540,362 L570,362 L600,363 L630,363 L660,365 L690,366 L720,368 L750,370 L780,372 L810,375 L840,377 L870,380 L900,382 L930,385 L960,387 L990,389 L1020,391 L1050,392 L1080,393 L1110,394 L1140,394 L1170,394 L1200,393 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
-  <ellipse cx="798" cy="159" rx="158" ry="44" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.5 798 159)"/><ellipse cx="798" cy="159" rx="219" ry="61" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.5 798 159)"/>
-  <circle cx="798" cy="159" r="62" fill="url(#cgg475zpl)"/>
-  <circle cx="571" cy="151" r="10" fill="#ffffff" opacity="0.77"/><circle cx="617" cy="113" r="9" fill="#ffffff" opacity="0.60"/>
+  <rect width="1200" height="420" fill="#f2f8ff"/>
+  <circle cx="604" cy="159" r="65" fill="#cbe2ff" opacity="0.58"/><circle cx="870" cy="192" r="184" fill="#cbe2ff" opacity="0.54"/><circle cx="646" cy="365" r="117" fill="#cbe2ff" opacity="0.56"/>
+  <circle cx="333" cy="205" r="106" fill="#7db7ff"/>
+  <line x1="0" y1="173" x2="1200" y2="173" stroke="#7db7ff" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
-      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/tokenizing-beyond-text/" data-topic="transformers/tokenizing-beyond-text">Patches became a token sequence</a> several districts ago. This topic finishes the job: linearly project each patch into the model&#39;s width, prepend a special summary token, add positional information, and run the exact same transformer block machinery already built for text.</p>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/tokenizing-beyond-text/" data-topic="transformers/tokenizing-beyond-text">Patches became a token sequence</a> several sections ago. This topic finishes the job: linearly project each patch into the model&#39;s width, prepend a special summary token, add positional information, and run the exact same transformer block machinery already built for text.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/transformers/tokenizing-beyond-text/" data-topic="transformers/tokenizing-beyond-text">Tokenizing Beyond Text</a>, <a class="wikilink" href="/transformers/learned-positional-embeddings/" data-topic="transformers/learned-positional-embeddings">Learned Positional Embeddings</a>, <a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">Assembling One Transformer Block</a>.</p>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Once an image is a sequence of flattened patches, what turns that sequence into something a transformer can actually classify?&quot; A Vision Transformer (ViT) does exactly what a text transformer does with token ids: project each patch into a <code>d_model</code>-wide vector (the patch&#39;s &quot;embedding&quot;), add positional information so the model knows where each patch sat in the image, and run the whole sequence through ordinary transformer blocks — no convolutions, no image-specific machinery anywhere in the stack.</p>
@@ -99,7 +92,7 @@ the CLS token&#39;s output (the eventual classification signal):
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
 <li><strong>It is the standard architecture for applying transformers to image classification</strong>, and the clearest demonstration that nothing about the transformer block itself is specific to language.</li>
-<li><strong>It directly reuses <a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">the full block</a> built earlier on this planet</strong> — a genuine example of the same machinery generalizing to a new modality with minimal new parts.</li>
+<li><strong>It directly reuses <a class="wikilink" href="/transformers/assembling-one-transformer-block/" data-topic="transformers/assembling-one-transformer-block">the full block</a> built earlier in this subject</strong> — a genuine example of the same machinery generalizing to a new modality with minimal new parts.</li>
 <li><strong><a class="wikilink" href="/transformers/multimodal-transformers-as-an-architecture-pattern/" data-topic="transformers/multimodal-transformers-as-an-architecture-pattern">the next topic</a> builds on exactly this</strong>: once image patches are vectors in a sequence, nothing stops combining them with text tokens in a single sequence.</li>
 </ul>
 <h2 id="common-pitfalls">Common pitfalls</h2>

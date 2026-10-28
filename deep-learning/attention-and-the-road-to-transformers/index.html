@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Attention and the Road to Transformers — AI Base</title>
-<meta name="description" content="Attention as Dot Products on the Math planet already covers the core mechanism: compare a query with every key, weight by the result, and average the values.">
+<meta name="description" content="Attention as Dot Products in Math already covers the core mechanism: compare a query with every key, weight by the result, and average the values.">
 <link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/attention-and-the-road-to-transformers/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AI Base">
 <meta property="og:title" content="Attention and the Road to Transformers — AI Base">
-<meta property="og:description" content="Attention as Dot Products on the Math planet already covers the core mechanism: compare a query with every key, weight by the result, and average the values.">
+<meta property="og:description" content="Attention as Dot Products in Math already covers the core mechanism: compare a query with every key, weight by the result, and average the values.">
 <meta property="og:url" content="https://ai.saranmahadev.in/deep-learning/attention-and-the-road-to-transformers/">
 <meta property="og:image" content="https://ai.saranmahadev.in/og.png">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":4,"name":"Attention and the Road to Transformers"},{"@type":"ListItem","position":5,"name":"Attention and the Road to Transformers","item":"https://ai.saranmahadev.in/deep-learning/attention-and-the-road-to-transformers/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Attention and the Road to Transformers","description":"Attention as Dot Products on the Math planet already covers the core mechanism: compare a query with every key, weight by the result, and average the values.","url":"https://ai.saranmahadev.in/deep-learning/attention-and-the-road-to-transformers/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Attention and the Road to Transformers","description":"Attention as Dot Products in Math already covers the core mechanism: compare a query with every key, weight by the result, and average the values.","url":"https://ai.saranmahadev.in/deep-learning/attention-and-the-road-to-transformers/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 </head>
 <body class="reading static-page" data-theme="light">
 <header class="hud">
@@ -44,20 +44,13 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>1 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="ctqr8rsbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6e6"/><stop offset="1" stop-color="#ffb6b6"/></linearGradient>
-    <radialGradient id="ctqr8rspl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ff8f8f"/><stop offset="1" stop-color="#8a546c"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#ctqr8rsbg)"/>
-  <circle cx="1002" cy="106" r="161" fill="#ffb89d" opacity="0.49"/><circle cx="816" cy="243" r="178" fill="#ffb89d" opacity="0.26"/><circle cx="604" cy="295" r="158" fill="#ffb89d" opacity="0.48"/><circle cx="526" cy="85" r="116" fill="#ffb6b6" opacity="0.58"/><circle cx="108" cy="17" r="169" fill="#8a546c" opacity="0.50"/><circle cx="1178" cy="237" r="189" fill="#ffb6b6" opacity="0.60"/>
-  <path d="M0,420 L0,350 L30,349 L60,345 L90,341 L120,335 L150,328 L180,321 L210,315 L240,310 L270,307 L300,306 L330,307 L360,310 L390,315 L420,321 L450,327 L480,334 L510,340 L540,345 L570,348 L600,350 L630,349 L660,345 L690,341 L720,335 L750,328 L780,321 L810,315 L840,310 L870,307 L900,306 L930,307 L960,310 L990,315 L1020,321 L1050,327 L1080,334 L1110,340 L1140,345 L1170,348 L1200,350 L1200,420 Z" fill="#ffb6b6" opacity="0.35"/>
-  <path d="M0,420 L0,394 L30,394 L60,394 L90,393 L120,393 L150,391 L180,390 L210,388 L240,386 L270,384 L300,381 L330,379 L360,376 L390,374 L420,372 L450,369 L480,367 L510,366 L540,364 L570,363 L600,362 L630,362 L660,362 L690,363 L720,363 L750,365 L780,366 L810,368 L840,370 L870,372 L900,375 L930,377 L960,380 L990,382 L1020,384 L1050,387 L1080,389 L1110,390 L1140,392 L1170,393 L1200,394 L1200,420 Z" fill="#8a546c" opacity="0.5"/>
-  <ellipse cx="994" cy="137" rx="196" ry="55" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-9.0 994 137)"/><ellipse cx="994" cy="137" rx="271" ry="76" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-3.0 994 137)"/>
-  <circle cx="994" cy="137" r="77" fill="url(#ctqr8rspl)"/>
-  <circle cx="1194" cy="220" r="16" fill="#ffffff" opacity="0.69"/><circle cx="1280" cy="129" r="9" fill="#ffffff" opacity="0.71"/><circle cx="1152" cy="54" r="7" fill="#ffffff" opacity="0.85"/><circle cx="772" cy="80" r="13" fill="#ffffff" opacity="0.78"/>
+  <rect width="1200" height="420" fill="#fff4f4"/>
+  <circle cx="856" cy="266" r="148" fill="#ffd2d2" opacity="0.47"/><circle cx="913" cy="218" r="73" fill="#ffd2d2" opacity="0.45"/><circle cx="919" cy="235" r="131" fill="#ffd2d2" opacity="0.49"/>
+  <circle cx="272" cy="290" r="108" fill="#ff8f8f"/>
+  <line x1="0" y1="202" x2="1200" y2="202" stroke="#ff8f8f" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
-      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products">Attention as Dot Products</a> on the Math planet already covers the core mechanism: compare a query with every key, weight by the result, and average the values. This district covers what you still need to turn that one idea into the architecture that replaced recurrence.</p>
-<p>Topics on this stretch of the road:</p>
+      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products">Attention as Dot Products</a> in Math already covers the core mechanism: compare a query with every key, weight by the result, and average the values. This section covers what you still need to turn that one idea into the architecture that replaced recurrence.</p>
+<p>Topics in this section:</p>
 <ul>
 <li><a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>: running several attention mechanisms side by side, each free to focus on something different.</li>
 <li><a class="wikilink" href="/deep-learning/positional-encoding/" data-topic="deep-learning/positional-encoding">Positional Encoding</a>: telling a position-blind mechanism where each item sits in the sequence.</li>

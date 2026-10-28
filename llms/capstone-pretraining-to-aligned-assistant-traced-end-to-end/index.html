@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Capstone: Pretraining to Aligned Assistant, Traced End to End — AI Base</title>
-<meta name="description" content="Every stage this planet&#39;s road has covered — pretraining, fine-tuning, preference alignment, deployment — is usually described separately, with its own numbers and its own bench.">
+<meta name="description" content="Every stage this subject has covered — pretraining, fine-tuning, preference alignment, deployment — is usually described separately, with its own numbers and its own bench.">
 <link rel="canonical" href="https://ai.saranmahadev.in/llms/capstone-pretraining-to-aligned-assistant-traced-end-to-end/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AI Base">
 <meta property="og:title" content="Capstone: Pretraining to Aligned Assistant, Traced End to End — AI Base">
-<meta property="og:description" content="Every stage this planet&#39;s road has covered — pretraining, fine-tuning, preference alignment, deployment — is usually described separately, with its own numbers and its own bench.">
+<meta property="og:description" content="Every stage this subject has covered — pretraining, fine-tuning, preference alignment, deployment — is usually described separately, with its own numbers and its own bench.">
 <meta property="og:url" content="https://ai.saranmahadev.in/llms/capstone-pretraining-to-aligned-assistant-traced-end-to-end/">
 <meta property="og:image" content="https://ai.saranmahadev.in/og.png">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"LLMs in Practice"},{"@type":"ListItem","position":5,"name":"Capstone: Pretraining to Aligned Assistant, Traced End to End","item":"https://ai.saranmahadev.in/llms/capstone-pretraining-to-aligned-assistant-traced-end-to-end/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Capstone: Pretraining to Aligned Assistant, Traced End to End","description":"Every stage this planet's road has covered — pretraining, fine-tuning, preference alignment, deployment — is usually described separately, with its own numbers and its own bench.","url":"https://ai.saranmahadev.in/llms/capstone-pretraining-to-aligned-assistant-traced-end-to-end/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Capstone: Pretraining to Aligned Assistant, Traced End to End","description":"Every stage this subject has covered — pretraining, fine-tuning, preference alignment, deployment — is usually described separately, with its own numbers and its own bench.","url":"https://ai.saranmahadev.in/llms/capstone-pretraining-to-aligned-assistant-traced-end-to-end/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the loss number drop so much more between pretraining and SFT than between any two other adjacent stages?","acceptedAnswer":{"@type":"Answer","text":"Pretraining and SFT use the same loss (next-token prediction via teacher forcing), so their numbers are directly comparable, and the drop from 1.9348 to 0.2670 reflects the model learning to reliably produce exactly the assistant-formatted tokens it's now being trained on — a large, measurable jump on the same scale."}},{"@type":"Question","name":"What would be missing from a model that went through stage 1 and stage 2, but skipped stage 3?","acceptedAnswer":{"@type":"Answer","text":"It would be instruction-following and fluent in assistant format, but it wouldn't have been shaped toward human preferences among its own possible responses — it could still produce responses a person would rate as unhelpful, unsafe or low-quality relative to alternatives it could have generated."}},{"@type":"Question","name":"Does stage 4's deployment cost reflect the cost of training the model through stages 1 to 3?","acceptedAnswer":{"@type":"Answer","text":"No — stage 4's cost and latency are purely per-request, incurred every time the already-trained model is called; the training cost in stages 1 through 3 is a separate, one-time (or periodically repeated) cost, far larger in absolute terms."}}]}</script>
 </head>
 <body class="reading static-page" data-theme="light">
@@ -45,22 +45,15 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="cez05d4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffece0"/><stop offset="1" stop-color="#ffc7a2"/></linearGradient>
-    <radialGradient id="cez05d4pl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffa970"/><stop offset="1" stop-color="#8a5f5e"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#cez05d4bg)"/>
-  <circle cx="296" cy="309" r="107" fill="#8a5f5e" opacity="0.47"/><circle cx="422" cy="40" r="96" fill="#8a5f5e" opacity="0.55"/><circle cx="242" cy="244" r="92" fill="#8a5f5e" opacity="0.26"/><circle cx="224" cy="410" r="182" fill="#ffece0" opacity="0.51"/><circle cx="1131" cy="349" r="200" fill="#ffc38f" opacity="0.32"/><circle cx="968" cy="371" r="161" fill="#ffc38f" opacity="0.34"/>
-  <path d="M0,420 L0,330 L30,333 L60,336 L90,339 L120,342 L150,345 L180,347 L210,348 L240,349 L270,350 L300,349 L330,349 L360,348 L390,346 L420,344 L450,342 L480,339 L510,336 L540,332 L570,329 L600,325 L630,322 L660,319 L690,316 L720,313 L750,311 L780,309 L810,307 L840,306 L870,306 L900,306 L930,306 L960,307 L990,309 L1020,311 L1050,314 L1080,316 L1110,320 L1140,323 L1170,326 L1200,330 L1200,420 Z" fill="#ffc7a2" opacity="0.35"/>
-  <path d="M0,420 L0,388 L30,386 L60,384 L90,381 L120,379 L150,376 L180,374 L210,372 L240,369 L270,367 L300,366 L330,364 L360,363 L390,362 L420,362 L450,362 L480,363 L510,363 L540,365 L570,366 L600,368 L630,370 L660,372 L690,375 L720,377 L750,380 L780,382 L810,384 L840,387 L870,389 L900,390 L930,392 L960,393 L990,394 L1020,394 L1050,394 L1080,393 L1110,393 L1140,391 L1170,390 L1200,388 L1200,420 Z" fill="#8a5f5e" opacity="0.5"/>
-  <ellipse cx="981" cy="133" rx="240" ry="67" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-13.2 981 133)"/><ellipse cx="981" cy="133" rx="331" ry="93" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(-7.2 981 133)"/>
-  <circle cx="981" cy="133" r="94" fill="url(#cez05d4pl)"/>
-  <circle cx="1143" cy="239" r="15" fill="#ffffff" opacity="0.81"/><circle cx="605" cy="164" r="9" fill="#ffffff" opacity="0.70"/><circle cx="645" cy="168" r="7" fill="#ffffff" opacity="0.83"/><circle cx="1237" cy="234" r="18" fill="#ffffff" opacity="0.85"/>
+  <rect width="1200" height="420" fill="#fff6f1"/>
+  <circle cx="971" cy="256" r="106" fill="#ffddc6" opacity="0.33"/><circle cx="645" cy="364" r="167" fill="#ffddc6" opacity="0.36"/>
+  <circle cx="303" cy="149" r="141" fill="#ffa970"/>
+  <line x1="0" y1="230" x2="1200" y2="230" stroke="#ffa970" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
-      <div class="doc-body"><div class="prose"><p>Every stage this planet&#39;s road has covered — pretraining, fine-tuning, preference alignment, deployment — is usually described separately, with its own numbers and its own bench. This capstone follows one model through all four stages in order, reusing the exact same functions each earlier topic already verified, so the whole pipeline&#39;s numbers connect end to end.</p>
+      <div class="doc-body"><div class="prose"><p>Every stage this subject has covered — pretraining, fine-tuning, preference alignment, deployment — is usually described separately, with its own numbers and its own bench. This capstone follows one model through all four stages in order, reusing the exact same functions each earlier topic already verified, so the whole pipeline&#39;s numbers connect end to end.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a>, <a class="wikilink" href="/llms/supervised-fine-tuning-sft/" data-topic="llms/supervised-fine-tuning-sft">Supervised Fine-Tuning (SFT)</a>, <a class="wikilink" href="/llms/direct-preference-optimization-dpo/" data-topic="llms/direct-preference-optimization-dpo">Direct Preference Optimization (DPO)</a>, <a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a>.</p>
 <h2 id="the-question-it-answers">The question it answers</h2>
-<p>&quot;What does a model actually go through, in order, between raw pretraining and being a deployed, aligned assistant that costs money to run?&quot; Four stages, each one this road already covered in depth: pretraining on raw text with the causal language modeling objective; supervised fine-tuning on assistant-formatted demonstrations; preference alignment (via DPO, no separate reward model needed); and deployment behind an API, where every request now has a real cost and latency.</p>
+<p>&quot;What does a model actually go through, in order, between raw pretraining and being a deployed, aligned assistant that costs money to run?&quot; Four stages, each one this subject already covered in depth: pretraining on raw text with the causal language modeling objective; supervised fine-tuning on assistant-formatted demonstrations; preference alignment (via DPO, no separate reward model needed); and deployment behind an API, where every request now has a real cost and latency.</p>
 <h2 id="intuition">Intuition</h2>
 <p>A single cut of meat moves through butchering, seasoning, cooking and plating before it reaches a table — each stage transforms it further toward &quot;a meal,&quot; and each stage has its own techniques worth understanding on their own. But watching the whole sequence happen to one piece, start to finish, makes clear how each stage&#39;s result becomes the next stage&#39;s starting point.</p>
 <h2 id="definition-and-notation">Definition and notation</h2>
@@ -70,7 +63,7 @@ stage 3: DPO alignment      — dpoStep, raising P(preferred) relative to a refe
 stage 4: deployment         — apiCostLatency, pricing and timing a real request
 </code></pre>
 <h2 id="a-worked-example">A worked example</h2>
-<p>Reusing the exact logits and parameters already verified in this planet&#39;s own topics:</p>
+<p>Reusing the exact logits and parameters already verified in this subject&#39;s own topics:</p>
 <pre><code class="language-text">stage 1 (pretraining):  mean CLM loss = 1.9348
 stage 2 (SFT):           mean CLM loss = 0.2670   (same objective, assistant-formatted data)
 stage 3 (DPO, 5 steps):  P(preferred response) rises from 0.310 to 0.484
@@ -78,14 +71,14 @@ stage 4 (deployment):    an 80-token prompt + 120-token reply → cost $0.00204,
 </code></pre>
 <p>The loss dropping nearly 7× from pretraining to SFT reflects the model learning to produce assistant-style responses specifically, on top of general language modeling. The DPO step then reshapes <em>preferences</em> among already-fluent responses, not fluency itself — P(preferred) rising from 0.310 to 0.484 after only 5 steps, with no reward model and no RL loop. The resulting model is then just as subject to per-request cost and latency as any other deployed API.</p>
 <h2 id="bench">Bench</h2>
-<div class="bench" data-bench="capstone-pretrain-to-assistant" data-title="One model, through every stage of this road"><p class="bench-fallback"><strong>Interactive bench: One model, through every stage of this road.</strong> Step through pretraining, SFT, DPO alignment and deployment and watch each stage's own verified numbers connect.</p></div>
+<div class="bench" data-bench="capstone-pretrain-to-assistant" data-title="One model, through every stage of this subject"><p class="bench-fallback"><strong>Interactive bench: One model, through every stage of this subject.</strong> Step through pretraining, SFT, DPO alignment and deployment and watch each stage's own verified numbers connect.</p></div>
 <p><strong>Try this</strong></p>
 <ol>
 <li>Step through all four stages in order and read each stage&#39;s own number.</li>
 <li>Compare how large the loss drop is from pretraining to SFT against how large the probability shift is from DPO — notice they&#39;re not measuring the same kind of quantity.</li>
 <li>Reset and think about which stage, if skipped, would leave the model least usable as a deployed assistant.</li>
 </ol>
-<p><strong>What you should notice:</strong> each stage&#39;s number was independently verified earlier on this planet&#39;s own road — this capstone doesn&#39;t introduce new mechanics, it chains the same four mechanisms together in the order they actually happen.</p>
+<p><strong>What you should notice:</strong> each stage&#39;s number was independently verified earlier in this subject — this capstone doesn&#39;t introduce new mechanics, it chains the same four mechanisms together in the order they actually happen.</p>
 <h2 id="where-it-appears-in-ai">Where it appears in AI</h2>
 <ul>
 <li><strong>Stage 1 reuses <a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a> exactly</strong>, stage 2 reuses <a class="wikilink" href="/llms/supervised-fine-tuning-sft/" data-topic="llms/supervised-fine-tuning-sft">SFT</a>&#39;s own worked example, stage 3 reuses <a class="wikilink" href="/llms/direct-preference-optimization-dpo/" data-topic="llms/direct-preference-optimization-dpo">Direct Preference Optimization (DPO)</a>&#39;s own worked example, and stage 4 reuses <a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a>&#39;s formula — nothing here is new mechanics, only the ordering.</li>

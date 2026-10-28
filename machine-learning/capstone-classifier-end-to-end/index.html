@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Capstone Classifier End to End — AI Base</title>
-<meta name="description" content="This capstone builds a small classifier from start to finish and brings the whole planet together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look…">
+<meta name="description" content="This capstone builds a small classifier from start to finish and brings the whole subject together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look…">
 <link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/capstone-classifier-end-to-end/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="AI Base">
 <meta property="og:title" content="Capstone Classifier End to End — AI Base">
-<meta property="og:description" content="This capstone builds a small classifier from start to finish and brings the whole planet together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look…">
+<meta property="og:description" content="This capstone builds a small classifier from start to finish and brings the whole subject together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look…">
 <meta property="og:url" content="https://ai.saranmahadev.in/machine-learning/capstone-classifier-end-to-end/">
 <meta property="og:image" content="https://ai.saranmahadev.in/og.png">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
 <link rel="stylesheet" href="/styles.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":4,"name":"Machine Learning in Practice"},{"@type":"ListItem","position":5,"name":"Capstone Classifier End to End","item":"https://ai.saranmahadev.in/machine-learning/capstone-classifier-end-to-end/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Capstone Classifier End to End","description":"This capstone builds a small classifier from start to finish and brings the whole planet together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look…","url":"https://ai.saranmahadev.in/machine-learning/capstone-classifier-end-to-end/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Capstone Classifier End to End","description":"This capstone builds a small classifier from start to finish and brings the whole subject together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look…","url":"https://ai.saranmahadev.in/machine-learning/capstone-classifier-end-to-end/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why is the raw-features logistic regression below chance?","acceptedAnswer":{"@type":"Answer","text":"The huge-scale noise column dominates the gradient updates, so the model fits noise instead of the real signal."}},{"@type":"Question","name":"Why do trees not need standardised features?","acceptedAnswer":{"@type":"Answer","text":"They only compare each feature with thresholds, so scale does not matter."}},{"@type":"Question","name":"How many times may you score the test set while choosing a model?","acceptedAnswer":{"@type":"Answer","text":"Zero: choose with cross-validation and open the test set once at the end."}}]}</script>
 </head>
 <body class="reading static-page" data-theme="light">
@@ -45,19 +45,12 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="c1p2q90sbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2de"/><stop offset="1" stop-color="#ffd99f"/></linearGradient>
-    <radialGradient id="c1p2q90spl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#ffc46b"/><stop offset="1" stop-color="#8a6b5c"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#c1p2q90sbg)"/>
-  <circle cx="65" cy="237" r="191" fill="#fff2de" opacity="0.34"/><circle cx="504" cy="145" r="187" fill="#ffd08d" opacity="0.25"/><circle cx="965" cy="145" r="219" fill="#ffd08d" opacity="0.44"/><circle cx="873" cy="235" r="112" fill="#ffd99f" opacity="0.62"/><circle cx="468" cy="141" r="184" fill="#fff2de" opacity="0.60"/>
-  <path d="M0,420 L0,345 L30,342 L60,338 L90,333 L120,328 L150,322 L180,318 L210,313 L240,310 L270,307 L300,306 L330,306 L360,307 L390,309 L420,312 L450,316 L480,321 L510,326 L540,331 L570,336 L600,341 L630,344 L660,347 L690,349 L720,350 L750,349 L780,347 L810,344 L840,340 L870,336 L900,331 L930,326 L960,321 L990,316 L1020,312 L1050,309 L1080,307 L1110,306 L1140,306 L1170,307 L1200,310 L1200,420 Z" fill="#ffd99f" opacity="0.35"/>
-  <path d="M0,420 L0,387 L30,382 L60,377 L90,372 L120,368 L150,365 L180,363 L210,362 L240,363 L270,366 L300,369 L330,374 L360,379 L390,384 L420,388 L450,391 L480,393 L510,394 L540,393 L570,390 L600,387 L630,382 L660,377 L690,372 L720,368 L750,365 L780,363 L810,362 L840,363 L870,366 L900,369 L930,374 L960,379 L990,384 L1020,388 L1050,391 L1080,393 L1110,394 L1140,393 L1170,390 L1200,387 L1200,420 Z" fill="#8a6b5c" opacity="0.5"/>
-  <ellipse cx="633" cy="205" rx="170" ry="47" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-3.8 633 205)"/><ellipse cx="633" cy="205" rx="234" ry="66" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(2.2 633 205)"/>
-  <circle cx="633" cy="205" r="67" fill="url(#c1p2q90spl)"/>
-  <circle cx="627" cy="108" r="7" fill="#ffffff" opacity="0.86"/><circle cx="848" cy="191" r="19" fill="#ffffff" opacity="0.85"/>
+  <rect width="1200" height="420" fill="#fff9f0"/>
+  <circle cx="540" cy="142" r="115" fill="#ffe7c4" opacity="0.40"/><circle cx="925" cy="258" r="71" fill="#ffe7c4" opacity="0.54"/><circle cx="647" cy="359" r="133" fill="#ffe7c4" opacity="0.47"/>
+  <circle cx="189" cy="103" r="129" fill="#ffc46b"/>
+  <line x1="0" y1="258" x2="1200" y2="258" stroke="#ffc46b" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
-      <div class="doc-body"><div class="prose"><p>This capstone builds a small classifier from start to finish and brings the whole planet together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look at a sealed test set. The data is designed so that each earlier lesson matters: a huge-scale noise column, a pattern no straight line can find, and a label with some noise.</p>
+      <div class="doc-body"><div class="prose"><p>This capstone builds a small classifier from start to finish and brings the whole subject together: scaling, feature engineering, a choice of models compared by cross-validation, and a single look at a sealed test set. The data is designed so that each earlier lesson matters: a huge-scale noise column, a pattern no straight line can find, and a label with some noise.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/the-ml-workflow/" data-topic="machine-learning/the-ml-workflow">The ML Workflow</a>, <a class="wikilink" href="/machine-learning/pipelines-and-leakage/" data-topic="machine-learning/pipelines-and-leakage">Pipelines and Leakage</a>, <a class="wikilink" href="/machine-learning/feature-engineering/" data-topic="machine-learning/feature-engineering">Feature Engineering</a>, <a class="wikilink" href="/machine-learning/scaling-and-normalisation/" data-topic="machine-learning/scaling-and-normalisation">Scaling and Normalisation</a> and <a class="wikilink" href="/machine-learning/random-forests/" data-topic="machine-learning/random-forests">Random Forests</a>.</p>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Do the pieces really add up?&quot; Each choice (scale or not, engineer a feature or not, which model) changes the score by many points, and only honest cross-validation tells you which choices help.</p>
@@ -127,7 +120,7 @@ Zero: choose with cross-validation and open the test set once at the end.
 
 <h2 id="key-terms">Key terms</h2>
 <ul>
-<li><strong>Capstone:</strong> a project that combines the lessons of a whole planet.</li>
+<li><strong>Capstone:</strong> a project that combines the lessons of a whole subject.</li>
 <li><strong>Sealed test set:</strong> data kept unseen until the final score.</li>
 <li><strong>Engineered feature:</strong> a new input built from existing ones.</li>
 <li><strong>Honest estimate:</strong> a score not influenced by decisions made on the test data.</li>

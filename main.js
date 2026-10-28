@@ -14,19 +14,23 @@ const STATUS = { written: "Written", outlined: "Outlined", index: "Index", plann
 const REPO = "https://github.com/saranmahadev/ai/blob/main/";
 
 applyPrefs();
-// Three modes: Read (the default, every route is a plain document), Explorer (unlocks the rocket and
-// the walkable 3D planets), and Graph (a 2D map of every topic and the links between them, at #/graph —
-// see graph.js). The choice is remembered in this browser only, same as the other ai-base-* prefs.
-const MODES = ["read", "explore", "graph"];
+// Two modes: Standard (the default, every route is a plain document) and Play (unlocks the rocket and
+// the walkable 3D planets). The choice is remembered in this browser only, same as the other ai-base-* prefs.
+// LEGACY_MODE_NAMES maps this site's old mode names (read/explore) to the current ones, so a stored
+// preference or a shared ?mode= link from before this rename keeps working instead of silently resetting.
+const MODES = ["standard", "play"];
+const LEGACY_MODE_NAMES = { read: "standard", explore: "play" };
 function getMode() {
-  const q = new URLSearchParams(location.search).get("mode");
+  const q = LEGACY_MODE_NAMES[new URLSearchParams(location.search).get("mode")] || new URLSearchParams(location.search).get("mode");
   if (MODES.includes(q)) return q; // ?mode= forces it for this pageload (used by the test suite and shareable 3D links)
-  try { const m = localStorage.getItem("ai-base-mode"); return MODES.includes(m) ? m : "read"; } catch { return "read"; }
+  try {
+    const raw = localStorage.getItem("ai-base-mode");
+    const m = LEGACY_MODE_NAMES[raw] || raw;
+    return MODES.includes(m) ? m : "standard";
+  } catch { return "standard"; }
 }
 function setMode(m) { try { localStorage.setItem("ai-base-mode", m); } catch { /* ignore */ } }
 const view = $("#view");
-const graphEl = $("#graph");
-let graphApi = null, graphLoading = false;
 const home = $("#home");
 let content = null;
 let stage = null, homeScene = null, galaxy = null, planetScene = null, planetKey = null;
@@ -136,7 +140,7 @@ function notFoundView() {
   return `
     <header class="page-head"><p class="kicker">404</p><h2>Nothing here</h2>
     <p class="blurb">That page doesn't exist, or the link is out of date.</p></header>
-    <p><a class="chip" href="#/explore">← Browse the knowledge base</a></p>`;
+    <p><a class="cta small" href="#/explore">← Browse the knowledge base</a></p>`;
 }
 
 // ---------- My path: progress across planets, from the topics you have read to the end (localStorage, this device only)
@@ -155,13 +159,13 @@ function pathView() {
     return `<section class="path-planet" style="--c:${p.color}">
       <h3>${planetDot(p)}<a href="#/${p.id}">${esc(p.title)}</a><span>${n} of ${ids.length} read</span></h3>
       <div class="pbar" role="progressbar" aria-label="${esc(p.title)} progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct(n, ids.length)}"><i style="width:${pct(n, ids.length)}%"></i></div>
-      <details ${n && n < ids.length ? "open" : ""}><summary>Districts</summary>
+      <details ${n && n < ids.length ? "open" : ""}><summary>Sections</summary>
       ${p.districts.map((d) => { const dids = d.topics.filter((id) => content.topics[id] && content.topics[id].status === "written"), dn = dids.filter((id) => read.has(id)).length; return `<div class="path-district"><h4>${esc(d.title)} <small>${dn}/${dids.length}</small></h4><ul class="chips">${dids.map((id) => `<li><a class="chip ${read.has(id) ? "read" : ""}" href="#/${id}"${read.has(id) ? ' aria-label="' + esc(content.topics[id].title) + ' (read)"' : ""}>${esc(content.topics[id].title)}</a></li>`).join("")}</ul></div>`; }).join("")}
       </details></section>`;
   };
   return `
     <header class="page-head"><p class="kicker">Your progress</p><h2>My path</h2>
-    <p class="blurb">${done} of ${total} topics read across ${explored.length} planets. A topic counts as read when you reach the end of it. Progress is kept in this browser only.</p></header>
+    <p class="blurb">${done} of ${total} topics read across ${explored.length} subjects. A topic counts as read when you reach the end of it. Progress is kept in this browser only.</p></header>
     <div class="pbar big" role="progressbar" aria-label="Overall progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct(done, total)}"><i style="width:${pct(done, total)}%"></i></div>
     ${cont ? `<a class="read-next path-continue" href="#/${cont.id}"><small>${done ? "Continue where you left off" : "Start here"}</small><b>${esc(cont.title)}</b><p>${esc(cont.summary || "")}</p><span aria-hidden="true">→</span></a>` : `<p class="notice">Every written topic is read. New ones appear here as they are added.</p>`}
     ${explored.map(planetBlock).join("")}
@@ -302,7 +306,7 @@ function enhanceArticle(topic) {
     p.querySelectorAll('a[href^="#/"]').forEach((a) => {
       const t = content.topics[decodeURIComponent(a.getAttribute("href").slice(2))];
       const pl = t && t.planet && t.planet !== topic.planet && content.planets.find((x) => x.id === t.planet);
-      if (pl && !a.nextElementSibling?.classList?.contains("xp")) a.insertAdjacentHTML("afterend", `<span class="xp" title="This prerequisite is on the ${esc(pl.title)} planet">${esc(pl.title)}</span>`);
+      if (pl && !a.nextElementSibling?.classList?.contains("xp")) a.insertAdjacentHTML("afterend", `<span class="xp" title="This prerequisite is on the ${esc(pl.title)} subject">${esc(pl.title)}</span>`);
     });
     break;
   }
@@ -356,7 +360,7 @@ function renderNav(info) {
   const el = $("#navbar");
   if (!info) { el.hidden = true; return; }
   const a = (c, cls = "") => c.href
-    ? `<a class="${cls}" href="${c.href}"${c.warp ? ` data-warp="${c.warp}"` : ""}${c.board ? " data-board" : ""}${c.title ? ` title="${esc(c.title)}"` : ""}>${esc(c.label)}</a>`
+    ? `<a class="${cls}" href="${c.href}"${c.warp ? ` data-warp="${c.warp}"` : ""}${c.board ? " data-board" : ""}${c.setMode ? ` data-set-mode="${c.setMode}"` : ""}${c.title ? ` title="${esc(c.title)}"` : ""}>${esc(c.label)}</a>`
     : `<span class="${cls}" aria-current="page">${esc(c.label)}</span>`;
   el.hidden = false;
   const back = info.back;
@@ -375,6 +379,9 @@ function renderNav(info) {
 $("#navbar").addEventListener("click", (e) => {
   const l = e.target.closest("a[href]");
   if (!l || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+  // an action that invites into Play Mode (e.g. "Try Play Mode" on a subject page) sets the mode
+  // before the href navigates it there, same as the home page's launch button does
+  if (l.dataset.setMode) { setMode(l.dataset.setMode); syncModePill(); }
   if (l.hasAttribute("data-board")) { e.preventDefault(); backToGalaxy(); }
   else if (l.dataset.warp) {
     e.preventDefault();
@@ -444,26 +451,23 @@ function route() {
   const [pathPart, query] = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("?");
   const parts = pathPart.split("/").filter(Boolean);
   const key = parts.join("/");
-  const explorerMode = getMode() === "explore";
+  const explorerMode = getMode() === "play";
   const planetObj = parts.length === 1 && content.planets.find((p) => p.id === key);
   // checked ahead of any topic lookup: a topic id is also <planet>/<slug>-shaped, so a sub-route always wins
   const glossaryPlanet = parts.length === 2 && parts[1] === "glossary" && content.planets.find((p) => p.id === parts[0]);
   const isPlanet = !!(explorerMode && planetScene && planetObj && !planetObj.planned && query !== "text");
   const isHome = parts.length === 0;
   const isGalaxy = explorerMode && key === "galaxy" && !!galaxy;
-  const isGraph = key === "graph";
   document.body.classList.toggle("route-home", isHome);
   document.body.classList.toggle("route-galaxy", isGalaxy);
   document.body.classList.toggle("route-planet", isPlanet);
-  document.body.classList.toggle("route-graph", isGraph);
   document.body.classList.toggle("route-path", key === "path");
-  document.body.classList.toggle("route-topic", !isHome && !isGalaxy && !isPlanet && !isGraph && !!content.topics[key]);
-  document.body.classList.toggle("reading", !isHome && !isGalaxy && !isPlanet && !isGraph);
+  document.body.classList.toggle("route-topic", !isHome && !isGalaxy && !isPlanet && !!content.topics[key]);
+  document.body.classList.toggle("reading", !isHome && !isGalaxy && !isPlanet);
   planetEl.hidden = !isPlanet;
   home.hidden = !isHome;
   galaxyEl.hidden = !isGalaxy;
-  graphEl.hidden = !isGraph;
-  view.hidden = isHome || isGalaxy || isPlanet || isGraph;
+  view.hidden = isHome || isGalaxy || isPlanet;
   if (stage) stage.setActive(isGalaxy ? galaxy : isPlanet ? planetScene : null);
   if (galaxy) { if (isGalaxy) galaxy.enter(); else galaxy.leave(); }
   if (planetScene) {
@@ -475,20 +479,6 @@ function route() {
   if (isPlanet) { setTitle(`${planetObj.title} · AI Base`); return; }
   if (isHome) { refreshHomeProgress(); setTitle("AI Base"); return; }
   if (isGalaxy) { setTitle("Galaxy · AI Base"); return; }
-  if (isGraph) {
-    setTitle("Graph · AI Base");
-    if (!graphApi && !graphLoading) {
-      graphLoading = true;
-      import("./graph.js").then((mod) => {
-        graphApi = mod.mountGraph(graphEl, mod.buildGraphData(content), {
-          content, reduceMotion, cacheKey: content.generated,
-          onOpen: (id) => { location.hash = `#/${id}`; }
-        });
-        graphLoading = false;
-      });
-    } else if (graphApi) graphApi.resize();
-    return;
-  }
 
   const wanted = !glossaryPlanet && content.topics[key];
   if (wanted && wanted.html === undefined && wanted.status !== "outlined") {
@@ -547,9 +537,9 @@ view.addEventListener("click", (e) => {
   if (topic) return; // topic to topic is a plain page change
   if (planet && planetScene && !planet.planned) { e.preventDefault(); warpTo(`#/${href}`); }
 });
-// ---------- mode pill (header): one segmented control for the three modes, replacing the old binary
-// Explorer-Mode toggle button. The choice persists via ai-base-mode (see getMode/setMode above).
-// Delegated on document (not just the header's own buttons) in case a future inline link reuses it.
+// ---------- mode pill (header): one segmented control for Standard and Play Mode. The choice persists
+// via ai-base-mode (see getMode/setMode above). Delegated on document (not just the header's own
+// buttons) in case a future inline link reuses it.
 function syncModePill() {
   const m = getMode();
   for (const b of document.querySelectorAll("[data-mode-btn]")) b.setAttribute("aria-checked", String(b.dataset.modeBtn === m));
@@ -564,10 +554,8 @@ document.addEventListener("click", (e) => {
   syncModePill();
   const [pathPart] = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("?");
   const key = pathPart.split("/").filter(Boolean).join("/");
-  // leaving the catalog text view while switching on Explorer Mode lands straight in the 3D galaxy
-  if (next === "explore" && galaxy && (key === "list" || key === "explore")) { location.hash = "#/galaxy"; return; }
-  // Graph Mode's whole purpose is the graph itself, so selecting it always jumps straight there
-  if (next === "graph" && key !== "graph") { location.hash = "#/graph"; return; }
+  // leaving the catalog text view while switching on Play Mode lands straight in the 3D galaxy
+  if (next === "play" && galaxy && (key === "list" || key === "explore")) { location.hash = "#/galaxy"; return; }
   route();
 });
 syncModePill();
@@ -594,8 +582,8 @@ syncModePill();
 // transient transition, triggered by an explicit click, then the canvas hands off to the galaxy scene.
 $("#home-launch").addEventListener("click", async () => {
   if (launching) return;
-  setMode("explore");
-  syncModeToggle();
+  setMode("play");
+  syncModePill();
   if (!homeScene || !stage) { location.hash = "#/galaxy"; return; }
   launching = true;
   $("#home-launch").disabled = true;
@@ -687,9 +675,7 @@ function setupPlanetHud() {
 }
 // ?debug: frame rate, draw calls and triangles, and the scene objects for tests
 function setupDebug() {
-  // a getter, not a one-time snapshot: graph.js is lazy-loaded on first visit to #/graph, which can
-  // resolve before or after this runs depending on route order, so graphApi must be read live.
-  window.__aiBase = { stage, planetScene, get graph() { return graphApi && graphApi.debug; } };
+  window.__aiBase = { stage, planetScene };
   const box = document.createElement("pre");
   box.id = "dbg"; box.setAttribute("aria-hidden", "true");
   document.body.append(box);

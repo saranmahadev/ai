@@ -45,17 +45,10 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="c1b48x9abg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eee9fd"/><stop offset="1" stop-color="#cebff9"/></linearGradient>
-    <radialGradient id="c1b48x9apl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#b39cf5"/><stop offset="1" stop-color="#68599a"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#c1b48x9abg)"/>
-  <circle cx="223" cy="323" r="220" fill="#68599a" opacity="0.30"/><circle cx="18" cy="373" r="83" fill="#eee9fd" opacity="0.53"/><circle cx="939" cy="362" r="103" fill="#cebff9" opacity="0.22"/><circle cx="84" cy="147" r="105" fill="#cebff9" opacity="0.54"/><circle cx="250" cy="208" r="135" fill="#ddbecb" opacity="0.48"/>
-  <path d="M0,420 L0,306 L30,306 L60,307 L90,311 L120,316 L150,322 L180,329 L210,336 L240,342 L270,346 L300,349 L330,350 L360,348 L390,345 L420,339 L450,333 L480,326 L510,319 L540,314 L570,309 L600,306 L630,306 L660,307 L690,311 L720,316 L750,322 L780,329 L810,336 L840,342 L870,346 L900,349 L930,350 L960,348 L990,345 L1020,339 L1050,333 L1080,326 L1110,319 L1140,314 L1170,309 L1200,306 L1200,420 Z" fill="#cebff9" opacity="0.35"/>
-  <path d="M0,420 L0,388 L30,386 L60,384 L90,381 L120,379 L150,376 L180,374 L210,371 L240,369 L270,367 L300,365 L330,364 L360,363 L390,362 L420,362 L450,362 L480,363 L510,363 L540,365 L570,366 L600,368 L630,370 L660,372 L690,375 L720,377 L750,380 L780,382 L810,385 L840,387 L870,389 L900,391 L930,392 L960,393 L990,394 L1020,394 L1050,394 L1080,393 L1110,393 L1140,391 L1170,390 L1200,388 L1200,420 Z" fill="#68599a" opacity="0.5"/>
-  <ellipse cx="769" cy="154" rx="226" ry="63" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(24.7 769 154)"/><ellipse cx="769" cy="154" rx="313" ry="88" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(30.7 769 154)"/>
-  <circle cx="769" cy="154" r="89" fill="url(#c1b48x9apl)"/>
-  <circle cx="684" cy="30" r="17" fill="#ffffff" opacity="0.74"/><circle cx="990" cy="120" r="16" fill="#ffffff" opacity="0.80"/>
+  <rect width="1200" height="420" fill="#f7f5fe"/>
+  <circle cx="988" cy="111" r="62" fill="#e1d7fb" opacity="0.57"/><circle cx="537" cy="47" r="161" fill="#e1d7fb" opacity="0.53"/><circle cx="1011" cy="126" r="98" fill="#e1d7fb" opacity="0.30"/>
+  <circle cx="230" cy="135" r="144" fill="#b39cf5"/>
+  <line x1="0" y1="131" x2="1200" y2="131" stroke="#b39cf5" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
       <div class="doc-body"><div class="prose"><p><strong>Logistic regression</strong> answers yes/no questions with a probability. It takes a weighted sum of the inputs, exactly like linear regression, and squashes it through the <strong>sigmoid</strong> so the output lies between 0 and 1. It is trained by minimising log loss, and its gradient is strikingly simple.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/math/functions-ai-loves/" data-topic="math/functions-ai-loves">Functions AI Loves</a>, <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a>, <a class="wikilink" href="/math/derivatives-of-exp-log-and-sigmoid/" data-topic="math/derivatives-of-exp-log-and-sigmoid">Derivatives of Exp, Log and Sigmoid</a> and <a class="wikilink" href="/math/linear-regression-end-to-end/" data-topic="math/linear-regression-end-to-end">Linear Regression End to End</a>.</p>
@@ -82,7 +75,7 @@ x = 5:   z = 2    p = σ(2)  = 0.8808
 x = 1:   z = −2   p = σ(−2) = 0.1192
 </code></pre>
 <p>If the true label at <code>x = 1</code> is <code>y = 1</code> (a yes the model doubted): <code>L = −ln 0.1192 = 2.127</code>. Gradient with respect to the score: <code>p − y = 0.1192 − 1 = −0.881</code>, so the update pushes the score for that example up. If instead <code>y = 0</code>, the loss is <code>−ln(1 − 0.1192) = 0.127</code> (small: the model was right).</p>
-<p>Notice it uses <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a> from the information-theory district, the sigmoid from the algebra district, and the chain rule from calculus.</p>
+<p>Notice it uses <a class="wikilink" href="/math/cross-entropy/" data-topic="math/cross-entropy">Cross-Entropy</a> from the information-theory section, the sigmoid from the algebra section, and the chain rule from calculus.</p>
 <h2 id="bench">Bench</h2>
 <div class="bench" data-bench="boundary-drawer" data-title="Draw the decision boundary"><p class="bench-fallback"><strong>Interactive bench: Draw the decision boundary.</strong> Two classes of points on a line; sliders for the weight and bias draw the sigmoid curve and the decision boundary, showing accuracy and log loss, with a button that trains the model by gradient descent.</p></div>
 <p><strong>Try this</strong></p>

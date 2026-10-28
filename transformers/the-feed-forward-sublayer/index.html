@@ -45,17 +45,10 @@
         <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>4 min read</span></div></div>
       </header>
       <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="c1sex7qrbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2efff"/><stop offset="1" stop-color="#abd0ff"/></linearGradient>
-    <radialGradient id="c1sex7qrpl" cx="32%" cy="28%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#7db7ff"/><stop offset="1" stop-color="#4f669f"/></radialGradient>
-  </defs>
-  <rect width="1200" height="420" fill="url(#c1sex7qrbg)"/>
-  <circle cx="1075" cy="130" r="200" fill="#c5cacf" opacity="0.61"/><circle cx="139" cy="288" r="138" fill="#c5cacf" opacity="0.54"/><circle cx="122" cy="278" r="179" fill="#e2efff" opacity="0.28"/><circle cx="916" cy="77" r="114" fill="#c5cacf" opacity="0.57"/><circle cx="271" cy="57" r="149" fill="#c5cacf" opacity="0.26"/>
-  <path d="M0,420 L0,316 L30,313 L60,311 L90,309 L120,307 L150,306 L180,306 L210,306 L240,306 L270,307 L300,309 L330,311 L360,313 L390,316 L420,319 L450,323 L480,326 L510,330 L540,333 L570,336 L600,339 L630,342 L660,344 L690,346 L720,348 L750,349 L780,350 L810,350 L840,349 L870,348 L900,346 L930,344 L960,342 L990,339 L1020,336 L1050,333 L1080,329 L1110,326 L1140,322 L1170,319 L1200,316 L1200,420 Z" fill="#abd0ff" opacity="0.35"/>
-  <path d="M0,420 L0,393 L30,394 L60,394 L90,393 L120,391 L150,389 L180,386 L210,382 L240,379 L270,375 L300,371 L330,368 L360,365 L390,363 L420,362 L450,362 L480,363 L510,364 L540,366 L570,369 L600,372 L630,376 L660,380 L690,383 L720,387 L750,390 L780,392 L810,393 L840,394 L870,394 L900,393 L930,391 L960,388 L990,385 L1020,381 L1050,377 L1080,374 L1110,370 L1140,367 L1170,365 L1200,363 L1200,420 Z" fill="#4f669f" opacity="0.5"/>
-  <ellipse cx="690" cy="230" rx="253" ry="71" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" transform="rotate(-4.5 690 230)"/><ellipse cx="690" cy="230" rx="350" ry="98" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" transform="rotate(1.5 690 230)"/>
-  <circle cx="690" cy="230" r="99" fill="url(#c1sex7qrpl)"/>
-  <circle cx="600" cy="120" r="16" fill="#ffffff" opacity="0.76"/><circle cx="487" cy="329" r="16" fill="#ffffff" opacity="0.82"/><circle cx="630" cy="101" r="15" fill="#ffffff" opacity="0.67"/><circle cx="368" cy="302" r="8" fill="#ffffff" opacity="0.79"/>
+  <rect width="1200" height="420" fill="#f2f8ff"/>
+  <circle cx="819" cy="372" r="75" fill="#cbe2ff" opacity="0.51"/><circle cx="747" cy="221" r="165" fill="#cbe2ff" opacity="0.33"/><circle cx="878" cy="278" r="63" fill="#cbe2ff" opacity="0.34"/>
+  <circle cx="225" cy="305" r="112" fill="#7db7ff"/>
+  <line x1="0" y1="265" x2="1200" y2="265" stroke="#7db7ff" stroke-opacity=".16" stroke-width="2"/>
 </svg></figure>
       <div class="doc-body"><div class="prose"><p>Attention lets every position look at every other position — but it never actually transforms a position&#39;s own content on its own. That job belongs to the feed-forward sublayer: a small, ordinary two-layer network applied identically and independently to every position in the sequence.</p>
 <p><strong>You need:</strong> <a class="wikilink" href="/transformers/residual-connections-in-transformers/" data-topic="transformers/residual-connections-in-transformers">Residual Connections in Transformers</a>, <a class="wikilink" href="/deep-learning/the-artificial-neuron-and-activation-functions/" data-topic="deep-learning/the-artificial-neuron-and-activation-functions">The Artificial Neuron and Activation Functions</a>.</p>
@@ -92,7 +85,7 @@ output (after W₂ · hidden + b₂):
 <ul>
 <li><strong>It is where most of a transformer&#39;s parameters typically live</strong>: with <code>d_ff = 4 × d_model</code>, the two feed-forward matrices together usually outweigh the attention sublayer&#39;s own parameters at a given layer.</li>
 <li><strong><a class="wikilink" href="/transformers/modern-feed-forward-variants-swiglu-and-geglu/" data-topic="transformers/modern-feed-forward-variants-swiglu-and-geglu">the next topic</a> replaces the plain ReLU activation used here</strong> with a gated variant that most modern large transformers use instead.</li>
-<li><strong><a class="wikilink" href="/transformers/mixture-of-experts-transformer-blocks/" data-topic="transformers/mixture-of-experts-transformer-blocks">Mixture-of-Experts Transformer Blocks</a>, much later on this planet, replaces this entire sublayer</strong> with several specialist copies and a router choosing which to use per token — directly building on the structure introduced here.</li>
+<li><strong><a class="wikilink" href="/transformers/mixture-of-experts-transformer-blocks/" data-topic="transformers/mixture-of-experts-transformer-blocks">Mixture-of-Experts Transformer Blocks</a>, much later in this subject, replaces this entire sublayer</strong> with several specialist copies and a router choosing which to use per token — directly building on the structure introduced here.</li>
 </ul>
 <h2 id="common-pitfalls">Common pitfalls</h2>
 <ul>
