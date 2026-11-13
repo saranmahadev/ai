@@ -27,7 +27,7 @@ const server = createServer((req, res) => {
 }).listen(0);
 const base = `http://localhost:${server.address().port}/`;
 
-const browser = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
+const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM || undefined, args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
 let failed = 0;
 const WIDTHS = [1280, 768, 390];
 for (const topic of withBenches) for (const bench of [...new Set(topic.benches)]) {
@@ -38,8 +38,8 @@ for (const topic of withBenches) for (const bench of [...new Set(topic.benches)]
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     page.on("console", (m) => { if (m.type() === "error") errors.push(`[${width}] ${m.text()}`); });
     page.on("pageerror", (e) => errors.push(`[${width}] ${e}`));
-    await page.goto(`${base}?time=12:00#/${topic.id}`);
-    await page.addStyleTag({ content: "#rbar, .r-toast { display: none !important; }" }); // the reading bar is tested in test:reader
+    await page.goto(`${base}#/${topic.id}`);
+    await page.addStyleTag({ content: ".r-toast { display: none !important; }" }); // the resume toast is tested in test:reader
     const sel = `.bench[data-bench="${bench}"]`;
     try {
       await page.waitForSelector(sel, { timeout: 15000 });

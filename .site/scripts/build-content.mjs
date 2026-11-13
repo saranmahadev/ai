@@ -50,34 +50,34 @@ for (const n of notes.values()) {
 const noteByPath = (p) => notes.get(p);
 const wikiTargets = (body) => [...body.matchAll(/\[\[([^\]|#]+)(?:#[^\]|]*)?(?:\|[^\]]*)?\]\]/g)].map((m) => m[1]);
 
-// ---- 2. Planets, districts and topics
-const config = JSON.parse(readFileSync(join(SITE, "planets.json"), "utf8"));
+// ---- 2. Courses, chapters and lessons
+const config = JSON.parse(readFileSync(join(SITE, "courses.json"), "utf8"));
 const topicIdOf = new Map(); // note path -> topic id
-const planets = [];
+const courses = [];
 const assigned = new Set();
 
-function claim(planetId, note) {
-  if (assigned.has(note.path)) { warn(`${note.path} is claimed by more than one planet`); return null; }
+function claim(courseId, note) {
+  if (assigned.has(note.path)) { warn(`${note.path} is claimed by more than one course`); return null; }
   assigned.add(note.path);
-  const id = `${planetId}/${slug(basename(note.path, ".md"))}`;
+  const id = `${courseId}/${slug(basename(note.path, ".md"))}`;
   topicIdOf.set(note.path, id);
   return id;
 }
 
-for (const cfg of config.planets) {
-  const planet = { id: cfg.id, title: cfg.title, color: cfg.color, blurb: cfg.blurb, planned: !!cfg.planned, districts: [] };
-  if (cfg.planned) { planets.push(planet); continue; }
+for (const cfg of config.courses) {
+  const course = { id: cfg.id, title: cfg.title, blurb: cfg.blurb, planned: !!cfg.planned, chapters: [] };
+  if (cfg.planned) { courses.push(course); continue; }
 
   if (cfg.folder) {
     const indexNote = cfg.index && noteByPath(cfg.index);
-    if (!indexNote) warn(`Planet ${cfg.id}: index note ${cfg.index} not found`);
-    if (indexNote) { planet.index = claim(cfg.id, indexNote); }
+    if (!indexNote) warn(`Course ${cfg.id}: index note ${cfg.index} not found`);
+    if (indexNote) { course.index = claim(cfg.id, indexNote); }
     const inFolder = [...notes.values()].filter((n) => n.path.startsWith(cfg.folder + "/"));
     const used = new Set();
-    // Districts in the order the index note links to them
+    // Chapters in the order the index note links to them
     const order = indexNote ? wikiTargets(indexNote.body).map((t) => byTitle.get(norm(t))).filter(Boolean) : [];
-    const districtNotes = [...order, ...inFolder.filter((n) => !order.includes(n) && n.folder === cfg.folder)];
-    for (const head of districtNotes) {
+    const chapterNotes = [...order, ...inFolder.filter((n) => !order.includes(n) && n.folder === cfg.folder)];
+    for (const head of chapterNotes) {
       if (used.has(head.path) || !inFolder.includes(head)) continue;
       const own = head.folder !== cfg.folder && basename(head.folder) === basename(head.path, ".md");
       const members = own ? inFolder.filter((n) => n.folder === head.folder) : [head];
@@ -85,24 +85,27 @@ for (const cfg of config.planets) {
       const linked = wikiTargets(head.body).map((t) => byTitle.get(norm(t))).filter((n) => n && rest.includes(n));
       const seq = [head, ...new Set(linked), ...rest.filter((n) => !linked.includes(n)).sort((a, b) => a.title.localeCompare(b.title))];
       seq.forEach((n) => used.add(n.path));
-      planet.districts.push({ id: slug(head.title), title: head.title, topics: seq.map((n) => claim(cfg.id, n)).filter(Boolean) });
+      // a chapter with its own folder opens with its landing note (the intro); the notes it links are the lessons
+      const ids = seq.map((n) => claim(cfg.id, n)).filter(Boolean);
+      course.chapters.push({ id: slug(head.title), title: head.title, intro: own ? ids[0] : null, lessons: own ? ids.slice(1) : ids });
     }
     for (const n of inFolder) if (!used.has(n.path)) { warn(`${n.path} is not linked from ${cfg.index}; added to "More"`); }
     const stray = inFolder.filter((n) => !used.has(n.path));
-    if (stray.length) planet.districts.push({ id: "more", title: "More", topics: stray.map((n) => claim(cfg.id, n)).filter(Boolean) });
+    if (stray.length) course.chapters.push({ id: "more", title: "More", intro: null, lessons: stray.map((n) => claim(cfg.id, n)).filter(Boolean) });
   } else {
-    const list = (cfg.notes || []).map((p) => noteByPath(p) || warn(`Planet ${cfg.id}: ${p} not found`)).filter(Boolean);
-    planet.districts.push({ id: "core", title: cfg.title, topics: list.map((n) => claim(cfg.id, n)).filter(Boolean) });
+    const list = (cfg.notes || []).map((p) => noteByPath(p) || warn(`Course ${cfg.id}: ${p} not found`)).filter(Boolean);
+    course.chapters.push({ id: "core", title: cfg.title, intro: null, lessons: list.map((n) => claim(cfg.id, n)).filter(Boolean) });
   }
-  planets.push(planet);
+  courses.push(course);
 }
 
-const galaxyNote = config.galaxy && noteByPath(config.galaxy.note);
-if (galaxyNote) topicIdOf.set(galaxyNote.path, "ai");
-for (const n of notes.values()) if (!assigned.has(n.path) && n !== galaxyNote) warn(`${n.path} is not assigned to any planet (edit .site/planets.json)`);
+const overviewNote = config.overview && noteByPath(config.overview.note);
+if (overviewNote) topicIdOf.set(overviewNote.path, "ai");
+for (const n of notes.values()) if (!assigned.has(n.path) && n !== overviewNote) warn(`${n.path} is not assigned to any course (edit .site/courses.json)`);
 
 // ---- 3. Render Markdown (wiki links, callouts, headings with ids)
-const planetByTitle = new Map(planets.map((p) => [norm(p.title), p]));
+const courseByTitle = new Map(courses.map((p) => [norm(p.title), p]));
+const chapterIds = (ch) => [ch.intro, ...ch.lessons].filter(Boolean);
 const escapeHtml = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 function resolveWikilinks(md, links) {
@@ -115,8 +118,8 @@ function resolveWikilinks(md, links) {
         const note = byTitle.get(norm(target));
         const id = note && topicIdOf.get(note.path);
         if (id) { links.add(id); return `<a class="wikilink" href="#/${id}" data-topic="${id}">${label}</a>`; }
-        const planet = planetByTitle.get(norm(target));
-        if (planet) return `<a class="wikilink planet" href="#/${planet.id}" data-planet="${planet.id}">${label}</a>`;
+        const course = courseByTitle.get(norm(target));
+        if (course) return `<a class="wikilink course" href="#/${course.id}" data-course="${course.id}">${label}</a>`;
         warn(`Unresolved link [[${target.trim()}]]`);
         return `<span class="wikilink missing" title="Not written yet">${label}</span>`;
       });
@@ -176,7 +179,7 @@ const isIndexOnly = (body) => body.split(/\r?\n/).every((l) => !l.trim() || /^\s
 const plain = (html) => html.replace(/<[^>]+>/g, "").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
 
 const topics = {};
-const planetOf = (id) => id.split("/")[0];
+const courseOf = (id) => id.split("/")[0];
 for (const [path, id] of topicIdOf) {
   const note = notes.get(path);
   const { html, toc, links, benches } = render(note);
@@ -188,9 +191,9 @@ for (const [path, id] of topicIdOf) {
     for (const sentence of summary.split(/(?<=[.!?])\s+/)) { if ((cut + " " + sentence).trim().length > 200) break; cut = (cut + " " + sentence).trim(); }
     summary = cut || summary.slice(0, 197).replace(/\s+\S*$/, "").trimEnd() + "…";
   }
-  const district = planets.flatMap((p) => p.districts.map((d) => ({ p, d }))).find(({ d }) => d.topics.includes(id));
+  const chapter = courses.flatMap((p) => p.chapters).find((d) => chapterIds(d).includes(id));
   topics[id] = {
-    id, title: note.title, planet: id === "ai" ? null : planetOf(id), district: district ? district.d.id : null,
+    id, title: note.title, course: id === "ai" ? null : courseOf(id), chapter: chapter ? chapter.id : null,
     path, summary, words, toc,
     status: note.meta.status || (words === 0 ? "outlined" : isIndexOnly(note.body) ? "index" : "written"),
     html, benches, glossary: glossaryOf(html), links: [...links].filter((l) => l !== id), backlinks: []
@@ -198,38 +201,39 @@ for (const [path, id] of topicIdOf) {
 }
 for (const t of Object.values(topics)) for (const l of t.links) if (topics[l] && !topics[l].backlinks.includes(t.id)) topics[l].backlinks.push(t.id);
 
-// A topic's "You need:" prerequisites (on the same planet) must come earlier on the road
-for (const p of planets) {
-  const pos = new Map(p.districts.flatMap((d) => d.topics).map((id, i) => [id, i]));
+// A lesson's "You need:" prerequisites (in the same course) must come earlier in the course
+for (const p of courses) {
+  const pos = new Map(p.chapters.flatMap(chapterIds).map((id, i) => [id, i]));
   for (const [path, id] of topicIdOf) {
     if (!pos.has(id)) continue;
     const m = notes.get(path).body.match(/\*\*You need:\*\*([^\n]*)/);
     if (!m) continue;
     for (const target of wikiTargets(m[1])) {
       const n = byTitle.get(norm(target)), pid = n && topicIdOf.get(n.path);
-      if (pid && pos.has(pid) && pos.get(pid) > pos.get(id)) warn(`Prerequisite "${target}" of "${notes.get(path).title}" comes later on the road`);
+      if (pid && pos.has(pid) && pos.get(pid) > pos.get(id)) warn(`Prerequisite "${target}" of "${notes.get(path).title}" comes later in the course`);
     }
   }
 }
 
-for (const p of planets) {
-  const ts = p.districts.flatMap((d) => d.topics).map((id) => topics[id]);
-  p.status = p.planned ? "planned" : ts.some((t) => t.status === "written") ? "explored" : "outlined";
-  p.topicCount = ts.length;
+for (const p of courses) {
+  const ts = p.chapters.flatMap((d) => d.lessons).map((id) => topics[id]);
+  p.status = p.planned ? "planned" : ts.some((t) => t.status === "written") ? "written" : "outlined";
+  p.lessonCount = ts.length;
 }
 
 const stats = {
-  planets: planets.length,
-  explored: planets.filter((p) => p.status === "explored").length,
+  courses: courses.filter((p) => !p.planned).length,
+  chapters: courses.reduce((n, p) => n + p.chapters.length, 0),
+  lessons: courses.reduce((n, p) => n + p.lessonCount, 0),
   topics: Object.keys(topics).length,
   written: Object.values(topics).filter((t) => t.status === "written").length,
   benches: Object.values(topics).filter((t) => t.benches.length > 0).length
 };
 // The index (content.json) carries everything except article bodies; each body (html + table of contents) is its own file
-// under content/, fetched when the topic is opened, so the first load stays small however many planets there are.
+// under content/, fetched when the topic is opened, so the first load stays small however many courses there are.
 const index = {};
 for (const [id, t] of Object.entries(topics)) { const { html, toc, ...rest } = t; index[id] = rest; }
-const out = { generated: new Date().toISOString(), galaxy: galaxyNote ? { ...config.galaxy, id: "ai" } : null, planets, topics: index, stats };
+const out = { generated: new Date().toISOString(), overview: overviewNote ? { ...config.overview, id: "ai" } : null, courses, topics: index, stats };
 
 if (!CHECK) {
   writeFileSync(join(SITE, "content.json"), JSON.stringify(out));
@@ -240,5 +244,5 @@ if (!CHECK) {
     writeFileSync(file, JSON.stringify({ html: t.html, toc: t.toc }));
   }
 }
-console.log(`content: ${stats.planets} planets (${stats.explored} explored), ${stats.topics} topics (${stats.written} written)${CHECK ? " [check only]" : ""}`);
+console.log(`content: ${stats.courses} courses, ${stats.chapters} chapters, ${stats.lessons} lessons (${stats.topics} pages, ${stats.written} written)${CHECK ? " [check only]" : ""}`);
 if (warnings.length) console.warn(`\n${warnings.length} warning(s):\n- ${[...new Set(warnings)].join("\n- ")}`);

@@ -17,14 +17,15 @@ export function h(tag, props = {}, ...kids) {
 }
 
 /** Colours that follow the time-of-day theme (read from CSS variables at draw time). */
+const isDark = () => (globalThis.aiBaseTheme ? globalThis.aiBaseTheme.isDark() : false);
 export function palette(el = document.documentElement) {
   const cs = getComputedStyle(el);
   const v = (n) => cs.getPropertyValue(n).trim();
   return {
     ink: v("--ink"), muted: v("--muted"), accent: v("--accent"), soft: v("--soft"), soft2: v("--soft2"), white: v("--white"),
     planet: v("--c") || v("--accent"),
-    warm: document.documentElement.classList.contains("night") ? "#ffb070" : "#e8793a",
-    good: document.documentElement.classList.contains("night") ? "#8ff0c6" : "#17924f"
+    warm: isDark() ? "#ffb070" : "#c2410c",
+    good: isDark() ? "#8ff0c6" : "#17724f"
   };
 }
 
@@ -57,15 +58,16 @@ export function canvas(parent, { aspect = 0.6, label = "", maxH = 460 } = {}) {
   };
   const ro = new ResizeObserver(size);
   ro.observe(box);
-  const mo = new MutationObserver(redraw); // theme.js changes root style/class as the day goes by
-  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style"] });
-  mo.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] }); // the reader can switch theme
+  const mo = new MutationObserver(redraw); // theme.js sets data-theme on <html> when the reader switches light/dark
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "style"] });
+  const mq = matchMedia("(prefers-color-scheme: dark)"); // and the system setting can change under "auto"
+  mq.addEventListener("change", redraw);
   return {
     cv, box, ctx,
     get w() { return w; }, get h() { return hh; },
     onDraw(fn) { draw = fn; size(); },
     redraw,
-    destroy() { ro.disconnect(); mo.disconnect(); cancelAnimationFrame(raf); }
+    destroy() { ro.disconnect(); mo.disconnect(); mq.removeEventListener("change", redraw); cancelAnimationFrame(raf); }
   };
 }
 

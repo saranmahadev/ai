@@ -1,4 +1,4 @@
-// Atom feed of recently-touched written topics, so a reader (or a crawler) can follow new and updated
+// Atom feed of recently-touched written lessons, so a reader (or a crawler) can follow new and updated
 // content without checking back manually. "Recently touched" comes from one batched `git log` walk over
 // the vault (not one spawn per topic — 624 topics would make that slow) that records each note's most
 // recent commit date; the newest 30 written topics by that date become the feed's entries, linking to the
@@ -54,7 +54,7 @@ const entryXml = entries.map((t) => {
 
 writeFileSync(join(SITE, "feed.xml"), `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>AI Base: recently added topics</title>
+  <title>AI Base: recently updated lessons</title>
   <subtitle>A free, structured knowledge base for learning AI.</subtitle>
   <link href="${SITE_URL}/feed.xml" rel="self"/>
   <link href="${SITE_URL}/"/>
