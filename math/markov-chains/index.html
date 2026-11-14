@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Markov Chains — AI Base</title>
 <meta name="description" content="A Markov chain is a sequence of random states where the next state depends only on the current one, not on how you got there.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/math/markov-chains/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":4,"name":"Probability"},{"@type":"ListItem","position":5,"name":"Markov Chains","item":"https://ai.saranmahadev.in/math/markov-chains/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Markov Chains","description":"A Markov chain is a sequence of random states where the next state depends only on the current one, not on how you got there.","url":"https://ai.saranmahadev.in/math/markov-chains/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Probability","item":"https://ai.saranmahadev.in/math/probability/"},{"@type":"ListItem","position":4,"name":"Markov Chains","item":"https://ai.saranmahadev.in/math/markov-chains/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Markov Chains","description":"A Markov chain is a sequence of random states where the next state depends only on the current one, not on how you got there.","url":"https://ai.saranmahadev.in/math/markov-chains/","isPartOf":{"@type":"Course","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What must each row of a transition matrix sum to?","acceptedAnswer":{"@type":"Answer","text":"1."}},{"@type":"Question","name":"With P as above, starting Rainy, what is the distribution after one day?","acceptedAnswer":{"@type":"Answer","text":"(0.4, 0.6)."}},{"@type":"Question","name":"What does the stationary distribution tell you?","acceptedAnswer":{"@type":"Answer","text":"The long-run fraction of time spent in each state."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/math/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Math</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/math/">Math</a></li><li>Probability</li><li>Markov Chains</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#b39cf5">
-      <header class="doc-head">
-        <h1 class="doc-title">Markov Chains</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#f7f5fe"/>
-  <circle cx="988" cy="328" r="129" fill="#e1d7fb" opacity="0.39"/><circle cx="686" cy="305" r="76" fill="#e1d7fb" opacity="0.33"/><circle cx="1057" cy="173" r="186" fill="#e1d7fb" opacity="0.40"/>
-  <circle cx="316" cy="213" r="121" fill="#b39cf5"/>
-  <line x1="0" y1="292" x2="1200" y2="292" stroke="#b39cf5" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>A <strong>Markov chain</strong> is a sequence of random states where the next state depends only on the current one, not on how you got there. A table of transition probabilities describes it completely, and over time the chain often settles into a steady long-run pattern.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a>, <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a> and <a class="wikilink" href="/math/sequences-and-series/" data-topic="math/sequences-and-series">Sequences and Series</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Probability chapter">
+        <div class="side-head">
+          <a class="side-course" href="/math/">Math · Chapter 07</a>
+          <a class="side-chapter" href="/math/probability/">Probability</a>
+          <span class="side-count">14 lessons</span>
+        </div>
+        <ol><li><a href="/math/events-and-sample-spaces/">Events and Sample Spaces</a></li><li><a href="/math/probability-rules/">Probability Rules</a></li><li><a href="/math/conditional-probability/">Conditional Probability</a></li><li><a href="/math/independence/">Independence</a></li><li><a href="/math/bayes-theorem/">Bayes Theorem</a></li><li><a href="/math/random-variables/">Random Variables</a></li><li><a href="/math/expectation/">Expectation</a></li><li><a href="/math/variance-and-standard-deviation/">Variance and Standard Deviation</a></li><li><a href="/math/discrete-distributions/">Discrete Distributions</a></li><li><a href="/math/continuous-distributions/">Continuous Distributions</a></li><li><a href="/math/joint-and-marginal-distributions/">Joint and Marginal Distributions</a></li><li><a href="/math/law-of-large-numbers/">Law of Large Numbers</a></li><li><a href="/math/central-limit-theorem/">Central Limit Theorem</a></li><li><a href="/math/markov-chains/" aria-current="page">Markov Chains</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="math/markov-chains">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/math/">Math</a></li><li><a href="/math/probability/">Probability</a></li><li><span aria-current="page">Markov Chains</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 14 of 14 · 3 min read</p>
+          <h1>Markov Chains</h1>
+        </header>
+        <div class="prose"><p>A <strong>Markov chain</strong> is a sequence of random states where the next state depends only on the current one, not on how you got there. A table of transition probabilities describes it completely, and over time the chain often settles into a steady long-run pattern.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a><a class="chip wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a><a class="chip wikilink" href="/math/sequences-and-series/" data-topic="math/sequences-and-series">Sequences and Series</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;If things move randomly from state to state, where do they end up, and how often are they in each state?&quot; Web browsing, weather, text generation and reinforcement learning all evolve step by step in this way.</p>
 <h2 id="intuition-a-random-walk-with-a-short-memory">Intuition: a random walk with a short memory</h2>
@@ -122,16 +125,21 @@ The long-run fraction of time spent in each state.
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a> · <a class="wikilink" href="/math/matrix-multiplication/" data-topic="math/matrix-multiplication">Matrix Multiplication</a> · <a class="wikilink" href="/math/eigenvalues-and-eigenvectors/" data-topic="math/eigenvalues-and-eigenvectors">Eigenvalues and Eigenvectors</a> · <a class="wikilink" href="/math/sequences-and-series/" data-topic="math/sequences-and-series">Sequences and Series</a> · <a class="wikilink" href="/math/embeddings-and-similarity-search/" data-topic="math/embeddings-and-similarity-search">Embeddings and Similarity Search</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/markov-chains">Open in the interactive site →</a></p>
-        <a class="read-next" href="/math/statistics/"><small>Read next</small><b>Statistics</b><p>Probability reasons from a known chance process to what data it will produce. Statistics runs the other way: it starts from data and reasons back to what produced it.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/conditional-probability/"><b>Conditional Probability</b><p>Conditional probability is the probability of an event given that another has happened: P(A | B), read &quot;the probability of A given B&quot;.</p></a><a class="rc-card" href="/math/matrix-multiplication/"><b>Matrix Multiplication</b><p>Matrix multiplication combines two matrices into one that does both transformations in a row. Each entry of the result is a dot product of a row of the first matrix with a column of the second.</p></a><a class="rc-card" href="/math/sequences-and-series/"><b>Sequences and Series</b><p>A sequence is an ordered list of numbers that follows a rule, and a series is what you get by adding its terms.</p></a><a class="rc-card" href="/math/eigenvalues-and-eigenvectors/"><b>Eigenvalues and Eigenvectors</b><p>An eigenvector of a matrix is a direction that the matrix only stretches, without turning: A v = λ v. The stretch factor λ is its eigenvalue.</p></a><a class="rc-card" href="/math/embeddings-and-similarity-search/"><b>Embeddings and Similarity Search</b><p>An embedding represents a word, image, song or user as a vector of numbers, learned so that similar things end up close together.</p></a><a class="rc-card" href="/math/probability/"><b>Probability</b><p>Probability is the maths of uncertainty. It gives numbers to &quot;how likely?&quot;, and rules for combining those numbers.</p></a></div></section>
-        <p class="doc-prev"><a href="/math/central-limit-theorem/">← Previous: Central Limit Theorem</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/math/markov-chains">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/math/central-limit-theorem/" data-topic="math/central-limit-theorem"><span>Previous · lesson 13</span><b>Central Limit Theorem</b></a><a class="step next" href="/math/statistics/" data-topic="math/statistics"><span>Next · chapter overview</span><b>Statistics</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Math/Probability/Markov%20Chains.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-a-random-walk-with-a-short-memory" data-scroll="intuition-a-random-walk-with-a-short-memory">Intuition: a random walk with a short memory</a><a href="#stationary-distribution" data-scroll="stationary-distribution">Stationary distribution</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

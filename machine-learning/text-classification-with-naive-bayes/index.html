@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Text Classification with Naive Bayes — AI Base</title>
 <meta name="description" content="Text is the classic home of naive Bayes.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/text-classification-with-naive-bayes/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":4,"name":"Instance and Probability Methods"},{"@type":"ListItem","position":5,"name":"Text Classification with Naive Bayes","item":"https://ai.saranmahadev.in/machine-learning/text-classification-with-naive-bayes/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Text Classification with Naive Bayes","description":"Text is the classic home of naive Bayes.","url":"https://ai.saranmahadev.in/machine-learning/text-classification-with-naive-bayes/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Instance and Probability Methods","item":"https://ai.saranmahadev.in/machine-learning/instance-and-probability-methods/"},{"@type":"ListItem","position":4,"name":"Text Classification with Naive Bayes","item":"https://ai.saranmahadev.in/machine-learning/text-classification-with-naive-bayes/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Text Classification with Naive Bayes","description":"Text is the classic home of naive Bayes.","url":"https://ai.saranmahadev.in/machine-learning/text-classification-with-naive-bayes/","isPartOf":{"@type":"Course","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why add α to every count?","acceptedAnswer":{"@type":"Answer","text":"So a word unseen in a class does not force that class's probability to zero."}},{"@type":"Question","name":"Why sum logs of ratios rather than multiply probabilities?","acceptedAnswer":{"@type":"Answer","text":"Products of many small numbers underflow; sums of logs are stable."}},{"@type":"Question","name":"A word appears equally often in both classes. What is its evidence?","acceptedAnswer":{"@type":"Answer","text":"None: the ratio is 1 and its log is 0."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/machine-learning/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Machine Learning</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/machine-learning/">Machine Learning</a></li><li>Instance and Probability Methods</li><li>Text Classification with Naive Bayes</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffc46b">
-      <header class="doc-head">
-        <h1 class="doc-title">Text Classification with Naive Bayes</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff9f0"/>
-  <circle cx="971" cy="93" r="114" fill="#ffe7c4" opacity="0.57"/><circle cx="465" cy="281" r="132" fill="#ffe7c4" opacity="0.33"/><circle cx="880" cy="214" r="62" fill="#ffe7c4" opacity="0.59"/>
-  <circle cx="239" cy="238" r="97" fill="#ffc46b"/>
-  <line x1="0" y1="118" x2="1200" y2="118" stroke="#ffc46b" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Text is the classic home of naive Bayes. Represent a message as the words it contains, count how often each word appears in spam and in ordinary mail, and classify a new message by multiplying those word frequencies. The one trick that makes it work is <strong>smoothing</strong>: giving every word a small pseudo-count so that an unseen word cannot zero out the answer.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/naive-bayes/" data-topic="machine-learning/naive-bayes">Naive Bayes</a> and <a class="wikilink" href="/machine-learning/datasets-features-and-labels/" data-topic="machine-learning/datasets-features-and-labels">Datasets, Features and Labels</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Instance and Probability Methods chapter">
+        <div class="side-head">
+          <a class="side-course" href="/machine-learning/">Machine Learning · Chapter 04</a>
+          <a class="side-chapter" href="/machine-learning/instance-and-probability-methods/">Instance and Probability Methods</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/machine-learning/k-nearest-neighbours/">k-Nearest Neighbours</a></li><li><a href="/machine-learning/naive-bayes/">Naive Bayes</a></li><li><a href="/machine-learning/text-classification-with-naive-bayes/" aria-current="page">Text Classification with Naive Bayes</a></li><li><a href="/machine-learning/generative-vs-discriminative-models/">Generative vs Discriminative Models</a></li><li><a href="/machine-learning/kernel-methods/">Kernel Methods</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="machine-learning/text-classification-with-naive-bayes">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/machine-learning/">Machine Learning</a></li><li><a href="/machine-learning/instance-and-probability-methods/">Instance and Probability Methods</a></li><li><span aria-current="page">Text Classification with Naive Bayes</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 3 of 5 · 4 min read</p>
+          <h1>Text Classification with Naive Bayes</h1>
+        </header>
+        <div class="prose"><p>Text is the classic home of naive Bayes. Represent a message as the words it contains, count how often each word appears in spam and in ordinary mail, and classify a new message by multiplying those word frequencies. The one trick that makes it work is <strong>smoothing</strong>: giving every word a small pseudo-count so that an unseen word cannot zero out the answer.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/machine-learning/naive-bayes/" data-topic="machine-learning/naive-bayes">Naive Bayes</a><a class="chip wikilink" href="/machine-learning/datasets-features-and-labels/" data-topic="machine-learning/datasets-features-and-labels">Datasets, Features and Labels</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;How do I turn words into a decision?&quot; Counting words per class gives each word a weight of evidence, and a message&#39;s verdict is the sum of its words&#39; evidence.</p>
 <h2 id="intuition-a-bag-of-words">Intuition: a bag of words</h2>
@@ -115,16 +118,21 @@ None: the ratio is 1 and its log is 0.
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/machine-learning/naive-bayes/" data-topic="machine-learning/naive-bayes">Naive Bayes</a> · <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/math/overflow-and-underflow/" data-topic="math/overflow-and-underflow">Overflow and Underflow</a> · <a class="wikilink" href="/machine-learning/generative-vs-discriminative-models/" data-topic="machine-learning/generative-vs-discriminative-models">Generative vs Discriminative Models</a> · <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/text-classification-with-naive-bayes">Open in the interactive site →</a></p>
-        <a class="read-next" href="/machine-learning/generative-vs-discriminative-models/"><small>Read next</small><b>Generative vs Discriminative Models</b><p>There are two ways to build a classifier. A generative model learns what each class looks like (how its examples are distributed) and uses Bayes&#39; rule to decide.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/naive-bayes/"><b>Naive Bayes</b><p>Naive Bayes classifies by asking, for each class, how well the observed features fit it, then combining the answers with Bayes&#39; rule.</p></a><a class="rc-card" href="/machine-learning/datasets-features-and-labels/"><b>Datasets, Features and Labels</b><p>A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).</p></a><a class="rc-card" href="/math/overflow-and-underflow/"><b>Overflow and Underflow</b><p>Overflow happens when a result is too large to store and becomes infinity; underflow happens when it is too small and becomes zero.</p></a><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/machine-learning/generative-vs-discriminative-models/"><b>Generative vs Discriminative Models</b><p>There are two ways to build a classifier. A generative model learns what each class looks like (how its examples are distributed) and uses Bayes&#39; rule to decide.</p></a><a class="rc-card" href="/machine-learning/logistic-regression-as-a-classifier/"><b>Logistic Regression as a Classifier</b><p>Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.</p></a></div></section>
-        <p class="doc-prev"><a href="/machine-learning/naive-bayes/">← Previous: Naive Bayes</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/machine-learning/text-classification-with-naive-bayes">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/machine-learning/naive-bayes/" data-topic="machine-learning/naive-bayes"><span>Previous · lesson 2</span><b>Naive Bayes</b></a><a class="step next" href="/machine-learning/generative-vs-discriminative-models/" data-topic="machine-learning/generative-vs-discriminative-models"><span>Next · lesson 4</span><b>Generative vs Discriminative Models</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Machine%20Learning/Instance%20and%20Probability%20Methods/Text%20Classification%20with%20Naive%20Bayes.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-a-bag-of-words" data-scroll="intuition-a-bag-of-words">Intuition: a bag of words</a><a href="#definitions" data-scroll="definitions">Definitions</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Caching and Incremental Indexing — AI Base</title>
 <meta name="description" content="Asking the same question twice shouldn&#39;t cost the full pipeline twice — caching the first answer makes the second one nearly free.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/rag/caching-and-incremental-indexing/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"RAG in Practice"},{"@type":"ListItem","position":5,"name":"Caching and Incremental Indexing","item":"https://ai.saranmahadev.in/rag/caching-and-incremental-indexing/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Caching and Incremental Indexing","description":"Asking the same question twice shouldn't cost the full pipeline twice — caching the first answer makes the second one nearly free.","url":"https://ai.saranmahadev.in/rag/caching-and-incremental-indexing/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"RAG in Practice","item":"https://ai.saranmahadev.in/rag/rag-in-practice/"},{"@type":"ListItem","position":4,"name":"Caching and Incremental Indexing","item":"https://ai.saranmahadev.in/rag/caching-and-incremental-indexing/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Caching and Incremental Indexing","description":"Asking the same question twice shouldn't cost the full pipeline twice — caching the first answer makes the second one nearly free.","url":"https://ai.saranmahadev.in/rag/caching-and-incremental-indexing/","isPartOf":{"@type":"Course","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does a higher cache hit rate save more total time?","acceptedAnswer":{"@type":"Answer","text":"A higher hit rate means a larger fraction of the 10,000 queries skip the full pipeline cost and are instead served near-instantly from the cache, so the total time spent across all queries drops proportionally more."}},{"@type":"Question","name":"Why is a full index rebuild disproportionate to adding 10 documents to a 100,000-document collection?","acceptedAnswer":{"@type":"Answer","text":"A full rebuild reprocesses every document in the collection, including the 99,990 that didn't change at all — its cost scales with the whole collection's size, not with how much actually changed."}},{"@type":"Question","name":"What risk does caching introduce that incremental indexing doesn't share?","acceptedAnswer":{"@type":"Answer","text":"A cached result can become stale if the underlying information changes after it was cached — incremental indexing, by contrast, is specifically about keeping the index itself current as documents change, not about serving a potentially outdated cached answer."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ RAG</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>RAG in Practice</li><li>Caching and Incremental Indexing</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#5fd1d9">
-      <header class="doc-head">
-        <h1 class="doc-title">Caching and Incremental Indexing</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#effafb"/>
-  <circle cx="1067" cy="311" r="85" fill="#bfedf0" opacity="0.37"/><circle cx="612" cy="144" r="81" fill="#bfedf0" opacity="0.31"/>
-  <circle cx="182" cy="270" r="150" fill="#5fd1d9"/>
-  <line x1="0" y1="239" x2="1200" y2="239" stroke="#5fd1d9" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Asking the same question twice shouldn&#39;t cost the full pipeline twice — caching the first answer makes the second one nearly free. And adding ten new documents to a hundred-thousand-document index shouldn&#39;t mean rebuilding the other 99,990 — incremental indexing updates only what actually changed.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/rag/production-rag-pipeline-architecture/" data-topic="rag/production-rag-pipeline-architecture">Production RAG Pipeline Architecture</a>, <a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="RAG in Practice chapter">
+        <div class="side-head">
+          <a class="side-course" href="/rag/">RAG · Chapter 09</a>
+          <a class="side-chapter" href="/rag/rag-in-practice/">RAG in Practice</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/rag/production-rag-pipeline-architecture/">Production RAG Pipeline Architecture</a></li><li><a href="/rag/caching-and-incremental-indexing/" aria-current="page">Caching and Incremental Indexing</a></li><li><a href="/rag/cost-and-latency-of-rag-systems/">Cost and Latency of RAG Systems</a></li><li><a href="/rag/security-and-data-leakage-in-rag/">Security and Data Leakage in RAG</a></li><li><a href="/rag/capstone-a-question-answered-traced-from-query-to-grounded-answer/">Capstone: A Question Answered, Traced from Query to Grounded Answer</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="rag/caching-and-incremental-indexing">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/rag/">RAG</a></li><li><a href="/rag/rag-in-practice/">RAG in Practice</a></li><li><span aria-current="page">Caching and Incremental Indexing</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 2 of 5 · 5 min read</p>
+          <h1>Caching and Incremental Indexing</h1>
+        </header>
+        <div class="prose"><p>Asking the same question twice shouldn&#39;t cost the full pipeline twice — caching the first answer makes the second one nearly free. And adding ten new documents to a hundred-thousand-document index shouldn&#39;t mean rebuilding the other 99,990 — incremental indexing updates only what actually changed.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/rag/production-rag-pipeline-architecture/" data-topic="rag/production-rag-pipeline-architecture">Production RAG Pipeline Architecture</a><a class="chip wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;How does a production RAG system avoid repeating work it&#39;s already done?&quot; <strong>Caching</strong> stores the result of a previous query (or an intermediate step, like an embedding) and serves it again at near-zero cost when the same or a very similar query comes in. <strong>Incremental indexing</strong> adds new documents to an existing index directly, at a cost proportional only to what&#39;s being added — rather than rebuilding the entire index from scratch, at a cost proportional to the whole collection, every time anything changes.</p>
 <h2 id="intuition">Intuition</h2>
@@ -113,16 +116,21 @@ A cached result can become stale if the underlying information changes after it 
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/rag/production-rag-pipeline-architecture/" data-topic="rag/production-rag-pipeline-architecture">Production RAG Pipeline Architecture</a> · <a class="wikilink" href="/rag/vector-databases-and-index-management/" data-topic="rag/vector-databases-and-index-management">Vector Databases and Index Management</a> · <a class="wikilink" href="/rag/metadata-extraction-and-enrichment/" data-topic="rag/metadata-extraction-and-enrichment">Metadata Extraction and Enrichment</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/caching-and-incremental-indexing">Open in the interactive site →</a></p>
-        <a class="read-next" href="/rag/cost-and-latency-of-rag-systems/"><small>Read next</small><b>Cost and Latency of RAG Systems</b><p>A plain LLM call already has its own cost and latency math, already covered in LLMs.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/production-rag-pipeline-architecture/"><b>Production RAG Pipeline Architecture</b><p>Every topic in this subject so far has zoomed into one stage of a RAG system.</p></a><a class="rc-card" href="/rag/vector-databases-and-index-management/"><b>Vector Databases and Index Management</b><p>An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest?</p></a><a class="rc-card" href="/rag/metadata-extraction-and-enrichment/"><b>Metadata Extraction and Enrichment</b><p>A chunk&#39;s text alone often can&#39;t say whether it&#39;s still true.</p></a><a class="rc-card" href="/rag/rag-in-practice/"><b>RAG in Practice</b><p>Everything in this subject so far has covered one piece of a RAG system at a time.</p></a></div></section>
-        <p class="doc-prev"><a href="/rag/production-rag-pipeline-architecture/">← Previous: Production RAG Pipeline Architecture</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/rag/caching-and-incremental-indexing">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/rag/production-rag-pipeline-architecture/" data-topic="rag/production-rag-pipeline-architecture"><span>Previous · lesson 1</span><b>Production RAG Pipeline Architecture</b></a><a class="step next" href="/rag/cost-and-latency-of-rag-systems/" data-topic="rag/cost-and-latency-of-rag-systems"><span>Next · lesson 3</span><b>Cost and Latency of RAG Systems</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/RAG/RAG%20in%20Practice/Caching%20and%20Incremental%20Indexing.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

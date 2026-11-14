@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Verifier-Guided Agent Loops — AI Base</title>
 <meta name="description" content="An agent that runs six actions in sequence, one of which is subtly wrong, finds out it failed only once all six are done — by which point the bad action has already fed into whatever came after it.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/agents/verifier-guided-agent-loops/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":4,"name":"Reflection and Self-Improvement"},{"@type":"ListItem","position":5,"name":"Verifier-Guided Agent Loops","item":"https://ai.saranmahadev.in/agents/verifier-guided-agent-loops/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Verifier-Guided Agent Loops","description":"An agent that runs six actions in sequence, one of which is subtly wrong, finds out it failed only once all six are done — by which point the bad action has already fed into whatever came after it.","url":"https://ai.saranmahadev.in/agents/verifier-guided-agent-loops/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Reflection and Self-Improvement","item":"https://ai.saranmahadev.in/agents/reflection-and-self-improvement/"},{"@type":"ListItem","position":4,"name":"Verifier-Guided Agent Loops","item":"https://ai.saranmahadev.in/agents/verifier-guided-agent-loops/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Verifier-Guided Agent Loops","description":"An agent that runs six actions in sequence, one of which is subtly wrong, finds out it failed only once all six are done — by which point the bad action has already fed into whatever came after it.","url":"https://ai.saranmahadev.in/agents/verifier-guided-agent-loops/","isPartOf":{"@type":"Course","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the task fail entirely without a verifier, even though only one of six actions was wrong?","acceptedAnswer":{"@type":"Answer","text":"Nothing checks action 3's output before it's used, so its failure isn't caught at all — the task simply proceeds on a bad result and fails overall."}},{"@type":"Question","name":"How is a verifier-guided loop different from the evaluator-optimizer workflow covered earlier?","acceptedAnswer":{"@type":"Answer","text":"Evaluator-optimizer runs a fixed number of generate-critique-improve rounds over one output; a verifier-guided loop checks every action across an agent's entire trajectory, for as long as that trajectory runs, with no fixed round count."}},{"@type":"Question","name":"In the worked example, why is only 1 of the 12-retry budget actually used?","acceptedAnswer":{"@type":"Answer","text":"Only one of the six actions (action 3) needed a retry at all, and it passed after just a single retry — the other five actions were valid on their first attempt and needed no retries."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/agents/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Agents</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/agents/">Agents</a></li><li>Reflection and Self-Improvement</li><li>Verifier-Guided Agent Loops</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#c99bf0">
-      <header class="doc-head">
-        <h1 class="doc-title">Verifier-Guided Agent Loops</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#faf5fe"/>
-  <circle cx="422" cy="82" r="87" fill="#e9d7f9" opacity="0.34"/><circle cx="521" cy="282" r="167" fill="#e9d7f9" opacity="0.47"/>
-  <circle cx="182" cy="123" r="129" fill="#c99bf0"/>
-  <line x1="0" y1="168" x2="1200" y2="168" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>An agent that runs six actions in sequence, one of which is subtly wrong, finds out it failed only once all six are done — by which point the bad action has already fed into whatever came after it. A verifier that checks each action the moment it&#39;s produced, and retries it on the spot if it fails, never lets that bad action leave the loop in the first place.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/agents/evaluator-optimizer-loops/" data-topic="agents/evaluator-optimizer-loops">Evaluator-Optimizer Loops</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Reflection and Self-Improvement chapter">
+        <div class="side-head">
+          <a class="side-course" href="/agents/">Agents · Chapter 07</a>
+          <a class="side-chapter" href="/agents/reflection-and-self-improvement/">Reflection and Self-Improvement</a>
+          <span class="side-count">4 lessons</span>
+        </div>
+        <ol><li><a href="/agents/self-critique-loops-in-agents/">Self-Critique Loops in Agents</a></li><li><a href="/agents/error-attribution-across-a-trajectory/">Error Attribution Across a Trajectory</a></li><li><a href="/agents/learning-from-feedback-without-weight-updates/">Learning from Feedback Without Weight Updates</a></li><li><a href="/agents/verifier-guided-agent-loops/" aria-current="page">Verifier-Guided Agent Loops</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="agents/verifier-guided-agent-loops">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/agents/">Agents</a></li><li><a href="/agents/reflection-and-self-improvement/">Reflection and Self-Improvement</a></li><li><span aria-current="page">Verifier-Guided Agent Loops</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 4 of 4 · 5 min read</p>
+          <h1>Verifier-Guided Agent Loops</h1>
+        </header>
+        <div class="prose"><p>An agent that runs six actions in sequence, one of which is subtly wrong, finds out it failed only once all six are done — by which point the bad action has already fed into whatever came after it. A verifier that checks each action the moment it&#39;s produced, and retries it on the spot if it fails, never lets that bad action leave the loop in the first place.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/agents/evaluator-optimizer-loops/" data-topic="agents/evaluator-optimizer-loops">Evaluator-Optimizer Loops</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;What does the evaluator-optimizer pattern look like generalized across an agent&#39;s entire trajectory, rather than a fixed number of workflow rounds?&quot; A verifier-guided loop pairs every action an agent takes with an immediate check: a separate verifier scores the action, and if it fails, the agent retries that one action — not the whole trajectory — before moving on. Unlike <a class="wikilink" href="/agents/self-critique-loops-in-agents/" data-topic="agents/self-critique-loops-in-agents">self-critique</a>, the checking role here is a separate, independent verifier rather than the agent checking itself; unlike the evaluator-optimizer workflow, there&#39;s no fixed round count — the loop runs for as long as the trajectory does, checking every single action along the way.</p>
 <h2 id="intuition">Intuition</h2>
@@ -111,16 +114,21 @@ Only one of the six actions (action 3) needed a retry at all, and it passed afte
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/agents/evaluator-optimizer-loops/" data-topic="agents/evaluator-optimizer-loops">Evaluator-Optimizer Loops</a> · <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a> · <a class="wikilink" href="/agents/guardrails-for-agent-actions/" data-topic="agents/guardrails-for-agent-actions">Guardrails for Agent Actions</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/verifier-guided-agent-loops">Open in the interactive site →</a></p>
-        <a class="read-next" href="/agents/agent-environments-and-action-spaces/"><small>Read next</small><b>Agent Environments and Action Spaces</b><p>What an agent can actually do depends entirely on what it&#39;s acting inside — clicking around a web page needs a different action space than running shell commands in a terminal.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/evaluator-optimizer-loops/"><b>Evaluator-Optimizer Loops</b><p>A first draft critiqued once gets noticeably better; critiqued a second time, it gets better still, but by less than the first round did.</p></a><a class="rc-card" href="/agents/self-critique-loops-in-agents/"><b>Self-Critique Loops in Agents</b><p>An arithmetic mistake made at step two of a four-step calculation doesn&#39;t stay contained to step two — every later step builds on the wrong number, and the final answer comes out wrong even though…</p></a><a class="rc-card" href="/agents/re-planning-on-failure/"><b>Re-Planning on Failure</b><p>A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5.</p></a><a class="rc-card" href="/agents/guardrails-for-agent-actions/"><b>Guardrails for Agent Actions</b><p>A text guardrail scores free-form output for risk and has to guess at intent from wording alone.</p></a><a class="rc-card" href="/agents/reflection-and-self-improvement/"><b>Reflection and Self-Improvement</b><p>An agent that never looks back at its own work repeats the same mistake at every step that triggers it.</p></a><a class="rc-card" href="/agents/learning-from-feedback-without-weight-updates/"><b>Learning from Feedback Without Weight Updates</b><p>An agent that gets told &quot;that approach was wrong, try this instead&quot; and then keeps making the identical mistake on the next attempt hasn&#39;t actually used the feedback it was given.</p></a></div></section>
-        <p class="doc-prev"><a href="/agents/learning-from-feedback-without-weight-updates/">← Previous: Learning from Feedback Without Weight Updates</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/agents/verifier-guided-agent-loops">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/agents/learning-from-feedback-without-weight-updates/" data-topic="agents/learning-from-feedback-without-weight-updates"><span>Previous · lesson 3</span><b>Learning from Feedback Without Weight Updates</b></a><a class="step next" href="/agents/agent-environments-and-action-spaces/" data-topic="agents/agent-environments-and-action-spaces"><span>Next · chapter overview</span><b>Agent Environments and Action Spaces</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Agents/Reflection%20and%20Self-Improvement/Verifier-Guided%20Agent%20Loops.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vector Databases and Index Management — AI Base</title>
 <meta name="description" content="An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest?">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/rag/vector-databases-and-index-management/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Vector Search and Indexing"},{"@type":"ListItem","position":5,"name":"Vector Databases and Index Management","item":"https://ai.saranmahadev.in/rag/vector-databases-and-index-management/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Vector Databases and Index Management","description":"An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest?","url":"https://ai.saranmahadev.in/rag/vector-databases-and-index-management/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Vector Search and Indexing","item":"https://ai.saranmahadev.in/rag/vector-search-and-indexing/"},{"@type":"ListItem","position":4,"name":"Vector Databases and Index Management","item":"https://ai.saranmahadev.in/rag/vector-databases-and-index-management/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Vector Databases and Index Management","description":"An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest?","url":"https://ai.saranmahadev.in/rag/vector-databases-and-index-management/","isPartOf":{"@type":"Course","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, what's the one capability a bare ANN library and a vector database both handle?","acceptedAnswer":{"@type":"Answer","text":"Computing nearest neighbors for a query — the core search operation itself."}},{"@type":"Question","name":"Why can't a bare ANN library typically handle inserting a new vector after the index is already built?","acceptedAnswer":{"@type":"Answer","text":"Many ANN index structures (especially graph- or cluster-based ones) are optimized for query speed assuming a fixed set of vectors; adding to them efficiently without degrading search quality or requiring a full rebuild is a separate engineering problem a vector database is built to solve."}},{"@type":"Question","name":"Why does metadata filtering belong to the vector database layer rather than the ANN algorithm itself?","acceptedAnswer":{"@type":"Answer","text":"The ANN algorithm's job is purely to find vectors close to a query; deciding which of those candidates also satisfy a separate condition (a date range, a permission check) is an additional layer of logic the database adds on top."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ RAG</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Vector Search and Indexing</li><li>Vector Databases and Index Management</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#5fd1d9">
-      <header class="doc-head">
-        <h1 class="doc-title">Vector Databases and Index Management</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#effafb"/>
-  <circle cx="1055" cy="45" r="129" fill="#bfedf0" opacity="0.37"/><circle cx="886" cy="186" r="111" fill="#bfedf0" opacity="0.51"/><circle cx="633" cy="270" r="96" fill="#bfedf0" opacity="0.39"/>
-  <circle cx="290" cy="166" r="153" fill="#5fd1d9"/>
-  <line x1="0" y1="220" x2="1200" y2="220" stroke="#5fd1d9" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest? A real RAG system needs a lot more than that — vectors that can be added and removed as documents change, an index that survives a restart, filtering by metadata, and all of it available to more than one machine at once. That&#39;s the gap between a bare search algorithm and a vector database.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/rag/approximate-nearest-neighbor-search-with-hnsw/" data-topic="rag/approximate-nearest-neighbor-search-with-hnsw">Approximate Nearest Neighbor Search with HNSW</a>, <a class="wikilink" href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/" data-topic="rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization">Approximate Nearest Neighbor Search with IVF and Product Quantization</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Vector Search and Indexing chapter">
+        <div class="side-head">
+          <a class="side-course" href="/rag/">RAG · Chapter 04</a>
+          <a class="side-chapter" href="/rag/vector-search-and-indexing/">Vector Search and Indexing</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/rag/exact-nearest-neighbor-search/">Exact Nearest Neighbor Search</a></li><li><a href="/rag/approximate-nearest-neighbor-search-with-hnsw/">Approximate Nearest Neighbor Search with HNSW</a></li><li><a href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/">Approximate Nearest Neighbor Search with IVF and Product Quantization</a></li><li><a href="/rag/vector-databases-and-index-management/" aria-current="page">Vector Databases and Index Management</a></li><li><a href="/rag/metadata-filtering-and-hybrid-indexes/">Metadata Filtering and Hybrid Indexes</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="rag/vector-databases-and-index-management">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/rag/">RAG</a></li><li><a href="/rag/vector-search-and-indexing/">Vector Search and Indexing</a></li><li><span aria-current="page">Vector Databases and Index Management</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 4 of 5 · 4 min read</p>
+          <h1>Vector Databases and Index Management</h1>
+        </header>
+        <div class="prose"><p>An ANN algorithm like HNSW or IVF answers one question well: given a query, which vectors are closest? A real RAG system needs a lot more than that — vectors that can be added and removed as documents change, an index that survives a restart, filtering by metadata, and all of it available to more than one machine at once. That&#39;s the gap between a bare search algorithm and a vector database.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/rag/approximate-nearest-neighbor-search-with-hnsw/" data-topic="rag/approximate-nearest-neighbor-search-with-hnsw">Approximate Nearest Neighbor Search with HNSW</a><a class="chip wikilink" href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/" data-topic="rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization">Approximate Nearest Neighbor Search with IVF and Product Quantization</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;What does a production system need beyond just an ANN search algorithm?&quot; A bare ANN library is typically built once over a fixed set of vectors and optimized purely for query speed. A vector database wraps that same underlying search algorithm with everything needed to run it as a living system: inserting, updating and deleting vectors after the index already exists; persisting the index so it survives a restart; filtering by metadata alongside similarity; and replicating across machines for availability and scale.</p>
 <h2 id="intuition">Intuition</h2>
@@ -112,16 +115,21 @@ The ANN algorithm's job is purely to find vectors close to a query; deciding whi
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/rag/approximate-nearest-neighbor-search-with-hnsw/" data-topic="rag/approximate-nearest-neighbor-search-with-hnsw">Approximate Nearest Neighbor Search with HNSW</a> · <a class="wikilink" href="/rag/metadata-filtering-and-hybrid-indexes/" data-topic="rag/metadata-filtering-and-hybrid-indexes">Metadata Filtering and Hybrid Indexes</a> · <a class="wikilink" href="/rag/caching-and-incremental-indexing/" data-topic="rag/caching-and-incremental-indexing">Caching and Incremental Indexing</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/vector-databases-and-index-management">Open in the interactive site →</a></p>
-        <a class="read-next" href="/rag/metadata-filtering-and-hybrid-indexes/"><small>Read next</small><b>Metadata Filtering and Hybrid Indexes</b><p>Asking for &quot;the 20 most relevant chunks, but only from documents I have permission to see&quot; sounds like one request — but a vector index has to decide when to apply that permission check.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/approximate-nearest-neighbor-search-with-hnsw/"><b>Approximate Nearest Neighbor Search with HNSW</b><p>Instead of checking every vector in a collection, HNSW (Hierarchical Navigable Small World) searches a graph where each vector is linked to a handful of its nearest neighbors, plus a few…</p></a><a class="rc-card" href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/"><b>Approximate Nearest Neighbor Search with IVF and Product Quantization</b><p>Rather than navigating a graph one hop at a time, IVF (inverted file index) takes a different shortcut: group every vector into a cluster ahead of time, and at query time, only search inside the…</p></a><a class="rc-card" href="/rag/metadata-filtering-and-hybrid-indexes/"><b>Metadata Filtering and Hybrid Indexes</b><p>Asking for &quot;the 20 most relevant chunks, but only from documents I have permission to see&quot; sounds like one request — but a vector index has to decide when to apply that permission check.</p></a><a class="rc-card" href="/rag/caching-and-incremental-indexing/"><b>Caching and Incremental Indexing</b><p>Asking the same question twice shouldn&#39;t cost the full pipeline twice — caching the first answer makes the second one nearly free.</p></a><a class="rc-card" href="/rag/chunk-overlap-and-size-trade-offs/"><b>Chunk Overlap and Size Trade-offs</b><p>A fact that happens to straddle a chunk boundary disappears — split in half across two chunks, it may be incomplete in both and never score high enough against a query to be retrieved.</p></a><a class="rc-card" href="/rag/bi-encoders-and-dense-embeddings/"><b>Bi-Encoders and Dense Embeddings</b><p>Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered in Math.</p></a></div></section>
-        <p class="doc-prev"><a href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/">← Previous: Approximate Nearest Neighbor Search with IVF and Product Quantization</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/rag/vector-databases-and-index-management">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization/" data-topic="rag/approximate-nearest-neighbor-search-with-ivf-and-product-quantization"><span>Previous · lesson 3</span><b>Approximate Nearest Neighbor Search with IVF and Product Quantization</b></a><a class="step next" href="/rag/metadata-filtering-and-hybrid-indexes/" data-topic="rag/metadata-filtering-and-hybrid-indexes"><span>Next · lesson 5</span><b>Metadata Filtering and Hybrid Indexes</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/RAG/Vector%20Search%20and%20Indexing/Vector%20Databases%20and%20Index%20Management.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

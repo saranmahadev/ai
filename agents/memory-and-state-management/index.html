@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Memory and State Management — AI Base</title>
 <meta name="description" content="An agent running for hundreds of steps can&#39;t keep everything it&#39;s ever seen in its context window — and some of what it learns along the way needs to survive past the current run entirely.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/agents/memory-and-state-management/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,40 +17,42 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":4,"name":"Memory and State Management"},{"@type":"ListItem","position":5,"name":"Memory and State Management","item":"https://ai.saranmahadev.in/agents/memory-and-state-management/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Memory and State Management","description":"An agent running for hundreds of steps can't keep everything it's ever seen in its context window — and some of what it learns along the way needs to survive past the current run entirely.","url":"https://ai.saranmahadev.in/agents/memory-and-state-management/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Memory and State Management","item":"https://ai.saranmahadev.in/agents/memory-and-state-management/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Memory and State Management","description":"An agent running for hundreds of steps can't keep everything it's ever seen in its context window — and some of what it learns along the way needs to survive past the current run entirely.","url":"https://ai.saranmahadev.in/agents/memory-and-state-management/","isPartOf":{"@type":"Course","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/agents/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Agents</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/agents/">Agents</a></li><li>Memory and State Management</li><li>Memory and State Management</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#c99bf0">
-      <header class="doc-head">
-        <h1 class="doc-title">Memory and State Management</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>1 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#faf5fe"/>
-  <circle cx="723" cy="198" r="124" fill="#e9d7f9" opacity="0.30"/><circle cx="784" cy="346" r="112" fill="#e9d7f9" opacity="0.41"/>
-  <circle cx="350" cy="303" r="98" fill="#c99bf0"/>
-  <line x1="0" y1="149" x2="1200" y2="149" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>An agent running for hundreds of steps can&#39;t keep everything it&#39;s ever seen in its context window — and some of what it learns along the way needs to survive past the current run entirely. This section is about what an agent actually keeps, for how long, and how it finds the right piece of it again later.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Memory and State Management chapter">
+        <div class="side-head">
+          <a class="side-course" href="/agents/">Agents · Chapter 05</a>
+          <a class="side-chapter" href="/agents/memory-and-state-management/" aria-current="page">Memory and State Management</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/agents/short-term-vs-long-term-agent-memory/">Short-Term vs. Long-Term Agent Memory</a></li><li><a href="/agents/episodic-memory-and-experience-logs/">Episodic Memory and Experience Logs</a></li><li><a href="/agents/memory-retrieval-as-agent-time-rag/">Memory Retrieval as Agent-Time RAG</a></li><li><a href="/agents/memory-compression-and-forgetting/">Memory Compression and Forgetting</a></li><li><a href="/agents/shared-state-across-a-multi-step-task/">Shared State Across a Multi-Step Task</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="agents/memory-and-state-management">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/agents/">Agents</a></li><li><span aria-current="page">Memory and State Management</span></li></ol></nav>
+          <p class="eyebrow mono">Chapter 05 · overview · 1 min read</p>
+          <h1>Memory and State Management</h1>
+        </header>
+        <div class="prose"><p>An agent running for hundreds of steps can&#39;t keep everything it&#39;s ever seen in its context window — and some of what it learns along the way needs to survive past the current run entirely. This section is about what an agent actually keeps, for how long, and how it finds the right piece of it again later.</p>
 <p>Topics in this section:</p>
 <ul>
 <li><a class="wikilink" href="/agents/short-term-vs-long-term-agent-memory/" data-topic="agents/short-term-vs-long-term-agent-memory">Short-Term vs. Long-Term Agent Memory</a>: what lives only in the current run&#39;s context, and what&#39;s meant to persist across runs entirely.</li>
@@ -58,16 +61,21 @@
 <li><a class="wikilink" href="/agents/memory-compression-and-forgetting/" data-topic="agents/memory-compression-and-forgetting">Memory Compression and Forgetting</a>: what has to be summarized or dropped once memory itself grows too large to use directly.</li>
 <li><a class="wikilink" href="/agents/shared-state-across-a-multi-step-task/" data-topic="agents/shared-state-across-a-multi-step-task">Shared State Across a Multi-Step Task</a>: the working state a single long task keeps passing from one step to the next.</li>
 </ul>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/memory-and-state-management">Open in the interactive site →</a></p>
-        <a class="read-next" href="/agents/short-term-vs-long-term-agent-memory/"><small>Read next</small><b>Short-Term vs. Long-Term Agent Memory</b><p>Everything an agent reads during one run — the request, the tool results so far, its own earlier reasoning — disappears the moment that run ends, unless something deliberately writes it somewhere…</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/short-term-vs-long-term-agent-memory/"><b>Short-Term vs. Long-Term Agent Memory</b><p>Everything an agent reads during one run — the request, the tool results so far, its own earlier reasoning — disappears the moment that run ends, unless something deliberately writes it somewhere…</p></a><a class="rc-card" href="/agents/episodic-memory-and-experience-logs/"><b>Episodic Memory and Experience Logs</b><p>The first time an agent faces a task, it has to actually discover which approach works — try something, see it fail, try something else.</p></a><a class="rc-card" href="/agents/memory-retrieval-as-agent-time-rag/"><b>Memory Retrieval as Agent-Time RAG</b><p>An agent with thousands of stored memories can&#39;t dump all of them into context on every step — it needs to pull back only the handful actually relevant to what it&#39;s doing right now.</p></a><a class="rc-card" href="/agents/memory-compression-and-forgetting/"><b>Memory Compression and Forgetting</b><p>A memory store that keeps every fact and every logged episode forever grows without bound — eventually too large to search efficiently, let alone fit anywhere near a context window.</p></a><a class="rc-card" href="/agents/shared-state-across-a-multi-step-task/"><b>Shared State Across a Multi-Step Task</b><p>A five-step task that needs today&#39;s date can fetch it five separate times, once per step — or fetch it once and write it somewhere every later step can just read.</p></a><a class="rc-card" href="/agents/agents/"><b>Agents</b><p>Every subject before this one covered a model answering one request at a time: a prompt goes in, an answer comes out.</p></a></div></section>
-        <p class="doc-prev"><a href="/agents/code-as-a-tool-calling-interface/">← Previous: Code as a Tool-Calling Interface</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/agents/memory-and-state-management">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/agents/code-as-a-tool-calling-interface/" data-topic="agents/code-as-a-tool-calling-interface"><span>Previous · lesson 6</span><b>Code as a Tool-Calling Interface</b></a><a class="step next" href="/agents/short-term-vs-long-term-agent-memory/" data-topic="agents/short-term-vs-long-term-agent-memory"><span>Next · lesson 1</span><b>Short-Term vs. Long-Term Agent Memory</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Agents/Memory%20and%20State%20Management/Memory%20and%20State%20Management.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

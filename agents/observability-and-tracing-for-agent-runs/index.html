@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Observability and Tracing for Agent Runs — AI Base</title>
 <meta name="description" content="When an agent&#39;s final answer is wrong, the final answer alone almost never says why.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/agents/observability-and-tracing-for-agent-runs/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":4,"name":"Agents in Practice"},{"@type":"ListItem","position":5,"name":"Observability and Tracing for Agent Runs","item":"https://ai.saranmahadev.in/agents/observability-and-tracing-for-agent-runs/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Observability and Tracing for Agent Runs","description":"When an agent's final answer is wrong, the final answer alone almost never says why.","url":"https://ai.saranmahadev.in/agents/observability-and-tracing-for-agent-runs/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Agents in Practice","item":"https://ai.saranmahadev.in/agents/agents-in-practice/"},{"@type":"ListItem","position":4,"name":"Observability and Tracing for Agent Runs","item":"https://ai.saranmahadev.in/agents/observability-and-tracing-for-agent-runs/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Observability and Tracing for Agent Runs","description":"When an agent's final answer is wrong, the final answer alone almost never says why.","url":"https://ai.saranmahadev.in/agents/observability-and-tracing-for-agent-runs/","isPartOf":{"@type":"Course","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does a run with no tracing leave 0 of 12 intermediate steps visible, even though the run clearly did something at each of those 12 steps?","acceptedAnswer":{"@type":"Answer","text":"Without tracing, nothing records what happened at each individual step — only the final output exists afterward, so none of the 12 intermediate actions, tool calls, or results were ever captured anywhere."}},{"@type":"Question","name":"What four things does a typical trace span record for one step?","acceptedAnswer":{"@type":"Answer","text":"Which tool was called, what input it received, what it returned, and how long it took (and typically its cost) — enough to reconstruct exactly what happened at that step without re-running anything."}},{"@type":"Question","name":"Why might re-running a failed trajectory to find the bug not be a safe substitute for tracing?","acceptedAnswer":{"@type":"Answer","text":"Many agent actions have real side effects (booking something, sending a message, modifying a file) that aren't safe or even possible to repeat — tracing records what happened without needing to reproduce it."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/agents/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Agents</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/agents/">Agents</a></li><li>Agents in Practice</li><li>Observability and Tracing for Agent Runs</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#c99bf0">
-      <header class="doc-head">
-        <h1 class="doc-title">Observability and Tracing for Agent Runs</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#faf5fe"/>
-  <circle cx="1012" cy="342" r="96" fill="#e9d7f9" opacity="0.47"/><circle cx="1014" cy="232" r="81" fill="#e9d7f9" opacity="0.59"/>
-  <circle cx="309" cy="306" r="147" fill="#c99bf0"/>
-  <line x1="0" y1="222" x2="1200" y2="222" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>When an agent&#39;s final answer is wrong, the final answer alone almost never says why. Observability means recording what happened at every step along the way — which tool was called, with what input, and what came back — so a failed run can actually be diagnosed instead of just noticed.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/agents/anatomy-of-an-agent-architecture/" data-topic="agents/anatomy-of-an-agent-architecture">Anatomy of an Agent Architecture</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Agents in Practice chapter">
+        <div class="side-head">
+          <a class="side-course" href="/agents/">Agents · Chapter 11</a>
+          <a class="side-chapter" href="/agents/agents-in-practice/">Agents in Practice</a>
+          <span class="side-count">4 lessons</span>
+        </div>
+        <ol><li><a href="/agents/observability-and-tracing-for-agent-runs/" aria-current="page">Observability and Tracing for Agent Runs</a></li><li><a href="/agents/production-agent-architecture/">Production Agent Architecture</a></li><li><a href="/agents/cost-and-latency-of-agent-loops/">Cost and Latency of Agent Loops</a></li><li><a href="/agents/capstone-a-goal-decomposed-executed-and-verified-end-to-end/">Capstone: A Goal, Decomposed, Executed and Verified End to End</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="agents/observability-and-tracing-for-agent-runs">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/agents/">Agents</a></li><li><a href="/agents/agents-in-practice/">Agents in Practice</a></li><li><span aria-current="page">Observability and Tracing for Agent Runs</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 1 of 4 · 4 min read</p>
+          <h1>Observability and Tracing for Agent Runs</h1>
+        </header>
+        <div class="prose"><p>When an agent&#39;s final answer is wrong, the final answer alone almost never says why. Observability means recording what happened at every step along the way — which tool was called, with what input, and what came back — so a failed run can actually be diagnosed instead of just noticed.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/agents/anatomy-of-an-agent-architecture/" data-topic="agents/anatomy-of-an-agent-architecture">Anatomy of an Agent Architecture</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;How do you actually find out why an agent run went wrong?&quot; Without any instrumentation beyond the final output, a run&#39;s intermediate steps leave no trace at all — if step 8 of 12 called the wrong tool, nothing about that is visible once the run finishes. <strong>Tracing</strong> records each step as its own span: which tool was called, what input it received, what it returned, how long it took, and what it cost. With tracing, every intermediate step is individually inspectable after the fact; without it, none of them are.</p>
 <h2 id="intuition">Intuition</h2>
@@ -108,16 +111,21 @@ Many agent actions have real side effects (booking something, sending a message,
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/agents/error-attribution-across-a-trajectory/" data-topic="agents/error-attribution-across-a-trajectory">Error Attribution Across a Trajectory</a> · <a class="wikilink" href="/agents/production-agent-architecture/" data-topic="agents/production-agent-architecture">Production Agent Architecture</a> · <a class="wikilink" href="/agents/cost-and-latency-of-agent-loops/" data-topic="agents/cost-and-latency-of-agent-loops">Cost and Latency of Agent Loops</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/observability-and-tracing-for-agent-runs">Open in the interactive site →</a></p>
-        <a class="read-next" href="/agents/production-agent-architecture/"><small>Read next</small><b>Production Agent Architecture</b><p>Every topic in this subject so far has zoomed into one piece of an agent — planning, a tool call, a memory lookup.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/anatomy-of-an-agent-architecture/"><b>Anatomy of an Agent Architecture</b><p>Every agent architecture covered in this subject, however different the application, is built from the same five named pieces: something that perceives the current request, something that…</p></a><a class="rc-card" href="/agents/error-attribution-across-a-trajectory/"><b>Error Attribution Across a Trajectory</b><p>A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything…</p></a><a class="rc-card" href="/agents/production-agent-architecture/"><b>Production Agent Architecture</b><p>Every topic in this subject so far has zoomed into one piece of an agent — planning, a tool call, a memory lookup.</p></a><a class="rc-card" href="/agents/cost-and-latency-of-agent-loops/"><b>Cost and Latency of Agent Loops</b><p>A single LLM call&#39;s cost and latency already has its own math, covered in LLMs.</p></a><a class="rc-card" href="/agents/agents-in-practice/"><b>Agents in Practice</b><p>Everything in this subject so far has covered one piece of an agent at a time.</p></a></div></section>
-        <p class="doc-prev"><a href="/agents/agents-in-practice/">← Previous: Agents in Practice</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/agents/observability-and-tracing-for-agent-runs">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/agents/agents-in-practice/" data-topic="agents/agents-in-practice"><span>Previous · chapter overview</span><b>Agents in Practice</b></a><a class="step next" href="/agents/production-agent-architecture/" data-topic="agents/production-agent-architecture"><span>Next · lesson 2</span><b>Production Agent Architecture</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Agents/Agents%20in%20Practice/Observability%20and%20Tracing%20for%20Agent%20Runs.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

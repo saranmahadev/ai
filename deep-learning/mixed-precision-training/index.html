@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mixed Precision Training — AI Base</title>
 <meta name="description" content="32-bit floats are the usual default, but most of a network&#39;s computation doesn&#39;t need that much precision.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/mixed-precision-training/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":4,"name":"Training at Scale"},{"@type":"ListItem","position":5,"name":"Mixed Precision Training","item":"https://ai.saranmahadev.in/deep-learning/mixed-precision-training/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Mixed Precision Training","description":"32-bit floats are the usual default, but most of a network's computation doesn't need that much precision.","url":"https://ai.saranmahadev.in/deep-learning/mixed-precision-training/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Training at Scale","item":"https://ai.saranmahadev.in/deep-learning/training-at-scale/"},{"@type":"ListItem","position":4,"name":"Mixed Precision Training","item":"https://ai.saranmahadev.in/deep-learning/mixed-precision-training/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Mixed Precision Training","description":"32-bit floats are the usual default, but most of a network's computation doesn't need that much precision.","url":"https://ai.saranmahadev.in/deep-learning/mixed-precision-training/","isPartOf":{"@type":"Course","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can a useful gradient disappear entirely when computed directly in 16-bit?","acceptedAnswer":{"@type":"Answer","text":"16-bit floating point has a smallest representable positive value; anything smaller rounds straight to zero, losing the gradient completely."}},{"@type":"Question","name":"What does loss scaling do, and why does it work?","acceptedAnswer":{"@type":"Answer","text":"It multiplies the loss (and so every gradient) by a large constant before backpropagation, lifting even tiny gradients above 16-bit's minimum representable value; dividing back by the same constant afterward, in full precision, recovers the correct gradient."}},{"@type":"Question","name":"Why is the \"unscale\" step done in 32-bit rather than 16-bit?","acceptedAnswer":{"@type":"Answer","text":"To avoid introducing new rounding error exactly where precision matters most — recovering the true gradient value before it's used to update the weights."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/deep-learning/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Deep Learning</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/deep-learning/">Deep Learning</a></li><li>Training at Scale</li><li>Mixed Precision Training</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ff8f8f">
-      <header class="doc-head">
-        <h1 class="doc-title">Mixed Precision Training</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff4f4"/>
-  <circle cx="1026" cy="52" r="134" fill="#ffd2d2" opacity="0.43"/><circle cx="1015" cy="109" r="67" fill="#ffd2d2" opacity="0.52"/><circle cx="1084" cy="164" r="63" fill="#ffd2d2" opacity="0.57"/>
-  <circle cx="377" cy="251" r="92" fill="#ff8f8f"/>
-  <line x1="0" y1="260" x2="1200" y2="260" stroke="#ff8f8f" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">32-bit floats</a> are the usual default, but most of a network&#39;s computation doesn&#39;t need that much precision. <strong>Mixed precision training</strong> runs most operations in a faster, cheaper 16-bit format instead, while keeping a few specific, precision-sensitive parts (like the running total of weight updates) in 32-bit — and uses one extra trick, <strong>loss scaling</strong>, to stop tiny gradients from disappearing entirely in the lower-precision format.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/why-gpus-and-accelerators/" data-topic="deep-learning/why-gpus-and-accelerators">Why GPUs and Accelerators</a> and <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Training at Scale chapter">
+        <div class="side-head">
+          <a class="side-course" href="/deep-learning/">Deep Learning · Chapter 11</a>
+          <a class="side-chapter" href="/deep-learning/training-at-scale/">Training at Scale</a>
+          <span class="side-count">6 lessons</span>
+        </div>
+        <ol><li><a href="/deep-learning/why-gpus-and-accelerators/">Why GPUs and Accelerators</a></li><li><a href="/deep-learning/mixed-precision-training/" aria-current="page">Mixed Precision Training</a></li><li><a href="/deep-learning/distributed-and-data-parallel-training/">Distributed and Data-Parallel Training</a></li><li><a href="/deep-learning/hyperparameter-tuning-for-deep-networks/">Hyperparameter Tuning for Deep Networks</a></li><li><a href="/deep-learning/debugging-a-training-run/">Debugging a Training Run</a></li><li><a href="/deep-learning/checkpointing-and-reproducibility/">Checkpointing and Reproducibility</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="deep-learning/mixed-precision-training">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/deep-learning/">Deep Learning</a></li><li><a href="/deep-learning/training-at-scale/">Training at Scale</a></li><li><span aria-current="page">Mixed Precision Training</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 2 of 6 · 4 min read</p>
+          <h1>Mixed Precision Training</h1>
+        </header>
+        <div class="prose"><p><a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">32-bit floats</a> are the usual default, but most of a network&#39;s computation doesn&#39;t need that much precision. <strong>Mixed precision training</strong> runs most operations in a faster, cheaper 16-bit format instead, while keeping a few specific, precision-sensitive parts (like the running total of weight updates) in 32-bit — and uses one extra trick, <strong>loss scaling</strong>, to stop tiny gradients from disappearing entirely in the lower-precision format.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/deep-learning/why-gpus-and-accelerators/" data-topic="deep-learning/why-gpus-and-accelerators">Why GPUs and Accelerators</a><a class="chip wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point<small class="xc">Math</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;If most GPUs compute faster, and need less memory, in 16-bit than 32-bit — why not just switch everything to 16-bit?&quot; Because some values, especially small gradients, can be too small for 16-bit to represent at all, rounding silently to zero — mixed precision gets the speed benefit while specifically protecting against that failure.</p>
 <h2 id="intuition-a-coarser-ruler-that-sometimes-can-t-see-small-things-at-all">Intuition: a coarser ruler that sometimes can&#39;t see small things at all</h2>
@@ -115,16 +118,21 @@ To avoid introducing new rounding error exactly where precision matters most —
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/deep-learning/why-gpus-and-accelerators/" data-topic="deep-learning/why-gpus-and-accelerators">Why GPUs and Accelerators</a> · <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a> · <a class="wikilink" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training">Distributed and Data-Parallel Training</a> · <a class="wikilink" href="/deep-learning/debugging-a-training-run/" data-topic="deep-learning/debugging-a-training-run">Debugging a Training Run</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/mixed-precision-training">Open in the interactive site →</a></p>
-        <a class="read-next" href="/deep-learning/distributed-and-data-parallel-training/"><small>Read next</small><b>Distributed and Data-Parallel Training</b><p>One accelerator has a limit to how much data it can process at once.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/floating-point/"><b>Floating Point</b><p>Computers store real numbers in floating point: a fixed number of significant binary digits and an exponent.</p></a><a class="rc-card" href="/deep-learning/why-gpus-and-accelerators/"><b>Why GPUs and Accelerators</b><p>A matrix multiplication — the core operation behind every dense layer, convolution and attention computation — is really an enormous number of small, independent multiply-and-add operations.</p></a><a class="rc-card" href="/deep-learning/distributed-and-data-parallel-training/"><b>Distributed and Data-Parallel Training</b><p>One accelerator has a limit to how much data it can process at once.</p></a><a class="rc-card" href="/deep-learning/debugging-a-training-run/"><b>Debugging a Training Run</b><p>A training run that looks &quot;broken&quot; is usually not a mystery — most failures leave a recognisable signature in the loss curve or the gradient statistics, and reading that signature correctly points…</p></a><a class="rc-card" href="/deep-learning/training-at-scale/"><b>Training at Scale</b><p>Training a large network is an engineering problem as much as a mathematical one: it runs on specific hardware, for hours or weeks, and can silently fail in ways a small model never would.</p></a></div></section>
-        <p class="doc-prev"><a href="/deep-learning/why-gpus-and-accelerators/">← Previous: Why GPUs and Accelerators</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/deep-learning/mixed-precision-training">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/deep-learning/why-gpus-and-accelerators/" data-topic="deep-learning/why-gpus-and-accelerators"><span>Previous · lesson 1</span><b>Why GPUs and Accelerators</b></a><a class="step next" href="/deep-learning/distributed-and-data-parallel-training/" data-topic="deep-learning/distributed-and-data-parallel-training"><span>Next · lesson 3</span><b>Distributed and Data-Parallel Training</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Deep%20Learning/Training%20at%20Scale/Mixed%20Precision%20Training.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-a-coarser-ruler-that-sometimes-can-t-see-small-things-at-all" data-scroll="intuition-a-coarser-ruler-that-sometimes-can-t-see-small-things-at-all">Intuition: a coarser ruler that sometimes can&#39;t see small things at all</a><a href="#definitions" data-scroll="definitions">Definitions</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

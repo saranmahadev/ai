@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Compute-Optimal Scaling (Chinchilla) — AI Base</title>
 <meta name="description" content="Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data?">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/llms/compute-optimal-scaling-chinchilla/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"Scaling, Capacity and Emergence"},{"@type":"ListItem","position":5,"name":"Compute-Optimal Scaling (Chinchilla)","item":"https://ai.saranmahadev.in/llms/compute-optimal-scaling-chinchilla/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Compute-Optimal Scaling (Chinchilla)","description":"Given a fixed training budget, there's a real choice buried inside it: spend it on a bigger model, or on more training data?","url":"https://ai.saranmahadev.in/llms/compute-optimal-scaling-chinchilla/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Scaling, Capacity and Emergence","item":"https://ai.saranmahadev.in/llms/scaling-capacity-and-emergence/"},{"@type":"ListItem","position":4,"name":"Compute-Optimal Scaling (Chinchilla)","item":"https://ai.saranmahadev.in/llms/compute-optimal-scaling-chinchilla/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Compute-Optimal Scaling (Chinchilla)","description":"Given a fixed training budget, there's a real choice buried inside it: spend it on a bigger model, or on more training data?","url":"https://ai.saranmahadev.in/llms/compute-optimal-scaling-chinchilla/","isPartOf":{"@type":"Course","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What question does compute-optimal scaling actually answer?","acceptedAnswer":{"@type":"Answer","text":"Given a fixed training compute budget, how that budget should be split between model size (parameters) and training data (tokens) to minimize loss."}},{"@type":"Question","name":"In the worked example, what happened to the optimal model size and data size when compute grew by 100×?","acceptedAnswer":{"@type":"Answer","text":"Both grew by almost exactly 10× — matching the square root of the compute increase, since the toy loss surface's exponents treated model size and data symmetrically."}},{"@type":"Question","name":"What was the Chinchilla paper's key finding about earlier large models?","acceptedAnswer":{"@type":"Answer","text":"That several of them had been trained too large relative to the amount of data they were given, for their actual compute budget — the same compute would have gone further with a smaller model trained on more tokens."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/llms/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ LLMs</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/llms/">LLMs</a></li><li>Scaling, Capacity and Emergence</li><li>Compute-Optimal Scaling (Chinchilla)</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffa970">
-      <header class="doc-head">
-        <h1 class="doc-title">Compute-Optimal Scaling (Chinchilla)</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff6f1"/>
-  <circle cx="901" cy="261" r="161" fill="#ffddc6" opacity="0.45"/><circle cx="1081" cy="200" r="176" fill="#ffddc6" opacity="0.37"/>
-  <circle cx="284" cy="111" r="97" fill="#ffa970"/>
-  <line x1="0" y1="222" x2="1200" y2="222" stroke="#ffa970" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data? Get this split wrong and you leave real performance on the table, for free, with no extra compute spent.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Scaling, Capacity and Emergence chapter">
+        <div class="side-head">
+          <a class="side-course" href="/llms/">LLMs · Chapter 02</a>
+          <a class="side-chapter" href="/llms/scaling-capacity-and-emergence/">Scaling, Capacity and Emergence</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/llms/compute-optimal-scaling-chinchilla/" aria-current="page">Compute-Optimal Scaling (Chinchilla)</a></li><li><a href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/">Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</a></li><li><a href="/llms/emergent-abilities-and-capability-jumps/">Emergent Abilities and Capability Jumps</a></li><li><a href="/llms/grokking-and-delayed-generalization/">Grokking and Delayed Generalization</a></li><li><a href="/llms/the-bitter-lesson-scale-vs-hand-engineering/">The Bitter Lesson: Scale vs. Hand-Engineering</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="llms/compute-optimal-scaling-chinchilla">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/llms/">LLMs</a></li><li><a href="/llms/scaling-capacity-and-emergence/">Scaling, Capacity and Emergence</a></li><li><span aria-current="page">Compute-Optimal Scaling (Chinchilla)</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 1 of 5 · 5 min read</p>
+          <h1>Compute-Optimal Scaling (Chinchilla)</h1>
+        </header>
+        <div class="prose"><p>Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data? Get this split wrong and you leave real performance on the table, for free, with no extra compute spent.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Given a fixed compute budget, what&#39;s the best way to split it between model size and training data?&quot; A loss surface like <code>L(N, D) = E + A/N^α + B/D^β</code> — an irreducible floor plus two separately-shrinking terms, one for model size <code>N</code>, one for training tokens <code>D</code> — can be minimized subject to a fixed total compute <code>C ≈ 6ND</code> (the standard FLOPs-per-token-per-parameter approximation for training). The Chinchilla paper&#39;s finding, confirmed by exactly this kind of minimization, was that earlier large models had been <strong>too big for their training data</strong> — compute would have been better spent on more tokens, holding the same budget fixed.</p>
 <h2 id="intuition">Intuition</h2>
@@ -111,16 +114,21 @@ That several of them had been trained too large relative to the amount of data t
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/llms/causal-language-modeling-as-a-pretraining-objective/" data-topic="llms/causal-language-modeling-as-a-pretraining-objective">Causal Language Modeling as a Pretraining Objective</a> · <a class="wikilink" href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/" data-topic="llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes">Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</a> · <a class="wikilink" href="/llms/emergent-abilities-and-capability-jumps/" data-topic="llms/emergent-abilities-and-capability-jumps">Emergent Abilities and Capability Jumps</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/compute-optimal-scaling-chinchilla">Open in the interactive site →</a></p>
-        <a class="read-next" href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/"><small>Read next</small><b>Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</b><p>The compute-optimal split in Compute-Optimal Scaling (Chinchilla) assumes you can always get as much data as the optimum wants, and that training cost is the only cost that matters.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/causal-language-modeling-as-a-pretraining-objective/"><b>Causal Language Modeling as a Pretraining Objective</b><p>With a curated corpus in hand, there&#39;s still a question of what, exactly, a model is being trained to do with it.</p></a><a class="rc-card" href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/"><b>Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</b><p>The compute-optimal split in Compute-Optimal Scaling (Chinchilla) assumes you can always get as much data as the optimum wants, and that training cost is the only cost that matters.</p></a><a class="rc-card" href="/llms/emergent-abilities-and-capability-jumps/"><b>Emergent Abilities and Capability Jumps</b><p>Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.</p></a><a class="rc-card" href="/llms/scaling-capacity-and-emergence/"><b>Scaling, Capacity and Emergence</b><p>Make an LLM bigger, train it on more data, or give it more compute, and its capability doesn&#39;t grow in some simple, uniform way — it follows surprisingly predictable curves overall, punctuated by…</p></a><a class="rc-card" href="/llms/the-bitter-lesson-scale-vs-hand-engineering/"><b>The Bitter Lesson: Scale vs. Hand-Engineering</b><p>Across decades of AI research, a pattern keeps repeating: a simple, general method paired with more computation eventually beats an elaborately hand-engineered, domain-specific one — not…</p></a><a class="rc-card" href="/llms/supervised-fine-tuning-sft/"><b>Supervised Fine-Tuning (SFT)</b><p>A pretrained model is extremely good at continuing text in whatever style it appears in — but &quot;the internet&quot; doesn&#39;t naturally produce the specific pattern of a helpful assistant replying to a…</p></a></div></section>
-        <p class="doc-prev"><a href="/llms/scaling-capacity-and-emergence/">← Previous: Scaling, Capacity and Emergence</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/llms/compute-optimal-scaling-chinchilla">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/llms/scaling-capacity-and-emergence/" data-topic="llms/scaling-capacity-and-emergence"><span>Previous · chapter overview</span><b>Scaling, Capacity and Emergence</b></a><a class="step next" href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/" data-topic="llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes"><span>Next · lesson 2</span><b>Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/LLMs/Scaling,%20Capacity%20and%20Emergence/Compute-Optimal%20Scaling%20(Chinchilla).md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

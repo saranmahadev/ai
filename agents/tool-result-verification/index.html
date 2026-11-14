@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tool Result Verification — AI Base</title>
 <meta name="description" content="A weather tool call that returns no exception isn&#39;t the same as a weather tool call that actually returned a usable result.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/agents/tool-result-verification/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":4,"name":"Tool Use and Function Calling"},{"@type":"ListItem","position":5,"name":"Tool Result Verification","item":"https://ai.saranmahadev.in/agents/tool-result-verification/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Tool Result Verification","description":"A weather tool call that returns no exception isn't the same as a weather tool call that actually returned a usable result.","url":"https://ai.saranmahadev.in/agents/tool-result-verification/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Tool Use and Function Calling","item":"https://ai.saranmahadev.in/agents/tool-use-and-function-calling/"},{"@type":"ListItem","position":4,"name":"Tool Result Verification","item":"https://ai.saranmahadev.in/agents/tool-result-verification/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Tool Result Verification","description":"A weather tool call that returns no exception isn't the same as a weather tool call that actually returned a usable result.","url":"https://ai.saranmahadev.in/agents/tool-result-verification/","isPartOf":{"@type":"Course","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do calls 3 and 4 both \"succeed\" by a bare exception check, yet fail verification?","acceptedAnswer":{"@type":"Answer","text":"Neither call raised an exception — by that signal alone, both completed successfully. But call 3's result is missing the temperature field and call 4's result is entirely empty, so neither actually has what the required-fields check needs."}},{"@type":"Question","name":"What's the difference between checking that a call didn't error and verifying its result?","acceptedAnswer":{"@type":"Answer","text":"Checking for an exception only tells you the call mechanism itself didn't break (no timeout, no crash); verifying the result tells you whether what came back actually has the specific content the next step depends on — a call can pass the first check while failing the second."}},{"@type":"Question","name":"Does the field-presence check in the worked example catch a result with a present but factually wrong value?","acceptedAnswer":{"@type":"Answer","text":"No — it only checks whether required fields exist in the result, not whether their values are correct. A temperature field holding an implausible number would pass this specific check while still being wrong."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/agents/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Agents</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/agents/">Agents</a></li><li>Tool Use and Function Calling</li><li>Tool Result Verification</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#c99bf0">
-      <header class="doc-head">
-        <h1 class="doc-title">Tool Result Verification</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#faf5fe"/>
-  <circle cx="1045" cy="49" r="146" fill="#e9d7f9" opacity="0.51"/><circle cx="492" cy="90" r="146" fill="#e9d7f9" opacity="0.30"/><circle cx="853" cy="375" r="117" fill="#e9d7f9" opacity="0.38"/>
-  <circle cx="260" cy="163" r="113" fill="#c99bf0"/>
-  <line x1="0" y1="256" x2="1200" y2="256" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>A weather tool call that returns no exception isn&#39;t the same as a weather tool call that actually returned a usable result. Five calls, none of which raised an error, still include one that silently came back empty and one that came back missing the temperature field entirely — only three of the five actually have everything the agent needs to act on.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/agents/prompt-chaining/" data-topic="agents/prompt-chaining">Prompt Chaining</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Tool Use and Function Calling chapter">
+        <div class="side-head">
+          <a class="side-course" href="/agents/">Agents · Chapter 04</a>
+          <a class="side-chapter" href="/agents/tool-use-and-function-calling/">Tool Use and Function Calling</a>
+          <span class="side-count">6 lessons</span>
+        </div>
+        <ol><li><a href="/agents/tool-selection-among-many-candidates/">Tool Selection Among Many Candidates</a></li><li><a href="/agents/parallel-vs-sequential-tool-calls/">Parallel vs. Sequential Tool Calls</a></li><li><a href="/agents/handling-tool-errors-and-retries/">Handling Tool Errors and Retries</a></li><li><a href="/agents/tool-result-verification/" aria-current="page">Tool Result Verification</a></li><li><a href="/agents/designing-tools-for-agent-reliability/">Designing Tools for Agent Reliability</a></li><li><a href="/agents/code-as-a-tool-calling-interface/">Code as a Tool-Calling Interface</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="agents/tool-result-verification">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/agents/">Agents</a></li><li><a href="/agents/tool-use-and-function-calling/">Tool Use and Function Calling</a></li><li><span aria-current="page">Tool Result Verification</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 4 of 6 · 5 min read</p>
+          <h1>Tool Result Verification</h1>
+        </header>
+        <div class="prose"><p>A weather tool call that returns no exception isn&#39;t the same as a weather tool call that actually returned a usable result. Five calls, none of which raised an error, still include one that silently came back empty and one that came back missing the temperature field entirely — only three of the five actually have everything the agent needs to act on.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/agents/prompt-chaining/" data-topic="agents/prompt-chaining">Prompt Chaining</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Is it enough to check that a tool call didn&#39;t error out?&quot; No — a tool call can complete successfully by every signal the calling code checks (no exception, a 200 status, a non-null return value) while still returning a result that&#39;s empty, incomplete, or simply wrong for what the agent actually needs next. <strong>Result verification</strong> is a separate check, applied after the call returns successfully, confirming the result itself has the specific fields or properties the next step depends on — the same validation-gate idea already covered for chained workflows, now applied to a tool&#39;s output.</p>
 <h2 id="intuition">Intuition</h2>
@@ -116,16 +119,21 @@ No — it only checks whether required fields exist in the result, not whether t
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/agents/prompt-chaining/" data-topic="agents/prompt-chaining">Prompt Chaining</a> · <a class="wikilink" href="/agents/handling-tool-errors-and-retries/" data-topic="agents/handling-tool-errors-and-retries">Handling Tool Errors and Retries</a> · <a class="wikilink" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability">Designing Tools for Agent Reliability</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/tool-result-verification">Open in the interactive site →</a></p>
-        <a class="read-next" href="/agents/designing-tools-for-agent-reliability/"><small>Read next</small><b>Designing Tools for Agent Reliability</b><p>A tool with a free-text date field lets an agent write &quot;03/14/2025,&quot; &quot;March 14, 2025,&quot; or &quot;14/03/2025&quot; — three formats, at least two of them genuinely ambiguous about which number is the month.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/prompt-chaining/"><b>Prompt Chaining</b><p>Splitting a task into a fixed sequence of calls — outline, then draft, then polish — lets each step check the previous one&#39;s work before building on it.</p></a><a class="rc-card" href="/agents/handling-tool-errors-and-retries/"><b>Handling Tool Errors and Retries</b><p>A flaky network call that succeeds 70% of the time individually succeeds 99.19% of the time within four tries — failures that are transient are exactly the kind retrying is good for.</p></a><a class="rc-card" href="/agents/designing-tools-for-agent-reliability/"><b>Designing Tools for Agent Reliability</b><p>A tool with a free-text date field lets an agent write &quot;03/14/2025,&quot; &quot;March 14, 2025,&quot; or &quot;14/03/2025&quot; — three formats, at least two of them genuinely ambiguous about which number is the month.</p></a><a class="rc-card" href="/agents/open-loop-vs-closed-loop-behavior/"><b>Open-Loop vs. Closed-Loop Behavior</b><p>An agent that fires off four actions in a row and reports &quot;done&quot; might be lying — not out of any intent to deceive, but because it never actually checked whether any of those four actions worked.</p></a><a class="rc-card" href="/agents/tool-use-and-function-calling/"><b>Tool Use and Function Calling</b><p>Calling one tool correctly is a solved problem, already covered in LLMs.</p></a><a class="rc-card" href="/agents/hybrid-code-and-gui-action-spaces/"><b>Hybrid Code-and-GUI Action Spaces</b><p>A script can rename fifty files in one call; clicking through a file manager to do the same thing takes fifty clicks.</p></a></div></section>
-        <p class="doc-prev"><a href="/agents/handling-tool-errors-and-retries/">← Previous: Handling Tool Errors and Retries</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/agents/tool-result-verification">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/agents/handling-tool-errors-and-retries/" data-topic="agents/handling-tool-errors-and-retries"><span>Previous · lesson 3</span><b>Handling Tool Errors and Retries</b></a><a class="step next" href="/agents/designing-tools-for-agent-reliability/" data-topic="agents/designing-tools-for-agent-reliability"><span>Next · lesson 5</span><b>Designing Tools for Agent Reliability</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Agents/Tool%20Use%20and%20Function%20Calling/Tool%20Result%20Verification.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

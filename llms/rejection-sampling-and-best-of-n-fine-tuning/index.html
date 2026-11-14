@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Rejection Sampling and Best-of-N Fine-Tuning — AI Base</title>
 <meta name="description" content="best-of-N sampling picks the best of several candidates at answer time. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/llms/rejection-sampling-and-best-of-n-fine-tuning/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"Instruction Tuning and Alignment"},{"@type":"ListItem","position":5,"name":"Rejection Sampling and Best-of-N Fine-Tuning","item":"https://ai.saranmahadev.in/llms/rejection-sampling-and-best-of-n-fine-tuning/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Rejection Sampling and Best-of-N Fine-Tuning","description":"best-of-N sampling picks the best of several candidates at answer time. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.","url":"https://ai.saranmahadev.in/llms/rejection-sampling-and-best-of-n-fine-tuning/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Instruction Tuning and Alignment","item":"https://ai.saranmahadev.in/llms/instruction-tuning-and-alignment/"},{"@type":"ListItem","position":4,"name":"Rejection Sampling and Best-of-N Fine-Tuning","item":"https://ai.saranmahadev.in/llms/rejection-sampling-and-best-of-n-fine-tuning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Rejection Sampling and Best-of-N Fine-Tuning","description":"best-of-N sampling picks the best of several candidates at answer time. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.","url":"https://ai.saranmahadev.in/llms/rejection-sampling-and-best-of-n-fine-tuning/","isPartOf":{"@type":"Course","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does rejection sampling fine-tuning actually train on?","acceptedAnswer":{"@type":"Answer","text":"Ordinary supervised fine-tuning, but on a dataset curated by sampling N candidates per prompt and keeping only the single highest-reward-model-scored one."}},{"@type":"Question","name":"In the worked example, roughly how much did the kept sample's mean reward improve from N=1 to N=16?","acceptedAnswer":{"@type":"Answer","text":"From about 0.4005 to about 0.6941 — nearly a 75% increase, purely from selecting the best of more independent samples."}},{"@type":"Question","name":"What's the key difference between rejection sampling fine-tuning and RLHF?","acceptedAnswer":{"@type":"Answer","text":"Rejection sampling fine-tuning uses ordinary SFT on a reward-model-filtered dataset, with no policy gradient or RL loop; RLHF directly optimizes the policy against the reward model's scores using reinforcement learning."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/llms/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ LLMs</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/llms/">LLMs</a></li><li>Instruction Tuning and Alignment</li><li>Rejection Sampling and Best-of-N Fine-Tuning</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffa970">
-      <header class="doc-head">
-        <h1 class="doc-title">Rejection Sampling and Best-of-N Fine-Tuning</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff6f1"/>
-  <circle cx="695" cy="366" r="85" fill="#ffddc6" opacity="0.46"/><circle cx="561" cy="235" r="87" fill="#ffddc6" opacity="0.47"/>
-  <circle cx="321" cy="195" r="152" fill="#ffa970"/>
-  <line x1="0" y1="186" x2="1200" y2="186" stroke="#ffa970" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">best-of-N sampling</a> picks the best of several candidates at <em>answer time</em>. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a>, <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Instruction Tuning and Alignment chapter">
+        <div class="side-head">
+          <a class="side-course" href="/llms/">LLMs · Chapter 03</a>
+          <a class="side-chapter" href="/llms/instruction-tuning-and-alignment/">Instruction Tuning and Alignment</a>
+          <span class="side-count">8 lessons</span>
+        </div>
+        <ol><li><a href="/llms/supervised-fine-tuning-sft/">Supervised Fine-Tuning (SFT)</a></li><li><a href="/llms/instruction-dataset-construction/">Instruction Dataset Construction</a></li><li><a href="/llms/reward-modeling/">Reward Modeling</a></li><li><a href="/llms/reinforcement-learning-from-human-feedback-rlhf/">Reinforcement Learning from Human Feedback (RLHF)</a></li><li><a href="/llms/direct-preference-optimization-dpo/">Direct Preference Optimization (DPO)</a></li><li><a href="/llms/constitutional-ai-and-rlaif/">Constitutional AI and RLAIF</a></li><li><a href="/llms/rejection-sampling-and-best-of-n-fine-tuning/" aria-current="page">Rejection Sampling and Best-of-N Fine-Tuning</a></li><li><a href="/llms/reward-hacking-and-sycophancy/">Reward Hacking and Sycophancy</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="llms/rejection-sampling-and-best-of-n-fine-tuning">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/llms/">LLMs</a></li><li><a href="/llms/instruction-tuning-and-alignment/">Instruction Tuning and Alignment</a></li><li><span aria-current="page">Rejection Sampling and Best-of-N Fine-Tuning</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 7 of 8 · 4 min read</p>
+          <h1>Rejection Sampling and Best-of-N Fine-Tuning</h1>
+        </header>
+        <div class="prose"><p><a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">best-of-N sampling</a> picks the best of several candidates at <em>answer time</em>. Rejection sampling fine-tuning takes the same idea and moves it earlier — into building the training set itself.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a><a class="chip wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling<small class="xc">Generative AI</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Can you improve a model without a full RLHF or DPO training loop?&quot; <strong>Rejection sampling fine-tuning</strong> (sometimes called RAFT) samples N candidate responses per prompt from the current model, scores every one with a reward model, keeps only the single best-scoring candidate per prompt, and runs ordinary <a class="wikilink" href="/llms/supervised-fine-tuning-sft/" data-topic="llms/supervised-fine-tuning-sft">supervised fine-tuning</a> on that curated set of &quot;winners.&quot; No policy gradient, no preference-pair loss — just SFT, but on a dataset that&#39;s been pre-filtered to contain disproportionately good examples.</p>
 <h2 id="intuition">Intuition</h2>
@@ -115,16 +118,21 @@ Rejection sampling fine-tuning uses ordinary SFT on a reward-model-filtered data
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a> · <a class="wikilink" href="/generative-ai/self-consistency-and-best-of-n-sampling/" data-topic="generative-ai/self-consistency-and-best-of-n-sampling">Self-Consistency and Best-of-N Sampling</a> · <a class="wikilink" href="/llms/supervised-fine-tuning-sft/" data-topic="llms/supervised-fine-tuning-sft">Supervised Fine-Tuning (SFT)</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/rejection-sampling-and-best-of-n-fine-tuning">Open in the interactive site →</a></p>
-        <a class="read-next" href="/llms/reward-hacking-and-sycophancy/"><small>Read next</small><b>Reward Hacking and Sycophancy</b><p>Every method in this section optimizes a policy to satisfy a reward signal — a reward model&#39;s score, an AI judge&#39;s ranking.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/self-consistency-and-best-of-n-sampling/"><b>Self-Consistency and Best-of-N Sampling</b><p>A single sampled answer is a coin flip against the model&#39;s own uncertainty — if it&#39;s right 50% of the time per try, one sample is right about half the time, full stop.</p></a><a class="rc-card" href="/llms/reward-modeling/"><b>Reward Modeling</b><p>Judging &quot;which of these two responses is better&quot; is a question most people can answer confidently; assigning an absolute numerical quality score to a single response, consistently, is much harder…</p></a><a class="rc-card" href="/llms/supervised-fine-tuning-sft/"><b>Supervised Fine-Tuning (SFT)</b><p>A pretrained model is extremely good at continuing text in whatever style it appears in — but &quot;the internet&quot; doesn&#39;t naturally produce the specific pattern of a helpful assistant replying to a…</p></a><a class="rc-card" href="/llms/reinforcement-learning-from-human-feedback-rlhf/"><b>Reinforcement Learning from Human Feedback (RLHF)</b><p>A reward model can score any response — but scoring responses isn&#39;t the same as producing better ones.</p></a><a class="rc-card" href="/llms/direct-preference-optimization-dpo/"><b>Direct Preference Optimization (DPO)</b><p>RLHF&#39;s reward model, policy-gradient loop, and stability tricks are a lot of moving parts for a relatively simple goal: make preferred responses more likely than dispreferred ones.</p></a><a class="rc-card" href="/llms/instruction-tuning-and-alignment/"><b>Instruction Tuning and Alignment</b><p>A model pretrained purely to predict the next token has no particular reason to follow an instruction, refuse a harmful request, or prefer a helpful answer over a merely plausible one.</p></a></div></section>
-        <p class="doc-prev"><a href="/llms/constitutional-ai-and-rlaif/">← Previous: Constitutional AI and RLAIF</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/llms/rejection-sampling-and-best-of-n-fine-tuning">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/llms/constitutional-ai-and-rlaif/" data-topic="llms/constitutional-ai-and-rlaif"><span>Previous · lesson 6</span><b>Constitutional AI and RLAIF</b></a><a class="step next" href="/llms/reward-hacking-and-sycophancy/" data-topic="llms/reward-hacking-and-sycophancy"><span>Next · lesson 8</span><b>Reward Hacking and Sycophancy</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/LLMs/Instruction%20Tuning%20and%20Alignment/Rejection%20Sampling%20and%20Best-of-N%20Fine-Tuning.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

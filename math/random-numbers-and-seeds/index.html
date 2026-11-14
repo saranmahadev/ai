@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Random Numbers and Seeds — AI Base</title>
 <meta name="description" content="Computers cannot produce true randomness by calculation, so they use pseudo-random number generators: deterministic recipes that produce sequences that look random. The seed is the starting value.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/math/random-numbers-and-seeds/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":4,"name":"Numerical Computing"},{"@type":"ListItem","position":5,"name":"Random Numbers and Seeds","item":"https://ai.saranmahadev.in/math/random-numbers-and-seeds/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Random Numbers and Seeds","description":"Computers cannot produce true randomness by calculation, so they use pseudo-random number generators: deterministic recipes that produce sequences that look random. The seed is the starting value.","url":"https://ai.saranmahadev.in/math/random-numbers-and-seeds/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Numerical Computing","item":"https://ai.saranmahadev.in/math/numerical-computing/"},{"@type":"ListItem","position":4,"name":"Random Numbers and Seeds","item":"https://ai.saranmahadev.in/math/random-numbers-and-seeds/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Random Numbers and Seeds","description":"Computers cannot produce true randomness by calculation, so they use pseudo-random number generators: deterministic recipes that produce sequences that look random. The seed is the starting value.","url":"https://ai.saranmahadev.in/math/random-numbers-and-seeds/","isPartOf":{"@type":"Course","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does the same seed always give the same sequence?","acceptedAnswer":{"@type":"Answer","text":"Yes, on the same generator."}},{"@type":"Question","name":"Why report an average over several seeds?","acceptedAnswer":{"@type":"Answer","text":"A single seed may be unusually lucky or unlucky."}},{"@type":"Question","name":"What is a generator's period?","acceptedAnswer":{"@type":"Answer","text":"The length after which its sequence repeats."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/math/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Math</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/math/">Math</a></li><li>Numerical Computing</li><li>Random Numbers and Seeds</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#b39cf5">
-      <header class="doc-head">
-        <h1 class="doc-title">Random Numbers and Seeds</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#f7f5fe"/>
-  <circle cx="640" cy="362" r="61" fill="#e1d7fb" opacity="0.41"/><circle cx="546" cy="153" r="68" fill="#e1d7fb" opacity="0.48"/><circle cx="589" cy="82" r="168" fill="#e1d7fb" opacity="0.53"/>
-  <circle cx="233" cy="275" r="91" fill="#b39cf5"/>
-  <line x1="0" y1="228" x2="1200" y2="228" stroke="#b39cf5" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Computers cannot produce true randomness by calculation, so they use <strong>pseudo-random number generators</strong>: deterministic recipes that produce sequences that look random. The <strong>seed</strong> is the starting value. The same seed gives the same sequence, which is exactly what you want for reproducible experiments.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/math/rounding-absolute-value-and-modulo/" data-topic="math/rounding-absolute-value-and-modulo">Rounding, Absolute Value and Modulo</a>, <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> and <a class="wikilink" href="/math/sequences-and-series/" data-topic="math/sequences-and-series">Sequences and Series</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Numerical Computing chapter">
+        <div class="side-head">
+          <a class="side-course" href="/math/">Math · Chapter 11</a>
+          <a class="side-chapter" href="/math/numerical-computing/">Numerical Computing</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/math/floating-point/">Floating Point</a></li><li><a href="/math/overflow-and-underflow/">Overflow and Underflow</a></li><li><a href="/math/numerical-stability/">Numerical Stability</a></li><li><a href="/math/conditioning/">Conditioning</a></li><li><a href="/math/random-numbers-and-seeds/" aria-current="page">Random Numbers and Seeds</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="math/random-numbers-and-seeds">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/math/">Math</a></li><li><a href="/math/numerical-computing/">Numerical Computing</a></li><li><span aria-current="page">Random Numbers and Seeds</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 5 of 5 · 3 min read</p>
+          <h1>Random Numbers and Seeds</h1>
+        </header>
+        <div class="prose"><p>Computers cannot produce true randomness by calculation, so they use <strong>pseudo-random number generators</strong>: deterministic recipes that produce sequences that look random. The <strong>seed</strong> is the starting value. The same seed gives the same sequence, which is exactly what you want for reproducible experiments.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/math/rounding-absolute-value-and-modulo/" data-topic="math/rounding-absolute-value-and-modulo">Rounding, Absolute Value and Modulo</a><a class="chip wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a><a class="chip wikilink" href="/math/sequences-and-series/" data-topic="math/sequences-and-series">Sequences and Series</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Where does the randomness in my model and simulations come from, and how do I get the same result twice?&quot; Weight initialisation, data shuffling, dropout and sampling all use random numbers, and two runs that differ only by seed can give different results.</p>
 <h2 id="intuition-a-scrambled-recipe">Intuition: a scrambled recipe</h2>
@@ -115,16 +118,21 @@ The length after which its sequence repeats.
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/math/rounding-absolute-value-and-modulo/" data-topic="math/rounding-absolute-value-and-modulo">Rounding, Absolute Value and Modulo</a> · <a class="wikilink" href="/math/continuous-distributions/" data-topic="math/continuous-distributions">Continuous Distributions</a> · <a class="wikilink" href="/math/law-of-large-numbers/" data-topic="math/law-of-large-numbers">Law of Large Numbers</a> · <a class="wikilink" href="/math/stochastic-gradient-descent/" data-topic="math/stochastic-gradient-descent">Stochastic Gradient Descent</a> · <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/random-numbers-and-seeds">Open in the interactive site →</a></p>
-        <a class="read-next" href="/math/math-in-ai/"><small>Read next</small><b>Math in AI</b><p>This last section puts the earlier ones to work.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/rounding-absolute-value-and-modulo/"><b>Rounding, Absolute Value and Modulo</b><p>Four small operations show up constantly: rounding (to the nearest whole number or a set of decimals), floor and ceiling (always down or always up), absolute value (distance from zero) and modulo…</p></a><a class="rc-card" href="/math/continuous-distributions/"><b>Continuous Distributions</b><p>A continuous random variable can take any value in a range, so no single value has positive probability.</p></a><a class="rc-card" href="/math/sequences-and-series/"><b>Sequences and Series</b><p>A sequence is an ordered list of numbers that follows a rule, and a series is what you get by adding its terms.</p></a><a class="rc-card" href="/math/floating-point/"><b>Floating Point</b><p>Computers store real numbers in floating point: a fixed number of significant binary digits and an exponent.</p></a><a class="rc-card" href="/math/law-of-large-numbers/"><b>Law of Large Numbers</b><p>The law of large numbers says that the average of many independent repetitions settles down to the expectation. Flip a fair coin enough times and the fraction of heads approaches one half.</p></a><a class="rc-card" href="/math/stochastic-gradient-descent/"><b>Stochastic Gradient Descent</b><p>Stochastic gradient descent (SGD) takes each step using the gradient from a small random mini-batch of examples instead of the whole data set.</p></a></div></section>
-        <p class="doc-prev"><a href="/math/conditioning/">← Previous: Conditioning</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/math/random-numbers-and-seeds">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/math/conditioning/" data-topic="math/conditioning"><span>Previous · lesson 4</span><b>Conditioning</b></a><a class="step next" href="/math/math-in-ai/" data-topic="math/math-in-ai"><span>Next · chapter overview</span><b>Math in AI</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Math/Numerical%20Computing/Random%20Numbers%20and%20Seeds.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-a-scrambled-recipe" data-scroll="intuition-a-scrambled-recipe">Intuition: a scrambled recipe</a><a href="#seeds-and-reproducibility" data-scroll="seeds-and-reproducibility">Seeds and reproducibility</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

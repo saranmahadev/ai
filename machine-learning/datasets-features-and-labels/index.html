@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Datasets, Features and Labels — AI Base</title>
 <meta name="description" content="A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/datasets-features-and-labels/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":4,"name":"The Learning Problem"},{"@type":"ListItem","position":5,"name":"Datasets, Features and Labels","item":"https://ai.saranmahadev.in/machine-learning/datasets-features-and-labels/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Datasets, Features and Labels","description":"A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).","url":"https://ai.saranmahadev.in/machine-learning/datasets-features-and-labels/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"The Learning Problem","item":"https://ai.saranmahadev.in/machine-learning/the-learning-problem/"},{"@type":"ListItem","position":4,"name":"Datasets, Features and Labels","item":"https://ai.saranmahadev.in/machine-learning/datasets-features-and-labels/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Datasets, Features and Labels","description":"A dataset is a table: each row is an example, each column a measurement. The columns the model reads are features; the column it should predict is the label (or target).","url":"https://ai.saranmahadev.in/machine-learning/datasets-features-and-labels/","isPartOf":{"@type":"Course","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"If X has 500 examples and 8 features, what is its shape?","acceptedAnswer":{"@type":"Answer","text":"(500, 8)."}},{"@type":"Question","name":"Why is \"agent's final quote\" a bad feature for predicting sale price?","acceptedAnswer":{"@type":"Answer","text":"It is only known after the sale, so it will not exist when you need a prediction (leakage)."}},{"@type":"Question","name":"What is a label?","acceptedAnswer":{"@type":"Answer","text":"The answer the model is trained to predict."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/machine-learning/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Machine Learning</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/machine-learning/">Machine Learning</a></li><li>The Learning Problem</li><li>Datasets, Features and Labels</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffc46b">
-      <header class="doc-head">
-        <h1 class="doc-title">Datasets, Features and Labels</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>3 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff9f0"/>
-  <circle cx="864" cy="53" r="188" fill="#ffe7c4" opacity="0.40"/><circle cx="1091" cy="266" r="174" fill="#ffe7c4" opacity="0.47"/><circle cx="1027" cy="51" r="82" fill="#ffe7c4" opacity="0.55"/>
-  <circle cx="339" cy="212" r="149" fill="#ffc46b"/>
-  <line x1="0" y1="292" x2="1200" y2="292" stroke="#ffc46b" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>A <strong>dataset</strong> is a table: each row is an example, each column a measurement. The columns the model reads are <strong>features</strong>; the column it should predict is the <strong>label</strong> (or target). Choosing which columns count as features, and keeping the answer out of them, is the first real decision in a project.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/what-is-machine-learning/" data-topic="machine-learning/what-is-machine-learning">What Is Machine Learning</a>, <a class="wikilink" href="/fundamentals/features-and-labels/" data-topic="fundamentals/features-and-labels">Features and Labels</a> and <a class="wikilink" href="/math/tensors-and-shapes/" data-topic="math/tensors-and-shapes">Tensors and Shapes</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="The Learning Problem chapter">
+        <div class="side-head">
+          <a class="side-course" href="/machine-learning/">Machine Learning · Chapter 01</a>
+          <a class="side-chapter" href="/machine-learning/the-learning-problem/">The Learning Problem</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/machine-learning/what-is-machine-learning/">What Is Machine Learning</a></li><li><a href="/machine-learning/kinds-of-learning/">Kinds of Learning</a></li><li><a href="/machine-learning/datasets-features-and-labels/" aria-current="page">Datasets, Features and Labels</a></li><li><a href="/machine-learning/train-validation-and-test-sets/">Train, Validation and Test Sets</a></li><li><a href="/machine-learning/the-learning-loop/">The Learning Loop</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="machine-learning/datasets-features-and-labels">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/machine-learning/">Machine Learning</a></li><li><a href="/machine-learning/the-learning-problem/">The Learning Problem</a></li><li><span aria-current="page">Datasets, Features and Labels</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 3 of 5 · 3 min read</p>
+          <h1>Datasets, Features and Labels</h1>
+        </header>
+        <div class="prose"><p>A <strong>dataset</strong> is a table: each row is an example, each column a measurement. The columns the model reads are <strong>features</strong>; the column it should predict is the <strong>label</strong> (or target). Choosing which columns count as features, and keeping the answer out of them, is the first real decision in a project.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/machine-learning/what-is-machine-learning/" data-topic="machine-learning/what-is-machine-learning">What Is Machine Learning</a><a class="chip wikilink" href="/fundamentals/features-and-labels/" data-topic="fundamentals/features-and-labels">Features and Labels<small class="xc">AI Fundamentals</small></a><a class="chip wikilink" href="/math/tensors-and-shapes/" data-topic="math/tensors-and-shapes">Tensors and Shapes<small class="xc">Math</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;What exactly do I feed the model, and what do I ask it to predict?&quot; A model can only use what it is shown, and it will happily use anything that predicts the label, even something unavailable at prediction time.</p>
 <h2 id="intuition-what-would-i-know-on-the-day">Intuition: what would I know on the day?</h2>
@@ -117,16 +120,21 @@ The answer the model is trained to predict.
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/fundamentals/features-and-labels/" data-topic="fundamentals/features-and-labels">Features and Labels</a> · <a class="wikilink" href="/machine-learning/what-is-machine-learning/" data-topic="machine-learning/what-is-machine-learning">What Is Machine Learning</a> · <a class="wikilink" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets">Train, Validation and Test Sets</a> · <a class="wikilink" href="/machine-learning/missing-values-and-cleaning/" data-topic="machine-learning/missing-values-and-cleaning">Missing Values and Cleaning</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/datasets-features-and-labels">Open in the interactive site →</a></p>
-        <a class="read-next" href="/machine-learning/train-validation-and-test-sets/"><small>Read next</small><b>Train, Validation and Test Sets</b><p>To know whether a model works you must measure it on data it has not learned from.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/what-is-machine-learning/"><b>What Is Machine Learning</b><p>Machine learning is building a program by showing it examples instead of writing its rules.</p></a><a class="rc-card" href="/fundamentals/features-and-labels/"><b>Features and Labels</b><p>Features are the measurable facts a model looks at, and a label is the answer it is asked to predict.</p></a><a class="rc-card" href="/math/tensors-and-shapes/"><b>Tensors and Shapes</b><p>A tensor is a grid of numbers with any number of dimensions: a scalar is 0-dimensional, a vector 1-dimensional, a matrix 2-dimensional, and a stack of images 4-dimensional.</p></a><a class="rc-card" href="/machine-learning/missing-values-and-cleaning/"><b>Missing Values and Cleaning</b><p>Real datasets have holes, typos, duplicates and impossible values.</p></a><a class="rc-card" href="/machine-learning/train-validation-and-test-sets/"><b>Train, Validation and Test Sets</b><p>To know whether a model works you must measure it on data it has not learned from.</p></a><a class="rc-card" href="/machine-learning/the-learning-problem/"><b>The Learning Problem</b><p>This section frames the whole subject: what it means for a program to learn from examples, the kinds of feedback a learner can have, how a dataset is laid out, why data must be split before…</p></a></div></section>
-        <p class="doc-prev"><a href="/machine-learning/kinds-of-learning/">← Previous: Kinds of Learning</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/machine-learning/datasets-features-and-labels">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/machine-learning/kinds-of-learning/" data-topic="machine-learning/kinds-of-learning"><span>Previous · lesson 2</span><b>Kinds of Learning</b></a><a class="step next" href="/machine-learning/train-validation-and-test-sets/" data-topic="machine-learning/train-validation-and-test-sets"><span>Next · lesson 4</span><b>Train, Validation and Test Sets</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Machine%20Learning/The%20Learning%20Problem/Datasets,%20Features%20and%20Labels.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-what-would-i-know-on-the-day" data-scroll="intuition-what-would-i-know-on-the-day">Intuition: what would I know on the day?</a><a href="#definitions" data-scroll="definitions">Definitions</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agents vs. Assistants vs. Workflows — AI Base</title>
 <meta name="description" content="&quot;Agent&quot; gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/agents/agents-vs-assistants-vs-workflows/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":4,"name":"Foundations of Agentic Systems"},{"@type":"ListItem","position":5,"name":"Agents vs. Assistants vs. Workflows","item":"https://ai.saranmahadev.in/agents/agents-vs-assistants-vs-workflows/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Agents vs. Assistants vs. Workflows","description":"\"Agent\" gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one.","url":"https://ai.saranmahadev.in/agents/agents-vs-assistants-vs-workflows/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Foundations of Agentic Systems","item":"https://ai.saranmahadev.in/agents/foundations-of-agentic-systems/"},{"@type":"ListItem","position":4,"name":"Agents vs. Assistants vs. Workflows","item":"https://ai.saranmahadev.in/agents/agents-vs-assistants-vs-workflows/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Agents vs. Assistants vs. Workflows","description":"\"Agent\" gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one.","url":"https://ai.saranmahadev.in/agents/agents-vs-assistants-vs-workflows/","isPartOf":{"@type":"Course","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the workflow score so much higher than the agent on the well-defined task, despite the agent being more capable overall?","acceptedAnswer":{"@type":"Answer","text":"The well-defined task's weights heavily favor predictability, where the workflow scores far higher (0.95 vs. 0.45) — the agent's extra flexibility and autonomy don't make up for being meaningfully less predictable, when predictability is what the task actually needs."}},{"@type":"Question","name":"Why do the workflow and the assistant end up scoring so similarly on the open-ended task?","acceptedAnswer":{"@type":"Answer","text":"Neither is built for genuine adaptability — the workflow is rigid by design, and the assistant can't drive itself through multiple steps at all — so once the task stops being well-defined, their different strengths (reliability vs. simplicity) stop mattering much."}},{"@type":"Question","name":"What's the architectural difference between a workflow and an agent, beyond just \"a workflow is simpler\"?","acceptedAnswer":{"@type":"Answer","text":"A workflow's sequence of steps is fixed by the developer in advance; an agent decides its own next step at run-time based on what's happened so far — the workflow's steps don't change based on intermediate results the way an agent's can."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/agents/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Agents</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/agents/">Agents</a></li><li>Foundations of Agentic Systems</li><li>Agents vs. Assistants vs. Workflows</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#c99bf0">
-      <header class="doc-head">
-        <h1 class="doc-title">Agents vs. Assistants vs. Workflows</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#faf5fe"/>
-  <circle cx="796" cy="311" r="150" fill="#e9d7f9" opacity="0.37"/><circle cx="576" cy="100" r="95" fill="#e9d7f9" opacity="0.49"/>
-  <circle cx="274" cy="133" r="91" fill="#c99bf0"/>
-  <line x1="0" y1="196" x2="1200" y2="196" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>&quot;Agent&quot; gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one. They&#39;re not the same thing, and picking the wrong one for a task costs real reliability or real flexibility, depending on which way the mismatch goes.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/agents/from-a-single-call-to-a-loop/" data-topic="agents/from-a-single-call-to-a-loop">From a Single Call to a Loop</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Foundations of Agentic Systems chapter">
+        <div class="side-head">
+          <a class="side-course" href="/agents/">Agents · Chapter 01</a>
+          <a class="side-chapter" href="/agents/foundations-of-agentic-systems/">Foundations of Agentic Systems</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/agents/from-a-single-call-to-a-loop/">From a Single Call to a Loop</a></li><li><a href="/agents/agents-vs-assistants-vs-workflows/" aria-current="page">Agents vs. Assistants vs. Workflows</a></li><li><a href="/agents/the-augmented-llm/">The Augmented LLM</a></li><li><a href="/agents/open-loop-vs-closed-loop-behavior/">Open-Loop vs. Closed-Loop Behavior</a></li><li><a href="/agents/anatomy-of-an-agent-architecture/">Anatomy of an Agent Architecture</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="agents/agents-vs-assistants-vs-workflows">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/agents/">Agents</a></li><li><a href="/agents/foundations-of-agentic-systems/">Foundations of Agentic Systems</a></li><li><span aria-current="page">Agents vs. Assistants vs. Workflows</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 2 of 5 · 5 min read</p>
+          <h1>Agents vs. Assistants vs. Workflows</h1>
+        </header>
+        <div class="prose"><p>&quot;Agent&quot; gets used loosely enough that a chatbot, a fixed multi-step pipeline, and a genuinely autonomous loop all sometimes get called one. They&#39;re not the same thing, and picking the wrong one for a task costs real reliability or real flexibility, depending on which way the mismatch goes.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/agents/from-a-single-call-to-a-loop/" data-topic="agents/from-a-single-call-to-a-loop">From a Single Call to a Loop</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;What actually tells an assistant, a workflow and an agent apart?&quot; An <strong>assistant</strong> is a single-turn (or simply-turn-taking) conversational call — fast and cheap, but it can&#39;t reliably drive itself through a multi-step task. A <strong>workflow</strong> is a fixed, developer-coded sequence of calls — highly predictable for the specific steps it was built for, but it can&#39;t adapt beyond that script. An <strong>agent</strong> decides its own next step at run-time based on what&#39;s happened so far — flexible enough for open-ended tasks, at the cost of being far less predictable.</p>
 <h2 id="intuition">Intuition</h2>
@@ -113,16 +116,21 @@ A workflow's sequence of steps is fixed by the developer in advance; an agent de
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/agents/from-a-single-call-to-a-loop/" data-topic="agents/from-a-single-call-to-a-loop">From a Single Call to a Loop</a> · <a class="wikilink" href="/agents/workflow-patterns-before-autonomy/" data-topic="agents/workflow-patterns-before-autonomy">Workflow Patterns Before Autonomy</a> · <a class="wikilink" href="/agents/when-planning-hurts-more-than-it-helps/" data-topic="agents/when-planning-hurts-more-than-it-helps">When Planning Hurts More Than It Helps</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/agents-vs-assistants-vs-workflows">Open in the interactive site →</a></p>
-        <a class="read-next" href="/agents/the-augmented-llm/"><small>Read next</small><b>The Augmented LLM</b><p>A bare model call can only ever draw on what was baked into its weights during training.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/from-a-single-call-to-a-loop/"><b>From a Single Call to a Loop</b><p>A single call to a model follows exactly one link in a chain of facts, no matter how the chain continues from there.</p></a><a class="rc-card" href="/llms/choosing-a-model-for-a-task/"><b>Choosing a Model for a Task</b><p>There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs.</p></a><a class="rc-card" href="/rag/rag-vs-fine-tuning-vs-long-context/"><b>RAG vs. Fine-Tuning vs. Long-Context</b><p>A model that doesn&#39;t know something, or doesn&#39;t behave the way you want, has more than one fix available.</p></a><a class="rc-card" href="/agents/workflow-patterns-before-autonomy/"><b>Workflow Patterns Before Autonomy</b><p>Not every multi-step task needs a fully autonomous agent deciding what to do next.</p></a><a class="rc-card" href="/agents/when-planning-hurts-more-than-it-helps/"><b>When Planning Hurts More Than It Helps</b><p>Planning ahead only pays off if the plan is still good by the time it&#39;s executed. In a stable environment that barely changes, one upfront plan beats reacting fresh at every single step.</p></a><a class="rc-card" href="/agents/foundations-of-agentic-systems/"><b>Foundations of Agentic Systems</b><p>A single call to a language model, however good, still just returns one response to one prompt.</p></a></div></section>
-        <p class="doc-prev"><a href="/agents/from-a-single-call-to-a-loop/">← Previous: From a Single Call to a Loop</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/agents/agents-vs-assistants-vs-workflows">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/agents/from-a-single-call-to-a-loop/" data-topic="agents/from-a-single-call-to-a-loop"><span>Previous · lesson 1</span><b>From a Single Call to a Loop</b></a><a class="step next" href="/agents/the-augmented-llm/" data-topic="agents/the-augmented-llm"><span>Next · lesson 3</span><b>The Augmented LLM</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Agents/Foundations%20of%20Agentic%20Systems/Agents%20vs.%20Assistants%20vs.%20Workflows.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Neural Architecture Search — AI Base</title>
 <meta name="description" content="Depth, width, kernel sizes, how layers connect — every architecture in the CNN lineage was designed by hand, by researchers trying ideas and comparing results.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/neural-architecture-search/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":4,"name":"Efficiency and Deployment"},{"@type":"ListItem","position":5,"name":"Neural Architecture Search","item":"https://ai.saranmahadev.in/deep-learning/neural-architecture-search/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Neural Architecture Search","description":"Depth, width, kernel sizes, how layers connect — every architecture in the CNN lineage was designed by hand, by researchers trying ideas and comparing results.","url":"https://ai.saranmahadev.in/deep-learning/neural-architecture-search/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Efficiency and Deployment","item":"https://ai.saranmahadev.in/deep-learning/efficiency-and-deployment/"},{"@type":"ListItem","position":4,"name":"Neural Architecture Search","item":"https://ai.saranmahadev.in/deep-learning/neural-architecture-search/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Neural Architecture Search","description":"Depth, width, kernel sizes, how layers connect — every architecture in the CNN lineage was designed by hand, by researchers trying ideas and comparing results.","url":"https://ai.saranmahadev.in/deep-learning/neural-architecture-search/","isPartOf":{"@type":"Course","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does neural architecture search widen \"hyperparameter tuning\" to include?","acceptedAnswer":{"@type":"Answer","text":"The architecture itself — depth, width, kernel sizes and connection patterns — not just training settings like learning rate."}},{"@type":"Question","name":"In the worked example, why does the architecture with the highest accuracy proxy score worst overall?","acceptedAnswer":{"@type":"Answer","text":"Its cost penalty grows quadratically with capacity and ends up far outweighing its accuracy advantage."}},{"@type":"Question","name":"Is there a single \"best\" architecture independent of how the score function is defined?","acceptedAnswer":{"@type":"Answer","text":"No — the winning candidate depends entirely on how accuracy and cost are weighed against each other in the score."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/deep-learning/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Deep Learning</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/deep-learning/">Deep Learning</a></li><li>Efficiency and Deployment</li><li>Neural Architecture Search</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ff8f8f">
-      <header class="doc-head">
-        <h1 class="doc-title">Neural Architecture Search</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff4f4"/>
-  <circle cx="924" cy="82" r="119" fill="#ffd2d2" opacity="0.54"/><circle cx="731" cy="343" r="177" fill="#ffd2d2" opacity="0.38"/><circle cx="1084" cy="239" r="100" fill="#ffd2d2" opacity="0.52"/>
-  <circle cx="329" cy="139" r="119" fill="#ff8f8f"/>
-  <line x1="0" y1="148" x2="1200" y2="148" stroke="#ff8f8f" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Depth, width, kernel sizes, how layers connect — every architecture in <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">the CNN lineage</a> was designed by hand, by researchers trying ideas and comparing results. <strong>Neural architecture search (NAS)</strong> automates that process: search over a space of possible architectures, score each candidate, and let the search itself find a good trade-off between accuracy and cost.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> and <a class="wikilink" href="/machine-learning/hyperparameter-tuning/" data-topic="machine-learning/hyperparameter-tuning">Hyperparameter Tuning</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Efficiency and Deployment chapter">
+        <div class="side-head">
+          <a class="side-course" href="/deep-learning/">Deep Learning · Chapter 10</a>
+          <a class="side-chapter" href="/deep-learning/efficiency-and-deployment/">Efficiency and Deployment</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/deep-learning/model-pruning/">Model Pruning</a></li><li><a href="/deep-learning/quantization/">Quantization</a></li><li><a href="/deep-learning/knowledge-distillation/">Knowledge Distillation</a></li><li><a href="/deep-learning/neural-architecture-search/" aria-current="page">Neural Architecture Search</a></li><li><a href="/deep-learning/edge-and-on-device-deep-learning/">Edge and On-Device Deep Learning</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="deep-learning/neural-architecture-search">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/deep-learning/">Deep Learning</a></li><li><a href="/deep-learning/efficiency-and-deployment/">Efficiency and Deployment</a></li><li><span aria-current="page">Neural Architecture Search</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 4 of 5 · 4 min read</p>
+          <h1>Neural Architecture Search</h1>
+        </header>
+        <div class="prose"><p>Depth, width, kernel sizes, how layers connect — every architecture in <a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">the CNN lineage</a> was designed by hand, by researchers trying ideas and comparing results. <strong>Neural architecture search (NAS)</strong> automates that process: search over a space of possible architectures, score each candidate, and let the search itself find a good trade-off between accuracy and cost.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a><a class="chip wikilink" href="/machine-learning/hyperparameter-tuning/" data-topic="machine-learning/hyperparameter-tuning">Hyperparameter Tuning<small class="xc">Machine Learning</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Must a good architecture always come from human intuition and trial and error?&quot; Not entirely — if you can define a space of possible architectures and a way to score any candidate from that space, search methods (grid search, random search, evolutionary search, reinforcement learning, gradient-based relaxations) can explore it automatically.</p>
 <h2 id="intuition-treating-the-architecture-itself-as-something-to-tune">Intuition: treating the architecture itself as something to tune</h2>
@@ -115,16 +118,21 @@ No — the winning candidate depends entirely on how accuracy and cost are weigh
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/" data-topic="deep-learning/cnn-architectures-from-lenet-to-resnet">CNN Architectures: From LeNet to ResNet</a> · <a class="wikilink" href="/machine-learning/hyperparameter-tuning/" data-topic="machine-learning/hyperparameter-tuning">Hyperparameter Tuning</a> · <a class="wikilink" href="/deep-learning/edge-and-on-device-deep-learning/" data-topic="deep-learning/edge-and-on-device-deep-learning">Edge and On-Device Deep Learning</a> · <a class="wikilink" href="/deep-learning/choosing-an-architecture-for-a-problem/" data-topic="deep-learning/choosing-an-architecture-for-a-problem">Choosing an Architecture for a Problem</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/neural-architecture-search">Open in the interactive site →</a></p>
-        <a class="read-next" href="/deep-learning/edge-and-on-device-deep-learning/"><small>Read next</small><b>Edge and On-Device Deep Learning</b><p>Running a model on a phone, a smartwatch, or a tiny embedded chip is a different problem from running it on a server: memory, compute, power and network connectivity are all far more constrained,…</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/cnn-architectures-from-lenet-to-resnet/"><b>CNN Architectures: From LeNet to ResNet</b><p>Convolutional architectures did not arrive all at once.</p></a><a class="rc-card" href="/machine-learning/hyperparameter-tuning/"><b>Hyperparameter Tuning</b><p>Parameters are learned; hyperparameters are chosen before training: learning rate, tree depth, penalty strength, number of neighbours.</p></a><a class="rc-card" href="/deep-learning/edge-and-on-device-deep-learning/"><b>Edge and On-Device Deep Learning</b><p>Running a model on a phone, a smartwatch, or a tiny embedded chip is a different problem from running it on a server: memory, compute, power and network connectivity are all far more constrained,…</p></a><a class="rc-card" href="/deep-learning/choosing-an-architecture-for-a-problem/"><b>Choosing an Architecture for a Problem</b><p>Every architecture in this subject was built to exploit some specific structure in its data: convolution exploits a grid, recurrence and attention exploit a sequence, graph networks exploit…</p></a><a class="rc-card" href="/deep-learning/efficiency-and-deployment/"><b>Efficiency and Deployment</b><p>A network that trains well is not automatically one you can afford to run.</p></a></div></section>
-        <p class="doc-prev"><a href="/deep-learning/knowledge-distillation/">← Previous: Knowledge Distillation</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/deep-learning/neural-architecture-search">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/deep-learning/knowledge-distillation/" data-topic="deep-learning/knowledge-distillation"><span>Previous · lesson 3</span><b>Knowledge Distillation</b></a><a class="step next" href="/deep-learning/edge-and-on-device-deep-learning/" data-topic="deep-learning/edge-and-on-device-deep-learning"><span>Next · lesson 5</span><b>Edge and On-Device Deep Learning</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Deep%20Learning/Efficiency%20and%20Deployment/Neural%20Architecture%20Search.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-treating-the-architecture-itself-as-something-to-tune" data-scroll="intuition-treating-the-architecture-itself-as-something-to-tune">Intuition: treating the architecture itself as something to tune</a><a href="#definitions" data-scroll="definitions">Definitions</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

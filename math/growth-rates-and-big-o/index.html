@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Growth Rates and Big-O — AI Base</title>
 <meta name="description" content="Big-O notation describes how the cost of an algorithm (time or memory) grows as the input size n grows, ignoring constant factors.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/math/growth-rates-and-big-o/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":4,"name":"Sets, Logic and Counting"},{"@type":"ListItem","position":5,"name":"Growth Rates and Big-O","item":"https://ai.saranmahadev.in/math/growth-rates-and-big-o/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Growth Rates and Big-O","description":"Big-O notation describes how the cost of an algorithm (time or memory) grows as the input size n grows, ignoring constant factors.","url":"https://ai.saranmahadev.in/math/growth-rates-and-big-o/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Sets, Logic and Counting","item":"https://ai.saranmahadev.in/math/sets-logic-and-counting/"},{"@type":"ListItem","position":4,"name":"Growth Rates and Big-O","item":"https://ai.saranmahadev.in/math/growth-rates-and-big-o/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Growth Rates and Big-O","description":"Big-O notation describes how the cost of an algorithm (time or memory) grows as the input size n grows, ignoring constant factors.","url":"https://ai.saranmahadev.in/math/growth-rates-and-big-o/","isPartOf":{"@type":"Course","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the Big-O of 5n + 100?","acceptedAnswer":{"@type":"Answer","text":"O(n)."}},{"@type":"Question","name":"If a method is O(n²) and n triples, the cost multiplies by?","acceptedAnswer":{"@type":"Answer","text":"9."}},{"@type":"Question","name":"Which grows faster, n² or 2ⁿ?","acceptedAnswer":{"@type":"Answer","text":"2ⁿ, eventually far faster."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/math/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Math</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/math/">Math</a></li><li>Sets, Logic and Counting</li><li>Growth Rates and Big-O</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#b39cf5">
-      <header class="doc-head">
-        <h1 class="doc-title">Growth Rates and Big-O</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#f7f5fe"/>
-  <circle cx="664" cy="266" r="150" fill="#e1d7fb" opacity="0.49"/><circle cx="599" cy="61" r="79" fill="#e1d7fb" opacity="0.43"/>
-  <circle cx="281" cy="124" r="137" fill="#b39cf5"/>
-  <line x1="0" y1="196" x2="1200" y2="196" stroke="#b39cf5" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p><strong>Big-O</strong> notation describes how the cost of an algorithm (time or memory) grows as the input size <code>n</code> grows, ignoring constant factors. The difference between <code>n</code>, <code>n²</code> and <code>2ⁿ</code> decides whether a method scales to a million items or gives up at fifty.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/math/logarithms/" data-topic="math/logarithms">Logarithms</a>, <a class="wikilink" href="/math/exponents-and-roots/" data-topic="math/exponents-and-roots">Exponents and Roots</a> and <a class="wikilink" href="/math/areas-volumes-and-scaling/" data-topic="math/areas-volumes-and-scaling">Areas, Volumes and Scaling</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Sets, Logic and Counting chapter">
+        <div class="side-head">
+          <a class="side-course" href="/math/">Math · Chapter 04</a>
+          <a class="side-chapter" href="/math/sets-logic-and-counting/">Sets, Logic and Counting</a>
+          <span class="side-count">8 lessons</span>
+        </div>
+        <ol><li><a href="/math/sets-and-operations/">Sets and Operations</a></li><li><a href="/math/logic-and-truth-tables/">Logic and Truth Tables</a></li><li><a href="/math/reading-proofs-and-quantifiers/">Reading Proofs and Quantifiers</a></li><li><a href="/math/counting-rules/">Counting Rules</a></li><li><a href="/math/permutations-and-combinations/">Permutations and Combinations</a></li><li><a href="/math/graphs-and-networks/">Graphs and Networks</a></li><li><a href="/math/trees-and-hierarchies/">Trees and Hierarchies</a></li><li><a href="/math/growth-rates-and-big-o/" aria-current="page">Growth Rates and Big-O</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="math/growth-rates-and-big-o">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/math/">Math</a></li><li><a href="/math/sets-logic-and-counting/">Sets, Logic and Counting</a></li><li><span aria-current="page">Growth Rates and Big-O</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 8 of 8 · 3 min read</p>
+          <h1>Growth Rates and Big-O</h1>
+        </header>
+        <div class="prose"><p><strong>Big-O</strong> notation describes how the cost of an algorithm (time or memory) grows as the input size <code>n</code> grows, ignoring constant factors. The difference between <code>n</code>, <code>n²</code> and <code>2ⁿ</code> decides whether a method scales to a million items or gives up at fifty.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/math/logarithms/" data-topic="math/logarithms">Logarithms</a><a class="chip wikilink" href="/math/exponents-and-roots/" data-topic="math/exponents-and-roots">Exponents and Roots</a><a class="chip wikilink" href="/math/areas-volumes-and-scaling/" data-topic="math/areas-volumes-and-scaling">Areas, Volumes and Scaling</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;If I double the data, how much longer will this take?&quot; It is the question behind every claim that a method is &quot;efficient&quot; or &quot;does not scale&quot;.</p>
 <h2 id="intuition-the-shape-of-the-growth-curve">Intuition: the shape of the growth curve</h2>
@@ -121,16 +124,21 @@ O(n).
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/math/logarithms/" data-topic="math/logarithms">Logarithms</a> · <a class="wikilink" href="/math/areas-volumes-and-scaling/" data-topic="math/areas-volumes-and-scaling">Areas, Volumes and Scaling</a> · <a class="wikilink" href="/math/counting-rules/" data-topic="math/counting-rules">Counting Rules</a> · <a class="wikilink" href="/math/trees-and-hierarchies/" data-topic="math/trees-and-hierarchies">Trees and Hierarchies</a> · <a class="wikilink" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products">Attention as Dot Products</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/growth-rates-and-big-o">Open in the interactive site →</a></p>
-        <a class="read-next" href="/math/linear-algebra/"><small>Read next</small><b>Linear Algebra</b><p>Linear algebra is the maths of lists of numbers (vectors) and grids of numbers (matrices), and of the simple operations that combine them.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/logarithms/"><b>Logarithms</b><p>A logarithm answers &quot;what power do I raise this base to, to get that number?&quot; log₂ 8 = 3 because 2³ = 8.</p></a><a class="rc-card" href="/math/exponents-and-roots/"><b>Exponents and Roots</b><p>An exponent says how many times to multiply a number by itself, and a root undoes it.</p></a><a class="rc-card" href="/math/areas-volumes-and-scaling/"><b>Areas, Volumes and Scaling</b><p>Area measures a flat region and volume measures a solid. When you scale a shape by a factor k, lengths grow by k, areas by k² and volumes by k³.</p></a><a class="rc-card" href="/math/counting-rules/"><b>Counting Rules</b><p>Counting answers &quot;how many ways can this happen?&quot; without listing them all.</p></a><a class="rc-card" href="/fundamentals/heuristics-and-a-star-search/"><b>Heuristics and A-star Search</b><p>A heuristic is an informed guess about how far you still are from the goal.</p></a><a class="rc-card" href="/math/trees-and-hierarchies/"><b>Trees and Hierarchies</b><p>A tree is a connected graph with no cycles: one root, branches, and leaves at the ends.</p></a></div></section>
-        <p class="doc-prev"><a href="/math/trees-and-hierarchies/">← Previous: Trees and Hierarchies</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/math/growth-rates-and-big-o">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/math/trees-and-hierarchies/" data-topic="math/trees-and-hierarchies"><span>Previous · lesson 7</span><b>Trees and Hierarchies</b></a><a class="step next" href="/math/linear-algebra/" data-topic="math/linear-algebra"><span>Next · chapter overview</span><b>Linear Algebra</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Math/Sets,%20Logic%20and%20Counting/Growth%20Rates%20and%20Big-O.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-the-shape-of-the-growth-curve" data-scroll="intuition-the-shape-of-the-growth-curve">Intuition: the shape of the growth curve</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

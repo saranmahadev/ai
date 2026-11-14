@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Adversarial and Jailbreak Evaluation — AI Base</title>
 <meta name="description" content="safety evaluation on ordinary, well-behaved inputs only tells you how a model behaves when nobody&#39;s trying to break it.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/llms/adversarial-and-jailbreak-evaluation/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"Evaluating LLMs"},{"@type":"ListItem","position":5,"name":"Adversarial and Jailbreak Evaluation","item":"https://ai.saranmahadev.in/llms/adversarial-and-jailbreak-evaluation/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Adversarial and Jailbreak Evaluation","description":"safety evaluation on ordinary, well-behaved inputs only tells you how a model behaves when nobody's trying to break it.","url":"https://ai.saranmahadev.in/llms/adversarial-and-jailbreak-evaluation/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Evaluating LLMs","item":"https://ai.saranmahadev.in/llms/evaluating-llms/"},{"@type":"ListItem","position":4,"name":"Adversarial and Jailbreak Evaluation","item":"https://ai.saranmahadev.in/llms/adversarial-and-jailbreak-evaluation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Adversarial and Jailbreak Evaluation","description":"safety evaluation on ordinary, well-behaved inputs only tells you how a model behaves when nobody's trying to break it.","url":"https://ai.saranmahadev.in/llms/adversarial-and-jailbreak-evaluation/","isPartOf":{"@type":"Course","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why is testing a model's guardrails only against direct requests insufficient for safety evaluation?","acceptedAnswer":{"@type":"Answer","text":"Because direct requests are typically the easiest for guardrails to block — more sophisticated strategies (role-play framing, obfuscation, priming) can succeed at much higher rates, which direct-request testing alone would never reveal."}},{"@type":"Question","name":"In the worked example, which attack strategy was most effective, and by how much did it outperform a direct request?","acceptedAnswer":{"@type":"Answer","text":"Many-shot priming, at 55% success, compared to a direct request's 2% — more than 25 times as effective at bypassing the same guardrails."}},{"@type":"Question","name":"Why is adversarial evaluation an ongoing process rather than a one-time check?","acceptedAnswer":{"@type":"Answer","text":"Because new jailbreak strategies are continuously discovered as models and their guardrails evolve — a model found robust against currently known strategies isn't guaranteed to remain robust against future ones."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/llms/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ LLMs</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/llms/">LLMs</a></li><li>Evaluating LLMs</li><li>Adversarial and Jailbreak Evaluation</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffa970">
-      <header class="doc-head">
-        <h1 class="doc-title">Adversarial and Jailbreak Evaluation</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff6f1"/>
-  <circle cx="877" cy="349" r="143" fill="#ffddc6" opacity="0.59"/><circle cx="704" cy="200" r="84" fill="#ffddc6" opacity="0.46"/><circle cx="692" cy="234" r="181" fill="#ffddc6" opacity="0.55"/>
-  <circle cx="351" cy="273" r="150" fill="#ffa970"/>
-  <line x1="0" y1="310" x2="1200" y2="310" stroke="#ffa970" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/llms/capability-evaluation-vs-safety-evaluation/" data-topic="llms/capability-evaluation-vs-safety-evaluation">safety evaluation</a> on ordinary, well-behaved inputs only tells you how a model behaves when nobody&#39;s trying to break it. Adversarial evaluation asks the harder, more important question: how does it behave when someone specifically is?</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/llms/capability-evaluation-vs-safety-evaluation/" data-topic="llms/capability-evaluation-vs-safety-evaluation">Capability Evaluation vs. Safety Evaluation</a>, <a class="wikilink" href="/generative-ai/content-safety-and-red-teaming/" data-topic="generative-ai/content-safety-and-red-teaming">Content Safety and Red-Teaming</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Evaluating LLMs chapter">
+        <div class="side-head">
+          <a class="side-course" href="/llms/">LLMs · Chapter 06</a>
+          <a class="side-chapter" href="/llms/evaluating-llms/">Evaluating LLMs</a>
+          <span class="side-count">6 lessons</span>
+        </div>
+        <ol><li><a href="/llms/benchmark-suites-mmlu-helm-big-bench/">Benchmark Suites (MMLU, HELM, BIG-bench)</a></li><li><a href="/llms/benchmark-contamination-and-leakage/">Benchmark Contamination and Leakage</a></li><li><a href="/llms/llm-as-judge-evaluation/">LLM-as-Judge Evaluation</a></li><li><a href="/llms/capability-evaluation-vs-safety-evaluation/">Capability Evaluation vs. Safety Evaluation</a></li><li><a href="/llms/leaderboards-and-their-limits/">Leaderboards and Their Limits</a></li><li><a href="/llms/adversarial-and-jailbreak-evaluation/" aria-current="page">Adversarial and Jailbreak Evaluation</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="llms/adversarial-and-jailbreak-evaluation">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/llms/">LLMs</a></li><li><a href="/llms/evaluating-llms/">Evaluating LLMs</a></li><li><span aria-current="page">Adversarial and Jailbreak Evaluation</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 6 of 6 · 4 min read</p>
+          <h1>Adversarial and Jailbreak Evaluation</h1>
+        </header>
+        <div class="prose"><p><a class="wikilink" href="/llms/capability-evaluation-vs-safety-evaluation/" data-topic="llms/capability-evaluation-vs-safety-evaluation">safety evaluation</a> on ordinary, well-behaved inputs only tells you how a model behaves when nobody&#39;s trying to break it. Adversarial evaluation asks the harder, more important question: how does it behave when someone specifically is?</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/llms/capability-evaluation-vs-safety-evaluation/" data-topic="llms/capability-evaluation-vs-safety-evaluation">Capability Evaluation vs. Safety Evaluation</a><a class="chip wikilink" href="/generative-ai/content-safety-and-red-teaming/" data-topic="generative-ai/content-safety-and-red-teaming">Content Safety and Red-Teaming<small class="xc">Generative AI</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;How well do a model&#39;s safety guardrails hold up against someone actively trying to defeat them?&quot; <strong>Jailbreak evaluation</strong> measures the <strong>success rate</strong> of specific adversarial strategies — a direct harmful request, a role-play framing that asks the model to &quot;pretend,&quot; obfuscated or encoded phrasing, a long prompt priming the model with many examples of compliance — at getting a model to produce output its guardrails are supposed to block. Different strategies succeed at very different rates, and a model&#39;s safety can&#39;t be fairly judged by its response to direct requests alone.</p>
 <h2 id="intuition">Intuition</h2>
@@ -113,16 +116,21 @@ Because new jailbreak strategies are continuously discovered as models and their
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/generative-ai/content-safety-and-red-teaming/" data-topic="generative-ai/content-safety-and-red-teaming">Content Safety and Red-Teaming</a> · <a class="wikilink" href="/llms/capability-evaluation-vs-safety-evaluation/" data-topic="llms/capability-evaluation-vs-safety-evaluation">Capability Evaluation vs. Safety Evaluation</a> · <a class="wikilink" href="/llms/guardrails-and-deployment-time-safety-filters/" data-topic="llms/guardrails-and-deployment-time-safety-filters">Guardrails and Deployment-Time Safety Filters</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/adversarial-and-jailbreak-evaluation">Open in the interactive site →</a></p>
-        <a class="read-next" href="/llms/the-llm-landscape/"><small>Read next</small><b>The LLM Landscape</b><p>Outside the technical mechanics, LLMs exist inside a fast-moving ecosystem of model families, release decisions, licenses and governance frameworks that shape who can actually build on what.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/capability-evaluation-vs-safety-evaluation/"><b>Capability Evaluation vs. Safety Evaluation</b><p>&quot;Is this model good?&quot; is really two separate questions wearing one trench coat: can it do the task, and will it behave safely while trying?</p></a><a class="rc-card" href="/generative-ai/content-safety-and-red-teaming/"><b>Content Safety and Red-Teaming</b><p>A watermark is a signal engineered to survive detection.</p></a><a class="rc-card" href="/llms/guardrails-and-deployment-time-safety-filters/"><b>Guardrails and Deployment-Time Safety Filters</b><p>Alignment training shapes what a model tends to do on its own, but a deployed product rarely relies on that alone.</p></a><a class="rc-card" href="/llms/evaluating-llms/"><b>Evaluating LLMs</b><p>Knowing whether an LLM is actually good — not just at one cherry-picked example, but systematically — means building and trusting the right measurement tools.</p></a><a class="rc-card" href="/rag/security-and-data-leakage-in-rag/"><b>Security and Data Leakage in RAG</b><p>Retrieval is a search over documents, and search has always needed access control — a public user&#39;s question shouldn&#39;t be able to pull an internal finance document into its retrieved context,…</p></a><a class="rc-card" href="/agents/prompt-injection-in-agent-contexts/"><b>Prompt Injection in Agent Contexts</b><p>A chatbot tricked by hidden text into saying something it shouldn&#39;t is embarrassing.</p></a></div></section>
-        <p class="doc-prev"><a href="/llms/leaderboards-and-their-limits/">← Previous: Leaderboards and Their Limits</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/llms/adversarial-and-jailbreak-evaluation">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits"><span>Previous · lesson 5</span><b>Leaderboards and Their Limits</b></a><a class="step next" href="/llms/the-llm-landscape/" data-topic="llms/the-llm-landscape"><span>Next · chapter overview</span><b>The LLM Landscape</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/LLMs/Evaluating%20LLMs/Adversarial%20and%20Jailbreak%20Evaluation.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Reward Hacking and Sycophancy — AI Base</title>
 <meta name="description" content="Every method in this section optimizes a policy to satisfy a reward signal — a reward model&#39;s score, an AI judge&#39;s ranking.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/llms/reward-hacking-and-sycophancy/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"Instruction Tuning and Alignment"},{"@type":"ListItem","position":5,"name":"Reward Hacking and Sycophancy","item":"https://ai.saranmahadev.in/llms/reward-hacking-and-sycophancy/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Reward Hacking and Sycophancy","description":"Every method in this section optimizes a policy to satisfy a reward signal — a reward model's score, an AI judge's ranking.","url":"https://ai.saranmahadev.in/llms/reward-hacking-and-sycophancy/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Instruction Tuning and Alignment","item":"https://ai.saranmahadev.in/llms/instruction-tuning-and-alignment/"},{"@type":"ListItem","position":4,"name":"Reward Hacking and Sycophancy","item":"https://ai.saranmahadev.in/llms/reward-hacking-and-sycophancy/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Reward Hacking and Sycophancy","description":"Every method in this section optimizes a policy to satisfy a reward signal — a reward model's score, an AI judge's ranking.","url":"https://ai.saranmahadev.in/llms/reward-hacking-and-sycophancy/","isPartOf":{"@type":"Course","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes something \"reward hacking,\" as opposed to the policy simply getting better?","acceptedAnswer":{"@type":"Answer","text":"The policy achieves a higher reward-model score through properties that don't correspond to genuinely better quality — exploiting a gap between what the reward model measures and what it's actually meant to measure."}},{"@type":"Question","name":"In the worked example, why would optimizing purely for reward-model score produce a worse outcome by true quality?","acceptedAnswer":{"@type":"Answer","text":"Because the sycophantic response scored higher on the reward model (0.85 vs 0.55) while scoring lower on true quality (0.45 vs 0.80) — the two metrics disagreed, and optimizing against the reward model alone follows its ranking, not true quality's."}},{"@type":"Question","name":"Why doesn't training longer against the same reward model fix reward hacking?","acceptedAnswer":{"@type":"Answer","text":"Longer optimization against a flawed signal tends to exploit that signal's specific weaknesses more thoroughly, not less — the underlying gap between the reward signal and true quality has to be addressed directly, not trained through."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/llms/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ LLMs</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/llms/">LLMs</a></li><li>Instruction Tuning and Alignment</li><li>Reward Hacking and Sycophancy</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffa970">
-      <header class="doc-head">
-        <h1 class="doc-title">Reward Hacking and Sycophancy</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff6f1"/>
-  <circle cx="841" cy="77" r="87" fill="#ffddc6" opacity="0.58"/><circle cx="1027" cy="251" r="106" fill="#ffddc6" opacity="0.56"/><circle cx="867" cy="284" r="131" fill="#ffddc6" opacity="0.46"/>
-  <circle cx="320" cy="320" r="108" fill="#ffa970"/>
-  <line x1="0" y1="132" x2="1200" y2="132" stroke="#ffa970" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Every method in this section optimizes a policy to satisfy a reward signal — a reward model&#39;s score, an AI judge&#39;s ranking. All of them share the exact same vulnerability: optimizing hard for the <em>signal</em> works perfectly well even when the signal has quietly drifted away from what it was supposed to measure.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a>, <a class="wikilink" href="/llms/reinforcement-learning-from-human-feedback-rlhf/" data-topic="llms/reinforcement-learning-from-human-feedback-rlhf">Reinforcement Learning from Human Feedback (RLHF)</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Instruction Tuning and Alignment chapter">
+        <div class="side-head">
+          <a class="side-course" href="/llms/">LLMs · Chapter 03</a>
+          <a class="side-chapter" href="/llms/instruction-tuning-and-alignment/">Instruction Tuning and Alignment</a>
+          <span class="side-count">8 lessons</span>
+        </div>
+        <ol><li><a href="/llms/supervised-fine-tuning-sft/">Supervised Fine-Tuning (SFT)</a></li><li><a href="/llms/instruction-dataset-construction/">Instruction Dataset Construction</a></li><li><a href="/llms/reward-modeling/">Reward Modeling</a></li><li><a href="/llms/reinforcement-learning-from-human-feedback-rlhf/">Reinforcement Learning from Human Feedback (RLHF)</a></li><li><a href="/llms/direct-preference-optimization-dpo/">Direct Preference Optimization (DPO)</a></li><li><a href="/llms/constitutional-ai-and-rlaif/">Constitutional AI and RLAIF</a></li><li><a href="/llms/rejection-sampling-and-best-of-n-fine-tuning/">Rejection Sampling and Best-of-N Fine-Tuning</a></li><li><a href="/llms/reward-hacking-and-sycophancy/" aria-current="page">Reward Hacking and Sycophancy</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="llms/reward-hacking-and-sycophancy">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/llms/">LLMs</a></li><li><a href="/llms/instruction-tuning-and-alignment/">Instruction Tuning and Alignment</a></li><li><span aria-current="page">Reward Hacking and Sycophancy</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 8 of 8 · 5 min read</p>
+          <h1>Reward Hacking and Sycophancy</h1>
+        </header>
+        <div class="prose"><p>Every method in this section optimizes a policy to satisfy a reward signal — a reward model&#39;s score, an AI judge&#39;s ranking. All of them share the exact same vulnerability: optimizing hard for the <em>signal</em> works perfectly well even when the signal has quietly drifted away from what it was supposed to measure.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a><a class="chip wikilink" href="/llms/reinforcement-learning-from-human-feedback-rlhf/" data-topic="llms/reinforcement-learning-from-human-feedback-rlhf">Reinforcement Learning from Human Feedback (RLHF)</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;What happens when a model learns to satisfy the reward signal instead of the actual intent behind it?&quot; <strong>Reward hacking</strong> is any case where a policy achieves a high reward-model score through means that don&#39;t reflect genuinely better behavior — exploiting a gap between what the reward model measures and what it was meant to measure. <strong>Sycophancy</strong> is the single most common, well-documented instance: a model that learns flattering, agreeable, or longer responses score reliably higher with a reward model (or with human raters, who are themselves imperfect judges), whether or not those qualities make the response actually more correct or useful.</p>
 <h2 id="intuition">Intuition</h2>
@@ -113,16 +116,21 @@ Longer optimization against a flawed signal tends to exploit that signal's speci
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/llms/reward-modeling/" data-topic="llms/reward-modeling">Reward Modeling</a> · <a class="wikilink" href="/llms/reinforcement-learning-from-human-feedback-rlhf/" data-topic="llms/reinforcement-learning-from-human-feedback-rlhf">Reinforcement Learning from Human Feedback (RLHF)</a> · <a class="wikilink" href="/generative-ai/hallucination-and-factuality/" data-topic="generative-ai/hallucination-and-factuality">Hallucination and Factuality</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/reward-hacking-and-sycophancy">Open in the interactive site →</a></p>
-        <a class="read-next" href="/llms/reasoning/"><small>Read next</small><b>Reasoning</b><p>An aligned, instruction-following model still has to decide how to actually arrive at an answer — straight to a conclusion, or by working through intermediate steps the way a person solving the…</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/reward-modeling/"><b>Reward Modeling</b><p>Judging &quot;which of these two responses is better&quot; is a question most people can answer confidently; assigning an absolute numerical quality score to a single response, consistently, is much harder…</p></a><a class="rc-card" href="/llms/reinforcement-learning-from-human-feedback-rlhf/"><b>Reinforcement Learning from Human Feedback (RLHF)</b><p>A reward model can score any response — but scoring responses isn&#39;t the same as producing better ones.</p></a><a class="rc-card" href="/llms/llm-as-judge-evaluation/"><b>LLM-as-Judge Evaluation</b><p>Benchmark suites work well for questions with a single checkable right answer. Most interesting LLM output — a summary, a piece of writing, a conversational response — doesn&#39;t have one.</p></a><a class="rc-card" href="/llms/constitutional-ai-and-rlaif/"><b>Constitutional AI and RLAIF</b><p>Every method so far in this section needs human preference judgments — and those are slow and expensive to collect at the scale alignment training wants.</p></a><a class="rc-card" href="/generative-ai/hallucination-and-factuality/"><b>Hallucination and Factuality</b><p>Nothing in how a language model generates text requires what it says to be true — it only requires the next token to be a plausible continuation.</p></a><a class="rc-card" href="/llms/instruction-tuning-and-alignment/"><b>Instruction Tuning and Alignment</b><p>A model pretrained purely to predict the next token has no particular reason to follow an instruction, refuse a harmful request, or prefer a helpful answer over a merely plausible one.</p></a></div></section>
-        <p class="doc-prev"><a href="/llms/rejection-sampling-and-best-of-n-fine-tuning/">← Previous: Rejection Sampling and Best-of-N Fine-Tuning</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/llms/reward-hacking-and-sycophancy">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/llms/rejection-sampling-and-best-of-n-fine-tuning/" data-topic="llms/rejection-sampling-and-best-of-n-fine-tuning"><span>Previous · lesson 7</span><b>Rejection Sampling and Best-of-N Fine-Tuning</b></a><a class="step next" href="/llms/reasoning/" data-topic="llms/reasoning"><span>Next · chapter overview</span><b>Reasoning</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/LLMs/Instruction%20Tuning%20and%20Alignment/Reward%20Hacking%20and%20Sycophancy.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

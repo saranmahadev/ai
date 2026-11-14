@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Parameter-Efficient Adaptation for Generation — AI Base</title>
 <meta name="description" content="Adapting a huge generative model to a specific style, domain, or speaker (as in Voice Cloning and Speaker Adaptation) by retraining all of its weights would mean storing and updating a full new…">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/parameter-efficient-adaptation-for-generation/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":4,"name":"Generative AI in Practice"},{"@type":"ListItem","position":5,"name":"Parameter-Efficient Adaptation for Generation","item":"https://ai.saranmahadev.in/generative-ai/parameter-efficient-adaptation-for-generation/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Parameter-Efficient Adaptation for Generation","description":"Adapting a huge generative model to a specific style, domain, or speaker (as in Voice Cloning and Speaker Adaptation) by retraining all of its weights would mean storing and updating a full new…","url":"https://ai.saranmahadev.in/generative-ai/parameter-efficient-adaptation-for-generation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Generative AI in Practice","item":"https://ai.saranmahadev.in/generative-ai/generative-ai-in-practice/"},{"@type":"ListItem","position":4,"name":"Parameter-Efficient Adaptation for Generation","item":"https://ai.saranmahadev.in/generative-ai/parameter-efficient-adaptation-for-generation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Parameter-Efficient Adaptation for Generation","description":"Adapting a huge generative model to a specific style, domain, or speaker (as in Voice Cloning and Speaker Adaptation) by retraining all of its weights would mean storing and updating a full new…","url":"https://ai.saranmahadev.in/generative-ai/parameter-efficient-adaptation-for-generation/","isPartOf":{"@type":"Course","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does LoRA actually learn, as opposed to full fine-tuning?","acceptedAnswer":{"@type":"Answer","text":"A low-rank correction (the product of two small matrices, A and B) added onto a frozen original weight matrix, rather than updating every entry of the original matrix directly."}},{"@type":"Question","name":"In the worked example, how many parameters did LoRA at rank 4 use compared to full fine-tuning, for a 64×64 matrix?","acceptedAnswer":{"@type":"Answer","text":"512 parameters (2 × 64 × 4) versus 4,096 for full fine-tuning — an 87.5% reduction."}},{"@type":"Question","name":"Does a low-rank update's restricted expressiveness mean it can't meaningfully change a model's behavior?","acceptedAnswer":{"@type":"Answer","text":"No — the worked example shows a real, measurable change in output even at a small rank; the restriction limits what *kinds* of changes are expressible, not whether a change can be substantial."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/generative-ai/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Generative AI</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/generative-ai/">Generative AI</a></li><li>Generative AI in Practice</li><li>Parameter-Efficient Adaptation for Generation</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ff9ccf">
-      <header class="doc-head">
-        <h1 class="doc-title">Parameter-Efficient Adaptation for Generation</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff5fa"/>
-  <circle cx="556" cy="96" r="167" fill="#ffd7ec" opacity="0.51"/><circle cx="458" cy="48" r="153" fill="#ffd7ec" opacity="0.58"/><circle cx="950" cy="146" r="78" fill="#ffd7ec" opacity="0.37"/>
-  <circle cx="228" cy="120" r="105" fill="#ff9ccf"/>
-  <line x1="0" y1="281" x2="1200" y2="281" stroke="#ff9ccf" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Adapting a huge generative model to a specific style, domain, or speaker (as in <a class="wikilink" href="/generative-ai/voice-cloning-and-speaker-adaptation/" data-topic="generative-ai/voice-cloning-and-speaker-adaptation">Voice Cloning and Speaker Adaptation</a>) by retraining all of its weights would mean storing and updating a full new copy of the model for every adaptation. This note covers the standard trick for avoiding that: learning a tiny update instead of a full one.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/voice-cloning-and-speaker-adaptation/" data-topic="generative-ai/voice-cloning-and-speaker-adaptation">Voice Cloning and Speaker Adaptation</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Generative AI in Practice chapter">
+        <div class="side-head">
+          <a class="side-course" href="/generative-ai/">Generative AI · Chapter 09</a>
+          <a class="side-chapter" href="/generative-ai/generative-ai-in-practice/">Generative AI in Practice</a>
+          <span class="side-count">4 lessons</span>
+        </div>
+        <ol><li><a href="/generative-ai/parameter-efficient-adaptation-for-generation/" aria-current="page">Parameter-Efficient Adaptation for Generation</a></li><li><a href="/generative-ai/building-a-generative-product/">Building a Generative Product</a></li><li><a href="/generative-ai/compute-and-environmental-costs-of-generative-ai/">Compute and Environmental Costs of Generative AI</a></li><li><a href="/generative-ai/capstone-a-tiny-multimodal-generator-with-decoding-and-guidance/">Capstone: A Tiny Multimodal Generator with Decoding and Guidance</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="generative-ai/parameter-efficient-adaptation-for-generation">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/generative-ai/">Generative AI</a></li><li><a href="/generative-ai/generative-ai-in-practice/">Generative AI in Practice</a></li><li><span aria-current="page">Parameter-Efficient Adaptation for Generation</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 1 of 4 · 5 min read</p>
+          <h1>Parameter-Efficient Adaptation for Generation</h1>
+        </header>
+        <div class="prose"><p>Adapting a huge generative model to a specific style, domain, or speaker (as in <a class="wikilink" href="/generative-ai/voice-cloning-and-speaker-adaptation/" data-topic="generative-ai/voice-cloning-and-speaker-adaptation">Voice Cloning and Speaker Adaptation</a>) by retraining all of its weights would mean storing and updating a full new copy of the model for every adaptation. This note covers the standard trick for avoiding that: learning a tiny update instead of a full one.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/generative-ai/voice-cloning-and-speaker-adaptation/" data-topic="generative-ai/voice-cloning-and-speaker-adaptation">Voice Cloning and Speaker Adaptation</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;How do you adapt a large generative model&#39;s behavior without retraining all of its weights?&quot; <strong>LoRA</strong> (low-rank adaptation) freezes the original weight matrix entirely and learns a small <em>correction</em> to it, expressed as the product of two much smaller matrices: <code>A</code> (d × r) and <code>B</code> (r × d), for some small rank <code>r</code> chosen far smaller than <code>d</code>. The adapted weight is simply the original plus that low-rank correction — <code>W&#39; = W + A·B</code> — with only <code>2·d·r</code> new parameters learned, instead of the full <code>d²</code> a complete retraining would touch.</p>
 <h2 id="intuition">Intuition</h2>
@@ -114,16 +117,21 @@ No — the worked example shows a real, measurable change in output even at a sm
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/generative-ai/voice-cloning-and-speaker-adaptation/" data-topic="generative-ai/voice-cloning-and-speaker-adaptation">Voice Cloning and Speaker Adaptation</a> · <a class="wikilink" href="/generative-ai/building-a-generative-product/" data-topic="generative-ai/building-a-generative-product">Building a Generative Product</a> · <a class="wikilink" href="/generative-ai/compute-and-environmental-costs-of-generative-ai/" data-topic="generative-ai/compute-and-environmental-costs-of-generative-ai">Compute and Environmental Costs of Generative AI</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/parameter-efficient-adaptation-for-generation">Open in the interactive site →</a></p>
-        <a class="read-next" href="/generative-ai/building-a-generative-product/"><small>Read next</small><b>Building a Generative Product</b><p>Everything in this subject so far has been about a single request: decode it well, condition it correctly, evaluate it fairly.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/voice-cloning-and-speaker-adaptation/"><b>Voice Cloning and Speaker Adaptation</b><p>A text-to-speech pipeline&#39;s prosody predictions describe some voice — but making it sound like a specific person, from only a few seconds of their recorded speech, is a separate problem.</p></a><a class="rc-card" href="/generative-ai/building-a-generative-product/"><b>Building a Generative Product</b><p>Everything in this subject so far has been about a single request: decode it well, condition it correctly, evaluate it fairly.</p></a><a class="rc-card" href="/generative-ai/compute-and-environmental-costs-of-generative-ai/"><b>Compute and Environmental Costs of Generative AI</b><p>Every stage in this subject, from a single denoising step to a whole product pipeline, costs real computation — and computation costs real energy, drawn from a real power grid.</p></a><a class="rc-card" href="/generative-ai/prompting-and-in-context-learning/"><b>Prompting and In-Context Learning</b><p>None of the decoding controls so far change what the model &quot;knows&quot; — they only change how its existing distribution gets turned into tokens.</p></a><a class="rc-card" href="/generative-ai/few-shot-and-zero-shot-generation/"><b>Few-Shot and Zero-Shot Generation</b><p>The copying mechanism in Prompting and In-Context Learning only works when the pattern it needs is actually present in the prompt — which raises a direct, practical question: how many examples…</p></a><a class="rc-card" href="/generative-ai/generative-ai-in-practice/"><b>Generative AI in Practice</b><p>This last section of the subject: adapting a generative model to a specific use case, serving it as a real product, counting the resources that costs, and a capstone that reassembles decoding and…</p></a></div></section>
-        <p class="doc-prev"><a href="/generative-ai/generative-ai-in-practice/">← Previous: Generative AI in Practice</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/generative-ai/parameter-efficient-adaptation-for-generation">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/generative-ai/generative-ai-in-practice/" data-topic="generative-ai/generative-ai-in-practice"><span>Previous · chapter overview</span><b>Generative AI in Practice</b></a><a class="step next" href="/generative-ai/building-a-generative-product/" data-topic="generative-ai/building-a-generative-product"><span>Next · lesson 2</span><b>Building a Generative Product</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Generative%20AI/Generative%20AI%20in%20Practice/Parameter-Efficient%20Adaptation%20for%20Generation.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

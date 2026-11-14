@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bias, Variance and the Whole Picture — AI Base</title>
 <meta name="description" content="A model&#39;s error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/math/bias-variance-and-the-whole-picture/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":4,"name":"Math in AI"},{"@type":"ListItem","position":5,"name":"Bias, Variance and the Whole Picture","item":"https://ai.saranmahadev.in/math/bias-variance-and-the-whole-picture/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bias, Variance and the Whole Picture","description":"A model's error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…","url":"https://ai.saranmahadev.in/math/bias-variance-and-the-whole-picture/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Math in AI","item":"https://ai.saranmahadev.in/math/math-in-ai/"},{"@type":"ListItem","position":4,"name":"Bias, Variance and the Whole Picture","item":"https://ai.saranmahadev.in/math/bias-variance-and-the-whole-picture/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bias, Variance and the Whole Picture","description":"A model's error on new data comes from three sources: bias (the model is too simple to capture the pattern), variance (the model is so flexible it changes wildly with the particular training data)…","url":"https://ai.saranmahadev.in/math/bias-variance-and-the-whole-picture/","isPartOf":{"@type":"Course","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"A model gets the same wrong answer on every training set. Is that bias or variance?","acceptedAnswer":{"@type":"Answer","text":"Bias."}},{"@type":"Question","name":"Which helps with high variance: more data or a bigger model?","acceptedAnswer":{"@type":"Answer","text":"More data (a bigger model would raise variance)."}},{"@type":"Question","name":"Can any model beat the noise floor?","acceptedAnswer":{"@type":"Answer","text":"No."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/math/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Math</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/math/">Math</a></li><li>Math in AI</li><li>Bias, Variance and the Whole Picture</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#b39cf5">
-      <header class="doc-head">
-        <h1 class="doc-title">Bias, Variance and the Whole Picture</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#f7f5fe"/>
-  <circle cx="658" cy="377" r="158" fill="#e1d7fb" opacity="0.50"/><circle cx="882" cy="122" r="116" fill="#e1d7fb" opacity="0.42"/><circle cx="831" cy="150" r="160" fill="#e1d7fb" opacity="0.36"/>
-  <circle cx="225" cy="145" r="115" fill="#b39cf5"/>
-  <line x1="0" y1="200" x2="1200" y2="200" stroke="#b39cf5" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>A model&#39;s error on new data comes from three sources: <strong>bias</strong> (the model is too simple to capture the pattern), <strong>variance</strong> (the model is so flexible it changes wildly with the particular training data) and <strong>noise</strong> (randomness no model can predict). Tuning a model is largely a trade between the first two. This topic also pulls the whole subject together.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a>, <a class="wikilink" href="/math/overfitting-in-statistics/" data-topic="math/overfitting-in-statistics">Overfitting in Statistics</a>, <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a> and <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Math in AI chapter">
+        <div class="side-head">
+          <a class="side-course" href="/math/">Math · Chapter 12</a>
+          <a class="side-chapter" href="/math/math-in-ai/">Math in AI</a>
+          <span class="side-count">8 lessons</span>
+        </div>
+        <ol><li><a href="/math/linear-regression-end-to-end/">Linear Regression End to End</a></li><li><a href="/math/logistic-regression-and-the-sigmoid/">Logistic Regression and the Sigmoid</a></li><li><a href="/math/a-forward-pass-by-hand/">A Forward Pass by Hand</a></li><li><a href="/math/backpropagation-by-hand/">Backpropagation by Hand</a></li><li><a href="/math/softmax-and-cross-entropy-in-practice/">Softmax and Cross-Entropy in Practice</a></li><li><a href="/math/embeddings-and-similarity-search/">Embeddings and Similarity Search</a></li><li><a href="/math/attention-as-dot-products/">Attention as Dot Products</a></li><li><a href="/math/bias-variance-and-the-whole-picture/" aria-current="page">Bias, Variance and the Whole Picture</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="math/bias-variance-and-the-whole-picture">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/math/">Math</a></li><li><a href="/math/math-in-ai/">Math in AI</a></li><li><span aria-current="page">Bias, Variance and the Whole Picture</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 8 of 8 · 4 min read</p>
+          <h1>Bias, Variance and the Whole Picture</h1>
+        </header>
+        <div class="prose"><p>A model&#39;s error on new data comes from three sources: <strong>bias</strong> (the model is too simple to capture the pattern), <strong>variance</strong> (the model is so flexible it changes wildly with the particular training data) and <strong>noise</strong> (randomness no model can predict). Tuning a model is largely a trade between the first two. This topic also pulls the whole subject together.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a><a class="chip wikilink" href="/math/overfitting-in-statistics/" data-topic="math/overfitting-in-statistics">Overfitting in Statistics</a><a class="chip wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a><a class="chip wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Why does my model make errors, and what should I change?&quot; The right remedy depends on which source dominates: a simpler model cannot fix noise, and more data cannot fix a model that is too rigid.</p>
 <h2 id="the-decomposition">The decomposition</h2>
@@ -131,16 +134,21 @@ No.
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/math/estimation-and-bias/" data-topic="math/estimation-and-bias">Estimation and Bias</a> · <a class="wikilink" href="/math/overfitting-in-statistics/" data-topic="math/overfitting-in-statistics">Overfitting in Statistics</a> · <a class="wikilink" href="/math/regularization-as-a-constraint/" data-topic="math/regularization-as-a-constraint">Regularization as a Constraint</a> · <a class="wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a> · <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/bias-variance-and-the-whole-picture">Open in the interactive site →</a></p>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/math/bias-variance-and-the-whole-picture">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/math/attention-as-dot-products/" data-topic="math/attention-as-dot-products"><span>Previous · lesson 7</span><b>Attention as Dot Products</b></a><span class="step empty"></span></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Math/Math%20in%20AI/Bias,%20Variance%20and%20the%20Whole%20Picture.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#the-decomposition" data-scroll="the-decomposition">The decomposition</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#how-to-steer" data-scroll="how-to-steer">How to steer</a><a href="#the-whole-picture" data-scroll="the-whole-picture">The whole picture</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
         
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/estimation-and-bias/"><b>Estimation and Bias</b><p>An estimator is a recipe for guessing an unknown quantity from data, such as using the sample mean to estimate the population mean.</p></a><a class="rc-card" href="/math/overfitting-in-statistics/"><b>Overfitting in Statistics</b><p>Overfitting happens when a model fits the quirks and noise of its training data instead of the underlying pattern, so it does well on the data it saw and badly on new data.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/math/regularization-as-a-constraint/"><b>Regularization as a Constraint</b><p>Regularization keeps a model from fitting noise by discouraging large weights: add a penalty such as λ‖w‖² to the loss.</p></a><a class="rc-card" href="/fundamentals/generalization/"><b>Generalization</b><p>Generalization is a model&#39;s ability to do well on examples it has never seen. A model that merely memorises its training examples, noise and all, scores perfectly on them and poorly on anything new.</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a></div></section>
-        <p class="doc-prev"><a href="/math/attention-as-dot-products/">← Previous: Attention as Dot Products</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

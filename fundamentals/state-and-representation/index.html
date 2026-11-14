@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>State and Representation — AI Base</title>
 <meta name="description" content="The state is the agent&#39;s summary of the situation: everything it needs to know to choose a good action, and nothing more.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/state-and-representation/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":4,"name":"The Agent"},{"@type":"ListItem","position":5,"name":"State and Representation","item":"https://ai.saranmahadev.in/fundamentals/state-and-representation/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"State and Representation","description":"The state is the agent's summary of the situation: everything it needs to know to choose a good action, and nothing more.","url":"https://ai.saranmahadev.in/fundamentals/state-and-representation/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"The Agent","item":"https://ai.saranmahadev.in/fundamentals/the-agent/"},{"@type":"ListItem","position":4,"name":"State and Representation","item":"https://ai.saranmahadev.in/fundamentals/state-and-representation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"State and Representation","description":"The state is the agent's summary of the situation: everything it needs to know to choose a good action, and nothing more.","url":"https://ai.saranmahadev.in/fundamentals/state-and-representation/","isPartOf":{"@type":"Course","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What should a good state include?","acceptedAnswer":{"@type":"Answer","text":"Every fact that affects the right decision, and little else."}},{"@type":"Question","name":"A robot has 50 positions and 3 battery levels. How many states is that?","acceptedAnswer":{"@type":"Answer","text":"50 × 3 = 150 distinct states."}},{"@type":"Question","name":"Why does adding more facts make a problem harder?","acceptedAnswer":{"@type":"Answer","text":"The number of possible situations multiplies with each new fact, so there is much more for the agent to distinguish and learn about."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/fundamentals/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ AI Fundamentals</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/fundamentals/">AI Fundamentals</a></li><li>The Agent</li><li>State and Representation</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#79d3c1">
-      <header class="doc-head">
-        <h1 class="doc-title">State and Representation</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#f2fbf9"/>
-  <circle cx="844" cy="171" r="62" fill="#c9ede6" opacity="0.42"/><circle cx="729" cy="374" r="73" fill="#c9ede6" opacity="0.58"/><circle cx="661" cy="199" r="109" fill="#c9ede6" opacity="0.34"/>
-  <circle cx="334" cy="248" r="151" fill="#79d3c1"/>
-  <line x1="0" y1="158" x2="1200" y2="158" stroke="#79d3c1" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>The <strong>state</strong> is the agent&#39;s summary of the situation: everything it needs to know to choose a good action, and nothing more. How you <strong>represent</strong> that state, as numbers, a table, a graph or something else, decides what the agent can notice and how hard its problem becomes.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a> and <a class="wikilink" href="/fundamentals/pda-loop/" data-topic="fundamentals/pda-loop">PDA Loop</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="The Agent chapter">
+        <div class="side-head">
+          <a class="side-course" href="/fundamentals/">AI Fundamentals · Chapter 02</a>
+          <a class="side-chapter" href="/fundamentals/the-agent/">The Agent</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/fundamentals/agents-and-environments/">Agents and Environments</a></li><li><a href="/fundamentals/pda-loop/">PDA Loop</a></li><li><a href="/fundamentals/goals-utility-and-rationality/">Goals, Utility and Rationality</a></li><li><a href="/fundamentals/state-and-representation/" aria-current="page">State and Representation</a></li><li><a href="/fundamentals/kinds-of-environments/">Kinds of Environments</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="fundamentals/state-and-representation">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/fundamentals/">AI Fundamentals</a></li><li><a href="/fundamentals/the-agent/">The Agent</a></li><li><span aria-current="page">State and Representation</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 4 of 5 · 4 min read</p>
+          <h1>State and Representation</h1>
+        </header>
+        <div class="prose"><p>The <strong>state</strong> is the agent&#39;s summary of the situation: everything it needs to know to choose a good action, and nothing more. How you <strong>represent</strong> that state, as numbers, a table, a graph or something else, decides what the agent can notice and how hard its problem becomes.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a><a class="chip wikilink" href="/fundamentals/pda-loop/" data-topic="fundamentals/pda-loop">PDA Loop</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>An agent cannot use the whole world. So what does it keep track of? Too little and it makes silly mistakes. Too much and the problem becomes enormous.</p>
 <h2 id="intuition-the-notes-you-would-jot-down">Intuition: the notes you would jot down</h2>
@@ -132,16 +135,21 @@ The number of possible situations multiplies with each new fact, so there is muc
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/fundamentals/agents-and-environments/" data-topic="fundamentals/agents-and-environments">Agents and Environments</a> · <a class="wikilink" href="/fundamentals/pda-loop/" data-topic="fundamentals/pda-loop">PDA Loop</a> · <a class="wikilink" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments">Kinds of Environments</a> · <a class="wikilink" href="/fundamentals/search/" data-topic="fundamentals/search">Search</a> · <a class="wikilink" href="/fundamentals/logic-and-knowledge-representation/" data-topic="fundamentals/logic-and-knowledge-representation">Logic and Knowledge Representation</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/state-and-representation">Open in the interactive site →</a></p>
-        <a class="read-next" href="/fundamentals/kinds-of-environments/"><small>Read next</small><b>Kinds of Environments</b><p>Some AI problems are easy and others are brutal, and much of the difference lies in the environment.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/agents-and-environments/"><b>Agents and Environments</b><p>An agent is anything that perceives its surroundings through sensors and acts on them through actuators to pursue a goal. The surroundings it lives in are its environment.</p></a><a class="rc-card" href="/fundamentals/pda-loop/"><b>PDA Loop</b><p>The Perception → Decision → Action loop is the heartbeat of every intelligent system.</p></a><a class="rc-card" href="/fundamentals/logic-and-knowledge-representation/"><b>Logic and Knowledge Representation</b><p>Classic AI stored what it knew as facts and rules, and used inference to work out new facts from them. Writing knowledge in a form a machine can reason with is called knowledge representation.</p></a><a class="rc-card" href="/fundamentals/kinds-of-environments/"><b>Kinds of Environments</b><p>Some AI problems are easy and others are brutal, and much of the difference lies in the environment.</p></a><a class="rc-card" href="/fundamentals/search/"><b>Search</b><p>Search is how a machine finds a path or a plan by exploring possibilities systematically.</p></a><a class="rc-card" href="/llms/llms/"><b>LLMs</b><p>A large language model is, mechanically, nothing more than the decoder-only transformer and the decoding, conditioning and evaluation machinery already covered on Transformers and Generative AI.</p></a></div></section>
-        <p class="doc-prev"><a href="/fundamentals/goals-utility-and-rationality/">← Previous: Goals, Utility and Rationality</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/fundamentals/state-and-representation">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/fundamentals/goals-utility-and-rationality/" data-topic="fundamentals/goals-utility-and-rationality"><span>Previous · lesson 3</span><b>Goals, Utility and Rationality</b></a><a class="step next" href="/fundamentals/kinds-of-environments/" data-topic="fundamentals/kinds-of-environments"><span>Next · lesson 5</span><b>Kinds of Environments</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Fundamentals/The%20Agent/State%20and%20Representation.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-the-notes-you-would-jot-down" data-scroll="intuition-the-notes-you-would-jot-down">Intuition: the notes you would jot down</a><a href="#state-in-two-familiar-systems" data-scroll="state-in-two-familiar-systems">State in two familiar systems</a><a href="#representation-the-same-state-written-differently" data-scroll="representation-the-same-state-written-differently">Representation: the same state, written differently</a><a href="#bigger-state-bigger-problem" data-scroll="bigger-state-bigger-problem">Bigger state, bigger problem</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

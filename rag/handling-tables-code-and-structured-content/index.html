@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Handling Tables, Code and Structured Content — AI Base</title>
 <meta name="description" content="Flattening a pricing table into one run-on paragraph destroys the one thing that made it useful — knowing which number went with which row.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/rag/handling-tables-code-and-structured-content/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Document Processing and Chunking"},{"@type":"ListItem","position":5,"name":"Handling Tables, Code and Structured Content","item":"https://ai.saranmahadev.in/rag/handling-tables-code-and-structured-content/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Handling Tables, Code and Structured Content","description":"Flattening a pricing table into one run-on paragraph destroys the one thing that made it useful — knowing which number went with which row.","url":"https://ai.saranmahadev.in/rag/handling-tables-code-and-structured-content/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Document Processing and Chunking","item":"https://ai.saranmahadev.in/rag/document-processing-and-chunking/"},{"@type":"ListItem","position":4,"name":"Handling Tables, Code and Structured Content","item":"https://ai.saranmahadev.in/rag/handling-tables-code-and-structured-content/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Handling Tables, Code and Structured Content","description":"Flattening a pricing table into one run-on paragraph destroys the one thing that made it useful — knowing which number went with which row.","url":"https://ai.saranmahadev.in/rag/handling-tables-code-and-structured-content/","isPartOf":{"@type":"Course","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the flattened table's embedding score so much lower against a row-specific query?","acceptedAnswer":{"@type":"Answer","text":"The flattened table's embedding is effectively an average over every row's content, so it isn't strongly aligned with any single row's topic — including the Pro plan row the query actually needs."}},{"@type":"Question","name":"Would flattening a 2-row table cause the same problem as flattening a 20-row table?","acceptedAnswer":{"@type":"Answer","text":"To a lesser degree — averaging over fewer, more similar rows dilutes less than averaging over many varied ones, but the underlying problem (losing which content belongs to which row) is the same regardless of table size."}},{"@type":"Question","name":"What's the right chunking unit for source code, by the same logic that applies to table rows?","acceptedAnswer":{"@type":"Answer","text":"A function, class or logical block — the structural unit that code's own syntax already defines, analogous to a table's row."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ RAG</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Document Processing and Chunking</li><li>Handling Tables, Code and Structured Content</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#5fd1d9">
-      <header class="doc-head">
-        <h1 class="doc-title">Handling Tables, Code and Structured Content</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#effafb"/>
-  <circle cx="1091" cy="55" r="141" fill="#bfedf0" opacity="0.38"/><circle cx="932" cy="123" r="106" fill="#bfedf0" opacity="0.52"/><circle cx="864" cy="83" r="67" fill="#bfedf0" opacity="0.30"/>
-  <circle cx="376" cy="154" r="107" fill="#5fd1d9"/>
-  <line x1="0" y1="302" x2="1200" y2="302" stroke="#5fd1d9" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Flattening a pricing table into one run-on paragraph destroys the one thing that made it useful — knowing which number went with which row. The same chunking advice that works for prose (split by sentence, by topic) actively damages content whose meaning <em>is</em> its structure.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/rag/metadata-extraction-and-enrichment/" data-topic="rag/metadata-extraction-and-enrichment">Metadata Extraction and Enrichment</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Document Processing and Chunking chapter">
+        <div class="side-head">
+          <a class="side-course" href="/rag/">RAG · Chapter 02</a>
+          <a class="side-chapter" href="/rag/document-processing-and-chunking/">Document Processing and Chunking</a>
+          <span class="side-count">6 lessons</span>
+        </div>
+        <ol><li><a href="/rag/parsing-documents-for-retrieval/">Parsing Documents for Retrieval</a></li><li><a href="/rag/fixed-size-and-recursive-chunking/">Fixed-Size and Recursive Chunking</a></li><li><a href="/rag/semantic-and-structure-aware-chunking/">Semantic and Structure-Aware Chunking</a></li><li><a href="/rag/chunk-overlap-and-size-trade-offs/">Chunk Overlap and Size Trade-offs</a></li><li><a href="/rag/metadata-extraction-and-enrichment/">Metadata Extraction and Enrichment</a></li><li><a href="/rag/handling-tables-code-and-structured-content/" aria-current="page">Handling Tables, Code and Structured Content</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="rag/handling-tables-code-and-structured-content">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/rag/">RAG</a></li><li><a href="/rag/document-processing-and-chunking/">Document Processing and Chunking</a></li><li><span aria-current="page">Handling Tables, Code and Structured Content</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 6 of 6 · 4 min read</p>
+          <h1>Handling Tables, Code and Structured Content</h1>
+        </header>
+        <div class="prose"><p>Flattening a pricing table into one run-on paragraph destroys the one thing that made it useful — knowing which number went with which row. The same chunking advice that works for prose (split by sentence, by topic) actively damages content whose meaning <em>is</em> its structure.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/rag/metadata-extraction-and-enrichment/" data-topic="rag/metadata-extraction-and-enrichment">Metadata Extraction and Enrichment</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;How should chunking change for content that isn&#39;t ordinary prose?&quot; A table&#39;s rows, a function&#39;s source code, a form&#39;s fields all carry meaning in their <em>structure</em>, not just their words. Flattening a table into a single paragraph averages its rows together into something that barely resembles any one of them — a query about one specific row ends up matching a vague blur of the whole table instead of the row it&#39;s actually asking about.</p>
 <h2 id="intuition">Intuition</h2>
@@ -112,16 +115,21 @@ A function, class or logical block — the structural unit that code's own synta
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/rag/metadata-extraction-and-enrichment/" data-topic="rag/metadata-extraction-and-enrichment">Metadata Extraction and Enrichment</a> · <a class="wikilink" href="/rag/retrieval-over-structured-data/" data-topic="rag/retrieval-over-structured-data">Retrieval over Structured Data</a> · <a class="wikilink" href="/rag/fixed-size-and-recursive-chunking/" data-topic="rag/fixed-size-and-recursive-chunking">Fixed-Size and Recursive Chunking</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/handling-tables-code-and-structured-content">Open in the interactive site →</a></p>
-        <a class="read-next" href="/rag/embeddings-for-retrieval/"><small>Read next</small><b>Embeddings for Retrieval</b><p>Turning a chunk of text into a vector is already covered in Math; this section is about the retrieval-specific engineering on top of that: which kind of model produces the vector, how to make it…</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/metadata-extraction-and-enrichment/"><b>Metadata Extraction and Enrichment</b><p>A chunk&#39;s text alone often can&#39;t say whether it&#39;s still true.</p></a><a class="rc-card" href="/rag/fixed-size-and-recursive-chunking/"><b>Fixed-Size and Recursive Chunking</b><p>The simplest way to split a document is to cut it every N characters and move on.</p></a><a class="rc-card" href="/rag/semantic-and-structure-aware-chunking/"><b>Semantic and Structure-Aware Chunking</b><p>Recursive chunking keeps sentences whole, but a sentence boundary isn&#39;t the same thing as a topic boundary — five sentences in a row about the same subject will still get split wherever the size…</p></a><a class="rc-card" href="/rag/retrieval-over-structured-data/"><b>Retrieval over Structured Data</b><p>&quot;How many orders were placed in 2024?&quot; has an exact answer sitting in a table of order records — but no chunk of retrieved text, however well-chosen, can ever compute that count.</p></a><a class="rc-card" href="/rag/document-processing-and-chunking/"><b>Document Processing and Chunking</b><p>Before anything can be retrieved, raw documents — PDFs, web pages, spreadsheets, code — have to become a collection of individually retrievable pieces.</p></a><a class="rc-card" href="/rag/parsing-documents-for-retrieval/"><b>Parsing Documents for Retrieval</b><p>A real document isn&#39;t just its words. A PDF carries page numbers, headers and footers repeated on every page; a web page carries navigation menus and cookie banners around the actual article.</p></a></div></section>
-        <p class="doc-prev"><a href="/rag/metadata-extraction-and-enrichment/">← Previous: Metadata Extraction and Enrichment</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/rag/handling-tables-code-and-structured-content">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/rag/metadata-extraction-and-enrichment/" data-topic="rag/metadata-extraction-and-enrichment"><span>Previous · lesson 5</span><b>Metadata Extraction and Enrichment</b></a><a class="step next" href="/rag/embeddings-for-retrieval/" data-topic="rag/embeddings-for-retrieval"><span>Next · chapter overview</span><b>Embeddings for Retrieval</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/RAG/Document%20Processing%20and%20Chunking/Handling%20Tables,%20Code%20and%20Structured%20Content.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Emergent Abilities and Capability Jumps — AI Base</title>
 <meta name="description" content="Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/llms/emergent-abilities-and-capability-jumps/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"Scaling, Capacity and Emergence"},{"@type":"ListItem","position":5,"name":"Emergent Abilities and Capability Jumps","item":"https://ai.saranmahadev.in/llms/emergent-abilities-and-capability-jumps/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Emergent Abilities and Capability Jumps","description":"Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.","url":"https://ai.saranmahadev.in/llms/emergent-abilities-and-capability-jumps/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Scaling, Capacity and Emergence","item":"https://ai.saranmahadev.in/llms/scaling-capacity-and-emergence/"},{"@type":"ListItem","position":4,"name":"Emergent Abilities and Capability Jumps","item":"https://ai.saranmahadev.in/llms/emergent-abilities-and-capability-jumps/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Emergent Abilities and Capability Jumps","description":"Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story.","url":"https://ai.saranmahadev.in/llms/emergent-abilities-and-capability-jumps/","isPartOf":{"@type":"Course","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What makes a capability \"emergent,\" as opposed to just gradually improving with scale?","acceptedAnswer":{"@type":"Answer","text":"Its accuracy stays near a chance-level floor across a wide range of smaller scales, then rises sharply within a comparatively narrow band of scale, rather than improving smoothly and proportionally across the whole range."}},{"@type":"Question","name":"In the worked example, over roughly how much scale did most of the capability jump happen?","acceptedAnswer":{"@type":"Answer","text":"Less than one order of magnitude — from about 10^9.8 to 10^10.5 — accuracy went from near-chance (32.6%) to near-ceiling (93.7%)."}},{"@type":"Question","name":"Why might an all-or-nothing accuracy metric make a smoothly improving underlying skill look like a sudden jump?","acceptedAnswer":{"@type":"Answer","text":"If a task requires getting every step exactly right to count as correct, even a smoothly rising per-step probability can translate into an accuracy curve that looks flat and then jumps sharply, once the per-step probability crosses the point where getting the whole sequence right becomes likely."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/llms/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ LLMs</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/llms/">LLMs</a></li><li>Scaling, Capacity and Emergence</li><li>Emergent Abilities and Capability Jumps</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffa970">
-      <header class="doc-head">
-        <h1 class="doc-title">Emergent Abilities and Capability Jumps</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff6f1"/>
-  <circle cx="534" cy="197" r="165" fill="#ffddc6" opacity="0.32"/><circle cx="546" cy="335" r="187" fill="#ffddc6" opacity="0.58"/><circle cx="756" cy="258" r="86" fill="#ffddc6" opacity="0.46"/>
-  <circle cx="163" cy="225" r="107" fill="#ffa970"/>
-  <line x1="0" y1="169" x2="1200" y2="169" stroke="#ffa970" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story. Some capabilities don&#39;t follow that story at all: they&#39;re absent at smaller scale, and then, within a surprisingly narrow range of scale, they&#39;re just there.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Scaling, Capacity and Emergence chapter">
+        <div class="side-head">
+          <a class="side-course" href="/llms/">LLMs · Chapter 02</a>
+          <a class="side-chapter" href="/llms/scaling-capacity-and-emergence/">Scaling, Capacity and Emergence</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/llms/compute-optimal-scaling-chinchilla/">Compute-Optimal Scaling (Chinchilla)</a></li><li><a href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/">Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</a></li><li><a href="/llms/emergent-abilities-and-capability-jumps/" aria-current="page">Emergent Abilities and Capability Jumps</a></li><li><a href="/llms/grokking-and-delayed-generalization/">Grokking and Delayed Generalization</a></li><li><a href="/llms/the-bitter-lesson-scale-vs-hand-engineering/">The Bitter Lesson: Scale vs. Hand-Engineering</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="llms/emergent-abilities-and-capability-jumps">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/llms/">LLMs</a></li><li><a href="/llms/scaling-capacity-and-emergence/">Scaling, Capacity and Emergence</a></li><li><span aria-current="page">Emergent Abilities and Capability Jumps</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 3 of 5 · 5 min read</p>
+          <h1>Emergent Abilities and Capability Jumps</h1>
+        </header>
+        <div class="prose"><p>Most of what scaling laws describe — loss decreasing smoothly with more compute — is a gradual story. Some capabilities don&#39;t follow that story at all: they&#39;re absent at smaller scale, and then, within a surprisingly narrow range of scale, they&#39;re just there.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Does every capability improve smoothly with scale, the way loss does?&quot; Not necessarily. An <strong>emergent ability</strong> is a capability that stays near chance performance across a wide range of smaller scales, and then rises sharply — far faster than the smooth loss curve underneath it — within a relatively narrow band of scale. The underlying loss might be improving steadily the whole time; it&#39;s the <em>task accuracy</em> built on top of it that can look like a flat line followed by a cliff.</p>
 <h2 id="intuition">Intuition</h2>
@@ -120,16 +123,21 @@ If a task requires getting every step exactly right to count as correct, even a 
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a> · <a class="wikilink" href="/llms/grokking-and-delayed-generalization/" data-topic="llms/grokking-and-delayed-generalization">Grokking and Delayed Generalization</a> · <a class="wikilink" href="/llms/benchmark-suites-mmlu-helm-big-bench/" data-topic="llms/benchmark-suites-mmlu-helm-big-bench">Benchmark Suites (MMLU, HELM, BIG-bench)</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/emergent-abilities-and-capability-jumps">Open in the interactive site →</a></p>
-        <a class="read-next" href="/llms/grokking-and-delayed-generalization/"><small>Read next</small><b>Grokking and Delayed Generalization</b><p>A model that has reached 100% accuracy on its training data looks, by every usual signal, finished.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/compute-optimal-scaling-chinchilla/"><b>Compute-Optimal Scaling (Chinchilla)</b><p>Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data?</p></a><a class="rc-card" href="/llms/benchmark-suites-mmlu-helm-big-bench/"><b>Benchmark Suites (MMLU, HELM, BIG-bench)</b><p>Comparing two LLMs fairly requires testing them on the same questions, under the same conditions, at a scale no individual could check by hand.</p></a><a class="rc-card" href="/llms/grokking-and-delayed-generalization/"><b>Grokking and Delayed Generalization</b><p>A model that has reached 100% accuracy on its training data looks, by every usual signal, finished.</p></a><a class="rc-card" href="/llms/scaling-capacity-and-emergence/"><b>Scaling, Capacity and Emergence</b><p>Make an LLM bigger, train it on more data, or give it more compute, and its capability doesn&#39;t grow in some simple, uniform way — it follows surprisingly predictable curves overall, punctuated by…</p></a></div></section>
-        <p class="doc-prev"><a href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/">← Previous: Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/llms/emergent-abilities-and-capability-jumps">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes/" data-topic="llms/scaling-laws-beyond-chinchilla-data-constrained-and-overtrained-regimes"><span>Previous · lesson 2</span><b>Scaling Laws Beyond Chinchilla: Data-Constrained and Overtrained Regimes</b></a><a class="step next" href="/llms/grokking-and-delayed-generalization/" data-topic="llms/grokking-and-delayed-generalization"><span>Next · lesson 4</span><b>Grokking and Delayed Generalization</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/LLMs/Scaling,%20Capacity%20and%20Emergence/Emergent%20Abilities%20and%20Capability%20Jumps.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

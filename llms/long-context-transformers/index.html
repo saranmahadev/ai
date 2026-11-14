@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Long-Context Transformers — AI Base</title>
 <meta name="description" content="Every mechanism this subject has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically…">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/llms/long-context-transformers/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"Context, Memory and Long-Range Behavior"},{"@type":"ListItem","position":5,"name":"Long-Context Transformers","item":"https://ai.saranmahadev.in/llms/long-context-transformers/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Long-Context Transformers","description":"Every mechanism this subject has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically…","url":"https://ai.saranmahadev.in/llms/long-context-transformers/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"Context, Memory and Long-Range Behavior","item":"https://ai.saranmahadev.in/llms/context-memory-and-long-range-behavior/"},{"@type":"ListItem","position":4,"name":"Long-Context Transformers","item":"https://ai.saranmahadev.in/llms/long-context-transformers/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Long-Context Transformers","description":"Every mechanism this subject has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically…","url":"https://ai.saranmahadev.in/llms/long-context-transformers/","isPartOf":{"@type":"Course","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does doubling a sequence's length roughly quadruple attention's FLOPs cost?","acceptedAnswer":{"@type":"Answer","text":"Self-attention computes a score for every pair of positions in the sequence; doubling the number of positions roughly quadruples the number of pairs, since every one of the doubled positions can attend to every other doubled position."}},{"@type":"Question","name":"In the worked example, what FLOPs ratio resulted from a 16× increase in sequence length?","acceptedAnswer":{"@type":"Answer","text":"256× — exactly matching 16², confirming the quadratic relationship between sequence length and attention cost."}},{"@type":"Question","name":"Is \"long context\" purely a matter of raw compute capacity?","acceptedAnswer":{"@type":"Answer","text":"No — handling longer sequences cheaply enough typically requires architectural techniques (sparsity, linear attention, IO-aware computation) on top of raw compute, and separately requires the model to have learned to use positional information that far apart meaningfully."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/llms/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ LLMs</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/llms/">LLMs</a></li><li>Context, Memory and Long-Range Behavior</li><li>Long-Context Transformers</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffa970">
-      <header class="doc-head">
-        <h1 class="doc-title">Long-Context Transformers</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff6f1"/>
-  <circle cx="981" cy="370" r="172" fill="#ffddc6" opacity="0.50"/><circle cx="418" cy="191" r="124" fill="#ffddc6" opacity="0.54"/>
-  <circle cx="164" cy="118" r="147" fill="#ffa970"/>
-  <line x1="0" y1="187" x2="1200" y2="187" stroke="#ffa970" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Every mechanism this subject has covered for making attention cheaper — <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">windowed</a>, <a class="wikilink" href="/transformers/linear-attention-approximations/" data-topic="transformers/linear-attention-approximations">linear</a>, <a class="wikilink" href="/transformers/io-aware-attention-computation/" data-topic="transformers/io-aware-attention-computation">IO-aware</a> — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more expensive as context grows, and &quot;long context&quot; means running straight into that wall.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention</a>, <a class="wikilink" href="/transformers/io-aware-attention-computation/" data-topic="transformers/io-aware-attention-computation">IO-Aware Attention Computation</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Context, Memory and Long-Range Behavior chapter">
+        <div class="side-head">
+          <a class="side-course" href="/llms/">LLMs · Chapter 05</a>
+          <a class="side-chapter" href="/llms/context-memory-and-long-range-behavior/">Context, Memory and Long-Range Behavior</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/llms/long-context-transformers/" aria-current="page">Long-Context Transformers</a></li><li><a href="/llms/context-window-extension-techniques/">Context Window Extension Techniques</a></li><li><a href="/llms/context-rot-and-lost-in-the-middle-effects/">Context Rot and Lost-in-the-Middle Effects</a></li><li><a href="/llms/multi-turn-conversation-state-and-memory/">Multi-Turn Conversation State and Memory</a></li><li><a href="/llms/kv-cache-reuse-across-sessions/">KV-Cache Reuse Across Sessions</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="llms/long-context-transformers">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/llms/">LLMs</a></li><li><a href="/llms/context-memory-and-long-range-behavior/">Context, Memory and Long-Range Behavior</a></li><li><span aria-current="page">Long-Context Transformers</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 1 of 5 · 4 min read</p>
+          <h1>Long-Context Transformers</h1>
+        </header>
+        <div class="prose"><p>Every mechanism this subject has covered for making attention cheaper — <a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">windowed</a>, <a class="wikilink" href="/transformers/linear-attention-approximations/" data-topic="transformers/linear-attention-approximations">linear</a>, <a class="wikilink" href="/transformers/io-aware-attention-computation/" data-topic="transformers/io-aware-attention-computation">IO-aware</a> — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically more expensive as context grows, and &quot;long context&quot; means running straight into that wall.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention<small class="xc">Transformers</small></a><a class="chip wikilink" href="/transformers/io-aware-attention-computation/" data-topic="transformers/io-aware-attention-computation">IO-Aware Attention Computation<small class="xc">Transformers</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Why is handling a longer context fundamentally harder than just &#39;using a bigger number&#39;?&quot; Ordinary self-attention computes a score between every pair of positions in a sequence — for a sequence of length <code>n</code>, that&#39;s <code>n²</code> pairwise scores. Double the sequence length, and the attention computation doesn&#39;t double in cost; it quadruples. Long-context transformers aren&#39;t just models with a larger number written in a config file — they specifically have to grapple with this quadratic wall, usually through the efficient-attention techniques already covered earlier in this subject.</p>
 <h2 id="intuition">Intuition</h2>
@@ -114,16 +117,21 @@ No — handling longer sequences cheaply enough typically requires architectural
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/transformers/sparse-and-local-windowed-attention/" data-topic="transformers/sparse-and-local-windowed-attention">Sparse and Local (Windowed) Attention</a> · <a class="wikilink" href="/transformers/io-aware-attention-computation/" data-topic="transformers/io-aware-attention-computation">IO-Aware Attention Computation</a> · <a class="wikilink" href="/llms/context-window-extension-techniques/" data-topic="llms/context-window-extension-techniques">Context Window Extension Techniques</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/long-context-transformers">Open in the interactive site →</a></p>
-        <a class="read-next" href="/llms/context-window-extension-techniques/"><small>Read next</small><b>Context Window Extension Techniques</b><p>solving the raw compute cost of attention is only half the problem.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/sparse-and-local-windowed-attention/"><b>Sparse and Local (Windowed) Attention</b><p>KV-caching fixes redundant recomputation, but the underlying attention computation itself still scales with the square of sequence length.</p></a><a class="rc-card" href="/transformers/linear-attention-approximations/"><b>Linear Attention Approximations</b><p>Windowed attention cuts cost by refusing to compute most pairs at all.</p></a><a class="rc-card" href="/transformers/io-aware-attention-computation/"><b>IO-Aware Attention Computation</b><p>Linear attention changes what gets computed — trading exact softmax for an approximation. This topic changes nothing about what&#39;s computed at all.</p></a><a class="rc-card" href="/llms/context-window-extension-techniques/"><b>Context Window Extension Techniques</b><p>solving the raw compute cost of attention is only half the problem.</p></a><a class="rc-card" href="/llms/context-memory-and-long-range-behavior/"><b>Context, Memory and Long-Range Behavior</b><p>A single forward pass has a fixed context window, but real use involves far more text than fits in one, conversations that span many turns, and sessions that return days later expecting to be…</p></a><a class="rc-card" href="/llms/context-rot-and-lost-in-the-middle-effects/"><b>Context Rot and Lost-in-the-Middle Effects</b><p>Even once a model can technically process a very long context without breaking — no quadratic-cost wall hit, no positions outside its trained range — there&#39;s still a separate, surprising problem:…</p></a></div></section>
-        <p class="doc-prev"><a href="/llms/context-memory-and-long-range-behavior/">← Previous: Context, Memory and Long-Range Behavior</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/llms/long-context-transformers">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/llms/context-memory-and-long-range-behavior/" data-topic="llms/context-memory-and-long-range-behavior"><span>Previous · chapter overview</span><b>Context, Memory and Long-Range Behavior</b></a><a class="step next" href="/llms/context-window-extension-techniques/" data-topic="llms/context-window-extension-techniques"><span>Next · lesson 2</span><b>Context Window Extension Techniques</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/LLMs/Context,%20Memory%20and%20Long-Range%20Behavior/Long-Context%20Transformers.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

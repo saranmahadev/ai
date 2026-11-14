@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Where AI Goes Wrong — AI Base</title>
 <meta name="description" content="AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/fundamentals/where-ai-goes-wrong/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":4,"name":"Judging AI"},{"@type":"ListItem","position":5,"name":"Where AI Goes Wrong","item":"https://ai.saranmahadev.in/fundamentals/where-ai-goes-wrong/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Where AI Goes Wrong","description":"AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…","url":"https://ai.saranmahadev.in/fundamentals/where-ai-goes-wrong/","isPartOf":{"@type":"CreativeWorkSeries","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"AI Fundamentals","item":"https://ai.saranmahadev.in/fundamentals/"},{"@type":"ListItem","position":3,"name":"Judging AI","item":"https://ai.saranmahadev.in/fundamentals/judging-ai/"},{"@type":"ListItem","position":4,"name":"Where AI Goes Wrong","item":"https://ai.saranmahadev.in/fundamentals/where-ai-goes-wrong/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Where AI Goes Wrong","description":"AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…","url":"https://ai.saranmahadev.in/fundamentals/where-ai-goes-wrong/","isPartOf":{"@type":"Course","name":"AI Fundamentals","url":"https://ai.saranmahadev.in/fundamentals/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why can a model do worse for a group that is rare in its training data?","acceptedAnswer":{"@type":"Answer","text":"It learns the patterns of the dominant group, so a group with different patterns is served poorly."}},{"@type":"Question","name":"What is distribution shift?","acceptedAnswer":{"@type":"Answer","text":"The data the system meets after deployment differs from the data it was trained on."}},{"@type":"Question","name":"Why look at results group by group?","acceptedAnswer":{"@type":"Answer","text":"An overall average can hide a poor result for a smaller group."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/fundamentals/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ AI Fundamentals</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/fundamentals/">AI Fundamentals</a></li><li>Judging AI</li><li>Where AI Goes Wrong</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#79d3c1">
-      <header class="doc-head">
-        <h1 class="doc-title">Where AI Goes Wrong</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>AI Fundamentals</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#f2fbf9"/>
-  <circle cx="668" cy="276" r="114" fill="#c9ede6" opacity="0.55"/><circle cx="888" cy="127" r="66" fill="#c9ede6" opacity="0.43"/><circle cx="1049" cy="274" r="132" fill="#c9ede6" opacity="0.39"/>
-  <circle cx="378" cy="264" r="133" fill="#79d3c1"/>
-  <line x1="0" y1="168" x2="1200" y2="168" stroke="#79d3c1" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>AI systems fail in patterned ways: they learn from <strong>unrepresentative or biased data</strong>, they meet a <strong>world that has changed</strong> since training, they can be <strong>brittle</strong> to tiny changes, and they can be <strong>confidently wrong</strong>. Knowing these patterns lets you ask the right questions before relying on a system.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/data-as-raw-material/" data-topic="fundamentals/data-as-raw-material">Data as Raw Material</a>, <a class="wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a> and <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Judging AI chapter">
+        <div class="side-head">
+          <a class="side-course" href="/fundamentals/">AI Fundamentals · Chapter 05</a>
+          <a class="side-chapter" href="/fundamentals/judging-ai/">Judging AI</a>
+          <span class="side-count">4 lessons</span>
+        </div>
+        <ol><li><a href="/fundamentals/measuring-performance/">Measuring Performance</a></li><li><a href="/fundamentals/generalization/">Generalization</a></li><li><a href="/fundamentals/where-ai-goes-wrong/" aria-current="page">Where AI Goes Wrong</a></li><li><a href="/fundamentals/anatomy-of-an-ai-system/">Anatomy of an AI System</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="fundamentals/where-ai-goes-wrong">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/fundamentals/">AI Fundamentals</a></li><li><a href="/fundamentals/judging-ai/">Judging AI</a></li><li><span aria-current="page">Where AI Goes Wrong</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 3 of 4 · 5 min read</p>
+          <h1>Where AI Goes Wrong</h1>
+        </header>
+        <div class="prose"><p>AI systems fail in patterned ways: they learn from <strong>unrepresentative or biased data</strong>, they meet a <strong>world that has changed</strong> since training, they can be <strong>brittle</strong> to tiny changes, and they can be <strong>confidently wrong</strong>. Knowing these patterns lets you ask the right questions before relying on a system.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/fundamentals/data-as-raw-material/" data-topic="fundamentals/data-as-raw-material">Data as Raw Material</a><a class="chip wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a><a class="chip wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>A system passed its tests. Where might it still let people down?</p>
 <h2 id="intuition-a-model-is-a-mirror-of-its-data">Intuition: a model is a mirror of its data</h2>
@@ -173,16 +176,21 @@ An overall average can hide a poor result for a smaller group.
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/fundamentals/data-as-raw-material/" data-topic="fundamentals/data-as-raw-material">Data as Raw Material</a> · <a class="wikilink" href="/fundamentals/generalization/" data-topic="fundamentals/generalization">Generalization</a> · <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a> · <a class="wikilink" href="/fundamentals/goals-utility-and-rationality/" data-topic="fundamentals/goals-utility-and-rationality">Goals, Utility and Rationality</a> · <a class="wikilink" href="/machine-learning/machine-learning/" data-topic="machine-learning/machine-learning">Machine Learning</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/fundamentals/where-ai-goes-wrong">Open in the interactive site →</a></p>
-        <a class="read-next" href="/fundamentals/anatomy-of-an-ai-system/"><small>Read next</small><b>Anatomy of an AI System</b><p>Every AI system, from a thermostat to a chatbot, can be described with the same seven parts: a goal, the data it uses, a model or rule, and a loop of perceive, decide, act, all judged by some…</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/data-as-raw-material/"><b>Data as Raw Material</b><p>Data is recorded information about the world: measurements, text, images, sound, clicks, transactions.</p></a><a class="rc-card" href="/fundamentals/generalization/"><b>Generalization</b><p>Generalization is a model&#39;s ability to do well on examples it has never seen. A model that merely memorises its training examples, noise and all, scores perfectly on them and poorly on anything new.</p></a><a class="rc-card" href="/fundamentals/measuring-performance/"><b>Measuring Performance</b><p>To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.</p></a><a class="rc-card" href="/fundamentals/goals-utility-and-rationality/"><b>Goals, Utility and Rationality</b><p>An agent needs a way to choose between options.</p></a><a class="rc-card" href="/machine-learning/machine-learning/"><b>Machine Learning</b><p>Machine learning is the craft of building programs from examples. Instead of writing the rules, you show a model data, tell it what &quot;good&quot; means, and let it find the rules itself.</p></a><a class="rc-card" href="/llms/llms/"><b>LLMs</b><p>A large language model is, mechanically, nothing more than the decoder-only transformer and the decoding, conditioning and evaluation machinery already covered on Transformers and Generative AI.</p></a></div></section>
-        <p class="doc-prev"><a href="/fundamentals/generalization/">← Previous: Generalization</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/fundamentals/where-ai-goes-wrong">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/fundamentals/generalization/" data-topic="fundamentals/generalization"><span>Previous · lesson 2</span><b>Generalization</b></a><a class="step next" href="/fundamentals/anatomy-of-an-ai-system/" data-topic="fundamentals/anatomy-of-an-ai-system"><span>Next · lesson 4</span><b>Anatomy of an AI System</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Fundamentals/Judging%20AI/Where%20AI%20Goes%20Wrong.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-a-model-is-a-mirror-of-its-data" data-scroll="intuition-a-model-is-a-mirror-of-its-data">Intuition: a model is a mirror of its data</a><a href="#failure-patterns" data-scroll="failure-patterns">Failure patterns</a><a href="#a-worked-example-one-cut-off-for-two-groups" data-scroll="a-worked-example-one-cut-off-for-two-groups">A worked example: one cut-off for two groups</a><a href="#bench" data-scroll="bench">Bench</a><a href="#habits-that-help" data-scroll="habits-that-help">Habits that help</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

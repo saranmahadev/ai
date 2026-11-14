@@ -1,15 +1,15 @@
-// App-shell precache + runtime caching for visited content, so a previously-read topic still works
-// offline. Deliberately does not cache Play Mode's three.js/vendor/scenes/models assets — that stays
-// online-only, keeping the install light and in keeping with the site's "stay light, no bloat" ethos.
-// Bump CACHE_VERSION when the app shell's own files change in a way that needs old caches cleared.
-const CACHE_VERSION = "v1";
+// App-shell precache + runtime caching for visited content, so a previously-read lesson still works
+// offline. A bench's own module is lazy-loaded and not precached; a lesson read offline shows its text and
+// the bench's fallback sentence. Bump CACHE_VERSION when the app shell's own files change.
+const CACHE_VERSION = "v2";
 const SHELL_CACHE = `ai-base-shell-${CACHE_VERSION}`;
 const CONTENT_CACHE = `ai-base-content-${CACHE_VERSION}`;
 
 const SHELL_FILES = [
-  "/", "/index.html", "/styles.css", "/main.js", "/nav.js", "/search.js", "/reader.js", "/cover.js", "/theme.js",
+  "/", "/index.html", "/styles.css", "/theme.js", "/main.js", "/views.js", "/search.js", "/reader.js",
   "/benches/kit.js", // main.js imports this statically (not lazily, unlike a per-bench module), so it must
                      // be part of the shell: without it, the whole module fails to evaluate offline.
+  "/vendor/fonts/newsreader-latin-wght-normal.woff2", "/vendor/fonts/inter-latin-wght-normal.woff2",
   "/favicon.svg", "/manifest.json"
 ];
 
@@ -40,7 +40,7 @@ self.addEventListener("fetch", (e) => {
   if (url.origin !== location.origin || e.request.method !== "GET") return;
 
   if (SHELL_FILES.includes(url.pathname)) {
-    // ignoreSearch: a navigation can carry a query string (?time=, ?mode=, ?debug) that the precached
+    // ignoreSearch: a navigation can carry a query string (?theme=) that the precached
     // shell entry, fetched without one, would otherwise fail to match.
     e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((hit) => hit || fetch(e.request)));
     return;

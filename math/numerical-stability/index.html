@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Numerical Stability — AI Base</title>
 <meta name="description" content="A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/math/numerical-stability/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":4,"name":"Numerical Computing"},{"@type":"ListItem","position":5,"name":"Numerical Stability","item":"https://ai.saranmahadev.in/math/numerical-stability/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Numerical Stability","description":"A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified.","url":"https://ai.saranmahadev.in/math/numerical-stability/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Numerical Computing","item":"https://ai.saranmahadev.in/math/numerical-computing/"},{"@type":"ListItem","position":4,"name":"Numerical Stability","item":"https://ai.saranmahadev.in/math/numerical-stability/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Numerical Stability","description":"A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified.","url":"https://ai.saranmahadev.in/math/numerical-stability/","isPartOf":{"@type":"Course","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does softmax change if you add 100 to every score?","acceptedAnswer":{"@type":"Answer","text":"No."}},{"@type":"Question","name":"What do you subtract before exponentiating in a stable softmax?","acceptedAnswer":{"@type":"Answer","text":"The largest score."}},{"@type":"Question","name":"Why is E[x²] − mean² risky?","acceptedAnswer":{"@type":"Answer","text":"It subtracts two nearly equal large numbers, losing precision."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/math/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Math</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/math/">Math</a></li><li>Numerical Computing</li><li>Numerical Stability</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#b39cf5">
-      <header class="doc-head">
-        <h1 class="doc-title">Numerical Stability</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#f7f5fe"/>
-  <circle cx="599" cy="124" r="70" fill="#e1d7fb" opacity="0.38"/><circle cx="634" cy="351" r="189" fill="#e1d7fb" opacity="0.55"/><circle cx="760" cy="286" r="114" fill="#e1d7fb" opacity="0.34"/>
-  <circle cx="359" cy="254" r="139" fill="#b39cf5"/>
-  <line x1="0" y1="242" x2="1200" y2="242" stroke="#b39cf5" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified. <strong>Numerical stability</strong> means rewriting a calculation, without changing its value, so that those errors stay small. Two rewrites do most of the work in machine learning: subtract the maximum before exponentiating (stable softmax and log-sum-exp) and avoid subtracting nearly equal numbers.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a>, <a class="wikilink" href="/math/overflow-and-underflow/" data-topic="math/overflow-and-underflow">Overflow and Underflow</a> and <a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Numerical Computing chapter">
+        <div class="side-head">
+          <a class="side-course" href="/math/">Math · Chapter 11</a>
+          <a class="side-chapter" href="/math/numerical-computing/">Numerical Computing</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/math/floating-point/">Floating Point</a></li><li><a href="/math/overflow-and-underflow/">Overflow and Underflow</a></li><li><a href="/math/numerical-stability/" aria-current="page">Numerical Stability</a></li><li><a href="/math/conditioning/">Conditioning</a></li><li><a href="/math/random-numbers-and-seeds/">Random Numbers and Seeds</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="math/numerical-stability">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/math/">Math</a></li><li><a href="/math/numerical-computing/">Numerical Computing</a></li><li><span aria-current="page">Numerical Stability</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 3 of 5 · 3 min read</p>
+          <h1>Numerical Stability</h1>
+        </header>
+        <div class="prose"><p>A formula that is correct on paper can give wrong answers on a computer, because rounding errors get magnified. <strong>Numerical stability</strong> means rewriting a calculation, without changing its value, so that those errors stay small. Two rewrites do most of the work in machine learning: subtract the maximum before exponentiating (stable softmax and log-sum-exp) and avoid subtracting nearly equal numbers.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a><a class="chip wikilink" href="/math/overflow-and-underflow/" data-topic="math/overflow-and-underflow">Overflow and Underflow</a><a class="chip wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;The maths is right, so why is the answer <code>NaN</code> or garbage?&quot; Because the order and form of the arithmetic matter when numbers have finite precision.</p>
 <h2 id="stable-softmax-and-log-sum-exp">Stable softmax and log-sum-exp</h2>
@@ -118,16 +121,21 @@ It subtracts two nearly equal large numbers, losing precision.
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/math/overflow-and-underflow/" data-topic="math/overflow-and-underflow">Overflow and Underflow</a> · <a class="wikilink" href="/math/floating-point/" data-topic="math/floating-point">Floating Point</a> · <a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a> · <a class="wikilink" href="/math/variance-and-standard-deviation/" data-topic="math/variance-and-standard-deviation">Variance and Standard Deviation</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/numerical-stability">Open in the interactive site →</a></p>
-        <a class="read-next" href="/math/conditioning/"><small>Read next</small><b>Conditioning</b><p>A problem is ill-conditioned when tiny changes in its input cause huge changes in its answer, no matter how carefully you compute. The condition number measures that sensitivity.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/floating-point/"><b>Floating Point</b><p>Computers store real numbers in floating point: a fixed number of significant binary digits and an exponent.</p></a><a class="rc-card" href="/math/overflow-and-underflow/"><b>Overflow and Underflow</b><p>Overflow happens when a result is too large to store and becomes infinity; underflow happens when it is too small and becomes zero.</p></a><a class="rc-card" href="/math/exponential-and-logarithmic-functions/"><b>Exponential and Logarithmic Functions</b><p>An exponential function f(t) = a·bᵗ multiplies by the same factor every step, so it grows (or decays) faster and faster. Its inverse, the logarithmic function, grows slower and slower.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/math/variance-and-standard-deviation/"><b>Variance and Standard Deviation</b><p>Variance measures how spread out a random variable is around its mean: the average squared distance from the mean.</p></a><a class="rc-card" href="/math/scientific-notation-and-scale/"><b>Scientific Notation and Scale</b><p>Scientific notation writes a number as a digit-and-decimal part times a power of ten, so 6,000,000 becomes 6 × 10⁶ and 0.00042 becomes 4.2 × 10⁻⁴.</p></a></div></section>
-        <p class="doc-prev"><a href="/math/overflow-and-underflow/">← Previous: Overflow and Underflow</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/math/numerical-stability">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/math/overflow-and-underflow/" data-topic="math/overflow-and-underflow"><span>Previous · lesson 2</span><b>Overflow and Underflow</b></a><a class="step next" href="/math/conditioning/" data-topic="math/conditioning"><span>Next · lesson 4</span><b>Conditioning</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Math/Numerical%20Computing/Numerical%20Stability.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#stable-softmax-and-log-sum-exp" data-scroll="stable-softmax-and-log-sum-exp">Stable softmax and log-sum-exp</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#catastrophic-cancellation" data-scroll="catastrophic-cancellation">Catastrophic cancellation</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

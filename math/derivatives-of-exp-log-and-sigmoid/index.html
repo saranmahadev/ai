@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Derivatives of Exp, Log and Sigmoid — AI Base</title>
 <meta name="description" content="Three families of functions carry most of machine learning: the exponential eˣ, the natural logarithm ln x, and the sigmoid σ(x).">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/math/derivatives-of-exp-log-and-sigmoid/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":4,"name":"Calculus"},{"@type":"ListItem","position":5,"name":"Derivatives of Exp, Log and Sigmoid","item":"https://ai.saranmahadev.in/math/derivatives-of-exp-log-and-sigmoid/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Derivatives of Exp, Log and Sigmoid","description":"Three families of functions carry most of machine learning: the exponential eˣ, the natural logarithm ln x, and the sigmoid σ(x).","url":"https://ai.saranmahadev.in/math/derivatives-of-exp-log-and-sigmoid/","isPartOf":{"@type":"CreativeWorkSeries","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://ai.saranmahadev.in/math/"},{"@type":"ListItem","position":3,"name":"Calculus","item":"https://ai.saranmahadev.in/math/calculus/"},{"@type":"ListItem","position":4,"name":"Derivatives of Exp, Log and Sigmoid","item":"https://ai.saranmahadev.in/math/derivatives-of-exp-log-and-sigmoid/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Derivatives of Exp, Log and Sigmoid","description":"Three families of functions carry most of machine learning: the exponential eˣ, the natural logarithm ln x, and the sigmoid σ(x).","url":"https://ai.saranmahadev.in/math/derivatives-of-exp-log-and-sigmoid/","isPartOf":{"@type":"Course","name":"Math","url":"https://ai.saranmahadev.in/math/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is d/dx of e^(3x)?","acceptedAnswer":{"@type":"Answer","text":"3e^(3x)."}},{"@type":"Question","name":"What is σ′ when σ = 0.9?","acceptedAnswer":{"@type":"Answer","text":"0.9 × 0.1 = 0.09."}},{"@type":"Question","name":"What is the slope of ln x at x = 4?","acceptedAnswer":{"@type":"Answer","text":"1/4 = 0.25."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/math/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Math</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/math/">Math</a></li><li>Calculus</li><li>Derivatives of Exp, Log and Sigmoid</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#b39cf5">
-      <header class="doc-head">
-        <h1 class="doc-title">Derivatives of Exp, Log and Sigmoid</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Math</b><span>3 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#f7f5fe"/>
-  <circle cx="656" cy="47" r="102" fill="#e1d7fb" opacity="0.41"/><circle cx="699" cy="115" r="135" fill="#e1d7fb" opacity="0.31"/><circle cx="879" cy="165" r="76" fill="#e1d7fb" opacity="0.30"/>
-  <circle cx="203" cy="91" r="121" fill="#b39cf5"/>
-  <line x1="0" y1="249" x2="1200" y2="249" stroke="#b39cf5" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Three families of functions carry most of machine learning: the exponential <code>eˣ</code>, the natural logarithm <code>ln x</code>, and the sigmoid <code>σ(x)</code>. Their derivatives are unusually neat: <code>eˣ</code> is its own derivative, <code>ln x</code> has slope <code>1/x</code>, and the sigmoid&#39;s slope is built from its own value.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/math/derivative-rules/" data-topic="math/derivative-rules">Derivative Rules</a>, <a class="wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a> and <a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Calculus chapter">
+        <div class="side-head">
+          <a class="side-course" href="/math/">Math · Chapter 06</a>
+          <a class="side-chapter" href="/math/calculus/">Calculus</a>
+          <span class="side-count">15 lessons</span>
+        </div>
+        <ol><li><a href="/math/rate-of-change/">Rate of Change</a></li><li><a href="/math/limits/">Limits</a></li><li><a href="/math/continuity/">Continuity</a></li><li><a href="/math/derivatives/">Derivatives</a></li><li><a href="/math/derivative-rules/">Derivative Rules</a></li><li><a href="/math/chain-rule/">Chain Rule</a></li><li><a href="/math/derivatives-of-exp-log-and-sigmoid/" aria-current="page">Derivatives of Exp, Log and Sigmoid</a></li><li><a href="/math/higher-derivatives-and-curvature/">Higher Derivatives and Curvature</a></li><li><a href="/math/partial-derivatives/">Partial Derivatives</a></li><li><a href="/math/gradients/">Gradients</a></li><li><a href="/math/jacobian/">Jacobian</a></li><li><a href="/math/hessian/">Hessian</a></li><li><a href="/math/integrals/">Integrals</a></li><li><a href="/math/taylor-approximation/">Taylor Approximation</a></li><li><a href="/math/automatic-differentiation/">Automatic Differentiation</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="math/derivatives-of-exp-log-and-sigmoid">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/math/">Math</a></li><li><a href="/math/calculus/">Calculus</a></li><li><span aria-current="page">Derivatives of Exp, Log and Sigmoid</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 7 of 15 · 3 min read</p>
+          <h1>Derivatives of Exp, Log and Sigmoid</h1>
+        </header>
+        <div class="prose"><p>Three families of functions carry most of machine learning: the exponential <code>eˣ</code>, the natural logarithm <code>ln x</code>, and the sigmoid <code>σ(x)</code>. Their derivatives are unusually neat: <code>eˣ</code> is its own derivative, <code>ln x</code> has slope <code>1/x</code>, and the sigmoid&#39;s slope is built from its own value.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/math/derivative-rules/" data-topic="math/derivative-rules">Derivative Rules</a><a class="chip wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a><a class="chip wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;What are the slopes of the functions I keep meeting in models?&quot; Loss functions use logs, softmax uses exponentials, and activations use sigmoids and tanh, so their derivatives are computed constantly.</p>
 <h2 id="the-results">The results</h2>
@@ -118,16 +121,21 @@ d/dx tanh x     = 1 − tanh² x
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/math/exponential-and-logarithmic-functions/" data-topic="math/exponential-and-logarithmic-functions">Exponential and Logarithmic Functions</a> · <a class="wikilink" href="/math/functions-ai-loves/" data-topic="math/functions-ai-loves">Functions AI Loves</a> · <a class="wikilink" href="/math/chain-rule/" data-topic="math/chain-rule">Chain Rule</a> · <a class="wikilink" href="/math/logistic-regression-and-the-sigmoid/" data-topic="math/logistic-regression-and-the-sigmoid">Logistic Regression and the Sigmoid</a> · <a class="wikilink" href="/math/softmax-and-cross-entropy-in-practice/" data-topic="math/softmax-and-cross-entropy-in-practice">Softmax and Cross-Entropy in Practice</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/math/derivatives-of-exp-log-and-sigmoid">Open in the interactive site →</a></p>
-        <a class="read-next" href="/math/higher-derivatives-and-curvature/"><small>Read next</small><b>Higher Derivatives and Curvature</b><p>The second derivative is the derivative of the derivative: it says how the slope itself is changing. Positive means the curve bends upward like a bowl, negative means it bends downward like a hill.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/math/derivative-rules/"><b>Derivative Rules</b><p>You do not compute a derivative from the limit every time.</p></a><a class="rc-card" href="/math/chain-rule/"><b>Chain Rule</b><p>The chain rule finds the derivative of a function built from other functions: d/dx f(g(x)) = f′(g(x)) · g′(x). Rates multiply along the chain, like gears turning one another.</p></a><a class="rc-card" href="/math/exponential-and-logarithmic-functions/"><b>Exponential and Logarithmic Functions</b><p>An exponential function f(t) = a·bᵗ multiplies by the same factor every step, so it grows (or decays) faster and faster. Its inverse, the logarithmic function, grows slower and slower.</p></a><a class="rc-card" href="/math/softmax-and-cross-entropy-in-practice/"><b>Softmax and Cross-Entropy in Practice</b><p>For questions with many possible answers, a network outputs one raw score (a logit) per class.</p></a><a class="rc-card" href="/math/logistic-regression-and-the-sigmoid/"><b>Logistic Regression and the Sigmoid</b><p>Logistic regression answers yes/no questions with a probability.</p></a><a class="rc-card" href="/math/functions-ai-loves/"><b>Functions AI Loves</b><p>A few specific functions turn up in almost every neural network: the sigmoid, tanh, ReLU, its leaky variant and softplus.</p></a></div></section>
-        <p class="doc-prev"><a href="/math/chain-rule/">← Previous: Chain Rule</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/math/derivatives-of-exp-log-and-sigmoid">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/math/chain-rule/" data-topic="math/chain-rule"><span>Previous · lesson 6</span><b>Chain Rule</b></a><a class="step next" href="/math/higher-derivatives-and-curvature/" data-topic="math/higher-derivatives-and-curvature"><span>Next · lesson 8</span><b>Higher Derivatives and Curvature</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Math/Calculus/Derivatives%20of%20Exp,%20Log%20and%20Sigmoid.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#the-results" data-scroll="the-results">The results</a><a href="#the-sigmoid-s-slope" data-scroll="the-sigmoid-s-slope">The sigmoid&#39;s slope</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>A History of LLM Families (GPT, BERT, T5, Llama) — AI Base</title>
 <meta name="description" content="Every architectural choice this subject has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/llms/a-history-of-llm-families-gpt-bert-t5-llama/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"The LLM Landscape"},{"@type":"ListItem","position":5,"name":"A History of LLM Families (GPT, BERT, T5, Llama)","item":"https://ai.saranmahadev.in/llms/a-history-of-llm-families-gpt-bert-t5-llama/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"A History of LLM Families (GPT, BERT, T5, Llama)","description":"Every architectural choice this subject has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family.","url":"https://ai.saranmahadev.in/llms/a-history-of-llm-families-gpt-bert-t5-llama/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"The LLM Landscape","item":"https://ai.saranmahadev.in/llms/the-llm-landscape/"},{"@type":"ListItem","position":4,"name":"A History of LLM Families (GPT, BERT, T5, Llama)","item":"https://ai.saranmahadev.in/llms/a-history-of-llm-families-gpt-bert-t5-llama/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"A History of LLM Families (GPT, BERT, T5, Llama)","description":"Every architectural choice this subject has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family.","url":"https://ai.saranmahadev.in/llms/a-history-of-llm-families-gpt-bert-t5-llama/","isPartOf":{"@type":"Course","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What architectural choice did BERT establish, and how does that differ from GPT-2's?","acceptedAnswer":{"@type":"Answer","text":"BERT used encoder-only masked-language-model pretraining; GPT-2 used decoder-only causal language modeling, predicting the next token rather than filling in masked ones."}},{"@type":"Question","name":"In the worked example, why is Llama 2 70B smaller than GPT-3 despite being released three years later?","acceptedAnswer":{"@type":"Answer","text":"It reflects a deliberate shift toward compute-optimal (and often overtrained, cheaper-to-serve) scaling philosophy, training a smaller model on relatively more data rather than simply maximizing parameter count."}},{"@type":"Question","name":"What did GPT-3 demonstrate that GPT-2 hadn't, at a smaller scale?","acceptedAnswer":{"@type":"Answer","text":"That scaling a decoder-only model further unlocked genuinely useful few-shot, in-context learning capabilities, without any additional training specific to those tasks."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/llms/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ LLMs</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/llms/">LLMs</a></li><li>The LLM Landscape</li><li>A History of LLM Families (GPT, BERT, T5, Llama)</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffa970">
-      <header class="doc-head">
-        <h1 class="doc-title">A History of LLM Families (GPT, BERT, T5, Llama)</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff6f1"/>
-  <circle cx="1025" cy="110" r="153" fill="#ffddc6" opacity="0.41"/><circle cx="616" cy="287" r="173" fill="#ffddc6" opacity="0.36"/><circle cx="945" cy="46" r="120" fill="#ffddc6" opacity="0.48"/>
-  <circle cx="335" cy="216" r="95" fill="#ffa970"/>
-  <line x1="0" y1="224" x2="1200" y2="224" stroke="#ffa970" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Every architectural choice this subject has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family. Tracing those choices through a handful of landmark models turns an abstract menu of options into an actual history.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/transformers/architectural-families/" data-topic="transformers/architectural-families">Choosing an Architecture Family for a Task</a>, <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="The LLM Landscape chapter">
+        <div class="side-head">
+          <a class="side-course" href="/llms/">LLMs · Chapter 07</a>
+          <a class="side-chapter" href="/llms/the-llm-landscape/">The LLM Landscape</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/llms/a-history-of-llm-families-gpt-bert-t5-llama/" aria-current="page">A History of LLM Families (GPT, BERT, T5, Llama)</a></li><li><a href="/llms/open-weight-vs-closed-models/">Open-Weight vs. Closed Models</a></li><li><a href="/llms/model-cards-and-responsible-release/">Model Cards and Responsible Release</a></li><li><a href="/llms/licensing-and-model-governance/">Licensing and Model Governance</a></li><li><a href="/llms/responsible-scaling-policies-and-frontier-safety/">Responsible Scaling Policies and Frontier Safety</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="llms/a-history-of-llm-families-gpt-bert-t5-llama">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/llms/">LLMs</a></li><li><a href="/llms/the-llm-landscape/">The LLM Landscape</a></li><li><span aria-current="page">A History of LLM Families (GPT, BERT, T5, Llama)</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 1 of 5 · 4 min read</p>
+          <h1>A History of LLM Families (GPT, BERT, T5, Llama)</h1>
+        </header>
+        <div class="prose"><p>Every architectural choice this subject has walked through — encoder-only, decoder-only, encoder-decoder, RoPE, gated feed-forward sublayers — shows up somewhere in a real, named model family. Tracing those choices through a handful of landmark models turns an abstract menu of options into an actual history.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/transformers/architectural-families/" data-topic="transformers/architectural-families">Choosing an Architecture Family for a Task<small class="xc">Transformers</small></a><a class="chip wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;How do today&#39;s major LLM families trace back to the architectural decisions covered earlier in this subject?&quot; A small number of landmark models mark the major turns: <strong>BERT</strong> (2018) established encoder-only masked-language-model pretraining; <strong>GPT-2</strong> (2019) showed decoder-only causal language modeling could scale into genuinely fluent, general-purpose generation; <strong>T5</strong> (2019) unified many NLP tasks under one encoder-decoder, text-to-text framing; <strong>GPT-3</strong> (2020) showed that scaling a decoder-only model further unlocked few-shot, in-context capabilities; <strong>Llama 2</strong> (2023) combined a decoder-only architecture with RoPE and other efficiency refinements, at a far smaller parameter count than GPT-3, trained on far more tokens.</p>
 <h2 id="intuition">Intuition</h2>
@@ -114,16 +117,21 @@ That scaling a decoder-only model further unlocked genuinely useful few-shot, in
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/transformers/architectural-families/" data-topic="transformers/architectural-families">Choosing an Architecture Family for a Task</a> · <a class="wikilink" href="/llms/compute-optimal-scaling-chinchilla/" data-topic="llms/compute-optimal-scaling-chinchilla">Compute-Optimal Scaling (Chinchilla)</a> · <a class="wikilink" href="/llms/open-weight-vs-closed-models/" data-topic="llms/open-weight-vs-closed-models">Open-Weight vs. Closed Models</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/a-history-of-llm-families-gpt-bert-t5-llama">Open in the interactive site →</a></p>
-        <a class="read-next" href="/llms/open-weight-vs-closed-models/"><small>Read next</small><b>Open-Weight vs. Closed Models</b><p>Two LLMs with similar benchmark scores can offer radically different things to the people using them, depending on whether the weights themselves are published or only an API sits in front of them.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/architectural-families/"><b>Architectural Families</b><p>The same transformer block supports three very different overall shapes, depending on which direction information is allowed to flow.</p></a><a class="rc-card" href="/llms/compute-optimal-scaling-chinchilla/"><b>Compute-Optimal Scaling (Chinchilla)</b><p>Given a fixed training budget, there&#39;s a real choice buried inside it: spend it on a bigger model, or on more training data?</p></a><a class="rc-card" href="/llms/open-weight-vs-closed-models/"><b>Open-Weight vs. Closed Models</b><p>Two LLMs with similar benchmark scores can offer radically different things to the people using them, depending on whether the weights themselves are published or only an API sits in front of them.</p></a><a class="rc-card" href="/llms/the-bitter-lesson-scale-vs-hand-engineering/"><b>The Bitter Lesson: Scale vs. Hand-Engineering</b><p>Across decades of AI research, a pattern keeps repeating: a simple, general method paired with more computation eventually beats an elaborately hand-engineered, domain-specific one — not…</p></a><a class="rc-card" href="/llms/the-llm-landscape/"><b>The LLM Landscape</b><p>Outside the technical mechanics, LLMs exist inside a fast-moving ecosystem of model families, release decisions, licenses and governance frameworks that shape who can actually build on what.</p></a></div></section>
-        <p class="doc-prev"><a href="/llms/the-llm-landscape/">← Previous: The LLM Landscape</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/llms/a-history-of-llm-families-gpt-bert-t5-llama">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/llms/the-llm-landscape/" data-topic="llms/the-llm-landscape"><span>Previous · chapter overview</span><b>The LLM Landscape</b></a><a class="step next" href="/llms/open-weight-vs-closed-models/" data-topic="llms/open-weight-vs-closed-models"><span>Next · lesson 2</span><b>Open-Weight vs. Closed Models</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/LLMs/The%20LLM%20Landscape/A%20History%20of%20LLM%20Families%20(GPT,%20BERT,%20T5,%20Llama).md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

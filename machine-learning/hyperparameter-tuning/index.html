@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hyperparameter Tuning — AI Base</title>
 <meta name="description" content="Parameters are learned; hyperparameters are chosen before training: learning rate, tree depth, penalty strength, number of neighbours.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/hyperparameter-tuning/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":4,"name":"Evaluation"},{"@type":"ListItem","position":5,"name":"Hyperparameter Tuning","item":"https://ai.saranmahadev.in/machine-learning/hyperparameter-tuning/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hyperparameter Tuning","description":"Parameters are learned; hyperparameters are chosen before training: learning rate, tree depth, penalty strength, number of neighbours.","url":"https://ai.saranmahadev.in/machine-learning/hyperparameter-tuning/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Evaluation","item":"https://ai.saranmahadev.in/machine-learning/evaluation/"},{"@type":"ListItem","position":4,"name":"Hyperparameter Tuning","item":"https://ai.saranmahadev.in/machine-learning/hyperparameter-tuning/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Hyperparameter Tuning","description":"Parameters are learned; hyperparameters are chosen before training: learning rate, tree depth, penalty strength, number of neighbours.","url":"https://ai.saranmahadev.in/machine-learning/hyperparameter-tuning/","isPartOf":{"@type":"Course","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between a parameter and a hyperparameter?","acceptedAnswer":{"@type":"Answer","text":"Parameters are learned during training; hyperparameters are set beforehand."}},{"@type":"Question","name":"Why can random search beat grid search for the same budget?","acceptedAnswer":{"@type":"Answer","text":"It tries more distinct values of each setting, so it is likelier to land near the ones that matter."}},{"@type":"Question","name":"Why report performance on a test set after tuning?","acceptedAnswer":{"@type":"Answer","text":"The best validation score is optimistically biased by the selection."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/machine-learning/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Machine Learning</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/machine-learning/">Machine Learning</a></li><li>Evaluation</li><li>Hyperparameter Tuning</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffc46b">
-      <header class="doc-head">
-        <h1 class="doc-title">Hyperparameter Tuning</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff9f0"/>
-  <circle cx="1041" cy="59" r="105" fill="#ffe7c4" opacity="0.50"/><circle cx="1013" cy="354" r="114" fill="#ffe7c4" opacity="0.58"/><circle cx="1068" cy="52" r="116" fill="#ffe7c4" opacity="0.46"/>
-  <circle cx="293" cy="119" r="134" fill="#ffc46b"/>
-  <line x1="0" y1="138" x2="1200" y2="138" stroke="#ffc46b" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Parameters are learned; <strong>hyperparameters</strong> are chosen before training: learning rate, tree depth, penalty strength, number of neighbours. Tuning means trying combinations and keeping the one with the best validation score, within a fixed budget of training runs. How you spend the budget matters.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a>, <a class="wikilink" href="/machine-learning/pruning-and-overfitting/" data-topic="machine-learning/pruning-and-overfitting">Pruning and Overfitting</a> and <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Evaluation chapter">
+        <div class="side-head">
+          <a class="side-course" href="/machine-learning/">Machine Learning · Chapter 06</a>
+          <a class="side-chapter" href="/machine-learning/evaluation/">Evaluation</a>
+          <span class="side-count">6 lessons</span>
+        </div>
+        <ol><li><a href="/machine-learning/accuracy-and-the-confusion-matrix/">Accuracy and the Confusion Matrix</a></li><li><a href="/machine-learning/precision-recall-and-f1/">Precision, Recall and F1</a></li><li><a href="/machine-learning/roc-and-auc/">ROC and AUC</a></li><li><a href="/machine-learning/regression-metrics/">Regression Metrics</a></li><li><a href="/machine-learning/cross-validation/">Cross-Validation</a></li><li><a href="/machine-learning/hyperparameter-tuning/" aria-current="page">Hyperparameter Tuning</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="machine-learning/hyperparameter-tuning">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/machine-learning/">Machine Learning</a></li><li><a href="/machine-learning/evaluation/">Evaluation</a></li><li><span aria-current="page">Hyperparameter Tuning</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 6 of 6 · 4 min read</p>
+          <h1>Hyperparameter Tuning</h1>
+        </header>
+        <div class="prose"><p>Parameters are learned; <strong>hyperparameters</strong> are chosen before training: learning rate, tree depth, penalty strength, number of neighbours. Tuning means trying combinations and keeping the one with the best validation score, within a fixed budget of training runs. How you spend the budget matters.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a><a class="chip wikilink" href="/machine-learning/pruning-and-overfitting/" data-topic="machine-learning/pruning-and-overfitting">Pruning and Overfitting</a><a class="chip wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate<small class="xc">Math</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;How do I choose the settings?&quot; There is no formula; you search, and the search itself can overfit the validation data if you are careless.</p>
 <h2 id="intuition-hunting-for-a-peak-with-few-tries">Intuition: hunting for a peak with few tries</h2>
@@ -116,16 +119,21 @@ The best validation score is optimistically biased by the selection.
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation">Cross-Validation</a> · <a class="wikilink" href="/machine-learning/pruning-and-overfitting/" data-topic="machine-learning/pruning-and-overfitting">Pruning and Overfitting</a> · <a class="wikilink" href="/math/learning-rate/" data-topic="math/learning-rate">Learning Rate</a> · <a class="wikilink" href="/machine-learning/ridge-and-lasso/" data-topic="machine-learning/ridge-and-lasso">Ridge and Lasso</a> · <a class="wikilink" href="/math/common-test-mistakes/" data-topic="math/common-test-mistakes">Common Test Mistakes</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/hyperparameter-tuning">Open in the interactive site →</a></p>
-        <a class="read-next" href="/machine-learning/unsupervised-learning/"><small>Read next</small><b>Unsupervised Learning</b><p>When no answers are given, a model can still find structure: groups of similar points, the true number of dimensions in the data, or the odd ones out.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/machine-learning/cross-validation/"><b>Cross-Validation</b><p>One train/validation split gives one score, and that score depends on which points happened to land where.</p></a><a class="rc-card" href="/machine-learning/pruning-and-overfitting/"><b>Pruning and Overfitting</b><p>Left alone, a tree keeps splitting until every leaf is pure, which means it memorises noise.</p></a><a class="rc-card" href="/math/learning-rate/"><b>Learning Rate</b><p>The learning rate η sets how big each gradient-descent step is. Too small and training crawls; too large and it overshoots, bounces around, or blows up.</p></a><a class="rc-card" href="/machine-learning/ridge-and-lasso/"><b>Ridge and Lasso</b><p>When there are many features and little data, a linear model can fit noise with huge, contradictory weights. Regularisation adds a penalty on the weights so the model prefers small ones.</p></a><a class="rc-card" href="/math/common-test-mistakes/"><b>Common Test Mistakes</b><p>Statistical tests are easy to misuse.</p></a><a class="rc-card" href="/machine-learning/evaluation/"><b>Evaluation</b><p>A model is only as good as the evidence for it.</p></a></div></section>
-        <p class="doc-prev"><a href="/machine-learning/cross-validation/">← Previous: Cross-Validation</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/machine-learning/hyperparameter-tuning">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/machine-learning/cross-validation/" data-topic="machine-learning/cross-validation"><span>Previous · lesson 5</span><b>Cross-Validation</b></a><a class="step next" href="/machine-learning/unsupervised-learning/" data-topic="machine-learning/unsupervised-learning"><span>Next · chapter overview</span><b>Unsupervised Learning</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Machine%20Learning/Evaluation/Hyperparameter%20Tuning.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-hunting-for-a-peak-with-few-tries" data-scroll="intuition-hunting-for-a-peak-with-few-tries">Intuition: hunting for a peak with few tries</a><a href="#definitions" data-scroll="definitions">Definitions</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

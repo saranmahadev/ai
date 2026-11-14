@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Universal Approximation — AI Base</title>
 <meta name="description" content="The universal approximation theorem says a feedforward network with just one hidden layer of sigmoid (or similarly-shaped) units can approximate any continuous function on a bounded input, as…">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/universal-approximation/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":4,"name":"Neural Network Foundations"},{"@type":"ListItem","position":5,"name":"Universal Approximation","item":"https://ai.saranmahadev.in/deep-learning/universal-approximation/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Universal Approximation","description":"The universal approximation theorem says a feedforward network with just one hidden layer of sigmoid (or similarly-shaped) units can approximate any continuous function on a bounded input, as…","url":"https://ai.saranmahadev.in/deep-learning/universal-approximation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Neural Network Foundations","item":"https://ai.saranmahadev.in/deep-learning/neural-network-foundations/"},{"@type":"ListItem","position":4,"name":"Universal Approximation","item":"https://ai.saranmahadev.in/deep-learning/universal-approximation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Universal Approximation","description":"The universal approximation theorem says a feedforward network with just one hidden layer of sigmoid (or similarly-shaped) units can approximate any continuous function on a bounded input, as…","url":"https://ai.saranmahadev.in/deep-learning/universal-approximation/","isPartOf":{"@type":"Course","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the universal approximation theorem actually guarantee?","acceptedAnswer":{"@type":"Answer","text":"That for any continuous function on a bounded input and any accuracy target, there exists a one-hidden-layer network wide enough to achieve it — not that training will find it."}},{"@type":"Question","name":"In the worked example, what happened to the fitting error as hidden units increased from 2 to 8?","acceptedAnswer":{"@type":"Answer","text":"It fell by roughly three orders of magnitude (0.209 to 0.00007), illustrating the theorem's \"wide enough\" clause concretely."}},{"@type":"Question","name":"Does the theorem explain why modern networks are deep rather than just wide?","acceptedAnswer":{"@type":"Answer","text":"No — it only shows one hidden layer can suffice in principle; it says nothing about efficiency, which is where depth's advantage comes in."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/deep-learning/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Deep Learning</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/deep-learning/">Deep Learning</a></li><li>Neural Network Foundations</li><li>Universal Approximation</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ff8f8f">
-      <header class="doc-head">
-        <h1 class="doc-title">Universal Approximation</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff4f4"/>
-  <circle cx="961" cy="78" r="97" fill="#ffd2d2" opacity="0.51"/><circle cx="1015" cy="286" r="172" fill="#ffd2d2" opacity="0.35"/>
-  <circle cx="171" cy="239" r="135" fill="#ff8f8f"/>
-  <line x1="0" y1="190" x2="1200" y2="190" stroke="#ff8f8f" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>The <strong>universal approximation theorem</strong> says a feedforward network with just one hidden layer of sigmoid (or similarly-shaped) units can approximate any continuous function on a bounded input, as closely as you like — provided the hidden layer is wide enough. It is a statement about what a network <em>can</em> represent, not about whether training will find that representation.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> and <a class="wikilink" href="/math/continuity/" data-topic="math/continuity">Continuity</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Neural Network Foundations chapter">
+        <div class="side-head">
+          <a class="side-course" href="/deep-learning/">Deep Learning · Chapter 01</a>
+          <a class="side-chapter" href="/deep-learning/neural-network-foundations/">Neural Network Foundations</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/deep-learning/from-linear-models-to-neural-networks/">From Linear Models to Neural Networks</a></li><li><a href="/deep-learning/the-artificial-neuron-and-activation-functions/">The Artificial Neuron and Activation Functions</a></li><li><a href="/deep-learning/the-multilayer-feedforward-network/">The Multilayer Feedforward Network</a></li><li><a href="/deep-learning/universal-approximation/" aria-current="page">Universal Approximation</a></li><li><a href="/deep-learning/why-depth-helps/">Why Depth Helps</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="deep-learning/universal-approximation">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/deep-learning/">Deep Learning</a></li><li><a href="/deep-learning/neural-network-foundations/">Neural Network Foundations</a></li><li><span aria-current="page">Universal Approximation</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 4 of 5 · 4 min read</p>
+          <h1>Universal Approximation</h1>
+        </header>
+        <div class="prose"><p>The <strong>universal approximation theorem</strong> says a feedforward network with just one hidden layer of sigmoid (or similarly-shaped) units can approximate any continuous function on a bounded input, as closely as you like — provided the hidden layer is wide enough. It is a statement about what a network <em>can</em> represent, not about whether training will find that representation.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a><a class="chip wikilink" href="/math/continuity/" data-topic="math/continuity">Continuity<small class="xc">Math</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Is one hidden layer, in principle, ever enough — or do I always need to go deeper?&quot; Depth is not required for raw representational power; one hidden layer can already represent (almost) anything continuous, if it is allowed to be as wide as needed.</p>
 <h2 id="intuition-build-the-curve-out-of-soft-steps">Intuition: build the curve out of soft steps</h2>
@@ -108,16 +111,21 @@ No — it only shows one hidden layer can suffice in principle; it says nothing 
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> · <a class="wikilink" href="/math/continuity/" data-topic="math/continuity">Continuity</a> · <a class="wikilink" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps">Why Depth Helps</a> · <a class="wikilink" href="/machine-learning/kernel-methods/" data-topic="machine-learning/kernel-methods">Kernel Methods</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/universal-approximation">Open in the interactive site →</a></p>
-        <a class="read-next" href="/deep-learning/why-depth-helps/"><small>Read next</small><b>Why Depth Helps</b><p>Universal Approximation showed one wide hidden layer can represent almost anything.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/the-multilayer-feedforward-network/"><b>The Multilayer Feedforward Network</b><p>A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.</p></a><a class="rc-card" href="/math/continuity/"><b>Continuity</b><p>A function is continuous at a point when you can draw it through that point without lifting your pen: the limit exists and equals the function&#39;s value.</p></a><a class="rc-card" href="/deep-learning/why-depth-helps/"><b>Why Depth Helps</b><p>Universal Approximation showed one wide hidden layer can represent almost anything.</p></a><a class="rc-card" href="/machine-learning/kernel-methods/"><b>Kernel Methods</b><p>A straight line cannot separate every problem, but a straight line in a richer space can.</p></a><a class="rc-card" href="/deep-learning/neural-network-foundations/"><b>Neural Network Foundations</b><p>A neural network is many simple units arranged in layers, each one a tiny scoring function like the ones in the Math and Machine Learning subjects.</p></a></div></section>
-        <p class="doc-prev"><a href="/deep-learning/the-multilayer-feedforward-network/">← Previous: The Multilayer Feedforward Network</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/deep-learning/universal-approximation">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network"><span>Previous · lesson 3</span><b>The Multilayer Feedforward Network</b></a><a class="step next" href="/deep-learning/why-depth-helps/" data-topic="deep-learning/why-depth-helps"><span>Next · lesson 5</span><b>Why Depth Helps</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Deep%20Learning/Neural%20Network%20Foundations/Universal%20Approximation.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-build-the-curve-out-of-soft-steps" data-scroll="intuition-build-the-curve-out-of-soft-steps">Intuition: build the curve out of soft steps</a><a href="#definitions" data-scroll="definitions">Definitions</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

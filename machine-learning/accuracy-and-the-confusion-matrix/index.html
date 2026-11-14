@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Accuracy and the Confusion Matrix — AI Base</title>
 <meta name="description" content="Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/machine-learning/accuracy-and-the-confusion-matrix/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":4,"name":"Evaluation"},{"@type":"ListItem","position":5,"name":"Accuracy and the Confusion Matrix","item":"https://ai.saranmahadev.in/machine-learning/accuracy-and-the-confusion-matrix/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Accuracy and the Confusion Matrix","description":"Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it.","url":"https://ai.saranmahadev.in/machine-learning/accuracy-and-the-confusion-matrix/","isPartOf":{"@type":"CreativeWorkSeries","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Machine Learning","item":"https://ai.saranmahadev.in/machine-learning/"},{"@type":"ListItem","position":3,"name":"Evaluation","item":"https://ai.saranmahadev.in/machine-learning/evaluation/"},{"@type":"ListItem","position":4,"name":"Accuracy and the Confusion Matrix","item":"https://ai.saranmahadev.in/machine-learning/accuracy-and-the-confusion-matrix/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Accuracy and the Confusion Matrix","description":"Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it.","url":"https://ai.saranmahadev.in/machine-learning/accuracy-and-the-confusion-matrix/","isPartOf":{"@type":"Course","name":"Machine Learning","url":"https://ai.saranmahadev.in/machine-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a false negative?","acceptedAnswer":{"@type":"Answer","text":"A real positive the model failed to flag."}},{"@type":"Question","name":"1% of cases are positive. What accuracy does \"always say no\" get?","acceptedAnswer":{"@type":"Answer","text":"99%."}},{"@type":"Question","name":"TP = 30, FP = 10, FN = 20. What are precision and recall?","acceptedAnswer":{"@type":"Answer","text":"Precision 30/40 = 75%; recall 30/50 = 60%."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/machine-learning/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Machine Learning</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/machine-learning/">Machine Learning</a></li><li>Evaluation</li><li>Accuracy and the Confusion Matrix</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffc46b">
-      <header class="doc-head">
-        <h1 class="doc-title">Accuracy and the Confusion Matrix</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Machine Learning</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff9f0"/>
-  <circle cx="839" cy="204" r="96" fill="#ffe7c4" opacity="0.59"/><circle cx="953" cy="302" r="62" fill="#ffe7c4" opacity="0.55"/><circle cx="933" cy="259" r="168" fill="#ffe7c4" opacity="0.36"/>
-  <circle cx="418" cy="292" r="131" fill="#ffc46b"/>
-  <line x1="0" y1="138" x2="1200" y2="138" stroke="#ffc46b" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it. The <strong>confusion matrix</strong> lays out the four ways a prediction can be right or wrong, and every better metric is built from its four counts.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a>, <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a> and <a class="wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Evaluation chapter">
+        <div class="side-head">
+          <a class="side-course" href="/machine-learning/">Machine Learning · Chapter 06</a>
+          <a class="side-chapter" href="/machine-learning/evaluation/">Evaluation</a>
+          <span class="side-count">6 lessons</span>
+        </div>
+        <ol><li><a href="/machine-learning/accuracy-and-the-confusion-matrix/" aria-current="page">Accuracy and the Confusion Matrix</a></li><li><a href="/machine-learning/precision-recall-and-f1/">Precision, Recall and F1</a></li><li><a href="/machine-learning/roc-and-auc/">ROC and AUC</a></li><li><a href="/machine-learning/regression-metrics/">Regression Metrics</a></li><li><a href="/machine-learning/cross-validation/">Cross-Validation</a></li><li><a href="/machine-learning/hyperparameter-tuning/">Hyperparameter Tuning</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="machine-learning/accuracy-and-the-confusion-matrix">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/machine-learning/">Machine Learning</a></li><li><a href="/machine-learning/evaluation/">Evaluation</a></li><li><span aria-current="page">Accuracy and the Confusion Matrix</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 1 of 6 · 4 min read</p>
+          <h1>Accuracy and the Confusion Matrix</h1>
+        </header>
+        <div class="prose"><p>Accuracy, the share of predictions that are right, is the first number everyone reaches for and often the most misleading. When one class is rare, a model can score 98% by never finding it. The <strong>confusion matrix</strong> lays out the four ways a prediction can be right or wrong, and every better metric is built from its four counts.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance<small class="xc">AI Fundamentals</small></a><a class="chip wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a><a class="chip wikilink" href="/math/conditional-probability/" data-topic="math/conditional-probability">Conditional Probability<small class="xc">Math</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;How is my classifier actually wrong?&quot; A single accuracy number hides whether it misses real cases, raises false alarms, or both, and those errors rarely cost the same.</p>
 <h2 id="intuition-two-ways-to-be-right-two-ways-to-be-wrong">Intuition: two ways to be right, two ways to be wrong</h2>
@@ -122,16 +125,21 @@ Precision 30/40 = 75%; recall 30/50 = 60%.
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/fundamentals/measuring-performance/" data-topic="fundamentals/measuring-performance">Measuring Performance</a> · <a class="wikilink" href="/math/bayes-theorem/" data-topic="math/bayes-theorem">Bayes Theorem</a> · <a class="wikilink" href="/machine-learning/precision-recall-and-f1/" data-topic="machine-learning/precision-recall-and-f1">Precision, Recall and F1</a> · <a class="wikilink" href="/machine-learning/logistic-regression-as-a-classifier/" data-topic="machine-learning/logistic-regression-as-a-classifier">Logistic Regression as a Classifier</a> · <a class="wikilink" href="/fundamentals/where-ai-goes-wrong/" data-topic="fundamentals/where-ai-goes-wrong">Where AI Goes Wrong</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/machine-learning/accuracy-and-the-confusion-matrix">Open in the interactive site →</a></p>
-        <a class="read-next" href="/machine-learning/precision-recall-and-f1/"><small>Read next</small><b>Precision, Recall and F1</b><p>Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision).</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/fundamentals/measuring-performance/"><b>Measuring Performance</b><p>To judge an AI system you have to count its hits, misses and false alarms, not just its overall accuracy.</p></a><a class="rc-card" href="/machine-learning/logistic-regression-as-a-classifier/"><b>Logistic Regression as a Classifier</b><p>Logistic regression turns a linear score into a probability with the sigmoid and predicts a class by comparing that probability with a threshold. Despite its name it is a classifier.</p></a><a class="rc-card" href="/math/conditional-probability/"><b>Conditional Probability</b><p>Conditional probability is the probability of an event given that another has happened: P(A | B), read &quot;the probability of A given B&quot;.</p></a><a class="rc-card" href="/math/bayes-theorem/"><b>Bayes Theorem</b><p>Bayes&#39; theorem is the rule for updating how likely you think something is after you see new evidence: P(H | E) = P(E | H) · P(H) / P(E).</p></a><a class="rc-card" href="/machine-learning/precision-recall-and-f1/"><b>Precision, Recall and F1</b><p>Precision and recall pull against each other: flagging more cases catches more real ones (higher recall) but also admits more false alarms (lower precision).</p></a><a class="rc-card" href="/fundamentals/where-ai-goes-wrong/"><b>Where AI Goes Wrong</b><p>AI systems fail in patterned ways: they learn from unrepresentative or biased data, they meet a world that has changed since training, they can be brittle to tiny changes, and they can be…</p></a></div></section>
-        <p class="doc-prev"><a href="/machine-learning/evaluation/">← Previous: Evaluation</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/machine-learning/accuracy-and-the-confusion-matrix">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/machine-learning/evaluation/" data-topic="machine-learning/evaluation"><span>Previous · chapter overview</span><b>Evaluation</b></a><a class="step next" href="/machine-learning/precision-recall-and-f1/" data-topic="machine-learning/precision-recall-and-f1"><span>Next · lesson 2</span><b>Precision, Recall and F1</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Machine%20Learning/Evaluation/Accuracy%20and%20the%20Confusion%20Matrix.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-two-ways-to-be-right-two-ways-to-be-wrong" data-scroll="intuition-two-ways-to-be-right-two-ways-to-be-wrong">Intuition: two ways to be right, two ways to be wrong</a><a href="#definitions" data-scroll="definitions">Definitions</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

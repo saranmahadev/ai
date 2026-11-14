@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ALiBi and Length Extrapolation — AI Base</title>
 <meta name="description" content="RoPE builds relative position into attention through rotation.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/transformers/alibi-and-length-extrapolation/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":4,"name":"Positional Information Beyond Sinusoids"},{"@type":"ListItem","position":5,"name":"ALiBi and Length Extrapolation","item":"https://ai.saranmahadev.in/transformers/alibi-and-length-extrapolation/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"ALiBi and Length Extrapolation","description":"RoPE builds relative position into attention through rotation.","url":"https://ai.saranmahadev.in/transformers/alibi-and-length-extrapolation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Transformers","item":"https://ai.saranmahadev.in/transformers/"},{"@type":"ListItem","position":3,"name":"Positional Information Beyond Sinusoids","item":"https://ai.saranmahadev.in/transformers/positional-information-beyond-sinusoids/"},{"@type":"ListItem","position":4,"name":"ALiBi and Length Extrapolation","item":"https://ai.saranmahadev.in/transformers/alibi-and-length-extrapolation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"ALiBi and Length Extrapolation","description":"RoPE builds relative position into attention through rotation.","url":"https://ai.saranmahadev.in/transformers/alibi-and-length-extrapolation/","isPartOf":{"@type":"Course","name":"Transformers","url":"https://ai.saranmahadev.in/transformers/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does ALiBi add to a transformer's queries, keys or embeddings?","acceptedAnswer":{"@type":"Answer","text":"Nothing — ALiBi only modifies attention scores directly, by subtracting a distance-proportional bias before the softmax."}},{"@type":"Question","name":"In the worked example, why did the steep-slope head's bias grow so much faster than the shallow-slope head's?","acceptedAnswer":{"@type":"Answer","text":"Because the bias is the slope multiplied by the distance, and a larger slope value scales that penalty up much more steeply as distance increases."}},{"@type":"Question","name":"Why does ALiBi handle sequences longer than anything seen in training, unlike a learned positional table?","acceptedAnswer":{"@type":"Answer","text":"Its bias is a simple formula (slope times distance) defined for any distance at all, with no maximum length built in — unlike a learned table, which has no entry past its trained size."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/transformers/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Transformers</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/transformers/">Transformers</a></li><li>Positional Information Beyond Sinusoids</li><li>ALiBi and Length Extrapolation</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#7db7ff">
-      <header class="doc-head">
-        <h1 class="doc-title">ALiBi and Length Extrapolation</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Transformers</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#f2f8ff"/>
-  <circle cx="783" cy="161" r="147" fill="#cbe2ff" opacity="0.44"/><circle cx="665" cy="306" r="100" fill="#cbe2ff" opacity="0.52"/><circle cx="822" cy="103" r="112" fill="#cbe2ff" opacity="0.58"/>
-  <circle cx="361" cy="194" r="157" fill="#7db7ff"/>
-  <line x1="0" y1="157" x2="1200" y2="157" stroke="#7db7ff" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">RoPE</a> builds relative position into attention through rotation. ALiBi (Attention with Linear Biases) takes an even more direct route to a related goal: skip rotating anything, and just subtract a penalty from each attention score, proportional to how far apart the two tokens are.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">Relative Position and RoPE</a>, <a class="wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Positional Information Beyond Sinusoids chapter">
+        <div class="side-head">
+          <a class="side-course" href="/transformers/">Transformers · Chapter 04</a>
+          <a class="side-chapter" href="/transformers/positional-information-beyond-sinusoids/">Positional Information Beyond Sinusoids</a>
+          <span class="side-count">3 lessons</span>
+        </div>
+        <ol><li><a href="/transformers/learned-positional-embeddings/">Learned Positional Embeddings</a></li><li><a href="/transformers/relative-position-and-rope/">Relative Position and RoPE</a></li><li><a href="/transformers/alibi-and-length-extrapolation/" aria-current="page">ALiBi and Length Extrapolation</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="transformers/alibi-and-length-extrapolation">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/transformers/">Transformers</a></li><li><a href="/transformers/positional-information-beyond-sinusoids/">Positional Information Beyond Sinusoids</a></li><li><span aria-current="page">ALiBi and Length Extrapolation</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 3 of 3 · 5 min read</p>
+          <h1>ALiBi and Length Extrapolation</h1>
+        </header>
+        <div class="prose"><p><a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">RoPE</a> builds relative position into attention through rotation. ALiBi (Attention with Linear Biases) takes an even more direct route to a related goal: skip rotating anything, and just subtract a penalty from each attention score, proportional to how far apart the two tokens are.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">Relative Position and RoPE</a><a class="chip wikilink" href="/deep-learning/multi-head-attention/" data-topic="deep-learning/multi-head-attention">Multi-Head Attention<small class="xc">Deep Learning</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Can a model trained only on short sequences still behave sensibly on much longer ones it never saw during training?&quot; <a class="wikilink" href="/transformers/learned-positional-embeddings/" data-topic="transformers/learned-positional-embeddings">A learned positional table</a> clearly cannot — there&#39;s no row for a position past its trained maximum. ALiBi&#39;s answer is to make distance penalization the <em>entire</em> mechanism: subtract a bias proportional to distance directly from each attention score, with a different penalty steepness (slope) per head. Because that formula is defined for any distance at all, it keeps producing sensible, well-behaved scores far past any sequence length seen during training — this is <strong>length extrapolation</strong>.</p>
 <h2 id="intuition">Intuition</h2>
@@ -117,16 +120,21 @@ Its bias is a simple formula (slope times distance) defined for any distance at 
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope">Relative Position and RoPE</a> · <a class="wikilink" href="/transformers/learned-positional-embeddings/" data-topic="transformers/learned-positional-embeddings">Learned Positional Embeddings</a> · <a class="wikilink" href="/transformers/attention-masks-padding-and-causal-masking/" data-topic="transformers/attention-masks-padding-and-causal-masking">Attention Masks: Padding and Causal Masking</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/transformers/alibi-and-length-extrapolation">Open in the interactive site →</a></p>
-        <a class="read-next" href="/transformers/architectural-families/"><small>Read next</small><b>Architectural Families</b><p>The same transformer block supports three very different overall shapes, depending on which direction information is allowed to flow.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/transformers/relative-position-and-rope/"><b>Relative Position and RoPE</b><p>Both the sinusoidal encoding and learned positional embeddings tell a token its absolute position — &quot;you are token number 7.&quot; Rotary position embedding (RoPE) asks a different question: instead of…</p></a><a class="rc-card" href="/deep-learning/multi-head-attention/"><b>Multi-Head Attention</b><p>Attention as Dot Products computes one weighted average per query — one way of deciding what to focus on.</p></a><a class="rc-card" href="/transformers/learned-positional-embeddings/"><b>Learned Positional Embeddings</b><p>The sinusoidal encoding from Deep Learning computes a position&#39;s vector from a fixed formula — nothing about it is trained.</p></a><a class="rc-card" href="/transformers/attention-masks-padding-and-causal-masking/"><b>Attention Masks: Padding and Causal Masking</b><p>Plain attention lets every position look at every other position.</p></a><a class="rc-card" href="/transformers/positional-information-beyond-sinusoids/"><b>Positional Information Beyond Sinusoids</b><p>The fixed sinusoidal encoding from Deep Learning was the original transformer&#39;s answer to &quot;where is this token in the sequence?&quot; — but it was never the only answer, and modern models mostly use…</p></a><a class="rc-card" href="/transformers/graph-transformers/"><b>Graph Transformers</b><p>A graph neural network restricts every node to messages from its direct neighbours, layer after layer.</p></a></div></section>
-        <p class="doc-prev"><a href="/transformers/relative-position-and-rope/">← Previous: Relative Position and RoPE</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/transformers/alibi-and-length-extrapolation">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/transformers/relative-position-and-rope/" data-topic="transformers/relative-position-and-rope"><span>Previous · lesson 2</span><b>Relative Position and RoPE</b></a><a class="step next" href="/transformers/architectural-families/" data-topic="transformers/architectural-families"><span>Next · chapter overview</span><b>Architectural Families</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Transformers/Positional%20Information%20Beyond%20Sinusoids/ALiBi%20and%20Length%20Extrapolation.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Choosing a Model for a Task — AI Base</title>
 <meta name="description" content="There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/llms/choosing-a-model-for-a-task/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":4,"name":"LLMs in Practice"},{"@type":"ListItem","position":5,"name":"Choosing a Model for a Task","item":"https://ai.saranmahadev.in/llms/choosing-a-model-for-a-task/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Choosing a Model for a Task","description":"There's no single \"best\" LLM — only the best model for a particular task's particular mix of needs.","url":"https://ai.saranmahadev.in/llms/choosing-a-model-for-a-task/","isPartOf":{"@type":"CreativeWorkSeries","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"LLMs","item":"https://ai.saranmahadev.in/llms/"},{"@type":"ListItem","position":3,"name":"LLMs in Practice","item":"https://ai.saranmahadev.in/llms/llms-in-practice/"},{"@type":"ListItem","position":4,"name":"Choosing a Model for a Task","item":"https://ai.saranmahadev.in/llms/choosing-a-model-for-a-task/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Choosing a Model for a Task","description":"There's no single \"best\" LLM — only the best model for a particular task's particular mix of needs.","url":"https://ai.saranmahadev.in/llms/choosing-a-model-for-a-task/","isPartOf":{"@type":"Course","name":"LLMs","url":"https://ai.saranmahadev.in/llms/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does the \"small\" model win the latency-sensitive scenario despite having the lowest quality score of the three?","acceptedAnswer":{"@type":"Answer","text":"Because that scenario weights speed and affordability far more heavily than quality (0.6 and 0.2 versus 0.2), and small scores highest on exactly those two dimensions."}},{"@type":"Question","name":"Does picking the model with the single highest quality score always give the best result for a task?","acceptedAnswer":{"@type":"Answer","text":"No — the right choice depends on the task's weighting across all the dimensions that matter to it, not on any one dimension's score alone, as the worked example's two different winners show."}},{"@type":"Question","name":"What mechanism does this topic reuse from evaluating LLMs more generally?","acceptedAnswer":{"@type":"Answer","text":"The weighted-scoring formula from leaderboard reweighting — the same arithmetic, applied here to choosing a model for a task instead of to ranking a leaderboard."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/llms/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ LLMs</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/llms/">LLMs</a></li><li>LLMs in Practice</li><li>Choosing a Model for a Task</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ffa970">
-      <header class="doc-head">
-        <h1 class="doc-title">Choosing a Model for a Task</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>LLMs</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff6f1"/>
-  <circle cx="1028" cy="319" r="117" fill="#ffddc6" opacity="0.41"/><circle cx="572" cy="217" r="139" fill="#ffddc6" opacity="0.41"/><circle cx="523" cy="109" r="189" fill="#ffddc6" opacity="0.32"/>
-  <circle cx="162" cy="298" r="132" fill="#ffa970"/>
-  <line x1="0" y1="279" x2="1200" y2="279" stroke="#ffa970" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs. A model that tops every capability benchmark can still be the wrong choice if the task cares more about speed or cost than about squeezing out the last few points of quality.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">Leaderboards and Their Limits</a>, <a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="LLMs in Practice chapter">
+        <div class="side-head">
+          <a class="side-course" href="/llms/">LLMs · Chapter 08</a>
+          <a class="side-chapter" href="/llms/llms-in-practice/">LLMs in Practice</a>
+          <span class="side-count">9 lessons</span>
+        </div>
+        <ol><li><a href="/llms/fine-tuning-for-a-specific-task/">Fine-Tuning for a Specific Task</a></li><li><a href="/llms/catastrophic-forgetting-in-fine-tuning/">Catastrophic Forgetting in Fine-Tuning</a></li><li><a href="/llms/system-prompts-and-prompt-templates/">System Prompts and Prompt Templates</a></li><li><a href="/llms/structured-output-and-tool-calling-apis/">Structured Output and Tool-Calling APIs</a></li><li><a href="/llms/model-merging-and-weight-averaging/">Model Merging and Weight Averaging</a></li><li><a href="/llms/cost-and-latency-of-llm-apis/">Cost and Latency of LLM APIs</a></li><li><a href="/llms/choosing-a-model-for-a-task/" aria-current="page">Choosing a Model for a Task</a></li><li><a href="/llms/guardrails-and-deployment-time-safety-filters/">Guardrails and Deployment-Time Safety Filters</a></li><li><a href="/llms/capstone-pretraining-to-aligned-assistant-traced-end-to-end/">Capstone: Pretraining to Aligned Assistant, Traced End to End</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="llms/choosing-a-model-for-a-task">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/llms/">LLMs</a></li><li><a href="/llms/llms-in-practice/">LLMs in Practice</a></li><li><span aria-current="page">Choosing a Model for a Task</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 7 of 9 · 5 min read</p>
+          <h1>Choosing a Model for a Task</h1>
+        </header>
+        <div class="prose"><p>There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs. A model that tops every capability benchmark can still be the wrong choice if the task cares more about speed or cost than about squeezing out the last few points of quality.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">Leaderboards and Their Limits</a><a class="chip wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Given several models of different sizes, how do you pick the right one for a specific task?&quot; The same weighted-scoring mechanism already derived for reweighting a leaderboard (<a class="wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">Leaderboards and Their Limits</a>) applies directly here: score each candidate model on the dimensions the task actually cares about (quality, speed, affordability), weight those dimensions by how much the task values each one, and the model with the highest weighted score is the right choice <em>for that task</em> — not necessarily the most capable model in the abstract.</p>
 <h2 id="intuition">Intuition</h2>
@@ -116,16 +119,21 @@ The weighted-scoring formula from leaderboard reweighting — the same arithmeti
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/llms/leaderboards-and-their-limits/" data-topic="llms/leaderboards-and-their-limits">Leaderboards and Their Limits</a> · <a class="wikilink" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis">Cost and Latency of LLM APIs</a> · <a class="wikilink" href="/llms/fine-tuning-for-a-specific-task/" data-topic="llms/fine-tuning-for-a-specific-task">Fine-Tuning for a Specific Task</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/llms/choosing-a-model-for-a-task">Open in the interactive site →</a></p>
-        <a class="read-next" href="/llms/guardrails-and-deployment-time-safety-filters/"><small>Read next</small><b>Guardrails and Deployment-Time Safety Filters</b><p>Alignment training shapes what a model tends to do on its own, but a deployed product rarely relies on that alone.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/llms/leaderboards-and-their-limits/"><b>Leaderboards and Their Limits</b><p>A leaderboard promises a simple answer to &quot;which model is best?&quot; — rank them by score, read off the winner.</p></a><a class="rc-card" href="/llms/cost-and-latency-of-llm-apis/"><b>Cost and Latency of LLM APIs</b><p>A request to an LLM API has two separate costs that don&#39;t move together: how much it costs in money, and how long it takes to come back.</p></a><a class="rc-card" href="/llms/fine-tuning-for-a-specific-task/"><b>Fine-Tuning for a Specific Task</b><p>An aligned, general-purpose assistant is often not what a product actually needs — a narrower model trained specifically on one job&#39;s data can do that one job better, cheaper, and more predictably.</p></a><a class="rc-card" href="/llms/llms-in-practice/"><b>LLMs in Practice</b><p>The last part of this subject: adapting a model to a specific task, prompting and serving it as part of a real product, the practical failure modes of each, and a capstone that traces the whole…</p></a><a class="rc-card" href="/llms/structured-output-and-tool-calling-apis/"><b>Structured Output and Tool-Calling APIs</b><p>Code that calls an LLM usually needs the response in a specific shape — valid JSON with particular fields, or a specific function call with typed arguments — not free-flowing prose.</p></a><a class="rc-card" href="/llms/model-merging-and-weight-averaging/"><b>Model Merging and Weight Averaging</b><p>Training a brand-new model that&#39;s good at two different tasks usually means training on both tasks&#39; data together.</p></a></div></section>
-        <p class="doc-prev"><a href="/llms/cost-and-latency-of-llm-apis/">← Previous: Cost and Latency of LLM APIs</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/llms/choosing-a-model-for-a-task">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/llms/cost-and-latency-of-llm-apis/" data-topic="llms/cost-and-latency-of-llm-apis"><span>Previous · lesson 6</span><b>Cost and Latency of LLM APIs</b></a><a class="step next" href="/llms/guardrails-and-deployment-time-safety-filters/" data-topic="llms/guardrails-and-deployment-time-safety-filters"><span>Next · lesson 8</span><b>Guardrails and Deployment-Time Safety Filters</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/LLMs/LLMs%20in%20Practice/Choosing%20a%20Model%20for%20a%20Task.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

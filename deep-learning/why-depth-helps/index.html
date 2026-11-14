@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Why Depth Helps — AI Base</title>
 <meta name="description" content="Universal Approximation showed one wide hidden layer can represent almost anything.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/deep-learning/why-depth-helps/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":4,"name":"Neural Network Foundations"},{"@type":"ListItem","position":5,"name":"Why Depth Helps","item":"https://ai.saranmahadev.in/deep-learning/why-depth-helps/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Why Depth Helps","description":"Universal Approximation showed one wide hidden layer can represent almost anything.","url":"https://ai.saranmahadev.in/deep-learning/why-depth-helps/","isPartOf":{"@type":"CreativeWorkSeries","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Deep Learning","item":"https://ai.saranmahadev.in/deep-learning/"},{"@type":"ListItem","position":3,"name":"Neural Network Foundations","item":"https://ai.saranmahadev.in/deep-learning/neural-network-foundations/"},{"@type":"ListItem","position":4,"name":"Why Depth Helps","item":"https://ai.saranmahadev.in/deep-learning/why-depth-helps/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Why Depth Helps","description":"Universal Approximation showed one wide hidden layer can represent almost anything.","url":"https://ai.saranmahadev.in/deep-learning/why-depth-helps/","isPartOf":{"@type":"Course","name":"Deep Learning","url":"https://ai.saranmahadev.in/deep-learning/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does composing the tent function k times double the number of linear pieces each time?","acceptedAnswer":{"@type":"Answer","text":"Each application folds the entire previous output back through the same two-piece shape, so every existing piece gets split into two."}},{"@type":"Question","name":"Why can't a single hidden layer of ReLU units match that cheaply?","acceptedAnswer":{"@type":"Answer","text":"A linear output over `m` ReLU units can have at most `m` breakpoints, so matching `2ᵏ − 1` breakpoints needs on the order of `2ᵏ` units — no shortcut from composition is available in one layer."}},{"@type":"Question","name":"Does this mean wider single-layer networks are never a good choice?","acceptedAnswer":{"@type":"Answer","text":"No — it is one function family where depth is exponentially cheaper; other functions may not have this compositional structure, and width still has its uses."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/deep-learning/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Deep Learning</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/deep-learning/">Deep Learning</a></li><li>Neural Network Foundations</li><li>Why Depth Helps</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ff8f8f">
-      <header class="doc-head">
-        <h1 class="doc-title">Why Depth Helps</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Deep Learning</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff4f4"/>
-  <circle cx="750" cy="78" r="170" fill="#ffd2d2" opacity="0.31"/><circle cx="724" cy="346" r="167" fill="#ffd2d2" opacity="0.49"/>
-  <circle cx="349" cy="98" r="142" fill="#ff8f8f"/>
-  <line x1="0" y1="262" x2="1200" y2="262" stroke="#ff8f8f" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/deep-learning/universal-approximation/" data-topic="deep-learning/universal-approximation">Universal Approximation</a> showed one wide hidden layer can represent almost anything. <strong>Depth helps anyway</strong> because, for some functions, a shallow network needs exponentially more units than a deep one to represent the same function — stacking layers lets you <em>compose</em> a small building block instead of laying out an enormous number of them side by side.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/deep-learning/universal-approximation/" data-topic="deep-learning/universal-approximation">Universal Approximation</a> and <a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Neural Network Foundations chapter">
+        <div class="side-head">
+          <a class="side-course" href="/deep-learning/">Deep Learning · Chapter 01</a>
+          <a class="side-chapter" href="/deep-learning/neural-network-foundations/">Neural Network Foundations</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/deep-learning/from-linear-models-to-neural-networks/">From Linear Models to Neural Networks</a></li><li><a href="/deep-learning/the-artificial-neuron-and-activation-functions/">The Artificial Neuron and Activation Functions</a></li><li><a href="/deep-learning/the-multilayer-feedforward-network/">The Multilayer Feedforward Network</a></li><li><a href="/deep-learning/universal-approximation/">Universal Approximation</a></li><li><a href="/deep-learning/why-depth-helps/" aria-current="page">Why Depth Helps</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="deep-learning/why-depth-helps">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/deep-learning/">Deep Learning</a></li><li><a href="/deep-learning/neural-network-foundations/">Neural Network Foundations</a></li><li><span aria-current="page">Why Depth Helps</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 5 of 5 · 5 min read</p>
+          <h1>Why Depth Helps</h1>
+        </header>
+        <div class="prose"><p><a class="wikilink" href="/deep-learning/universal-approximation/" data-topic="deep-learning/universal-approximation">Universal Approximation</a> showed one wide hidden layer can represent almost anything. <strong>Depth helps anyway</strong> because, for some functions, a shallow network needs exponentially more units than a deep one to represent the same function — stacking layers lets you <em>compose</em> a small building block instead of laying out an enormous number of them side by side.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/deep-learning/universal-approximation/" data-topic="deep-learning/universal-approximation">Universal Approximation</a><a class="chip wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;If width alone can approximate anything, why bother going deep?&quot; Because <em>how many</em> units width needs can explode, while depth can solve the same problem with far fewer units, by reusing a small piece of computation again and again.</p>
 <h2 id="intuition-folding-a-strip-of-paper">Intuition: folding a strip of paper</h2>
@@ -112,16 +115,21 @@ No — it is one function family where depth is exponentially cheaper; other fun
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/deep-learning/universal-approximation/" data-topic="deep-learning/universal-approximation">Universal Approximation</a> · <a class="wikilink" href="/deep-learning/the-multilayer-feedforward-network/" data-topic="deep-learning/the-multilayer-feedforward-network">The Multilayer Feedforward Network</a> · <a class="wikilink" href="/deep-learning/convolutional-neural-networks/" data-topic="deep-learning/convolutional-neural-networks">Convolutional Neural Networks</a> · <a class="wikilink" href="/deep-learning/vanishing-and-exploding-gradients/" data-topic="deep-learning/vanishing-and-exploding-gradients">Vanishing and Exploding Gradients</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/deep-learning/why-depth-helps">Open in the interactive site →</a></p>
-        <a class="read-next" href="/deep-learning/training-deep-networks/"><small>Read next</small><b>Training Deep Networks</b><p>Gradient descent and backpropagation (see Gradient Descent and Backpropagation by Hand in Math) are the engine; this section covers the practical decisions that decide whether that engine actually…</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/deep-learning/universal-approximation/"><b>Universal Approximation</b><p>The universal approximation theorem says a feedforward network with just one hidden layer of sigmoid (or similarly-shaped) units can approximate any continuous function on a bounded input, as…</p></a><a class="rc-card" href="/deep-learning/the-multilayer-feedforward-network/"><b>The Multilayer Feedforward Network</b><p>A multilayer feedforward network wires several artificial neurons into layers and runs them in one direction only, input to output, with no loops.</p></a><a class="rc-card" href="/deep-learning/convolutional-neural-networks/"><b>Convolutional Neural Networks</b><p>A photograph has structure a plain feedforward network ignores: a cat&#39;s ear looks the same whether it is in the top-left or bottom-right corner.</p></a><a class="rc-card" href="/deep-learning/vanishing-and-exploding-gradients/"><b>Vanishing and Exploding Gradients</b><p>Training a network means pushing a gradient signal backward through every layer by the chain rule.</p></a><a class="rc-card" href="/deep-learning/neural-network-foundations/"><b>Neural Network Foundations</b><p>A neural network is many simple units arranged in layers, each one a tiny scoring function like the ones in the Math and Machine Learning subjects.</p></a><a class="rc-card" href="/deep-learning/from-linear-models-to-neural-networks/"><b>From Linear Models to Neural Networks</b><p>A single linear unit — a perceptron or a logistic regression — can only cut its input space with one straight line (or flat plane).</p></a></div></section>
-        <p class="doc-prev"><a href="/deep-learning/universal-approximation/">← Previous: Universal Approximation</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/deep-learning/why-depth-helps">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/deep-learning/universal-approximation/" data-topic="deep-learning/universal-approximation"><span>Previous · lesson 4</span><b>Universal Approximation</b></a><a class="step next" href="/deep-learning/training-deep-networks/" data-topic="deep-learning/training-deep-networks"><span>Next · chapter overview</span><b>Training Deep Networks</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Deep%20Learning/Neural%20Network%20Foundations/Why%20Depth%20Helps.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition-folding-a-strip-of-paper" data-scroll="intuition-folding-a-strip-of-paper">Intuition: folding a strip of paper</a><a href="#definitions" data-scroll="definitions">Definitions</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

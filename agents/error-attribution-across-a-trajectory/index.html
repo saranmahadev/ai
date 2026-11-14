@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Error Attribution Across a Trajectory — AI Base</title>
 <meta name="description" content="A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything…">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/agents/error-attribution-across-a-trajectory/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":4,"name":"Reflection and Self-Improvement"},{"@type":"ListItem","position":5,"name":"Error Attribution Across a Trajectory","item":"https://ai.saranmahadev.in/agents/error-attribution-across-a-trajectory/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Error Attribution Across a Trajectory","description":"A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything…","url":"https://ai.saranmahadev.in/agents/error-attribution-across-a-trajectory/","isPartOf":{"@type":"CreativeWorkSeries","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Agents","item":"https://ai.saranmahadev.in/agents/"},{"@type":"ListItem","position":3,"name":"Reflection and Self-Improvement","item":"https://ai.saranmahadev.in/agents/reflection-and-self-improvement/"},{"@type":"ListItem","position":4,"name":"Error Attribution Across a Trajectory","item":"https://ai.saranmahadev.in/agents/error-attribution-across-a-trajectory/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Error Attribution Across a Trajectory","description":"A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything…","url":"https://ai.saranmahadev.in/agents/error-attribution-across-a-trajectory/","isPartOf":{"@type":"Course","name":"Agents","url":"https://ai.saranmahadev.in/agents/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does binary search need only 4 checks regardless of whether the culprit is step 2 or step 15?","acceptedAnswer":{"@type":"Answer","text":"Each check halves the range of steps still being searched, so the number of checks needed depends only on the trajectory's total length (⌈log₂(n)⌉), not on where within that length the culprit happens to be."}},{"@type":"Question","name":"What assumption does binary search's correctness depend on here?","acceptedAnswer":{"@type":"Answer","text":"That the failure condition is monotonic — once a step breaks, every step after it stays broken too — so checking a single midpoint reliably tells you which half the culprit is in."}},{"@type":"Question","name":"Why would the gap between linear scan and binary search matter more on a longer trajectory?","acceptedAnswer":{"@type":"Answer","text":"Linear scan's cost grows directly with the culprit's position (up to the full trajectory length), while binary search's cost grows only logarithmically — the longer the trajectory, the larger the gap between the two becomes."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/agents/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Agents</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/agents/">Agents</a></li><li>Reflection and Self-Improvement</li><li>Error Attribution Across a Trajectory</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#c99bf0">
-      <header class="doc-head">
-        <h1 class="doc-title">Error Attribution Across a Trajectory</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Agents</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#faf5fe"/>
-  <circle cx="586" cy="57" r="177" fill="#e9d7f9" opacity="0.58"/><circle cx="462" cy="111" r="132" fill="#e9d7f9" opacity="0.37"/><circle cx="888" cy="297" r="189" fill="#e9d7f9" opacity="0.49"/>
-  <circle cx="229" cy="109" r="143" fill="#c99bf0"/>
-  <line x1="0" y1="297" x2="1200" y2="297" stroke="#c99bf0" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything noticed. Error attribution is the problem of finding <em>which</em> earlier step actually broke, not just noticing that the end result did.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/agents/plan-and-execute-agents/" data-topic="agents/plan-and-execute-agents">Plan-and-Execute Agents</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Reflection and Self-Improvement chapter">
+        <div class="side-head">
+          <a class="side-course" href="/agents/">Agents · Chapter 07</a>
+          <a class="side-chapter" href="/agents/reflection-and-self-improvement/">Reflection and Self-Improvement</a>
+          <span class="side-count">4 lessons</span>
+        </div>
+        <ol><li><a href="/agents/self-critique-loops-in-agents/">Self-Critique Loops in Agents</a></li><li><a href="/agents/error-attribution-across-a-trajectory/" aria-current="page">Error Attribution Across a Trajectory</a></li><li><a href="/agents/learning-from-feedback-without-weight-updates/">Learning from Feedback Without Weight Updates</a></li><li><a href="/agents/verifier-guided-agent-loops/">Verifier-Guided Agent Loops</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="agents/error-attribution-across-a-trajectory">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/agents/">Agents</a></li><li><a href="/agents/reflection-and-self-improvement/">Reflection and Self-Improvement</a></li><li><span aria-current="page">Error Attribution Across a Trajectory</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 2 of 4 · 5 min read</p>
+          <h1>Error Attribution Across a Trajectory</h1>
+        </header>
+        <div class="prose"><p>A 16-step agent trajectory fails, and the final output is visibly wrong — but the step that actually caused it happened eleven steps earlier, with five more steps run on top of it before anything noticed. Error attribution is the problem of finding <em>which</em> earlier step actually broke, not just noticing that the end result did.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/agents/plan-and-execute-agents/" data-topic="agents/plan-and-execute-agents">Plan-and-Execute Agents</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Once a trajectory has failed, how do you efficiently find which step actually caused it?&quot; A trajectory is a sequence of steps, each depending on the ones before it. If a failure only surfaces at the end, the obvious approach — scanning forward from step one, checking each step until something looks wrong — works, but costs one check per step up to and including the culprit. A faster approach treats &quot;is everything still valid up to step i?&quot; as a question whose answer flips from true to false exactly once, at the culprit, and finds that flip with a binary search instead of a linear scan.</p>
 <h2 id="intuition">Intuition</h2>
@@ -112,16 +115,21 @@ Linear scan's cost grows directly with the culprit's position (up to the full tr
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/agents/self-critique-loops-in-agents/" data-topic="agents/self-critique-loops-in-agents">Self-Critique Loops in Agents</a> · <a class="wikilink" href="/agents/re-planning-on-failure/" data-topic="agents/re-planning-on-failure">Re-Planning on Failure</a> · <a class="wikilink" href="/agents/trajectory-level-evaluation/" data-topic="agents/trajectory-level-evaluation">Trajectory-Level Evaluation</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/agents/error-attribution-across-a-trajectory">Open in the interactive site →</a></p>
-        <a class="read-next" href="/agents/learning-from-feedback-without-weight-updates/"><small>Read next</small><b>Learning from Feedback Without Weight Updates</b><p>An agent that gets told &quot;that approach was wrong, try this instead&quot; and then keeps making the identical mistake on the next attempt hasn&#39;t actually used the feedback it was given.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/agents/plan-and-execute-agents/"><b>Plan-and-Execute Agents</b><p>Deciding every step of a trip itinerary up front, then just following it, takes one planning conversation and one action per stop.</p></a><a class="rc-card" href="/agents/self-critique-loops-in-agents/"><b>Self-Critique Loops in Agents</b><p>An arithmetic mistake made at step two of a four-step calculation doesn&#39;t stay contained to step two — every later step builds on the wrong number, and the final answer comes out wrong even though…</p></a><a class="rc-card" href="/agents/re-planning-on-failure/"><b>Re-Planning on Failure</b><p>A plan to book a trip hits a hotel that&#39;s sold out on step 3 of 5.</p></a><a class="rc-card" href="/agents/trajectory-level-evaluation/"><b>Trajectory-Level Evaluation</b><p>An agent that takes a forbidden or dangerous action partway through its run, then happens to land on the correct final answer anyway, passes any grader that only checks the final answer.</p></a><a class="rc-card" href="/agents/open-loop-vs-closed-loop-behavior/"><b>Open-Loop vs. Closed-Loop Behavior</b><p>An agent that fires off four actions in a row and reports &quot;done&quot; might be lying — not out of any intent to deceive, but because it never actually checked whether any of those four actions worked.</p></a><a class="rc-card" href="/agents/reflection-and-self-improvement/"><b>Reflection and Self-Improvement</b><p>An agent that never looks back at its own work repeats the same mistake at every step that triggers it.</p></a></div></section>
-        <p class="doc-prev"><a href="/agents/self-critique-loops-in-agents/">← Previous: Self-Critique Loops in Agents</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/agents/error-attribution-across-a-trajectory">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/agents/self-critique-loops-in-agents/" data-topic="agents/self-critique-loops-in-agents"><span>Previous · lesson 1</span><b>Self-Critique Loops in Agents</b></a><a class="step next" href="/agents/learning-from-feedback-without-weight-updates/" data-topic="agents/learning-from-feedback-without-weight-updates"><span>Next · lesson 3</span><b>Learning from Feedback Without Weight Updates</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Agents/Reflection%20and%20Self-Improvement/Error%20Attribution%20Across%20a%20Trajectory.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

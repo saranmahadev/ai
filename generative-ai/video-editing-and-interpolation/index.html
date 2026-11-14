@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Video Editing and Interpolation — AI Base</title>
 <meta name="description" content="inpainting fills in missing pixels surrounded by known ones.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/generative-ai/video-editing-and-interpolation/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":4,"name":"Video, 3D and Code Generation"},{"@type":"ListItem","position":5,"name":"Video Editing and Interpolation","item":"https://ai.saranmahadev.in/generative-ai/video-editing-and-interpolation/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Video Editing and Interpolation","description":"inpainting fills in missing pixels surrounded by known ones.","url":"https://ai.saranmahadev.in/generative-ai/video-editing-and-interpolation/","isPartOf":{"@type":"CreativeWorkSeries","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Generative AI","item":"https://ai.saranmahadev.in/generative-ai/"},{"@type":"ListItem","position":3,"name":"Video, 3D and Code Generation","item":"https://ai.saranmahadev.in/generative-ai/video-3d-and-code-generation/"},{"@type":"ListItem","position":4,"name":"Video Editing and Interpolation","item":"https://ai.saranmahadev.in/generative-ai/video-editing-and-interpolation/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Video Editing and Interpolation","description":"inpainting fills in missing pixels surrounded by known ones.","url":"https://ai.saranmahadev.in/generative-ai/video-editing-and-interpolation/","isPartOf":{"@type":"Course","name":"Generative AI","url":"https://ai.saranmahadev.in/generative-ai/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why is frame interpolation better-constrained than forward video generation?","acceptedAnswer":{"@type":"Answer","text":"Because frame interpolation has a known frame on both sides of the gap being filled, while forward generation only has evidence from the preceding frames, with nothing constraining where the sequence \"should\" end up."}},{"@type":"Question","name":"In the worked example, what determines the interpolated frame values?","acceptedAnswer":{"@type":"Answer","text":"Only the two known endpoint positions and how many frames separate them — the same harmonic (linear) interpolation formula used for spatial inpainting."}},{"@type":"Question","name":"What's a real limitation of using flat linear interpolation for video frames?","acceptedAnswer":{"@type":"Answer","text":"Real motion is rarely linear — accelerating or decelerating motion (like a bouncing ball) isn't well approximated by evenly-spaced positions, which is why production frame interpolation uses learned, motion-aware methods instead."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/generative-ai/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ Generative AI</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/generative-ai/">Generative AI</a></li><li>Video, 3D and Code Generation</li><li>Video Editing and Interpolation</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#ff9ccf">
-      <header class="doc-head">
-        <h1 class="doc-title">Video Editing and Interpolation</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>Generative AI</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#fff5fa"/>
-  <circle cx="1039" cy="346" r="71" fill="#ffd7ec" opacity="0.36"/><circle cx="732" cy="112" r="79" fill="#ffd7ec" opacity="0.59"/><circle cx="699" cy="364" r="110" fill="#ffd7ec" opacity="0.46"/>
-  <circle cx="401" cy="261" r="118" fill="#ff9ccf"/>
-  <line x1="0" y1="135" x2="1200" y2="135" stroke="#ff9ccf" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p><a class="wikilink" href="/generative-ai/inpainting-and-outpainting/" data-topic="generative-ai/inpainting-and-outpainting">inpainting</a> fills in missing pixels surrounded by known ones. Frame interpolation is the exact same idea, just rotated: the &quot;gap&quot; to fill is in time rather than space, and what&#39;s known on either side is a whole frame instead of a few pixels.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/generative-ai/inpainting-and-outpainting/" data-topic="generative-ai/inpainting-and-outpainting">Inpainting and Outpainting</a>, <a class="wikilink" href="/generative-ai/video-generation-and-temporal-consistency/" data-topic="generative-ai/video-generation-and-temporal-consistency">Video Generation and Temporal Consistency</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Video, 3D and Code Generation chapter">
+        <div class="side-head">
+          <a class="side-course" href="/generative-ai/">Generative AI · Chapter 05</a>
+          <a class="side-chapter" href="/generative-ai/video-3d-and-code-generation/">Video, 3D and Code Generation</a>
+          <span class="side-count">4 lessons</span>
+        </div>
+        <ol><li><a href="/generative-ai/video-generation-and-temporal-consistency/">Video Generation and Temporal Consistency</a></li><li><a href="/generative-ai/video-editing-and-interpolation/" aria-current="page">Video Editing and Interpolation</a></li><li><a href="/generative-ai/3d-asset-and-scene-generation/">3D Asset and Scene Generation</a></li><li><a href="/generative-ai/code-generation-and-program-synthesis/">Code Generation and Program Synthesis</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="generative-ai/video-editing-and-interpolation">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/generative-ai/">Generative AI</a></li><li><a href="/generative-ai/video-3d-and-code-generation/">Video, 3D and Code Generation</a></li><li><span aria-current="page">Video Editing and Interpolation</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 2 of 4 · 4 min read</p>
+          <h1>Video Editing and Interpolation</h1>
+        </header>
+        <div class="prose"><p><a class="wikilink" href="/generative-ai/inpainting-and-outpainting/" data-topic="generative-ai/inpainting-and-outpainting">inpainting</a> fills in missing pixels surrounded by known ones. Frame interpolation is the exact same idea, just rotated: the &quot;gap&quot; to fill is in time rather than space, and what&#39;s known on either side is a whole frame instead of a few pixels.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/generative-ai/inpainting-and-outpainting/" data-topic="generative-ai/inpainting-and-outpainting">Inpainting and Outpainting</a><a class="chip wikilink" href="/generative-ai/video-generation-and-temporal-consistency/" data-topic="generative-ai/video-generation-and-temporal-consistency">Video Generation and Temporal Consistency</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;How do you generate the frames in between two frames you already have?&quot; <strong>Frame interpolation</strong> treats the in-between frames exactly the way <a class="wikilink" href="/generative-ai/inpainting-and-outpainting/" data-topic="generative-ai/inpainting-and-outpainting">inpainting</a> treats missing pixels between two known anchors: minimize total squared change between adjacent frames, with the known start and end frames fixed. Because both ends are known, the result is just as well-constrained as spatial inpainting was — unlike <a class="wikilink" href="/generative-ai/video-generation-and-temporal-consistency/" data-topic="generative-ai/video-generation-and-temporal-consistency">generating new frames forward</a>, which only ever has evidence from one direction.</p>
 <h2 id="intuition">Intuition</h2>
@@ -112,16 +115,21 @@ Real motion is rarely linear — accelerating or decelerating motion (like a bou
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/generative-ai/inpainting-and-outpainting/" data-topic="generative-ai/inpainting-and-outpainting">Inpainting and Outpainting</a> · <a class="wikilink" href="/generative-ai/video-generation-and-temporal-consistency/" data-topic="generative-ai/video-generation-and-temporal-consistency">Video Generation and Temporal Consistency</a> · <a class="wikilink" href="/generative-ai/3d-asset-and-scene-generation/" data-topic="generative-ai/3d-asset-and-scene-generation">3D Asset and Scene Generation</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/generative-ai/video-editing-and-interpolation">Open in the interactive site →</a></p>
-        <a class="read-next" href="/generative-ai/3d-asset-and-scene-generation/"><small>Read next</small><b>3D Asset and Scene Generation</b><p>Every generation method so far in this subject produces a flat grid of values — pixels, a spectrogram, a sequence of frames.</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/generative-ai/inpainting-and-outpainting/"><b>Inpainting and Outpainting</b><p>structural conditioning locks part of a generated output to an exact value.</p></a><a class="rc-card" href="/generative-ai/video-generation-and-temporal-consistency/"><b>Video Generation and Temporal Consistency</b><p>Generate a sequence of images one frame at a time, each independently, and you get something that technically shows motion but looks nothing like video — it flickers and jumps, because nothing…</p></a><a class="rc-card" href="/generative-ai/3d-asset-and-scene-generation/"><b>3D Asset and Scene Generation</b><p>Every generation method so far in this subject produces a flat grid of values — pixels, a spectrogram, a sequence of frames.</p></a><a class="rc-card" href="/generative-ai/video-3d-and-code-generation/"><b>Video, 3D and Code Generation</b><p>Three modalities that each push generation past where images and audio stop: video adds time, 3D adds an extra spatial dimension and viewpoint consistency, and code adds a requirement neither has…</p></a></div></section>
-        <p class="doc-prev"><a href="/generative-ai/video-generation-and-temporal-consistency/">← Previous: Video Generation and Temporal Consistency</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/generative-ai/video-editing-and-interpolation">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/generative-ai/video-generation-and-temporal-consistency/" data-topic="generative-ai/video-generation-and-temporal-consistency"><span>Previous · lesson 1</span><b>Video Generation and Temporal Consistency</b></a><a class="step next" href="/generative-ai/3d-asset-and-scene-generation/" data-topic="generative-ai/3d-asset-and-scene-generation"><span>Next · lesson 3</span><b>3D Asset and Scene Generation</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/Generative%20AI/Video,%203D%20and%20Code%20Generation/Video%20Editing%20and%20Interpolation.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

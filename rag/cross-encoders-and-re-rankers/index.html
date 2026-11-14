@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cross-Encoders and Re-Rankers — AI Base</title>
 <meta name="description" content="A bi-encoder&#39;s speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/rag/cross-encoders-and-re-rankers/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Embeddings for Retrieval"},{"@type":"ListItem","position":5,"name":"Cross-Encoders and Re-Rankers","item":"https://ai.saranmahadev.in/rag/cross-encoders-and-re-rankers/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Cross-Encoders and Re-Rankers","description":"A bi-encoder's speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented.","url":"https://ai.saranmahadev.in/rag/cross-encoders-and-re-rankers/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Embeddings for Retrieval","item":"https://ai.saranmahadev.in/rag/embeddings-for-retrieval/"},{"@type":"ListItem","position":4,"name":"Cross-Encoders and Re-Rankers","item":"https://ai.saranmahadev.in/rag/cross-encoders-and-re-rankers/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Cross-Encoders and Re-Rankers","description":"A bi-encoder's speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented.","url":"https://ai.saranmahadev.in/rag/cross-encoders-and-re-rankers/","isPartOf":{"@type":"Course","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does candidate A score so highly under the bi-encoder but so poorly under the cross-encoder?","acceptedAnswer":{"@type":"Answer","text":"A's pooled embedding ends up close to the query's because it repeats the query's own words, even though its actual content is off-topic — the cross-encoder, processing the pair jointly, can detect that the surface overlap doesn't correspond to real relevance."}},{"@type":"Question","name":"Why is a cross-encoder typically applied only to a shortlist rather than an entire collection?","acceptedAnswer":{"@type":"Answer","text":"Its cost scales with the number of query-document pairs it has to jointly process, and that cost per pair is far higher than a bi-encoder's — applying it to a whole large collection would be far too expensive for most systems."}},{"@type":"Question","name":"What's lost by encoding the query and document independently, as a bi-encoder does?","acceptedAnswer":{"@type":"Answer","text":"Any fine-grained interaction between specific parts of the query and specific parts of the document — a bi-encoder's two separate, pooled vectors can't capture the kind of mismatch the worked example's candidate A represents."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ RAG</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Embeddings for Retrieval</li><li>Cross-Encoders and Re-Rankers</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#5fd1d9">
-      <header class="doc-head">
-        <h1 class="doc-title">Cross-Encoders and Re-Rankers</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>4 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#effafb"/>
-  <circle cx="1044" cy="293" r="75" fill="#bfedf0" opacity="0.47"/><circle cx="1004" cy="228" r="101" fill="#bfedf0" opacity="0.32"/><circle cx="544" cy="242" r="94" fill="#bfedf0" opacity="0.32"/>
-  <circle cx="221" cy="124" r="110" fill="#5fd1d9"/>
-  <line x1="0" y1="252" x2="1200" y2="252" stroke="#5fd1d9" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>A bi-encoder&#39;s speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented. A cross-encoder gives that up: it feeds the query and a document into the model <em>together</em>, letting every word of each attend to every word of the other, at the cost of having to do that fresh for every single pair.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Embeddings for Retrieval chapter">
+        <div class="side-head">
+          <a class="side-course" href="/rag/">RAG · Chapter 03</a>
+          <a class="side-chapter" href="/rag/embeddings-for-retrieval/">Embeddings for Retrieval</a>
+          <span class="side-count">5 lessons</span>
+        </div>
+        <ol><li><a href="/rag/bi-encoders-and-dense-embeddings/">Bi-Encoders and Dense Embeddings</a></li><li><a href="/rag/cross-encoders-and-re-rankers/" aria-current="page">Cross-Encoders and Re-Rankers</a></li><li><a href="/rag/domain-adapting-embedding-models/">Domain-Adapting Embedding Models</a></li><li><a href="/rag/multi-vector-and-late-interaction-retrieval/">Multi-Vector and Late-Interaction Retrieval</a></li><li><a href="/rag/embedding-quantization-for-retrieval/">Embedding Quantization for Retrieval</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="rag/cross-encoders-and-re-rankers">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/rag/">RAG</a></li><li><a href="/rag/embeddings-for-retrieval/">Embeddings for Retrieval</a></li><li><span aria-current="page">Cross-Encoders and Re-Rankers</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 2 of 5 · 4 min read</p>
+          <h1>Cross-Encoders and Re-Rankers</h1>
+        </header>
+        <div class="prose"><p>A bi-encoder&#39;s speed comes from encoding the query and a document separately — which means it can never let fine details of one influence how the other gets represented. A cross-encoder gives that up: it feeds the query and a document into the model <em>together</em>, letting every word of each attend to every word of the other, at the cost of having to do that fresh for every single pair.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;When does a bi-encoder&#39;s ranking get something wrong that a more careful look would catch?&quot; A document that happens to repeat a query&#39;s own words can score a high bi-encoder similarity without actually answering the question — its pooled vector looks close to the query&#39;s, even though the content is off-topic. A <strong>cross-encoder</strong> jointly processes the query and that document and outputs a single relevance score, catching exactly this kind of mismatch that two independently pooled vectors can miss. Because a cross-encoder has to run once per candidate pair, it&#39;s typically used as a <strong>re-ranker</strong>: applied only to the short list a cheap bi-encoder already narrowed down, not the whole collection.</p>
 <h2 id="intuition">Intuition</h2>
@@ -111,16 +114,21 @@ Any fine-grained interaction between specific parts of the query and specific pa
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings">Bi-Encoders and Dense Embeddings</a> · <a class="wikilink" href="/rag/re-ranking-retrieved-results/" data-topic="rag/re-ranking-retrieved-results">Re-Ranking Retrieved Results</a> · <a class="wikilink" href="/rag/multi-vector-and-late-interaction-retrieval/" data-topic="rag/multi-vector-and-late-interaction-retrieval">Multi-Vector and Late-Interaction Retrieval</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/cross-encoders-and-re-rankers">Open in the interactive site →</a></p>
-        <a class="read-next" href="/rag/domain-adapting-embedding-models/"><small>Read next</small><b>Domain-Adapting Embedding Models</b><p>A general-purpose embedding model learned its sense of &quot;similar&quot; from broad, general text — which means it can genuinely confuse two meanings of the same term if one of them is specific to a…</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/bi-encoders-and-dense-embeddings/"><b>Bi-Encoders and Dense Embeddings</b><p>Embedding a query and comparing it to embedded documents is a cosine-similarity problem, already covered in Math.</p></a><a class="rc-card" href="/rag/re-ranking-retrieved-results/"><b>Re-Ranking Retrieved Results</b><p>Running a cross-encoder over an entire 10,000-document collection would cost roughly a million units in this subject&#39;s own illustrative units — far too much for a live request.</p></a><a class="rc-card" href="/rag/multi-vector-and-late-interaction-retrieval/"><b>Multi-Vector and Late-Interaction Retrieval</b><p>Pooling every token of a document into one vector means a single, strong, exact match can get diluted by everything else in the document — the more unrelated text surrounds it, the weaker its…</p></a><a class="rc-card" href="/rag/embeddings-for-retrieval/"><b>Embeddings for Retrieval</b><p>Turning a chunk of text into a vector is already covered in Math; this section is about the retrieval-specific engineering on top of that: which kind of model produces the vector, how to make it…</p></a></div></section>
-        <p class="doc-prev"><a href="/rag/bi-encoders-and-dense-embeddings/">← Previous: Bi-Encoders and Dense Embeddings</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/rag/cross-encoders-and-re-rankers">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/rag/bi-encoders-and-dense-embeddings/" data-topic="rag/bi-encoders-and-dense-embeddings"><span>Previous · lesson 1</span><b>Bi-Encoders and Dense Embeddings</b></a><a class="step next" href="/rag/domain-adapting-embedding-models/" data-topic="rag/domain-adapting-embedding-models"><span>Next · lesson 3</span><b>Domain-Adapting Embedding Models</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/RAG/Embeddings%20for%20Retrieval/Cross-Encoders%20and%20Re-Rankers.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>

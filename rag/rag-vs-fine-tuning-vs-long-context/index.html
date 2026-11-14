@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RAG vs. Fine-Tuning vs. Long-Context — AI Base</title>
 <meta name="description" content="A model that doesn&#39;t know something, or doesn&#39;t behave the way you want, has more than one fix available.">
+<meta name="theme-color" content="#fbf6ec">
 <link rel="canonical" href="https://ai.saranmahadev.in/rag/rag-vs-fine-tuning-vs-long-context/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="article">
@@ -16,42 +17,44 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="alternate" type="application/atom+xml" title="AI Base: recently added topics" href="/feed.xml">
+<link rel="alternate" type="application/atom+xml" title="AI Base: recently updated lessons" href="/feed.xml">
+<script src="/theme.js"></script>
 <link rel="stylesheet" href="/styles.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"Explore","item":"https://ai.saranmahadev.in/explore/"},{"@type":"ListItem","position":3,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":4,"name":"Why Retrieval and Grounding"},{"@type":"ListItem","position":5,"name":"RAG vs. Fine-Tuning vs. Long-Context","item":"https://ai.saranmahadev.in/rag/rag-vs-fine-tuning-vs-long-context/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"RAG vs. Fine-Tuning vs. Long-Context","description":"A model that doesn't know something, or doesn't behave the way you want, has more than one fix available.","url":"https://ai.saranmahadev.in/rag/rag-vs-fine-tuning-vs-long-context/","isPartOf":{"@type":"CreativeWorkSeries","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Curriculum","item":"https://ai.saranmahadev.in/"},{"@type":"ListItem","position":2,"name":"RAG","item":"https://ai.saranmahadev.in/rag/"},{"@type":"ListItem","position":3,"name":"Why Retrieval and Grounding","item":"https://ai.saranmahadev.in/rag/why-retrieval-and-grounding/"},{"@type":"ListItem","position":4,"name":"RAG vs. Fine-Tuning vs. Long-Context","item":"https://ai.saranmahadev.in/rag/rag-vs-fine-tuning-vs-long-context/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"RAG vs. Fine-Tuning vs. Long-Context","description":"A model that doesn't know something, or doesn't behave the way you want, has more than one fix available.","url":"https://ai.saranmahadev.in/rag/rag-vs-fine-tuning-vs-long-context/","isPartOf":{"@type":"Course","name":"RAG","url":"https://ai.saranmahadev.in/rag/"},"publisher":{"@type":"Organization","name":"AI Base","url":"https://ai.saranmahadev.in"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"In the worked example, why does RAG edge out long-context in the freshness-critical scenario despite both scoring 0.95 on freshness itself?","acceptedAnswer":{"@type":"Answer","text":"The scenario also weights update cost, where RAG scores higher (0.90 vs. 0.95 is close, but long-context's advantage narrows once latency cost — where RAG scores much better, 0.60 vs. 0.30 — is factored in too) — the combination across all weighted dimensions, not freshness alone, decides the winner."}},{"@type":"Question","name":"Why does fine-tuning win decisively in the style-adaptation scenario when it scored worst in the freshness scenario?","acceptedAnswer":{"@type":"Answer","text":"The two scenarios weight completely different dimensions — freshness and update cost (where fine-tuning is weakest) barely matter in the style scenario, which instead weights style (where fine-tuning scores 0.95, far above the other two)."}},{"@type":"Question","name":"Can RAG and fine-tuning be used on the same model at the same time?","acceptedAnswer":{"@type":"Answer","text":"Yes — they address different kinds of gaps (non-parametric facts vs. parametric behavior), so a production system can fine-tune a model for style or task-specific behavior and still retrieve documents for it to answer from."}}]}</script>
 </head>
-<body class="reading static-page" data-theme="light">
-<header class="hud">
-  <a class="brand clay-pill" href="/" aria-label="AI Base, home"><span class="dot"></span>AI Base</a>
-  <div class="hud-right">
-    <a class="hud-btn clay-pill" href="/explore/">Explore</a>
-    <a class="hud-btn clay-pill" href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a>
+<body data-section="curriculum">
+<a class="skip" href="#view">Skip to content</a>
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>AI Base</a>
+  <nav class="site-nav" aria-label="Main">
+    <a class="nav-curriculum" href="/">Curriculum</a>
+    <a class="nav-glossary" href="/glossary/">Glossary</a>
+    <a class="nav-progress" href="/#/progress">My progress</a>
+  </nav>
+  <div class="site-tools">
+    <a class="search-btn" href="/#/search"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5 14 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Search lessons</span></a>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch between light and dark"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 2.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
   </div>
-</header>
-<main id="static-view">
-<nav class="static-crumbs" aria-label="Breadcrumb">
-  <a class="nb-back" href="https://ai.saranmahadev.in/rag/">
-    <svg class="nb-back-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5l-6 5.5 6 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span class="nb-back-label">‹ RAG</span>
-  </a>
-  <ul class="nb-crumbs"><li><a href="https://ai.saranmahadev.in/">Home</a></li><li><a href="https://ai.saranmahadev.in/explore/">Explore</a></li><li><a href="https://ai.saranmahadev.in/rag/">RAG</a></li><li>Why Retrieval and Grounding</li><li>RAG vs. Fine-Tuning vs. Long-Context</li></ul>
-  
-</nav>
-    <article class="doc topic" style="--c:#5fd1d9">
-      <header class="doc-head">
-        <h1 class="doc-title">RAG vs. Fine-Tuning vs. Long-Context</h1>
-        <div class="doc-by"><span class="doc-orb" aria-hidden="true"></span><div><b>RAG</b><span>5 min read</span></div></div>
-      </header>
-      <figure class="doc-cover" aria-hidden="true"><svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" preserveAspectRatio="xMidYMid slice">
-  <rect width="1200" height="420" fill="#effafb"/>
-  <circle cx="1072" cy="184" r="112" fill="#bfedf0" opacity="0.34"/><circle cx="750" cy="97" r="168" fill="#bfedf0" opacity="0.53"/>
-  <circle cx="344" cy="138" r="108" fill="#5fd1d9"/>
-  <line x1="0" y1="259" x2="1200" y2="259" stroke="#5fd1d9" stroke-opacity=".16" stroke-width="2"/>
-</svg></figure>
-      <div class="doc-body"><div class="prose"><p>A model that doesn&#39;t know something, or doesn&#39;t behave the way you want, has more than one fix available. Retrieval, fine-tuning, and simply stuffing more into the prompt (long-context) all address a gap between what a model does and what you need — but they&#39;re good at different gaps, for different reasons.</p>
-<p><strong>You need:</strong> <a class="wikilink" href="/rag/parametric-vs-non-parametric-knowledge/" data-topic="rag/parametric-vs-non-parametric-knowledge">Parametric vs. Non-Parametric Knowledge</a>, <a class="wikilink" href="/llms/long-context-transformers/" data-topic="llms/long-context-transformers">Long-Context Transformers</a>, <a class="wikilink" href="/llms/fine-tuning-for-a-specific-task/" data-topic="llms/fine-tuning-for-a-specific-task">Fine-Tuning for a Specific Task</a>.</p>
+</div></header>
+<main id="view"><div class="page lesson">
+      <nav class="lesson-side" aria-label="Why Retrieval and Grounding chapter">
+        <div class="side-head">
+          <a class="side-course" href="/rag/">RAG · Chapter 01</a>
+          <a class="side-chapter" href="/rag/why-retrieval-and-grounding/">Why Retrieval and Grounding</a>
+          <span class="side-count">4 lessons</span>
+        </div>
+        <ol><li><a href="/rag/parametric-vs-non-parametric-knowledge/">Parametric vs. Non-Parametric Knowledge</a></li><li><a href="/rag/hallucination-and-knowledge-cutoff/">Hallucination and Knowledge Cutoff</a></li><li><a href="/rag/rag-vs-fine-tuning-vs-long-context/" aria-current="page">RAG vs. Fine-Tuning vs. Long-Context</a></li><li><a href="/rag/anatomy-of-a-rag-pipeline/">Anatomy of a RAG Pipeline</a></li></ol>
+      </nav>
+      <article class="lesson-main" data-lesson="rag/rag-vs-fine-tuning-vs-long-context">
+        <header class="lesson-head">
+          <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Curriculum</a></li><li><a href="/rag/">RAG</a></li><li><a href="/rag/why-retrieval-and-grounding/">Why Retrieval and Grounding</a></li><li><span aria-current="page">RAG vs. Fine-Tuning vs. Long-Context</span></li></ol></nav>
+          <p class="eyebrow mono">Lesson 3 of 4 · 5 min read</p>
+          <h1>RAG vs. Fine-Tuning vs. Long-Context</h1>
+        </header>
+        <div class="prose"><p>A model that doesn&#39;t know something, or doesn&#39;t behave the way you want, has more than one fix available. Retrieval, fine-tuning, and simply stuffing more into the prompt (long-context) all address a gap between what a model does and what you need — but they&#39;re good at different gaps, for different reasons.</p>
+<div class="needs"><span class="label">You need</span><a class="chip wikilink" href="/rag/parametric-vs-non-parametric-knowledge/" data-topic="rag/parametric-vs-non-parametric-knowledge">Parametric vs. Non-Parametric Knowledge</a><a class="chip wikilink" href="/llms/long-context-transformers/" data-topic="llms/long-context-transformers">Long-Context Transformers<small class="xc">LLMs</small></a><a class="chip wikilink" href="/llms/fine-tuning-for-a-specific-task/" data-topic="llms/fine-tuning-for-a-specific-task">Fine-Tuning for a Specific Task<small class="xc">LLMs</small></a></div>
 <h2 id="the-question-it-answers">The question it answers</h2>
 <p>&quot;Given a gap between what a model knows or does and what&#39;s needed, how do you decide which of these three fixes it?&quot; Retrieval (RAG) and long-context both keep the model&#39;s weights untouched and supply information at answer-time — RAG searches a large collection for the relevant few documents; long-context relies on stuffing everything that might be relevant directly into the prompt, which only scales as far as the context window and its cost allow. Fine-tuning changes the weights themselves, which is the right tool when the gap is about <em>behavior</em> or <em>style</em> rather than <em>facts</em> — information baked into weights through fine-tuning doesn&#39;t update the moment something changes, the way a retrieved document can.</p>
 <h2 id="intuition">Intuition</h2>
@@ -113,16 +116,21 @@ Yes — they address different kinds of gaps (non-parametric facts vs. parametri
 </ul>
 <h2 id="related">Related</h2>
 <p><a class="wikilink" href="/rag/parametric-vs-non-parametric-knowledge/" data-topic="rag/parametric-vs-non-parametric-knowledge">Parametric vs. Non-Parametric Knowledge</a> · <a class="wikilink" href="/llms/choosing-a-model-for-a-task/" data-topic="llms/choosing-a-model-for-a-task">Choosing a Model for a Task</a> · <a class="wikilink" href="/rag/anatomy-of-a-rag-pipeline/" data-topic="rag/anatomy-of-a-rag-pipeline">Anatomy of a RAG Pipeline</a></p>
-</div></div>
-      <footer class="doc-end">
-        <p class="source"><a class="cta" href="https://ai.saranmahadev.in/#/rag/rag-vs-fine-tuning-vs-long-context">Open in the interactive site →</a></p>
-        <a class="read-next" href="/rag/anatomy-of-a-rag-pipeline/"><small>Read next</small><b>Anatomy of a RAG Pipeline</b><p>Every retrieval-augmented system, however elaborate, is built from the same handful of stages in the same order: a question comes in, it becomes a vector, that vector finds relevant passages,…</p><span aria-hidden="true">→</span></a>
-        <section class="more"><h3>Keep exploring</h3><div class="rc-grid"><a class="rc-card" href="/rag/parametric-vs-non-parametric-knowledge/"><b>Parametric vs. Non-Parametric Knowledge</b><p>A language model&#39;s &quot;knowledge&quot; isn&#39;t stored the way a database stores facts.</p></a><a class="rc-card" href="/llms/long-context-transformers/"><b>Long-Context Transformers</b><p>Every mechanism this subject has covered for making attention cheaper — windowed, linear, IO-aware — exists because of one specific, unavoidable fact: ordinary self-attention gets quadratically…</p></a><a class="rc-card" href="/llms/fine-tuning-for-a-specific-task/"><b>Fine-Tuning for a Specific Task</b><p>An aligned, general-purpose assistant is often not what a product actually needs — a narrower model trained specifically on one job&#39;s data can do that one job better, cheaper, and more predictably.</p></a><a class="rc-card" href="/llms/choosing-a-model-for-a-task/"><b>Choosing a Model for a Task</b><p>There&#39;s no single &quot;best&quot; LLM — only the best model for a particular task&#39;s particular mix of needs.</p></a><a class="rc-card" href="/llms/cost-and-latency-of-llm-apis/"><b>Cost and Latency of LLM APIs</b><p>A request to an LLM API has two separate costs that don&#39;t move together: how much it costs in money, and how long it takes to come back.</p></a><a class="rc-card" href="/llms/catastrophic-forgetting-in-fine-tuning/"><b>Catastrophic Forgetting in Fine-Tuning</b><p>Fine-tuning a model to be excellent at one narrow task can quietly make it worse at everything it used to do.</p></a></div></section>
-        <p class="doc-prev"><a href="/rag/hallucination-and-knowledge-cutoff/">← Previous: Hallucination and Knowledge Cutoff</a></p>
-      </footer>
-    </article></main>
-<footer class="home-footer">
-  <p><a href="https://github.com/saranmahadev/ai" target="_blank" rel="noopener">GitHub ↗</a> · <a href="https://github.com/saranmahadev/ai/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> · <a href="/feed.xml">RSS ↗</a></p>
-</footer>
+</div>
+        <footer class="lesson-end">
+          <div class="markbar"><span>Track your progress and run the bench in the interactive lesson.</span><a class="btn primary" href="/#/rag/rag-vs-fine-tuning-vs-long-context">Open the interactive lesson</a></div>
+          <nav class="steps" aria-label="Previous and next lesson"><a class="step prev" href="/rag/hallucination-and-knowledge-cutoff/" data-topic="rag/hallucination-and-knowledge-cutoff"><span>Previous · lesson 2</span><b>Hallucination and Knowledge Cutoff</b></a><a class="step next" href="/rag/anatomy-of-a-rag-pipeline/" data-topic="rag/anatomy-of-a-rag-pipeline"><span>Next · lesson 4</span><b>Anatomy of a RAG Pipeline</b></a></nav>
+          <p class="source"><a href="https://github.com/saranmahadev/ai/blob/main/RAG/Why%20Retrieval%20and%20Grounding/RAG%20vs.%20Fine-Tuning%20vs.%20Long-Context.md">View the source note on GitHub</a></p>
+        </footer>
+      </article>
+      <aside class="lesson-toc">
+        <nav aria-label="On this page"><span class="label">On this page</span><a href="#the-question-it-answers" data-scroll="the-question-it-answers">The question it answers</a><a href="#intuition" data-scroll="intuition">Intuition</a><a href="#definition-and-notation" data-scroll="definition-and-notation">Definition and notation</a><a href="#a-worked-example" data-scroll="a-worked-example">A worked example</a><a href="#bench" data-scroll="bench">Bench</a><a href="#where-it-appears-in-ai" data-scroll="where-it-appears-in-ai">Where it appears in AI</a><a href="#common-pitfalls" data-scroll="common-pitfalls">Common pitfalls</a><a href="#quick-check" data-scroll="quick-check">Quick check</a><a href="#key-terms" data-scroll="key-terms">Key terms</a></nav>
+        
+      </aside>
+    </div></main>
+<footer class="site-foot"><div class="wrap">
+  <span>AI Base. Written as an open Obsidian vault, MIT licensed.</span>
+  <span class="foot-links"><a href="https://github.com/saranmahadev/ai">GitHub</a><a href="/feed.xml">Feed</a><a href="https://github.com/saranmahadev/ai/blob/main/CONTRIBUTING.md">Contributing</a></span>
+</div></footer>
 </body>
 </html>
