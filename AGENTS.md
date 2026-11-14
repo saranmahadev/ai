@@ -39,22 +39,23 @@ The vault is the single source of truth for a public site in `.site/` (deployed 
 
 | Vault | Site |
 | --- | --- |
-| A top-level domain, configured in `.site/planets.json` (for example `Math/`) | A **planet** |
-| A sub-folder of a planet's folder (for example `Math/Calculus/`) | A **district**: one stretch of that planet's road |
-| A note | A **topic**: a signpost on the road, opened as an article page |
-| A `[[wiki link]]` | A connection: "Related topics", "Mentioned in", and fast travel |
-| An empty note | An *outlined* topic, shown as "still empty" |
-| A domain with no notes yet, listed as `planned` in `.site/planets.json` | An *undiscovered* planet |
+| A top-level domain, configured in `.site/courses.json` (for example `Math/`) | A **course**, numbered in learning order |
+| A sub-folder of a course's folder (for example `Math/Calculus/`) | A **chapter** of that course |
+| A chapter's landing note (`Calculus/Calculus.md`) | The chapter's **intro** page |
+| Any other note in the chapter | A **lesson**, opened as an article page |
+| A `[[wiki link]]` | A link between lessons; a `**You need:**` line becomes the lesson's prerequisites |
+| An empty note | An *outlined* lesson, shown as "not written" |
+| A domain with no notes yet, listed as `planned` in `.site/courses.json` | Not shown until it has notes |
 
-- The note filename is the topic title. A district's landing note has the same name as its folder (`Calculus/Calculus.md`); the planet's landing note sits next to the folder (`Math.md`). Their link order sets the order of districts and topics.
-- A note with no folder or planet assignment is reported by the site build as a warning; assign it in `.site/planets.json`.
+- The note filename is the lesson title. A chapter's landing note has the same name as its folder (`Calculus/Calculus.md`); the course's landing note sits next to the folder (`Math.md`). Their link order sets the order of chapters and lessons.
+- A note with no folder or course assignment is reported by the site build as a warning; assign it in `.site/courses.json`.
 - `AGENTS.md`, `CLAUDE.md`, `README.md`, `.obsidian/`, `.agents/`, `.github/` and `.site/` are never published.
 
 ### Writing notes so they publish well
 
-- Start with a short plain-language paragraph: it becomes the topic summary. Optional frontmatter (`title`, `summary`, `status`) overrides the derived values.
+- Start with a short plain-language paragraph: it becomes the lesson summary and its opening lede. Optional frontmatter (`title`, `summary`, `status`) overrides the derived values.
 - Use standard Markdown plus wiki links (`[[Note]]`, `[[Note|alias]]`, `[[Note#Heading]]`). Use `##`/`###` headings, since they build the page's table of contents. Tables, code fences and `> [!note]` callouts are supported.
-- Link only to notes that exist, or to a planned planet by its title. Unresolved links are reported by the site build.
+- Link only to notes that exist, or to a course by its title. Unresolved links are reported by the site build.
 - Do not embed Obsidian files (`![[...]]`); they are dropped. Use ordinary image links instead.
 
 ### Changing the vault or the site

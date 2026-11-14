@@ -1,15 +1,16 @@
-// Topic search: a keyboard-first overlay ("/" or Ctrl/Cmd+K). It searches titles, summaries, key terms and planets
-// in the content index; results open the topic. Everything is local.
+// Lesson search: a keyboard-first overlay ("/" or Ctrl/Cmd+K). It searches titles, summaries, key terms and courses
+// in the content index; results open the lesson. Everything is local.
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const words = (s) => (s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").match(/[a-z0-9]+/g) || []);
 
 export function buildIndex(content) {
   const docs = [];
-  for (const p of content.planets) docs.push({ id: p.id, kind: "planet", title: p.title, sub: p.planned ? "Subject · not explored yet" : "Subject", text: p.blurb, terms: "", planet: p.title });
+  const courses = content.courses.filter((c) => !c.planned);
+  for (const c of courses) docs.push({ id: c.id, kind: "course", title: c.title, sub: "Course", text: c.blurb, terms: "" });
   for (const t of Object.values(content.topics)) {
     if (t.status === "outlined") continue;
-    const p = t.planet && content.planets.find((x) => x.id === t.planet), d = p && p.districts.find((x) => x.id === t.district);
-    docs.push({ id: t.id, kind: "topic", title: t.title, sub: p ? `${p.title}${d && d.title !== p.title ? " · " + d.title : ""}` : "Overview", text: t.summary || "", terms: (t.glossary || []).map((g) => g.term).join(" "), planet: p ? p.title : "" });
+    const c = t.course && courses.find((x) => x.id === t.course), ch = c && c.chapters.find((x) => x.id === t.chapter);
+    docs.push({ id: t.id, kind: "lesson", title: t.title, sub: c ? `${c.title}${ch && ch.title !== c.title ? " · " + ch.title : ""}` : "Overview", text: t.summary || "", terms: (t.glossary || []).map((g) => g.term).join(" ") });
   }
   for (const d of docs) { d.tw = words(d.title); d.sw = words(d.text); d.gw = words(d.terms); d.tl = d.title.toLowerCase(); }
   return docs;
@@ -35,7 +36,7 @@ export function search(docs, query, limit = 8) {
     }
     if (!all) continue;
     if (d.tl === q) score += 60; else if (d.tl.startsWith(q)) score += 30;
-    if (d.kind === "planet") score += 6;
+    if (d.kind === "course") score += 6;
     out.push([score, d]);
   }
   return out.sort((a, b) => b[0] - a[0] || a[1].title.localeCompare(b[1].title)).slice(0, limit).map((x) => x[1]);
@@ -50,7 +51,7 @@ export function mountSearch({ content, onGo }) {
     active = 0;
     list.innerHTML = results.length
       ? results.map((d, i) => `<li role="option" id="sr-${i}" data-i="${i}" aria-selected="${i === active}"><b>${esc(d.title)}</b><small>${esc(d.sub)}</small><span>${esc(d.text.length > 110 ? d.text.slice(0, 108).replace(/\s+\S*$/, "") + "…" : d.text)}</span></li>`).join("")
-      : `<li class="empty" role="presentation">${q ? "No topics match. Try a shorter word." : "Type a word: a topic, a term or a subject."}</li>`;
+      : `<li class="empty" role="presentation">${q ? "No lessons match. Try a shorter word." : "Type a word: a lesson, a term or a course."}</li>`;
     input.setAttribute("aria-activedescendant", results.length ? "sr-0" : "");
   };
   const mark = () => { list.querySelectorAll("[role=option]").forEach((li, i) => { li.setAttribute("aria-selected", String(i === active)); if (i === active) li.scrollIntoView({ block: "nearest" }); }); input.setAttribute("aria-activedescendant", results.length ? `sr-${active}` : ""); };

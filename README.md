@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="https://ai.saranmahadev.in/og.png" alt="AI Base — a free, structured knowledge base for learning AI" width="100%">
+  <img src="https://ai.saranmahadev.in/og.png" alt="AI Base — a free, open curriculum for learning AI in order" width="100%">
 </p>
 
 <h1 align="center">AI Base</h1>
 
 <p align="center">
-  A free, structured knowledge base for learning AI — from arithmetic up through transformers, LLMs, RAG and autonomous agents.<br>
-  Every topic ships with a worked example and a live interactive demo, not just prose.
+  A free, open curriculum for learning AI — from arithmetic up through transformers, LLMs, RAG and autonomous agents.<br>
+  Ten courses, read in order; every lesson ships with a worked example and a live interactive bench, not just prose.
 </p>
 
 <p align="center">
@@ -22,18 +22,18 @@
 
 ---
 
-Every subject follows the same arc: a plain-language explanation, a worked example with real numbers, an interactive bench you can play with in the browser, common pitfalls, a quick check, and links to what to read next. There's also an optional 3D **Play Mode**, if you'd rather fly a rocket between subjects and walk a planet's streets than click through a list — same content either way, nothing locked behind it.
+Ten courses, read in order. Each course is a set of chapters, and each chapter a set of lessons. Every lesson follows the same arc: a plain-language explanation, a worked example with real numbers, an interactive bench you can play with in the browser, common pitfalls, a quick check, and the lesson that comes next.
 
 ## Why this is different
 
-- **Worked examples are actually verified.** Every number in a note was produced by running the same code as that topic's bench — not typed by hand and hoped to be right. Change a bench's data and the note's numbers have to change with it; that coupling is enforced by review, not by convention.
-- **624 topics, every one with a live demo.** Not screenshots of a demo — 521 running interactive benches you can drag, step through, and break, built with vanilla canvas/SVG and no dependencies.
-- **A real prerequisite graph, not a flat list.** Topics link backward to exactly what you need and nowhere else; cross-subject links only ever point to something earlier, so following "You need:" never leads in circles.
-- **Free, open, and it doesn't watch you.** No ads, no account, no analytics, no tracking script, no third-party request of any kind — fonts and a 3D engine are vendored in. Reading progress lives in your own browser's `localStorage` and nowhere else.
+- **Worked examples are actually verified.** Every number in a note was produced by running the same code as that lesson's bench — not typed by hand and hoped to be right. Change a bench's data and the note's numbers have to change with it; that coupling is enforced by review, not by convention.
+- **521 lessons, every one with a live demo.** Not screenshots of a demo — 521 running interactive benches you can drag, step through, and break, built with vanilla canvas/SVG and no dependencies.
+- **A real prerequisite graph, not a flat list.** Lessons link backward to exactly what you need and nowhere else; links between courses only ever point to something earlier, so following "You need:" never leads in circles.
+- **Free, open, and it doesn't watch you.** No ads, no account, no analytics, no tracking script, no third-party request of any kind — the fonts are vendored in. Reading progress lives in your own browser's `localStorage` and nowhere else.
 
 ## What's inside
 
-| Subject | What it covers |
+| Course | What it covers |
 | --- | --- |
 | **AI Fundamentals** | What AI is, and how an intelligent system perceives, decides and acts |
 | **Math** | The language of models: arithmetic, linear algebra, calculus, probability, statistics, information theory |
@@ -46,7 +46,7 @@ Every subject follows the same arc: a plain-language explanation, a worked examp
 | **RAG** | Grounding a model in real documents: chunking, embeddings, retrieval, generation |
 | **Agents** | Planning, tool use, memory, multi-agent coordination, evaluation, safety |
 
-10 subjects · 624 topics · 521 interactive benches — read as plain documents by default, or explored as a galaxy in 3D.
+10 courses · 92 chapters · 521 lessons, each with an interactive bench — plain documents, in light or dark.
 
 ## Quick start
 
@@ -61,7 +61,7 @@ npm run dev   # builds content.json from the vault and serves http://localhost:8
 
 ```
 AGENTS.md, CLAUDE.md     the vault's rules and the site's technical guide
-<Subject>/<Topic>.md     the vault: the actual knowledge, in Markdown
+<Course>/<Chapter>/<Lesson>.md   the vault: the actual knowledge, in Markdown
 .site/                   the static site generator and front end that publishes the vault
 ```
 
@@ -69,7 +69,7 @@ The Markdown notes are the single source of truth. The site in `.site/` is a gen
 
 ## Contributing
 
-Contributions to the notes (fixing an explanation, adding a missing topic) or to the site are both welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and ground rules, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for how we expect people to treat each other here.
+Contributions to the notes (fixing an explanation, adding a missing lesson) or to the site are both welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and ground rules, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for how we expect people to treat each other here.
 
 ## License
 
